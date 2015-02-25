@@ -23,40 +23,32 @@ import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
 /**
  * This class implements the Newton Raphson Algorithm for the SNB Model
  * 
+ * @author Fabian Prasser
  * @author Michael Schneider
  * @version 1.0
  */
 class AlgorithmNewtonSNB extends AlgorithmNewtonRaphson {
 
-    /**
-     * number of equivalence classes of size one in the sample
-     */
+    /** Number of equivalence classes of size one in the sample */
     private final int c1;
 
-    /**
-     * number of equivalence classes of size two in the sample
-     */
+    /** number of equivalence classes of size two in the sample */
     private final int c2;
 
-    /**
-     * number of non-empty classes equivalence classes in the population
-     * (estimated)
-     */
+    /** Number of non-empty classes equivalence classes in the population (estimated) */
     protected double  estimatedNumberOfNonEmptyClasses;
 
-    /**
-     * sampling fraction
-     */
+    /** Sampling fraction */
     protected double  samplingFraction;
 
     /**
      * Implements procedures of Newton Raphson algorithm for SNB Model
      * 
      * @param k
-     *            number of non zero classes equivalence classes in the
+     *            Number of non zero classes equivalence classes in the
      *            population (estimated)
      * @param pi
-     *            sampling fraction,
+     *            Sampling fraction,
      *            
      * @param numClassesOfSize1
      * 
@@ -110,17 +102,17 @@ class AlgorithmNewtonSNB extends AlgorithmNewtonRaphson {
      * The method for computing the first derivatives of the object functions
      * evaluated at the iterated solutions.
      * 
-     * @param iteratedSolution
-     *            the iterated vector of solutions.
-     * @return the first derivatives of the object functions evaluated at the
+     * @param iteratedSolution The iterated vector of solutions.
+     * @return The first derivatives of the object functions evaluated at the
      *         iterated solutions.
      */
     @Override
     protected double[][] firstDerivativeMatrix(final double[] iteratedSolution) {
+        
         final double[][] result = new double[iteratedSolution.length][iteratedSolution.length];
         final double iBeta = iteratedSolution[1] - 1;
-        // The derivation of the following formulas has been obtained using
-        // Mathematica
+        
+        // The derivation of the following formulas has been obtained using Mathematica
 
         // Formula 1, d alpha
         result[0][0] = (-(samplingFraction *
@@ -185,8 +177,7 @@ class AlgorithmNewtonSNB extends AlgorithmNewtonRaphson {
         final double[] result = new double[iteratedSolution.length];
         final double dividend = ((1 - samplingFraction) * (1 - iteratedSolution[1]));
 
-        // original equations to determine the value of the parameters alpha and
-        // beta in the SNB Model:
+        // Original equations to determine the value of the parameters alpha and beta in the SNB Model
         result[0] = (estimatedNumberOfNonEmptyClasses *
                      samplingFraction *
                      power((iteratedSolution[1] / (1 - dividend)),

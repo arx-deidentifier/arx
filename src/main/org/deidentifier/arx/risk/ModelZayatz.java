@@ -45,10 +45,10 @@ class ModelZayatz extends RiskModelPopulationBased {
         super(classes, model, stop, new WrappedInteger());
         
         int[] _classes = super.getClasses().getEquivalenceClasses();
-        double conditionalUniquenessPercentage =  computeConditionalUniquenessPercentage(_classes,
-                                                      (int)super.getPopulationSize(), // TODO: Might overflow
-                                                      (int)super.getSampleSize(),
-                                                      (int)super.getNumClasses());
+        double conditionalUniquenessPercentage = computeConditionalUniquenessPercentage( _classes,
+                                                                                         super.getPopulationSize(),
+                                                                                         super.getSampleSize(),
+                                                                                         super.getNumClasses());
         
         this.numUniques = super.getNumClassesOfSize(1) * conditionalUniquenessPercentage / super.getSampleFraction();
     }
@@ -72,22 +72,31 @@ class ModelZayatz extends RiskModelPopulationBased {
      * @return
      */
     private double computeConditionalUniquenessPercentage(int[] classes,
-                                                          int populationSize,
-                                                          int sampleSize,
-                                                          int numClasses) {
+                                                          double populationSize,
+                                                          double sampleSize,
+                                                          double numClasses) {
         
         int numClassesOfSize1 = classes[0] == 1 ? classes[1] : 0;
         double temp = 0;
-
+        
+        int param1 = (int)populationSize;
+        if (populationSize > Integer.MAX_VALUE) {
+            param1 = Integer.MAX_VALUE; // TODO: This is an error: overflow
+        }
+        int param2 = (int)sampleSize;
+        if (sampleSize > Integer.MAX_VALUE) {
+            param2 = Integer.MAX_VALUE; // TODO: This is an error: overflow
+        }
         for (int i = 0; i < classes.length; i+=2) {
             int size = classes[i];
             int count = classes[i + 1];
-            HypergeometricDistribution distribution = new HypergeometricDistribution(populationSize, size, sampleSize);
+            
+            HypergeometricDistribution distribution = new HypergeometricDistribution(param1, size, param2);
             temp += (count / ((double) numClasses)) * distribution.probability(1);
             checkInterrupt();
         }
 
-        HypergeometricDistribution distribution = new HypergeometricDistribution(populationSize, 1, sampleSize);
+        HypergeometricDistribution distribution = new HypergeometricDistribution(param1, 1, param2);
         return (((double)numClassesOfSize1 / ((double) numClasses)) * (distribution.probability(1))) / temp;
     }
 }

@@ -26,6 +26,7 @@ import Jama.Matrix;
  * The class defines the required methods for the sub-classes using
  * Newton-Raphson algorithm
  * 
+ * @author Fabian Prasser
  * @author Michael Schneider
  * @version 1.0
  */
@@ -33,27 +34,27 @@ import Jama.Matrix;
 abstract class AlgorithmNewtonRaphson {
 
     /** Convergence threshold for the Newton-Raphson algorithm. */
-    public double   accuracy      = 1.0e-9;
+    public double          accuracy      = 1.0e-9;
 
     /** Maximum number of iterations. */
-    public int      maxIterations = 300;
+    public int             maxIterations = 300;
 
     /** The solutions. */
-    public double[] solution;
+    public double[]        solution;
 
     /** The vector of the differences between the iterated vectors of solutions. */
-    private Matrix  differenceVector;
+    private Matrix         differenceVector;
 
     /** The vector of first derivatives of the object functions. */
-    private Matrix  firstDerivativeMatrix;
+    private Matrix         firstDerivativeMatrix;
 
     /** The vector of solutions. */
-    private Matrix  solutionVector;
+    private Matrix         solutionVector;
 
     /** The iterated vector of solutions. */
-    private Matrix  updatedSolutionVector;
+    private Matrix         updatedSolutionVector;
 
-    /** Stop flag*/
+    /** Stop flag */
     private WrappedBoolean stop;
     
     /**

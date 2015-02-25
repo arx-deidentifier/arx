@@ -52,7 +52,7 @@ class ModelPitman extends RiskModelPopulationBased {
         if (numClassesOfSize2 == 0) numClassesOfSize2 = 1; // Overestimate
         int numClasses = (int) super.getNumClasses();
         int sampleSize = (int) super.getSampleSize();
-        int populationSize = (int) super.getPopulationSize(); // TODO: Might overflow
+        double populationSize = super.getPopulationSize();
 
         // Initial guess
         final double c = (numClassesOfSize1 * (numClassesOfSize1 - 1)) / numClassesOfSize2;

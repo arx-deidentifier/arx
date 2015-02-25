@@ -113,7 +113,7 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
         }
         result[1][1] = 0 - temp1 - temp2;
 
-        // compute d^2L/(d theta d alpha)
+        // Compute d^2L/(d theta d alpha)
         temp1 = 0;
         temp2 = 0;
         temp3 = 0;
@@ -137,11 +137,12 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
      */
     @Override
     protected double[] objectFunctionVector(final double[] iteratedSolution) {
-        // theta is at iteratedSolution[0], alpha at [1]
+        
+        // Theta is at iteratedSolution[0], alpha at [1]
         final double[] result = new double[iteratedSolution.length];
         double temp1 = 0, temp2 = 0, temp3 = 0;
 
-        // compute theta
+        // Compute theta
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
             temp1 += (1 / (iteratedSolution[0] + (i * iteratedSolution[1])));
             checkInterrupt();

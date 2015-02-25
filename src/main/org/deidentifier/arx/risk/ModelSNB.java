@@ -79,9 +79,7 @@ class ModelSNB extends RiskModelPopulationBased {
 
     /**
      * @return Shlosser estimator for variable K, giving number of non zero
-     *         classes in the population estimated according to Haas, 1998 and
-     *         Shlosser
-     * 
+     *         classes in the population estimated according to Haas, 1998 and Shlosser
      */
     private double estimateNonEmptyEquivalenceClasses(int[] classes, 
                                                       double numClasses,
