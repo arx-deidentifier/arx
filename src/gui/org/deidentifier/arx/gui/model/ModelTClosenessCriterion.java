@@ -29,19 +29,19 @@ import org.deidentifier.arx.criteria.PrivacyCriterion;
 public class ModelTClosenessCriterion extends ModelExplicitCriterion{
 
     /** SVUID. */
-    private static final long serialVersionUID = 4901053938589514626L;
-        
+    private static final long serialVersionUID     = 4901053938589514626L;
+
     /** Variant. */
     public static final int   VARIANT_EQUAL        = 0;
-    
+
     /** Variant. */
     public static final int   VARIANT_HIERARCHICAL = 1;
 
-	/** The variant. */
-	private int variant = 0;
-	
-	/** T. */
-	private double t = 0.001d;
+    /** The variant. */
+    private int               variant              = 0;
+
+    /** T. */
+    private double            t                    = 0.001d;
 
     /**
      * Creates a new instance.

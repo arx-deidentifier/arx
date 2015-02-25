@@ -117,20 +117,20 @@ public class Resources {
         return image;
     }
 
-    /**  TODO */
+    /** Messages */
     private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
 
     /** The splash. */
-    private static Image splash = null;
-    
+    private static Image                splash          = null;
+
     /** The iconset. */
-    private static Image[] iconset = null;
+    private static Image[]              iconset         = null;
 
     /** Logger. */
-    private final Logger logger = Logger.getRootLogger();
+    private final Logger                logger          = Logger.getRootLogger();
 
     /** Shell. */
-    private final Shell  shell;
+    private final Shell                 shell;
     
     /**
      * Creates a new instance.

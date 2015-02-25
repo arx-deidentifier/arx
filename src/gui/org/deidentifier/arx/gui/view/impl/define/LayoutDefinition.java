@@ -80,7 +80,7 @@ public class LayoutDefinition implements ILayout {
         new ViewDataInput(compositeLeft, controller, true);
         new ViewSubsetDefinition(compositeLeft, controller);
         new ViewDataDefinition(compositeTopRight, controller);
-        new ViewGeneralSettings(compositeBottomRight, controller);
+        new LayoutTransformationSettings(compositeBottomRight, controller);
     }
 
 }

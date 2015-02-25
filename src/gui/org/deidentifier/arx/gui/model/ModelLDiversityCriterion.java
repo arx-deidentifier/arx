@@ -30,25 +30,25 @@ import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 
     /** SVUID. */
-    private static final long serialVersionUID = -9172448654255959945L;
-    
-    /** Variant. */
-    public static final int VARIANT_DISTINCT = 0;
-    
-    /** Variant. */
-    public static final int VARIANT_ENTROPY = 1;
-    
-    /** Variant. */
-    public static final int VARIANT_RECURSIVE = 2;
+    private static final long serialVersionUID  = -9172448654255959945L;
 
-	/** The variant to use. */
-	private int variant = 0;
-	
-	/** L. */
-	private int l = 2;
-	
-	/** C, if any. */
-	private double c = 0.001d;
+    /** Variant. */
+    public static final int   VARIANT_DISTINCT  = 0;
+
+    /** Variant. */
+    public static final int   VARIANT_ENTROPY   = 1;
+
+    /** Variant. */
+    public static final int   VARIANT_RECURSIVE = 2;
+
+    /** The variant to use. */
+    private int               variant           = 0;
+
+    /** L. */
+    private int               l                 = 2;
+
+    /** C, if any. */
+    private double            c                 = 0.001d;
 
     /**
      * Creates a new instance.

@@ -43,35 +43,35 @@ import org.eclipse.swt.widgets.Scale;
  * @author Fabian Prasser
  */
 public class ViewCodingModel implements IView {
-    
-    /**  TODO */
-    private final Color COLOR_MEDIUM;
-    
-    /**  TODO */
-    private final Color COLOR_LIGHT;
-    
-    /**  TODO */
-    private final Color COLOR_DARK;
 
-    /**  TODO */
+    /** TODO */
+    private final Color      COLOR_MEDIUM;
+
+    /** TODO */
+    private final Color      COLOR_LIGHT;
+
+    /** TODO */
+    private final Color      COLOR_DARK;
+
+    /** TODO */
     private static final int MINIMUM    = 0;
-    
-    /**  TODO */
+
+    /** TODO */
     private static final int MAXIMUM    = 1000;
 
-    /**  TODO */
+    /** TODO */
     private Controller       controller = null;
-    
-    /**  TODO */
+
+    /** TODO */
     private Model            model      = null;
 
-    /**  TODO */
+    /** TODO */
     private final Scale      slider;
-    
-    /**  TODO */
+
+    /** TODO */
     private final Composite  root;
-    
-    /**  TODO */
+
+    /** TODO */
     private final Canvas     canvas;
 
     /**

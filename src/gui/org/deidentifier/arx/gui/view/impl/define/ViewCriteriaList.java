@@ -22,6 +22,7 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
+import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -180,6 +181,13 @@ public class ViewCriteriaList implements IView {
                         TableItem item = new TableItem(table, SWT.NONE);
                         item.setText(new String[] { "", c.toString(), c.getAttribute() });
                         item.setImage(0, symbolT);
+                    }
+                }
+
+                for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
+                    if (c.isActive() && c.isEnabled()) {
+                        TableItem item = new TableItem(table, SWT.NONE);
+                        item.setText(new String[] { "", c.toString(), "" });
                     }
                 }
                 column1.pack();

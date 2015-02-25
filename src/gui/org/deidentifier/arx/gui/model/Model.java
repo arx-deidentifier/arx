@@ -222,6 +222,9 @@ public class Model implements Serializable {
     /** Model for a specific privacy criterion. */
     private Map<String, ModelTClosenessCriterion> tClosenessModel                 = new HashMap<String, ModelTClosenessCriterion>();
 
+    /** Model for a specific privacy criterion. */
+    private Set<ModelRiskBasedCriterion>          riskBasedModel                  = new HashSet<ModelRiskBasedCriterion>();
+
     /* *****************************************
      * UTILITY METRICS
      ******************************************/
@@ -359,6 +362,16 @@ public class Model implements Serializable {
                 }
                 
                 PrivacyCriterion criterion = entry.getValue().getCriterion(this);
+                config.addCriterion(criterion);
+            }
+        }
+        
+        for (ModelRiskBasedCriterion entry : this.riskBasedModel){
+            if (entry != null &&
+                entry.isActive() &&
+                entry.isEnabled()) {
+                
+                PrivacyCriterion criterion = entry.getCriterion(this);
                 config.addCriterion(criterion);
             }
         }
@@ -526,6 +539,9 @@ public class Model implements Serializable {
      * @return
      */
 	public Map<String, ModelLDiversityCriterion> getLDiversityModel() {
+	       if (this.lDiversityModel == null) {
+	            this.lDiversityModel = new HashMap<String, ModelLDiversityCriterion>();
+	        }
 		return lDiversityModel;
 	}
 	
@@ -825,8 +841,23 @@ public class Model implements Serializable {
      * @return
      */
 	public Map<String, ModelTClosenessCriterion> getTClosenessModel() {
+	    if (this.tClosenessModel == null) {
+            this.tClosenessModel = new HashMap<String, ModelTClosenessCriterion>();
+        }
 		return tClosenessModel;
 	}
+
+    /**
+     * Returns the risk-based model.
+     *
+     * @return
+     */
+    public Set<ModelRiskBasedCriterion> getRiskBasedModel() {
+        if (this.riskBasedModel == null) {
+            this.riskBasedModel = new HashSet<ModelRiskBasedCriterion>();
+        }
+        return riskBasedModel;
+    }
 
 	/**
      * Returns the execution time of the last anonymization process.
@@ -944,13 +975,12 @@ public class Model implements Serializable {
 		dPresenceModel = new ModelDPresenceCriterion();
 		lDiversityModel.clear();
 		tClosenessModel.clear();
+		riskBasedModel.clear();
 		DataHandle handle = inputConfig.getInput().getHandle();
 		for (int col = 0; col < handle.getNumColumns(); col++) {
 			String attribute = handle.getAttributeName(col);
-			lDiversityModel.put(attribute, new ModelLDiversityCriterion(
-					attribute));
-			tClosenessModel.put(attribute, new ModelTClosenessCriterion(
-					attribute));
+			lDiversityModel.put(attribute, new ModelLDiversityCriterion(attribute));
+			tClosenessModel.put(attribute, new ModelTClosenessCriterion(attribute));
 		}
 	}
 

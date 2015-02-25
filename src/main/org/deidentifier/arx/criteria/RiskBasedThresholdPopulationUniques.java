@@ -45,9 +45,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      * @param populationModel
      */
     public RiskBasedThresholdPopulationUniques(double riskThreshold, ARXPopulationModel populationModel){
-        super(false, riskThreshold);
-        this.statisticalModel = StatisticalModel.DANKAR;
-        this.populationModel = populationModel;
+        this(riskThreshold, StatisticalModel.DANKAR, populationModel);
     }
 
     /**
@@ -67,7 +65,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
 
     @Override
     public String toString() {
-        return "(<"+getRiskThreshold()+")-population-uniques";
+        return "(<" + getRiskThreshold() + "-population-uniques (" + statisticalModel.toString().toLowerCase() + ")";
     }
 
     /**
