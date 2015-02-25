@@ -888,12 +888,16 @@ public class Model implements Serializable {
      * Resets the model.
      */
 	public void reset() {
-		// TODO: Need to reset more fields
-		resetCriteria();
-		inputConfig = new ModelConfiguration();
-		outputConfig = null;
-		output = null;
-		result = null;
+        resetCriteria();
+        resetAttributePair();
+        inputConfig = new ModelConfiguration();
+        outputConfig = null;
+        output = null;
+        result = null;
+        auditTrail.clear();
+        selectedQuasiIdentifiers = null;
+        subsetOrigin = "None";
+        groups = null;
 	}
     
     /**
