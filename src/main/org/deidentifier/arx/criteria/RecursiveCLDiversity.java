@@ -30,7 +30,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
  */
 public class RecursiveCLDiversity extends LDiversity{
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = -5893481096346270328L;
 
     /** The parameter c. */

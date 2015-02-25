@@ -28,7 +28,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
  */
 public class EntropyLDiversity extends LDiversity {
 
-    /**  TODO */
+    /**  SVUID */
     private static final long   serialVersionUID = -354688551915634000L;
 
     /** Helper. */

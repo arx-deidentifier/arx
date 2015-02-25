@@ -34,7 +34,7 @@ import org.deidentifier.arx.framework.data.DataManager;
  */
 public class DPresence extends ImplicitPrivacyCriterion{
     
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = 8534004943055128797L;
     
     /** Delta min. */

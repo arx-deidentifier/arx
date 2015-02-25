@@ -70,6 +70,14 @@ public abstract class PrivacyCriterion implements Serializable{
     public abstract boolean isAnonymous(HashGroupifyEntry entry);
 
     /**
+     * Is this criterion based on the overall sample
+     * @return
+     */
+    public boolean isSampleBased() {
+        return false;
+    }
+    
+    /**
      * Returns whether the criterion is monotonic with tuple suppression.
      *
      * @return

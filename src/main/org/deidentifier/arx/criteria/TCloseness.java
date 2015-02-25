@@ -30,12 +30,12 @@ import org.deidentifier.arx.ARXConfiguration;
  */
 public abstract class TCloseness extends ExplicitPrivacyCriterion {
 
-    /**  TODO */
+    /** SVUID */
     private static final long serialVersionUID = -139670758266526116L;
-    
+
     /** The param t. */
-    protected final double       t;
-    
+    protected final double    t;
+
     /**
      * Creates a new instance.
      *

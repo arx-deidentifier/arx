@@ -29,20 +29,20 @@ import org.deidentifier.arx.framework.data.DataManager;
  */
 public class HierarchicalDistanceTCloseness extends TCloseness {
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = -2142590190479670706L;
-    
+
     /** The hierarchy used for the EMD. */
-    private final Hierarchy hierarchy;
-    
+    private final Hierarchy   hierarchy;
+
     /** Internal tree. */
-    private int[] tree;
-    
+    private int[]             tree;
+
     /** Internal offset. */
-    private int start;
-    
+    private int               start;
+
     /** Internal empty tree. */
-    private int[] empty;
+    private int[]             empty;
 
     /**
      * Creates a new instance of the t-closeness criterion with hierarchical earth-movers-distance as proposed in:

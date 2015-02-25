@@ -26,17 +26,17 @@ import org.deidentifier.arx.framework.data.DataManager;
  */
 public abstract class ExplicitPrivacyCriterion extends PrivacyCriterion {
 
-    /**  TODO */
+    /** SVUID */
     private static final long serialVersionUID = -6467044039242481225L;
     
-    /**  TODO */
+    /**  Attribute */
     protected final String attribute;
     
-    /**  TODO */
+    /**  Attribute index */
     protected int index = -1;
 
     /**
-     * 
+     * Creates a new instance
      *
      * @param attribute
      * @param monotonic

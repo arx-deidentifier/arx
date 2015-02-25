@@ -24,12 +24,11 @@ package org.deidentifier.arx.criteria;
  */
 public abstract class ImplicitPrivacyCriterion extends PrivacyCriterion {
 
-    /**  TODO */
+    /** SVUID */
     private static final long serialVersionUID = -6467044039242481225L;
 
-    /**
-     * 
-     *
+    /** 
+     * Creates a new instance
      * @param monotonic
      */
     public ImplicitPrivacyCriterion(boolean monotonic) {

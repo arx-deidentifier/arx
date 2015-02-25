@@ -31,13 +31,13 @@ import org.deidentifier.arx.ARXConfiguration;
  */
 public abstract class LDiversity extends ExplicitPrivacyCriterion {
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = 6429149925699964530L;
 
     /** The parameter l. */
     protected final double    l;
     
-    /**  TODO */
+    /**  The derived minimal size of a class */
     protected final int       minSize;
 
     /**

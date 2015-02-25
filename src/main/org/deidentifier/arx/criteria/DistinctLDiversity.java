@@ -27,7 +27,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
  */
 public class DistinctLDiversity extends LDiversity{
 
-    /**  TODO */
+    /** SVUID */
     private static final long serialVersionUID = -7973221140269608088L;
     
     /**

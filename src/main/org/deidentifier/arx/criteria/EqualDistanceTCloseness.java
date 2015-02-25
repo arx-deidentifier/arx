@@ -28,7 +28,7 @@ import org.deidentifier.arx.framework.data.DataManager;
  */
 public class EqualDistanceTCloseness extends TCloseness {
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = -1383357036299011323L;
 
     /** The original distribution. */
