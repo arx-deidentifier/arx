@@ -386,7 +386,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
 
             @Override
             public void onInterrupt() {
-                if (stopped || !isEnabled()) {
+                if (!isEnabled()) {
                     setStatusEmpty();
                 } else {
                     setStatusWorking();

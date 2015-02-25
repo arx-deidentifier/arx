@@ -206,7 +206,7 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
 
             @Override
             public void onInterrupt() {
-                if (stopped || !isEnabled()) {
+                if (!isEnabled()) {
                     setStatusEmpty();
                 } else {
                     setStatusWorking();

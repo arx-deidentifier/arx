@@ -238,7 +238,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
 
             @Override
             public void onInterrupt() {
-                if (stopped || !isEnabled()) {
+                if (!isEnabled()) {
                     setStatusEmpty();
                 } else {
                     setStatusWorking();
