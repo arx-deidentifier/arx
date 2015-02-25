@@ -49,6 +49,7 @@ class ModelPitman extends RiskModelPopulationBased {
 
         int numClassesOfSize1 = (int) super.getNumClassesOfSize(1);
         int numClassesOfSize2 = (int) super.getNumClassesOfSize(2);
+        if (numClassesOfSize2 == 0) numClassesOfSize2 = 1; // Overestimate
         int numClasses = (int) super.getNumClasses();
         int sampleSize = (int) super.getSampleSize();
         int populationSize = (int) super.getPopulationSize(); // TODO: Might overflow

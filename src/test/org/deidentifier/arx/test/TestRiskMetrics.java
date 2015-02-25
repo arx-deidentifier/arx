@@ -129,7 +129,7 @@ public class TestRiskMetrics extends TestCase {
         provider.createDataDefinition();
         DataHandle handle = provider.getData().getHandle();
 
-        double risk = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankarWithoutSNB();
+        double risk = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
 
         // Risk before anonymization
         assertTrue("Is: "+risk, risk == 1.0d);
@@ -148,7 +148,7 @@ public class TestRiskMetrics extends TestCase {
         }
         final DataHandle outHandle = result.getOutput(false);
 
-        risk = outHandle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankarWithoutSNB();
+        risk = outHandle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
         assertTrue("Is: "+risk, risk == 0);
     }
 
@@ -164,19 +164,19 @@ public class TestRiskMetrics extends TestCase {
         DataHandle handle = data.getHandle();
 
         double sampleRisk = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedUniquenessRisk().getFractionOfUniqueTuples();
-        double populationRisk = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankarWithoutSNB();
+        double populationRisk = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
         assertTrue(populationRisk+"/"+sampleRisk, populationRisk == 0.2768499388373113);
         assertTrue(populationRisk+"/"+sampleRisk, populationRisk <= sampleRisk);
 
-        populationRisk = handle.getRiskEstimator(ARXPopulationModel.create(0.2d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankarWithoutSNB();
+        populationRisk = handle.getRiskEstimator(ARXPopulationModel.create(0.2d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
         assertTrue(populationRisk+"/"+sampleRisk, populationRisk == 0.3577099234829125d);
         assertTrue(populationRisk+"/"+sampleRisk, populationRisk <= sampleRisk);
 
-        populationRisk = handle.getRiskEstimator(ARXPopulationModel.create(0.01d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankarWithoutSNB();
+        populationRisk = handle.getRiskEstimator(ARXPopulationModel.create(0.01d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
         assertTrue(populationRisk+"/"+sampleRisk, populationRisk == 0.14460835311692927);
         assertTrue(populationRisk+"/"+sampleRisk, populationRisk <= sampleRisk);
         
-        populationRisk = handle.getRiskEstimator(ARXPopulationModel.create(1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankarWithoutSNB();
+        populationRisk = handle.getRiskEstimator(ARXPopulationModel.create(1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
         assertTrue(populationRisk+"/"+sampleRisk, populationRisk == 0.5142895033485844d);
         assertTrue(populationRisk+"/"+sampleRisk, populationRisk == sampleRisk);
         

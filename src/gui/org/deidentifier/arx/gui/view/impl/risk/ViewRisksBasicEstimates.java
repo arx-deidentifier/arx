@@ -196,8 +196,8 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
             private double           highestRisk;
             private double           fractionOfTuplesAffectedByHighestRisk;
             private double           fractionOfUniqueTuples;
-            private double           fractionOfUniqueTuplesDankarWithoutSNB;
-            private StatisticalModel dankarModelWithoutSNB;
+            private double           fractionOfUniqueTuplesDankar;
+            private StatisticalModel dankarModel;
 
             @Override
             public int getProgress() {
@@ -228,8 +228,8 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
                 createItem(Resources.getMessage("RiskAnalysis.9"), highestRisk);
                 createItem(Resources.getMessage("RiskAnalysis.10"), fractionOfTuplesAffectedByHighestRisk);
                 createItem(Resources.getMessage("RiskAnalysis.11"), fractionOfUniqueTuples);
-                createItem(Resources.getMessage("RiskAnalysis.12"), fractionOfUniqueTuplesDankarWithoutSNB);
-                createItem(Resources.getMessage("RiskAnalysis.18"), dankarModelWithoutSNB);
+                createItem(Resources.getMessage("RiskAnalysis.12"), fractionOfUniqueTuplesDankar);
+                createItem(Resources.getMessage("RiskAnalysis.18"), dankarModel);
 
                 table.setRedraw(true);
                 
@@ -263,8 +263,8 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
                 highestRisk = samReidModel.getHighestRisk();
                 fractionOfTuplesAffectedByHighestRisk = samReidModel.getFractionOfTuplesAffectedByHighestRisk();
                 fractionOfUniqueTuples = samUniqueModel.getFractionOfUniqueTuples();
-                fractionOfUniqueTuplesDankarWithoutSNB = popUniqueModel.getFractionOfUniqueTuplesDankarWithoutSNB();
-                dankarModelWithoutSNB = popUniqueModel.getDankarModelWithoutSNB();
+                fractionOfUniqueTuplesDankar = popUniqueModel.getFractionOfUniqueTuplesDankar();
+                dankarModel = popUniqueModel.getDankarModel();
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){

@@ -38,7 +38,6 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
         ZAYATZ,
         SNB,
         DANKAR,
-        DANKAR_WITHOUT_SNB
     }
     
     /** Estimate */
@@ -49,12 +48,8 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
     private final double           numUniquesPitman;
     /** Estimate */
     private final double           numUniquesDankar;
-    /** Estimate */
-    private final double           numUniquesDankarWithoutSNB;
     /** Model */
     private final StatisticalModel dankarModel;
-    /** Model */
-    private final StatisticalModel dankarModelWithoutSNB;
 
     /**
      * Creates a new instance
@@ -81,7 +76,6 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
         
         // Init
         int numClassesOfSize1 = (int)super.getNumClassesOfSize(1);
-        int numClassesOfSize2 = (int)super.getNumClassesOfSize(2);
         double sampleFraction = super.getSampleFraction();
     
         // Handle where there are not sample uniques 
@@ -90,8 +84,6 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
             numUniquesSNB = 0d;
             numUniquesPitman = 0d;
             numUniquesDankar = 0d;
-            numUniquesDankarWithoutSNB = 0d;
-            dankarModelWithoutSNB = null;
             dankarModel = null;
             progress.value = 100;
             return;
@@ -102,33 +94,15 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
         progress.value = 50;
         
         // Estimate with Pitman's model
-        numUniquesPitman = numClassesOfSize2 != 0 ? new ModelPitman(model, classes, accuracy, maxIterations, stop).getNumUniques() : 0d;
+        numUniquesPitman = new ModelPitman(model, classes, accuracy, maxIterations, stop).getNumUniques();
         progress.value = 75;
         
         // Estimate with SNB model
         numUniquesSNB = new ModelSNB(model, classes, accuracy, maxIterations, stop).getNumUniques();
         progress.value = 100;
         
-// Decision rule of Dankar et al.
-//    If sampfrac <= 0.1 then 
-//        E1=Pitman 
-//    Else 
-//    If SNB converges then 
-//        if Est(SNB) > Est(Zayatz) then 
-//            E1=Zayatz 
-//        Else 
-//            E1=SNB 
-//        Endif 
-//    Else 
-//        E1=Zayatz 
-//    Endif
-//    Endif
-        
-        // Estimate with Dankar's model. TODO: Check against the paper
-        if (numClassesOfSize2 == 0) {
-            numUniquesDankar = numUniquesZayatz;
-            dankarModel = StatisticalModel.ZAYATZ;
-        } else if (sampleFraction <= 0.1) {
+        // Decision rule by Dankar et al.
+        if (sampleFraction <= 0.1) {
             if (isValid(numUniquesPitman)) {
                 numUniquesDankar = numUniquesPitman;
                 dankarModel = StatisticalModel.PITMAN;
@@ -136,52 +110,18 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
                 numUniquesDankar = numUniquesZayatz;
                 dankarModel = StatisticalModel.ZAYATZ;
             }
-        } else {
-            if (!isValid(numUniquesZayatz)) {
-                if (!isValid(numUniquesSNB)) {
-                    numUniquesDankar = numUniquesPitman;
-                    dankarModel = StatisticalModel.PITMAN;
-                } else {
-                    numUniquesDankar = numUniquesSNB;
-                    dankarModel = StatisticalModel.SNB;
-                }
+        } else if (isValid(numUniquesSNB)) {
+            if (numUniquesZayatz < numUniquesSNB) {
+                numUniquesDankar = numUniquesZayatz;
+                dankarModel = StatisticalModel.ZAYATZ;
             } else {
-                if (isValid(numUniquesSNB)) {
-                    if (numUniquesZayatz < numUniquesSNB) {
-                        numUniquesDankar = numUniquesZayatz;
-                        dankarModel = StatisticalModel.ZAYATZ;
-                    } else {
-                        numUniquesDankar = numUniquesSNB;
-                        dankarModel = StatisticalModel.SNB;
-                    }
-                } else {
-                    numUniquesDankar = numUniquesZayatz;
-                    dankarModel = StatisticalModel.ZAYATZ;
-                }
-            }
-        } 
-
-        // Estimate with Dankar's model, ignoring the SNB model. TODO: Check against the paper
-        if (numClassesOfSize2 == 0) {
-            numUniquesDankarWithoutSNB = numUniquesZayatz;
-            dankarModelWithoutSNB = StatisticalModel.ZAYATZ;
-        } else if (sampleFraction <= 0.1) {
-            if (isValid(numUniquesPitman)) {
-                numUniquesDankarWithoutSNB = numUniquesPitman;
-                dankarModelWithoutSNB = StatisticalModel.PITMAN;
-            } else {
-                numUniquesDankarWithoutSNB = numUniquesZayatz;
-                dankarModelWithoutSNB = StatisticalModel.ZAYATZ;
+                numUniquesDankar = numUniquesSNB;
+                dankarModel = StatisticalModel.SNB;
             }
         } else {
-            if (!isValid(numUniquesZayatz)) {
-                numUniquesDankarWithoutSNB = numUniquesPitman; 
-                dankarModelWithoutSNB = StatisticalModel.PITMAN;
-            } else {
-                numUniquesDankarWithoutSNB = numUniquesZayatz;
-                dankarModelWithoutSNB = StatisticalModel.ZAYATZ;
-            }
-        } 
+            numUniquesDankar = numUniquesZayatz;
+            dankarModel = StatisticalModel.ZAYATZ;
+        }
     }
 
     /**
@@ -189,14 +129,6 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
      */
     public StatisticalModel getDankarModel() {
         return dankarModel;
-    }
-
-    /**
-     * Returns the statistical model, used by Dankar et al.'s decision rule for estimating population uniqueness.
-     * Excludes the SNB model.
-     */
-    public StatisticalModel getDankarModelWithoutSNB() {
-        return dankarModelWithoutSNB;
     }
 
     /**
@@ -211,13 +143,6 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
      */
     public double getFractionOfUniqueTuplesDankar() {
         return getNumUniqueTuplesDankar() / super.getPopulationSize();
-    }
-
-    /**
-     * Estimated number of unique tuples in the population according to Dankar's decision rule, excluding the SNB model
-     */
-    public double getFractionOfUniqueTuplesDankarWithoutSNB() {
-        return getNumUniqueTuplesDankarWithoutSNB() / super.getPopulationSize();
     }
 
     /**
@@ -253,8 +178,6 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
             return getNumUniqueTuplesSNB();
         case DANKAR:
             return getNumUniqueTuplesDankar();
-        case DANKAR_WITHOUT_SNB:
-            return getNumUniqueTuplesDankarWithoutSNB();
         }
         throw new IllegalArgumentException("Unknown model");
     }
@@ -264,13 +187,6 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
      */
     public double getNumUniqueTuplesDankar() {
         return isValid(numUniquesDankar) ? numUniquesDankar : 0d;
-    }
-
-    /**
-     * Estimated number of unique tuples in the population according to Dankar et al.'s decision rule, excluding the SNB model
-     */
-    public double getNumUniqueTuplesDankarWithoutSNB() {
-        return isValid(numUniquesDankarWithoutSNB) ? numUniquesDankarWithoutSNB : 0d;
     }
 
     /**

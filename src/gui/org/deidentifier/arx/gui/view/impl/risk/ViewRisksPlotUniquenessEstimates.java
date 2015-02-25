@@ -331,7 +331,6 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
             private double[] dataZayatz;
             private double[] dataSNB;
             private double[] dataDankar;
-            private double[] dataDankarWithoutSNB;
             private int idx;
 
             @Override
@@ -360,10 +359,9 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
                     createSeries(seriesSet, dataZayatz, "Zayatz", PlotSymbolType.CROSS, GUIHelper.COLOR_BLUE);
                     createSeries(seriesSet, dataSNB, "SNB", PlotSymbolType.DIAMOND, GUIHelper.COLOR_RED);
                     createSeries(seriesSet, dataDankar, "Dankar", PlotSymbolType.SQUARE, GUIHelper.COLOR_DARK_GRAY);
-                    createSeries(seriesSet, dataDankarWithoutSNB, "Dankar (without SNB)", PlotSymbolType.TRIANGLE, GUIHelper.COLOR_GREEN);
                     chart.getLegend().setVisible(true);
                 } else {
-                    createSeries(seriesSet, dataDankarWithoutSNB, "Dankar (without SNB)", PlotSymbolType.SQUARE, GUIHelper.COLOR_BLACK);
+                    createSeries(seriesSet, dataDankar, "Dankar", PlotSymbolType.SQUARE, GUIHelper.COLOR_BLACK);
                     chart.getLegend().setVisible(false);
                 }
                 
@@ -402,12 +400,11 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
                 long time = System.currentTimeMillis();
                 
                 // Perform work
-                dataDankarWithoutSNB = new double[POINTS.length];
+                dataDankar = new double[POINTS.length];
                 if (showAllModels) {
                     dataPitman = new double[POINTS.length];
                     dataZayatz = new double[POINTS.length];
                     dataSNB = new double[POINTS.length];
-                    dataDankar = new double[POINTS.length];
                 }
                 for (idx = 0; idx < POINTS.length; idx++) {
                     if (stopped) {
@@ -418,21 +415,19 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
                                                               builder.getEquivalenceClassModel()).getInterruptibleInstance();
                     
                     if (idx == 0 && builder.getSampleBasedUniquenessRisk().getFractionOfUniqueTuples() == 0.0d) {
-                        Arrays.fill(dataDankarWithoutSNB, 0.0d);
+                        Arrays.fill(dataDankar, 0.0d);
                         if (showAllModels) {
                             Arrays.fill(dataPitman, 0.0d);
                             Arrays.fill(dataZayatz, 0.0d);
                             Arrays.fill(dataSNB, 0.0d);
-                            Arrays.fill(dataDankar, 0.0d);
                         }
                         break;
                     }
-                    dataDankarWithoutSNB[idx] = builder.getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankarWithoutSNB();
+                    dataDankar[idx] = builder.getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
                     if (showAllModels) {
                         dataPitman[idx] = builder.getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesPitman();
                         dataZayatz[idx] = builder.getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesZayatz();
                         dataSNB[idx] = builder.getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesSNB();
-                        dataDankar[idx] = builder.getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
                     }
                 }
 
