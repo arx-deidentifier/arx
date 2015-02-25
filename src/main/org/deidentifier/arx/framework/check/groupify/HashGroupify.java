@@ -497,12 +497,12 @@ public class HashGroupify implements IHashGroupify {
      */
     private final HashGroupifyEntry addInternal(final int[] key, final int hash, final int representant, int count, final int pcount) {
 
-        // Is the tuple contained in the research subset
+        // If we enforce d-presence and the tuple is not contained in the research subset: set count to zero
         if (subset != null && !subset.contains(representant)) {
             count = 0;
         }
 
-        // Add entry
+        // Find or create entry
         int index = hash & (buckets.length - 1);
         HashGroupifyEntry entry = findEntry(key, index, hash);
         if (entry == null) {
@@ -512,6 +512,8 @@ public class HashGroupify implements IHashGroupify {
             }
             entry = createEntry(key, index, hash, representant);
         }
+        
+        // Track size
         entry.count += count;
 
         // Indirectly check if we enforce d-presence
@@ -524,7 +526,7 @@ public class HashGroupify implements IHashGroupify {
             }
         }
 
-        // Compute current outliers, if k-anonymity is contained in the set of criteria
+        // Compute current total number of outliers, if k-anonymity is contained in the set of criteria
         if (entry.count >= k) {
             if (!entry.isNotOutlier) {
                 entry.isNotOutlier = true;
