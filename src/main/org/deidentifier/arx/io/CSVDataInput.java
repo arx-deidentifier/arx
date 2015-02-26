@@ -40,14 +40,14 @@ public class CSVDataInput {
     /** A reader. */
     private final Reader            reader;
 
-    /** Settings */
+    /** Settings. */
     private final CsvParserSettings settings;
 
     /**
      * Instantiate.
      *
-     * @param file
-     * @throws IOException
+     * @param file the file
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final File file) throws IOException {
         this(file, CSVUtil.DEFAULT_DELIMITER);
@@ -56,9 +56,9 @@ public class CSVDataInput {
     /**
      * Instantiate.
      *
-     * @param file
-     * @param delimiter
-     * @throws IOException
+     * @param file the file
+     * @param delimiter the delimiter
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final File file, final char delimiter) throws IOException {
         this(file, delimiter, CSVUtil.DEFAULT_QUOTE);
@@ -67,10 +67,10 @@ public class CSVDataInput {
     /**
      * Instantiate.
      *
-     * @param file
-     * @param delimiter
-     * @param quote
-     * @throws IOException
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final File file, final char delimiter, final char quote) throws IOException {
         this(file, delimiter, quote, CSVUtil.DEFAULT_ESCAPE);
@@ -79,11 +79,11 @@ public class CSVDataInput {
     /**
      * Instantiate.
      *
-     * @param file
-     * @param delimiter
-     * @param quote
-     * @param escape
-     * @throws IOException
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final File file, final char delimiter, final char quote, final char escape) throws IOException {
         this(file, delimiter, quote, escape, CSVUtil.DEFAULT_LINEBREAK);
@@ -91,24 +91,23 @@ public class CSVDataInput {
 
     /**
      * Instantiate.
-     * 
-     * @param file
-     * @param delimiter
-     * @param quote
-     * @param escape
-     * @param linebreak
-     * @throws IOException
+     *
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-        reader = new FileReader(file);
-        settings = createSettings(delimiter, quote, escape, linebreak);
+        this(new FileReader(file), delimiter, quote, escape, linebreak);
     }
 
     /**
      * Instantiate.
      *
-     * @param stream
-     * @throws IOException
+     * @param stream the stream
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final InputStream stream) throws IOException {
         this(stream, CSVUtil.DEFAULT_DELIMITER);
@@ -117,9 +116,9 @@ public class CSVDataInput {
     /**
      * Instantiate.
      *
-     * @param stream
-     * @param delimiter
-     * @throws IOException
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final InputStream stream, final char delimiter) throws IOException {
         this(stream, delimiter, CSVUtil.DEFAULT_QUOTE);
@@ -128,10 +127,10 @@ public class CSVDataInput {
     /**
      * Instantiate.
      *
-     * @param stream
-     * @param delimiter
-     * @param quote
-     * @throws IOException
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final InputStream stream, final char delimiter, final char quote) throws IOException {
         this(stream, delimiter, quote, CSVUtil.DEFAULT_ESCAPE);
@@ -140,11 +139,11 @@ public class CSVDataInput {
     /**
      * Instantiate.
      *
-     * @param stream
-     * @param delimiter
-     * @param quote
-     * @param escape
-     * @throws IOException
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final InputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
         this(stream, delimiter, quote, escape, CSVUtil.DEFAULT_LINEBREAK);
@@ -153,22 +152,37 @@ public class CSVDataInput {
     /**
      * Instantiate.
      *
-     * @param stream
-     * @param delimiter
-     * @param quote
-     * @param escape
-     * @throws IOException
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final InputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-        reader = new InputStreamReader(stream);
+        this(new InputStreamReader(stream), delimiter, quote, escape, linebreak);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param reader the reader
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataInput(final Reader reader, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        this.reader = reader;
         settings = createSettings(delimiter, quote, escape, linebreak);
     }
 
     /**
      * Instantiate.
      *
-     * @param filename
-     * @throws IOException
+     * @param filename the filename
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final String filename) throws IOException {
         this(filename, CSVUtil.DEFAULT_DELIMITER);
@@ -177,9 +191,9 @@ public class CSVDataInput {
     /**
      * Instantiate.
      *
-     * @param filename
-     * @param delimiter
-     * @throws IOException
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final String filename, final char delimiter) throws IOException {
         this(filename, delimiter, CSVUtil.DEFAULT_QUOTE);
@@ -188,10 +202,10 @@ public class CSVDataInput {
     /**
      * Instantiate.
      *
-     * @param filename
-     * @param delimiter
-     * @param quote
-     * @throws IOException
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final String filename, final char delimiter, final char quote) throws IOException {
         this(filename, delimiter, quote, CSVUtil.DEFAULT_ESCAPE);
@@ -200,11 +214,11 @@ public class CSVDataInput {
     /**
      * Instantiate.
      *
-     * @param filename
-     * @param delimiter
-     * @param quote
-     * @param escape
-     * @throws IOException
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final String filename, final char delimiter, final char quote, final char escape) throws IOException {
         this(filename, delimiter, quote, escape, CSVUtil.DEFAULT_LINEBREAK);
@@ -212,29 +226,31 @@ public class CSVDataInput {
 
     /**
      * Instantiate.
-     * 
-     * @param filename
-     * @param delimiter
-     * @param quote
-     * @param escape
-     * @param linebreak
-     * @throws IOException
+     *
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final String filename, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
         this(new File(filename), delimiter, quote, escape, linebreak);
     }
 
     /**
-     * Closes the reader
-     * @throws IOException
+     * Closes the reader.
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public void close() throws IOException {
         reader.close();
     }
 
     /**
-     * Returns an iterator
-     * @return
+     * Returns an iterator.
+     *
+     * @return the iterator
      */
     public Iterator<String[]> iterator() {
 
@@ -265,6 +281,15 @@ public class CSVDataInput {
         };
     }
 
+    /**
+     * Creates the CsvParserSettings.
+     *
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @return the csv parser settings
+     */
     private CsvParserSettings createSettings(final char delimiter, final char quote, final char escape, final char[] linebreak) {
         CsvFormat format = new CsvFormat();
         format.setDelimiter(delimiter);
