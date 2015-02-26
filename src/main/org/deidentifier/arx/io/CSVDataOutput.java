@@ -109,6 +109,17 @@ public class CSVDataOutput {
     /**
      * Instantiate.
      *
+     * @param file the file
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final File file, final CSVConfig config) throws IOException {
+        this(file, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
+    }
+
+    /**
+     * Instantiate.
+     *
      * @param stream the stream
      * @throws IOException Signals that an I/O exception has occurred.
      */
@@ -169,6 +180,17 @@ public class CSVDataOutput {
     /**
      * Instantiate.
      *
+     * @param stream the stream
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(OutputStream stream, final CSVConfig config) throws IOException {
+        this(stream, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
+    }
+
+    /**
+     * Instantiate.
+     *
      * @param filename the filename
      * @throws IOException Signals that an I/O exception has occurred.
      */
@@ -209,7 +231,33 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final String filename, final char delimiter, final char quote, final char escape) throws IOException {
-        this(new File(filename), delimiter, quote, escape);
+        this(filename, delimiter, quote, escape, CSVUtil.DEFAULT_LINEBREAK);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final String filename, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        this(new File(filename), delimiter, quote, escape, linebreak);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+
+    public CSVDataOutput(String filename, final CSVConfig config) throws IOException {
+        this(filename, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
     }
 
     /**
