@@ -131,7 +131,7 @@ public class HashGroupifyDistribution {
      * @return
      */
     public double getAverageClassSize() {
-        return numClasses / numTuples;
+        return numTuples / numClasses;
     }
 
     /**
