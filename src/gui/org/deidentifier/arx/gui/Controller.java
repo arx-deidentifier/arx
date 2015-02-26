@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -183,21 +184,36 @@ public class Controller implements IView {
         
         Set<String> sensitive = model.getInputDefinition().getSensitiveAttributes();
         
+        List<ModelExplicitCriterion> explicit = new ArrayList<ModelExplicitCriterion>();
         for (ModelLDiversityCriterion other : model.getLDiversityModel().values()) {
             if (!other.isEnabled() && sensitive.contains(other.getAttribute())) {
-                criteria.add(other);
+                explicit.add(other);
             }
         }
         for (ModelTClosenessCriterion other : model.getTClosenessModel().values()) {
             if (!other.isEnabled() && sensitive.contains(other.getAttribute())) {
-                criteria.add(other);
+                explicit.add(other);
             }
         }
+        Collections.sort(explicit, new Comparator<ModelExplicitCriterion>(){
+            public int compare(ModelExplicitCriterion o1, ModelExplicitCriterion o2) {
+                return o1.getAttribute().compareTo(o2.getAttribute());
+            }
+        });
+        criteria.addAll(explicit);
+        
+        List<ModelRiskBasedCriterion> riskBased = new ArrayList<ModelRiskBasedCriterion>();
         for (ModelRiskBasedCriterion other : model.getRiskBasedModel()) {
             if (!other.isEnabled()) {
-                criteria.add(other);
+                riskBased.add(other);
             }
         }
+        Collections.sort(riskBased, new Comparator<ModelRiskBasedCriterion>(){
+            public int compare(ModelRiskBasedCriterion o1, ModelRiskBasedCriterion o2) {
+                return o1.getLabel().compareTo(o2.getLabel());
+            }
+        });
+        criteria.addAll(riskBased);
         
         if (criteria.isEmpty()) {
             return;
@@ -228,21 +244,37 @@ public class Controller implements IView {
         
         Set<String> sensitive = model.getInputDefinition().getSensitiveAttributes();
         
+        List<ModelExplicitCriterion> explicit = new ArrayList<ModelExplicitCriterion>();
         for (ModelLDiversityCriterion other : model.getLDiversityModel().values()) {
             if (other.isEnabled() && sensitive.contains(other.getAttribute())) {
-                criteria.add(other);
+                explicit.add(other);
             }
         }
         for (ModelTClosenessCriterion other : model.getTClosenessModel().values()) {
             if (other.isEnabled() && sensitive.contains(other.getAttribute())) {
-                criteria.add(other);
+                explicit.add(other);
             }
         }
+        Collections.sort(explicit, new Comparator<ModelExplicitCriterion>(){
+            public int compare(ModelExplicitCriterion o1, ModelExplicitCriterion o2) {
+                return o1.getAttribute().compareTo(o2.getAttribute());
+            }
+        });
+        criteria.addAll(explicit);
+        
+        List<ModelRiskBasedCriterion> riskBased = new ArrayList<ModelRiskBasedCriterion>();
         for (ModelRiskBasedCriterion other : model.getRiskBasedModel()) {
             if (other.isEnabled()) {
-                criteria.add(other);
+                riskBased.add(other);
             }
         }
+        Collections.sort(riskBased, new Comparator<ModelRiskBasedCriterion>(){
+            public int compare(ModelRiskBasedCriterion o1, ModelRiskBasedCriterion o2) {
+                return o1.getLabel().compareTo(o2.getLabel());
+            }
+        });
+        criteria.addAll(riskBased);
+        
         
         if (criteria.isEmpty()) {
             return;

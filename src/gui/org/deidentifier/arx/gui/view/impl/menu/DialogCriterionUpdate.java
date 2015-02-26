@@ -54,7 +54,7 @@ import org.eclipse.swt.widgets.TableItem;
  *
  * @author Fabian Prasser
  */
-public class DialogCriterionAddition extends TitleAreaDialog implements IDialog {
+public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
 
     /** View */
     private Button               ok         = null;
@@ -93,7 +93,7 @@ public class DialogCriterionAddition extends TitleAreaDialog implements IDialog 
     private Composite            root       = null;
 
     /** Is cancelling supported */
-    private final boolean        cancelSupported;
+    private final boolean        edit;
 
     /**
      * Constructor.
@@ -101,16 +101,16 @@ public class DialogCriterionAddition extends TitleAreaDialog implements IDialog 
      * @param controller
      * @param parent
      * @param elements
-     * @param cancel
+     * @param edit
      */
-    public DialogCriterionAddition(final Controller controller,
+    public DialogCriterionUpdate(final Controller controller,
                                    final Shell parent,
                                    List<ModelCriterion> elements,
-                                   boolean cancel) {
+                                   boolean edit) {
         super(parent);
         this.elements = elements;
         this.controller = controller;
-        this.cancelSupported = cancel;
+        this.edit = edit;
     }
 
     /**
@@ -122,7 +122,7 @@ public class DialogCriterionAddition extends TitleAreaDialog implements IDialog 
      * @param cancel
      * @param selection
      */
-    public DialogCriterionAddition(final Controller controller,
+    public DialogCriterionUpdate(final Controller controller,
                                    final Shell parent,
                                    List<ModelCriterion> elements,
                                    boolean cancel,
@@ -159,7 +159,7 @@ public class DialogCriterionAddition extends TitleAreaDialog implements IDialog 
         }
         
         if (selection != null) {
-            if (cancelSupported && ok != null) {
+            if (edit && ok != null) {
                 ok.setEnabled(true);
             }
             if (selection instanceof ModelLDiversityCriterion) {
@@ -174,7 +174,7 @@ public class DialogCriterionAddition extends TitleAreaDialog implements IDialog 
                 editor = new EditorCriterionRiskBased(root, (ModelRiskBasedCriterion)selection);
             }
         } else {
-            if (cancelSupported && ok != null) {
+            if (edit && ok != null) {
                 ok.setEnabled(false);
             }
         }
@@ -202,9 +202,9 @@ public class DialogCriterionAddition extends TitleAreaDialog implements IDialog 
                 close();
             }
         });
-        ok.setEnabled(!cancelSupported || false);
+        ok.setEnabled(!edit || false);
 
-        if (cancelSupported) {
+        if (edit) {
                 
             // Create Cancel Button
             cancel = createButton(parent, Window.CANCEL, Resources.getMessage("ProjectDialog.4"), false); //$NON-NLS-1$
@@ -222,8 +222,13 @@ public class DialogCriterionAddition extends TitleAreaDialog implements IDialog 
     @Override
     protected Control createContents(Composite parent) {
         Control contents = super.createContents(parent);
-        setTitle(Resources.getMessage("CriterionSelectionDialog.7")); //$NON-NLS-1$
-        setMessage(Resources.getMessage("CriterionSelectionDialog.6"), IMessageProvider.NONE); //$NON-NLS-1$
+        if (edit) {
+            setTitle(Resources.getMessage("CriterionSelectionDialog.9")); //$NON-NLS-1$
+            setMessage(Resources.getMessage("CriterionSelectionDialog.8"), IMessageProvider.NONE); //$NON-NLS-1$
+        } else {
+            setTitle(Resources.getMessage("CriterionSelectionDialog.7")); //$NON-NLS-1$
+            setMessage(Resources.getMessage("CriterionSelectionDialog.6"), IMessageProvider.NONE); //$NON-NLS-1$
+        }
         return contents;
     }
     
@@ -279,11 +284,11 @@ public class DialogCriterionAddition extends TitleAreaDialog implements IDialog 
             public void widgetSelected(SelectionEvent arg0) {
                 if (table.getSelectionIndex() != -1) {
                     selection = elements.get(table.getSelectionIndex());
-                    if (cancelSupported) ok.setEnabled(true);
+                    if (edit) ok.setEnabled(true);
                     update();
                 } else {
                     selection = null;
-                    if (cancelSupported) ok.setEnabled(false);
+                    if (edit) ok.setEnabled(false);
                     update();
                 }
             }

@@ -46,7 +46,7 @@ import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAuditTrail;
 import org.deidentifier.arx.gui.view.impl.menu.DialogComboSelection;
-import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionAddition;
+import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionUpdate;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogDebug;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
@@ -267,7 +267,7 @@ public class MainWindow implements IView {
     public ModelCriterion showAddCriterionDialog(List<ModelCriterion> criteria) {
 
         // Dialog
-        final DialogCriterionAddition dialog = new DialogCriterionAddition(controller, shell, criteria, true);
+        final DialogCriterionUpdate dialog = new DialogCriterionUpdate(controller, shell, criteria, true);
         dialog.create();
         if (dialog.open() != Window.OK) {
             return null;
@@ -292,7 +292,7 @@ public class MainWindow implements IView {
      * @return
      */
     public void showConfigureCriterionDialog(List<ModelCriterion> criteria, ModelCriterion criterion) {
-        DialogCriterionAddition dialog = new DialogCriterionAddition(controller, shell, criteria, false, criterion);
+        DialogCriterionUpdate dialog = new DialogCriterionUpdate(controller, shell, criteria, false, criterion);
         dialog.create();
         dialog.open();
     }

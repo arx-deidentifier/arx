@@ -17,6 +17,11 @@
 
 package org.deidentifier.arx.gui.view.impl.define;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelCriterion;
@@ -235,31 +240,52 @@ public class ViewCriteriaList implements IView {
                     item.setData(model.getDPresenceModel());
                 }
     
-                for (ModelLDiversityCriterion c : model.getLDiversityModel().values()) {
-                    if (c.isEnabled()) {
-                        TableItem item = new TableItem(table, SWT.NONE);
-                        item.setText(new String[] { "", c.toString(), c.getAttribute() });
-                        item.setImage(0, symbolL);
-                        item.setData(c);
+
+                List<ModelExplicitCriterion> explicit = new ArrayList<ModelExplicitCriterion>();
+                for (ModelLDiversityCriterion other : model.getLDiversityModel().values()) {
+                    if (other.isEnabled()) {
+                        explicit.add(other);
                     }
                 }
-    
-                for (ModelTClosenessCriterion c : model.getTClosenessModel().values()) {
-                    if (c.isEnabled()) {
-                        TableItem item = new TableItem(table, SWT.NONE);
-                        item.setText(new String[] { "", c.toString(), c.getAttribute() });
-                        item.setImage(0, symbolT);
-                        item.setData(c);
+                for (ModelTClosenessCriterion other : model.getTClosenessModel().values()) {
+                    if (other.isEnabled()) {
+                        explicit.add(other);
                     }
+                }
+                Collections.sort(explicit, new Comparator<ModelExplicitCriterion>(){
+                    public int compare(ModelExplicitCriterion o1, ModelExplicitCriterion o2) {
+                        return o1.getAttribute().compareTo(o2.getAttribute());
+                    }
+                });
+                
+                for (ModelExplicitCriterion c :explicit) {
+                    TableItem item = new TableItem(table, SWT.NONE);
+                    item.setText(new String[] { "", c.toString(), c.getAttribute() });
+                    if (c instanceof ModelLDiversityCriterion) {
+                        item.setImage(0, symbolL);
+                    } else {
+                        item.setImage(0, symbolT);
+                    }
+                    item.setData(c);
                 }
 
-                for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
-                    if (c.isEnabled()) {
-                        TableItem item = new TableItem(table, SWT.NONE);
-                        item.setText(new String[] { "", c.toString(), "" });
-                        item.setImage(0, symbolR);
-                        item.setData(c);
+                List<ModelRiskBasedCriterion> riskBased = new ArrayList<ModelRiskBasedCriterion>();
+                for (ModelRiskBasedCriterion other : model.getRiskBasedModel()) {
+                    if (other.isEnabled()) {
+                        riskBased.add(other);
                     }
+                }
+                Collections.sort(riskBased, new Comparator<ModelRiskBasedCriterion>(){
+                    public int compare(ModelRiskBasedCriterion o1, ModelRiskBasedCriterion o2) {
+                        return o1.getLabel().compareTo(o2.getLabel());
+                    }
+                });
+                
+                for (ModelRiskBasedCriterion c : riskBased) {
+                    TableItem item = new TableItem(table, SWT.NONE);
+                    item.setText(new String[] { "", c.toString(), "" });
+                    item.setImage(0, symbolR);
+                    item.setData(c);
                 }
 
                 column1.pack();
