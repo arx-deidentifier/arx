@@ -181,6 +181,17 @@ public abstract class Data {
     /**
      * Creates a new data object from a CSV file.
      *
+     * @param file the file
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final File file) throws IOException {
+        return new IterableData(new CSVDataInput(file).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
      * @param file A file
      * @param delimiter The utilized separator character
      * @return A Data object
@@ -206,6 +217,46 @@ public abstract class Data {
     /**
      * Creates a new data object from a CSV file.
      *
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final File file, final char delimiter, final char quote, final char escape) throws IOException {
+        return new IterableData(new CSVDataInput(file, delimiter, quote, escape).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        return new IterableData(new CSVDataInput(file, delimiter, quote, escape, linebreak).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
+     * @param stream the stream
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final InputStream stream) throws IOException {
+        return new IterableData(new CSVDataInput(stream).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
      * @param stream An input stream
      * @param delimiter The utilized separator character
      * @return A Data object
@@ -226,6 +277,35 @@ public abstract class Data {
      */
     public static Data create(final InputStream stream, final char delimiter, final char quote) throws IOException {
         return new IterableData(new CSVDataInput(stream, delimiter, quote).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final InputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
+        return new IterableData(new CSVDataInput(stream, delimiter, quote, escape).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final InputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        return new IterableData(new CSVDataInput(stream, delimiter, quote, escape, linebreak).iterator());
     }
 
     /**
@@ -261,26 +341,66 @@ public abstract class Data {
     /**
      * Creates a new data object from a CSV file.
      *
-     * @param path A path to the file
-     * @param separator The utilized separator character
-     * @return A Data object
+     * @param path the path
+     * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path, final char separator) throws IOException {
-        return new IterableData(new CSVDataInput(path, separator).iterator());
+    public static Data create(final String path) throws IOException {
+        return new IterableData(new CSVDataInput(path).iterator());
     }
 
     /**
      * Creates a new data object from a CSV file.
      *
      * @param path A path to the file
-     * @param separator The utilized separator character
-     * @param delimiter The delimiter for strings
+     * @param delimiter The utilized separator character
      * @return A Data object
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path, final char separator, final char delimiter) throws IOException {
-        return new IterableData(new CSVDataInput(path, separator, delimiter).iterator());
+    public static Data create(final String path, final char delimiter) throws IOException {
+        return new IterableData(new CSVDataInput(path, delimiter).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
+     * @param path A path to the file
+     * @param delimiter The utilized separator character
+     * @param quote The delimiter for strings
+     * @return A Data object
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final String path, final char delimiter, final char quote) throws IOException {
+        return new IterableData(new CSVDataInput(path, delimiter, quote).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
+     * @param path the path
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final String path, final char delimiter, final char quote, final char escape) throws IOException {
+        return new IterableData(new CSVDataInput(path, delimiter, quote, escape).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
+     * @param path the path
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final String path, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        return new IterableData(new CSVDataInput(path, delimiter, quote, escape, linebreak).iterator());
     }
 
     /**
