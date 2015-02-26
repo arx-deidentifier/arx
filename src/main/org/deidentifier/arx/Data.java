@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.deidentifier.arx.io.CSVConfig;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
@@ -246,6 +247,18 @@ public abstract class Data {
     /**
      * Creates a new data object from a CSV file.
      *
+     * @param file the file
+     * @param config the config
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final File file, final CSVConfig config) throws IOException {
+        return new IterableData(new CSVDataInput(file, config).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
      * @param stream the stream
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
@@ -306,6 +319,18 @@ public abstract class Data {
      */
     public static Data create(final InputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
         return new IterableData(new CSVDataInput(stream, delimiter, quote, escape, linebreak).iterator());
+    }
+
+    /**
+     * Creates the.
+     *
+     * @param stream the stream
+     * @param config the config
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final InputStream stream, final CSVConfig config) throws IOException {
+        return new IterableData(new CSVDataInput(stream, config).iterator());
     }
 
     /**
@@ -401,6 +426,18 @@ public abstract class Data {
      */
     public static Data create(final String path, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
         return new IterableData(new CSVDataInput(path, delimiter, quote, escape, linebreak).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
+     * @param path the path
+     * @param config the config
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final String path, final CSVConfig config) throws IOException {
+        return new IterableData(new CSVDataInput(path, config).iterator());
     }
 
     /**

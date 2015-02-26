@@ -98,6 +98,17 @@ public class CSVHierarchyInput {
     /**
      * Instantiate.
      *
+     * @param file the file
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final File file, final CSVConfig config) throws IOException {
+        load(new CSVDataInput(file, config));
+    }
+
+    /**
+     * Instantiate.
+     *
      * @param stream the stream
      * @throws IOException Signals that an I/O exception has occurred.
      */
@@ -158,6 +169,17 @@ public class CSVHierarchyInput {
     /**
      * Instantiate.
      *
+     * @param stream the stream
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final InputStream stream, final CSVConfig config) throws IOException {
+        load(new CSVDataInput(stream, config));
+    }
+
+    /**
+     * Instantiate.
+     *
      * @param filename the filename
      * @throws IOException Signals that an I/O exception has occurred.
      */
@@ -213,6 +235,17 @@ public class CSVHierarchyInput {
      */
     public CSVHierarchyInput(final String filename, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
         load(new CSVDataInput(filename, delimiter, quote, escape, linebreak));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final String filename, final CSVConfig config) throws IOException {
+        load(new CSVDataInput(filename, config));
     }
 
     /**

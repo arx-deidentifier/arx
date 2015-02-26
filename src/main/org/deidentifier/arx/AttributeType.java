@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.deidentifier.arx.io.CSVConfig;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 
@@ -288,6 +289,18 @@ public class AttributeType implements Serializable, Cloneable {
 
         /**
          * Creates a new hierarchy from a CSV file.
+         * 
+         * @param file
+         * @param config
+         * @return
+         * @throws IOException
+         */
+        public static Hierarchy create(final File file, final CSVConfig config) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, config).getHierarchy());
+        }
+
+        /**
+         * Creates a new hierarchy from a CSV file.
          *
          * @param file the file
          * @param delimiter the delimiter
@@ -322,6 +335,17 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static Hierarchy create(final InputStream stream, final char delimiter) throws IOException {
             return new ArrayHierarchy(new CSVHierarchyInput(stream, delimiter).getHierarchy());
+        }
+
+        /**
+         * Creates a new hierarchy from a CSV file.
+         * @param stream
+         * @param config
+         * @return
+         * @throws IOException
+         */
+        public static Hierarchy create(final InputStream stream, final CSVConfig config) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, config).getHierarchy());
         }
 
         /**
@@ -399,6 +423,17 @@ public class AttributeType implements Serializable, Cloneable {
         }
 
         /**
+         * Creates a new hierarchy from a CSV file.
+         * @param path
+         * @param config
+         * @return
+         * @throws IOException
+         */
+        public static Hierarchy create(final String path, final CSVConfig config) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(path, config).getHierarchy());
+        }
+
+        /**
          * Creates a new hierarchy from a two-dimensional string array.
          *
          * @param array The array
@@ -443,7 +478,7 @@ public class AttributeType implements Serializable, Cloneable {
             final CSVDataOutput output = new CSVDataOutput(file);
             output.write(getHierarchy());
         }
-        
+
         /**
          * Writes the hierarchy to a CSV file.
          *
@@ -455,7 +490,19 @@ public class AttributeType implements Serializable, Cloneable {
             final CSVDataOutput output = new CSVDataOutput(file, delimiter);
             output.write(getHierarchy());
         }
-        
+
+        /**
+         * Writes the hierarchy to a CSV file.
+         *
+         * @param file the file
+         * @param config the config
+         * @throws IOException Signals that an I/O exception has occurred.
+         */
+        public void save(final File file, final CSVConfig config) throws IOException {
+            final CSVDataOutput output = new CSVDataOutput(file, config);
+            output.write(getHierarchy());
+        }
+
         /**
          * Writes the hierarchy to a CSV file.
          *
@@ -466,7 +513,7 @@ public class AttributeType implements Serializable, Cloneable {
             final CSVDataOutput output = new CSVDataOutput(out);
             output.write(getHierarchy());
         }
-        
+
         /**
          * Writes the hierarchy to a CSV file.
          *
@@ -478,7 +525,19 @@ public class AttributeType implements Serializable, Cloneable {
             final CSVDataOutput output = new CSVDataOutput(out, delimiter);
             output.write(getHierarchy());
         }
-        
+
+        /**
+         * Writes the hierarchy to a CSV file.
+         *
+         * @param out the out
+         * @param config the config
+         * @throws IOException Signals that an I/O exception has occurred.
+         */
+        public void save(final OutputStream out, final CSVConfig config) throws IOException {
+            final CSVDataOutput output = new CSVDataOutput(out, config);
+            output.write(getHierarchy());
+        }
+
         /**
          * Writes the hierarchy to a CSV file.
          *
@@ -499,6 +558,18 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public void save(final String path, final char delimiter) throws IOException {
             final CSVDataOutput output = new CSVDataOutput(path, delimiter);
+            output.write(getHierarchy());
+        }
+
+        /**
+         * Writes the hierarchy to a CSV file.
+         *
+         * @param path the path
+         * @param config the config
+         * @throws IOException Signals that an I/O exception has occurred.
+         */
+        public void save(final String path, final CSVConfig config) throws IOException {
+            final CSVDataOutput output = new CSVDataOutput(path, config);
             output.write(getHierarchy());
         }
     }
