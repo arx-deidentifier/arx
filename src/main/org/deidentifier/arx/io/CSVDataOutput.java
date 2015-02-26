@@ -281,14 +281,7 @@ public class CSVDataOutput {
         format.setQuote(quote);
         format.setQuoteEscape(escape);
         format.setLineSeparator(linebreak);
-
-        if (linebreak[0] == '\n') {
-            format.setNormalizedNewline('\n');
-        } else if ((linebreak[0] == '\r') && (linebreak.length < 2)) {
-            format.setNormalizedNewline('\r');
-        } else {
-            format.setNormalizedNewline('\n');
-        }
+        format.setNormalizedNewline(CSVUtil.getNormalizedLinebreakCharacter(linebreak));
 
         CsvWriterSettings settings = new CsvWriterSettings();
         settings.setEmptyValue("");
