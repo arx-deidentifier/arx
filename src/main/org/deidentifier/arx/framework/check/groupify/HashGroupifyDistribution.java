@@ -54,7 +54,7 @@ public class HashGroupifyDistribution {
         // Initialize
         List<HashGroupifyEntry> list = new ArrayList<HashGroupifyEntry>();
         while(entry != null) {
-            if (entry.isNotOutlier) {
+            if (entry.isNotOutlier && entry.count > 0) {
                 this.numClasses++;
                 addToDistribution(entry.count);
                 list.add(entry);
@@ -74,7 +74,8 @@ public class HashGroupifyDistribution {
         // Sort & store suppressible entries
         Collections.sort(list, new Comparator<HashGroupifyEntry>(){
             public int compare(HashGroupifyEntry o1, HashGroupifyEntry o2) {
-                return Integer.compare(o1.representant, o2.representant);
+                int cmp = Integer.compare(o1.count, o2.count);
+                return cmp != 0 ? cmp : Integer.compare(o1.representant, o2.representant);
             }
         });
         this.entries = list.toArray(new HashGroupifyEntry[list.size()]);
