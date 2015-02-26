@@ -436,6 +436,17 @@ public class AttributeType implements Serializable, Cloneable {
         /**
          * Writes the hierarchy to a CSV file.
          *
+         * @param file the file
+         * @throws IOException Signals that an I/O exception has occurred.
+         */
+        public void save(final File file) throws IOException {
+            final CSVDataOutput output = new CSVDataOutput(file);
+            output.write(getHierarchy());
+        }
+        
+        /**
+         * Writes the hierarchy to a CSV file.
+         *
          * @param file A file
          * @param delimiter The utilized separator character
          * @throws IOException Signals that an I/O exception has occurred.
@@ -444,7 +455,18 @@ public class AttributeType implements Serializable, Cloneable {
             final CSVDataOutput output = new CSVDataOutput(file, delimiter);
             output.write(getHierarchy());
         }
-
+        
+        /**
+         * Writes the hierarchy to a CSV file.
+         *
+         * @param out the out
+         * @throws IOException Signals that an I/O exception has occurred.
+         */
+        public void save(final OutputStream out) throws IOException {
+            final CSVDataOutput output = new CSVDataOutput(out);
+            output.write(getHierarchy());
+        }
+        
         /**
          * Writes the hierarchy to a CSV file.
          *
@@ -454,6 +476,17 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public void save(final OutputStream out, final char delimiter) throws IOException {
             final CSVDataOutput output = new CSVDataOutput(out, delimiter);
+            output.write(getHierarchy());
+        }
+        
+        /**
+         * Writes the hierarchy to a CSV file.
+         *
+         * @param path the path
+         * @throws IOException Signals that an I/O exception has occurred.
+         */
+        public void save(final String path) throws IOException {
+            final CSVDataOutput output = new CSVDataOutput(path);
             output.write(getHierarchy());
         }
 
