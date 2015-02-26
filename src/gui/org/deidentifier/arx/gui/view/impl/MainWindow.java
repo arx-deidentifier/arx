@@ -33,6 +33,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.Model.Perspective;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
+import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
@@ -45,6 +46,7 @@ import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAuditTrail;
 import org.deidentifier.arx.gui.view.impl.menu.DialogComboSelection;
+import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionAddition;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogDebug;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
@@ -257,6 +259,24 @@ public class MainWindow implements IView {
     }
     
     /**
+     * Shows a dialog for selecting privacy criteria.
+     *
+     * @param criteria
+     * @return
+     */
+    public ModelCriterion showAddCriterionDialog(List<ModelCriterion> criteria) {
+
+        // Dialog
+        final DialogCriterionAddition dialog = new DialogCriterionAddition(controller, shell, criteria, true);
+        dialog.create();
+        if (dialog.open() != Window.OK) {
+            return null;
+        } else {
+            return dialog.getCriterion();
+        }
+    }
+
+    /**
      * Shows the audit trail
      */
     public void showAuditTrail(List<ModelAuditTrailEntry> auditTrail) {
@@ -264,7 +284,19 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-
+    /**
+     * Shows a dialog for configuring privacy criteria.
+     *
+     * @param criteria
+     * @param criterion 
+     * @return
+     */
+    public void showConfigureCriterionDialog(List<ModelCriterion> criteria, ModelCriterion criterion) {
+        DialogCriterionAddition dialog = new DialogCriterionAddition(controller, shell, criteria, false, criterion);
+        dialog.create();
+        dialog.open();
+    }
+    
     /**
      * Shows a debug dialog.
      */
@@ -273,7 +305,7 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-    
+
     /**
      * Shows an error dialog.
      *
@@ -286,7 +318,7 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-
+    
     /**
      * Shows an error dialog.
      *
@@ -301,7 +333,7 @@ public class MainWindow implements IView {
         final String trace = sw.toString();
         showErrorDialog(shell, message, trace);
     }
-    
+
     /**
      * Shows an error dialog.
      *
@@ -591,175 +623,6 @@ public class MainWindow implements IView {
     }
     
     /**
-     * Creates the global menu
-     * @return
-     */
-    private List<MainMenuItem> getMenu() {
-        
-        List<MainMenuItem> menu = new ArrayList<MainMenuItem>();
-
-        menu.add(getMenuFile());
-        menu.add(getEditMenu());
-        menu.add(getViewMenu());
-        menu.add(getHelpMenu());
-        
-        return menu;
-    }
-    
-
-    /**
-     * Creates the help menu
-     * @return
-     */
-    private MainMenuItem getViewMenu() {
-
-
-        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
-        
-        items.add(new MainMenuItem(Resources.getMessage("MainWindow.2"), //$NON-NLS-1$
-                                   controller.getResources().getImage("perspective_define.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { 
-                root.setSelection(0);
-                controller.getModel().setPerspective(Perspective.CONFIGURATION);
-                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
-            }
-            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.CONFIGURATION; }
-        });
-        
-        items.add(new MainMenuItem(Resources.getMessage("MainWindow.3"), //$NON-NLS-1$
-                                   controller.getResources().getImage("perspective_explore.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { 
-                root.setSelection(1);
-                controller.getModel().setPerspective(Perspective.EXPLORATION);
-                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
-            }
-            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.EXPLORATION; }
-        });
-
-        items.add(new MainMenuItem(Resources.getMessage("MainWindow.1"), //$NON-NLS-1$
-                                   controller.getResources().getImage("perspective_analyze.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { 
-                root.setSelection(2);
-                controller.getModel().setPerspective(Perspective.ANALYSIS);
-                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
-            }
-            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.ANALYSIS; }
-        });
-
-        items.add(new MainMenuItem(Resources.getMessage("MainWindow.4"), //$NON-NLS-1$
-                                   controller.getResources().getImage("perspective_risk.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { 
-                root.setSelection(3);
-                controller.getModel().setPerspective(Perspective.RISK);
-                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
-            }
-            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.RISK; }
-        });
-
-        items.add(new MainMenuSeparator());
-
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.0"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                   controller.getResources().getImage("explore_lattice.png"), //$NON-NLS-1$
-                                   true) {
-            public void action(Controller controller) { 
-                layoutExplore.showLattice(); 
-                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
-            }
-            public boolean isEnabled(Model model) { 
-                return model != null && 
-                       model.getPerspective() == Perspective.EXPLORATION && 
-                       model.getResult() != null &&
-                       !layoutExplore.isShowLattice(); 
-            }
-        });
-        
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.2"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                   controller.getResources().getImage("explore_list.png"), //$NON-NLS-1$
-                                   true) {
-            public void action(Controller controller) { 
-                layoutExplore.showList();
-                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
-            }
-            public boolean isEnabled(Model model) { 
-                return model != null && 
-                       model.getPerspective() == Perspective.EXPLORATION && 
-                       model.getResult() != null &&
-                       !layoutExplore.isShowList();
-            }
-        });
-
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.3"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                   controller.getResources().getImage("explore_tiles.png"), //$NON-NLS-1$
-                                   true) {
-            public void action(Controller controller) { 
-                layoutExplore.showTiles(); 
-                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
-            }
-            public boolean isEnabled(Model model) { 
-                return model != null && 
-                       model.getPerspective() == Perspective.EXPLORATION && 
-                       model.getResult() != null &&
-                       !layoutExplore.isShowTiles();
-            }
-        });
-
-        
-        return new MainMenuGroup(Resources.getMessage("MainMenu.33"), items) { //$NON-NLS-1$
-            public boolean isEnabled(Model model) {
-                return true;
-            }  
-        };
-    }
-
-
-    /**
-     * Creates the help menu
-     * @return
-     */
-    private MainMenuItem getHelpMenu() {
-
-
-        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
-        
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.27"), //$NON-NLS-1$
-                                   controller.getResources().getImage("help.png"), //$NON-NLS-1$
-                                   true) {
-            public void action(Controller controller) { controller.actionMenuHelpHelp(); }
-            public boolean isEnabled(Model model) { return true; }
-        });
-
-        items.add(new MainMenuSeparator());
-        
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.29"), //$NON-NLS-1$
-                                   controller.getResources().getImage("information.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { controller.actionMenuHelpAbout(); }
-            public boolean isEnabled(Model model) { return true; }
-        });
-
-        items.add(new MainMenuSeparator());
-
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.32"), //$NON-NLS-1$
-                                   controller.getResources().getImage("information.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { controller.actionMenuHelpDebug(); }
-            public boolean isEnabled(Model model) { 
-                return model != null && model.isDebugEnabled(); 
-            }
-        });
-        
-        return new MainMenuGroup(Resources.getMessage("MainMenu.2"), items) { //$NON-NLS-1$
-            public boolean isEnabled(Model model) {
-                return true;
-            }  
-        };
-    }
-
-    /**
      * Creates the edit menu
      * @return
      */
@@ -881,6 +744,67 @@ public class MainWindow implements IView {
             }  
         };
     }
+    
+
+    /**
+     * Creates the help menu
+     * @return
+     */
+    private MainMenuItem getHelpMenu() {
+
+
+        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.27"), //$NON-NLS-1$
+                                   controller.getResources().getImage("help.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuHelpHelp(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.29"), //$NON-NLS-1$
+                                   controller.getResources().getImage("information.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuHelpAbout(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.32"), //$NON-NLS-1$
+                                   controller.getResources().getImage("information.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuHelpDebug(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.isDebugEnabled(); 
+            }
+        });
+        
+        return new MainMenuGroup(Resources.getMessage("MainMenu.2"), items) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return true;
+            }  
+        };
+    }
+
+
+    /**
+     * Creates the global menu
+     * @return
+     */
+    private List<MainMenuItem> getMenu() {
+        
+        List<MainMenuItem> menu = new ArrayList<MainMenuItem>();
+
+        menu.add(getMenuFile());
+        menu.add(getEditMenu());
+        menu.add(getViewMenu());
+        menu.add(getHelpMenu());
+        
+        return menu;
+    }
 
     /**
      * Creates the file menu
@@ -970,6 +894,114 @@ public class MainWindow implements IView {
         });
         
         return new MainMenuGroup(Resources.getMessage("MainMenu.0"), items) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return true;
+            }  
+        };
+    }
+
+    /**
+     * Creates the help menu
+     * @return
+     */
+    private MainMenuItem getViewMenu() {
+
+
+        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.2"), //$NON-NLS-1$
+                                   controller.getResources().getImage("perspective_define.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(0);
+                controller.getModel().setPerspective(Perspective.CONFIGURATION);
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.CONFIGURATION; }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.3"), //$NON-NLS-1$
+                                   controller.getResources().getImage("perspective_explore.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(1);
+                controller.getModel().setPerspective(Perspective.EXPLORATION);
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.EXPLORATION; }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.1"), //$NON-NLS-1$
+                                   controller.getResources().getImage("perspective_analyze.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(2);
+                controller.getModel().setPerspective(Perspective.ANALYSIS);
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.ANALYSIS; }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.4"), //$NON-NLS-1$
+                                   controller.getResources().getImage("perspective_risk.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(3);
+                controller.getModel().setPerspective(Perspective.RISK);
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.RISK; }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.0"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                   controller.getResources().getImage("explore_lattice.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { 
+                layoutExplore.showLattice(); 
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { 
+                return model != null && 
+                       model.getPerspective() == Perspective.EXPLORATION && 
+                       model.getResult() != null &&
+                       !layoutExplore.isShowLattice(); 
+            }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.2"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                   controller.getResources().getImage("explore_list.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { 
+                layoutExplore.showList();
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { 
+                return model != null && 
+                       model.getPerspective() == Perspective.EXPLORATION && 
+                       model.getResult() != null &&
+                       !layoutExplore.isShowList();
+            }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.3"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                   controller.getResources().getImage("explore_tiles.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { 
+                layoutExplore.showTiles(); 
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { 
+                return model != null && 
+                       model.getPerspective() == Perspective.EXPLORATION && 
+                       model.getResult() != null &&
+                       !layoutExplore.isShowTiles();
+            }
+        });
+
+        
+        return new MainMenuGroup(Resources.getMessage("MainMenu.33"), items) { //$NON-NLS-1$
             public boolean isEnabled(Model model) {
                 return true;
             }  

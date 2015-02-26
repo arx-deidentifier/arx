@@ -181,19 +181,13 @@ public class ViewAttributeDefinition implements IView {
                         boolean criteriaDisabled = false;
                         
                         // Enable/disable criteria for sensitive attributes
-                        if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-                        	model.getLDiversityModel().get(attribute).setActive(true);
-                        	model.getTClosenessModel().get(attribute).setActive(true);
-                        } else {
-                            
+                        if (type != AttributeType.SENSITIVE_ATTRIBUTE) {
+                        	
                             if (model.getLDiversityModel().get(attribute).isEnabled() ||
                                 model.getTClosenessModel().get(attribute).isEnabled()){
                                 criteriaDisabled = true;
                             }
-                            
-                        	model.getLDiversityModel().get(attribute).setActive(false);
-                        	model.getTClosenessModel().get(attribute).setActive(false);
-                        	
+
                         	model.getTClosenessModel().get(attribute).setEnabled(false);
                         	model.getLDiversityModel().get(attribute).setEnabled(false);
                         }
@@ -206,8 +200,6 @@ public class ViewAttributeDefinition implements IView {
                                 criteriaDisabled = true;
                             }
                             
-                            model.getKAnonymityModel().setActive(false);
-                            model.getDPresenceModel().setActive(false);
                             model.getKAnonymityModel().setEnabled(false);
                             model.getDPresenceModel().setEnabled(false);
                             for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
@@ -215,16 +207,9 @@ public class ViewAttributeDefinition implements IView {
                                     criteriaDisabled = true;
                                 }
                                 c.setEnabled(false);
-                                c.setActive(false);
                             }
 
-                        } else {
-                            model.getKAnonymityModel().setActive(true);
-                            model.getDPresenceModel().setActive(true);
-                            for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
-                                c.setActive(true);
-                            }
-                        }
+                        } 
 
                         // Update icon
                         updateIcon();

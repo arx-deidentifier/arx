@@ -15,13 +15,9 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.gui.view.impl.define;
+package org.deidentifier.arx.gui.view.impl.menu;
 
-import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelDPresenceCriterion;
-import org.deidentifier.arx.gui.model.ModelEvent;
-import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -38,54 +34,56 @@ import org.eclipse.swt.widgets.Scale;
  *
  * @author Fabian Prasser
  */
-public class ViewCriterionDPresence extends ViewCriterion {
+public class EditorCriterionDPresence extends EditorCriterion<ModelDPresenceCriterion>{
 
-    /**  TODO */
-    private Scale sliderDMin;
-    
-    /**  TODO */
-    private Scale sliderDMax;
-    
-    /**  TODO */
-    private Label labelDMin;
-    
-    /**  TODO */
-    private Label labelDMax;
+    /** View */
+    private Scale                   sliderDMin;
+
+    /** View */
+    private Scale                   sliderDMax;
+
+    /** View */
+    private Label                   labelDMin;
+
+    /** View */
+    private Label                   labelDMax;
 
     /**
      * Creates a new instance.
      *
      * @param parent
-     * @param controller
      * @param model
      */
-    public ViewCriterionDPresence(final Composite parent,
-                                  final Controller controller,
-                                  final Model model) {
-
-        super(parent, controller, model);
-        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+    public EditorCriterionDPresence(final Composite parent, 
+                                  final ModelDPresenceCriterion model) {
+        super(parent, model);
     }
 
-    @Override
-    public void update(ModelEvent event) {
-        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
-            this.parse();
-        }
-        super.update(event);
+    /**
+     * Updates the "dMax" label and tooltip text.
+     *
+     * @param text
+     */
+    private void updateDMaxLabel(String text) {
+        labelDMax.setText(text);
+        labelDMax.setToolTipText(text);
     }
 
-    @Override
-    public void reset() {
-
-        sliderDMin.setSelection(0);
-        sliderDMax.setSelection(0);
-        updateDMinLabel("0"); //$NON-NLS-1$
-        updateDMaxLabel("0"); //$NON-NLS-1$
-        super.reset();
+    /**
+     * Updates the "dMin" label and tooltip text.
+     *
+     * @param text
+     */
+    private void updateDMinLabel(String text) {
+        labelDMin.setText(text);
+        labelDMin.setToolTipText(text);
     }
-
-    @Override
+    
+    /**
+     * Build
+     * @param parent
+     * @return
+     */
     protected Composite build(Composite parent) {
 
         // Create input group
@@ -113,14 +111,19 @@ public class ViewCriterionDPresence extends ViewCriterion {
         sliderDMin.setMaximum(SWTUtil.SLIDER_MAX);
         sliderDMin.setMinimum(0);
         sliderDMin.setSelection(0);
-        final Object outer = this;
         sliderDMin.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getDPresenceModel().setDmin(SWTUtil.sliderToDouble(0, 1, sliderDMin.getSelection()));
-                String dmin = String.valueOf(model.getDPresenceModel().getDmin());
+                model.setDmin(SWTUtil.sliderToDouble(0, 1, sliderDMin.getSelection()));
+                String dmin = String.valueOf(model.getDmin());
                 updateDMinLabel(dmin);
-                controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getDPresenceModel()));
+                
+                if (model.getDmin() > model.getDmax()) {
+                    model.setDmax(model.getDmin());
+                    String dmax = String.valueOf(model.getDmin());
+                    updateDMaxLabel(dmax);
+                    sliderDMax.setSelection(sliderDMin.getSelection());
+                }
             }
         });
 
@@ -145,53 +148,29 @@ public class ViewCriterionDPresence extends ViewCriterion {
         sliderDMax.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getDPresenceModel().setDmax(SWTUtil.sliderToDouble(0, 1, sliderDMax.getSelection()));
-                String dmax = String.valueOf(model.getDPresenceModel().getDmax());
+                model.setDmax(SWTUtil.sliderToDouble(0, 1, sliderDMax.getSelection()));
+                String dmax = String.valueOf(model.getDmax());
                 updateDMaxLabel(dmax);
-                controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getDPresenceModel()));
+                
+                if (model.getDmax() < model.getDmin()) {
+                    model.setDmin(model.getDmax());
+                    String dmin = String.valueOf(model.getDmax());
+                    updateDMinLabel(dmin);
+                    sliderDMin.setSelection(sliderDMax.getSelection());
+                }
             }
         });
-
+        
         return group;
     }
 
-    @Override
-    protected void parse() {
-        ModelDPresenceCriterion m = model.getDPresenceModel();
-        if (m == null) {
-            reset();
-            return;
-        }
-        root.setRedraw(false);
-        updateDMinLabel(String.valueOf(m.getDmin()));
-        sliderDMin.setSelection(SWTUtil.doubleToSlider(0, 1d, m.getDmin()));
-        updateDMaxLabel(String.valueOf(m.getDmax()));
-        sliderDMax.setSelection(SWTUtil.doubleToSlider(0, 1d, m.getDmax()));
-        if (m.isActive() && m.isEnabled()) {
-            SWTUtil.enable(root);
-        } else {
-            SWTUtil.disable(root);
-        }
-        root.setRedraw(true);
-    }
-
     /**
-     * Updates the "dMin" label and tooltip text.
-     *
-     * @param text
+     * Parses the input
      */
-    private void updateDMinLabel(String text) {
-        labelDMin.setText(text);
-        labelDMin.setToolTipText(text);
-    }
-
-    /**
-     * Updates the "dMax" label and tooltip text.
-     *
-     * @param text
-     */
-    private void updateDMaxLabel(String text) {
-        labelDMax.setText(text);
-        labelDMax.setToolTipText(text);
+    protected void parse(ModelDPresenceCriterion model) {
+        updateDMinLabel(String.valueOf(model.getDmin()));
+        sliderDMin.setSelection(SWTUtil.doubleToSlider(0, 1d, model.getDmin()));
+        updateDMaxLabel(String.valueOf(model.getDmax()));
+        sliderDMax.setSelection(SWTUtil.doubleToSlider(0, 1d, model.getDmax()));
     }
 }

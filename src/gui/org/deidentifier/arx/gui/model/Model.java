@@ -331,20 +331,17 @@ public class Model implements Serializable {
         }
         
 		if (this.kAnonymityModel != null &&
-		    this.kAnonymityModel.isActive() &&
 		    this.kAnonymityModel.isEnabled()) {
 		    config.addCriterion(this.kAnonymityModel.getCriterion(this));
 		}
 
         if (this.dPresenceModel != null && 
-            this.dPresenceModel.isActive() && 
             this.dPresenceModel.isEnabled()) {
             config.addCriterion(this.dPresenceModel.getCriterion(this));
         }
 		
 		for (Entry<String, ModelLDiversityCriterion> entry : this.lDiversityModel.entrySet()){
 	        if (entry.getValue() != null &&
-	            entry.getValue().isActive() &&
 	            entry.getValue().isEnabled()) {
 	            config.addCriterion(entry.getValue().getCriterion(this));
 	        }
@@ -352,7 +349,6 @@ public class Model implements Serializable {
         
         for (Entry<String, ModelTClosenessCriterion> entry : this.tClosenessModel.entrySet()){
             if (entry.getValue() != null &&
-                entry.getValue().isActive() &&
                 entry.getValue().isEnabled()) {
                 
                 if (entry.getValue().getVariant()==1){ // EMD with hierarchy
@@ -368,7 +364,6 @@ public class Model implements Serializable {
         
         for (ModelRiskBasedCriterion entry : this.riskBasedModel){
             if (entry != null &&
-                entry.isActive() &&
                 entry.isEnabled()) {
                 
                 PrivacyCriterion criterion = entry.getCriterion(this);
@@ -711,6 +706,42 @@ public class Model implements Serializable {
     }
 	
 	/**
+     * Returns the current query.
+     *
+     * @return
+     */
+	public String getQuery() {
+        return query;
+    }
+    
+	/**
+     * Returns the current result.
+     *
+     * @return the result
+     */
+	public ARXResult getResult() {
+		return result;
+	}
+
+	/**
+     * Returns the risk-based model.
+     *
+     * @return
+     */
+    public Set<ModelRiskBasedCriterion> getRiskBasedModel() {
+        if (this.riskBasedModel == null) {
+            this.riskBasedModel = new HashSet<ModelRiskBasedCriterion>();
+            this.riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_AVERAGE_RISK));
+            this.riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
+            this.riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR));
+            this.riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN));
+            this.riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB));
+            this.riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ));
+        }
+        return riskBasedModel;
+    }
+
+    /**
      * Returns the risk model
      * @return the risk model
      */
@@ -722,24 +753,6 @@ public class Model implements Serializable {
     }
     
 	/**
-     * Returns the current query.
-     *
-     * @return
-     */
-	public String getQuery() {
-        return query;
-    }
-
-	/**
-     * Returns the current result.
-     *
-     * @return the result
-     */
-	public ARXResult getResult() {
-		return result;
-	}
-
-    /**
      * Returns the currently selected attribute.
      *
      * @return
@@ -747,7 +760,7 @@ public class Model implements Serializable {
 	public String getSelectedAttribute() {
 		return selectedAttribute;
 	}
-    
+	
 	/**
      * Returns the selected transformation.
      *
@@ -756,8 +769,8 @@ public class Model implements Serializable {
 	public ARXNode getSelectedNode() {
 		return selectedNode;
 	}
-	
-	/**
+
+    /**
      * Returns a set of quasi identifiers selected for risk analysis
      * @return
      */
@@ -808,7 +821,7 @@ public class Model implements Serializable {
 		return separator;
 	}
 
-    /**
+	/**
      * Returns the according parameter.
      *
      * @return
@@ -835,7 +848,7 @@ public class Model implements Serializable {
         return this.subsetOrigin;
     }
 
-	/**
+    /**
      * Returns the t-closeness model.
      *
      * @return
@@ -846,18 +859,6 @@ public class Model implements Serializable {
         }
 		return tClosenessModel;
 	}
-
-    /**
-     * Returns the risk-based model.
-     *
-     * @return
-     */
-    public Set<ModelRiskBasedCriterion> getRiskBasedModel() {
-        if (this.riskBasedModel == null) {
-            this.riskBasedModel = new HashSet<ModelRiskBasedCriterion>();
-        }
-        return riskBasedModel;
-    }
 
 	/**
      * Returns the execution time of the last anonymization process.

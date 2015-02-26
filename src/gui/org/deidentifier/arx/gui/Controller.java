@@ -57,6 +57,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
+import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.model.ModelViewConfig;
 import org.deidentifier.arx.gui.model.ModelViewConfig.Mode;
@@ -167,6 +168,92 @@ public class Controller implements IView {
     }
 
     /**
+     * Adds a criterion
+     */
+    public void actionCriterionAdd() {
+
+        List<ModelCriterion> criteria = new ArrayList<ModelCriterion>();
+        
+        if (!model.getKAnonymityModel().isEnabled()) {
+            criteria.add(model.getKAnonymityModel());
+        }
+        if (!model.getDPresenceModel().isEnabled()) {
+            criteria.add(model.getDPresenceModel());
+        }
+        
+        Set<String> sensitive = model.getInputDefinition().getSensitiveAttributes();
+        
+        for (ModelLDiversityCriterion other : model.getLDiversityModel().values()) {
+            if (!other.isEnabled() && sensitive.contains(other.getAttribute())) {
+                criteria.add(other);
+            }
+        }
+        for (ModelTClosenessCriterion other : model.getTClosenessModel().values()) {
+            if (!other.isEnabled() && sensitive.contains(other.getAttribute())) {
+                criteria.add(other);
+            }
+        }
+        for (ModelRiskBasedCriterion other : model.getRiskBasedModel()) {
+            if (!other.isEnabled()) {
+                criteria.add(other);
+            }
+        }
+        
+        if (criteria.isEmpty()) {
+            return;
+        }
+        
+        // Select criterion
+        ModelCriterion criterion = main.showAddCriterionDialog(criteria);
+        if (criterion != null) {
+            criterion.setEnabled(true);
+            this.update(new ModelEvent(this, ModelPart.CRITERION_DEFINITION, criterion));
+        }
+    }
+
+    /**
+     * Configures a criterion
+     * @param criterion 
+     */
+    public void actionCriterionConfigure(ModelCriterion criterion) {
+
+        List<ModelCriterion> criteria = new ArrayList<ModelCriterion>();
+        
+        if (model.getKAnonymityModel().isEnabled()) {
+            criteria.add(model.getKAnonymityModel());
+        }
+        if (model.getDPresenceModel().isEnabled()) {
+            criteria.add(model.getDPresenceModel());
+        }
+        
+        Set<String> sensitive = model.getInputDefinition().getSensitiveAttributes();
+        
+        for (ModelLDiversityCriterion other : model.getLDiversityModel().values()) {
+            if (other.isEnabled() && sensitive.contains(other.getAttribute())) {
+                criteria.add(other);
+            }
+        }
+        for (ModelTClosenessCriterion other : model.getTClosenessModel().values()) {
+            if (other.isEnabled() && sensitive.contains(other.getAttribute())) {
+                criteria.add(other);
+            }
+        }
+        for (ModelRiskBasedCriterion other : model.getRiskBasedModel()) {
+            if (other.isEnabled()) {
+                criteria.add(other);
+            }
+        }
+        
+        if (criteria.isEmpty()) {
+            return;
+        }
+        
+        // Select criterion
+        main.showConfigureCriterionDialog(criteria, criterion);
+        this.update(new ModelEvent(this, ModelPart.CRITERION_DEFINITION, null));
+    }
+
+    /**
      * Enables and disables a criterion.
      *
      * @param criterion
@@ -191,13 +278,13 @@ public class Controller implements IView {
         List<ModelExplicitCriterion> others = new ArrayList<ModelExplicitCriterion>();
         if (criterion instanceof ModelLDiversityCriterion) {
             for (ModelLDiversityCriterion other : model.getLDiversityModel().values()) {
-                if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
+                if (!other.equals(criterion) && other.isEnabled()) {
                     others.add((ModelExplicitCriterion) other);
                 }
             }
         } else if (criterion instanceof ModelTClosenessCriterion) {
             for (ModelTClosenessCriterion other : model.getTClosenessModel().values()) {
-                if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
+                if (!other.equals(criterion) && other.isEnabled()) {
                     others.add((ModelExplicitCriterion) other);
                 }
             }
@@ -236,13 +323,13 @@ public class Controller implements IView {
 
             if (criterion instanceof ModelLDiversityCriterion) {
                 for (ModelLDiversityCriterion other : model.getLDiversityModel().values()) {
-                    if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
+                    if (!other.equals(criterion) && other.isEnabled()) {
                         other.pull((ModelExplicitCriterion) criterion);
                     }
                 }
             } else if (criterion instanceof ModelTClosenessCriterion) {
                 for (ModelTClosenessCriterion other : model.getTClosenessModel().values()) {
-                    if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
+                    if (!other.equals(criterion) && other.isEnabled()) {
                         other.pull((ModelExplicitCriterion) criterion);
                     }
                 }
@@ -1345,7 +1432,7 @@ public class Controller implements IView {
     public String getDebugData() {
         return this.debug.getData(model);
     }
-
+    
     /**
      * Returns the current model
      * @return
@@ -1353,7 +1440,7 @@ public class Controller implements IView {
     public Model getModel() {
         return model;
     }
-    
+
     /**
      * Returns the resources.
      *

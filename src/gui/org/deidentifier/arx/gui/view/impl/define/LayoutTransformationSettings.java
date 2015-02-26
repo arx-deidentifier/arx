@@ -76,6 +76,32 @@ public class LayoutTransformationSettings implements ILayout, IView {
         this.root = build(parent);
     }
 
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
+    @Override
+    public void reset() {
+        hideSettingsAttributeWeights();
+        hideSettingsCodingModel();
+    }
+    
+    @Override
+    public void update(ModelEvent event) {
+        
+        if (event.part == ModelPart.MODEL) {
+            model = (Model) event.data;
+            updateControls();
+        } 
+        
+        if (event.part == ModelPart.ATTRIBUTE_TYPE ||
+            event.part == ModelPart.INPUT ||
+            event.part == ModelPart.METRIC) {
+            updateControls();
+        }
+    }
+
     /**
      * 
      *
@@ -105,7 +131,7 @@ public class LayoutTransformationSettings implements ILayout, IView {
         folder.setSelection(0);
         return group;
     }
-
+  
     /**
      * Hides the settings for the attribute weights.
      */
@@ -117,7 +143,7 @@ public class LayoutTransformationSettings implements ILayout, IView {
             folder.disposeItem(Resources.getMessage("CriterionDefinitionView.63"));  //$NON-NLS-1$
         }
     }
-    
+
     /**
      * Hides the settings for the coding model.
      */
@@ -139,7 +165,7 @@ public class LayoutTransformationSettings implements ILayout, IView {
         this.viewAttributeWeights = new ViewAttributeWeights(composite1, controller);
         this.viewAttributeWeights.update(new ModelEvent(this, ModelPart.MODEL, this.model));
     }
-  
+
     /**
      * Shows the settings for the coding model.
      */
@@ -149,32 +175,6 @@ public class LayoutTransformationSettings implements ILayout, IView {
         composite2.setLayout(new FillLayout());
         this.viewCodingModel = new ViewCodingModel(composite2, controller);
         this.viewCodingModel.update(new ModelEvent(this, ModelPart.MODEL, this.model));
-    }
-
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
-
-    @Override
-    public void reset() {
-        hideSettingsAttributeWeights();
-        hideSettingsCodingModel();
-    }
-
-    @Override
-    public void update(ModelEvent event) {
-        
-        if (event.part == ModelPart.MODEL) {
-            model = (Model) event.data;
-            updateControls();
-        } 
-        
-        if (event.part == ModelPart.ATTRIBUTE_TYPE ||
-            event.part == ModelPart.INPUT ||
-            event.part == ModelPart.METRIC) {
-            updateControls();
-        }
     }
 
     /**

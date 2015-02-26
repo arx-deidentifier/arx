@@ -15,13 +15,9 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.gui.view.impl.define;
+package org.deidentifier.arx.gui.view.impl.menu;
 
-import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.Model;
-import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
-import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -39,58 +35,40 @@ import org.eclipse.swt.widgets.Scale;
  *
  * @author Fabian Prasser
  */
-public class ViewCriterionTCloseness extends ViewCriterion {
+public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCriterion> {
 
-    /**  TODO */
+    /**  View */
     private static final String VARIANTS[] = {Resources.getMessage("CriterionDefinitionView.9"), Resources.getMessage("CriterionDefinitionView.10") }; //$NON-NLS-1$ //$NON-NLS-2$
 
-    /**  TODO */
+    /**  View */
     private Scale               sliderT;
     
-    /**  TODO */
+    /**  View */
     private Combo               comboVariant;
     
-    /**  TODO */
+    /**  View */
     private Label               labelT;
     
-    /**  TODO */
-    private String              attribute;
-
     /**
      * Creates a new instance.
      *
      * @param parent
-     * @param controller
      * @param model
      */
-    public ViewCriterionTCloseness(final Composite parent, final Controller controller,
-                                   final Model model) {
+    public EditorCriterionTCloseness(final Composite parent,
+                                     final ModelTClosenessCriterion model) {
 
-        super(parent, controller, model);
-        this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
-        this.controller.addListener(ModelPart.INPUT, this);
-        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        super(parent, model);
     }
 
-    @Override
-    public void reset() {
-        sliderT.setSelection(0);
-        updateLabel("0.001"); //$NON-NLS-1$
-        comboVariant.select(0);
-        super.reset();
-    }
-
-    @Override
-    public void update(ModelEvent event) {
-        if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
-            this.attribute = (String) event.data;
-            this.parse();
-        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
-            if (event.data.equals(this.attribute)) {
-                this.parse();
-            }
-        }
-        super.update(event);
+    /**
+     * Updates the label and tool tip text.
+     *
+     * @param text
+     */
+    private void updateLabel(String text) {
+        labelT.setText(text);
+        labelT.setToolTipText(text);
     }
 
     @Override
@@ -114,14 +92,10 @@ public class ViewCriterionTCloseness extends ViewCriterion {
         comboVariant.setLayoutData(d32);
         comboVariant.setItems(VARIANTS);
         comboVariant.select(0);
-        final Object outer = this;
         comboVariant.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                ModelTClosenessCriterion m = model.getTClosenessModel().get(
-                                                                            attribute);
-                m.setVariant(comboVariant.getSelectionIndex());
-                controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
+                model.setVariant(comboVariant.getSelectionIndex());
             }
         });
 
@@ -146,43 +120,19 @@ public class ViewCriterionTCloseness extends ViewCriterion {
         sliderT.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                ModelTClosenessCriterion m = model.getTClosenessModel().get(
-                                                                            attribute);
-                m.setT(SWTUtil.sliderToDouble(0.001d, 1d, sliderT.getSelection()));
-                updateLabel(String.valueOf(m.getT()));
-                controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
+                model.setT(SWTUtil.sliderToDouble(0.001d, 1d, sliderT.getSelection()));
+                updateLabel(String.valueOf(model.getT()));
             }
         });
 
         return group;
     }
-
-    @Override
-    protected void parse() {
-        ModelTClosenessCriterion m = model.getTClosenessModel().get(attribute);
-        if (m == null) {
-            reset();
-            return;
-        }
-        root.setRedraw(false);
-        sliderT.setSelection(SWTUtil.doubleToSlider(0.001d, 1d, m.getT()));
-        updateLabel(String.valueOf(m.getT()));
-        comboVariant.select(m.getVariant());
-        if (m.isActive() && m.isEnabled()) {
-            SWTUtil.enable(root);
-        } else {
-            SWTUtil.disable(root);
-        }
-        root.setRedraw(true);
-    }
     
-    /**
-     * Updates the label and tooltip text.
-     *
-     * @param text
-     */
-    private void updateLabel(String text) {
-        labelT.setText(text);
-        labelT.setToolTipText(text);
+    @Override
+    protected void parse(ModelTClosenessCriterion model) {
+        
+        sliderT.setSelection(SWTUtil.doubleToSlider(0.001d, 1d, model.getT()));
+        updateLabel(String.valueOf(model.getT()));
+        comboVariant.select(model.getVariant());
     }
 }

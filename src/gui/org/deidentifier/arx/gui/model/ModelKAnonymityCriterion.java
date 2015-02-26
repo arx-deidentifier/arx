@@ -61,5 +61,28 @@ public class ModelKAnonymityCriterion extends ModelImplicitCriterion{
         // TODO: Move to messages.properties
         return k+"-Anonymity";
     }
-	
+
+    @Override
+    public String getLabel() {
+        // TODO: Move to messages.properties
+        return "k-Anonymity";
+    }
+
+    @Override
+    public ModelKAnonymityCriterion clone() {
+        ModelKAnonymityCriterion result = new ModelKAnonymityCriterion();
+        result.k = this.k;
+        result.setEnabled(this.isEnabled());
+        return result;
+    }
+    
+    @Override
+    public void parse(ModelCriterion criterion) {
+        if (!(criterion instanceof ModelKAnonymityCriterion)) {
+            return;
+        }
+        ModelKAnonymityCriterion other = (ModelKAnonymityCriterion)criterion;
+        this.k = other.k;
+        this.setEnabled(other.isEnabled());
+    }
 }

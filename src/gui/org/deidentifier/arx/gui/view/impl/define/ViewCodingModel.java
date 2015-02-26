@@ -198,26 +198,6 @@ public class ViewCodingModel implements IView {
         root.pack();
     }
 
-    /**
-     * Sets the current suppression weight.
-     *
-     * @param d
-     */
-    private void setSuppressionWeight(double d) {
-        int value = (int)(MINIMUM + d * (double)(MAXIMUM - MINIMUM));
-        if (!this.slider.isDisposed()) this.slider.setSelection(value);
-        if (!this.canvas.isDisposed()) this.canvas.redraw();
-    }
-
-    /**
-     * Returns the current suppression weight.
-     *
-     * @return
-     */
-    private double getSuppressionWeight() {
-        return ((double)slider.getSelection() - MINIMUM) / (double)(MAXIMUM - MINIMUM);
-    }
-
     /* (non-Javadoc)
      * @see org.deidentifier.arx.gui.view.def.IView#dispose()
      */
@@ -254,5 +234,25 @@ public class ViewCodingModel implements IView {
                 this.setSuppressionWeight(this.model.getInputConfig().getSuppressionWeight());
             }
         } 
+    }
+
+    /**
+     * Returns the current suppression weight.
+     *
+     * @return
+     */
+    private double getSuppressionWeight() {
+        return ((double)slider.getSelection() - MINIMUM) / (double)(MAXIMUM - MINIMUM);
+    }
+
+    /**
+     * Sets the current suppression weight.
+     *
+     * @param d
+     */
+    private void setSuppressionWeight(double d) {
+        int value = (int)(MINIMUM + d * (double)(MAXIMUM - MINIMUM));
+        if (!this.slider.isDisposed()) this.slider.setSelection(value);
+        if (!this.canvas.isDisposed()) this.canvas.redraw();
     }
 }

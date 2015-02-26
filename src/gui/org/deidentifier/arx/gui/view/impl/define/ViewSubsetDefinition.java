@@ -93,6 +93,50 @@ public class ViewSubsetDefinition implements IView{
         this.root = build(parent);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
+    @Override
+    public void reset() {
+        size.setText("0");
+        total.setText("0");
+        percent.setText("0");
+        origin.setText("");
+        disable();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
+    @Override
+    public void update(final ModelEvent event) {
+        if (event.part == ModelPart.MODEL) {
+            model = (Model) event.data;
+            if (model.getInputConfig().getInput()!=null){
+                root.setRedraw(false);
+                // TODO: Load subset
+                enable();
+                root.setRedraw(true);
+            }
+        } else if (event.part == ModelPart.INPUT) {
+            if (model.getInputConfig().getInput()!=null){
+                enable();
+            }
+        } else if (event.part == ModelPart.RESEARCH_SUBSET) {
+            if (model!=null){
+                update();
+            }
+        } 
+    }
+    
     /**
      * Builds the view.
      *
@@ -175,38 +219,6 @@ public class ViewSubsetDefinition implements IView{
         
         return group;
     }
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
-    @Override
-    public void reset() {
-        size.setText("0");
-        total.setText("0");
-        percent.setText("0");
-        origin.setText("");
-        disable();
-    }
-    
-    /**
-     * Enables the view.
-     */
-    private void enable(){
-        // TODO: Maybe make this a default for all views?
-        all.setEnabled(true);
-        none.setEnabled(true);
-        file.setEnabled(true);
-        filter.setEnabled(true);
-        SWTUtil.enable(root);
-    }
     
     /**
      * Disables the view.
@@ -220,28 +232,16 @@ public class ViewSubsetDefinition implements IView{
         SWTUtil.disable(root);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+    /**
+     * Enables the view.
      */
-    @Override
-    public void update(final ModelEvent event) {
-        if (event.part == ModelPart.MODEL) {
-            model = (Model) event.data;
-            if (model.getInputConfig().getInput()!=null){
-                root.setRedraw(false);
-                // TODO: Load subset
-                enable();
-                root.setRedraw(true);
-            }
-        } else if (event.part == ModelPart.INPUT) {
-            if (model.getInputConfig().getInput()!=null){
-                enable();
-            }
-        } else if (event.part == ModelPart.RESEARCH_SUBSET) {
-            if (model!=null){
-                update();
-            }
-        } 
+    private void enable(){
+        // TODO: Maybe make this a default for all views?
+        all.setEnabled(true);
+        none.setEnabled(true);
+        file.setEnabled(true);
+        filter.setEnabled(true);
+        SWTUtil.enable(root);
     }
 
     /**

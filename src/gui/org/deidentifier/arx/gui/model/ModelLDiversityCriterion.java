@@ -144,4 +144,32 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
             default: throw new RuntimeException("Internal error: invalid variant of l-diversity");
         }
     }
+
+    @Override
+    public String getLabel() {
+        // TODO: Move to messages.properties
+        return "l-Diversity";
+    }
+
+    @Override
+    public ModelLDiversityCriterion clone() {
+        ModelLDiversityCriterion result = new ModelLDiversityCriterion(this.getAttribute());
+        result.l = this.l;
+        result.c = this.c;
+        result.variant = this.variant;
+        result.setEnabled(this.isEnabled());
+        return result;
+    }
+    
+    @Override
+    public void parse(ModelCriterion criterion) {
+        if (!(criterion instanceof ModelLDiversityCriterion)) {
+            return;
+        }
+        ModelLDiversityCriterion other = (ModelLDiversityCriterion)criterion;
+        this.l = other.l;
+        this.c = other.c;
+        this.variant = other.variant;
+        this.setEnabled(other.isEnabled());
+    }
 }

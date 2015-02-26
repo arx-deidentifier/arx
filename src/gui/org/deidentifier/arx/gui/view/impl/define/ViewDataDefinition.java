@@ -35,7 +35,6 @@ import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -80,9 +79,7 @@ public class ViewDataDefinition implements IView {
         folder.setUnselectedCloseVisible(false);
         folder.setSimple(false);
         folder.setTabHeight(25);
-        final GridData tabData = SWTUtil.createFillGridData();
-        tabData.grabExcessVerticalSpace = true;
-        folder.setLayoutData(tabData);
+        folder.setLayoutData(SWTUtil.createFillGridData());
 
         // Create help button
         SWTUtil.createHelpButton(controller, folder, "id-1"); //$NON-NLS-1$
@@ -127,22 +124,6 @@ public class ViewDataDefinition implements IView {
         folder.redraw();
     }
 
-    /**
-     * Handle a selection event.
-     */
-    private void selectionEvent() {
-        int index = folder.getSelectionIndex();
-        if (index >= 0) {
-            final String name = names.get(index);
-            if (model != null) {
-                model.setSelectedAttribute(name);
-                controller.update(new ModelEvent(this,
-                                                 ModelPart.SELECTED_ATTRIBUTE,
-                                                 name));
-            }
-        }
-    }
-
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
@@ -175,6 +156,22 @@ public class ViewDataDefinition implements IView {
             }
             folder.setRedraw(true);
             folder.redraw();
+        }
+    }
+
+    /**
+     * Handle a selection event.
+     */
+    private void selectionEvent() {
+        int index = folder.getSelectionIndex();
+        if (index >= 0) {
+            final String name = names.get(index);
+            if (model != null) {
+                model.setSelectedAttribute(name);
+                controller.update(new ModelEvent(this,
+                                                 ModelPart.SELECTED_ATTRIBUTE,
+                                                 name));
+            }
         }
     }
 }

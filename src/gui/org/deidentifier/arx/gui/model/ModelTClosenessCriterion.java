@@ -120,4 +120,30 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
             default: throw new RuntimeException("Internal error: invalid variant of t-closeness");
         }
     }
+
+    @Override
+    public String getLabel() {
+        // TODO: Move to messages.properties
+        return "t-Closeness";
+    }
+
+    @Override
+    public ModelTClosenessCriterion clone() {
+        ModelTClosenessCriterion result = new ModelTClosenessCriterion(this.getAttribute());
+        result.t = this.t;
+        result.variant = this.variant;
+        result.setEnabled(this.isEnabled());
+        return result;
+    }
+    
+    @Override
+    public void parse(ModelCriterion criterion) {
+        if (!(criterion instanceof ModelTClosenessCriterion)) {
+            return;
+        }
+        ModelTClosenessCriterion other = (ModelTClosenessCriterion)criterion;
+        this.t = other.t;
+        this.variant = other.variant;
+        this.setEnabled(other.isEnabled());
+    }
 }

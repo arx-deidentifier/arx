@@ -123,4 +123,44 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
             throw new RuntimeException("Internal error: invalid variant of risk-based criterion");
         }
     }
+
+    @Override
+    public String getLabel() {
+        switch (variant) {
+        case VARIANT_AVERAGE_RISK:
+            return "Average-Reidentification-Risk";
+        case VARIANT_POPULATION_UNIQUES_DANKAR:
+            return "Population-Uniqueness (Dankar)";
+        case VARIANT_POPULATION_UNIQUES_PITMAN:
+            return "Population-Uniqueness (Pitman)";
+        case VARIANT_POPULATION_UNIQUES_SNB:
+            return "Population-Uniqueness (SNB)";
+        case VARIANT_POPULATION_UNIQUES_ZAYATZ:
+            return "Population-Uniqueness (Zayatz)";
+        case VARIANT_SAMPLE_UNIQUES:
+            return "Sample-Uniqueness";
+        default:
+            throw new RuntimeException("Internal error: invalid variant of risk-based criterion");
+        }
+    }
+
+    @Override
+    public ModelRiskBasedCriterion clone() {
+        ModelRiskBasedCriterion result = new ModelRiskBasedCriterion(this.variant);
+        result.threshold = this.threshold;
+        result.variant = this.variant;
+        result.setEnabled(this.isEnabled());
+        return result;
+    }
+    
+    @Override
+    public void parse(ModelCriterion criterion) {
+        if (!(criterion instanceof ModelRiskBasedCriterion)) {
+            return;
+        }
+        ModelRiskBasedCriterion other = (ModelRiskBasedCriterion)criterion;
+        this.threshold = other.threshold;
+        this.variant = other.variant;
+        this.setEnabled(other.isEnabled());
+    }
 }

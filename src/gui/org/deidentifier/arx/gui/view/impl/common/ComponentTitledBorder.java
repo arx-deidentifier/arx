@@ -40,7 +40,17 @@ public class ComponentTitledBorder implements IComponent{
     
     /**  TODO */
     private final CTabItem tab; 
-    
+
+    /**
+     * Creates a new instance.
+     *
+     * @param parent
+     * @param title
+     */
+    public ComponentTitledBorder(Composite parent, String title){
+        this(parent, null, title, null);
+    }
+
     /**
      * Creates a new instance.
      *
@@ -56,7 +66,7 @@ public class ComponentTitledBorder implements IComponent{
         folder.setSimple(false);
         
         // Create help button
-        SWTUtil.createHelpButton(controller, folder, id);
+        if (controller != null) SWTUtil.createHelpButton(controller, folder, id);
 
         // Prevent closing
         folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
@@ -90,6 +100,14 @@ public class ComponentTitledBorder implements IComponent{
      */
     public void setChild(Control child){
         this.tab.setControl(child);
+    }
+    
+    /**
+     * Returns the tab
+     * @return
+     */
+    public CTabItem getTab() {
+        return this.tab;
     }
     
     /**

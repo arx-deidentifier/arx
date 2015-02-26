@@ -84,4 +84,30 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
         // TODO: Move to messages.properties
         return "("+String.valueOf(dmin)+","+String.valueOf(dmax)+")-Presence";
     }
+
+    @Override
+    public String getLabel() {
+        // TODO: Move to messages.properties
+        return "(" + '\u03B4' + ")-Presence";
+    }
+
+    @Override
+    public ModelDPresenceCriterion clone() {
+        ModelDPresenceCriterion result = new ModelDPresenceCriterion();
+        result.dmax = this.dmax;
+        result.dmin = this.dmin;
+        result.setEnabled(this.isEnabled());
+        return result;
+    }
+    
+    @Override
+    public void parse(ModelCriterion criterion) {
+        if (!(criterion instanceof ModelDPresenceCriterion)) {
+            return;
+        }
+        ModelDPresenceCriterion other = (ModelDPresenceCriterion)criterion;
+        this.dmax = other.dmax;
+        this.dmin = other.dmin;
+        this.setEnabled(other.isEnabled());
+    }
 }

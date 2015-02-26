@@ -15,13 +15,9 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.gui.view.impl.define;
+package org.deidentifier.arx.gui.view.impl.menu;
 
-import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.Model;
-import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelKAnonymityCriterion;
-import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -38,44 +34,40 @@ import org.eclipse.swt.widgets.Scale;
  *
  * @author Fabian Prasser
  */
-public class ViewCriterionKAnonymity extends ViewCriterion {
+public class EditorCriterionKAnonymity extends EditorCriterion<ModelKAnonymityCriterion>{
 
-    /**  TODO */
+    /**  View */
     private Label labelK;
     
-    /**  TODO */
+    /**  View */
     private Scale sliderK;
 
     /**
      * Creates a new instance.
      *
      * @param parent
-     * @param controller
      * @param model
      */
-    public ViewCriterionKAnonymity(final Composite parent, final Controller controller,
-                                   final Model model) {
-
-        super(parent, controller, model);
-        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+    public EditorCriterionKAnonymity(final Composite parent, 
+                                     final ModelKAnonymityCriterion model) {
+        super(parent, model);
     }
 
-    @Override
-    public void update(ModelEvent event) {
-        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
-            this.parse();
-        }
-        super.update(event);
+    /**
+     * Updates the label and tool tip text.
+     *
+     * @param text
+     */
+    private void updateLabel(String text) {
+        labelK.setText(text);
+        labelK.setToolTipText(text);
     }
 
-    @Override
-    public void reset() {
-        sliderK.setSelection(0);
-        updateLabel("2");
-        super.reset();
-    }
-
-    @Override
+    /**
+     * Build
+     * @param parent
+     * @return
+     */
     protected Composite build(Composite parent) {
 
         // Create input group
@@ -101,46 +93,22 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
         sliderK.setMaximum(SWTUtil.SLIDER_MAX);
         sliderK.setMinimum(0);
         sliderK.setSelection(0);
-        final Object outer = this;
         sliderK.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getKAnonymityModel().setK(
-                                                SWTUtil.sliderToInt(2, 100, sliderK.getSelection()));
-                updateLabel(String
-                                     .valueOf(model.getKAnonymityModel().getK()));
-                controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getKAnonymityModel()));
+                model.setK(SWTUtil.sliderToInt(2, 100, sliderK.getSelection()));
+                updateLabel(String.valueOf(model.getK()));
             }
         });
 
         return group;
     }
 
-    @Override
-    protected void parse() {
-        ModelKAnonymityCriterion m = model.getKAnonymityModel();
-        if (m == null) {
-            reset();
-            return;
-        }
-        root.setRedraw(false);
-        updateLabel(String.valueOf(m.getK()));
-        sliderK.setSelection(SWTUtil.intToSlider(2, 100, m.getK()));
-        if (m.isActive() && m.isEnabled()) {
-            SWTUtil.enable(root);
-        } else {
-            SWTUtil.disable(root);
-        }
-        root.setRedraw(true);
-    }
-
     /**
-     * Updates the label and tooltip text.
-     *
-     * @param text
+     * Parse
      */
-    private void updateLabel(String text) {
-        labelK.setText(text);
-        labelK.setToolTipText(text);
+    protected void parse(ModelKAnonymityCriterion model) {
+        updateLabel(String.valueOf(model.getK()));
+        sliderK.setSelection(SWTUtil.intToSlider(2, 100, model.getK()));
     }
 }
