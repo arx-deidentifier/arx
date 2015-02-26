@@ -71,7 +71,7 @@ public class RiskEstimateBuilderInterruptible {
      */
     public RiskModelAttributes getPopulationBasedAttributeRisks(StatisticalModel model) throws InterruptedException {
         try {
-            return parent.getPopulationBasedAttributeRisks();
+            return parent.getPopulationBasedAttributeRisks(model);
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
@@ -83,7 +83,7 @@ public class RiskEstimateBuilderInterruptible {
      */
     public RiskModelPopulationBasedUniquenessRisk getPopulationBasedUniquenessRisk() throws InterruptedException {
         try {
-            return parent.getPopulationBasedUniquenessRisk();
+            return parent.getPopulationBasedUniquenessRiskInterruptible();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
