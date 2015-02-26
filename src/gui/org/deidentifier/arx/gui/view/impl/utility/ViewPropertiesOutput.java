@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
@@ -31,6 +32,10 @@ import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
+import org.deidentifier.arx.criteria.RiskBasedPrivacyCriterion;
+import org.deidentifier.arx.criteria.RiskBasedThresholdAverageRisk;
+import org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques;
+import org.deidentifier.arx.criteria.RiskBasedThresholdSampleUniques;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -280,7 +285,7 @@ public class ViewPropertiesOutput extends ViewProperties {
             // Print info about d-presence
             if (context.config.containsCriterion(DPresence.class)) {
                 DPresence criterion = context.config.getCriterion(DPresence.class);
-                // only if its not an auto-generated criterion
+                // Only if its not an auto-generated criterion
                 if (!(criterion.getDMin()==0d && criterion.getDMax()==1d)){
                     Property n = new Property(Resources.getMessage("PropertiesView.92"), new String[] { Resources.getMessage("PropertiesView.93") }); //$NON-NLS-1$ //$NON-NLS-2$
                     new Property(n, Resources.getMessage("PropertiesView.94"), new String[] { String.valueOf(criterion.getDMin())}); //$NON-NLS-1$
@@ -325,6 +330,28 @@ public class ViewPropertiesOutput extends ViewProperties {
                     new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                     final int height = context.config.getHierarchy(criterion.getAttribute()).getHierarchy()[0].length;
                     new Property(n, "SE-"+(index++), new String[] { Resources.getMessage("PropertiesView.87") + String.valueOf(height) }); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+            }
+
+            // Print info about risk-based criteria
+            Set<RiskBasedPrivacyCriterion> criteria = context.config.getCriteria(RiskBasedPrivacyCriterion.class);
+            for (RiskBasedPrivacyCriterion criterion : criteria) {
+                
+                String type = "";
+                if (criterion instanceof RiskBasedThresholdAverageRisk) {
+                    type = Resources.getMessage("PropertiesView.123");
+                } else if (criterion instanceof RiskBasedThresholdPopulationUniques) {
+                    type = Resources.getMessage("PropertiesView.125");
+                } else if (criterion instanceof RiskBasedThresholdSampleUniques) {
+                    type = Resources.getMessage("PropertiesView.124");
+                }
+                        
+                Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { type }); //$NON-NLS-1$ //$NON-NLS-2$
+                new Property(n, Resources.getMessage("PropertiesView.120"), new String[] { String.valueOf(criterion.getRiskThreshold())}); //$NON-NLS-1$
+                
+                if (criterion instanceof RiskBasedThresholdPopulationUniques) {
+                    new Property(n, Resources.getMessage("PropertiesView.121"), new String[] { String.valueOf(((RiskBasedThresholdPopulationUniques)criterion).getPopulationModel().getSampleFraction(context.handle))}); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.122"), new String[] { ((RiskBasedThresholdPopulationUniques)criterion).getStatisticalModel().toString()}); //$NON-NLS-1$
                 }
             }
         } else {
