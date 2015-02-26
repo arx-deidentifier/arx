@@ -105,8 +105,8 @@ public class ImportWizardPageCSV extends WizardPage {
         /**
          * Returns the string value for the given column.
          *
-         * @param element
-         * @return
+         * @param element the element
+         * @return the text
          */
         @Override
         public String getText(Object element) {
@@ -114,7 +114,7 @@ public class ImportWizardPageCSV extends WizardPage {
         }
     }
 
-    /** The default number of characters to read in the case of line break guessing*/
+    /** The default number of characters to read in the case of line break guessing. */
     private static final int DEFAULT_BUFFER_SIZE = 4096;
 
     /** Reference to the wizard containing this page. */
@@ -125,46 +125,46 @@ public class ImportWizardPageCSV extends WizardPage {
      */
     private ArrayList<ImportWizardModelColumn> wizardColumns;
     /* Widgets */
-    /** TODO */
+    /** TODO. */
     private Label                              lblLocation;
 
-    /** TODO */
+    /** TODO. */
     private Combo                              comboLocation;
 
-    /** TODO */
+    /** TODO. */
     private Button                             btnChoose;
 
-    /** TODO */
+    /** TODO. */
     private Button                             btnContainsHeader;
 
-    /** TODO */
+    /** TODO. */
     private Combo                              comboSeparator;
     
-    /** TODO */
+    /** TODO. */
     private Combo                              comboLinebreak;
 
-    /** TODO */
+    /** TODO. */
     private Combo                              comboDelimiter;
 
-    /** TODO */
+    /** TODO. */
     private Combo                              comboEscape;
 
-    /** TODO */
+    /** TODO. */
     private Label                              lblSeparator;
 
-    /** TODO */
+    /** TODO. */
     private Label                              lblDelimiter;
     
-    /** TODO */
+    /** TODO. */
     private Label                              lblLinebreak;
 
-    /** TODO */
+    /** TODO. */
     private Label                              lblEscape;
 
-    /** TODO */
+    /** TODO. */
     private Table                              tablePreview;
 
-    /** TODO */
+    /** TODO. */
     private TableViewer                        tableViewerPreview;
 
     /**
@@ -210,14 +210,10 @@ public class ImportWizardPageCSV extends WizardPage {
      */
     private final char[]                       delimiters        = { '\"', '\'' };
     
-    /**
-     * Supported line breaks
-     */
+    /** Supported line breaks. */
     private final char[][]                     linebreaks        = { { '\n' }, { '\r', '\n' }, { '\r' } };
 
-    /**
-     * Labels for supported line breaks
-     */
+    /** Labels for supported line breaks. */
     private final String[]                     linebreaklabels   = { "Unix ('\\n')", "Windows ('\\r\\n')", "Mac OS ('\\r')" };
 
     /**
@@ -245,7 +241,7 @@ public class ImportWizardPageCSV extends WizardPage {
      */
     private boolean                            customSeparator;
 
-    /** TODO */
+    /** TODO. */
     private final ArrayList<String[]>          previewData       = new ArrayList<String[]>();
 
     /**
@@ -268,7 +264,7 @@ public class ImportWizardPageCSV extends WizardPage {
      * 
      * This adds all the controls to the page along with their listeners.
      *
-     * @param parent
+     * @param parent the parent
      * @note {@link #tablePreview} is not visible until a file is loaded.
      */
     public void createControl(Composite parent)
@@ -512,6 +508,11 @@ public class ImportWizardPageCSV extends WizardPage {
 
     }
     
+    /**
+     * Tries to detect the line break.
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     private void detectLinebreak() throws IOException {
         BufferedReader r = null;
         final char[] buffer = new char[DEFAULT_BUFFER_SIZE];
@@ -669,7 +670,7 @@ public class ImportWizardPageCSV extends WizardPage {
      * This goes through up to {@link ImportWizardModel#PREVIEW_MAX_LINES} lines
      * within the appropriate file and reads them in. It uses {@link ImportAdapter} in combination with {@link ImportConfigurationCSV} to actually read in the data.
      *
-     * @throws IOException
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private void readPreview() throws IOException {
 
