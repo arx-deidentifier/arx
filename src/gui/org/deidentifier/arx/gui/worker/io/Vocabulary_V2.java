@@ -55,7 +55,7 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
     @Override
     public void checkVersion(String version) throws SAXException {
         if (!(version.equals("2.0") || version.startsWith("2.1") || version.startsWith("2.2")
-                                    || version.startsWith("2.3"))) {
+                                    || version.startsWith("2.3") || version.startsWith("3.0"))) {
             throw new SAXException(Resources.getMessage("WorkerLoad.10") + version); //$NON-NLS-1$
         }
     }
