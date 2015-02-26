@@ -214,7 +214,7 @@ public class ImportWizardPageCSV extends WizardPage {
     private final char[][]                     linebreaks        = { { '\n' }, { '\r', '\n' }, { '\r' } };
 
     /** Labels for supported line breaks. */
-    private final String[]                     linebreaklabels   = { "Unix ('\\n')", "Windows ('\\r\\n')", "Mac OS ('\\r')" };
+    private final String[]                     linebreaklabels   = { "Unix (\\n)", "Windows (\\r\\n)", "Mac OS (\\r)" };
 
     /**
      * Supported separators.
