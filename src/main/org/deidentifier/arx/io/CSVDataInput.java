@@ -297,6 +297,7 @@ public class CSVDataInput {
         format.setQuoteEscape(escape);
         format.setLineSeparator(linebreak);
         format.setNormalizedNewline(CSVUtil.getNormalizedLinebreakCharacter(linebreak));
+        format.setComment('\0');
 
         CsvParserSettings settings = new CsvParserSettings();
         settings.setEmptyValue("");
