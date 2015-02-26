@@ -114,7 +114,7 @@ public class ARXPopulationModel implements Serializable {
         this.region = Region.NONE;
         this.sampleFraction = (double)handle.getNumRows() / populationSize;
     }
-    
+
     /**
      * Creates a new instance
      * @param sampleFraction
@@ -133,6 +133,23 @@ public class ARXPopulationModel implements Serializable {
     }
 
     /**
+     * Clone constructor
+     * @param region
+     * @param sampleFraction
+     */
+    private ARXPopulationModel(Region region, double sampleFraction) {
+        this.region = region;
+        this.sampleFraction = sampleFraction;
+    }
+
+    /**
+     * Returns a clone of this object
+     */
+    public ARXPopulationModel clone() {
+        return new ARXPopulationModel(region, sampleFraction);
+    }
+    
+    /**
      * Returns the population size
      * @param handle
      * @return
@@ -140,7 +157,7 @@ public class ARXPopulationModel implements Serializable {
     public double getPopulationSize(DataHandle handle) {
         return getPopulationSize(handle.getNumRows());
     }
-    
+
     /**
      * Returns the population size
      * @param sampleSize
@@ -169,7 +186,7 @@ public class ARXPopulationModel implements Serializable {
     public double getSampleFraction(DataHandle handle) {
         return getSampleFraction(handle.getNumRows());
     }
-
+    
     /**
      * Returns the sample fraction
      * @param sampleSize

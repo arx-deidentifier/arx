@@ -31,6 +31,7 @@ import java.util.Set;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -40,6 +41,7 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricDescription;
 
@@ -518,6 +520,14 @@ public class Model implements Serializable {
 	    else if (inputConfig.getInput()==null) return null;
 	    else return inputConfig.getInput().getDefinition();
 	}
+	
+	/**
+	 * Returns the input population model
+	 * @return
+	 */
+	public ARXPopulationModel getInputPopulationModel() {
+	    return getRiskModel().getPopulationModel();
+	}
 
 	/**
      * Returns the k-anonymity model.
@@ -677,7 +687,7 @@ public class Model implements Serializable {
 		return outputNode;
 	}
 
-	/**
+    /**
      * Returns a string representation of the currently applied transformation.
      *
      * @return
@@ -685,6 +695,21 @@ public class Model implements Serializable {
 	public String getOutputNodeAsString() {
 		return outputNodeAsString;
 	}
+
+	/**
+     * Returns the output population model, if any. Null otherwise.
+     * @return
+     */
+    public ARXPopulationModel getOutputPopulationModel() {
+        ModelConfiguration config = getOutputConfig();
+        if (config != null) {
+            Set<RiskBasedThresholdPopulationUniques> set = config.getCriteria(RiskBasedThresholdPopulationUniques.class);
+            if (set != null && !set.isEmpty()) {
+                return set.iterator().next().getPopulationModel();
+            }
+        }
+        return null;
+    }
 
 	/**
      * Returns the path of the project.

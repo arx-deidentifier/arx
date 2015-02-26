@@ -40,6 +40,8 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
 
     /**
      * Creates a new instance of this criterion. Uses Dankar's method for estimating population uniqueness.
+     * This constructor will clone the population model, making further changes to it will not influence
+     * the results.
      *  
      * @param riskThreshold
      * @param populationModel
@@ -50,7 +52,9 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
 
     /**
      * Creates a new instance of this criterion. Uses the specified method for estimating population uniqueness.
-     *  
+     * This constructor will clone the population model, making further changes to it will not influence
+     * the results.
+     * 
      * @param riskThreshold
      * @param statisticalModel
      * @param populationModel
@@ -60,7 +64,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
                                                ARXPopulationModel populationModel){
         super(false, riskThreshold);
         this.statisticalModel = statisticalModel;
-        this.populationModel = populationModel;
+        this.populationModel = populationModel.clone();
     }
 
     /**
