@@ -44,7 +44,7 @@ public class CSVDataOutput {
     private final CsvWriterSettings settings;
 
     /** Should the writer be closed. */
-    private final boolean           close;
+    private boolean           close;
 
     /**
      * Instantiate.
@@ -175,6 +175,7 @@ public class CSVDataOutput {
      */
     public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
         this(new OutputStreamWriter(stream), delimiter, quote, escape, linebreak);
+        close = false;
     }
 
     /**
