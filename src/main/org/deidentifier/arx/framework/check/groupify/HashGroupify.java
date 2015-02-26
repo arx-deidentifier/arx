@@ -524,7 +524,7 @@ public class HashGroupify implements IHashGroupify {
         // Indirectly check if we enforce d-presence
         if (subset != null) {
             entry.pcount += pcount;
-            if (count > 0 && entry.count == 0) {
+            if (count > 0 && entry.count == count) {
                 // This is a tuple from the research subset, but the class is not represented by a tuple from the subset.
                 // Reset its representative, which is necessary for rollup / history, because
                 // otherwise subset.contains(tupleID) could potentially return false
