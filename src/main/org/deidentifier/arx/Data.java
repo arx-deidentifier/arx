@@ -413,10 +413,10 @@ public abstract class Data {
         return new ArrayData(array);
     }
 
-    /** TODO. */
+    /** The data handle. */
     private DataHandleInput handle;
 
-    /** TODO. */
+    /** The data definition. */
     private DataDefinition  definition = new DataDefinition();
 
     /**
