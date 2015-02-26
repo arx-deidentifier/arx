@@ -115,8 +115,8 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
     public String toString() {
         // TODO: Move to messages.properties
         switch (variant) {
-            case VARIANT_EQUAL: return String.valueOf(t)+"-Closeness with equal-distance EMD";
-            case VARIANT_HIERARCHICAL: return String.valueOf(t)+"-Closeness with hierarchical-distance EMD";
+            case VARIANT_EQUAL: return String.valueOf(t)+"-Closeness (constant ground-distance)";
+            case VARIANT_HIERARCHICAL: return String.valueOf(t)+"-Closeness (hierarchical ground-distance)";
             default: throw new RuntimeException("Internal error: invalid variant of t-closeness");
         }
     }

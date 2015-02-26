@@ -82,7 +82,7 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
     @Override
     public String toString() {
         // TODO: Move to messages.properties
-        return "("+String.valueOf(dmin)+","+String.valueOf(dmax)+")-Presence";
+        return "("+String.valueOf(dmin)+", "+String.valueOf(dmax)+")-Presence";
     }
 
     @Override

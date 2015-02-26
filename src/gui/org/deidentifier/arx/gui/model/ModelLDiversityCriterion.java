@@ -140,7 +140,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
         switch (variant) {
             case VARIANT_DISTINCT: return "Distinct-"+l+"-diversity";
             case VARIANT_ENTROPY: return "Entropy-"+l+"-diversity"; 
-            case VARIANT_RECURSIVE: return "Recursive-("+String.valueOf(c)+","+l+")-diversity";
+            case VARIANT_RECURSIVE: return "Recursive-("+String.valueOf(c)+", "+l+")-diversity";
             default: throw new RuntimeException("Internal error: invalid variant of l-diversity");
         }
     }
