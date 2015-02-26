@@ -240,6 +240,15 @@ public class ImportWizardPageCSV extends WizardPage {
      * knows about it.
      */
     private boolean                            customSeparator;
+    
+    /**
+     * Indicates whether line break was detected automatically or by the user
+     * 
+     * The line break will usually be detected automatically {@link #detectLinebreak()}. In case the user selected another line break
+     * by hand, this flag will be set to true, making sure the rest of the logic
+     * knows about it.
+     */
+    private boolean                            customLinebreak;
 
     /** TODO. */
     private final ArrayList<String[]>          previewData       = new ArrayList<String[]>();
@@ -299,6 +308,7 @@ public class ImportWizardPageCSV extends WizardPage {
                 comboEscape.setVisible(true);
                 btnContainsHeader.setVisible(true);
                 customSeparator = false;
+                customLinebreak = false;
                 evaluatePage();
             }
         });
@@ -449,7 +459,7 @@ public class ImportWizardPageCSV extends WizardPage {
             comboLinebreak.add(String.valueOf(c));
         }
 
-        comboLinebreak.select(selectedEscape);
+        comboLinebreak.select(selectedLinebreak);
         comboLinebreak.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         comboLinebreak.addSelectionListener(new SelectionAdapter() {
 
@@ -458,7 +468,8 @@ public class ImportWizardPageCSV extends WizardPage {
              */
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                selectedEscape = comboLinebreak.getSelectionIndex();
+                selectedLinebreak = comboLinebreak.getSelectionIndex();
+                customLinebreak = true;
                 evaluatePage();
             }
         });
@@ -626,8 +637,10 @@ public class ImportWizardPageCSV extends WizardPage {
         }
 
         try {
-            detectLinebreak();
-            comboLinebreak.select(selectedLinebreak);
+            if (!customLinebreak) {
+                detectLinebreak();
+                comboLinebreak.select(selectedLinebreak);
+            }
             if (!customSeparator) {
                 detectSeparator();
                 comboSeparator.select(selectedSeparator);
