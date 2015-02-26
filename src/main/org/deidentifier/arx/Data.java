@@ -1,7 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
  * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
- * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +42,7 @@ public abstract class Data {
      * programmatically define its content.
      * 
      * @author Fabian Prasser
- * @author Florian Kohlmayer
+     * @author Florian Kohlmayer
      */
     public static class DefaultData extends Data {
 
@@ -53,13 +52,15 @@ public abstract class Data {
         /**
          * Adds a row to this data object.
          *
-         * @param row
+         * @param row the row
          */
         public void add(final String... row) {
             data.add(row);
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.deidentifier.arx.Data#iterator()
          */
         @Override
@@ -83,13 +84,15 @@ public abstract class Data {
         /**
          * Creates a new instance.
          *
-         * @param array
+         * @param array the array
          */
         private ArrayData(final String[][] array) {
             this.array = array;
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.deidentifier.arx.Data#iterator()
          */
         @Override
@@ -135,13 +138,15 @@ public abstract class Data {
         /**
          * Creates a new instance.
          *
-         * @param iterator
+         * @param iterator the iterator
          */
         private IterableData(final Iterator<String[]> iterator) {
             this.iterator = iterator;
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.deidentifier.arx.Data#iterator()
          */
         @Override
@@ -164,7 +169,7 @@ public abstract class Data {
      *
      * @param source The source that should be used to import data
      * @return Data object as described by the data source
-     * @throws IOException
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public static Data create(final DataSource source) throws IOException {
 
@@ -177,50 +182,50 @@ public abstract class Data {
      * Creates a new data object from a CSV file.
      *
      * @param file A file
-     * @param separator The utilized separator character
+     * @param delimiter The utilized separator character
      * @return A Data object
-     * @throws IOException
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final File file, final char separator) throws IOException {
-        return new IterableData(new CSVDataInput(file, separator).iterator());
+    public static Data create(final File file, final char delimiter) throws IOException {
+        return new IterableData(new CSVDataInput(file, delimiter).iterator());
     }
 
     /**
      * Creates a new data object from a CSV file.
      *
      * @param file A file
-     * @param separator The utilized separator character
-     * @param delimiter The delimiter for strings
+     * @param delimiter The utilized separator character
+     * @param quote The delimiter for strings
      * @return A Data object
-     * @throws IOException
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final File file, final char separator, final char delimiter) throws IOException {
-        return new IterableData(new CSVDataInput(file, separator, delimiter).iterator());
+    public static Data create(final File file, final char delimiter, final char quote) throws IOException {
+        return new IterableData(new CSVDataInput(file, delimiter, quote).iterator());
     }
 
     /**
      * Creates a new data object from a CSV file.
      *
      * @param stream An input stream
-     * @param separator The utilized separator character
+     * @param delimiter The utilized separator character
      * @return A Data object
-     * @throws IOException
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final InputStream stream, final char separator) throws IOException {
-        return new IterableData(new CSVDataInput(stream, separator).iterator());
+    public static Data create(final InputStream stream, final char delimiter) throws IOException {
+        return new IterableData(new CSVDataInput(stream, delimiter).iterator());
     }
 
     /**
      * Creates a new data object from a CSV file.
      *
      * @param stream An input stream
-     * @param separator The utilized separator character
-     * @param delimiter The delimiter for strings
+     * @param delimiter The utilized separator character
+     * @param quote The delimiter for strings
      * @return A Data object
-     * @throws IOException
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final InputStream stream, final char separator, final char delimiter) throws IOException {
-        return new IterableData(new CSVDataInput(stream, separator, delimiter).iterator());
+    public static Data create(final InputStream stream, final char delimiter, final char quote) throws IOException {
+        return new IterableData(new CSVDataInput(stream, delimiter, quote).iterator());
     }
 
     /**
@@ -230,15 +235,15 @@ public abstract class Data {
      * @return A Data object
      */
     public static Data create(final Iterator<String[]> iterator) {
-        
+
         // Obtain data
         IterableData result = new IterableData(iterator);
 
         // Update definition, if needed
-        if (iterator instanceof ImportAdapter){
-            result.getDefinition().parse((ImportAdapter)iterator);
+        if (iterator instanceof ImportAdapter) {
+            result.getDefinition().parse((ImportAdapter) iterator);
         }
-        
+
         // Return
         return result;
     }
@@ -259,7 +264,7 @@ public abstract class Data {
      * @param path A path to the file
      * @param separator The utilized separator character
      * @return A Data object
-     * @throws IOException
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public static Data create(final String path, final char separator) throws IOException {
         return new IterableData(new CSVDataInput(path, separator).iterator());
@@ -272,7 +277,7 @@ public abstract class Data {
      * @param separator The utilized separator character
      * @param delimiter The delimiter for strings
      * @return A Data object
-     * @throws IOException
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public static Data create(final String path, final char separator, final char delimiter) throws IOException {
         return new IterableData(new CSVDataInput(path, separator, delimiter).iterator());
@@ -288,16 +293,16 @@ public abstract class Data {
         return new ArrayData(array);
     }
 
-    /**  TODO */
+    /** TODO. */
     private DataHandleInput handle;
 
-    /**  TODO */
+    /** TODO. */
     private DataDefinition  definition = new DataDefinition();
 
     /**
      * Returns the data definition.
      *
-     * @return
+     * @return the definition
      */
     public DataDefinition getDefinition() {
         return definition;
@@ -306,7 +311,7 @@ public abstract class Data {
     /**
      * Returns a data handle.
      *
-     * @return
+     * @return the handle
      */
     public DataHandle getHandle() {
         if (handle == null) {
@@ -318,9 +323,9 @@ public abstract class Data {
     }
 
     /**
-     * 
+     * Iterator.
      *
-     * @return
+     * @return the iterator
      */
     protected abstract Iterator<String[]> iterator();
 }
