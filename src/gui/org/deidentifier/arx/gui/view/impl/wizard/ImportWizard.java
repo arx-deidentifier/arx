@@ -245,8 +245,10 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
         if (data.getSourceType() == SourceType.CSV) {
             
             configuration = new ImportConfigurationCSV(data.getFileLocation(),
-                                                     data.getCsvSeparator(),
                                                      data.getCsvDelimiter(),
+                                                     data.getCsvQuote(),
+                                                     data.getCsvEscape(),
+                                                     data.getCsvLinebreak(),
                                                      data.getFirstRowContainsHeader());
 
         } else if (data.getSourceType() == SourceType.EXCEL) {

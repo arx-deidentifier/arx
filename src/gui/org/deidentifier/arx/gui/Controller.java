@@ -51,6 +51,7 @@ import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
+import org.deidentifier.arx.gui.model.ModelCSVConfig;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -634,7 +635,7 @@ public class Controller implements IView {
 
         // Export
         final WorkerExport worker = new WorkerExport(file,
-                                                     model.getSeparator(),
+                                                     model.getCsvConfig(),
                                                      model.getOutput(),
                                                      model.getOutputConfig().getConfig(),
                                                      model.getInputBytes());
@@ -682,7 +683,7 @@ public class Controller implements IView {
         // Save
         try {
             final CSVDataOutput out = new CSVDataOutput(file,
-                                                        model.getSeparator());
+                                                        model.getCsvConfig().convert());
             out.write(hierarchy.getHierarchy());
 
         } catch (final Exception e) {
@@ -1452,7 +1453,14 @@ public class Controller implements IView {
 
         // TODO: Fix this
         if (config instanceof ImportConfigurationCSV) {
-            model.setInputBytes(new File(((ImportConfigurationCSV) config).getFileLocation()).length());
+            ImportConfigurationCSV csvconfig = (ImportConfigurationCSV) config;
+            model.setInputBytes(new File((csvconfig).getFileLocation()).length());
+            ModelCSVConfig modelCSVConfig = new ModelCSVConfig();
+            modelCSVConfig.setDelimiter(csvconfig.getDelimiter());
+            modelCSVConfig.setEscape(csvconfig.getEscape());
+            modelCSVConfig.setLinebreak(csvconfig.getLinebreak());
+            modelCSVConfig.setQuote(csvconfig.getQuote());
+            model.setCsvConfig(modelCSVConfig);
         } else {
             model.setInputBytes(0);
         }
