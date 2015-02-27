@@ -123,7 +123,7 @@ public class HashGroupifyDistribution {
                 
                 int count = 0;
                 for (int j=i+1; j<entries.length; j++) {
-                    if (entries[i].isNotOutlier) {
+                    if (!entries[i].isNotOutlier) {
                         count++;
                     }
                 }
