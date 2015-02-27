@@ -536,7 +536,7 @@ public class ImportWizardPageCSV extends WizardPage {
         }
 
         if (read > 0) {
-            for (int i = 0; i < buffer.length; i++) {
+            for (int i = 0; i < read; i++) {
                 char current = buffer[i];
                 if (current == '\r') {
                     if (i < buffer.length - 1 && buffer[i + 1] == '\n') { // Windows
@@ -552,7 +552,6 @@ public class ImportWizardPageCSV extends WizardPage {
                 }
             }
         }
-
     }
 
     /**
