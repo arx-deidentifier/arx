@@ -53,6 +53,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import com.carrotsearch.hppc.CharIntOpenHashMap;
 import com.carrotsearch.hppc.IntIntOpenHashMap;
+import com.univocity.parsers.common.TextParsingException;
 
 
 /**
@@ -640,6 +641,9 @@ public class ImportWizardPageCSV extends WizardPage {
 
         } catch (IOException | IllegalArgumentException e) {
             setErrorMessage(e.getMessage());
+            return;
+        } catch (TextParsingException e) {
+            setErrorMessage("Could not parse file. Maybe the selected syntax is invalid?");
             return;
         } catch (RuntimeException e) {
             if (e.getCause()!=null) {
