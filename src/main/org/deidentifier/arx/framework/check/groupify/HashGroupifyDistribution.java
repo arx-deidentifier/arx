@@ -120,18 +120,6 @@ public class HashGroupifyDistribution {
     public int getMaxSuppressedIndex() {
         for (int i=0; i<entries.length; i++) {
             if (entries[i].isNotOutlier) {
-                
-                int count = 0;
-                for (int j=i+1; j<entries.length; j++) {
-                    if (!entries[i].isNotOutlier) {
-                        count++;
-                    }
-                }
-                
-                if (count != 0) {
-                    throw new RuntimeException("ARGL: "+count);
-                }
-                
                 return i-1;
             }
         }
