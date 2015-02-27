@@ -26,9 +26,9 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IDialog;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.eclipse.swt.widgets.Shell;
 
-import de.linearbits.preferences.PreferencesDialog;
 import de.linearbits.preferences.PreferenceBoolean;
 import de.linearbits.preferences.PreferenceCharacter;
 import de.linearbits.preferences.PreferenceDouble;
@@ -36,6 +36,7 @@ import de.linearbits.preferences.PreferenceInteger;
 import de.linearbits.preferences.PreferenceSelection;
 import de.linearbits.preferences.PreferenceString;
 import de.linearbits.preferences.PreferenceText;
+import de.linearbits.preferences.PreferencesDialog;
 
 /**
  * This class implements a dialog for editing project properties.
@@ -68,6 +69,7 @@ public class DialogProperties implements IDialog {
         // Create dialog
         this.dialog = new PreferencesDialog(parent, "Settings", "Project-specific preferences");
         createTabProject(this.dialog);
+        createTabIOSettings(this.dialog);
         createTabTransformation(this.dialog);
         createTabInternals(this.dialog);
         createTabVisualization(this.dialog);
@@ -79,7 +81,7 @@ public class DialogProperties implements IDialog {
     public void open() {
         dialog.open();
     }
-
+    
     /**
      * Create a tab
      * @param window
@@ -110,6 +112,34 @@ public class DialogProperties implements IDialog {
             protected void setValue(Object t) { model.setDebugEnabled((Boolean)t); }});
     }
 
+
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabIOSettings(PreferencesDialog window) {
+        
+        window.addCategory(Resources.getMessage("PropertyDialog.34"), //$NON-NLS-1$
+                           controller.getResources().getImage("settings-io.png")); //$NON-NLS-1$
+     
+        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.35"), ';') { //$NON-NLS-1$
+            protected String getValue() { return String.valueOf(model.getCSVSyntax().getDelimiter()); }
+            protected void setValue(Object t) { model.getCSVSyntax().setDelimiter(((String)t).charAt(0)); }});
+
+        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.36"), '"') { //$NON-NLS-1$
+            protected String getValue() { return String.valueOf(model.getCSVSyntax().getQuote()); }
+            protected void setValue(Object t) { model.getCSVSyntax().setQuote(((String)t).charAt(0)); }});
+
+        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.37"), '"') { //$NON-NLS-1$
+            protected String getValue() { return String.valueOf(model.getCSVSyntax().getEscape()); }
+            protected void setValue(Object t) { model.getCSVSyntax().setEscape(((String)t).charAt(0)); }});  
+
+        window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.38"), CSVSyntax.getAvailableLinebreaks()) { //$NON-NLS-1$
+            protected String getValue() { return CSVSyntax.getLabelForLinebreak(model.getCSVSyntax().getLinebreak()); }
+            protected void setValue(Object t) { model.getCSVSyntax().setLinebreak(CSVSyntax.getLinebreakForLabel((String)t)); }}); //$NON-NLS-1$
+
+    }
+
     /**
      * Create a tab
      * @param window
@@ -127,9 +157,9 @@ public class DialogProperties implements IDialog {
             protected String getValue() { return model.getDescription(); }
             protected void setValue(Object t) { model.setDescription((String)t); }});
 
-        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.9"), ';') { //$NON-NLS-1$
-            protected String getValue() { return String.valueOf(model.getSeparator()); }
-            protected void setValue(Object t) { model.setSeparator(((String)t).charAt(0)); }});
+//        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.9"), ';') { //$NON-NLS-1$
+//            protected String getValue() { return String.valueOf(model.getSeparator()); }
+//            protected void setValue(Object t) { model.setSeparator(((String)t).charAt(0)); }});
 
         window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.33"), getLocales()) { //$NON-NLS-1$
             protected String getValue() { return model.getLocale().getLanguage().toUpperCase(); }
@@ -165,7 +195,7 @@ public class DialogProperties implements IDialog {
             protected Integer getValue() { return model.getMaxNodesInLattice(); }
             protected void setValue(Object t) { model.setMaxNodesInLattice((Integer)t); }});
     }
-
+    
     /**
      * Create a tab
      * @param window

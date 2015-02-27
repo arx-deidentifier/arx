@@ -634,7 +634,7 @@ public class Controller implements IView {
 
         // Export
         final WorkerExport worker = new WorkerExport(file,
-                                                     model.getSeparator(),
+                                                     model.getCSVSyntax(),
                                                      model.getOutput(),
                                                      model.getOutputConfig().getConfig(),
                                                      model.getInputBytes());
@@ -681,8 +681,7 @@ public class Controller implements IView {
 
         // Save
         try {
-            final CSVDataOutput out = new CSVDataOutput(file,
-                                                        model.getSeparator());
+            final CSVDataOutput out = new CSVDataOutput(file, model.getCSVSyntax());
             out.write(hierarchy.getHierarchy());
 
         } catch (final Exception e) {
@@ -1450,9 +1449,14 @@ public class Controller implements IView {
         model.getInputConfig().setResearchSubset(subset);
         model.getInputConfig().setInput(data);
 
-        // TODO: Fix this
+        // Nothing to fix
         if (config instanceof ImportConfigurationCSV) {
-            model.setInputBytes(new File(((ImportConfigurationCSV) config).getFileLocation()).length());
+            ImportConfigurationCSV csvconfig = (ImportConfigurationCSV) config;
+            model.setInputBytes(new File((csvconfig).getFileLocation()).length());
+            model.getCSVSyntax().setDelimiter(csvconfig.getDelimiter());
+            model.getCSVSyntax().setEscape(csvconfig.getEscape());
+            model.getCSVSyntax().setLinebreak(csvconfig.getLinebreak());
+            model.getCSVSyntax().setQuote(csvconfig.getQuote());
         } else {
             model.setInputBytes(0);
         }

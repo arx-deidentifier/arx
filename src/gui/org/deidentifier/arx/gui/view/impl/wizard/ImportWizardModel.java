@@ -80,14 +80,17 @@ public class ImportWizardModel {
     /** Location of file to import from. */
     private String                        fileLocation;
 
-    /** Separator for columns (in case of CSV import). */
-    private char                          csvSeparator;
+    /** Line break characters (in case of CSV import). */
+    private char[]                        csvLinebreak;
 
-    /** Separator for columns (in case of CSV import). */
+    /** Escape character (in case of CSV import). */
     private char                          csvEscape;
 
     /** Separator for columns (in case of CSV import). */
     private char                          csvDelimiter;
+    
+    /** Character to enclose strings (in case of CSV import). */
+    private char                          csvQuote;
 
     /**
      * Indicates whether first row contains header
@@ -133,14 +136,7 @@ public class ImportWizardModel {
         return csvDelimiter;
     }
 
-    /**
-     * @return {@link #csvSeparator}
-     */
-    public char getCsvSeparator() {
-        return csvSeparator;
-    }
-
-    /**
+   /**
      * @return {@link #csvEscape}
      */
     public char getCsvEscape() {
@@ -281,15 +277,6 @@ public class ImportWizardModel {
     }
 
     /**
-     * @param csvSeparator
-     *            {@link #csvSeparator}
-     */
-    public void setCsvSeparator(char csvSeparator) {
-
-        this.csvSeparator = csvSeparator;
-    }
-
-    /**
      * 
      * @param csvEscape
      */
@@ -380,5 +367,23 @@ public class ImportWizardModel {
 
         this.wizardColumns = columns;
     }
+
+    public char[] getCsvLinebreak() {
+        return csvLinebreak;
+    }
+
+    public void setCsvLinebreak(char[] csvLinebreak) {
+        this.csvLinebreak = csvLinebreak;
+    }
+
+    public char getCsvQuote() {
+        return csvQuote;
+    }
+
+    public void setCsvQuote(char csvQuote) {
+        this.csvQuote = csvQuote;
+    }
+
+   
 
 }

@@ -27,6 +27,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVDataOutput;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -36,20 +37,20 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class WorkerExport extends Worker<DataHandle> {
 
-	/** The stop flag. */
-	private volatile boolean stop = false;
-	
-	/** The path. */
-	private final String path;
-	
-	/** The separator. */
-	private final char separator;
-	
-	/** The byte count. */
-	private final long bytes;
-	
-	/** The data. */
-	private final DataHandle handle;
+    /** The stop flag. */
+    private volatile boolean stop = false;
+
+    /** The path. */
+    private final String     path;
+
+    /** The CSVConfig. */
+    private final CSVSyntax  csvSyntax;
+
+    /** The byte count. */
+    private final long       bytes;
+
+    /** The data. */
+    private final DataHandle handle;
 
 	/**
      * Creates a new instance.
@@ -61,14 +62,14 @@ public class WorkerExport extends Worker<DataHandle> {
      * @param bytes
      */
     public WorkerExport(final String path,
-                        final char separator,
+                        final CSVSyntax csvConfig,
                         final DataHandle handle,
                         final ARXConfiguration config,
                         final long bytes) {
     	
         this.path = path;
         this.bytes = bytes;
-        this.separator = separator;
+        this.csvSyntax = csvConfig;
         this.handle = handle;
     }
 
@@ -114,7 +115,7 @@ public class WorkerExport extends Worker<DataHandle> {
 
         // Export the data
         try {
-            final CSVDataOutput csvout = new CSVDataOutput(cout, separator);
+            final CSVDataOutput csvout = new CSVDataOutput(cout, csvSyntax);
             csvout.write(handle.getView().iterator());
             cout.close();
             result = handle;

@@ -38,6 +38,7 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricDescription;
 
@@ -132,8 +133,11 @@ public class Model implements Serializable {
     /** The project name. */
     private String                                name                            = null;
     
-    /** The project's separator. */
+    /** Left for backwards compatibility only! */
     private char                                  separator                       = ';';                                            //$NON-NLS-1$
+
+    /** The projects CSV syntax */
+    private CSVSyntax                             csvSyntax;
     
     /** Execution time of last anonymization. */
     private long                                  time;
@@ -425,6 +429,18 @@ public class Model implements Serializable {
     }
 
 	/**
+     * Gets the csv config model.
+     * @return
+     */
+    public CSVSyntax getCSVSyntax() {
+        if (csvSyntax == null) {
+            csvSyntax = new CSVSyntax();
+            csvSyntax.setDelimiter(separator);
+        }
+        return csvSyntax;
+    }
+
+	/**
      * Returns the project description.
      *
      * @return
@@ -508,7 +524,7 @@ public class Model implements Serializable {
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
 	}
-
+	
 	/**
      * Returns the l-diversity model.
      *
@@ -517,7 +533,7 @@ public class Model implements Serializable {
 	public Map<String, ModelLDiversityCriterion> getLDiversityModel() {
 		return lDiversityModel;
 	}
-	
+
 	/**
      * Returns the project locale.
      *
@@ -672,7 +688,7 @@ public class Model implements Serializable {
 	public String getPath() {
 		return path;
 	}
-
+	
 	/**
      * @return the perspective
      */
@@ -691,7 +707,7 @@ public class Model implements Serializable {
 	public String getQuery() {
         return query;
     }
-	
+
 	/**
      * Returns the current result.
      *
@@ -701,7 +717,7 @@ public class Model implements Serializable {
 		return result;
 	}
 
-	/**
+    /**
      * Returns the currently selected attribute.
      *
      * @return
@@ -709,8 +725,8 @@ public class Model implements Serializable {
 	public String getSelectedAttribute() {
 		return selectedAttribute;
 	}
-
-    /**
+    
+	/**
      * Returns the selected transformation.
      *
      * @return
@@ -718,17 +734,8 @@ public class Model implements Serializable {
 	public ARXNode getSelectedNode() {
 		return selectedNode;
 	}
-    
-	/**
-     * Returns the separator.
-     *
-     * @return
-     */
-	public char getSeparator() {
-		return separator;
-	}
 	
-	/**
+    /**
      * Returns the according parameter.
      *
      * @return
@@ -746,7 +753,7 @@ public class Model implements Serializable {
 		return snapshotSizeSnapshot;
 	}
 
-    /**
+	/**
      * Returns the origin of the subset.
      *
      * @return
@@ -791,7 +798,7 @@ public class Model implements Serializable {
 	    return debugEnabled;
 	}
 
-	/**
+    /**
      * Returns whether this project is modified.
      *
      * @return
@@ -808,7 +815,7 @@ public class Model implements Serializable {
         }
 		return modified;
 	}
-
+    
     /**
      * Returns whether a quasi-identifier is selected.
      *
@@ -817,8 +824,8 @@ public class Model implements Serializable {
 	public boolean isQuasiIdentifierSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
 	}
-    
-    /**
+
+	/**
      * Returns whether a sensitive attribute is selected.
      *
      * @return
@@ -826,7 +833,7 @@ public class Model implements Serializable {
 	public boolean isSensitiveAttributeSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
-
+	
 	/**
      * Returns whether visualization is enabled.
      *
@@ -839,7 +846,7 @@ public class Model implements Serializable {
 	        return this.showVisualization;
 	    }
 	}
-	
+
 	/**
      * Resets the model.
      */
@@ -861,8 +868,8 @@ public class Model implements Serializable {
 		pair[0] = null;
 		pair[1] = null;
 	}
-
-	/**
+    
+    /**
      * Resets the configuration of the privacy criteria.
      */
 	public void resetCriteria() {
@@ -882,8 +889,8 @@ public class Model implements Serializable {
 					attribute));
 		}
 	}
-    
-    /**
+
+	/**
      * Sets the anonymizer.
      *
      * @param anonymizer
@@ -932,7 +939,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	/**
+    /**
      * Sets the according parameter.
      *
      * @param val
@@ -952,7 +959,7 @@ public class Model implements Serializable {
 		this.inputBytes = inputBytes;
 	}
 
-    /**
+	/**
      * Sets the input config.
      *
      * @param config
@@ -1020,14 +1027,14 @@ public class Model implements Serializable {
     public void setMetricDescription(MetricDescription description) {
         this.metricDescription = description;
     }
-
+	
 	/**
      * Marks this project as modified.
      */
     public void setModified() {
 		modified = true;
 	}
-
+	
 	/**
      * Sets the project name.
      *
@@ -1047,7 +1054,7 @@ public class Model implements Serializable {
 		nodeFilter = filter;
 		setModified();
 	}
-	
+
 	/**
      * Sets the current output.
      *
@@ -1064,7 +1071,7 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
-	
+
 	/**
      * Sets the output config.
      *
@@ -1100,7 +1107,7 @@ public class Model implements Serializable {
         setModified();
     }
 
-	/**
+    /**
      * Sets the result.
      *
      * @param result
@@ -1113,14 +1120,14 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
-
+    
 	/**
      * Marks this project as saved.
      */
 	public void setSaved() {
 		modified = false;
 	}
-
+    
     /**
      * Sets the selected attribute.
      *
@@ -1145,7 +1152,7 @@ public class Model implements Serializable {
 		setModified();
 	}
     
-	/**
+    /**
      * Sets the selected node.
      *
      * @param node
@@ -1154,16 +1161,7 @@ public class Model implements Serializable {
 		selectedNode = node;
 		setModified();
 	}
-    
-    /**
-     * Sets the separator.
-     *
-     * @param separator
-     */
-	public void setSeparator(final char separator) {
-		this.separator = separator;
-	}
-    
+
     /**
      * 
      *
@@ -1174,7 +1172,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	/**
+    /**
      * Sets the according parameter.
      *
      * @param snapshotSize
@@ -1183,7 +1181,7 @@ public class Model implements Serializable {
 		setModified();
 		snapshotSizeSnapshot = snapshotSize;
 	}
-    
+
     /**
      * Sets how the subset was defined.
      */
