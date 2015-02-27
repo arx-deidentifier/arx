@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import org.deidentifier.arx.framework.check.INodeChecker;
+import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.framework.lattice.NodeAction;
@@ -171,7 +172,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // Check or evaluate
         if (configuration.getTriggerEvaluate().appliesTo(node)) {
-            InformationLossWithBound<?> loss = checker.getMetric().getInformationLoss(node, null);
+            InformationLossWithBound<?> loss = checker.getMetric().getInformationLoss(node, (IHashGroupify)null);
             lattice.setInformationLoss(node, loss.getInformationLoss());
             lattice.setLowerBound(node, loss.getLowerBound());
             if (loss.getLowerBound() == null) {
