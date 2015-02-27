@@ -69,7 +69,7 @@ public class DialogProperties implements IDialog {
         // Create dialog
         this.dialog = new PreferencesDialog(parent, "Settings", "Project-specific preferences");
         createTabProject(this.dialog);
-        createTabCSVSettings(this.dialog);
+        createTabIOSettings(this.dialog);
         createTabTransformation(this.dialog);
         createTabInternals(this.dialog);
         createTabVisualization(this.dialog);
@@ -82,34 +82,6 @@ public class DialogProperties implements IDialog {
         dialog.open();
     }
     
-    /**
-     * Create a tab
-     * @param window
-     */
-    private void createTabCSVSettings(PreferencesDialog window) {
-        
-        window.addCategory(Resources.getMessage("PropertyDialog.34"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-project.png")); //$NON-NLS-1$
-     
-        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.35"), ';') { //$NON-NLS-1$
-            protected String getValue() { return String.valueOf(model.getCSVSyntax().getDelimiter()); }
-            protected void setValue(Object t) { model.getCSVSyntax().setDelimiter(((String)t).charAt(0)); }});
-
-        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.36"), '"') { //$NON-NLS-1$
-            protected String getValue() { return String.valueOf(model.getCSVSyntax().getQuote()); }
-            protected void setValue(Object t) { model.getCSVSyntax().setQuote(((String)t).charAt(0)); }});
-
-        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.37"), '"') { //$NON-NLS-1$
-            protected String getValue() { return String.valueOf(model.getCSVSyntax().getEscape()); }
-            protected void setValue(Object t) { model.getCSVSyntax().setEscape(((String)t).charAt(0)); }});  
-
-        window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.38"), CSVSyntax.getAvailableLinebreaks()) { //$NON-NLS-1$
-            protected String getValue() { return CSVSyntax.getLabelForLinebreak(model.getCSVSyntax().getLinebreak()); }
-            protected void setValue(Object t) { model.getCSVSyntax().setLinebreak(CSVSyntax.getLinebreakForLabel((String)t)); }}); //$NON-NLS-1$
-
-    }
-
-
     /**
      * Create a tab
      * @param window
@@ -138,6 +110,34 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.29"), false) { //$NON-NLS-1$
             protected Boolean getValue() { return model.isDebugEnabled(); }
             protected void setValue(Object t) { model.setDebugEnabled((Boolean)t); }});
+    }
+
+
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabIOSettings(PreferencesDialog window) {
+        
+        window.addCategory(Resources.getMessage("PropertyDialog.34"), //$NON-NLS-1$
+                           controller.getResources().getImage("settings-io.png")); //$NON-NLS-1$
+     
+        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.35"), ';') { //$NON-NLS-1$
+            protected String getValue() { return String.valueOf(model.getCSVSyntax().getDelimiter()); }
+            protected void setValue(Object t) { model.getCSVSyntax().setDelimiter(((String)t).charAt(0)); }});
+
+        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.36"), '"') { //$NON-NLS-1$
+            protected String getValue() { return String.valueOf(model.getCSVSyntax().getQuote()); }
+            protected void setValue(Object t) { model.getCSVSyntax().setQuote(((String)t).charAt(0)); }});
+
+        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.37"), '"') { //$NON-NLS-1$
+            protected String getValue() { return String.valueOf(model.getCSVSyntax().getEscape()); }
+            protected void setValue(Object t) { model.getCSVSyntax().setEscape(((String)t).charAt(0)); }});  
+
+        window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.38"), CSVSyntax.getAvailableLinebreaks()) { //$NON-NLS-1$
+            protected String getValue() { return CSVSyntax.getLabelForLinebreak(model.getCSVSyntax().getLinebreak()); }
+            protected void setValue(Object t) { model.getCSVSyntax().setLinebreak(CSVSyntax.getLinebreakForLabel((String)t)); }}); //$NON-NLS-1$
+
     }
 
     /**
