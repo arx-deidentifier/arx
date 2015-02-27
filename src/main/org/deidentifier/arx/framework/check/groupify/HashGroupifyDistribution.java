@@ -55,7 +55,6 @@ public class HashGroupifyDistribution {
         List<HashGroupifyEntry> list = new ArrayList<HashGroupifyEntry>();
         while(entry != null) {
             if (entry.isNotOutlier && entry.count > 0) {
-                this.numClasses++;
                 addToDistribution(entry.count);
                 list.add(entry);
             } else {
@@ -67,8 +66,7 @@ public class HashGroupifyDistribution {
         
         // Suppressed tuples form one equivalence class
         if (suppressed != 0) {
-            this.distribution.putOrAdd(suppressed, 1, 1);
-            this.numClasses++;
+            addToDistribution(suppressed);
         }
         
         // Sort & store suppressible entries
@@ -82,12 +80,37 @@ public class HashGroupifyDistribution {
     }
     
     /**
+     * Returns the average class size
+     * @return
+     */
+    public double getAverageClassSize() {
+        return numTuples / numClasses;
+    }
+
+    /**
      * Returns a set of classes as an input for the risk model
      */
     public RiskModelEquivalenceClasses getEquivalenceClasses() {
         return new RiskModelEquivalenceClasses(this.distribution);
     }
 
+    /**
+     * Returns the fraction of tuples that are in classes of the given size
+     * @param size
+     * @return
+     */
+    public double getFractionOfTuplesInClassesOfSize(int size) {
+        return (double)distribution.get(size) * (double)size / numTuples;
+    }
+
+    /**
+     * Returns the number of tuples
+     * @return
+     */
+    public int getNumberOfTuples() {
+        return (int)this.numTuples;
+    }
+    
     /**
      * Suppresses one entry. Returns the size of the suppressed class or 0, if no entry existed that could be suppressed
      * @return
@@ -124,30 +147,5 @@ public class HashGroupifyDistribution {
         if (previous != 1) {
             distribution.put(size, previous - 1);
         }
-    }
-
-    /**
-     * Returns the average class size
-     * @return
-     */
-    public double getAverageClassSize() {
-        return numTuples / numClasses;
-    }
-
-    /**
-     * Returns the fraction of tuples that are in classes of the given size
-     * @param size
-     * @return
-     */
-    public double getFractionOfTuplesInClassesOfSize(int size) {
-        return (double)distribution.get(size) * (double)size / numTuples;
-    }
-
-    /**
-     * Returns the number of tuples
-     * @return
-     */
-    public int getNumberOfTuples() {
-        return (int)this.numTuples;
     }
 }
