@@ -33,18 +33,28 @@ import com.carrotsearch.hppc.IntIntOpenHashMap;
 public class HashGroupifyDistribution {
 
     /** The backing map */
-    private IntIntOpenHashMap   distribution = new IntIntOpenHashMap();
+    private IntIntOpenHashMap   distribution        = new IntIntOpenHashMap();
     /** The number of suppressed tuples */
-    private int                 suppressed   = 0;
+    private int                 suppressed          = 0;
     /** Entries that can be suppressed */
     private HashGroupifyEntry[] entries;
-    /** Offset into the array of entries that can be suppressed */
-    private int                 offset       = 0;
     /** Number of tuples in the data set */
     private double              numTuples;
     /** Number of classes in the data set */
-    private double              numClasses   = 0;
+    private double              numClasses          = 0;
 
+    /** State of the binary search */
+    private int                 binaryLow           = 0;
+    /** State of the binary search */
+    private int                 binaryHigh          = 0;
+    /** State of the binary search */
+    private int                 binaryMid           = 0;
+    /** State of the binary search */
+    private int                 initiallySuppressed = 0;
+
+    /** State of the linear search */
+    private int                 linearOffset        = 0;
+    
     /**
      * Creates a new instance
      * @param entry
@@ -104,6 +114,31 @@ public class HashGroupifyDistribution {
     }
 
     /**
+     * Debugging stuff
+     * @return
+     */
+    public int getMaxSuppressedIndex() {
+        for (int i=0; i<entries.length; i++) {
+            if (entries[i].isNotOutlier) {
+                
+                int count = 0;
+                for (int j=i+1; j<entries.length; j++) {
+                    if (entries[i].isNotOutlier) {
+                        count++;
+                    }
+                }
+                
+                if (count != 0) {
+                    throw new RuntimeException("ARGL: "+count);
+                }
+                
+                return i-1;
+            }
+        }
+        return entries.length-1;
+    }
+    
+    /**
      * Returns the number of tuples
      * @return
      */
@@ -112,19 +147,82 @@ public class HashGroupifyDistribution {
     }
     
     /**
+     * Returns the number of suppressed tuples
+     * @return
+     */
+    public int getNumOfSuppressedTuples() {
+        return this.suppressed;
+    }
+    
+    /**
+     * Suppress less tuples
+     * @return
+     */
+    public int suppressBinaryLess() {
+
+        int newBinaryHigh = binaryMid - 1;
+        int newBinaryMid = (binaryLow + newBinaryHigh) / 2;
+
+        for (int i = newBinaryMid + 1; i <= binaryHigh; i++) {
+            HashGroupifyEntry entry = entries[i];
+            unSuppressEntry(entry);
+        }
+        
+        binaryHigh = newBinaryHigh;
+        binaryMid = newBinaryMid;
+        
+        // mid - high
+        return suppressed - initiallySuppressed;
+    }
+
+    /**
+     * Suppress more tuples
+     * @return
+     */
+    public int suppressBinaryMore() {
+        
+        binaryLow = binaryMid + 1;
+        binaryMid = (binaryLow + binaryHigh) / 2;
+        
+        // low-mid
+        
+        for (int i = binaryLow; i <= binaryMid; i++) {
+            HashGroupifyEntry entry = entries[i];
+            suppressEntry(entry);
+        }
+        
+        return suppressed - initiallySuppressed;
+    }
+    
+    /**
+     * Starts binary suppression
+     * @return
+     */
+    public int suppressBinaryStart() {
+        binaryLow = 0;
+        binaryHigh = entries.length - 1;
+        binaryMid = (binaryLow + binaryHigh) / 2;
+        initiallySuppressed = suppressed;
+        
+        // low-mid
+        
+        for (int i = binaryLow; i <= binaryMid; i++) {
+            HashGroupifyEntry entry = entries[i];
+            suppressEntry(entry);
+        }
+        return suppressed - initiallySuppressed;
+    }
+
+    /**
      * Suppresses one entry. Returns the size of the suppressed class or 0, if no entry existed that could be suppressed
      * @return
      */
-    public int suppressNextClass() {
-        if (offset == entries.length) {
+    public int suppressLinearMore() {
+        if (linearOffset == entries.length) {
             return 0;
         }
-        HashGroupifyEntry entry = entries[offset++];
-        entry.isNotOutlier = false;
-        removeFromDistribution(entry.count);
-        if (this.suppressed != 0) removeFromDistribution(suppressed);
-        this.suppressed += entry.count;
-        addToDistribution(suppressed);
+        HashGroupifyEntry entry = entries[linearOffset++];
+        suppressEntry(entry);
         return entry.count;
     }
 
@@ -147,5 +245,38 @@ public class HashGroupifyDistribution {
         if (previous != 1) {
             distribution.put(size, previous - 1);
         }
+    }
+
+    /**
+     * Suppresses the given entry
+     * @param entry
+     */
+    private void suppressEntry(HashGroupifyEntry entry) {
+        entry.isNotOutlier = false;
+        removeFromDistribution(entry.count);
+        if (this.suppressed != 0) {
+            removeFromDistribution(this.suppressed);
+        }
+        this.suppressed += entry.count;
+        addToDistribution(this.suppressed);
+    }
+
+    /**
+     * Unsuppressed the given entry
+     * @param entry
+     */
+    private void unSuppressEntry(HashGroupifyEntry entry) {
+        
+        if (this.suppressed == 0) {
+            throw new IllegalStateException("Must not happed");
+        }
+        
+        entry.isNotOutlier = true;
+        removeFromDistribution(this.suppressed);
+        this.suppressed -= entry.count;
+        if (this.suppressed != 0) {
+            addToDistribution(this.suppressed);
+        }
+        addToDistribution(entry.count);
     }
 }

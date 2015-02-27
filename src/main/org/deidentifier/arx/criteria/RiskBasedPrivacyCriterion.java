@@ -50,18 +50,41 @@ public abstract class RiskBasedPrivacyCriterion extends SampleBasedPrivacyCriter
     public int enforce(HashGroupifyDistribution distribution,
                        int numCurrentlySuppressedOutliers,
                        int numMaxSuppressedOutliers) {
-
-        while (!isFulfilled(distribution)) {
-            int suppressed = distribution.suppressNextClass();
-            if (suppressed == 0) {
-                return distribution.getNumberOfTuples();
-            }
-            numCurrentlySuppressedOutliers += suppressed;
-            if (numCurrentlySuppressedOutliers > numMaxSuppressedOutliers) {
-                break;
+        
+        if (isFulfilled(distribution)) {
+            return numCurrentlySuppressedOutliers;
+        }
+        
+        int lastSuppressed = numCurrentlySuppressedOutliers; 
+        int currentSuppressed = distribution.suppressBinaryStart();
+        while (lastSuppressed != currentSuppressed) {
+            
+            lastSuppressed = currentSuppressed;
+            if (!isFulfilled(distribution)) {
+                currentSuppressed = distribution.suppressBinaryMore();
+            } else {
+                currentSuppressed = distribution.suppressBinaryLess();
             }
         }
-        return numCurrentlySuppressedOutliers;
+        
+        System.out.println("COUNT: "+distribution.getMaxSuppressedIndex());
+        
+        return distribution.getNumOfSuppressedTuples();
+//
+//        while (!isFulfilled(distribution)) {
+//            int suppressed = distribution.suppressNextClass();
+//            if (suppressed == 0) {
+//                return distribution.getNumberOfTuples();
+//            }
+//            numCurrentlySuppressedOutliers += suppressed;
+//            if (numCurrentlySuppressedOutliers > numMaxSuppressedOutliers) {
+//                break;
+//            }
+//        }
+//
+//        System.out.println("COUNT: "+distribution.getMaxSuppressedIndex());
+//        
+//        return numCurrentlySuppressedOutliers;
     }
     
     @Override
