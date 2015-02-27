@@ -53,7 +53,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final File file) throws IOException {
-        this(file, CSVUtil.DEFAULT_DELIMITER);
+        this(file, CSVSyntax.DEFAULT_DELIMITER);
     }
 
     /**
@@ -64,7 +64,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final File file, final char delimiter) throws IOException {
-        this(file, delimiter, CSVUtil.DEFAULT_QUOTE);
+        this(file, delimiter, CSVSyntax.DEFAULT_QUOTE);
     }
 
     /**
@@ -76,7 +76,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final File file, final char delimiter, final char quote) throws IOException {
-        this(file, delimiter, quote, CSVUtil.DEFAULT_ESCAPE);
+        this(file, delimiter, quote, CSVSyntax.DEFAULT_ESCAPE);
     }
 
     /**
@@ -89,7 +89,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final File file, final char delimiter, final char quote, final char escape) throws IOException {
-        this(file, delimiter, quote, escape, CSVUtil.DEFAULT_LINEBREAK);
+        this(file, delimiter, quote, escape, CSVSyntax.DEFAULT_LINEBREAK);
     }
 
     /**
@@ -124,7 +124,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final OutputStream stream) throws IOException {
-        this(stream, CSVUtil.DEFAULT_DELIMITER);
+        this(stream, CSVSyntax.DEFAULT_DELIMITER);
     }
 
     /**
@@ -135,7 +135,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final OutputStream stream, final char delimiter) throws IOException {
-        this(stream, delimiter, CSVUtil.DEFAULT_QUOTE);
+        this(stream, delimiter, CSVSyntax.DEFAULT_QUOTE);
     }
 
     /**
@@ -147,7 +147,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote) throws IOException {
-        this(stream, delimiter, quote, CSVUtil.DEFAULT_ESCAPE);
+        this(stream, delimiter, quote, CSVSyntax.DEFAULT_ESCAPE);
     }
 
     /**
@@ -160,7 +160,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
-        this(stream, delimiter, quote, escape, CSVUtil.DEFAULT_LINEBREAK);
+        this(stream, delimiter, quote, escape, CSVSyntax.DEFAULT_LINEBREAK);
     }
 
     /**
@@ -196,7 +196,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final String filename) throws IOException {
-        this(filename, CSVUtil.DEFAULT_DELIMITER);
+        this(filename, CSVSyntax.DEFAULT_DELIMITER);
     }
 
     /**
@@ -207,7 +207,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final String filename, final char delimiter) throws IOException {
-        this(filename, delimiter, CSVUtil.DEFAULT_QUOTE);
+        this(filename, delimiter, CSVSyntax.DEFAULT_QUOTE);
     }
 
     /**
@@ -219,7 +219,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final String filename, final char delimiter, final char quote) throws IOException {
-        this(filename, delimiter, quote, CSVUtil.DEFAULT_ESCAPE);
+        this(filename, delimiter, quote, CSVSyntax.DEFAULT_ESCAPE);
     }
 
     /**
@@ -232,7 +232,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final String filename, final char delimiter, final char quote, final char escape) throws IOException {
-        this(filename, delimiter, quote, escape, CSVUtil.DEFAULT_LINEBREAK);
+        this(filename, delimiter, quote, escape, CSVSyntax.DEFAULT_LINEBREAK);
     }
 
     /**
@@ -330,7 +330,7 @@ public class CSVDataOutput {
         format.setQuote(quote);
         format.setQuoteEscape(escape);
         format.setLineSeparator(linebreak);
-        format.setNormalizedNewline(CSVUtil.getNormalizedLinebreakCharacter(linebreak));
+        format.setNormalizedNewline(CSVSyntax.getNormalizedLinebreak(linebreak));
 
         CsvWriterSettings settings = new CsvWriterSettings();
         settings.setEmptyValue("");

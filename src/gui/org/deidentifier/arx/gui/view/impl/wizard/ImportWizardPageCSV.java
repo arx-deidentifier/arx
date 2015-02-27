@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportColumn;
 import org.deidentifier.arx.io.ImportColumnCSV;
@@ -207,12 +208,6 @@ public class ImportWizardPageCSV extends WizardPage {
      */
     private final char[]                       quotes        = { '\"', '\'' };
     
-    /** Supported line breaks. */
-    private final char[][]                     linebreaks        = { { '\n' }, { '\r', '\n' }, { '\r' } };
-
-    /** Labels for supported line breaks. */
-    private final String[]                     linebreaklabels   = { "Unix (\\n)", "Windows (\\r\\n)", "Mac OS (\\r)" };
-
     /**
      * Supported separators.
      * 
@@ -452,7 +447,7 @@ public class ImportWizardPageCSV extends WizardPage {
         comboLinebreak.setVisible(false);
 
         /* Add labels */
-        for (final String c : linebreaklabels) {
+        for (final String c : CSVSyntax.getAvailableLinebreaks()) {
             comboLinebreak.add(String.valueOf(c));
         }
 
@@ -665,7 +660,7 @@ public class ImportWizardPageCSV extends WizardPage {
         data.setCsvDelimiter(delimiters[selectedDelimiter]);
         data.setCsvQuote(quotes[selectedQuote]);
         data.setCsvEscape(escapes[selectedEscape]);
-        data.setCsvLinebreak(linebreaks[selectedLinebreak]);
+        data.setCsvLinebreak(CSVSyntax.getLinebreakForLabel(CSVSyntax.getAvailableLinebreaks()[selectedLinebreak]));
 
         /* Mark page as completed */
         setPageComplete(true);
@@ -687,7 +682,7 @@ public class ImportWizardPageCSV extends WizardPage {
         /* Parameters from the user interface */
         final String location = comboLocation.getText();
         final char delimiter = delimiters[selectedDelimiter];
-        final char[] linebreak = linebreaks[selectedLinebreak];
+        final char[] linebreak = CSVSyntax.getLinebreakForLabel(CSVSyntax.getAvailableLinebreaks()[selectedLinebreak]);
         final char quote = quotes[selectedQuote];
         final char escape = escapes[selectedEscape];
         final boolean containsHeader = btnContainsHeader.getSelection();

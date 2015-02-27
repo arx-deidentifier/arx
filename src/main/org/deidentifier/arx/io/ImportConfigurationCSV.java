@@ -52,7 +52,7 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
      */
     public ImportConfigurationCSV(String fileLocation,
                                   boolean containsHeader) {
-        this(fileLocation, CSVUtil.DEFAULT_DELIMITER, CSVUtil.DEFAULT_QUOTE, CSVUtil.DEFAULT_ESCAPE, containsHeader);
+        this(fileLocation, CSVSyntax.DEFAULT_DELIMITER, CSVSyntax.DEFAULT_QUOTE, CSVSyntax.DEFAULT_ESCAPE, containsHeader);
     }
 
     /**
@@ -65,7 +65,7 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
     public ImportConfigurationCSV(String fileLocation,
                                   char delimiter,
                                   boolean containsHeader) {
-        this(fileLocation, delimiter, CSVUtil.DEFAULT_QUOTE, CSVUtil.DEFAULT_ESCAPE, containsHeader);
+        this(fileLocation, delimiter, CSVSyntax.DEFAULT_QUOTE, CSVSyntax.DEFAULT_ESCAPE, containsHeader);
     }
 
     /**
@@ -80,7 +80,7 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
                                   char delimiter,
                                   char quote,
                                   boolean containsHeader) {
-        this(fileLocation, delimiter, quote, CSVUtil.DEFAULT_ESCAPE, containsHeader);
+        this(fileLocation, delimiter, quote, CSVSyntax.DEFAULT_ESCAPE, containsHeader);
     }
 
     /**
@@ -97,7 +97,7 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
                                   char quote,
                                   char escape,
                                   boolean containsHeader) {
-        this(fileLocation, delimiter, quote, escape, CSVUtil.DEFAULT_LINEBREAK, containsHeader);
+        this(fileLocation, delimiter, quote, escape, CSVSyntax.DEFAULT_LINEBREAK, containsHeader);
     }
 
     /**

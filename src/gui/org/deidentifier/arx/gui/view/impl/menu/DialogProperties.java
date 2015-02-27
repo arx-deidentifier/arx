@@ -26,9 +26,9 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IDialog;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.eclipse.swt.widgets.Shell;
 
-import de.linearbits.preferences.PreferencesDialog;
 import de.linearbits.preferences.PreferenceBoolean;
 import de.linearbits.preferences.PreferenceCharacter;
 import de.linearbits.preferences.PreferenceDouble;
@@ -36,6 +36,7 @@ import de.linearbits.preferences.PreferenceInteger;
 import de.linearbits.preferences.PreferenceSelection;
 import de.linearbits.preferences.PreferenceString;
 import de.linearbits.preferences.PreferenceText;
+import de.linearbits.preferences.PreferencesDialog;
 
 /**
  * This class implements a dialog for editing project properties.
@@ -80,6 +81,34 @@ public class DialogProperties implements IDialog {
     public void open() {
         dialog.open();
     }
+    
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabCSVSettings(PreferencesDialog window) {
+        
+        window.addCategory(Resources.getMessage("PropertyDialog.34"), //$NON-NLS-1$
+                           controller.getResources().getImage("settings-project.png")); //$NON-NLS-1$
+     
+        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.35"), ';') { //$NON-NLS-1$
+            protected String getValue() { return String.valueOf(model.getCSVSyntax().getDelimiter()); }
+            protected void setValue(Object t) { model.getCSVSyntax().setDelimiter(((String)t).charAt(0)); }});
+
+        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.36"), '"') { //$NON-NLS-1$
+            protected String getValue() { return String.valueOf(model.getCSVSyntax().getQuote()); }
+            protected void setValue(Object t) { model.getCSVSyntax().setQuote(((String)t).charAt(0)); }});
+
+        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.37"), '"') { //$NON-NLS-1$
+            protected String getValue() { return String.valueOf(model.getCSVSyntax().getEscape()); }
+            protected void setValue(Object t) { model.getCSVSyntax().setEscape(((String)t).charAt(0)); }});  
+
+        window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.38"), CSVSyntax.getAvailableLinebreaks()) { //$NON-NLS-1$
+            protected String getValue() { return CSVSyntax.getLabelForLinebreak(model.getCSVSyntax().getLinebreak()); }
+            protected void setValue(Object t) { model.getCSVSyntax().setLinebreak(CSVSyntax.getLinebreakForLabel((String)t)); }}); //$NON-NLS-1$
+
+    }
+
 
     /**
      * Create a tab
@@ -136,34 +165,6 @@ public class DialogProperties implements IDialog {
             protected String getValue() { return model.getLocale().getLanguage().toUpperCase(); }
             protected void setValue(Object t) { model.setLocale(((String)t).equals("Default") ? Locale.getDefault() : new Locale(((String)t).toLowerCase())); }}); //$NON-NLS-1$
     }
-    
-    /**
-     * Create a tab
-     * @param window
-     */
-    private void createTabCSVSettings(PreferencesDialog window) {
-        
-        window.addCategory(Resources.getMessage("PropertyDialog.34"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-project.png")); //$NON-NLS-1$
-     
-        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.35"), ';') { //$NON-NLS-1$
-            protected String getValue() { return String.valueOf(model.getCSVSyntax().getDelimiter()); }
-            protected void setValue(Object t) { model.getCSVSyntax().setDelimiter(((String)t).charAt(0)); }});
-
-        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.36"), '"') { //$NON-NLS-1$
-            protected String getValue() { return String.valueOf(model.getCSVSyntax().getQuote()); }
-            protected void setValue(Object t) { model.getCSVSyntax().setQuote(((String)t).charAt(0)); }});
-
-        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.37"), '"') { //$NON-NLS-1$
-            protected String getValue() { return String.valueOf(model.getCSVSyntax().getEscape()); }
-            protected void setValue(Object t) { model.getCSVSyntax().setEscape(((String)t).charAt(0)); }});  
-
-        window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.38"), getLinebreakLabels()) { //$NON-NLS-1$
-            protected String getValue() { return toLinebreakLabel(model.getCSVSyntax().getLinebreak()); }
-            protected void setValue(Object t) { model.getCSVSyntax().setLinebreak(fromLinebreakLabel((String)t)); }}); //$NON-NLS-1$
-
-    }
-
 
     /**
      * Create a tab
@@ -194,7 +195,7 @@ public class DialogProperties implements IDialog {
             protected Integer getValue() { return model.getMaxNodesInLattice(); }
             protected void setValue(Object t) { model.setMaxNodesInLattice((Integer)t); }});
     }
-
+    
     /**
      * Create a tab
      * @param window
@@ -223,58 +224,5 @@ public class DialogProperties implements IDialog {
             languages.add(lang.toUpperCase());
         }
         return languages.toArray(new String[]{});
-    }
-    
-    /**
-     * Converts a line break label to according character array. 
-     * @param label
-     * @return
-     */
-    private char[] fromLinebreakLabel(String label) {
-        for (int i = 0; i < linebreaklabels.length; i++) {
-            if (linebreaklabels[i].equals(label)) {
-                return linebreaks[i];
-            }
-        }
-        return linebreaks[0]; // default
-    }
-
-    /**
-     * Converts character array to according line break label.
-     * @param linebreak
-     * @return
-     */
-    private String toLinebreakLabel(char[] linebreak) {
-        for (int i = 0; i < linebreaks.length; i++) {
-            char[] currentLinebreak = linebreaks[i];
-            if (currentLinebreak.length != linebreak.length) {
-                continue;
-            }
-            boolean match = true;
-            for (int j = 0; j < currentLinebreak.length; j++) {
-                if (currentLinebreak[j] != linebreak[j]) {
-                    match = false;
-                    break;
-                }
-            }
-            if (match) {
-                return linebreaklabels[i];
-            }
-        }
-        return linebreaklabels[0]; // default
-    }
-
-    /** Supported line breaks. */
-    private final char[][]                     linebreaks        = { { '\n' }, { '\r', '\n' }, { '\r' } };
-
-    /** Labels for supported line breaks. */
-    private final String[]                     linebreaklabels   = { "Unix (\\n)", "Windows (\\r\\n)", "Mac OS (\\r)" };
-
-    /**
-     * Returns the supported line break labels.
-     * @return
-     */
-    private String[] getLinebreakLabels() {
-        return linebreaklabels;
     }
 }

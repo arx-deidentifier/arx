@@ -17,6 +17,7 @@
 package org.deidentifier.arx.io;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Syntax for a CSV file.
@@ -41,19 +42,94 @@ public class CSVSyntax implements Serializable{
     /** The linebreak. */
     private char[]            linebreak;
 
+    /** Default values. */
+    public static final char   DEFAULT_DELIMITER = ';';
+    /** Default values. */
+    public static final char   DEFAULT_QUOTE     = '\"';
+
+    /** Default values. */
+    public static final char   DEFAULT_ESCAPE    = '\"';
+
+    /** Default values. */
+    public static final char[] DEFAULT_LINEBREAK = { '\n' };
+
+    /** Supported line breaks. */
+    private static final char[][] linebreaks      = { { '\n' }, { '\r', '\n' }, { '\r' } };
+    
+    /** Labels for supported line breaks. */
+    private static final String[] linebreaklabels = { "Unix", "Windows", "Mac OS"};
+    /**
+     * Returns the available line breaks
+     * @return
+     */
+    public static String[] getAvailableLinebreaks() {
+        return linebreaklabels.clone();
+    }
+
+    /**
+     * Returns a linebreak for a label
+     * @param label
+     * @return
+     */
+    public static char[] getLinebreakForLabel(String label) {
+        int idx = 0;
+        for (String c : linebreaklabels) {
+            if (c.equals(label)) {
+                return linebreaks[idx];
+            } else {
+                idx++;
+            }
+        }
+        return linebreaks[0];
+    }
+
+    /**
+     * Returns a label for a linebreak
+     * @param linebreak
+     * @return
+     */
+    public static String getLabelForLinebreak(char[] linebreak) {
+        int idx = 0;
+        for (char[] c : linebreaks) {
+            if (Arrays.equals(c, linebreak)) {
+                return linebreaklabels[idx];
+            } else {
+                idx++;
+            }
+        }
+        return linebreaklabels[0];
+    }
+
+    /**
+     * Gets the normalized line break character.
+     *
+     * @param linebreak the line break
+     * @return the normalized line break character
+     */
+    public static char getNormalizedLinebreak(char[] linebreak) {
+        if (linebreak[0] == '\n') {
+            return '\n';
+        } else if ((linebreak[0] == '\r') && (linebreak.length < 2)) {
+            return '\r';
+        } else {
+            return '\n';
+        }
+    }
+
     /**
      * Instantiates a new syntax for a CSV file.
      */
     public CSVSyntax() {
-        this(CSVUtil.DEFAULT_DELIMITER);
+        this(DEFAULT_DELIMITER);
     }
+
     /**
      * Instantiates a new syntax for a CSV file.
      *
      * @param delimiter the delimiter
      */
     public CSVSyntax(final char delimiter) {
-        this(delimiter, CSVUtil.DEFAULT_QUOTE);
+        this(delimiter, DEFAULT_QUOTE);
     }
 
     /**
@@ -63,7 +139,7 @@ public class CSVSyntax implements Serializable{
      * @param quote the quote
      */
     public CSVSyntax(final char delimiter, final char quote) {
-        this(delimiter, quote, CSVUtil.DEFAULT_ESCAPE);
+        this(delimiter, quote, DEFAULT_ESCAPE);
     }
 
     /**
@@ -74,7 +150,7 @@ public class CSVSyntax implements Serializable{
      * @param escape the escape
      */
     public CSVSyntax(final char delimiter, final char quote, final char escape) {
-        this(delimiter, quote, escape, CSVUtil.DEFAULT_LINEBREAK);
+        this(delimiter, quote, escape, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -91,6 +167,7 @@ public class CSVSyntax implements Serializable{
         this.escape = escape;
         this.linebreak = linebreak;
     }
+    
 
     /**
      * Instantiates a new syntax for a CSV file.
@@ -109,6 +186,7 @@ public class CSVSyntax implements Serializable{
         }
         this.linebreak = linebreak.toCharArray();
     }
+
     /**
      * Gets the delimiter.
      *
@@ -162,7 +240,7 @@ public class CSVSyntax implements Serializable{
     public void setEscape(char escape) {
         this.escape = escape;
     }
-
+    
     /**
      * Sets the line break.
      *
@@ -183,7 +261,7 @@ public class CSVSyntax implements Serializable{
         }
         this.linebreak = linebreak.toCharArray();
     }
-
+    
     /**
      * Sets the quote.
      *
