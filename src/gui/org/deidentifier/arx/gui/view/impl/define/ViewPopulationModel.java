@@ -242,6 +242,12 @@ public class ViewPopulationModel implements IView {
      */
     private void update() {
 
+        // Check
+        if (model == null || model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null) { 
+            return; 
+        }
+
         root.setRedraw(false);
         
         for (int i=0; i<combo.getItemCount(); i++) {

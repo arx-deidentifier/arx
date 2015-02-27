@@ -194,6 +194,12 @@ public class ViewRisksPopulationModel implements IView {
      */
     private void update() {
 
+        // Check
+        if (model == null || model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null) { 
+            return; 
+        }
+        
         root.setRedraw(false);
         SWTUtil.enable(root);
         

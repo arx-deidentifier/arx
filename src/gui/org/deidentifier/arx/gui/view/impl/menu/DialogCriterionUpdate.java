@@ -45,9 +45,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.mihalis.opal.dynamictablecolumns.DynamicTable;
+import org.mihalis.opal.dynamictablecolumns.DynamicTableColumn;
 
 /**
  * A dialog for adding and configuring privacy criteria.
@@ -237,19 +237,26 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
 
         parent.setLayout(SWTUtil.createGridLayout(1));
 
-        final Table table = new Table(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        final DynamicTable table = new DynamicTable(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         final GridData d = SWTUtil.createFillGridData();
         d.heightHint = 100;
         table.setLayoutData(d);
 
-        TableColumn column1 = new TableColumn(table, SWT.NONE);
-        column1.setText("");
-        TableColumn column2 = new TableColumn(table, SWT.NONE);
+        DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.NONE);
+        column1.setText("Type");
+        column1.setWidth("10%", "30px");
+        DynamicTableColumn column2 = new DynamicTableColumn(table, SWT.NONE);
         column2.setText(Resources.getMessage("CriterionSelectionDialog.2")); //$NON-NLS-1$
-        TableColumn column3 = new TableColumn(table, SWT.NONE);
+        column2.setWidth("45%", "100px");
+        DynamicTableColumn column3 = new DynamicTableColumn(table, SWT.NONE);
         column3.setText(Resources.getMessage("CriterionSelectionDialog.3")); //$NON-NLS-1$
+        column3.setWidth("45%", "100px");
         
+        column1.pack();
+        column2.pack();
+        column3.pack();
+
 
         this.symbolL = controller.getResources().getImage("symbol_l.png"); //$NON-NLS-1$
         this.symbolT = controller.getResources().getImage("symbol_t.png"); //$NON-NLS-1$
@@ -294,11 +301,6 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
             }
         });
 
-        column1.pack();
-        column2.pack();
-        column3.pack();
-        
-        
         ComponentTitledBorder border = new ComponentTitledBorder(parent, "Configuration");
         border.setLayoutData(SWTUtil.createFillGridData());
         
