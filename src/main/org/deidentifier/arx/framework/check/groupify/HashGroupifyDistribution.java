@@ -32,6 +32,14 @@ import com.carrotsearch.hppc.IntIntOpenHashMap;
  */
 public class HashGroupifyDistribution {
 
+    /**
+     * A condition that may or may not be fulfilled for the distribution
+     * @author Fabian Prasser
+     */
+    public static interface Condition {
+        public boolean isFulfilled(HashGroupifyDistribution distribution);
+    }
+    
     /** The backing map */
     private IntIntOpenHashMap   distribution        = new IntIntOpenHashMap();
     /** The number of suppressed tuples */
@@ -42,18 +50,6 @@ public class HashGroupifyDistribution {
     private double              numTuples;
     /** Number of classes in the data set */
     private double              numClasses          = 0;
-
-    /** State of the binary search */
-    private int                 binaryLow           = 0;
-    /** State of the binary search */
-    private int                 binaryHigh          = 0;
-    /** State of the binary search */
-    private int                 binaryMid           = 0;
-    /** State of the binary search */
-    private int                 initiallySuppressed = 0;
-
-    /** State of the linear search */
-    private int                 linearOffset        = 0;
     
     /**
      * Creates a new instance
@@ -114,19 +110,6 @@ public class HashGroupifyDistribution {
     }
 
     /**
-     * Debugging stuff
-     * @return
-     */
-    public int getMaxSuppressedIndex() {
-        for (int i=0; i<entries.length; i++) {
-            if (entries[i].isNotOutlier) {
-                return i-1;
-            }
-        }
-        return entries.length-1;
-    }
-    
-    /**
      * Returns the number of tuples
      * @return
      */
@@ -142,88 +125,76 @@ public class HashGroupifyDistribution {
         return this.suppressed;
     }
     
+
     /**
-     * Suppress less tuples
-     * @return
+     * Suppresses entries until the condition is fulfilled
+     * @param condition
+     * @return the number of tuples that have been suppressed
      */
-    public int suppressBinaryLess() {
+    public int suppressWhileNotFulfilledLinear(Condition condition) {
 
-        int newBinaryHigh = binaryMid - 1;
-        int newBinaryMid = (binaryLow + newBinaryHigh) / 2;
-        
-        if (binaryLow > newBinaryHigh) {
-            return suppressed - initiallySuppressed;
-        }
+        int initiallySuppressed = this.suppressed;
 
-        for (int i = newBinaryMid + 1; i <= binaryHigh; i++) {
-            HashGroupifyEntry entry = entries[i];
-            unSuppressEntry(entry);
+        for (int i=0; i<entries.length; i++) {
+            if (!condition.isFulfilled(this)) {
+                suppressEntry(entries[i]);
+            } else {
+                break;
+            }
         }
         
-        binaryHigh = newBinaryHigh;
-        binaryMid = newBinaryMid;
-        
-        // mid - high
-        return suppressed - initiallySuppressed;
+        return this.suppressed - initiallySuppressed;
     }
 
     /**
-     * Suppress more tuples
-     * @return
+     * Suppresses entries until the condition is fulfilled
+     * @param condition
+     * @return the number of tuples that have been suppressed
      */
-    public int suppressBinaryMore() {
-        
-        binaryLow = binaryMid + 1;
-        binaryMid = (binaryLow + binaryHigh) / 2;
-        
-        if (binaryLow > binaryHigh) {
-            return suppressed - initiallySuppressed;
-        }
-        
-        // low-mid
-        
-        for (int i = binaryLow; i <= binaryMid; i++) {
-            HashGroupifyEntry entry = entries[i];
-            suppressEntry(entry);
-        }
-        
-        return suppressed - initiallySuppressed;
-    }
-    
-    /**
-     * Starts binary suppression
-     * @return
-     */
-    public int suppressBinaryStart() {
-        binaryLow = 0;
-        binaryHigh = entries.length - 1;
-        binaryMid = (binaryLow + binaryHigh) / 2;
-        initiallySuppressed = suppressed;
+    public int suppressWhileNotFulfilledBinary(Condition condition) {
 
-        if (binaryLow > binaryHigh) {
-            return suppressed - initiallySuppressed;
-        }
-        
-        // low-mid
-        
-        for (int i = binaryLow; i <= binaryMid; i++) {
-            HashGroupifyEntry entry = entries[i];
-            suppressEntry(entry);
-        }
-        return suppressed - initiallySuppressed;
-    }
+        // Start parameters
+        int low = 0;
+        int high = entries.length - 1;
+        int mid = (low + high) / 2;
+        int initiallySuppressed = this.suppressed;
 
-    /**
-     * Suppresses one entry. Returns the size of the suppressed class or 0, if no entry existed that could be suppressed
-     * @return
-     */
-    public int suppressLinearMore() {
-        if (linearOffset == entries.length) {
-            return 0;
+        // Initially suppress from low to mid
+        for (int i=low; i <= mid; i++) {
+            suppressEntry(entries[i]);
         }
-        HashGroupifyEntry entry = entries[linearOffset++];
-        suppressEntry(entry);
-        return entry.count;
+
+        // While not done
+        while (low <= high) {
+
+            // Binary search
+            if (condition.isFulfilled(this)) {
+                high = mid - 1;
+                mid = (low + high) / 2;
+                
+                // Clear suppression from mid
+                for (int i = mid + 1; i < entries.length && !entries[i].isNotOutlier; i++) {
+                    unSuppressEntry(entries[i]);
+                }
+                
+            } else {
+                
+                low = mid + 1;
+                mid = (low + high) / 2;
+                
+                // Suppress from low to mid
+                for (int i=low; i <= mid; i++) {
+                    suppressEntry(entries[i]);
+                }
+            }
+        }
+
+        // Finally check mid+1
+        if (!condition.isFulfilled(this) && mid + 1 < entries.length && entries[mid + 1].isNotOutlier) {
+            suppressEntry(entries[mid + 1]);
+        }
+
+        return this.suppressed - initiallySuppressed;
     }
 
     /**

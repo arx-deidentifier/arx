@@ -19,6 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution.Condition;
 
 /**
  * Abstract class for criteria that ensure that a certain risk measure is lower than or equal to a given threshold
@@ -50,41 +51,14 @@ public abstract class RiskBasedPrivacyCriterion extends SampleBasedPrivacyCriter
     public int enforce(HashGroupifyDistribution distribution,
                        int numCurrentlySuppressedOutliers,
                        int numMaxSuppressedOutliers) {
-        
-        if (isFulfilled(distribution)) {
-            return numCurrentlySuppressedOutliers;
-        }
-        
-        int lastSuppressed = numCurrentlySuppressedOutliers; 
-        int currentSuppressed = distribution.suppressBinaryStart();
-        while (lastSuppressed != currentSuppressed) {
-            
-            lastSuppressed = currentSuppressed;
-            if (!isFulfilled(distribution)) {
-                currentSuppressed = distribution.suppressBinaryMore();
-            } else {
-                currentSuppressed = distribution.suppressBinaryLess();
+       
+        distribution.suppressWhileNotFulfilledBinary(new Condition(){
+            public boolean isFulfilled(HashGroupifyDistribution distribution) {
+                return RiskBasedPrivacyCriterion.this.isFulfilled(distribution);
             }
-        }
-        
-        System.out.println("COUNT: "+distribution.getMaxSuppressedIndex());
-        
+        });
+       
         return distribution.getNumOfSuppressedTuples();
-//
-//        while (!isFulfilled(distribution)) {
-//            int suppressed = distribution.suppressNextClass();
-//            if (suppressed == 0) {
-//                return distribution.getNumberOfTuples();
-//            }
-//            numCurrentlySuppressedOutliers += suppressed;
-//            if (numCurrentlySuppressedOutliers > numMaxSuppressedOutliers) {
-//                break;
-//            }
-//        }
-//
-//        System.out.println("COUNT: "+distribution.getMaxSuppressedIndex());
-//        
-//        return numCurrentlySuppressedOutliers;
     }
     
     @Override
