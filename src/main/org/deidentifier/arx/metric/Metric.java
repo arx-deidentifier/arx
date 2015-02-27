@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -279,43 +280,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
-     * This method supports backwards compatibility. It will transform implementations from version 1 to 
-     * implementations from version 2, if necessary. 
-     * @param metric
-     * @return
-     */
-    private static Metric<?> createMetric(Metric<?> metric) {
-        
-        if (metric instanceof MetricAECS) {
-            return __MetricV2.createAECSMetric(((MetricAECS)metric).getRowCount());
-        } else if (metric instanceof MetricDM) {
-            return __MetricV2.createDiscernabilityMetric(false, ((MetricDM)metric).getRowCount());
-        } else if (metric instanceof MetricDMStar) {
-            return __MetricV2.createDiscernabilityMetric(true, ((MetricDMStar)metric).getRowCount());
-        } else if (metric instanceof MetricEntropy) {
-            return __MetricV2.createEntropyMetric(true, 
-                                                  ((MetricEntropy)metric).getCache(), 
-                                                  ((MetricEntropy)metric).getCardinalities(), 
-                                                  ((MetricEntropy)metric).getHierarchies());
-        } else if (metric instanceof MetricNMEntropy) {
-            return __MetricV2.createEntropyMetric(false, 
-                                                  ((MetricEntropy)metric).getCache(), 
-                                                  ((MetricEntropy)metric).getCardinalities(), 
-                                                  ((MetricEntropy)metric).getHierarchies());
-        } else if (metric instanceof MetricNMPrecision) {
-            return __MetricV2.createPrecisionMetric(false, ((MetricNMPrecision)metric).getHeights(),
-                                                           ((MetricNMPrecision)metric).getCells());
-        } else if (metric instanceof MetricPrecision) {
-            return __MetricV2.createPrecisionMetric(true, ((MetricPrecision)metric).getHeights(),
-                                                          ((MetricPrecision)metric).getCells());
-        } else if (metric instanceof MetricStatic) {
-            return __MetricV2.createStaticMetric(((MetricStatic)metric)._infoloss);
-        } else {
-            return metric;
-        }
-    }
-
-    /**
      * Creates an instance of the non-monotonic precision metric.
      * The default aggregate function, which is the arithmetic mean, will be used.
      * This metric will respect attribute weights defined in the configuration.
@@ -325,6 +289,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric() {
         return __MetricV2.createPrecisionMetric();
     }
+
     /**
      * Creates an instance of the non-monotonic precision metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -336,8 +301,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(AggregateFunction function) {
         return __MetricV2.createPrecisionMetric(function);
     }
-
-    
     /**
      * Creates an instance of the precision metric.
      * The default aggregate function, which is the arithmetic mean, will be used.
@@ -351,6 +314,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecisionMetric(monotonic);
     }
 
+    
     /**
      * Creates an instance of the precision metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -362,7 +326,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, AggregateFunction function) {
         return __MetricV2.createPrecisionMetric(monotonic, function);
     }
-
 
     /**
      * Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
@@ -377,6 +340,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold) {
         return __MetricV2.createPrecomputedEntropyMetric(threshold);
     }
+
 
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric. The default aggregate function,
@@ -421,7 +385,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold) {
         return __MetricV2.createPrecomputedLossMetric(threshold);
     }
-    
+
     /**
      * Creates a potentially precomputed instance of the loss metric which treats generalization and suppression equally.
      * This metric will respect attribute weights defined in the configuration.
@@ -435,7 +399,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecomputedLossMetric(threshold, function);
     }
     
-
     /**
      * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
      * The default aggregate function, which is the rank function, will be used.
@@ -455,7 +418,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, double gsFactor) {
         return __MetricV2.createPrecomputedLossMetric(threshold, gsFactor);
     }
-
+    
 
     /**
      * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
@@ -476,7 +439,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, double gsFactor, AggregateFunction function) {
         return __MetricV2.createPrecomputedLossMetric(threshold, gsFactor, function);
     }
-    
+
+
     /**
      * Creates an instance of a metric with statically defined information loss. 
      * The default aggregate function, which is the sum-function, will be used for comparing results.
@@ -489,8 +453,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createStaticMetric(Map<String, List<Double>> loss) {
         return __MetricV2.createStaticMetric(loss);
     }
-
-
+    
     /**
      * Creates an instance of a metric with statically defined information loss. 
      * This metric will respect attribute weights defined in the configuration. 
@@ -503,6 +466,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createStaticMetric(Map<String, List<Double>> loss, AggregateFunction function) {
         return __MetricV2.createStaticMetric(loss, function);
     }
+
 
     /**
      * Returns a list of all available metrics for information loss.
@@ -653,6 +617,43 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
+     * This method supports backwards compatibility. It will transform implementations from version 1 to 
+     * implementations from version 2, if necessary. 
+     * @param metric
+     * @return
+     */
+    private static Metric<?> createMetric(Metric<?> metric) {
+        
+        if (metric instanceof MetricAECS) {
+            return __MetricV2.createAECSMetric(((MetricAECS)metric).getRowCount());
+        } else if (metric instanceof MetricDM) {
+            return __MetricV2.createDiscernabilityMetric(false, ((MetricDM)metric).getRowCount());
+        } else if (metric instanceof MetricDMStar) {
+            return __MetricV2.createDiscernabilityMetric(true, ((MetricDMStar)metric).getRowCount());
+        } else if (metric instanceof MetricEntropy) {
+            return __MetricV2.createEntropyMetric(true, 
+                                                  ((MetricEntropy)metric).getCache(), 
+                                                  ((MetricEntropy)metric).getCardinalities(), 
+                                                  ((MetricEntropy)metric).getHierarchies());
+        } else if (metric instanceof MetricNMEntropy) {
+            return __MetricV2.createEntropyMetric(false, 
+                                                  ((MetricEntropy)metric).getCache(), 
+                                                  ((MetricEntropy)metric).getCardinalities(), 
+                                                  ((MetricEntropy)metric).getHierarchies());
+        } else if (metric instanceof MetricNMPrecision) {
+            return __MetricV2.createPrecisionMetric(false, ((MetricNMPrecision)metric).getHeights(),
+                                                           ((MetricNMPrecision)metric).getCells());
+        } else if (metric instanceof MetricPrecision) {
+            return __MetricV2.createPrecisionMetric(true, ((MetricPrecision)metric).getHeights(),
+                                                          ((MetricPrecision)metric).getCells());
+        } else if (metric instanceof MetricStatic) {
+            return __MetricV2.createStaticMetric(((MetricStatic)metric)._infoloss);
+        } else {
+            return metric;
+        }
+    }
+
+    /**
      * Returns a description for the given metric, if there is any, null otherwise.
      *
      * @param metric
@@ -727,6 +728,19 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Returns the information loss that would be induced by suppressing the given entry. The loss
+     * is not necessarily consistent with the loss that is computed by 
+     * <code>getInformationLoss(node, groupify)</code> but is guaranteed to be comparable for 
+     * different entries from the same groupify operator.
+     * 
+     * @param entry
+     * @return
+     */
+    public final InformationLossWithBound<T> getInformationLoss(final Node node, final HashGroupifyEntry entry) {
+        return this.getInformationLossInternal(node, entry);
+    }
+    
+    /**
      * Evaluates the metric for the given node.
      *
      * @param node The node for which to compute the information loss
@@ -754,7 +768,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
             return getLowerBoundInternal(node);
         }
     }
-    
+
+
     /**
      * Returns a lower bound for the information loss for the given node.
      * This can be used to expose the results of monotonic shares of a metric,
@@ -782,7 +797,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public String getName() {
         return this.toString();
     }
-
+    
     /**
      * Initializes the metric.
      *
@@ -813,7 +828,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public final boolean isMonotonic() {
         return monotonic;
     }
-    
+
     /**
      * Returns true if the metric is multi-dimensional.
      *
@@ -831,7 +846,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public final boolean isWeighted() {
         return (this instanceof MetricWeighted) || this.isMultiDimensional();
     }
-
+    
     /**
      * Returns the name of metric.
      *
@@ -840,6 +855,17 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public String toString() {
         return this.getClass().getSimpleName();
     }
+
+    /**
+     * Returns the information loss that would be induced by suppressing the given entry. The loss
+     * is not necessarily consistent with the loss that is computed by 
+     * <code>getInformationLoss(node, groupify)</code> but is guaranteed to be comparable for 
+     * different entries from the same groupify operator.
+     * 
+     * @param entry
+     * @return
+     */
+    protected abstract InformationLossWithBound<T> getInformationLossInternal(final Node node, HashGroupifyEntry entry);
     
  
     /**

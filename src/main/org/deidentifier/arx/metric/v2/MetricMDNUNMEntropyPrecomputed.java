@@ -142,7 +142,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
      */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
-        return super.getInformationLossInternal(node, null).getLowerBound();
+        return super.getInformationLossInternal(node, (IHashGroupify)null).getLowerBound();
     }
 
     /* (non-Javadoc)
@@ -151,7 +151,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                        IHashGroupify groupify) {
-        return super.getInformationLossInternal(node, null).getLowerBound();
+        return super.getInformationLossInternal(node, (IHashGroupify)null).getLowerBound();
     }
 
     /* (non-Javadoc)

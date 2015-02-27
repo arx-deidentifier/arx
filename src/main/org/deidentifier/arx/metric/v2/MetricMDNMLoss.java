@@ -130,9 +130,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         return gsFactor;
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getName()
-     */
     @Override
     public String getName() {
         return "Loss";
@@ -147,17 +144,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         return sFactor;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#toString()
-     */
     @Override
     public String toString() {
         return "Loss ("+gsFactor+"/"+gFactor+"/"+sFactor+")";
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, IHashGroupify g) {
         
@@ -195,17 +186,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                                IHashGroupify g) {
@@ -247,9 +232,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         return this.shares;
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
-     */
     @SuppressWarnings("unchecked")
     @Override
     protected void initializeInternal(final DataDefinition definition,
@@ -321,5 +303,31 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double result = (aggregate - min) / (max - min);
         result = result >= 0d ? result : 0d;
         return round(result);
+    }
+    
+
+    @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+
+        // Init
+        double[] bound = new double[getDimensions()];
+        int dimensions = getDimensions();
+        int[] transformation = node.getTransformation();
+
+        // Compute
+        for (int dimension = 0; dimension < dimensions; dimension++) {
+            int value = entry.key[dimension];
+            int level = transformation[dimension];
+            double share = (double) entry.count * shares[dimension].getShare(value, level);
+            bound[dimension] += share * gFactor;
+        }
+
+        // Normalize
+        for (int dimension = 0; dimension < dimensions; dimension++) {
+            bound[dimension] = normalize(bound[dimension], dimension);
+        }
+
+        // Return
+        return new ILMultiDimensionalWithBound(super.createInformationLoss(bound));
     }
 }

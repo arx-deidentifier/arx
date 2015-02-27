@@ -52,9 +52,6 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         super.setNumTuples(rowCount);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractMetricSingleDimensional#createMaxInformationLoss()
-     */
     @Override
     public ILSingleDimensional createMaxInformationLoss() {
         Double rows = getNumTuples();
@@ -65,9 +62,6 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractMetricSingleDimensional#createMinInformationLoss()
-     */
     @Override
     public ILSingleDimensional createMinInformationLoss() {
         return new ILSingleDimensional(1d);
@@ -87,17 +81,11 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
                                        );
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#toString()
-     */
     @Override
     public String toString() {
         return "Average equivalence class size";
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
 
@@ -123,17 +111,11 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
                                                 getNumTuples() / (double)groupsWithoutSuppression);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Node node) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Node node,
                                                         IHashGroupify groupify) {
@@ -147,5 +129,10 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         
         // Compute AECS
         return new ILSingleDimensional(getNumTuples() / (double)groups);
+    }
+    
+    @Override
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        return new ILSingleDimensionalWithBound(entry.count);
     }
 }

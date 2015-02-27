@@ -114,7 +114,7 @@ public class MetricNMEntropy extends MetricEntropy {
      */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
-        return super.getInformationLossInternal(node, null).getInformationLoss();
+        return super.getInformationLossInternal(node, (IHashGroupify)null).getInformationLoss();
     }
     
     /* (non-Javadoc)

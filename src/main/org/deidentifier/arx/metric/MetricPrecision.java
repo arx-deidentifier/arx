@@ -19,6 +19,7 @@ package org.deidentifier.arx.metric;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -46,25 +47,16 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         super(true, true);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#createMaxInformationLoss()
-     */
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         return new InformationLossDefault(1d);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#createMinInformationLoss()
-     */
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         return new InformationLossDefault(0d);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#toString()
-     */
     @Override
     public String toString() {
         return "Monotonic Precision";
@@ -86,9 +78,6 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         return 0d;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
@@ -103,26 +92,17 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         return new InformationLossDefaultWithBound(result, result);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricWeighted#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
-        return this.getInformationLossInternal(node, null).getLowerBound();
+        return this.getInformationLossInternal(node, (IHashGroupify)null).getLowerBound();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricWeighted#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricWeighted#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
-     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -135,5 +115,10 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         for (int j = 0; j < maxLevels.length; j++) {
             maxLevels[j] = hierarchies[j].getArray()[0].length - 1;
         }
+    }
+    
+    @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 }

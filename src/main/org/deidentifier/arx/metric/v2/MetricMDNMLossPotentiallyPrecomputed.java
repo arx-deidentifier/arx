@@ -88,9 +88,6 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
                                        );
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#toString()
-     */
     @Override
     public String toString() {
         return "Loss";

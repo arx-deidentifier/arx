@@ -24,6 +24,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -114,17 +115,11 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
                                        );
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#toString()
-     */
     @Override
     public String toString() {
         return "Non-uniform entropy";
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         
@@ -179,17 +174,11 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
-        return this.getInformationLossInternal(node, null).getLowerBound();
+        return this.getInformationLossInternal(node, (IHashGroupify)null).getLowerBound();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                                IHashGroupify groupify) {
@@ -225,9 +214,6 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super.setMin(min);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
-     */
     @Override
     protected void initializeInternal(DataDefinition definition,
                                       Data input,
@@ -272,5 +258,12 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         
         super.setMax(max);
         super.setMin(min);
+    }
+    
+    @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        double[] result = new double[getDimensions()];
+        Arrays.fill(result, entry.count);
+        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
 }

@@ -49,9 +49,6 @@ public class MetricDM extends MetricDefault {
         super(false, false);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricDefault#createMaxInformationLoss()
-     */
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         if (rowCount == 0) {
@@ -61,9 +58,6 @@ public class MetricDM extends MetricDefault {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricDefault#createMinInformationLoss()
-     */
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         if (rowCount == 0) {
@@ -73,17 +67,11 @@ public class MetricDM extends MetricDefault {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#toString()
-     */
     @Override
     public String toString() {
         return "Non-Monotonic Discernability";
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
@@ -106,17 +94,11 @@ public class MetricDM extends MetricDefault {
         return new InformationLossDefaultWithBound(value, lowerBound);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricDefault#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricDefault#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
@@ -140,9 +122,6 @@ public class MetricDM extends MetricDefault {
         return this.rowCount;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricDefault#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
-     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input,
@@ -160,5 +139,10 @@ public class MetricDM extends MetricDefault {
         } else {
             rowCount = input.getDataLength();
         }
+    }
+
+    @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 }

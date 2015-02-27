@@ -71,11 +71,7 @@ public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMul
                                        this.getAggregateFunction() // aggregate function
                                        );
     }
-    
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#toString()
-     */
     @Override
     public String toString() {
         return "Non-monotonic non-uniform entropy";

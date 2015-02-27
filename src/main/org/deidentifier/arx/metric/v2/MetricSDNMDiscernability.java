@@ -50,9 +50,6 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         super(monotonic, false);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractMetricSingleDimensional#createMaxInformationLoss()
-     */
     @Override
     public ILSingleDimensional createMaxInformationLoss() {
         Double rows = getNumTuples();
@@ -63,9 +60,6 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractMetricSingleDimensional#createMinInformationLoss()
-     */
     @Override
     public ILSingleDimensional createMinInformationLoss() {
         Double rows = getNumTuples();
@@ -90,17 +84,11 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
                                        );
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#toString()
-     */
     @Override
     public String toString() {
         return "Non-monotonic discernability";
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         
@@ -120,17 +108,11 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         return new ILSingleDimensionalWithBound(dm, dmStar);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Node node) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Node node,
                                                         IHashGroupify groupify) {
@@ -141,6 +123,11 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
             m = m.nextOrdered;
         }
         return new ILSingleDimensional(lowerBound);
+    }
+    
+    @Override
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        return new ILSingleDimensionalWithBound(entry.count);
     }
 }
 

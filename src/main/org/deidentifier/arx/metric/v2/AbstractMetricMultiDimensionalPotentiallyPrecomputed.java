@@ -19,6 +19,7 @@ package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -37,20 +38,20 @@ import org.deidentifier.arx.metric.InformationLossWithBound;
 public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed extends AbstractMetricMultiDimensional {
 
     /** SVUID. */
-    private static final long serialVersionUID = 7278544218893194559L;
+    private static final long              serialVersionUID = 7278544218893194559L;
 
     /** Is this instance precomputed. */
-    private boolean precomputed = false;
-    
+    private boolean                        precomputed      = false;
+
     /** The threshold. */
-    private final double threshold;
-    
+    private final double                   threshold;
+
     /** The default metric. */
     private AbstractMetricMultiDimensional defaultMetric;
-    
+
     /** The precomputed variant. */
     private AbstractMetricMultiDimensional precomputedMetric;
-    
+
     /**
      * Creates a new instance. The precomputed variant will be used if 
      * #distinctValues / #rows <= threshold for all quasi-identifiers.
@@ -207,5 +208,14 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
      */
     protected boolean isPrecomputed() {
         return this.precomputed;
+    }
+    
+    @Override
+    protected InformationLossWithBound<AbstractILMultiDimensional> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        if (precomputed) {
+            return precomputedMetric.getInformationLoss(node, entry);
+        } else {
+            return defaultMetric.getInformationLoss(node, entry);
+        }
     }
 }

@@ -72,9 +72,6 @@ public class MetricMDNUEntropyPotentiallyPrecomputed extends AbstractMetricMulti
                                        );
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#toString()
-     */
     @Override
     public String toString() {
         return "Non-uniform entropy";
