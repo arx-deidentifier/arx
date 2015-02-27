@@ -488,4 +488,28 @@ public class Vocabulary_V1 extends Vocabulary {
     public String getLocale() {
         return "locale";
     }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.worker.io.Vocabulary#getSeparator()
+     */
+    @Override
+    public String getQuote() {
+        return "quote"; //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.worker.io.Vocabulary#getSeparator()
+     */
+    @Override
+    public String getEscape() {
+        return "escape"; //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.worker.io.Vocabulary#getSeparator()
+     */
+    @Override
+    public String getLinebreak() {
+        return "linebreak"; //$NON-NLS-1$
+    }
 }

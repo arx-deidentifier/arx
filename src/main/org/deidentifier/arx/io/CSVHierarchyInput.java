@@ -102,7 +102,7 @@ public class CSVHierarchyInput {
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final File file, final CSVConfig config) throws IOException {
+    public CSVHierarchyInput(final File file, final CSVSyntax config) throws IOException {
         load(new CSVDataInput(file, config));
     }
 
@@ -173,7 +173,7 @@ public class CSVHierarchyInput {
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final InputStream stream, final CSVConfig config) throws IOException {
+    public CSVHierarchyInput(final InputStream stream, final CSVSyntax config) throws IOException {
         load(new CSVDataInput(stream, config));
     }
 
@@ -244,7 +244,7 @@ public class CSVHierarchyInput {
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final String filename, final CSVConfig config) throws IOException {
+    public CSVHierarchyInput(final String filename, final CSVSyntax config) throws IOException {
         load(new CSVDataInput(filename, config));
     }
 

@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.deidentifier.arx.io.CSVConfig;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
@@ -252,7 +252,7 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final File file, final CSVConfig config) throws IOException {
+    public static Data create(final File file, final CSVSyntax config) throws IOException {
         return new IterableData(new CSVDataInput(file, config).iterator());
     }
 
@@ -329,7 +329,7 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final InputStream stream, final CSVConfig config) throws IOException {
+    public static Data create(final InputStream stream, final CSVSyntax config) throws IOException {
         return new IterableData(new CSVDataInput(stream, config).iterator());
     }
 
@@ -436,7 +436,7 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path, final CSVConfig config) throws IOException {
+    public static Data create(final String path, final CSVSyntax config) throws IOException {
         return new IterableData(new CSVDataInput(path, config).iterator());
     }
 

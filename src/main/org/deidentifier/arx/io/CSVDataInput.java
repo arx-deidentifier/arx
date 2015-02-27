@@ -110,7 +110,7 @@ public class CSVDataInput {
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVDataInput(final File file, final CSVConfig config) throws IOException {
+    public CSVDataInput(final File file, final CSVSyntax config) throws IOException {
         this(file, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
     }
 
@@ -181,7 +181,7 @@ public class CSVDataInput {
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVDataInput(final InputStream stream, final CSVConfig config) throws IOException {
+    public CSVDataInput(final InputStream stream, final CSVSyntax config) throws IOException {
         this(stream, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
     }
 
@@ -267,7 +267,7 @@ public class CSVDataInput {
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVDataInput(final String filename, final CSVConfig config) throws IOException {
+    public CSVDataInput(final String filename, final CSVSyntax config) throws IOException {
         this(filename, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
     }
 

@@ -18,6 +18,7 @@ package org.deidentifier.arx.io;
 
 /**
  * The Class CSVUtil.
+ * @author Florian Kohlmayer
  */
 public class CSVUtil {
 
@@ -34,10 +35,10 @@ public class CSVUtil {
     protected static final char[] DEFAULT_LINEBREAK = { '\n' };
 
     /**
-     * Gets the normalized linebreak character.
+     * Gets the normalized line break character.
      *
-     * @param linebreak the linebreak
-     * @return the normalized linebreak character
+     * @param linebreak the line break
+     * @return the normalized line break character
      */
     protected static char getNormalizedLinebreakCharacter(char[] linebreak) {
         if (linebreak[0] == '\n') {
@@ -48,5 +49,4 @@ public class CSVUtil {
             return '\n';
         }
     }
-
 }

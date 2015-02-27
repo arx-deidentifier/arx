@@ -40,7 +40,7 @@ import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
-import org.deidentifier.arx.io.CSVConfig;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.io.CSVDataOutput;
 
 import cern.colt.Swapper;
@@ -604,7 +604,7 @@ public abstract class DataHandle {
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public void save(final File file, final CSVConfig config) throws IOException {
+    public void save(final File file, final CSVSyntax config) throws IOException {
         checkRegistry();
         final CSVDataOutput output = new CSVDataOutput(file, config);
         output.write(iterator());
@@ -642,7 +642,7 @@ public abstract class DataHandle {
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public void save(final OutputStream out, final CSVConfig config) throws IOException {
+    public void save(final OutputStream out, final CSVSyntax config) throws IOException {
         checkRegistry();
         final CSVDataOutput output = new CSVDataOutput(out, config);
         output.write(iterator());
@@ -680,7 +680,7 @@ public abstract class DataHandle {
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public void save(final String path, final CSVConfig config) throws IOException {
+    public void save(final String path, final CSVSyntax config) throws IOException {
         checkRegistry();
         final CSVDataOutput output = new CSVDataOutput(path, config);
         output.write(iterator());

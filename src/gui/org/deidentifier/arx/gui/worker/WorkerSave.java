@@ -334,7 +334,20 @@ public class WorkerSave extends Worker<Model> {
         XMLWriter writer = new XMLWriter();
         writer.indent(vocabulary.getProject());
         writer.write(vocabulary.getName(), model.getName());
-        writer.write(vocabulary.getSeparator(), model.getSeparator());
+        
+        writer.write(vocabulary.getSeparator(), model.getCSVSyntax().getDelimiter());
+        writer.write(vocabulary.getEscape(), model.getCSVSyntax().getEscape());
+        writer.write(vocabulary.getQuote(), model.getCSVSyntax().getQuote());
+        
+        String linebreak = "UNIX";
+        char[] _linebreak = model.getCSVSyntax().getLinebreak();
+        if (_linebreak.length == 1 && _linebreak[0] == '\r') {
+            linebreak = "MAC";
+        } else if (_linebreak.length == 2){
+            linebreak = "WINDOWS";
+        }
+        writer.write(vocabulary.getLinebreak(), linebreak);
+        
         writer.write(vocabulary.getDescription(), model.getDescription());
         writer.write(vocabulary.getLocale(), model.getLocale().getLanguage().toUpperCase());
         writer.write(vocabulary.getHistorySize(), model.getHistorySize());
@@ -468,7 +481,7 @@ public class WorkerSave extends Worker<Model> {
 
         for (Entry<String, Hierarchy> entry : config.getHierarchies().entrySet()) {
             zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(entry.getKey()) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
-            final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+            final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
             out.write(entry.getValue().getHierarchy());
         }
     }
@@ -484,7 +497,7 @@ public class WorkerSave extends Worker<Model> {
         if (model.getInputConfig().getInput() != null) {
             if (model.getInputConfig().getInput().getHandle() != null) {
                 zip.putNextEntry(new ZipEntry("data/input.csv")); //$NON-NLS-1$
-                final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+                final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
                 out.write(model.getInputConfig()
                                .getInput()
                                .getHandle()
@@ -505,7 +518,7 @@ public class WorkerSave extends Worker<Model> {
         if (model.getInputConfig().getInput() != null) {
             if (model.getInputConfig().getInput().getHandle() != null) {
                 zip.putNextEntry(new ZipEntry("data/input_subset.csv")); //$NON-NLS-1$
-                final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+                final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
                 out.write(model.getInputConfig().getInput().getHandle().getView().iterator());
             }
         }
@@ -626,7 +639,7 @@ public class WorkerSave extends Worker<Model> {
 	private void writeOutput(final Model model, final ZipOutputStream zip) throws IOException {
 		if (model.getOutput() != null) {
 			zip.putNextEntry(new ZipEntry("data/output.csv")); //$NON-NLS-1$
-			final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+			final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
 			out.write(model.getOutput().iterator());
 		}
 	}
@@ -641,7 +654,7 @@ public class WorkerSave extends Worker<Model> {
     private void writeOutputSubset(final Model model, final ZipOutputStream zip) throws IOException {
         if (model.getOutput() != null) {
             zip.putNextEntry(new ZipEntry("data/output_subset.csv")); //$NON-NLS-1$
-            final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+            final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
             out.write(model.getOutput().getView().iterator());
         }
     }

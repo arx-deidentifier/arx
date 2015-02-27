@@ -38,6 +38,7 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricDescription;
 
@@ -132,11 +133,11 @@ public class Model implements Serializable {
     /** The project name. */
     private String                                name                            = null;
     
-    /** The project's separator. Left for backwards compatibility only! */
+    /** Left for backwards compatibility only! */
     private char                                  separator                       = ';';                                            //$NON-NLS-1$
-    
-    /** The projects CSV configuration */
-    private ModelCSVConfig                        csvConfig                       = new ModelCSVConfig();
+
+    /** The projects CSV syntax */
+    private CSVSyntax                             csvSyntax;
     
     /** Execution time of last anonymization. */
     private long                                  time;
@@ -431,12 +432,12 @@ public class Model implements Serializable {
      * Gets the csv config model.
      * @return
      */
-    public ModelCSVConfig getCsvConfig() {
-        if (csvConfig == null) {
-            csvConfig = new ModelCSVConfig();
-            csvConfig.setDelimiter(getSeparator());
+    public CSVSyntax getCSVSyntax() {
+        if (csvSyntax == null) {
+            csvSyntax = new CSVSyntax();
+            csvSyntax.setDelimiter(separator);
         }
-        return csvConfig;
+        return csvSyntax;
     }
 
 	/**
@@ -734,18 +735,6 @@ public class Model implements Serializable {
 		return selectedNode;
 	}
 	
-	/**
-     * Returns the separator.
-     *
-     * @return
-     */
-	public char getSeparator() {
-	    if (separator == '\0') {
-	        setSeparator(';');
-	    }
-		return separator;
-	}
-
     /**
      * Returns the according parameter.
      *
@@ -910,14 +899,6 @@ public class Model implements Serializable {
 		setModified();
 		this.anonymizer = anonymizer;
 	}
-
-	/**
-     * Sets the csv config model.
-     * @param csvConfig
-     */
-    public void setCsvConfig(ModelCSVConfig csvConfig) {
-        this.csvConfig = csvConfig;
-    }
 
 	/**
      * Enables debugging.
@@ -1181,15 +1162,6 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	/**
-     * Sets the separator.
-     *
-     * @param separator
-     */
-	public void setSeparator(final char separator) {
-		this.separator = separator;
-	}
-    
     /**
      * 
      *

@@ -554,7 +554,9 @@ public class WorkerLoad extends Worker<Model> {
         final ZipEntry entry = zip.getEntry(prefix + ref);
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.5")); } //$NON-NLS-1$
         final InputStream is = new BufferedInputStream(zip.getInputStream(entry));
-        return Hierarchy.create(is, model.getSeparator());
+        
+        // Use project delimiter for backwards compatibility
+        return Hierarchy.create(is, model.getCSVSyntax().getDelimiter());
     }
 
     /**
@@ -570,8 +572,9 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { return; }
 
         // Read input
+        // Use project delimiter for backwards compatibility
         config.setInput(Data.create(new BufferedInputStream(zip.getInputStream(entry)),
-                                    model.getSeparator()));
+                                    model.getCSVSyntax().getDelimiter()));
         
         // Disable visualization
         if (model.getMaximalSizeForComplexOperations() > 0 &&
