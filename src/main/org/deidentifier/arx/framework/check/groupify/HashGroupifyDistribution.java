@@ -150,6 +150,10 @@ public class HashGroupifyDistribution {
 
         int newBinaryHigh = binaryMid - 1;
         int newBinaryMid = (binaryLow + newBinaryHigh) / 2;
+        
+        if (binaryLow > newBinaryHigh) {
+            return suppressed - initiallySuppressed;
+        }
 
         for (int i = newBinaryMid + 1; i <= binaryHigh; i++) {
             HashGroupifyEntry entry = entries[i];
@@ -172,6 +176,10 @@ public class HashGroupifyDistribution {
         binaryLow = binaryMid + 1;
         binaryMid = (binaryLow + binaryHigh) / 2;
         
+        if (binaryLow > binaryHigh) {
+            return suppressed - initiallySuppressed;
+        }
+        
         // low-mid
         
         for (int i = binaryLow; i <= binaryMid; i++) {
@@ -191,6 +199,10 @@ public class HashGroupifyDistribution {
         binaryHigh = entries.length - 1;
         binaryMid = (binaryLow + binaryHigh) / 2;
         initiallySuppressed = suppressed;
+
+        if (binaryLow > binaryHigh) {
+            return suppressed - initiallySuppressed;
+        }
         
         // low-mid
         
