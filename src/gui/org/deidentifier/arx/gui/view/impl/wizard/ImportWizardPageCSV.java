@@ -114,9 +114,6 @@ public class ImportWizardPageCSV extends WizardPage {
         }
     }
 
-    /** The default number of characters to read in the case of line break guessing. */
-    private static final int DEFAULT_BUFFER_SIZE = 4096;
-
     /** Reference to the wizard containing this page. */
     private ImportWizard                       wizardImport;
 
@@ -526,7 +523,7 @@ public class ImportWizardPageCSV extends WizardPage {
      */
     private void detectLinebreak() throws IOException {
         BufferedReader r = null;
-        final char[] buffer = new char[DEFAULT_BUFFER_SIZE];
+        final char[] buffer = new char[ImportWizardModel.DETECT_MAX_CHARS];
         int read = 0;
 
         try {
@@ -671,10 +668,8 @@ public class ImportWizardPageCSV extends WizardPage {
         data.setCsvEscape(escapes[selectedEscape]);
         data.setCsvLinebreak(linebreaks[selectedLinebreak]);
 
-
         /* Mark page as completed */
         setPageComplete(true);
-
     }
 
     /**
