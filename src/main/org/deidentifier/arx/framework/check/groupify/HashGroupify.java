@@ -25,6 +25,8 @@ import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleBasedPrivacyCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.Metric;
 
 /**
  * A hash groupify operator. It implements a hash table with chaining and keeps
@@ -232,6 +234,9 @@ public class HashGroupify implements IHashGroupify {
     /** Criteria. */
     private final SampleBasedPrivacyCriterion[] sampleBasedCriteria;
 
+    /** Metric */
+    private final Metric<?>                     metric;
+
     /**
      * Constructs a new hash groupify operator.
      *
@@ -248,7 +253,8 @@ public class HashGroupify implements IHashGroupify {
 
         this.currentOutliers = 0;
         this.absoluteMaxOutliers = config.getAbsoluteMaxOutliers();
-
+        this.metric = config.getMetric();
+        
         // Extract research subset
         if (config.containsCriterion(DPresence.class)) {
             this.subset = config.getCriterion(DPresence.class).getSubset().getSet();
@@ -351,9 +357,9 @@ public class HashGroupify implements IHashGroupify {
     }
 
     @Override
-    public void analyze(boolean force){
-        if (force) analyzeAll();
-        else analyzeWithEarlyAbort();
+    public void analyze(Node transformation, boolean force){
+        if (force) analyzeAll(transformation);
+        else analyzeWithEarlyAbort(transformation);
     }
 
     @Override
@@ -554,8 +560,9 @@ public class HashGroupify implements IHashGroupify {
 
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
+     * @param transformation
      */
-    private void analyzeAll(){
+    private void analyzeAll(Node transformation){
 
         // We have only checked k-anonymity so far
         kAnonymous = (currentOutliers <= absoluteMaxOutliers);
@@ -591,14 +598,15 @@ public class HashGroupify implements IHashGroupify {
             entry = entry.nextOrdered;
         }
         
-        this.analyzeSampleBasedCriteria(false);
+        this.analyzeSampleBasedCriteria(transformation, false);
         this.anonymous = (currentOutliers <= absoluteMaxOutliers) && dpresent;
     }
 
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
+     * @param transformation
      */
-    private void analyzeWithEarlyAbort(){
+    private void analyzeWithEarlyAbort(Node transformation){
         
         // We have only checked k-anonymity so far
         kAnonymous = (currentOutliers <= absoluteMaxOutliers);
@@ -657,16 +665,17 @@ public class HashGroupify implements IHashGroupify {
             entry = entry.nextOrdered;
         }
         
-        this.analyzeSampleBasedCriteria(true);
+        this.analyzeSampleBasedCriteria(transformation, true);
         this.anonymous = (currentOutliers <= absoluteMaxOutliers);
     }
 
     /**
      * Analyze sample-based criteria
+     * @param transformation
      * @param earlyAbort May we perform an early abort, if we reach the threshold
      * @return
      */
-    private void analyzeSampleBasedCriteria(boolean earlyAbort) {
+    private void analyzeSampleBasedCriteria(Node transformation, boolean earlyAbort) {
         
         // Nothing to do
         if (this.sampleBasedCriteria.length == 0) {
@@ -674,7 +683,7 @@ public class HashGroupify implements IHashGroupify {
         }
         
         // Build a distribution
-        HashGroupifyDistribution distribution = new HashGroupifyDistribution(this.firstEntry);
+        HashGroupifyDistribution distribution = new HashGroupifyDistribution(metric, transformation, this.firstEntry);
         
         // For each criterion
         for (SampleBasedPrivacyCriterion criterion : this.sampleBasedCriteria) {

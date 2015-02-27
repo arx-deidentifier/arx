@@ -310,7 +310,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
 
         // Init
-        double[] bound = new double[getDimensions()];
+        double[] result = new double[getDimensions()];
         int dimensions = getDimensions();
         int[] transformation = node.getTransformation();
 
@@ -319,15 +319,10 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
             int value = entry.key[dimension];
             int level = transformation[dimension];
             double share = (double) entry.count * shares[dimension].getShare(value, level);
-            bound[dimension] += share * gFactor;
+            result[dimension] += share * gFactor;
         }
-
-        // Normalize
-        for (int dimension = 0; dimension < dimensions; dimension++) {
-            bound[dimension] = normalize(bound[dimension], dimension);
-        }
-
+        
         // Return
-        return new ILMultiDimensionalWithBound(super.createInformationLoss(bound));
+        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
 }

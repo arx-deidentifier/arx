@@ -136,13 +136,6 @@ public interface INodeChecker {
     public abstract Metric<?> getMetric();
 
     /**
-     * Returns the number of groups from the previous check.
-     *
-     * @return
-     */
-    public abstract int getNumberOfGroups();
-
-    /**
      * Applies the given transformation and sets its properties.
      *
      * @param transformation

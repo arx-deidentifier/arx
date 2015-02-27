@@ -118,17 +118,11 @@ public class NodeChecker implements INodeChecker {
                                            dictionarySensFreq);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.INodeChecker#check(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     public INodeChecker.Result check(final Node node) {
         return check(node, false);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.INodeChecker#check(org.deidentifier.arx.framework.lattice.Node, boolean)
-     */
     @Override
     public INodeChecker.Result check(final Node node, final boolean forceMeasureInfoLoss) {
         
@@ -164,7 +158,7 @@ public class NodeChecker implements INodeChecker {
         }
         
         // We are done with transforming and adding
-        currentGroupify.analyze(forceMeasureInfoLoss);
+        currentGroupify.analyze(node, forceMeasureInfoLoss);
         if (forceMeasureInfoLoss && !currentGroupify.isAnonymous() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.resetSuppression();
         }
@@ -182,33 +176,21 @@ public class NodeChecker implements INodeChecker {
                                        bound);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.INodeChecker#getBuffer()
-     */
     @Override
     public Data getBuffer() {
         return new Data(transformer.getBuffer(), data.getHeader(), data.getMap(), data.getDictionary());
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.INodeChecker#getConfiguration()
-     */
     @Override
     public ARXConfigurationInternal getConfiguration() {
         return config;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.INodeChecker#getData()
-     */
     @Override
     public Data getData() {
         return data;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.INodeChecker#getGroupify()
-     */
     @Override
     public IHashGroupify getGroupify() {
         return currentGroupify;
@@ -223,40 +205,23 @@ public class NodeChecker implements INodeChecker {
         return history;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.INodeChecker#getInformationLoss(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     @Deprecated
     public double getInformationLoss(final Node node) {
         throw new UnsupportedOperationException("Not implemented!");
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.INodeChecker#getMetric()
-     */
     @Override
     public Metric<?> getMetric() {
         return metric;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.INodeChecker#getNumberOfGroups()
-     */
-    @Override
-    public int getNumberOfGroups() {
-        return currentGroupify.size();
-    }
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.INodeChecker#applyAndSetProperties(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     public TransformedData applyAndSetProperties(final Node transformation) {
 
         // Apply transition and groupify
         currentGroupify = transformer.apply(0L, transformation.getTransformation(), currentGroupify);
-        currentGroupify.analyze(true);
+        currentGroupify.analyze(transformation, true);
         if (!currentGroupify.isAnonymous() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.resetSuppression();
         }

@@ -19,6 +19,7 @@ package org.deidentifier.arx.framework.check.groupify;
 
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
+import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * Interface for hash groupify operators
@@ -68,9 +69,10 @@ public interface IHashGroupify {
      * the operator may perform an early abort, which may lead to an inconsistent classification
      * of equivalence classes.
      * 
+     * @param transformation
      * @param force
      */
-    public abstract void analyze(boolean force);
+    public abstract void analyze(Node transformation, boolean force);
 
     /**
      * Clear.
