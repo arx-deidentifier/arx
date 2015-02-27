@@ -604,7 +604,7 @@ public class HashGroupify implements IHashGroupify {
         kAnonymous = (currentOutliers <= absoluteMaxOutliers);
         
         // Abort early, if only k-anonymity was specified
-        if (classBasedCriteria.length == 0) { 
+        if (classBasedCriteria.length == 0 && sampleBasedCriteria.length == 0) { 
             anonymous = kAnonymous;
             return;
         }
