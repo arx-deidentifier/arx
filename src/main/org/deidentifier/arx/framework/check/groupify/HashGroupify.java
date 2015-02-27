@@ -450,7 +450,7 @@ public class HashGroupify implements IHashGroupify {
 
     @Override
     public boolean isKAnonymous() {
-        return kAnonymous;
+        return k != Integer.MAX_VALUE && kAnonymous;
     }
     
     @Override
