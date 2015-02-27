@@ -103,7 +103,7 @@ public class ViewCriteriaList implements IView {
         this.symbolR = controller.getResources().getImage("symbol_r.png"); //$NON-NLS-1$
         
         this.root = parent;
-        table = new DynamicTable(root, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
+        table = new DynamicTable(root, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
         table.addSelectionListener(new SelectionAdapter(){
