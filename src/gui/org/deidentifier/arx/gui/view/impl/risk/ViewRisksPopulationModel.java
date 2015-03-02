@@ -237,11 +237,6 @@ public class ViewRisksPopulationModel implements IView {
         root.setRedraw(false);
         SWTUtil.enable(root);
         
-        ARXPopulationModel popmodel = model.getInputPopulationModel();
-        if (model.getOutputPopulationModel() != null) {
-            popmodel = model.getOutputPopulationModel();
-        }
-        
         boolean mayUseOutput = isOutputPopulationModelAvailable() && model.getRiskModel().isUseOutputPopulationModelIfAvailable();
         boolean enabled = output ? mayUseOutput : !mayUseOutput;
         this.buttonUse.setSelection(enabled);
@@ -249,12 +244,19 @@ public class ViewRisksPopulationModel implements IView {
         if (output && !isOutputPopulationModelAvailable()) {
             reset();
         } else {
+
+            ARXPopulationModel popmodel = model.getInputPopulationModel();
+            if (output && isOutputPopulationModelAvailable()) {
+                popmodel = model.getOutputPopulationModel();
+            }
+            
             for (int i=0; i<list.getItemCount(); i++) {
                 if (list.getItem(i).equals(popmodel.getRegion().getName())) {
                     list.select(i);
                     break;
                 }
             }
+            list.showSelection();
             DataHandle handle = model.getInputConfig().getInput().getHandle();
             textSampleFraction.setText(format.format(popmodel.getSamplingFraction(handle)));
             textSampleFraction.setEnabled(true);
