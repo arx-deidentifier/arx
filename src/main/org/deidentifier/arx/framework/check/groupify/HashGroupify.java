@@ -237,6 +237,9 @@ public class HashGroupify implements IHashGroupify {
     /** Metric */
     private final Metric<?>                     metric;
 
+    /** Do we ensure optimality for sample-based criteria */
+    private final boolean                       heuristicForSampleBasedCriteria;
+
     /**
      * Constructs a new hash groupify operator.
      *
@@ -254,6 +257,7 @@ public class HashGroupify implements IHashGroupify {
         this.currentOutliers = 0;
         this.absoluteMaxOutliers = config.getAbsoluteMaxOutliers();
         this.metric = config.getMetric();
+        this.heuristicForSampleBasedCriteria = config.isUseHeuristicForSampleBasedCriteria();
         
         // Extract research subset
         if (config.containsCriterion(DPresence.class)) {
@@ -683,7 +687,9 @@ public class HashGroupify implements IHashGroupify {
         }
         
         // Build a distribution
-        HashGroupifyDistribution distribution = new HashGroupifyDistribution(metric, transformation, this.firstEntry);
+        HashGroupifyDistribution distribution = new HashGroupifyDistribution(heuristicForSampleBasedCriteria ? null : metric, 
+                                                                             transformation, 
+                                                                             this.firstEntry);
         
         // For each criterion
         for (SampleBasedPrivacyCriterion criterion : this.sampleBasedCriteria) {

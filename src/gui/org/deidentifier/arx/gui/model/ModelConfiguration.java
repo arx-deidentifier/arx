@@ -129,7 +129,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public double getAttributeWeight(String attribute) {
         return config.getAttributeWeight(attribute);
     }
-    
+
     /**
      * Returns all weights.
      *
@@ -147,7 +147,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public ARXConfiguration getConfig(){
     	return config;
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -178,7 +178,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public <T extends PrivacyCriterion> T getCriterion(Class<T> clazz) {
         return config.getCriterion(clazz);
     }
-    
+
     /**
      * Returns the set of all assigned hierarchies.
      *
@@ -197,7 +197,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public Hierarchy getHierarchy(String attribute){
         return this.hierarchies.get(attribute);
     }
-
+    
     /**
      * Returns the according builder.
      *
@@ -215,7 +215,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public Data getInput() {
         return input;
     }
-    
+
     /**
      * Maximum generalization.
      *
@@ -228,7 +228,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         return this.max.get(attribute);
     }
-    
+
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -250,7 +250,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         return this.min.get(attribute);
     }
-
+    
     /**
      * Returns the current research subset.
      *
@@ -259,7 +259,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
 	public RowSet getResearchSubset() {
 		return researchSubset;
 	}
-
+    
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#getSuppressionString()
@@ -309,7 +309,15 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isModified() {
         return modified;
     }
-    
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#isUseHeuristicSearchForSampleBasedCriteria()
+     */
+    public boolean isHeuristicForSampleBasedCriteria() {
+        return config.isUseHeuristicSearchForSampleBasedCriteria();
+    }
+
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -318,7 +326,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isPracticalMonotonicity() {
         return config.isPracticalMonotonicity();
     }
-
+    
     /**
      * Protect sensitive associations.
      *
@@ -342,7 +350,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void removeAllCriteria() {
         this.getCriteria().clear();
     }
-    
+
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -354,7 +362,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         return config.removeCriterion(c);
     }
-
+    
     /**
      * Removes the builder for the given attribute.
      *
@@ -365,8 +373,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         hierarchyBuilders.remove(attr);
     }
-	
-	/**
+
+    /**
      * Delegates to an instance of ARXConfiguration.
      *
      * @param supp
@@ -375,7 +383,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setMaxOutliers(supp);
     }
-
+	
 	/**
      * @param type
      * @param enabled
@@ -385,7 +393,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setAttributeTypeSuppressed(type, enabled);
     }
-	
+
 	/**
      * Sets the according attribute weight.
      *
@@ -396,8 +404,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setAttributeWeight(attribute, weight);
     }
-
-    /**
+	
+	/**
      * Assigns a hierarchy.
      *
      * @param attribute
@@ -407,7 +415,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.hierarchies.put(attribute, hierarchy);
         this.setModified();
     }
-    
+
     /**
      * Sets the given hierarchy builder.
      *
@@ -430,7 +438,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         input = data;
         setModified();
     }
-
+    
     /**
      * Maximum generalization.
      *
@@ -444,7 +452,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         this.max.put(attribute, max);
     }
-    
+
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -467,6 +475,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         setModified();
         this.min.put(attribute, min);
+    }
+    
+    /**
+     * @param value
+     * @see org.deidentifier.arx.ARXConfiguration#setUseHeuristicSearchForSampleBasedCriteria(boolean)
+     */
+    public void setHeuristicForSampleBasedCriteria(boolean value) {
+        config.setUseHeuristicSearchForSampleBasedCriteria(value);
     }
 
     /**

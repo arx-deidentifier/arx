@@ -89,7 +89,7 @@ public class HashGroupifyDistribution {
     /**
      * Creates a new instance
      * 
-     * @param metric
+     * @param metric, null if ordering should not be applied
      * @param transformation
      * @param entry
      */
@@ -119,7 +119,8 @@ public class HashGroupifyDistribution {
         
         // Blacklist metrics for which information loss of individual entries
         // is equal to the size of the class
-        if ((metric instanceof MetricMDHeight) ||
+        if ((metric == null) ||
+            (metric instanceof MetricMDHeight) ||
             (metric instanceof MetricMDNMPrecision) ||
             (metric instanceof MetricMDNUEntropy) ||
             (metric instanceof MetricMDNUEntropyPotentiallyPrecomputed) ||

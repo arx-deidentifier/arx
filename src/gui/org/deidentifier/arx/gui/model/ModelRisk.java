@@ -63,8 +63,6 @@ public class ModelRisk implements Serializable {
     private Map<ViewRiskType, Boolean> viewEnabledForOutput      = new HashMap<ViewRiskType, Boolean>();
     /** Model */
     private boolean                    useOutputModelIfAvailable = true;
-    /** Model */
-    private boolean                    ensureOptimality          = true;
 
     /**
      * Creates a new instance
@@ -279,19 +277,5 @@ public class ModelRisk implements Serializable {
      */
     public void setViewEnabledForOutput(ViewRiskType view, boolean value) {
         this.viewEnabledForOutput.put(view, value);
-    }
-
-    /**
-     * @return the ensureOptimality
-     */
-    public boolean isEnsureOptimality() {
-        return ensureOptimality;
-    }
-
-    /**
-     * @param value the ensureOptimality to set
-     */
-    public void setEnsureOptimality(boolean value) {
-        this.ensureOptimality = value;
     }
 }

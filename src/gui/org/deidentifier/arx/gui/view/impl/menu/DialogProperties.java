@@ -206,8 +206,8 @@ public class DialogProperties implements IDialog {
             protected void setValue(Object t) { model.getRiskModel().setMaxQiSize((Integer)t); }});
         
         window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.44")) { //$NON-NLS-1$
-            protected Boolean getValue() { return model.getRiskModel().isEnsureOptimality(); }
-            protected void setValue(Object t) { model.getRiskModel().setEnsureOptimality((Boolean)t); }});
+            protected Boolean getValue() { return model.getInputConfig().isHeuristicForSampleBasedCriteria(); }
+            protected void setValue(Object t) { model.getInputConfig().setHeuristicForSampleBasedCriteria((Boolean)t); }});
     }
 
     /**
