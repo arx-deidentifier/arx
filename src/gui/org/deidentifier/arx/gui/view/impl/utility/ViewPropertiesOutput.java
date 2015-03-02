@@ -350,7 +350,7 @@ public class ViewPropertiesOutput extends ViewProperties {
                 new Property(n, Resources.getMessage("PropertiesView.120"), new String[] { String.valueOf(criterion.getRiskThreshold())}); //$NON-NLS-1$
                 
                 if (criterion instanceof RiskBasedThresholdPopulationUniques) {
-                    new Property(n, Resources.getMessage("PropertiesView.121"), new String[] { String.valueOf(((RiskBasedThresholdPopulationUniques)criterion).getPopulationModel().getSampleFraction(context.handle))}); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.121"), new String[] { String.valueOf(((RiskBasedThresholdPopulationUniques)criterion).getPopulationModel().getSamplingFraction(context.handle))}); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.122"), new String[] { ((RiskBasedThresholdPopulationUniques)criterion).getStatisticalModel().toString()}); //$NON-NLS-1$
                 }
             }

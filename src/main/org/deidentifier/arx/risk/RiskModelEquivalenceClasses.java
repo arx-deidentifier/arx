@@ -96,14 +96,6 @@ public class RiskModelEquivalenceClasses {
     
     /**
      * Creates a new instance
-     * @param distribution
-     */
-    public RiskModelEquivalenceClasses(final IntIntOpenHashMap distribution) {
-        this.convertAndAnalyze(distribution, new WrappedBoolean(), new WrappedInteger());
-    }
-
-    /**
-     * Creates a new instance
      * @param handle
      */
     public RiskModelEquivalenceClasses(final DataHandle handle) {
@@ -117,6 +109,14 @@ public class RiskModelEquivalenceClasses {
      */
     public RiskModelEquivalenceClasses(final DataHandle handle, final Set<String> qis) {
         this(handle, qis, new WrappedBoolean(), new WrappedInteger(), 1.0d);
+    }
+
+    /**
+     * Creates a new instance
+     * @param distribution
+     */
+    public RiskModelEquivalenceClasses(final IntIntOpenHashMap distribution) {
+        this.convertAndAnalyze(distribution, new WrappedBoolean(), new WrappedInteger());
     }
     /**
      * Creates a new instance
@@ -193,6 +193,39 @@ public class RiskModelEquivalenceClasses {
     }
 
     /**
+     * Returns a property of the class distribution
+     * @return the avgClassSize
+     */
+    public double getAvgClassSize() {
+        return avgClassSize;
+    }
+
+    /**
+     * Returns class-size[idx], class-count[idx+1],... ordered ascending by class size
+     * 
+     * @return the equivalenceClasses
+     */
+    public int[] getEquivalenceClasses() {
+        return equivalenceClasses;
+    }
+
+    /**
+     * Returns a property of the class distribution
+     * @return the numClasses
+     */
+    public double getNumClasses() {
+        return numClasses;
+    }
+
+    /**
+     * Returns a property of the class distribution
+     * @return the numTuples
+     */
+    public double getNumTuples() {
+        return numTuples;
+    }
+
+    /**
      * Convert and analyze
      * @param grouped
      * @param stop
@@ -246,38 +279,5 @@ public class RiskModelEquivalenceClasses {
         this.numTuples = numTuples;
         this.numClasses = numClasses;
         this.avgClassSize = this.numTuples / this.numClasses;
-    }
-
-    /**
-     * Returns a property of the class distribution
-     * @return the avgClassSize
-     */
-    public double getAvgClassSize() {
-        return avgClassSize;
-    }
-
-    /**
-     * Returns class-size[idx], class-count[idx+1],... ordered ascending by class size
-     * 
-     * @return the equivalenceClasses
-     */
-    public int[] getEquivalenceClasses() {
-        return equivalenceClasses;
-    }
-
-    /**
-     * Returns a property of the class distribution
-     * @return the numClasses
-     */
-    public double getNumClasses() {
-        return numClasses;
-    }
-
-    /**
-     * Returns a property of the class distribution
-     * @return the numTuples
-     */
-    public double getNumTuples() {
-        return numTuples;
     }
 }

@@ -56,10 +56,10 @@ class ModelSNB extends RiskModelPopulationBased {
         double numNonEmptyClasses = estimateNonEmptyEquivalenceClasses(_classes,
                                                                        super.getNumClasses(),
                                                                        numClassesOfSize1,
-                                                                       super.getSampleFraction());
+                                                                       super.getSamplingFraction());
 
         AlgorithmNewtonSNB snbModel = new AlgorithmNewtonSNB(numNonEmptyClasses, 
-                                                             super.getSampleFraction(), 
+                                                             super.getSamplingFraction(), 
                                                              (int)numClassesOfSize1,
                                                              (int)super.getNumClassesOfSize(2),
                                                              maxIterations,

@@ -35,6 +35,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
@@ -55,11 +56,15 @@ public class ViewRisksPopulationModel implements IView {
     /** View */
     private List             list;
     /** View */
-    private Text             text;
+    private Text             textSampleFraction;
     /** View */
-    private Text             text2;
+    private Text             textPopulationSize;
     /** View */
     private DecimalFormat    format = new DecimalFormat("0.########################################");
+    /** View */
+    private Button           buttonUseOutput;
+    /** View */
+    private Text             textModelUsed;
 
     /** Model */
     private Model            model;
@@ -105,8 +110,8 @@ public class ViewRisksPopulationModel implements IView {
      */
     @Override
     public void reset() {
-        text.setText("");
-        text2.setText("");
+        textSampleFraction.setText("");
+        textPopulationSize.setText("");
         SWTUtil.disable(root);
     }
 
@@ -136,6 +141,18 @@ public class ViewRisksPopulationModel implements IView {
      * @param parent
      */
     private void create(final Composite parent) {
+        
+        buttonUseOutput = new Button(parent, SWT.CHECK);
+        buttonUseOutput.setText("Use model from output, if available");
+        buttonUseOutput.setLayoutData(GridDataFactory.fillDefaults().span(2, 1).grab(true, false).create());
+        
+        Label lbl0 = new Label(parent, SWT.NONE);
+        lbl0.setText("Current model:");
+
+        textModelUsed = new Text(parent, SWT.BORDER | SWT.SINGLE);
+        textModelUsed.setText("Input");
+        textModelUsed.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        textModelUsed.setEditable(false);
 
         Label lbl1 = new Label(parent, SWT.NONE);
         lbl1.setText("Region:");
@@ -149,20 +166,20 @@ public class ViewRisksPopulationModel implements IView {
         list.setEnabled(false);
         
         Label lbl2 = new Label(parent, SWT.NONE);
-        lbl2.setText("Sample fraction:");
+        lbl2.setText("Sampling fraction:");
         
-        text = new Text(parent, SWT.BORDER | SWT.SINGLE);
-        text.setText("0");
-        text.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        text.setEditable(false);
+        textSampleFraction = new Text(parent, SWT.BORDER | SWT.SINGLE);
+        textSampleFraction.setText("0");
+        textSampleFraction.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        textSampleFraction.setEditable(false);
         
         Label lbl3 = new Label(parent, SWT.NONE);
         lbl3.setText("Population size:");
         
-        text2 = new Text(parent, SWT.BORDER | SWT.SINGLE);
-        text2.setText("0");
-        text2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        text2.setEditable(false);
+        textPopulationSize = new Text(parent, SWT.BORDER | SWT.SINGLE);
+        textPopulationSize.setText("0");
+        textPopulationSize.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        textPopulationSize.setEditable(false);
         
         list.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
@@ -216,10 +233,10 @@ public class ViewRisksPopulationModel implements IView {
         }
         
         DataHandle handle = model.getInputConfig().getInput().getHandle();
-        text.setText(format.format(popmodel.getSampleFraction(handle)));
-        text.setEnabled(true);
-        text2.setText(format.format(popmodel.getPopulationSize(handle)));
-        text2.setEnabled(true);
+        textSampleFraction.setText(format.format(popmodel.getSamplingFraction(handle)));
+        textSampleFraction.setEnabled(true);
+        textPopulationSize.setText(format.format(popmodel.getPopulationSize(handle)));
+        textPopulationSize.setEnabled(true);
         root.setRedraw(true);
     }
 }

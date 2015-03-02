@@ -51,7 +51,7 @@ class ModelZayatz extends RiskModelPopulationBased {
                                                                                          super.getSampleSize(),
                                                                                          super.getNumClasses());
         
-        this.numUniques = super.getNumClassesOfSize(1) * conditionalUniquenessPercentage / super.getSampleFraction();
+        this.numUniques = super.getNumClassesOfSize(1) * conditionalUniquenessPercentage / super.getSamplingFraction();
     }
 
     /**

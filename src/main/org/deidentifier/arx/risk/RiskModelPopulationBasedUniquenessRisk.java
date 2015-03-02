@@ -55,7 +55,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
     /** Parameter */
     private int                         numClassesOfSize1;
     /** Parameter */
-    private double                      sampleFraction;
+    private double                      samplingFraction;
     /** Parameter */
     private ARXPopulationModel          model;
     /** Parameter */
@@ -111,7 +111,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
 
         // Init
         this.numClassesOfSize1 = (int) super.getNumClassesOfSize(1);
-        this.sampleFraction = super.getSampleFraction();
+        this.samplingFraction = super.getSamplingFraction();
         this.model = model;
         this.classes = classes;
         this.sampleSize = sampleSize;
@@ -220,7 +220,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
                 dankarModel = StatisticalModel.DANKAR;
             } else {
                 // Decision rule by Dankar et al.
-                if (sampleFraction <= 0.1) {
+                if (samplingFraction <= 0.1) {
                     getNumUniqueTuplesPitman();
                     if (isValid(numUniquesPitman)) {
                         numUniquesDankar = numUniquesPitman;

@@ -62,7 +62,7 @@ public class ViewPopulationModel implements IView {
     private DecimalFormat    format = new DecimalFormat("0.########################################");
     /** Model */
     private Model            model;
-    
+
     /**
      * Creates a new instance.
      * 
@@ -126,7 +126,7 @@ public class ViewPopulationModel implements IView {
         combo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         Label lbl2 = new Label(parent, SWT.NONE);
-        lbl2.setText("Sample fraction:");
+        lbl2.setText("Sampling fraction:");
         
         text = new Text(parent, SWT.BORDER | SWT.SINGLE);
         text.setText("0");

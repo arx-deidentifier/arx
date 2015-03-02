@@ -237,15 +237,6 @@ public class RiskEstimateBuilder {
     }
 
     /**
-     * Returns a class providing population-based uniqueness estimates
-     * @return
-     */
-    protected RiskModelPopulationBasedUniquenessRisk getPopulationBasedUniquenessRiskInterruptible(){
-        progress.value = 0;
-        return new RiskModelPopulationBasedUniquenessRisk(population, getEquivalenceClassModel(0.25), handle.getNumRows(), stop, progress, accuracy, maxIterations, true);
-    }
-    
-    /**
      * Returns a class providing access to sample-based risk estimates about the attributes
      * @return
      */
@@ -261,7 +252,7 @@ public class RiskEstimateBuilder {
         progress.value = 0;
         return new RiskModelSampleBasedReidentificationRisk(getEquivalenceClassModel());
     }
-
+    
     /**
      * Returns a class providing sample-based uniqueness estimates
      * @return
@@ -331,6 +322,15 @@ public class RiskEstimateBuilder {
             }
             return classes;
         }
+    }
+
+    /**
+     * Returns a class providing population-based uniqueness estimates
+     * @return
+     */
+    protected RiskModelPopulationBasedUniquenessRisk getPopulationBasedUniquenessRiskInterruptible(){
+        progress.value = 0;
+        return new RiskModelPopulationBasedUniquenessRisk(population, getEquivalenceClassModel(0.25), handle.getNumRows(), stop, progress, accuracy, maxIterations, true);
     }
     
     /**

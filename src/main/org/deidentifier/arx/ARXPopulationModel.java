@@ -179,20 +179,20 @@ public class ARXPopulationModel implements Serializable {
     }
 
     /**
-     * Returns the sample fraction
+     * Returns the sampling fraction
      * @param handle
      * @return
      */
-    public double getSampleFraction(DataHandle handle) {
-        return getSampleFraction(handle.getNumRows());
+    public double getSamplingFraction(DataHandle handle) {
+        return getSamplingFraction(handle.getNumRows());
     }
     
     /**
-     * Returns the sample fraction
+     * Returns the sampling fraction
      * @param sampleSize
-     * @return the sampleFraction
+     * @return the sampling fraction
      */
-    public double getSampleFraction(double sampleSize) {
+    public double getSamplingFraction(double sampleSize) {
         if (region == Region.NONE) {
             return this.sampleFraction;
         } else {

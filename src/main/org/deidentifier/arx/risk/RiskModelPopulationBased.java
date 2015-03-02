@@ -115,19 +115,19 @@ public abstract class RiskModelPopulationBased {
     }
 
     /**
-     * Returns the sample fraction
-     * @return
-     */
-    protected double getSampleFraction() {
-        return this.populationModel.getSampleFraction(this.sampleSize);
-    }
-
-    /**
      * Returns the sample size
      * @return
      */
     protected double getSampleSize() {
         return this.sampleSize;
+    }
+
+    /**
+     * Returns the sample fraction
+     * @return
+     */
+    protected double getSamplingFraction() {
+        return this.populationModel.getSamplingFraction(this.sampleSize);
     }
 
     /**

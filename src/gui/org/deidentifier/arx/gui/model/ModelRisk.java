@@ -132,16 +132,16 @@ public class ModelRisk implements Serializable {
      * @return
      */
     public double getSampleFraction(DataHandle handle) {
-        return this.populationModel.getSampleFraction(handle);
+        return this.populationModel.getSamplingFraction(handle);
     }
     
     /**
      * @param sampleSize
      * @return
-     * @see org.deidentifier.arx.ARXPopulationModel#getSampleFraction(double)
+     * @see org.deidentifier.arx.ARXPopulationModel#getSamplingFraction(double)
      */
     public double getSampleFraction(double sampleSize) {
-        return populationModel.getSampleFraction(sampleSize);
+        return populationModel.getSamplingFraction(sampleSize);
     }
     
     /**

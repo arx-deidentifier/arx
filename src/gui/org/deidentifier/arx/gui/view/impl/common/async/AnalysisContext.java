@@ -17,11 +17,13 @@
 
 package org.deidentifier.arx.gui.view.impl.common.async;
 
+import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
+import org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -32,12 +34,12 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
  * @author Fabian Prasser
  */
 public class AnalysisContext {
-    
+
     /** The target (input or output). */
     private ModelPart target;
-    
+
     /** The model. */
-    private Model model;
+    private Model     model;
 
     /**
      * Returns the current context, consisting of a consistent combination of
@@ -120,6 +122,28 @@ public class AnalysisContext {
         
         // Nothing found
         return null;
+    }
+
+    /**
+     * Returns a population model for the given context
+     *
+     * @return
+     */
+    public ARXPopulationModel getPopulationModel() {
+
+        // First, try to return a model associated with an output criterion
+        if (model.getRiskModel().isUseOutputPopulationModelIfAvailable() &&
+            model.getOutputConfig() != null) {
+            for (RiskBasedThresholdPopulationUniques t : model.getOutputConfig()
+                                                              .getCriteria(RiskBasedThresholdPopulationUniques.class)) {
+                if (t.getPopulationModel() != null) { 
+                    return t.getPopulationModel(); 
+                }
+            }
+        }
+        
+        // Fall back to the input model
+        return model.getRiskModel().getPopulationModel();
     }
 
     /**
