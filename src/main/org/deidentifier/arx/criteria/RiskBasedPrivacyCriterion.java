@@ -19,7 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution.Condition;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution.PrivacyCondition;
 
 /**
  * Abstract class for criteria that ensure that a certain risk measure is lower than or equal to a given threshold
@@ -48,17 +48,19 @@ public abstract class RiskBasedPrivacyCriterion extends SampleBasedPrivacyCriter
     }
     
     @Override
-    public int enforce(HashGroupifyDistribution distribution,
-                       int numCurrentlySuppressedOutliers,
-                       int numMaxSuppressedOutliers) {
+    public void enforce(final HashGroupifyDistribution distribution,
+                       final int numMaxSuppressedOutliers) {
        
-        distribution.suppressWhileNotFulfilledBinary(new Condition(){
-            public boolean isFulfilled(HashGroupifyDistribution distribution) {
-                return RiskBasedPrivacyCriterion.this.isFulfilled(distribution);
+        distribution.suppressWhileNotFulfilledBinary(new PrivacyCondition(){
+            public State isFulfilled(HashGroupifyDistribution distribution) {
+                boolean fulfilled = RiskBasedPrivacyCriterion.this.isFulfilled(distribution);
+                if (!fulfilled && distribution.getNumOfSuppressedTuples() > numMaxSuppressedOutliers) {
+                    return State.ABORT;
+                } else {
+                    return fulfilled ? State.FULFILLED : State.NOT_FULFILLED;
+                }
             }
         });
-       
-        return distribution.getNumOfSuppressedTuples();
     }
     
     @Override

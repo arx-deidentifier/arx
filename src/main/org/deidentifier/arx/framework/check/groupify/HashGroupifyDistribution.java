@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution.PrivacyCondition.State;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
@@ -54,8 +55,24 @@ public class HashGroupifyDistribution {
      * A condition that may or may not be fulfilled for the distribution
      * @author Fabian Prasser
      */
-    public static interface Condition {
-        public boolean isFulfilled(HashGroupifyDistribution distribution);
+    public static interface PrivacyCondition {
+        
+        /**
+         * The current state of the search condition
+         * @author Fabian Prasser
+         */
+        public static enum State {
+            FULFILLED,
+            NOT_FULFILLED,
+            ABORT
+        }
+        
+        /**
+         * Evaluates the condition on the given distribution
+         * @param distribution
+         * @return
+         */
+        public State isFulfilled(HashGroupifyDistribution distribution);
     }
     
     /** The backing map */
@@ -203,14 +220,16 @@ public class HashGroupifyDistribution {
      * @param condition
      * @return the number of tuples that have been suppressed
      */
-    public int suppressWhileNotFulfilledLinear(Condition condition) {
+    public int suppressWhileNotFulfilledLinear(PrivacyCondition condition) {
 
         int initiallySuppressed = this.suppressed;
 
         for (int i=0; i<entries.length; i++) {
-            if (!condition.isFulfilled(this)) {
+            State state = condition.isFulfilled(this);
+            if (state == State.NOT_FULFILLED) {
                 suppressEntry(entries[i]);
-            } else {
+            } else { 
+                // State.FULFILLED || State.ABORT
                 break;
             }
         }
@@ -223,13 +242,14 @@ public class HashGroupifyDistribution {
      * @param condition
      * @return the number of tuples that have been suppressed
      */
-    public int suppressWhileNotFulfilledBinary(Condition condition) {
+    public int suppressWhileNotFulfilledBinary(PrivacyCondition condition) {
 
         // Start parameters
         int low = 0;
         int high = entries.length - 1;
         int mid = (low + high) / 2;
         int initiallySuppressed = this.suppressed;
+        State state = State.ABORT;
 
         // Initially suppress from low to mid
         for (int i=low; i <= mid; i++) {
@@ -240,7 +260,10 @@ public class HashGroupifyDistribution {
         while (low <= high) {
 
             // Binary search
-            if (condition.isFulfilled(this)) {
+            state = condition.isFulfilled(this);
+            if (state == State.ABORT) {
+                break;
+            } else if (state == State.FULFILLED) {
                 high = mid - 1;
                 mid = (low + high) / 2;
                 
@@ -249,7 +272,7 @@ public class HashGroupifyDistribution {
                     unSuppressEntry(entries[i]);
                 }
                 
-            } else {
+            } else { // state == State.NOT_FULFILLED
                 
                 low = mid + 1;
                 mid = (low + high) / 2;
@@ -262,8 +285,11 @@ public class HashGroupifyDistribution {
         }
 
         // Finally check mid+1
-        if (!condition.isFulfilled(this) && mid + 1 < entries.length && entries[mid + 1].isNotOutlier) {
-            suppressEntry(entries[mid + 1]);
+        if (state != State.ABORT) {
+            state = condition.isFulfilled(this);
+            if (state == State.NOT_FULFILLED && mid + 1 < entries.length && entries[mid + 1].isNotOutlier) {
+                suppressEntry(entries[mid + 1]);
+            }
         }
 
         return this.suppressed - initiallySuppressed;

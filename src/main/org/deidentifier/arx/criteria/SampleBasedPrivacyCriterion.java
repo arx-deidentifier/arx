@@ -56,17 +56,13 @@ public abstract class SampleBasedPrivacyCriterion extends PrivacyCriterion {
     }
     
     /**
-     * This method enforces the criterion on the current hash table. It must return the total number of tuples
-     * that have been suppressed. It is assumed that all sample-based criteria can be fulfilled in any case.
-     * Criteria may abort early, if the threshold is reached <code>(numCurrentlySuppressedOutliers > numMaxSuppressedOutliers)</code>.
-     * Implementations must return the updated value of <code>numCurrentlySuppressedOutliers</code>.
+     * This method enforces the criterion on the current hash table. 
+     * Criteria can be enforced by suppressing classes in the distribution by passing a PrivacyCondition.
+     * Criteria may abort early, if the threshold is reached (<code>distribution.getNumOfSuppressedTuples() > numMaxSuppressedOutliers</code>).
      * 
      * @param distribution
-     * @param numCurrentlySuppressedOutliers
      * @param numMaxSuppressedOutliers
-     * @return numCurrentlySuppressedOutliers
      */
-    public abstract int enforce(HashGroupifyDistribution distribution, 
-                                int numCurrentlySuppressedOutliers, 
-                                int numMaxSuppressedOutliers);
+    public abstract void enforce(HashGroupifyDistribution distribution, 
+                                 int numMaxSuppressedOutliers);
 }

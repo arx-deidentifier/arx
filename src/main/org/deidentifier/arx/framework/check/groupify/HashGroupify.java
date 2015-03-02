@@ -689,11 +689,10 @@ public class HashGroupify implements IHashGroupify {
         for (SampleBasedPrivacyCriterion criterion : this.sampleBasedCriteria) {
             
             // Enforce
-            this.currentOutliers = criterion.enforce(distribution, 
-                                                     this.currentOutliers,
-                                                     earlyAbort ? this.absoluteMaxOutliers : Integer.MAX_VALUE);
+            criterion.enforce(distribution, earlyAbort ? this.absoluteMaxOutliers : Integer.MAX_VALUE);
             
             // Early abort
+            this.currentOutliers = distribution.getNumOfSuppressedTuples();
             if (earlyAbort && currentOutliers > absoluteMaxOutliers) {
                 return;
             }
