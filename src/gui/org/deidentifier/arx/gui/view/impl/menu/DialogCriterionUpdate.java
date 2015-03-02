@@ -202,7 +202,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
                 close();
             }
         });
-        ok.setEnabled(!edit || false);
+        ok.setEnabled(elements.size() != 0);
 
         if (edit) {
                 
@@ -311,7 +311,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
 
         if (selection != null) {
             table.setSelection(elements.indexOf(selection));
-        } else {
+        } else if (table.getItemCount() != 0){
             table.setSelection(0);
             selection = elements.get(0);
         }
