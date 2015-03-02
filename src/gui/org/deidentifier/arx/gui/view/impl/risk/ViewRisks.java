@@ -292,7 +292,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         
         AnalysisContext analysisContext = context.context;
         
-        return context.handle.getRiskEstimator(analysisContext.getModel().getRiskModel().getPopulationModel(),
+        return context.handle.getRiskEstimator(analysisContext.getPopulationModel(),
                                                identifiers,
                                                analysisContext.getModel().getRiskModel().getAccuracy(),
                                                analysisContext.getModel().getRiskModel().getMaxIterations())
