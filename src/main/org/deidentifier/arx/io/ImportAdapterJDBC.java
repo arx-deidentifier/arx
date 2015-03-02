@@ -24,6 +24,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.DataType;
+
 /**
  * Import adapter for JDBC
  * 
@@ -168,7 +170,7 @@ public class ImportAdapterJDBC extends ImportAdapter {
                 result[i] = resultSet.getString(indexes[i]);
                 if (!dataTypes[i].isValid(result[i])) {
                     if (config.columns.get(i).isCleansing()) {
-                        result[i] = null;
+                        result[i] = DataType.NULL_VALUE;
                     } else {
                         throw new IllegalArgumentException("Data value does not match data type");
                     }

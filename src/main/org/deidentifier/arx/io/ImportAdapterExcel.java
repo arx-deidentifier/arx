@@ -29,6 +29,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.ImportConfigurationExcel.ExcelFileTypes;
 
 /**
@@ -189,7 +190,7 @@ public class ImportAdapterExcel extends ImportAdapter {
 
             if (!dataTypes[i].isValid(result[i])) {
                 if (config.columns.get(i).isCleansing()) {
-                    result[i] = null;
+                    result[i] = DataType.NULL_VALUE;
                 } else {
                     throw new IllegalArgumentException("Data value does not match data type");
                 }

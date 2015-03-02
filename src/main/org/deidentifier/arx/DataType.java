@@ -47,7 +47,7 @@ import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilde
 public abstract class DataType<T> implements Serializable, Comparator<T> {
 
     /** The string representing the NULL value */
-    private static final String NULL_VALUE = "NULL";
+    public static final String NULL_VALUE = "NULL";
 
     /**
      * Base class for date/time types.
@@ -382,11 +382,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public String toString() {
             return "Date(" + string + ")";
         }
-
-        @Override
-        public boolean isNull(String value) {
-            return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
-        }
     }
 
     /**
@@ -718,11 +713,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public String toString() {
             return "Decimal";
         }
-
-        @Override
-        public boolean isNull(String value) {
-            return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
-        }
     }
 
     /**
@@ -1047,11 +1037,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public String toString() {
             return "Integer";
         }
-
-        @Override
-        public boolean isNull(String value) {
-            return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
-        }
     }
     
     /**
@@ -1314,11 +1299,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public String toString() {
             return "OrderedString";
         }
-
-        @Override
-        public boolean isNull(String value) {
-            return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
-        }
     }
     
     /**
@@ -1539,11 +1519,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract Locale getLocale();
-        
-        /**
-         * @return
-         */
-        public abstract boolean isNull(String value);
     }
 
     /**
@@ -1985,4 +1960,13 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @return
      */
     public abstract T parse(String s);
+    
+    /**
+     * Returns whether the given value represent null
+     * @param value
+     * @return
+     */
+    public boolean isNull(String value) {
+        return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
+    }
 }

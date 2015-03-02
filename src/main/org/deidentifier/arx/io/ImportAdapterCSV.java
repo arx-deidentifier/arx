@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.input.CountingInputStream;
+import org.deidentifier.arx.DataType;
 
 /**
  * Import adapter for CSV files
@@ -176,7 +177,7 @@ public class ImportAdapterCSV extends ImportAdapter {
             result[i] = row[indexes[i]];
             if (!dataTypes[i].isValid(result[i])) {
                 if (config.columns.get(i).isCleansing()) {
-                    result[i] = null;
+                    result[i] = DataType.NULL_VALUE;
                 } else {
                     throw new IllegalArgumentException("Data value does not match data type");
                 }
