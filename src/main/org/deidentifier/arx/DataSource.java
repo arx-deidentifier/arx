@@ -32,9 +32,10 @@ import org.deidentifier.arx.io.ImportConfigurationJDBC;
  * or via a JDBC connection.
  *
  * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class DataSource {
-    
+
     /**
      * Creates a CSV data source.
      *
@@ -46,7 +47,7 @@ public class DataSource {
     public static DataSource createCSVSource(File file, char separator, boolean containsHeader) {
         return new DataSource(file, separator, containsHeader);
     }
-    
+
     /**
      * Creates a CSV data source.
      *
@@ -83,7 +84,6 @@ public class DataSource {
         return createExcelSource(new File(file), sheetIndex, containsHeader);
     }
 
-
     /**
      * Creates a JDBC data source.
      *
@@ -109,7 +109,7 @@ public class DataSource {
     public static DataSource createJDBCSource(String url, String user, String password, String table) throws SQLException {
         return new DataSource(url, user, password, table);
     }
-    
+
     /** The config. */
     private final ImportConfiguration config;
 
@@ -123,7 +123,7 @@ public class DataSource {
     private DataSource(File file, char separator, boolean containsHeader) {
         config = new ImportConfigurationCSV(file.getAbsolutePath(), separator, containsHeader);
     }
-    
+
     /**
      * Creates an Excel source.
      *
@@ -134,7 +134,7 @@ public class DataSource {
     private DataSource(File file, int sheetIndex, boolean containsHeader) {
         config = new ImportConfigurationExcel(file.getAbsolutePath(), sheetIndex, containsHeader);
     }
-    
+
     /**
      * Creates a JDBC data source.
      *
@@ -145,7 +145,7 @@ public class DataSource {
     private DataSource(String url, String table) throws SQLException {
         config = new ImportConfigurationJDBC(url, table);
     }
-    
+
     /**
      * Creates a JDBC data source.
      *
@@ -158,7 +158,7 @@ public class DataSource {
     private DataSource(String url, String user, String password, String table) throws SQLException {
         config = new ImportConfigurationJDBC(url, user, password, table);
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -167,7 +167,7 @@ public class DataSource {
     public void addColumn(int index) {
         addColumn(index, DataType.STRING);
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -175,15 +175,31 @@ public class DataSource {
      * @param datatype
      */
     public void addColumn(int index, DataType<?> datatype) {
-        if (config instanceof ImportConfigurationCSV){
+        if (config instanceof ImportConfigurationCSV) {
             config.addColumn(new ImportColumnCSV(index, datatype));
-        } else if (config instanceof ImportConfigurationExcel){
+        } else if (config instanceof ImportConfigurationExcel) {
             config.addColumn(new ImportColumnExcel(index, datatype));
-        } else if (config instanceof ImportConfigurationJDBC){
+        } else if (config instanceof ImportConfigurationJDBC) {
             config.addColumn(new ImportColumnJDBC(index, datatype));
         }
     }
-    
+
+    /**
+     * Adds a new column.
+     *
+     * @param index
+     * @param datatype
+     */
+    public void addColumn(int index, DataType<?> datatype, boolean cleansing) {
+        if (config instanceof ImportConfigurationCSV) {
+            config.addColumn(new ImportColumnCSV(index, datatype, cleansing));
+        } else if (config instanceof ImportConfigurationExcel) {
+            config.addColumn(new ImportColumnExcel(index, datatype, cleansing));
+        } else if (config instanceof ImportConfigurationJDBC) {
+            config.addColumn(new ImportColumnJDBC(index, datatype, cleansing));
+        }
+    }
+
     /**
      * Adds a new column.
      *
@@ -193,7 +209,7 @@ public class DataSource {
     public void addColumn(int index, String alias) {
         addColumn(index, alias, DataType.STRING);
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -202,15 +218,33 @@ public class DataSource {
      * @param datatype
      */
     public void addColumn(int index, String alias, DataType<?> datatype) {
-        if (config instanceof ImportConfigurationCSV){
+        if (config instanceof ImportConfigurationCSV) {
             config.addColumn(new ImportColumnCSV(index, alias, datatype));
-        } else if (config instanceof ImportConfigurationExcel){
+        } else if (config instanceof ImportConfigurationExcel) {
             config.addColumn(new ImportColumnExcel(index, alias, datatype));
-        } else if (config instanceof ImportConfigurationJDBC){
+        } else if (config instanceof ImportConfigurationJDBC) {
             config.addColumn(new ImportColumnJDBC(index, alias, datatype));
         }
     }
-    
+
+    /**
+     * Adds a new column.
+     * 
+     * @param index
+     * @param alias
+     * @param datatype
+     * @param cleansing
+     */
+    public void addColumn(int index, String alias, DataType<?> datatype, boolean cleansing) {
+        if (config instanceof ImportConfigurationCSV) {
+            config.addColumn(new ImportColumnCSV(index, alias, datatype, cleansing));
+        } else if (config instanceof ImportConfigurationExcel) {
+            config.addColumn(new ImportColumnExcel(index, alias, datatype, cleansing));
+        } else if (config instanceof ImportConfigurationJDBC) {
+            config.addColumn(new ImportColumnJDBC(index, alias, datatype, cleansing));
+        }
+    }
+
     /**
      * Adds a new column.
      *
@@ -219,7 +253,7 @@ public class DataSource {
     public void addColumn(String name) {
         addColumn(name, DataType.STRING);
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -227,15 +261,32 @@ public class DataSource {
      * @param datatype
      */
     public void addColumn(String name, DataType<?> datatype) {
-        if (config instanceof ImportConfigurationCSV){
+        if (config instanceof ImportConfigurationCSV) {
             config.addColumn(new ImportColumnCSV(name, datatype));
-        } else if (config instanceof ImportConfigurationExcel){
+        } else if (config instanceof ImportConfigurationExcel) {
             config.addColumn(new ImportColumnExcel(name, datatype));
-        } else if (config instanceof ImportConfigurationJDBC){
+        } else if (config instanceof ImportConfigurationJDBC) {
             config.addColumn(new ImportColumnJDBC(name, datatype));
         }
     }
-    
+
+    /**
+     * Adds a new column.
+     *
+     * @param name
+     * @param datatype
+     * @param cleansing
+     */
+    public void addColumn(String name, DataType<?> datatype, boolean cleansing) {
+        if (config instanceof ImportConfigurationCSV) {
+            config.addColumn(new ImportColumnCSV(name, datatype, cleansing));
+        } else if (config instanceof ImportConfigurationExcel) {
+            config.addColumn(new ImportColumnExcel(name, datatype, cleansing));
+        } else if (config instanceof ImportConfigurationJDBC) {
+            config.addColumn(new ImportColumnJDBC(name, datatype, cleansing));
+        }
+    }
+
     /**
      * Adds a new column.
      *
@@ -245,7 +296,7 @@ public class DataSource {
     public void addColumn(String name, String alias) {
         addColumn(name, alias, DataType.STRING);
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -254,21 +305,38 @@ public class DataSource {
      * @param datatype
      */
     public void addColumn(String name, String alias, DataType<?> datatype) {
-        if (config instanceof ImportConfigurationCSV){
+        if (config instanceof ImportConfigurationCSV) {
             config.addColumn(new ImportColumnCSV(name, alias, datatype));
-        } else if (config instanceof ImportConfigurationExcel){
+        } else if (config instanceof ImportConfigurationExcel) {
             config.addColumn(new ImportColumnExcel(name, alias, datatype));
-        } else if (config instanceof ImportConfigurationJDBC){
+        } else if (config instanceof ImportConfigurationJDBC) {
             config.addColumn(new ImportColumnJDBC(name, alias, datatype));
         }
     }
-    
+
+    /**
+     * Adds a new column.
+     * @param name
+     * @param alias
+     * @param datatype
+     * @param cleansing
+     */
+    public void addColumn(String name, String alias, DataType<?> datatype, boolean cleansing) {
+        if (config instanceof ImportConfigurationCSV) {
+            config.addColumn(new ImportColumnCSV(name, alias, datatype, cleansing));
+        } else if (config instanceof ImportConfigurationExcel) {
+            config.addColumn(new ImportColumnExcel(name, alias, datatype, cleansing));
+        } else if (config instanceof ImportConfigurationJDBC) {
+            config.addColumn(new ImportColumnJDBC(name, alias, datatype, cleansing));
+        }
+    }
+
     /**
      * Returns the configuration.
      *
      * @return
      */
-    protected ImportConfiguration getConfiguration(){
+    protected ImportConfiguration getConfiguration() {
         return config;
     }
 }

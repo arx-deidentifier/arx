@@ -35,11 +35,11 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
      *
      * @note Counting starts usually at 0
      */
-    private int index;
+    private int    index;
 
     /** Column name. */
     private String name;
-    
+
     /**
      * Creates a new instance of this object with the given parameters.
      *
@@ -50,7 +50,18 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
      *       scheme.
      */
     public ImportColumnIndexed(int index, DataType<?> datatype) {
-        this(index, null, datatype);
+        this(index, null, datatype, false);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     * 
+     * @param index {@link #index}
+     * @param datatype {@link #dataType}
+     * @param cleansing
+     */
+    public ImportColumnIndexed(int index, DataType<?> datatype, boolean cleansing) {
+        this(index, null, datatype, cleansing);
     }
 
     /**
@@ -62,10 +73,22 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
      * @note This does assign an alias name to the column explicitly.
      */
     public ImportColumnIndexed(int index, String aliasName, DataType<?> datatype) {
-        super(aliasName, datatype);
+        this(index, aliasName, datatype, false);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     * 
+     * @param index {@link #index}
+     * @param aliasName {@link ImportColumn#setAliasName(String)}
+     * @param datatype {@link #dataType}
+     * @param cleansing
+     */
+    public ImportColumnIndexed(int index, String aliasName, DataType<?> datatype, boolean cleansing) {
+        super(aliasName, datatype, cleansing);
         setIndex(index);
     }
-    
+
     /**
      * Creates a new instance of this object with the given parameters.
      *
@@ -73,7 +96,17 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
      * @param datatype
      */
     public ImportColumnIndexed(String name, DataType<?> datatype) {
-        this(name, null, datatype);
+        this(name, null, datatype, false);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     * @param name
+     * @param datatype
+     * @param cleansing
+     */
+    public ImportColumnIndexed(String name, DataType<?> datatype, boolean cleansing) {
+        this(name, null, datatype, cleansing);
     }
 
     /**
@@ -84,7 +117,19 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
      * @param datatype
      */
     public ImportColumnIndexed(String name, String aliasName, DataType<?> datatype) {
-        super(aliasName, datatype);
+        this(name, aliasName, datatype, false);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     * 
+     * @param name
+     * @param aliasName
+     * @param datatype
+     * @param cleansing
+     */
+    public ImportColumnIndexed(String name, String aliasName, DataType<?> datatype, boolean cleansing) {
+        super(aliasName, datatype, cleansing);
         setIndex(Integer.MIN_VALUE);
         setName(name);
     }
@@ -92,6 +137,7 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
     /**
      * @return {@link #index}
      */
+    @Override
     public int getIndex() {
         return index;
     }
@@ -111,17 +157,18 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
      * @return
      */
     public boolean isIndexSpecified() {
-        return this.index != Integer.MIN_VALUE;
+        return index != Integer.MIN_VALUE;
     }
 
     /**
      * @param index
      *            {@link #index}
      */
+    @Override
     public void setIndex(int index) {
         this.index = index;
     }
-    
+
     /**
      * Sets the name.
      *

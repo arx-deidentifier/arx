@@ -28,6 +28,7 @@ import org.deidentifier.arx.DataType;
  *
  * @author Karol Babioch
  * @author Fabian Prasser
+ * @author Florian Kohlmayer
  * @note For now only the index based addressing works
  * @warning Don't mix name based and index based addressing
  */
@@ -51,7 +52,17 @@ public class ImportColumnJDBC extends ImportColumn implements
      * @param datatype
      */
     public ImportColumnJDBC(int index, DataType<?> datatype) {
-        this(index, null, datatype);
+        this(index, null, datatype, false);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     * @param index
+     * @param datatype
+     * @param cleansing
+     */
+    public ImportColumnJDBC(int index, DataType<?> datatype, boolean cleansing) {
+        this(index, null, datatype, cleansing);
     }
 
     /**
@@ -62,7 +73,19 @@ public class ImportColumnJDBC extends ImportColumn implements
      * @param datatype
      */
     public ImportColumnJDBC(int index, String aliasName, DataType<?> datatype) {
-        super(aliasName, datatype);
+        this(index, aliasName, datatype, false);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     * 
+     * @param index
+     * @param aliasName
+     * @param datatype
+     * @param cleansing
+     */
+    public ImportColumnJDBC(int index, String aliasName, DataType<?> datatype, boolean cleansing) {
+        super(aliasName, datatype, cleansing);
         setIndex(index);
     }
 
@@ -73,7 +96,18 @@ public class ImportColumnJDBC extends ImportColumn implements
      * @param datatype
      */
     public ImportColumnJDBC(String name, DataType<?> datatype) {
-        super(name, datatype);
+        this(name, datatype, false);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     * 
+     * @param name
+     * @param datatype
+     * @param cleansing
+     */
+    public ImportColumnJDBC(String name, DataType<?> datatype, boolean cleansing) {
+        super(name, datatype, cleansing);
         setName(name);
     }
 
@@ -85,13 +119,26 @@ public class ImportColumnJDBC extends ImportColumn implements
      * @param datatype
      */
     public ImportColumnJDBC(String name, String aliasName, DataType<?> datatype) {
-        super(aliasName, datatype);
+        this(name, aliasName, datatype, false);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     * 
+     * @param name
+     * @param aliasName
+     * @param datatype
+     * @param cleansing
+     */
+    public ImportColumnJDBC(String name, String aliasName, DataType<?> datatype, boolean cleansing) {
+        super(aliasName, datatype, cleansing);
         setName(name);
     }
 
     /**
      * @return {@link #index}
      */
+    @Override
     public int getIndex() {
         return index;
     }
@@ -108,6 +155,7 @@ public class ImportColumnJDBC extends ImportColumn implements
      * @param index
      *            {@link #index}
      */
+    @Override
     public void setIndex(int index) {
         this.index = index;
     }
