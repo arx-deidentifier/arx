@@ -127,9 +127,6 @@ public class ViewLattice extends ViewSolutionSpace {
     }
 
     /** Color. */
-    private static final Color         COLOR_WHITE             = GUIHelper.getColor(255, 255, 255);
-    
-    /** Color. */
     private static final Color         COLOR_BLACK             = GUIHelper.getColor(0, 0, 0);
     
     /** Color. */
@@ -347,7 +344,7 @@ public class ViewLattice extends ViewSolutionSpace {
 
         // Fill background
         Point size = canvas.getSize();
-        g.setBackground(COLOR_WHITE);
+        g.setBackground(g.getDevice().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
         g.fillRectangle(0, 0, size.x, size.y);
                 
         // Return, if nothing to show
@@ -376,6 +373,10 @@ public class ViewLattice extends ViewSolutionSpace {
         
         // Draw nodes
         drawNodes(g);
+        
+        // Draw border
+        g.setForeground(g.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+        g.drawRectangle(0, 0, screen.x-1, screen.y-1);
     }
 
     /**
