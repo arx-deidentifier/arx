@@ -182,11 +182,12 @@ public abstract class ViewSolutionSpace implements IView {
         // Create the secondary composite
         this.secondary = new Composite(this.base, SWT.NONE);
         this.secondary.setLayout(SWTUtil.createGridLayout(1));
-        label = new CLabel(this.secondary, SWT.NONE);
-        label.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, true).minSize(400, 200).create());
-        label.setImage(controller.getResources().getImage("warning.png"));
-        label.setText("");
-        label.setAlignment(SWT.LEFT);
+        
+        this.label = new CLabel(this.secondary, SWT.NONE);
+        this.label.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, true).minSize(400, 200).create());
+        this.label.setImage(controller.getResources().getImage("warning.png"));
+        this.label.setText("");
+        this.label.setAlignment(SWT.LEFT);
         
         // Show primary
         this.showPrimaryComposite();
