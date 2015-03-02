@@ -23,6 +23,7 @@ import java.text.DecimalFormat;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -62,12 +63,12 @@ public class ViewRisksPopulationModel implements IView {
     /** View */
     private DecimalFormat    format = new DecimalFormat("0.########################################");
     /** View */
-    private Button           buttonUseOutput;
-    /** View */
-    private Text             textModelUsed;
+    private Button           buttonUse;
 
     /** Model */
     private Model            model;
+    /** Model */
+    private final boolean    output;
 
 
     /**
@@ -75,9 +76,11 @@ public class ViewRisksPopulationModel implements IView {
      * 
      * @param parent
      * @param controller
+     * @param output
      */
     public ViewRisksPopulationModel(final Composite parent,
-                                    final Controller controller) {
+                                    final Controller controller,
+                                    final boolean output) {
 
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.POPULATION_MODEL, this);
@@ -85,6 +88,7 @@ public class ViewRisksPopulationModel implements IView {
         controller.addListener(ModelPart.OUTPUT, this);
         controller.addListener(ModelPart.RESULT, this);
         this.controller = controller;
+        this.output = output;
 
         // Create group
         root = parent;
@@ -110,6 +114,7 @@ public class ViewRisksPopulationModel implements IView {
      */
     @Override
     public void reset() {
+        list.select(0);
         textSampleFraction.setText("");
         textPopulationSize.setText("");
         SWTUtil.disable(root);
@@ -134,6 +139,19 @@ public class ViewRisksPopulationModel implements IView {
            update();
         }
     }
+    
+    /**
+     * Is an output model available
+     * @return
+     */
+    private boolean isOutputPopulationModelAvailable() {
+        if (model == null || model.getOutputConfig() == null) { return false; }
+        for (RiskBasedThresholdPopulationUniques t : model.getOutputConfig()
+                                                          .getCriteria(RiskBasedThresholdPopulationUniques.class)) {
+            if (t.getPopulationModel() != null) { return true; }
+        }
+        return false;
+    }
 
     /**
      * Creates the required controls.
@@ -142,18 +160,17 @@ public class ViewRisksPopulationModel implements IView {
      */
     private void create(final Composite parent) {
         
-        buttonUseOutput = new Button(parent, SWT.CHECK);
-        buttonUseOutput.setText("Use model from output, if available");
-        buttonUseOutput.setLayoutData(GridDataFactory.fillDefaults().span(2, 1).grab(true, false).create());
+        buttonUse = new Button(parent, SWT.CHECK);
+        buttonUse.setText("Use this model");
+        buttonUse.setLayoutData(GridDataFactory.fillDefaults().span(2, 1).grab(true, false).create());
+        buttonUse.addSelectionListener(new SelectionAdapter(){
+            public void widgetSelected(SelectionEvent arg0) {
+                model.getRiskModel().setUseOutputPopulationModelIfAvailable(output ? buttonUse.getSelection()
+                                                                                   : !buttonUse.getSelection());
+                controller.update(new ModelEvent(controller, ModelPart.POPULATION_MODEL, null));
+            }
+        });
         
-        Label lbl0 = new Label(parent, SWT.NONE);
-        lbl0.setText("Current model:");
-
-        textModelUsed = new Text(parent, SWT.BORDER | SWT.SINGLE);
-        textModelUsed.setText("Input");
-        textModelUsed.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        textModelUsed.setEditable(false);
-
         Label lbl1 = new Label(parent, SWT.NONE);
         lbl1.setText("Region:");
         lbl1.setLayoutData(GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.TOP).create());
@@ -225,18 +242,25 @@ public class ViewRisksPopulationModel implements IView {
             popmodel = model.getOutputPopulationModel();
         }
         
-        for (int i=0; i<list.getItemCount(); i++) {
-            if (list.getItem(i).equals(popmodel.getRegion().getName())) {
-                list.select(i);
-                break;
-            }
-        }
+        boolean mayUseOutput = isOutputPopulationModelAvailable() && model.getRiskModel().isUseOutputPopulationModelIfAvailable();
+        boolean enabled = output ? mayUseOutput : !mayUseOutput;
+        this.buttonUse.setSelection(enabled);
         
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-        textSampleFraction.setText(format.format(popmodel.getSamplingFraction(handle)));
-        textSampleFraction.setEnabled(true);
-        textPopulationSize.setText(format.format(popmodel.getPopulationSize(handle)));
-        textPopulationSize.setEnabled(true);
+        if (output && !isOutputPopulationModelAvailable()) {
+            reset();
+        } else {
+            for (int i=0; i<list.getItemCount(); i++) {
+                if (list.getItem(i).equals(popmodel.getRegion().getName())) {
+                    list.select(i);
+                    break;
+                }
+            }
+            DataHandle handle = model.getInputConfig().getInput().getHandle();
+            textSampleFraction.setText(format.format(popmodel.getSamplingFraction(handle)));
+            textSampleFraction.setEnabled(true);
+            textPopulationSize.setText(format.format(popmodel.getPopulationSize(handle)));
+            textPopulationSize.setEnabled(true);
+        }
         root.setRedraw(true);
     }
 }
