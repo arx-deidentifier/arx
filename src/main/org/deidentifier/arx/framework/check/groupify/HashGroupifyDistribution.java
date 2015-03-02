@@ -151,9 +151,13 @@ public class HashGroupifyDistribution {
             comparator = new Comparator<HashGroupifyEntry>(){
                 public int compare(HashGroupifyEntry o1, HashGroupifyEntry o2) {
                     
+                    int cmp = Integer.compare(o1.count, o2.count);
+                    if (cmp != 0) {
+                        return cmp;
+                    }
+                    
                     InformationLossWithBound<?> loss1 = cache.get(o1);
                     InformationLossWithBound<?> loss2 = cache.get(o2);
-                    
                     if (loss1 == null) {
                         loss1 = metric.getInformationLoss(transformation, o1); 
                         cache.put(o1, loss1);
@@ -164,7 +168,7 @@ public class HashGroupifyDistribution {
                         cache.put(o2, loss2);
                     }
                     
-                    int cmp = loss1.getInformationLoss().compareTo(loss2.getInformationLoss());
+                    cmp = loss1.getInformationLoss().compareTo(loss2.getInformationLoss());
                     return cmp != 0 ? cmp : Integer.compare(o1.representant, o2.representant);
                 }
             };

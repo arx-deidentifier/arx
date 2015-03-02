@@ -318,8 +318,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         for (int dimension = 0; dimension < dimensions; dimension++) {
             int value = entry.key[dimension];
             int level = transformation[dimension];
-            double share = (double) entry.count * shares[dimension].getShare(value, level);
-            result[dimension] += share * gFactor;
+            result[dimension] = (double) entry.count / shares[dimension].getShare(value, level);
         }
         
         // Return
