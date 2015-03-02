@@ -86,20 +86,9 @@ public class SWTUtil {
      * @param image
      */
     public static void createDisabledImage(ToolItem item) {
-        item.setDisabledImage(createDisabledImage(item.getControl(), item.getImage()));
+        item.setDisabledImage(new Image(item.getDisplay(), item.getImage(), SWT.IMAGE_GRAY));
     }
     
-    /**
-     * Generates a version of the image
-     * that renders well on windows toolbars, when disabled.
-     * 
-     * @param control
-     * @param image
-     */
-    public static Image createDisabledImage(Control control, Image image) {
-        return new Image(control.getDisplay(), image, SWT.IMAGE_GRAY);
-    }
-
     /**
      * Creates grid data.
      *
