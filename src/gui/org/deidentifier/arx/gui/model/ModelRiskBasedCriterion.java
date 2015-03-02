@@ -71,13 +71,13 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
         case VARIANT_AVERAGE_RISK:
             return new RiskBasedThresholdAverageRisk(threshold);
         case VARIANT_POPULATION_UNIQUES_DANKAR:
-            return new RiskBasedThresholdPopulationUniques(threshold, StatisticalModel.DANKAR, model.getRiskModel().getPopulationModel());
+            return new RiskBasedThresholdPopulationUniques(threshold, StatisticalModel.DANKAR, model.getRiskModel().getPopulationModel().clone());
         case VARIANT_POPULATION_UNIQUES_PITMAN:
-            return new RiskBasedThresholdPopulationUniques(threshold, StatisticalModel.PITMAN, model.getRiskModel().getPopulationModel());
+            return new RiskBasedThresholdPopulationUniques(threshold, StatisticalModel.PITMAN, model.getRiskModel().getPopulationModel().clone());
         case VARIANT_POPULATION_UNIQUES_SNB:
-            return new RiskBasedThresholdPopulationUniques(threshold, StatisticalModel.SNB, model.getRiskModel().getPopulationModel());
+            return new RiskBasedThresholdPopulationUniques(threshold, StatisticalModel.SNB, model.getRiskModel().getPopulationModel().clone());
         case VARIANT_POPULATION_UNIQUES_ZAYATZ:
-            return new RiskBasedThresholdPopulationUniques(threshold, StatisticalModel.ZAYATZ, model.getRiskModel().getPopulationModel());
+            return new RiskBasedThresholdPopulationUniques(threshold, StatisticalModel.ZAYATZ, model.getRiskModel().getPopulationModel().clone());
         case VARIANT_SAMPLE_UNIQUES:
             return new RiskBasedThresholdSampleUniques(threshold);
         default:
