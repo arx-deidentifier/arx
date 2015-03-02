@@ -213,11 +213,10 @@ public class ViewRisksPopulationModel implements IView {
 
                 for (int i=0; i<list.getItemCount(); i++) {
                     if (list.getItem(i).equals(popmodel.getRegion().getName())) {
-                        list.select(i);
+                        list.setSelection(i);
                         break;
                     }
                 }
-                list.showSelection();
             }
         });
     }
@@ -253,11 +252,10 @@ public class ViewRisksPopulationModel implements IView {
             
             for (int i=0; i<list.getItemCount(); i++) {
                 if (list.getItem(i).equals(popmodel.getRegion().getName())) {
-                    list.select(i);
+                    list.setSelection(i);
                     break;
                 }
             }
-            list.showSelection();
             DataHandle handle = model.getInputConfig().getInput().getHandle();
             textSampleFraction.setText(format.format(popmodel.getSamplingFraction(handle)));
             textSampleFraction.setEnabled(true);
