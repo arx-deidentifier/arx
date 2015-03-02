@@ -35,9 +35,8 @@ public class ModelRisk implements Serializable {
     /**
      * A enum for views
      * @author Fabian Prasser
-     *
      */
-    public static enum ViewRisk {
+    public static enum ViewRiskType {
         CLASSES_PLOT,
         CLASSES_TABLE,
         ATTRIBUTES,
@@ -47,21 +46,23 @@ public class ModelRisk implements Serializable {
     }
 
     /** SVUID */
-    private static final long      serialVersionUID     = 5405871228130041796L;
+    private static final long      serialVersionUID          = 5405871228130041796L;
     /** Modified */
-    private boolean                modified             = false;
+    private boolean                modified                  = false;
     /** Model */
-    private ARXPopulationModel     populationModel;
+    private ARXPopulationModel     populationModel           = null;
     /** Model */
-    private int                    maxIterations        = 300;
+    private int                    maxIterations             = 300;
     /** Model */
-    private double                 accuracy             = 1.0e-9;
+    private double                 accuracy                  = 1.0e-9;
     /** Model */
-    private int                    maxQiSize            = 10;
+    private int                    maxQiSize                 = 10;
     /** Model */
-    private Map<ViewRisk, Boolean> viewEnabledForInput  = new HashMap<ViewRisk, Boolean>();
+    private Map<ViewRiskType, Boolean> viewEnabledForInput       = new HashMap<ViewRiskType, Boolean>();
     /** Model */
-    private Map<ViewRisk, Boolean> viewEnabledForOutput = new HashMap<ViewRisk, Boolean>();
+    private Map<ViewRiskType, Boolean> viewEnabledForOutput      = new HashMap<ViewRiskType, Boolean>();
+    /** Model */
+    private boolean                useOutputModelIfAvailable = true;
 
     /**
      * Creates a new instance
@@ -151,17 +152,11 @@ public class ModelRisk implements Serializable {
         return modified;
     }
 
-    /***
-     * Returns whether a view is enabled
-     * @param view
-     * @return
+    /**
+     * Use the output or the input model?
      */
-    public boolean isViewEnabledForInput(ViewRisk view) {
-        if (!viewEnabledForInput.containsKey(view)) {
-            return true;
-        } else {
-            return viewEnabledForInput.get(view);
-        }
+    public boolean isUseOutputPopulationModelIfAvailable() {
+        return useOutputModelIfAvailable;
     }
 
     /***
@@ -169,14 +164,27 @@ public class ModelRisk implements Serializable {
      * @param view
      * @return
      */
-    public boolean isViewEnabledForOutput(ViewRisk view) {
+    public boolean isViewEnabledForInput(ViewRiskType view) {
+        if (!viewEnabledForInput.containsKey(view)) {
+            return true;
+        } else {
+            return viewEnabledForInput.get(view);
+        }
+    }
+    
+    /***
+     * Returns whether a view is enabled
+     * @param view
+     * @return
+     */
+    public boolean isViewEnabledForOutput(ViewRiskType view) {
         if (!viewEnabledForOutput.containsKey(view)) {
             return true;
         } else {
             return viewEnabledForOutput.get(view);
         }
     }
-    
+
     /**
      * @param accuracy the accuracy to set
      */
@@ -238,20 +246,27 @@ public class ModelRisk implements Serializable {
         this.populationModel = new ARXPopulationModel(sampleFraction);
         this.modified = true;
     }
-
+    
     /**
      * Set unmodified
      */
     public void setUnmodified() {
         this.modified = false;
     }
-    
+
+    /**
+     * Use the output or the input model?
+     */
+    public void setUseOutputPopulationModelIfAvailable(boolean value) {
+        this.useOutputModelIfAvailable = value;
+    }
+
     /**
      * Allows to enable/disable views
      * @param view
      * @param value
      */
-    public void setViewEnabledForInput(ViewRisk view, boolean value) {
+    public void setViewEnabledForInput(ViewRiskType view, boolean value) {
         this.viewEnabledForInput.put(view, value);
     }
 
@@ -260,7 +275,7 @@ public class ModelRisk implements Serializable {
      * @param view
      * @param value
      */
-    public void setViewEnabledForOutput(ViewRisk view, boolean value) {
+    public void setViewEnabledForOutput(ViewRiskType view, boolean value) {
         this.viewEnabledForOutput.put(view, value);
     }
 }

@@ -40,7 +40,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTree;
-import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext.Context;
+import org.deidentifier.arx.gui.view.impl.common.async.AnalysisData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -233,7 +233,7 @@ public class ViewPropertiesOutput extends ViewProperties {
      */
     protected void update() {
 
-        Context context = getContext().getContext();
+        AnalysisData context = getContext().getData();
 
         if (context == null ||
             context.config == null ||

@@ -35,34 +35,34 @@ import org.eclipse.swt.widgets.Composite;
  * @author Fabian Prasser
  */
 public class LayoutRisks implements ILayout {
-    
-    /** Constant*/
-    private static final int       WEIGHT_TOP    = 75;
-    /** Constant*/
-    private static final int       WEIGHT_BOTTOM = 25;
-    /** Constant*/
-    private static final int       WEIGHT_LEFT   = 50;
-    /** Constant*/
-    private static final int       WEIGHT_RIGHT  = 50;
+
+    /** Constant */
+    private static final int          WEIGHT_TOP    = 75;
+    /** Constant */
+    private static final int          WEIGHT_BOTTOM = 25;
+    /** Constant */
+    private static final int          WEIGHT_LEFT   = 50;
+    /** Constant */
+    private static final int          WEIGHT_RIGHT  = 50;
 
     /** View */
-    private final Composite         centerLeft;
+    private final Composite           centerLeft;
     /** View */
-    private final Composite         centerRight;
+    private final Composite           centerRight;
     /** View */
-    private final Composite         bottomLeft;
+    private final Composite           bottomLeft;
     /** View */
-    private final Composite         bottomRight;
+    private final Composite           bottomRight;
     /** View */
-    private final SashForm          centerSash;
+    private final SashForm            centerSash;
     /** View */
     private final LayoutRisksAbstract layoutBottomLeft;
     /** View */
     private final LayoutRisksAbstract layoutBottomRight;
     /** View */
-    private final LayoutRisksTop    layoutTopLeft;
+    private final LayoutRisksTop      layoutTopLeft;
     /** View */
-    private final LayoutRisksTop    layoutTopRight;
+    private final LayoutRisksTop      layoutTopRight;
 
     /**
      * Creates a new instance.

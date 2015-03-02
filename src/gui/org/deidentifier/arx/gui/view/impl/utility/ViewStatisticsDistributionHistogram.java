@@ -232,7 +232,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
 
         // The statistics builder
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
-        final Hierarchy hierarchy = context.context.getHierarchy(context.context.getContext(), context.attribute);
+        final Hierarchy hierarchy = context.context.getHierarchy(context.context.getData(), context.attribute);
         final DataHandle handle = context.handle;
         final int column = handle.getColumnIndexOf(context.attribute);
         

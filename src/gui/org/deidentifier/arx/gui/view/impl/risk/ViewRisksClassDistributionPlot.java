@@ -19,7 +19,7 @@ package org.deidentifier.arx.gui.view.impl.risk;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.model.ModelRisk.ViewRisk;
+import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
@@ -354,8 +354,8 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
     }
 
     @Override
-    protected ViewRisk getViewType() {
-        return ViewRisk.CLASSES_PLOT;
+    protected ViewRiskType getViewType() {
+        return ViewRiskType.CLASSES_PLOT;
     }
 
     /**

@@ -24,12 +24,12 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.Model.Perspective;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.model.ModelRisk.ViewRisk;
+import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatus;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
-import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization;
+import org.deidentifier.arx.gui.view.impl.utility.AnalysisContextVisualization;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -275,7 +275,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         AnalysisContext analysisContext = context.context;
         
         return context.handle.getRiskEstimator(analysisContext.getModel().getRiskModel().getPopulationModel(),
-                                               analysisContext.getContext().definition.getQuasiIdentifyingAttributes(),
+                                               analysisContext.getData().definition.getQuasiIdentifyingAttributes(),
                                                analysisContext.getModel().getRiskModel().getAccuracy(),
                                                analysisContext.getModel().getRiskModel().getMaxIterations())
                                                .getInterruptibleInstance();
@@ -309,7 +309,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * Returns the according type of view
      * @return
      */
-    protected abstract ViewRisk getViewType();
+    protected abstract ViewRiskType getViewType();
 
     /**
      * Is a job running

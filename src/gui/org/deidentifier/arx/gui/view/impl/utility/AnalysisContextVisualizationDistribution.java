@@ -22,7 +22,6 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
-import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization;
 
 /**
  * The current context.
@@ -55,8 +54,8 @@ public class AnalysisContextVisualizationDistribution implements AnalysisContext
      * @param context
      */
     public AnalysisContextVisualizationDistribution(AnalysisContext context){
-        if (context.getContext()==null) return;
-        this.handle = context.getContext().handle;
+        if (context.getData()==null) return;
+        this.handle = context.getData().handle;
         this.context = context;
         if (handle == null) return;
         this.model = context.getModel();

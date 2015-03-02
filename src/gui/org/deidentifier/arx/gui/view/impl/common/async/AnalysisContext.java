@@ -33,67 +33,6 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
  */
 public class AnalysisContext {
     
-    /**
-     * This class implements a context for drawing statistics.
-     *
-     * @author Fabian Prasser
-     */
-    public static class Context{
-        
-        /** The according config. */
-        public final ModelConfiguration config;
-        
-        /** The according handle. */
-        public final DataHandle handle;
-        
-        /** The according definition. */
-        public final DataDefinition definition;
-        
-        /**
-         * Initial constructor.
-         *
-         * @param config
-         * @param handle
-         */
-        private Context(ModelConfiguration config, DataHandle handle, DataDefinition definition) {
-            this.config = config;
-            this.handle = handle;
-            this.definition = definition;
-        }
-        
-        /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result +
-                     ((config == null) ? 0 : config.hashCode());
-            result = prime * result +
-                     ((handle == null) ? 0 : handle.hashCode());
-            return result;
-        }
-        
-        /* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            Context other = (Context) obj;
-            if (config == null) {
-                if (other.config != null) return false;
-            } else if (!config.equals(other.config)) return false;
-            if (handle == null) {
-                if (other.handle != null) return false;
-            } else if (!handle.equals(other.handle)) return false;
-            return true;
-        }
-    }
-    
     /** The target (input or output). */
     private ModelPart target;
     
@@ -106,7 +45,7 @@ public class AnalysisContext {
      *
      * @return
      */
-    public Context getContext(){
+    public AnalysisData getData(){
         
         // Prepare
         DataHandle handle = null;
@@ -147,7 +86,7 @@ public class AnalysisContext {
         }
         
         // Return
-        return new Context(config, handle, definition);
+        return new AnalysisData(config, handle, definition);
     }
 
     /**
@@ -157,7 +96,7 @@ public class AnalysisContext {
      * @param attribute
      * @return
      */
-    public Hierarchy getHierarchy(Context context, String attribute) {
+    public Hierarchy getHierarchy(AnalysisData context, String attribute) {
 
         // We only accept sanitized input
         if (context.config == null || 

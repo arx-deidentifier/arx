@@ -20,7 +20,7 @@ package org.deidentifier.arx.gui.view.impl.risk;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
-import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization;
+import org.deidentifier.arx.gui.view.impl.utility.AnalysisContextVisualization;
 
 /**
  * The current context.
@@ -44,8 +44,8 @@ public class AnalysisContextRisk implements AnalysisContextVisualization{
      * @param context
      */
     public AnalysisContextRisk(AnalysisContext context){
-        if (context.getContext()==null) return;
-        this.handle = context.getContext().handle;
+        if (context.getData()==null) return;
+        this.handle = context.getData().handle;
         this.context = context;
         if (handle == null) return;
         this.model = context.getModel();

@@ -22,7 +22,6 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
-import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization;
 
 
 /**
@@ -62,8 +61,8 @@ public class AnalysisContextVisualizationContingency implements AnalysisContextV
      * @param context
      */
     public AnalysisContextVisualizationContingency(AnalysisContext context){
-        if (context.getContext()==null) return;
-        this.handle = context.getContext().handle;
+        if (context.getData()==null) return;
+        this.handle = context.getData().handle;
         if (handle == null) return;
         this.model = context.getModel();
         if (model==null) return;

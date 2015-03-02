@@ -24,6 +24,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.def.IView;
@@ -43,28 +44,29 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 public class LayoutRisksAbstract implements ILayout, IView {
 
-    /** View */
-    private final ComponentTitledFolder      folder;
     /** Model */
     private final Map<Integer, ViewRisks<?>> views = new HashMap<Integer, ViewRisks<?>>();
     /** Model */
     private final boolean                    isInput;
     /** Model */
     private final boolean                    isTop;
+    /** Model */
+    protected Model                          model;
+    
     /** Controller */
     private final Controller                 controller;
+
+    /** View */
+    private final Image                      imageEnabled;
+    /** View */
+    private final Image                      imageDisabled;
     /** View */
     private final ToolItem                   buttonSubset;
     /** View */
     private final ToolItem                   buttonEnable;
-    /** Model */
-    protected Model                          model;
 
     /** View */
-    private final Image                      imageEnabled;
-
-    /** View */
-    private final Image                      imageDisabled;
+    private final ComponentTitledFolder      folder;
 
     /**
      * Creates a new instance
@@ -193,6 +195,13 @@ public class LayoutRisksAbstract implements ILayout, IView {
         if (this.isTop) {
             updateButtonSubset(event);
         }
+    }
+    
+    /**
+     * Returns the selected type of view
+     */
+    public ViewRiskType getSelectedViewType() {
+        return this.getViewForSelectionIndex(getSelectionIndex()).getViewType();
     }
 
     /**
