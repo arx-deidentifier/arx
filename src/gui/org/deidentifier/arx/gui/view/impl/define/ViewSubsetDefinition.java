@@ -26,12 +26,13 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
@@ -51,16 +52,16 @@ public class ViewSubsetDefinition implements IView{
     private Model model;
     
     /**  TODO */
-    private Label size;
+    private Text size;
     
     /**  TODO */
-    private Label origin;
+    private Text origin;
     
     /**  TODO */
-    private Label total;
+    private Text total;
     
     /**  TODO */
-    private Label percent;
+    private Text percent;
 
     /**  TODO */
     private ToolItem all;
@@ -191,26 +192,30 @@ public class ViewSubsetDefinition implements IView{
         
         Label l = new Label(group, SWT.NONE);
         l.setText(Resources.getMessage("SubsetDefinitionView.6"));
-        size = new Label(group, SWT.BORDER);
+        size = new Text(group, SWT.BORDER);
         size.setText("0");
         size.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        size.setEditable(false);
         l = new Label(group, SWT.NONE);
         l.setText("/");
-        total = new Label(group, SWT.BORDER);
+        total = new Text(group, SWT.BORDER);
         total.setText("0");
         total.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        total.setEditable(false);
         l = new Label(group, SWT.NONE);
         l.setText("=");
-        percent = new Label(group, SWT.BORDER);
+        percent = new Text(group, SWT.BORDER);
         percent.setText("0");
         percent.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        percent.setEditable(false);
         l = new Label(group, SWT.NONE);
         l.setText("%");
         l = new Label(group, SWT.NONE);
         l.setText(Resources.getMessage("SubsetDefinitionView.5"));
-        origin = new Label(group, SWT.BORDER);
+        origin = new Text(group, SWT.BORDER);
         origin.setText("");
         origin.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        origin.setEditable(false);
         
         all = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.1"));
         none = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.2"));
