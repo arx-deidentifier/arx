@@ -86,7 +86,18 @@ public class SWTUtil {
      * @param image
      */
     public static void createDisabledImage(ToolItem item) {
-        item.setDisabledImage(new Image(item.getDisplay(), item.getImage(), SWT.IMAGE_GRAY));
+        item.setDisabledImage(createDisabledImage(item.getControl(), item.getImage()));
+    }
+    
+    /**
+     * Generates a version of the image
+     * that renders well on windows toolbars, when disabled.
+     * 
+     * @param control
+     * @param image
+     */
+    public static Image createDisabledImage(Control control, Image image) {
+        return new Image(control.getDisplay(), image, SWT.IMAGE_GRAY);
     }
 
     /**
@@ -196,6 +207,7 @@ public class SWTUtil {
         ToolItem item = new ToolItem( toolbar, SWT.PUSH );
         item.setImage(controller.getResources().getImage("help.png"));  //$NON-NLS-1$
         item.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
+        createDisabledImage(item);
         int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         tabFolder.setTabHeight(Math.max(height, tabFolder.getTabHeight()));
         item.addSelectionListener(new SelectionAdapter(){

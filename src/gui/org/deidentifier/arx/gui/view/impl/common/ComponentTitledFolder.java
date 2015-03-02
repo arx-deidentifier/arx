@@ -241,6 +241,7 @@ public class ComponentTitledFolder implements IComponent {
             else item = new ToolItem( toolbar, SWT.PUSH);
             item.setImage(bar.getImage(key));
             item.setToolTipText(title);
+            SWTUtil.createDisabledImage(item);
             item.addSelectionListener(new SelectionAdapter(){
                 @Override
                 public void widgetSelected(SelectionEvent arg0) {
@@ -252,6 +253,7 @@ public class ComponentTitledFolder implements IComponent {
         ToolItem item = new ToolItem( toolbar, SWT.PUSH );
         item.setImage(controller.getResources().getImage("help.png"));  //$NON-NLS-1$
         item.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
+        SWTUtil.createDisabledImage(item);
         item.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent arg0) {
