@@ -517,6 +517,8 @@ public class Controller implements IView {
 
         // Show errors
         if (worker.getError() != null) {
+            
+            // Extract
             Throwable t = worker.getError();
             if (worker.getError() instanceof InvocationTargetException) {
                 t = worker.getError().getCause();
@@ -528,10 +530,18 @@ public class Controller implements IView {
                                     Resources.getMessage("Controller.13"), //$NON-NLS-1$
                                     Resources.getMessage("Controller.14") + t.getMessage()); //$NON-NLS-1$
             }
+            
+            // Log
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             worker.getError().printStackTrace(pw);
             getResources().getLogger().info(sw.toString());
+            
+            // Reset
+            model.setOutput(null, null);
+            model.setSelectedNode(null);
+            update(new ModelEvent(this, ModelPart.OUTPUT, null));
+            update(new ModelEvent(this, ModelPart.SELECTED_NODE, null));
             return;
         }
 

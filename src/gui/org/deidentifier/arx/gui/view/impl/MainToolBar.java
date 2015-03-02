@@ -346,6 +346,8 @@ public class MainToolBar extends AbstractMenu {
                 layout();
                 
                 toolbar.setRedraw(true);
+            } else {
+                reset();
             }
         } else if (event.part == ModelPart.RESULT) {
             if (model.getResult() != null) {
