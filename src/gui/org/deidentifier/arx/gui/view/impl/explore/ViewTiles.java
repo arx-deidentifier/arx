@@ -75,7 +75,7 @@ public class ViewTiles extends ViewSolutionSpace {
         // Super class
         super(parent, controller);
 
-        tiles = new Tiles<ARXNode>(super.getPrimaryComposite(), SWT.NONE);
+        tiles = new Tiles<ARXNode>(super.getPrimaryComposite(), SWT.BORDER);
         tiles.setLayoutData(SWTUtil.createFillGridData());
         
         // Selection listener
