@@ -47,7 +47,7 @@ import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilde
 public abstract class DataType<T> implements Serializable, Comparator<T> {
 
     /** The string representing the NULL value */
-    public static final String NULL_VALUE = "NULL";
+    private static final String NULL_VALUE = "NULL";
 
     /**
      * Base class for date/time types.
@@ -345,7 +345,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public Date parse(String s) {
-            if(s == null || s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
                 return null;
             }
         	try {
@@ -381,6 +381,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         @Override
         public String toString() {
             return "Date(" + string + ")";
+        }
+
+        @Override
+        public boolean isNull(String value) {
+            return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
         }
     }
 
@@ -676,7 +681,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public Double parse(String s) {
-            if(s == null || s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
                 return null;
             }
             try {
@@ -712,6 +717,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         @Override
         public String toString() {
             return "Decimal";
+        }
+
+        @Override
+        public boolean isNull(String value) {
+            return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
         }
     }
 
@@ -1000,7 +1010,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public Long parse(String s) {
-            if(s == null || s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
                 return null;
             }
             try {
@@ -1036,6 +1046,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         @Override
         public String toString() {
             return "Integer";
+        }
+
+        @Override
+        public boolean isNull(String value) {
+            return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
         }
     }
     
@@ -1269,7 +1284,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public boolean isValid(String s) {
-            if (order != null && !order.containsKey(s)) {
+            if (s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+                return true;
+            } else if (order != null && !order.containsKey(s)) {
                 return false;
             } else {
                 return true;
@@ -1281,7 +1298,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public String parse(String s) {
-            if(s == null || s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
                 return null;
             }
             if (order != null && !order.containsKey(s)) {
@@ -1296,6 +1313,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         @Override
         public String toString() {
             return "OrderedString";
+        }
+
+        @Override
+        public boolean isNull(String value) {
+            return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
         }
     }
     
@@ -1330,12 +1352,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public int compare(final String s1, final String s2) {
-            if (s1 == null && s2 == null) {
-                return 0;
-            } else if (s1 == null) {
-                return +1;
-            } else if (s2 == null) {
-                return -1;
+            if (s1 == null || s2 == null) {
+                throw new IllegalArgumentException("Null is not a string");
             }
             return s1.compareTo(s2);
         }
@@ -1357,7 +1375,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         @Override
         public String format(String s){
             if (s == null) {
-                return NULL_VALUE;
+                throw new IllegalArgumentException("Null is not a string");
             }
             return s;
         }
@@ -1383,7 +1401,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public boolean isValid(String s) {
-            return true;
+            return s != null;
         }
 
         /* (non-Javadoc)
@@ -1391,8 +1409,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public String parse(String s) {
-            if(s == null || s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
-                return null;
+            if (s == null) {
+                throw new IllegalArgumentException("Null is not a string");
             }
             return s;
         }
@@ -1513,18 +1531,19 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static interface DataTypeWithFormat {
         
         /**
-         * 
-         *
          * @return
          */
         public abstract String getFormat();
         
         /**
-         * 
-         *
          * @return
          */
         public abstract Locale getLocale();
+        
+        /**
+         * @return
+         */
+        public abstract boolean isNull(String value);
     }
 
     /**
