@@ -21,6 +21,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
@@ -115,7 +116,7 @@ public class LayoutCriteria implements ILayout {
         buttonConfigure = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.82"));
 
         Composite composite1 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.4"), null);
-        composite1.setLayout(new FillLayout());
+        composite1.setLayout(SWTUtil.createGridLayout(1));
         this.criteriaView = new ViewCriteriaList(composite1, controller, this);
 
         Composite composite2 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.5"), null);

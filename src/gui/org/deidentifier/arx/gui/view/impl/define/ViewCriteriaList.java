@@ -39,6 +39,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
 import org.mihalis.opal.dynamictablecolumns.DynamicTable;
@@ -106,6 +107,9 @@ public class ViewCriteriaList implements IView {
         table = new DynamicTable(root, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
+        GridData gd = SWTUtil.createFillHorizontallyGridData();
+        gd.heightHint = 100;
+        table.setLayoutData(gd);
         SWTUtil.createGenericTooltip(table);
         
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
