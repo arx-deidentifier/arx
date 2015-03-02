@@ -243,6 +243,11 @@ public class HashGroupifyDistribution {
      * @return the number of tuples that have been suppressed
      */
     public int suppressWhileNotFulfilledBinary(PrivacyCondition condition) {
+        
+        // Nothing to suppress
+        if (entries.length == 0) {
+            return this.suppressed;
+        }
 
         // Start parameters
         int low = 0;
