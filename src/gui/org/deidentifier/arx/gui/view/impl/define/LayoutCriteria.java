@@ -24,7 +24,6 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -108,7 +107,6 @@ public class LayoutCriteria implements ILayout {
 
         // Add view
         folder = new ComponentTitledFolder(parent, controller, bar, null);
-        folder.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).minSize(1, 150).create());
 
         buttonCross = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.59"));
         buttonUp = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.57"));
@@ -130,7 +128,7 @@ public class LayoutCriteria implements ILayout {
                 updateButtons();
             }
         });
-
+        
         // Select
         folder.setSelection(0);
     }

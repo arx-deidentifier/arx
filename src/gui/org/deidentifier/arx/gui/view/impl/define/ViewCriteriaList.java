@@ -103,7 +103,7 @@ public class ViewCriteriaList implements IView {
         this.symbolR = controller.getResources().getImage("symbol_r.png"); //$NON-NLS-1$
         
         this.root = parent;
-        table = new DynamicTable(root, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        table = new DynamicTable(root, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         SWTUtil.createGenericTooltip(table);
@@ -128,7 +128,7 @@ public class ViewCriteriaList implements IView {
         column1.pack();
         column2.pack();
         column3.pack();
-
+        
         layout.updateButtons();
         reset();
     }

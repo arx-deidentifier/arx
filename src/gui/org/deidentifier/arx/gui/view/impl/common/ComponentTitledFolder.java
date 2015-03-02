@@ -30,9 +30,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
@@ -263,5 +265,31 @@ public class ComponentTitledFolder implements IComponent {
         
         int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         folder.setTabHeight(Math.max(height, folder.getTabHeight()));
+    }
+
+    /**
+     * @param arg0
+     * @param arg1
+     * @see org.eclipse.swt.widgets.Widget#addListener(int, org.eclipse.swt.widgets.Listener)
+     */
+    public void addListener(int arg0, Listener arg1) {
+        folder.addListener(arg0, arg1);
+    }
+
+    /**
+     * @return
+     * @see org.eclipse.swt.widgets.Control#getSize()
+     */
+    public Point getSize() {
+        return folder.getSize();
+    }
+
+    /**
+     * @param arg0
+     * @param arg1
+     * @see org.eclipse.swt.widgets.Control#setSize(int, int)
+     */
+    public void setSize(int arg0, int arg1) {
+        folder.setSize(arg0, arg1);
     }
 }

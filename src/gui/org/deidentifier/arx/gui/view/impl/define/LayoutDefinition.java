@@ -22,6 +22,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.impl.common.ViewDataInput;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -47,6 +48,7 @@ public class LayoutDefinition implements ILayout {
         Composite compositeLeft;
 		Composite compositeRight;
 		Composite compositeTopRight;
+		Composite compositeCenterRight;
 		Composite compositeBottomRight;
 
         // Create center composite
@@ -71,6 +73,11 @@ public class LayoutDefinition implements ILayout {
         compositeTopRight.setLayoutData(SWTUtil.createFillGridData());
         compositeTopRight.setLayout(SWTUtil.createGridLayout(1));
 
+        // Create center-right composite
+        compositeCenterRight = new Composite(compositeRight, SWT.NONE);
+        compositeCenterRight.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        compositeCenterRight.setLayout(new FillLayout());
+        
         // Create bottom-right composite
         compositeBottomRight = new Composite(compositeRight, SWT.NONE);
         compositeBottomRight.setLayoutData(SWTUtil.createFillHorizontallyGridData());
@@ -80,7 +87,7 @@ public class LayoutDefinition implements ILayout {
         new ViewDataInput(compositeLeft, controller, true);
         new ViewSubsetDefinition(compositeLeft, controller);
         new ViewDataDefinition(compositeTopRight, controller);
-        new LayoutCriteria(compositeBottomRight, controller);
+        new LayoutCriteria(compositeCenterRight, controller);
         new LayoutTransformationSettings(compositeBottomRight, controller);
     }
 
