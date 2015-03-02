@@ -137,6 +137,7 @@ public class ViewTiles extends ViewSolutionSpace {
         tiles.setDecoratorTooltip(super.getTooltipDecorator());
         tiles.setDecoratorLineColor(createDecoratorLineColor());
         tiles.setDecoratorLineWidth(createDecoratorLineWidth());
+        tiles.setBackground(tiles.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
         tiles.update();
     }
 
