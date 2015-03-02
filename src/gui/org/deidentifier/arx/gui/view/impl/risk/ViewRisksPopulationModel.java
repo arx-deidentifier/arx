@@ -207,7 +207,7 @@ public class ViewRisksPopulationModel implements IView {
                 }
                 
                 ARXPopulationModel popmodel = model.getInputPopulationModel();
-                if (model.getOutputPopulationModel() != null) {
+                if (output && isOutputPopulationModelAvailable()) {
                     popmodel = model.getOutputPopulationModel();
                 }
 
@@ -217,6 +217,7 @@ public class ViewRisksPopulationModel implements IView {
                         break;
                     }
                 }
+                list.showSelection();
             }
         });
     }
