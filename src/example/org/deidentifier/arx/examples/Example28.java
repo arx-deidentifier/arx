@@ -20,9 +20,15 @@ package org.deidentifier.arx.examples;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataSource;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
+import org.deidentifier.arx.criteria.KAnonymity;
 
 /**
  * This class implements an example on how to use data cleansing using the DataSource functionality.
@@ -62,9 +68,32 @@ public class Example28 extends Example {
         // Create data object
         final Data data = Data.create(source);
 
+        // Define hierarchies
+        final DefaultHierarchy age = Hierarchy.create();
+        age.add("34", "<50", "*");
+        age.add("45", "<50", "*");
+        age.add("66", ">=50", "*");
+        age.add("70", ">=50", "*");
+        age.add("99", ">=50", "*");
+        age.add(null, ">=50", "*");
+
+        data.getDefinition().setAttributeType("age", age);
+
         // Print to console
         print(data.getHandle());
         System.out.println("\n");
+
+        // Anonymize
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+        final ARXConfiguration config = ARXConfiguration.create();
+        config.addCriterion(new KAnonymity(3));
+        config.setMaxOutliers(0d);
+        final ARXResult result = anonymizer.anonymize(data, config);
+
+        // Print results
+        System.out.println("Output:");
+        print(result.getOutput(false));
+
     }
 
 }
