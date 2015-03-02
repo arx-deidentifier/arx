@@ -19,15 +19,20 @@ package org.deidentifier.arx.examples;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataSource;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
+import org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased.Level;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Interval;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
 import org.deidentifier.arx.criteria.KAnonymity;
 
 /**
@@ -51,8 +56,60 @@ public class Example28 extends Example {
                                                 ClassNotFoundException {
 
         exampleCSV();
-        // exampleExcel();
-        // exampleJDBC();
+        buildHierarchy();
+        useBuilderAndAnonymize();
+    }
+
+    /**
+     * This method uses a hierarchy builder for an interval based hierarchy containing NULL values.
+     * 
+     * @throws IOException
+     */
+    private static void buildHierarchy() throws IOException {
+
+        // Define hierarchies
+        // Define hierarchies
+        HierarchyBuilderIntervalBased<Long> builder1 = HierarchyBuilderIntervalBased.create(
+                                                                                            DataType.INTEGER,
+                                                                                            new Range<Long>(0l, 0l, 0l),
+                                                                                            new Range<Long>(99l, 99l, 99l));
+
+        // Define base intervals
+        builder1.setAggregateFunction(DataType.INTEGER.createAggregate().createIntervalFunction(true, false));
+        builder1.addInterval(0l, 20l);
+        builder1.addInterval(20l, 33l);
+
+        // Define grouping fanouts
+        builder1.getLevel(0).addGroup(2);
+        builder1.getLevel(1).addGroup(3);
+
+        // Print hierarhcy definition
+        System.out.println("------------------------");
+        System.out.println("INTERVAL-BASED HIERARCHY");
+        System.out.println("------------------------");
+        System.out.println("");
+        System.out.println("SPECIFICATION");
+
+        // Print specification
+        for (Interval<Long> interval1 : builder1.getIntervals()) {
+            System.out.println(interval1);
+        }
+
+        // Print specification
+        for (Level<Long> level : builder1.getLevels()) {
+            System.out.println(level);
+        }
+
+        // Print info about resulting levels
+        System.out.println("Resulting levels: " + Arrays.toString(builder1.prepare(getExampleData())));
+
+        System.out.println("");
+        System.out.println("RESULT");
+
+        // Print resulting hierarchy
+        printArray(builder1.build().getHierarchy());
+        System.out.println("");
+
     }
 
     /**
@@ -75,13 +132,77 @@ public class Example28 extends Example {
         age.add("66", ">=50", "*");
         age.add("70", ">=50", "*");
         age.add("99", ">=50", "*");
-        age.add(null, ">=50", "*");
+        age.add("NULL", "NULL", "*");
 
         data.getDefinition().setAttributeType("age", age);
 
         // Print to console
         print(data.getHandle());
         System.out.println("\n");
+
+        // Anonymize
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+        final ARXConfiguration config = ARXConfiguration.create();
+        config.addCriterion(new KAnonymity(3));
+        config.setMaxOutliers(0d);
+        final ARXResult result = anonymizer.anonymize(data, config);
+
+        // Print results
+        System.out.println("Output:");
+        print(result.getOutput(false));
+
+    }
+
+    private static String[] getExampleData() {
+
+        String[] data = new String[] {
+                "34",
+                "66",
+                "70",
+                "34",
+                "70",
+                "NULL",
+
+        };
+
+        return data;
+    }
+
+    /**
+     * This method uses a hierarchy builder for an interval based hierarchy containing NULL values.
+     * 
+     * @throws IOException
+     */
+    private static void useBuilderAndAnonymize() throws IOException {
+        DataSource source = DataSource.createCSVSource("data/test_dirty.csv", ';', true);
+        source.addColumn("age", DataType.INTEGER, true);
+
+        // Create data object
+        final Data data = Data.create(source);
+
+        // Define hierarchies
+        HierarchyBuilderIntervalBased<Long> builder1 = HierarchyBuilderIntervalBased.create(
+                                                                                            DataType.INTEGER,
+                                                                                            new Range<Long>(0l, 0l, 0l),
+                                                                                            new Range<Long>(99l, 99l, 99l));
+
+        // Define base intervals
+        builder1.setAggregateFunction(DataType.INTEGER.createAggregate().createIntervalFunction(true, false));
+        builder1.addInterval(0l, 20l);
+        builder1.addInterval(20l, 33l);
+
+        // Define grouping fanouts
+        builder1.getLevel(0).addGroup(2);
+        builder1.getLevel(1).addGroup(3);
+
+        data.getDefinition().setAttributeType("age", builder1);
+
+
+        // Print info
+        System.out.println("Data:");
+        printHandle(data.getHandle());
+        System.out.println("Hierarchy:");
+        printArray(builder1.build(data.getHandle().getDistinctValues(0)).getHierarchy());
 
         // Anonymize
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
