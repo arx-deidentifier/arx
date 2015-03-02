@@ -46,23 +46,25 @@ public class ModelRisk implements Serializable {
     }
 
     /** SVUID */
-    private static final long      serialVersionUID          = 5405871228130041796L;
+    private static final long          serialVersionUID          = 5405871228130041796L;
     /** Modified */
-    private boolean                modified                  = false;
+    private boolean                    modified                  = false;
     /** Model */
-    private ARXPopulationModel     populationModel           = null;
+    private ARXPopulationModel         populationModel           = null;
     /** Model */
-    private int                    maxIterations             = 300;
+    private int                        maxIterations             = 300;
     /** Model */
-    private double                 accuracy                  = 1.0e-9;
+    private double                     accuracy                  = 1.0e-9;
     /** Model */
-    private int                    maxQiSize                 = 10;
+    private int                        maxQiSize                 = 10;
     /** Model */
     private Map<ViewRiskType, Boolean> viewEnabledForInput       = new HashMap<ViewRiskType, Boolean>();
     /** Model */
     private Map<ViewRiskType, Boolean> viewEnabledForOutput      = new HashMap<ViewRiskType, Boolean>();
     /** Model */
-    private boolean                useOutputModelIfAvailable = true;
+    private boolean                    useOutputModelIfAvailable = true;
+    /** Model */
+    private boolean                    ensureOptimality          = true;
 
     /**
      * Creates a new instance
@@ -277,5 +279,19 @@ public class ModelRisk implements Serializable {
      */
     public void setViewEnabledForOutput(ViewRiskType view, boolean value) {
         this.viewEnabledForOutput.put(view, value);
+    }
+
+    /**
+     * @return the ensureOptimality
+     */
+    public boolean isEnsureOptimality() {
+        return ensureOptimality;
+    }
+
+    /**
+     * @param value the ensureOptimality to set
+     */
+    public void setEnsureOptimality(boolean value) {
+        this.ensureOptimality = value;
     }
 }

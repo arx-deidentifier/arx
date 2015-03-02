@@ -191,7 +191,7 @@ public class DialogProperties implements IDialog {
     private void createTabRisk(PreferencesDialog window) {
 
         window.addCategory(Resources.getMessage("PropertyDialog.40"), //$NON-NLS-1$
-                           controller.getResources().getImage("perspective_risk.png")); //$NON-NLS-1$
+                           controller.getResources().getImage("settings-risk.png")); //$NON-NLS-1$
         
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.41"), 1, 100000, 300) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getMaxIterations(); }
@@ -204,6 +204,10 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.43"), 1, 10, 10) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getMaxQiSize(); }
             protected void setValue(Object t) { model.getRiskModel().setMaxQiSize((Integer)t); }});
+        
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.44")) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getRiskModel().isEnsureOptimality(); }
+            protected void setValue(Object t) { model.getRiskModel().setEnsureOptimality((Boolean)t); }});
     }
 
     /**
