@@ -29,7 +29,6 @@ import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDialog;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledBorder;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -40,10 +39,12 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.mihalis.opal.dynamictablecolumns.DynamicTable;
@@ -222,7 +223,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
     @Override
     protected Control createContents(Composite parent) {
         Control contents = super.createContents(parent);
-        if (edit) {
+        if (!edit) {
             setTitle(Resources.getMessage("CriterionSelectionDialog.9")); //$NON-NLS-1$
             setMessage(Resources.getMessage("CriterionSelectionDialog.8"), IMessageProvider.NONE); //$NON-NLS-1$
         } else {
@@ -301,11 +302,12 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
             }
         });
 
-        ComponentTitledBorder border = new ComponentTitledBorder(parent, "Configuration");
+        Group border = new Group(parent, SWT.SHADOW_ETCHED_IN);
+        border.setText("Configuration");
         border.setLayoutData(SWTUtil.createFillGridData());
+        border.setLayout(new FillLayout());
         
-        this.root = new Composite(border.getControl(), SWT.NONE);
-        border.setChild(root);
+        this.root = new Composite(border, SWT.NONE);
         this.root.setLayout(SWTUtil.createGridLayout(1));
 
 

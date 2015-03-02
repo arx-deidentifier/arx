@@ -72,14 +72,6 @@ public class LayoutCriteria implements ILayout {
                         criteriaView.actionAdd();
                     }
                 });
-        bar.add(Resources.getMessage("CriterionDefinitionView.82"), 
-                controller.getResources().getImage("edit.png"),
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        criteriaView.actionConfigure();
-                    }
-                });
         bar.add(Resources.getMessage("CriterionDefinitionView.59"), 
                 controller.getResources().getImage("remove.png"),
                 new Runnable() {
@@ -88,6 +80,15 @@ public class LayoutCriteria implements ILayout {
                         criteriaView.actionRemove();
                     }
                 });
+        bar.add(Resources.getMessage("CriterionDefinitionView.82"), 
+                controller.getResources().getImage("edit.png"),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        criteriaView.actionConfigure();
+                    }
+                });
+
         bar.add(Resources.getMessage("CriterionDefinitionView.57"), 
                 controller.getResources().getImage("bullet_arrow_up.png"),
                 new Runnable() {
