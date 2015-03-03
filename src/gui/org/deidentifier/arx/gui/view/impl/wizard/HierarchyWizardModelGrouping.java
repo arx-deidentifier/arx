@@ -243,8 +243,10 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
                 T max = null;
                 for (String date : data) {
                     T value = dtype.parse(date);
-                    if (min==null || dtype.compare(value, min) < 0) min = value;
-                    if (max==null || dtype.compare(value, max) > 0) max = value;
+                    if (value != null) {
+                        if (min==null || dtype.compare(value, min) < 0) min = value;
+                        if (max==null || dtype.compare(value, max) > 0) max = value;
+                    }
                 }
                 
                 if (equals(type, DataType.INTEGER)) {
