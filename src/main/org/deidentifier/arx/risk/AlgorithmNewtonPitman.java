@@ -74,61 +74,53 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
     @Override
     protected double[][] firstDerivativeMatrix(final double[] iteratedSolution) {
 
-        final double[][] result = new double[iteratedSolution.length][iteratedSolution.length];
-        double temp1 = 0, temp2 = 0, temp3 = 0;
         double t = iteratedSolution[0]; // Theta
         double a = iteratedSolution[1]; // Alpha
-
-        // compute d^2L/(dtheta)^2
+        double v = 0;
+        double w = 0;
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        
+        // For each...
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
-            temp1 += (1 / ((t + (i * a)) * (t + (i * a))));
-            checkInterrupt();
+            double val0 = (t + (i * a));
+            double val1 = 1d / (val0 * val0);
+            double val2 = i * val1;
+            double val3 = i * val2;
+            v += val1; // Compute d^2L/(dtheta)^2
+            z += val2; // Compute d^2L/(d theta d alpha)
+            x += val3; // Compute d^2L/(d alpha)^2
+            
         }
+        checkInterrupt();
 
-        for (int i = 0; i < classes.length; i += 2) {
-            int key = classes[i];
-            temp2 += (1 / ((t + key) * (t + key)));
-            checkInterrupt();
-        }
-        result[0][0] = temp2 - temp1;
-
-        // compute d^2L/(d alpha)^2
-        temp1 = 0;
-        temp2 = 0;
-        temp3 = 0;
-        for (int i = 1; i < numberOfEquivalenceClasses; i++) {
-            temp1 += ((i * i) / ((t + (i * a)) * (t + (i * a))));
-            checkInterrupt();
-        }
-
+        // For each class...
         for (int i = 0; i < classes.length; i += 2) {
             int key = classes[i];
             int value = classes[i + 1];
-            temp3 = 0;
+            double val0 = t + key;
+            w += 1d / (val0 * val0);
+            double val1 = 0;
             if (key != 1) {
                 for (int j = 1; j < key; j++) {
-                    temp3 += (1 / ((j - a) * (j - a)));
+                    double val2 = j - a;
+                    val1 += 1d / (val2 * val2);
                 }
-                temp2 += value * temp3;
+                y += value * val1;
             }
             checkInterrupt();
         }
-        result[1][1] = 0 - temp1 - temp2;
-
-        // Compute d^2L/(d theta d alpha)
-        temp1 = 0;
-        temp2 = 0;
-        temp3 = 0;
-        for (int i = 1; i < numberOfEquivalenceClasses; i++) {
-            temp1 += (i / (((i * a) + t) * ((i * a) + t)));
-            checkInterrupt();
-        }
-        result[0][1] = 0 - temp1;
-        result[1][0] = 0 - temp1;
-
+        
+        // Pack
+        double[][] result = new double[2][2];
+        result[0][0] = w - v;
+        result[0][1] = 0 - z;
+        result[1][0] = 0 - z;
+        result[1][1] = 0 - x - y;
         return result;
     }
-
+    
     /**
      * The method for computing the object functions evaluated at the iterated
      * solutions.
@@ -144,7 +136,9 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
         double a = iteratedSolution[1]; // Alpha
 
         double[] result = new double[iteratedSolution.length];
-        double temp1 = 0, temp2 = 0, temp3 = 0;
+        double temp1 = 0;
+        double temp2 = 0;
+        double temp3 = 0;
 
         // Compute theta
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
