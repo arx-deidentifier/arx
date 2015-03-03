@@ -80,37 +80,37 @@ class AlgorithmNewtonSNB extends AlgorithmNewtonRaphson {
         final double b = iteratedSolution[1];
 
         final double[][] result = new double[iteratedSolution.length][iteratedSolution.length];
+        final double     val0 = (b - 1d) * (f - 1d);
+        final double     val1 = val0 - 1d;
+        final double     val2 = 1d - val0;
+        final double     val3 = a * val0 / val1 - 1d;
+        final double     val4 = Math.pow(-b / val1, a);
+        final double     val5 = val0 + 2d;
+        final double     val6 = Math.pow(f, 2d);
+        final double     val7 = Math.pow(b, a);
+        final double     val8 = val7 * val6 * k;
+        final double     val9 = a * val8;
+        final double     val10 = 2d * Math.pow(val2, a + 2d);
+        final double     val11 = Math.pow((val1), 2d);
+        final double     val12 = (a - 1d) * val5;
+        final double     val13 = f * k;
+        final double     val14 = f - 1d;
+        final double     val15 = a - 1d;
+        final double     val16 = b - 1d;
+        final double     val17 = val12 * val16;
+        
         // Formula 1d, d alpha
-        result[0][0] = -f * k * Math.log(-b / ((b - 1d) * (f - 1d) - 1d)) * 
-                       ((a * (b - 1d) * (f - 1d)) / ((b - 1d) * (f - 1d) - 1d) - 1d) * 
-                       Math.pow((-b / ((b - 1d) * (f - 1d) - 1d)), a) - 
-                       (f * k * Math.pow((-b / ((b - 1d) * (f - 1d) - 1d)), a) * (b - 1d) * (f - 1d)) / 
-                       ((b - 1d) * (f - 1d) - 1d);
+        result[0][0] = -val13 * Math.log(-b / val1) * val3 * val4 - (val13 * val4 * val0) / val1;
         
         // Formula 1d, d beta
-        result[0][1] = a * f * k * (1d / ((b - 1d) * (f - 1d) - 1d) - (b * (f - 1d)) / Math.pow(((b - 1d) * (f - 1d) - 1d), 2d)) * 
-                       ((a * (b - 1d) * (f - 1d)) / ((b - 1d) * (f - 1d) - 1d) - 1d) * 
-                       Math.pow((-b / ((b - 1d) * (f - 1d) - 1d)), (a - 1d)) - 
-                       f * k * Math.pow((-b / ((b - 1d) * (f - 1d) - 1d)), a) * 
-                       ((a * (f - 1d)) / ((b - 1d) * (f - 1d) - 1d) - (a * (b - 1d) * Math.pow((f - 1d), 2d)) / Math.pow(((b - 1d) * (f - 1d) - 1d), 2d));
+        result[0][1] = a * val13 * (1d / val1 - (b * val14) / val11) * val3 * Math.pow((-b / val1), val15) - val13 * val4 * 
+                       ((a * val14) / val1 - (a * val16 * Math.pow(val14, 2d)) / val11);
         // Formula 2d, d alpha
-        result[1][0] = (a * Math.pow(b, a) * Math.pow(f, 2d) * k * Math.log(1d - (b - 1d) * (f - 1d)) * 
-                       ((a - 1d) * (b - 1d) * (f - 1d) + 2d) * (b - 1d)) / (2d * Math.pow((1d - (b - 1d) * (f - 1d)), (a + 2d))) - 
-                       (a * Math.pow(b, a) * Math.pow(f, 2d) * k * Math.pow((b - 1d), 2d) * 
-                       (f - 1d)) / (2d * Math.pow((1d - (b - 1d) * (f - 1d)), (a + 2d))) - (Math.pow(b, a) * 
-                       Math.pow(f, 2d) * k * ((a - 1d) * (b - 1d) * (f - 1d) + 2d) * (b - 1d)) / 
-                       (2d * Math.pow((1d - (b - 1d) * (f - 1d)), (a + 2d))) - (a * Math.pow(b, a) * 
-                       Math.pow(f, 2d) * k * Math.log(b) * ((a - 1d) * (b - 1d) * (f - 1d) + 2d) * (b - 1d)) / 
-                       (2d * Math.pow((1d - (b - 1d) * (f - 1d)), (a + 2d)));
+        result[1][0] = (val9 * Math.log(val2) * val17) / val10 - (val9 * Math.pow(val16, 2d) * 
+                       val14) / val10 - (val8 * val17) / val10 - (val9 * Math.log(b) * val17) / val10;
         // Formula 2d, d beta
-        result[1][1] = -(a * Math.pow(b, a) * Math.pow(f, 2d) * k * ((a - 1d) * (b - 1d) * (f - 1d) + 2d)) / 
-                       (2d * Math.pow((1d - (b - 1d) * (f - 1d)), (a + 2d))) - (Math.pow(a, 2d) * Math.pow(b, (a - 1d)) * 
-                       Math.pow(f, 2d) * k * ((a - 1d) * (b - 1d) * (f - 1d) + 2d) * (b - 1d)) / (2d * 
-                       Math.pow((1d - (b - 1d) * (f - 1d)), (a + 2d))) - (a * Math.pow(b, a) * 
-                       Math.pow(f, 2d) * k * (a - 1d) * (b - 1d) * (f - 1d)) / (2d * 
-                       Math.pow((1d - (b - 1d) * (f - 1d)), (a + 2d))) - (a * Math.pow(b, a) * 
-                       Math.pow(f, 2d) * k * ((a - 1d) * (b - 1d) * (f - 1d) + 2d) * (a + 2d) * (b - 1d) * (f - 1d)) / 
-                       (2d * Math.pow((1d - (b - 1d) * (f - 1d)), (a + 3d)));
+        result[1][1] = -(val9 * val12) / val10 - (Math.pow(a, 2d) * Math.pow(b, val15) * val6 * k * val17) / val10 - (val9 * val15 * val0) / 
+                       val10 - (val9 * val12 * (a + 2d) * val0) / (2d * Math.pow(val2, (a + 3d)));
 
         return result;
     }
