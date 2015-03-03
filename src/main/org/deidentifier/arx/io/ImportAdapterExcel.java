@@ -29,6 +29,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.ImportConfigurationExcel.ExcelFileTypes;
 
 /**
@@ -73,7 +74,7 @@ public class ImportAdapterExcel extends ImportAdapter {
     /** Current row {@link lastRow} is referencing. */
     private int                      currentRow     = 0;
 
-    /**  TODO */
+    /** TODO */
     private FileInputStream          input;
 
     /**
@@ -143,7 +144,7 @@ public class ImportAdapterExcel extends ImportAdapter {
      */
     @Override
     public int getProgress() {
-        return (int) ((double) currentRow / (double) totalRows * 100d);
+        return (int) (((double) currentRow / (double) totalRows) * 100d);
     }
 
     /**
@@ -188,7 +189,11 @@ public class ImportAdapterExcel extends ImportAdapter {
             result[i] = row.getCell(indexes[i]).getStringCellValue();
 
             if (!dataTypes[i].isValid(result[i])) {
-                throw new IllegalArgumentException("Data value does not match data type");
+                if (config.columns.get(i).isCleansing()) {
+                    result[i] = DataType.NULL_VALUE;
+                } else {
+                    throw new IllegalArgumentException("Data value does not match data type");
+                }
             }
         }
 
@@ -200,8 +205,8 @@ public class ImportAdapterExcel extends ImportAdapter {
             row = null;
             try {
                 input.close();
-            } catch (Exception e){
-                /* Die silently*/
+            } catch (Exception e) {
+                /* Die silently */
             }
         }
 
@@ -232,9 +237,11 @@ public class ImportAdapterExcel extends ImportAdapter {
     private String[] createHeader() {
 
         /* Preparation work */
-        if (config.getContainsHeader()) this.config.prepare(row);
-        this.indexes = getIndexesToImport();
-        this.dataTypes = getColumnDatatypes();
+        if (config.getContainsHeader()) {
+            config.prepare(row);
+        }
+        indexes = getIndexesToImport();
+        dataTypes = getColumnDatatypes();
 
         /* Initialization */
         String[] header = new String[config.getColumns().size()];
@@ -246,9 +253,9 @@ public class ImportAdapterExcel extends ImportAdapter {
             ImportColumn column = columns.get(i);
 
             row.getCell(((ImportColumnExcel) column).getIndex())
-                   .setCellType(Cell.CELL_TYPE_STRING);
+               .setCellType(Cell.CELL_TYPE_STRING);
             String name = row.getCell(((ImportColumnExcel) column).getIndex())
-                                 .getStringCellValue();
+                             .getStringCellValue();
 
             if (config.getContainsHeader() && !name.equals("")) {
                 /* Assign name of file itself */

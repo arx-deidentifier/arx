@@ -71,17 +71,19 @@ public class HierarchyWizardModel<T> {
         // Create models
         orderModel = new HierarchyWizardModelOrder<T>(dataType, locale, getOrderData());
         if (dataType instanceof DataTypeWithRatioScale){
-            intervalModel = new HierarchyWizardModelIntervals<T>(dataType, data);
+            if (data.length > 1 || data[0] != DataType.NULL_VALUE) {
+                intervalModel = new HierarchyWizardModelIntervals<T>(dataType, data);
+            }
         }
         redactionModel = new HierarchyWizardModelRedaction<T>(dataType, data);
         
         // Propose a dedicated type of builder
         if (equals(dataType, DataType.DATE)) {
-            this.type = Type.INTERVAL_BASED;
+            this.type = intervalModel != null ? Type.INTERVAL_BASED : Type.ORDER_BASED;
         } else if (equals(dataType, DataType.DECIMAL)) {
-            this.type = Type.INTERVAL_BASED;
+            this.type = intervalModel != null ? Type.INTERVAL_BASED : Type.ORDER_BASED;
         } else if (equals(dataType, DataType.INTEGER)) {
-            this.type = Type.INTERVAL_BASED;
+            this.type = intervalModel != null ? Type.INTERVAL_BASED : Type.ORDER_BASED;
         } else if (equals(dataType, DataType.ORDERED_STRING)) {
             this.type = Type.ORDER_BASED;
         } else if (equals(dataType, DataType.STRING)) {

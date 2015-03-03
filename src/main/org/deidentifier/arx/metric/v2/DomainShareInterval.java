@@ -118,8 +118,27 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
                 if (level == 0) {
                     share = 1d / domainSize;
                 } else {
-                    Interval<T> interval = (Interval<T>)groups[level - 1][i];
-                    share = toDouble(dataType.subtract(interval.getMax(), interval.getMin())) / domainSize;
+                    AbstractGroup group = groups[level - 1][i];
+                    if (group instanceof Interval) {
+                        Interval<T> interval = (Interval<T>)group;
+                        
+                        if (interval.isOutOfBound()) {
+                            if (interval.isOutOfLowerBound()) {
+                                share = toDouble(dataType.subtract(builder.getLowerRange().getSnapBound(),
+                                                                   builder.getLowerRange().getLabelBound())) / domainSize;
+                            } else {
+                                share = toDouble(dataType.subtract(builder.getUpperRange().getLabelBound(),
+                                                                   builder.getUpperRange().getSnapBound())) / domainSize;
+                            }
+                        } else if (interval.isNullInterval()) {
+                            share = 1d / domainSize;
+                        } else {
+                            share = toDouble(dataType.subtract(interval.getMax(), interval.getMin())) / domainSize;
+                        }
+                    } else { 
+                     // Special case, '*' at the end
+                        share = 1d;
+                    }
                 }
                 
                 // If duplicate

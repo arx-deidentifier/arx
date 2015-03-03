@@ -45,7 +45,10 @@ import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilde
  * @param <T>
  */
 public abstract class DataType<T> implements Serializable, Comparator<T> {
-    
+
+    /** The string representing the NULL value */
+    public static final String NULL_VALUE = "NULL";
+
     /**
      * Base class for date/time types.
      *
@@ -53,7 +56,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
 	public static class ARXDate extends DataType<Date> implements DataTypeWithFormat, DataTypeWithRatioScale<Date> {
 
-        /**  TODO */
+        /**  SVUID */
         private static final long                      serialVersionUID = -1658470914184442833L;
 
         /** The description of the data type. */
@@ -139,22 +142,40 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return this;
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.deidentifier.arx.DataType#compare(java.lang.Object, java.lang.Object)
          */
         @Override
         public int compare(Date t1, Date t2) {
+            if (t1 == null && t2 == null) {
+                return 0;
+            } else if (t1 == null) {
+                return +1;
+            } else if (t2 == null) {
+                return -1;
+            }
             return t1.compareTo(t2);
         }
-        
-        /* (non-Javadoc)
+
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.deidentifier.arx.DataType#compare(java.lang.String, java.lang.String)
          */
         @Override
         public int compare(final String s1, final String s2) throws ParseException {
+            if (s1 == null && s2 == null) {
+                return 0;
+            } else if (s1 == null) {
+                return +1;
+            } else if (s2 == null) {
+                return -1;
+            }
             try {
                 return format.parse(s1).compareTo(format.parse(s2));
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new IllegalArgumentException("Invalid value", e);
             }
         }
@@ -200,6 +221,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public String format(Date s){
+            if (s == null) {
+                return NULL_VALUE;
+            }
         	return format.format(s);
         }
 
@@ -321,6 +345,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public Date parse(String s) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+                return null;
+            }
         	try {
 				return format.parse(s);
         	} catch (Exception e) {
@@ -364,7 +391,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public static class ARXDecimal extends DataType<Double> implements DataTypeWithFormat, DataTypeWithRatioScale<Double> {
 
-        /**  TODO */
+        /**  SVUID */
         private static final long                        serialVersionUID = 7293446977526103610L;
 
         /** The description of the data type. */
@@ -449,6 +476,13 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public int compare(Double t1, Double t2) {
+            if (t1 == null && t2 == null) {
+                return 0;
+            } else if (t1 == null) {
+                return +1;
+            } else if (t2 == null) {
+                return -1;
+            }
             double d1 = parse(format(t1));
             double d2 = parse(format(t2));
             d1 = d1 == -0.0d ? 0d : d1;
@@ -461,6 +495,13 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
+            if (s1 == null && s2 == null) {
+                return 0;
+            } else if (s1 == null) {
+                return +1;
+            } else if (s2 == null) {
+                return -1;
+            }
             try {
                 double d1 = parse(s1);
                 double d2 = parse(s2);
@@ -511,6 +552,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public String format(Double s){
+            if (s == null) {
+                return NULL_VALUE;
+            }
             if (format==null){
                 return String.valueOf(s);
             } else {
@@ -632,6 +676,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public Double parse(String s) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+                return null;
+            }
             try {
                 if (format == null) {
                     return Double.valueOf(s);
@@ -675,7 +722,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public static class ARXInteger extends DataType<Long> implements DataTypeWithFormat, DataTypeWithRatioScale<Long>  {
         
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = -631163546929231044L;
 
         /** The description of the data type. */
@@ -761,6 +808,13 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public int compare(Long t1, Long t2) {
+            if (t1 == null && t2 == null) {
+                return 0;
+            } else if (t1 == null) {
+                return +1;
+            } else if (t2 == null) {
+                return -1;
+            }
             return t1.compareTo(t2);
         }
 
@@ -769,6 +823,13 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
+            if (s1 == null && s2 == null) {
+                return 0;
+            } else if (s1 == null) {
+                return +1;
+            } else if (s2 == null) {
+                return -1;
+            }
             try {
                 return parse(s1).compareTo(parse(s2));
             } catch (Exception e) {
@@ -815,6 +876,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public String format(Long s){
+            if (s == null) {
+                return NULL_VALUE;
+            }
             if (format==null){
                 return String.valueOf(s);
             } else {
@@ -936,6 +1000,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public Long parse(String s) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+                return null;
+            }
             try {
                 if (format == null) {
                     return Long.valueOf(s);
@@ -979,10 +1046,10 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public static class ARXOrderedString extends DataType<String> implements DataTypeWithFormat {
 
-        /**  TODO */
+        /**  SVUID */
         private static final long                        serialVersionUID = -830897705078418835L;
 
-        /**  TODO */
+        /**  The defined order */
         private final Map<String, Integer>               order;
 
         /** The description of the data type. */
@@ -1077,6 +1144,13 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public int compare(final String s1, final String s2) {
+            if (s1 == null && s2 == null) {
+                return 0;
+            } else if (s1 == null) {
+                return +1;
+            } else if (s2 == null) {
+                return -1;
+            }
             if (order != null){
                 try {
                     return order.get(s1).compareTo(order.get(s2));
@@ -1113,6 +1187,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public String format(String s){
+            if (s == null) {
+                return NULL_VALUE;
+            }
             if (order != null && !order.containsKey(s)) {
                 throw new IllegalArgumentException("Unknown string '"+s+"'");
             }
@@ -1192,7 +1269,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public boolean isValid(String s) {
-            if (order != null && !order.containsKey(s)) {
+            if (s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+                return true;
+            } else if (order != null && !order.containsKey(s)) {
                 return false;
             } else {
                 return true;
@@ -1204,6 +1283,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public String parse(String s) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+                return null;
+            }
             if (order != null && !order.containsKey(s)) {
                 throw new IllegalArgumentException("Unknown string '"+s+"'");
             }
@@ -1226,7 +1308,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public static class ARXString extends DataType<String> {
         
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = 903334212175979691L;
         
         /** The description of the data type. */
@@ -1250,6 +1332,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public int compare(final String s1, final String s2) {
+            if (s1 == null || s2 == null) {
+                throw new IllegalArgumentException("Null is not a string");
+            }
             return s1.compareTo(s2);
         }
 
@@ -1269,6 +1354,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public String format(String s){
+            if (s == null) {
+                throw new IllegalArgumentException("Null is not a string");
+            }
             return s;
         }
         
@@ -1293,7 +1381,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public boolean isValid(String s) {
-            return true;
+            return s != null;
         }
 
         /* (non-Javadoc)
@@ -1301,6 +1389,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public String parse(String s) {
+            if (s == null) {
+                throw new IllegalArgumentException("Null is not a string");
+            }
             return s;
         }
 
@@ -1321,7 +1412,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public static abstract class DataTypeDescription<T> implements Serializable {
 
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = 6369986224526795419L;
         
         /** The wrapped java class. */
@@ -1420,15 +1511,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static interface DataTypeWithFormat {
         
         /**
-         * 
-         *
          * @return
          */
         public abstract String getFormat();
         
         /**
-         * 
-         *
          * @return
          */
         public abstract Locale getLocale();
@@ -1591,7 +1678,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract T subtract(T minuend, T subtrahend);
     }
     
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = -4380267779210935078L;
 
     /** A date data type with default format dd.mm.yyyy */
@@ -1873,4 +1960,13 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @return
      */
     public abstract T parse(String s);
+    
+    /**
+     * Returns whether the given value represent null
+     * @param value
+     * @return
+     */
+    public boolean isNull(String value) {
+        return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
+    }
 }

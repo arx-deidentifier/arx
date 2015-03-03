@@ -30,11 +30,12 @@ import org.deidentifier.arx.DataType;
  */
 public class ImportColumnExcel extends ImportColumnIndexed {
 
+
     /**
      * Creates a new instance of this object with the given parameters.
      *
-     * @param index
-     * @param datatype
+     * @param index the index
+     * @param datatype the datatype
      * @see {@link ImportColumnIndexed}
      */
     public ImportColumnExcel(int index, DataType<?> datatype) {
@@ -44,9 +45,20 @@ public class ImportColumnExcel extends ImportColumnIndexed {
     /**
      * Creates a new instance of this object with the given parameters.
      *
-     * @param index
-     * @param aliasName
-     * @param datatype
+     * @param index the index
+     * @param datatype the datatype
+     * @param cleansing the cleansing
+     */
+    public ImportColumnExcel(int index, DataType<?> datatype, boolean cleansing) {
+        super(index, datatype, cleansing);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param index the index
+     * @param aliasName the alias name
+     * @param datatype the datatype
      * @see {@link ImportColumnIndexed}
      */
     public ImportColumnExcel(int index, String aliasName, DataType<?> datatype) {
@@ -56,8 +68,20 @@ public class ImportColumnExcel extends ImportColumnIndexed {
     /**
      * Creates a new instance of this object with the given parameters.
      *
-     * @param name
-     * @param datatype
+     * @param index the index
+     * @param aliasName the alias name
+     * @param datatype the datatype
+     * @param cleansing the cleansing
+     */
+    public ImportColumnExcel(int index, String aliasName, DataType<?> datatype, boolean cleansing) {
+        super(index, aliasName, datatype, cleansing);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param name the name
+     * @param datatype the datatype
      */
     public ImportColumnExcel(String name, DataType<?> datatype) {
         super(name, datatype);
@@ -66,11 +90,34 @@ public class ImportColumnExcel extends ImportColumnIndexed {
     /**
      * Creates a new instance of this object with the given parameters.
      *
-     * @param name
-     * @param alias
-     * @param datatype
+     * @param name the name
+     * @param datatype the datatype
+     * @param cleansing the cleansing
+     */
+    public ImportColumnExcel(String name, DataType<?> datatype, boolean cleansing) {
+        super(name, datatype, cleansing);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param name the name
+     * @param alias the alias
+     * @param datatype the datatype
      */
     public ImportColumnExcel(String name, String alias, DataType<?> datatype) {
+        super(name, alias, datatype);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param name the name
+     * @param alias the alias
+     * @param datatype the datatype
+     * @param cleansing the cleansing
+     */
+    public ImportColumnExcel(String name, String alias, DataType<?> datatype, boolean cleansing) {
         super(name, alias, datatype);
     }
 }

@@ -26,14 +26,16 @@ import org.deidentifier.arx.DataType;
  * 
  * @author Karol Babioch
  * @author Fabian Prasser
+ * @author Florian Kohlmayer
+ * 
  */
 public class ImportColumnCSV extends ImportColumnIndexed {
 
     /**
      * Creates a new instance of this object with the given parameters.
      *
-     * @param index
-     * @param datatype
+     * @param index the index
+     * @param datatype the datatype
      * @see {@link ImportColumnIndexed}
      */
     public ImportColumnCSV(int index, DataType<?> datatype) {
@@ -43,9 +45,20 @@ public class ImportColumnCSV extends ImportColumnIndexed {
     /**
      * Creates a new instance of this object with the given parameters.
      *
-     * @param index
-     * @param aliasName
-     * @param datatype
+     * @param index the index
+     * @param datatype the datatype
+     * @param cleansing the cleansing
+     */
+    public ImportColumnCSV(int index, DataType<?> datatype, boolean cleansing) {
+        super(index, datatype, cleansing);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param index the index
+     * @param aliasName the alias name
+     * @param datatype the datatype
      * @see {@link ImportColumnIndexed}
      */
     public ImportColumnCSV(int index, String aliasName, DataType<?> datatype) {
@@ -55,8 +68,20 @@ public class ImportColumnCSV extends ImportColumnIndexed {
     /**
      * Creates a new instance of this object with the given parameters.
      *
-     * @param name
-     * @param datatype
+     * @param index the index
+     * @param aliasName the alias name
+     * @param datatype the datatype
+     * @param cleansing the cleansing
+     */
+    public ImportColumnCSV(int index, String aliasName, DataType<?> datatype, boolean cleansing) {
+        super(index, aliasName, datatype, cleansing);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param name the name
+     * @param datatype the datatype
      */
     public ImportColumnCSV(String name, DataType<?> datatype) {
         super(name, datatype);
@@ -65,11 +90,34 @@ public class ImportColumnCSV extends ImportColumnIndexed {
     /**
      * Creates a new instance of this object with the given parameters.
      *
-     * @param name
-     * @param alias
-     * @param datatype
+     * @param name the name
+     * @param datatype the datatype
+     * @param cleansing the cleansing
+     */
+    public ImportColumnCSV(String name, DataType<?> datatype, boolean cleansing) {
+        super(name, datatype, cleansing);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param name the name
+     * @param alias the alias
+     * @param datatype the datatype
      */
     public ImportColumnCSV(String name, String alias, DataType<?> datatype) {
+        super(name, alias, datatype);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param name the name
+     * @param alias the alias
+     * @param datatype the datatype
+     * @param cleansing the cleansing
+     */
+    public ImportColumnCSV(String name, String alias, DataType<?> datatype, boolean cleansing) {
         super(name, alias, datatype);
     }
 }

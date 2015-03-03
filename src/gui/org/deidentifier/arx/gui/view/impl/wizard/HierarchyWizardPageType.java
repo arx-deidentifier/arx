@@ -17,7 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
-import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -109,9 +108,7 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         
         this.interval = new Button(composite, SWT.RADIO);
         this.interval.setText("Use intervals (for variables with ratio scale)");
-        if (!(model.getDataType() instanceof DataTypeWithRatioScale)) {
-            this.interval.setEnabled(false);
-        }
+        this.interval.setEnabled(model.getIntervalModel() != null);
         
         this.order = new Button(composite, SWT.RADIO);
         this.order.setText("Use ordering (e.g., for variables with ordinal scale)");

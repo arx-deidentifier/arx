@@ -32,7 +32,7 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to use the NDS Metric.
+ * This class implements an example on how to use the Loss Metric.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer

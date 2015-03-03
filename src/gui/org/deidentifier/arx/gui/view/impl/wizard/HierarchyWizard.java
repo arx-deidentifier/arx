@@ -83,31 +83,31 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
          */
         public void update();
     }
-    
+
     /** Var. */
-    private HierarchyWizardModel<T>   model;
-    
+    private HierarchyWizardModel<T>         model;
+
     /** Var. */
     private final Controller                controller;
-    
+
     /** Var. */
     private final ARXWizardButton           buttonLoad;
-    
+
     /** Var. */
     private final ARXWizardButton           buttonSave;
-    
+
     /** Var. */
     private HierarchyWizardPageIntervals<T> pageIntervals;
-    
+
     /** Var. */
     private HierarchyWizardPageOrder<T>     pageOrder;
-    
+
     /** Var. */
     private HierarchyWizardPageRedaction<T> pageRedaction;
-    
+
     /** Var. */
     private HierarchyWizardPageFinal<T>     pageFinal;
-    
+
     /** Var. */
     private HierarchyWizardPageType<T>      pageType;
 

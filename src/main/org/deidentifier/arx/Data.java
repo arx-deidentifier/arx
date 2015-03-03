@@ -25,8 +25,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.deidentifier.arx.io.CSVSyntax;
+import org.apache.poi.ss.formula.functions.T;
 import org.deidentifier.arx.io.CSVDataInput;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
 
@@ -259,6 +260,19 @@ public abstract class Data {
     /**
      * Creates a new data object from a CSV file.
      *
+     * @param file the file
+     * @param config the config
+     * @param datatypes the datatypes
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final File file, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
+        return new IterableData(new CSVDataInput(file, config, datatypes).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
      * @param stream the stream
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
@@ -322,7 +336,7 @@ public abstract class Data {
     }
 
     /**
-     * Creates the.
+     * Creates a new data object from a CSV file.
      *
      * @param stream the stream
      * @param config the config
@@ -331,6 +345,19 @@ public abstract class Data {
      */
     public static Data create(final InputStream stream, final CSVSyntax config) throws IOException {
         return new IterableData(new CSVDataInput(stream, config).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
+     * @param stream the stream
+     * @param config the config
+     * @param datatypes the datatypes
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final InputStream stream, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
+        return new IterableData(new CSVDataInput(stream, config, datatypes).iterator());
     }
 
     /**
@@ -438,6 +465,19 @@ public abstract class Data {
      */
     public static Data create(final String path, final CSVSyntax config) throws IOException {
         return new IterableData(new CSVDataInput(path, config).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file.
+     *
+     * @param path the path
+     * @param config the config
+     * @param datatypes the datatypes
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final String path, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
+        return new IterableData(new CSVDataInput(path, config, datatypes).iterator());
     }
 
     /**

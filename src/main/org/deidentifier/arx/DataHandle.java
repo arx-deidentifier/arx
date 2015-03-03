@@ -26,10 +26,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
@@ -40,8 +42,8 @@ import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
-import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.io.CSVDataOutput;
+import org.deidentifier.arx.io.CSVSyntax;
 
 import cern.colt.Swapper;
 
@@ -372,44 +374,26 @@ public abstract class DataHandle {
         result.addAll(getMatchingDataTypes(column, Date.class, locale, threshold));
         result.addAll(getMatchingDataTypes(column, Double.class, locale, threshold));
         result.add(new Pair<DataType<?>, Double>(DataType.STRING, 1.0d));
+        
+        // Sort order
+        final Map<Class<?>, Integer> order = new HashMap<Class<?>, Integer>();
+        order.put(Long.class, 0);
+        order.put(Date.class, 1);
+        order.put(Double.class, 2);
+        order.put(String.class, 3);
+        
+        // Sort
         Collections.sort(result, new Comparator<Pair<DataType<?>, Double>>() {
-            @Override
             public int compare(Pair<DataType<?>, Double> o1, Pair<DataType<?>, Double> o2) {
-
-                Class<?> class1 = o1.getFirst().getClass();
-                Class<?> class2 = o2.getFirst().getClass();
-
-                if (class1 == Long.class) {
-                    if (class2 == Long.class) {
-                        return o1.getSecond().compareTo(o2.getSecond());
-                    } else {
-                        return -1;
-                    }
-                } else if (class1 == Date.class) {
-                    if (class2 == Long.class) {
-                        return +1;
-                    } else if (class2 == Date.class) {
-                        return o1.getSecond().compareTo(o2.getSecond());
-                    } else {
-                        return -1;
-                    }
-                } else if (class1 == Double.class) {
-                    if (class2 == Double.class) {
-                        return o1.getSecond().compareTo(o2.getSecond());
-                    } else if (class2 == String.class) {
-                        return -1;
-                    } else {
-                        return +1;
-                    }
-                } else if (class1 == String.class) {
-                    if (class2 == String.class) {
-                        return o1.getSecond().compareTo(o2.getSecond());
-                    } else {
-                        return +1;
-                    }
-                } else {
-                    return 0;
-                }
+                
+                // Sort by matching quality
+                int cmp = o1.getSecond().compareTo(o2.getSecond());
+                if (cmp != 0) return -cmp;
+                
+                // Sort by order
+                int order1 = order.get(o1.getFirst().getDescription().getWrappedClass());
+                int order2 = order.get(o2.getFirst().getDescription().getWrappedClass());
+                return Integer.compare(order1, order2);
             }
         });
         return result;
