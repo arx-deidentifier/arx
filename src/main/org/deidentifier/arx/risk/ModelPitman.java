@@ -51,18 +51,17 @@ class ModelPitman extends RiskModelPopulationBased {
                 final WrappedBoolean stop) {
         super(classes, model, sampleSize, stop, new WrappedInteger());
 
-        int numClassesOfSize1 = (int) super.getNumClassesOfSize(1);
-        int numClassesOfSize2 = (int) super.getNumClassesOfSize(2);
-        if (numClassesOfSize2 == 0) numClassesOfSize2 = 1; // Overestimate
+        int c1 = (int) super.getNumClassesOfSize(1);
+        int c2 = (int) super.getNumClassesOfSize(2);
+        if (c2 == 0) c2 = 1; // Overestimate
         int numClasses = (int) super.getNumClasses();
         double populationSize = super.getPopulationSize();
 
         // Initial guess
-        final double c = (numClassesOfSize1 * (numClassesOfSize1 - 1)) / numClassesOfSize2;
-        final double thetaGuess = ((sampleSize * numClasses * c) - (numClassesOfSize1 * (sampleSize - 1) * ((2 * numClasses) + c))) /
-                                  (((2 * numClassesOfSize1 * numClasses) + (numClassesOfSize1 * c)) - (sampleSize * c));
-        final double alphaGuess = ((thetaGuess * (numClassesOfSize1 - sampleSize)) + ((sampleSize - 1) * numClassesOfSize1)) /
-                                  (sampleSize * numClasses);
+        final double c = (c1 * (c1 - 1)) / c2;
+        final double thetaGuess = ((sampleSize * numClasses * c) - (c1 * (sampleSize - 1) * ((2 * numClasses) + c))) /
+                                  (((2 * c1 * numClasses) + (c1 * c)) - (sampleSize * c));
+        final double alphaGuess = ((thetaGuess * (c1 - sampleSize)) + ((sampleSize - 1) * c1)) / (sampleSize * numClasses);
 
         // Apply Newton-Rhapson algorithm to solve the Maximum Likelihood Estimates
         final AlgorithmNewtonPitman pitmanNewton = new AlgorithmNewtonPitman(numClasses, sampleSize, classes.getEquivalenceClasses(), maxIterations, accuracy, stop);
