@@ -83,6 +83,7 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
         double z = 0;
         
         // For each...
+        // TODO: Find closed form
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
             double val0 = (t + (i * a));
             double val1 = 1d / (val0 * val0);
@@ -101,8 +102,10 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
             int value = classes[i + 1];
             double val0 = t + key;
             w += 1d / (val0 * val0);
-            double val1 = 0;
+            
             if (key != 1) {
+                double val1 = 0;
+                // TODO: Find closed form
                 for (int j = 1; j < key; j++) {
                     double val2 = j - a;
                     val1 += 1d / (val2 * val2);
@@ -135,46 +138,47 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
         double t = iteratedSolution[0]; // Theta
         double a = iteratedSolution[1]; // Alpha
 
-        double[] result = new double[iteratedSolution.length];
-        double temp1 = 0;
-        double temp2 = 0;
-        double temp3 = 0;
-
-        // Compute theta
+        double w = 0;
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        
+        // TODO: Find closed form
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
-            temp1 += (1 / (t + (i * a)));
-            checkInterrupt();
+            double val0 = 1d / (t + (i * a));
+            double val1 = i * val0;
+            w += val0;
+            y += val1;
         }
+        checkInterrupt();
+        
+        // TODO: Find closed form
         for (int i = 1; i < numberOfEntries; i++) {
-            temp2 += (1 / (t + i));
-            checkInterrupt();
+            x += 1d / (t + i);
         }
-        result[0] = temp1 - temp2;
+        checkInterrupt();
 
-        // compute alpha
-        temp1 = 0;
-        temp2 = 0;
-        temp3 = 0;
-        for (int i = 1; i < numberOfEquivalenceClasses; i++) {
-            temp1 += (i / (t + (i * a)));
-            checkInterrupt();
-        }
+        // For each class..
         for (int i = 0; i < classes.length; i += 2) {
             int key = classes[i];
             int value = classes[i + 1];
-            temp3 = 0;
+            
             if (key != 1) {
+                // TODO: Find closed form
+                double val0 = 0;
                 for (int j = 1; j < key; j++) {
-                    temp3 += (1 / (j - a));
+                    val0 += 1d / (j - a);
                 }
-                temp2 += value * temp3;
+                z += value * val0;
             }
             checkInterrupt();
 
         }
-        result[1] = temp1 - temp2;
-
+        
+        // Return
+        double[] result = new double[2];
+        result[0] = w - x;
+        result[1] = y - z;
         return result;
     }
-
 }
