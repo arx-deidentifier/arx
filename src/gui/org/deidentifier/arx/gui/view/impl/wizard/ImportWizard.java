@@ -45,7 +45,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 public class ImportWizard extends ARXWizard<ImportConfiguration> {
 
     /** Reference to container storing all the data gathered by the wizard. */
-    private ImportWizardModel       data          = new ImportWizardModel();
+    private ImportWizardModel       data;
 
     /** Reference of controller being used by this wizard. */
     private Controller              controller;
@@ -53,28 +53,25 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
     /** Reference of model being used by this wizard. */
     private Model                   model;
 
-    /*
-     * All of the pages provided by this wizard
-     */
-    /**  TODO */
+    /**  View */
     private ImportWizardPageSource  sourcePage;
     
-    /**  TODO */
+    /**  View */
     private ImportWizardPageCSV     csvPage;
     
-    /**  TODO */
+    /**  View */
     private ImportWizardPageColumns columnPage;
     
-    /**  TODO */
+    /**  View */
     private ImportWizardPagePreview previewPage;
     
-    /**  TODO */
+    /**  View */
     private ImportWizardPageJDBC    jdbcPage;
     
-    /**  TODO */
+    /**  View */
     private ImportWizardPageTable   tablePage;
     
-    /**  TODO */
+    /**  View */
     private ImportWizardPageExcel   xlsPage;
 
     /**
@@ -105,6 +102,7 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
         setWindowTitle("Import data");
         this.setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(controller.getResources()
                                                                            .getImage("import.png"))); //$NON-NLS-1$
+        this.data = new ImportWizardModel(model);
         this.controller = controller;
         this.model = model;
     }

@@ -20,7 +20,12 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.commons.math3.util.Pair;
+import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.io.ImportColumn;
 import org.deidentifier.arx.io.ImportColumnIndexed;
 import org.deidentifier.arx.io.ImportColumnJDBC;
@@ -129,6 +134,17 @@ public class ImportWizardModel {
     /** Jdbc connection potentially used throughout the wizard. */
     private Connection                    jdbcConnection;
 
+    /** The locale */
+    private Locale                        locale;
+
+    /**
+     * Creates a new instance
+     * @param model
+     */
+    public ImportWizardModel(Model model) {
+        this.locale = model.getLocale();
+    }
+
     /**
      * @return the csvDelimiter
      */
@@ -210,6 +226,21 @@ public class ImportWizardModel {
     public List<String[]> getPreviewData() {
 
         return previewData;
+    }
+    
+    /**
+     * Returns a list of matching data types
+     * @param column
+     */
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(ImportWizardModelColumn column) {
+        
+        if (wizardColumns.indexOf(column) == -1) { 
+            throw new IllegalArgumentException("Column not part of preview data"); 
+        }
+
+        Data data = Data.create(getPreviewData());
+        int columnIndex = ((ImportColumnIndexed) column.getColumn()).getIndex();
+        return data.getHandle().getMatchingDataTypes(columnIndex, locale, Math.ulp(0d));
     }
 
     /**
@@ -350,8 +381,7 @@ public class ImportWizardModel {
     }
 
     /**
-     * 
-     *
+     * Setter
      * @param sourceType
      */
     public void setSourceType(SourceType sourceType) {
@@ -368,22 +398,35 @@ public class ImportWizardModel {
         this.wizardColumns = columns;
     }
 
+    /**
+     * Getter
+     * @return
+     */
     public char[] getCsvLinebreak() {
         return csvLinebreak;
     }
 
+    /**
+     * Setter
+     * @param csvLinebreak
+     */
     public void setCsvLinebreak(char[] csvLinebreak) {
         this.csvLinebreak = csvLinebreak;
     }
 
+    /**
+     * Getter
+     * @return
+     */
     public char getCsvQuote() {
         return csvQuote;
     }
 
+    /**
+     * Setter
+     * @param csvQuote
+     */
     public void setCsvQuote(char csvQuote) {
         this.csvQuote = csvQuote;
     }
-
-   
-
 }
