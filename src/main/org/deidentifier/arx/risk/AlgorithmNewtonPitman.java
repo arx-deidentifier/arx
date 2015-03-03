@@ -76,16 +76,18 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
 
         final double[][] result = new double[iteratedSolution.length][iteratedSolution.length];
         double temp1 = 0, temp2 = 0, temp3 = 0;
+        double t = iteratedSolution[0]; // Theta
+        double a = iteratedSolution[1]; // Alpha
 
         // compute d^2L/(dtheta)^2
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
-            temp1 += (1 / ((iteratedSolution[0] + (i * iteratedSolution[1])) * (iteratedSolution[0] + (i * iteratedSolution[1]))));
+            temp1 += (1 / ((t + (i * a)) * (t + (i * a))));
             checkInterrupt();
         }
 
         for (int i = 0; i < classes.length; i += 2) {
             int key = classes[i];
-            temp2 += (1 / ((iteratedSolution[0] + key) * (iteratedSolution[0] + key)));
+            temp2 += (1 / ((t + key) * (t + key)));
             checkInterrupt();
         }
         result[0][0] = temp2 - temp1;
@@ -95,7 +97,7 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
         temp2 = 0;
         temp3 = 0;
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
-            temp1 += ((i * i) / ((iteratedSolution[0] + (i * iteratedSolution[1])) * (iteratedSolution[0] + (i * iteratedSolution[1]))));
+            temp1 += ((i * i) / ((t + (i * a)) * (t + (i * a))));
             checkInterrupt();
         }
 
@@ -105,7 +107,7 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
             temp3 = 0;
             if (key != 1) {
                 for (int j = 1; j < key; j++) {
-                    temp3 += (1 / ((j - iteratedSolution[1]) * (j - iteratedSolution[1])));
+                    temp3 += (1 / ((j - a) * (j - a)));
                 }
                 temp2 += value * temp3;
             }
@@ -118,7 +120,7 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
         temp2 = 0;
         temp3 = 0;
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
-            temp1 += (i / (((i * iteratedSolution[1]) + iteratedSolution[0]) * ((i * iteratedSolution[1]) + iteratedSolution[0])));
+            temp1 += (i / (((i * a) + t) * ((i * a) + t)));
             checkInterrupt();
         }
         result[0][1] = 0 - temp1;
@@ -138,17 +140,19 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
     @Override
     protected double[] objectFunctionVector(final double[] iteratedSolution) {
         
-        // Theta is at iteratedSolution[0], alpha at [1]
-        final double[] result = new double[iteratedSolution.length];
+        double t = iteratedSolution[0]; // Theta
+        double a = iteratedSolution[1]; // Alpha
+
+        double[] result = new double[iteratedSolution.length];
         double temp1 = 0, temp2 = 0, temp3 = 0;
 
         // Compute theta
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
-            temp1 += (1 / (iteratedSolution[0] + (i * iteratedSolution[1])));
+            temp1 += (1 / (t + (i * a)));
             checkInterrupt();
         }
         for (int i = 1; i < numberOfEntries; i++) {
-            temp2 += (1 / (iteratedSolution[0] + i));
+            temp2 += (1 / (t + i));
             checkInterrupt();
         }
         result[0] = temp1 - temp2;
@@ -158,7 +162,7 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
         temp2 = 0;
         temp3 = 0;
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
-            temp1 += (i / (iteratedSolution[0] + (i * iteratedSolution[1])));
+            temp1 += (i / (t + (i * a)));
             checkInterrupt();
         }
         for (int i = 0; i < classes.length; i += 2) {
@@ -167,7 +171,7 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
             temp3 = 0;
             if (key != 1) {
                 for (int j = 1; j < key; j++) {
-                    temp3 += (1 / (j - iteratedSolution[1]));
+                    temp3 += (1 / (j - a));
                 }
                 temp2 += value * temp3;
             }
