@@ -265,6 +265,7 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
         }
 
         for (ImportColumn c : data.getEnabledColumns()) {
+            c.setCleansing(data.isPerformCleansing());
             configuration.addColumn(c);
         }
         

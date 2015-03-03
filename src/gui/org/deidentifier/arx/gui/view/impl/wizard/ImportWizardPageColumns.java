@@ -28,6 +28,7 @@ import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.io.ImportColumn;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -410,6 +411,9 @@ public class ImportWizardPageColumns extends WizardPage {
     /** View */
     private Button                 btnDown;
 
+    /** View */
+    private Button                 btnCleansing;
+
     /** Indicator for the next action of {@link ColumnEnabledSelectionListener}. */
     private boolean                selectAll = false;
 
@@ -706,6 +710,18 @@ public class ImportWizardPageColumns extends WizardPage {
                     checkboxTableViewer.setInput(columns);
                     table.notifyListeners(SWT.Selection, null);
                 }
+            }
+        });
+        
+        btnCleansing = new Button(container, SWT.CHECK);
+        btnCleansing.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
+        btnCleansing.setText("Perform data cleansing");
+        btnCleansing.setToolTipText("When checked, all values that do not conform to the selected data type will be replaced with null");
+        btnCleansing.setEnabled(true);
+        btnCleansing.setSelection(wizardImport.getData().isPerformCleansing());
+        btnCleansing.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent arg0) {
+                wizardImport.getData().setPerformCleansing(btnCleansing.getSelection());
             }
         });
 

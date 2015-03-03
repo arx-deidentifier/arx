@@ -44,7 +44,7 @@ abstract public class ImportColumn {
     private DataType<?>   dataType;
 
     /** Indicates if non-matching values should be replaced with NULL values. */
-    private final boolean cleansing;
+    private boolean cleansing;
 
     /**
      * Creates a new instance of this object with the given parameters.
@@ -116,5 +116,13 @@ abstract public class ImportColumn {
      */
     public void setDataType(DataType<?> dataType) {
         this.dataType = dataType;
+    }
+
+    /**
+     * Should we perform cleansing
+     * @param cleansing
+     */
+    public void setCleansing(boolean cleansing) {
+        this.cleansing = cleansing;
     }
 }

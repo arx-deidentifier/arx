@@ -44,12 +44,6 @@ import org.deidentifier.arx.io.ImportColumnJDBC;
  */
 public class ImportWizardModel {
 
-    /** Maximum number of lines to be loaded for preview purposes. */
-    public static final int PREVIEW_MAX_LINES = 25;
-
-    /** Maximum number of chars to be loaded for detecting separators. */
-    public static final int DETECT_MAX_CHARS  = 100000;
-    
     /**
      * Possible sources for importing data from.
      *
@@ -65,7 +59,13 @@ public class ImportWizardModel {
         
         /**  TODO */
         EXCEL
-    };
+    }
+
+    /** Maximum number of lines to be loaded for preview purposes. */
+    public static final int PREVIEW_MAX_LINES = 25;
+    
+    /** Maximum number of chars to be loaded for detecting separators. */
+    public static final int DETECT_MAX_CHARS  = 100000;;
 
     /** Actual source data should be imported from. */
     private SourceType                    sourceType;
@@ -137,6 +137,9 @@ public class ImportWizardModel {
     /** The locale */
     private Locale                        locale;
 
+    /** Should we perform cleansing */
+    private boolean                       performCleansing       = true;
+
     /**
      * Creates a new instance
      * @param model
@@ -152,12 +155,28 @@ public class ImportWizardModel {
         return csvDelimiter;
     }
 
-   /**
-     * @return {@link #csvEscape}
+    /**
+         * @return {@link #csvEscape}
+         */
+        public char getCsvEscape() {
+            return csvEscape;
+        }
+
+    /**
+     * Getter
+     * @return
      */
-    public char getCsvEscape() {
-        return csvEscape;
+    public char[] getCsvLinebreak() {
+        return csvLinebreak;
     }
+
+   /**
+ * Getter
+ * @return
+ */
+public char getCsvQuote() {
+    return csvQuote;
+}
 
     /**
      * Returns list of enabled columns
@@ -221,14 +240,6 @@ public class ImportWizardModel {
     }
 
     /**
-     * @return {@link #previewData}
-     */
-    public List<String[]> getPreviewData() {
-
-        return previewData;
-    }
-    
-    /**
      * Returns a list of matching data types
      * @param column
      */
@@ -241,6 +252,14 @@ public class ImportWizardModel {
         Data data = Data.create(getPreviewData());
         int columnIndex = ((ImportColumnIndexed) column.getColumn()).getIndex();
         return data.getHandle().getMatchingDataTypes(columnIndex, locale, Math.ulp(0d));
+    }
+    
+    /**
+     * @return {@link #previewData}
+     */
+    public List<String[]> getPreviewData() {
+
+        return previewData;
     }
 
     /**
@@ -301,12 +320,19 @@ public class ImportWizardModel {
     }
 
     /**
+     * @return the performCleansing
+     */
+    public boolean isPerformCleansing() {
+        return performCleansing;
+    }
+
+    /**
      * @param csvDelimiter the csvDelimiter to set
      */
     public void setCsvDelimiter(char csvDelimiter) {
         this.csvDelimiter = csvDelimiter;
     }
-
+    
     /**
      * 
      * @param csvEscape
@@ -314,7 +340,23 @@ public class ImportWizardModel {
     public void setCsvEscape(char csvEscape) {
         this.csvEscape = csvEscape;
     }
-    
+
+    /**
+     * Setter
+     * @param csvLinebreak
+     */
+    public void setCsvLinebreak(char[] csvLinebreak) {
+        this.csvLinebreak = csvLinebreak;
+    }
+
+    /**
+     * Setter
+     * @param csvQuote
+     */
+    public void setCsvQuote(char csvQuote) {
+        this.csvQuote = csvQuote;
+    }
+
     /**
      * @param excelSheetIndex
      *            {@link #excelSheetIndex}
@@ -362,6 +404,13 @@ public class ImportWizardModel {
     }
 
     /**
+     * @param performCleansing the performCleansing to set
+     */
+    public void setPerformCleansing(boolean performCleansing) {
+        this.performCleansing = performCleansing;
+    }
+
+    /**
      * 
      *
      * @param previewData
@@ -396,37 +445,5 @@ public class ImportWizardModel {
     public void setWizardColumns(List<ImportWizardModelColumn> columns) {
 
         this.wizardColumns = columns;
-    }
-
-    /**
-     * Getter
-     * @return
-     */
-    public char[] getCsvLinebreak() {
-        return csvLinebreak;
-    }
-
-    /**
-     * Setter
-     * @param csvLinebreak
-     */
-    public void setCsvLinebreak(char[] csvLinebreak) {
-        this.csvLinebreak = csvLinebreak;
-    }
-
-    /**
-     * Getter
-     * @return
-     */
-    public char getCsvQuote() {
-        return csvQuote;
-    }
-
-    /**
-     * Setter
-     * @param csvQuote
-     */
-    public void setCsvQuote(char csvQuote) {
-        this.csvQuote = csvQuote;
     }
 }
