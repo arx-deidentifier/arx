@@ -29,6 +29,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
+import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
@@ -423,11 +424,12 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
                         }
                         break;
                     }
-                    dataDankar[idx] = builder.getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
+                    RiskModelPopulationBasedUniquenessRisk populationBasedModel = builder.getPopulationBasedUniquenessRisk();
+                    dataDankar[idx] = populationBasedModel.getFractionOfUniqueTuplesDankar();
                     if (showAllModels) {
-                        dataPitman[idx] = builder.getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesPitman();
-                        dataZayatz[idx] = builder.getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesZayatz();
-                        dataSNB[idx] = builder.getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesSNB();
+                        dataPitman[idx] = populationBasedModel.getFractionOfUniqueTuplesPitman();
+                        dataZayatz[idx] = populationBasedModel.getFractionOfUniqueTuplesZayatz();
+                        dataSNB[idx] = populationBasedModel.getFractionOfUniqueTuplesSNB();
                     }
                 }
 
