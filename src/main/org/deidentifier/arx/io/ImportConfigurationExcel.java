@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
+ * ARX: Powerful Data Anonymization
+ * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.io;
@@ -43,42 +42,40 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
      * XLS is the "old" Excel file type, XLSX is the "new" Excel file type.
      */
     public enum ExcelFileTypes {
+        
+        /**  TODO */
         XLS,
+        
+        /**  TODO */
         XLSX
     };
 
     /**
      * Used file type
      * 
-     * This is the actual filetype that will be used
-     * 
+     * This is the actual filetype that will be used.
+     *
      * @see {@link #setExcelFileType(ExcelFileTypes excelFileType)}
      */
     private ExcelFileTypes excelFileType;
 
-    /**
-     * Sheet index
-     */
+    /** Sheet index. */
     private int            sheetIndex;
 
     /**
-     * Indicates whether first row contains header (names of columns)
-     * 
+     * Indicates whether first row contains header (names of columns).
+     *
      * @see {@link IImportConfigurationWithHeader}
      */
     private boolean        containsHeader;
 
     /**
-     * Creates a new instance of this object
-     * 
-     * @param fileLocation
-     *            {@link #setFileLocation(String)}
-     * @param excelFileType
-     *            {@link #setExcelFileType(ExcelFileTypes)}
-     * @param sheetIndex
-     *            {@link #setSheetIndex(int)}
-     * @param containsHeader
-     *            {@link #setContainsHeader(boolean)}
+     * Creates a new instance of this object.
+     *
+     * @param fileLocation {@link #setFileLocation(String)}
+     * @param excelFileType {@link #setExcelFileType(ExcelFileTypes)}
+     * @param sheetIndex {@link #setSheetIndex(int)}
+     * @param containsHeader {@link #setContainsHeader(boolean)}
      */
     public ImportConfigurationExcel(String fileLocation,
                                     ExcelFileTypes excelFileType,
@@ -192,34 +189,8 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
     }
 
     /**
-     * @param containsHeader
-     *            {@link #containsHeader}
-     */
-    @Override
-    public void setContainsHeader(boolean containsHeader) {
-        this.containsHeader = containsHeader;
-    }
-
-    /**
-     * @param excelFileType
-     *            {@link #ExcelFileTypes}
-     */
-    public void setExcelFileType(ExcelFileTypes excelFileType) {
-        this.excelFileType = excelFileType;
-    }
-
-    /**
-     * @param sheetIndex
-     *            {@link #sheetIndex}
-     */
-    public void setSheetIndex(int sheetIndex) {
-        this.sheetIndex = sheetIndex;
-    }
-
-
-    /**
-     * Sets the indexes based on the header
-     * 
+     * Sets the indexes based on the header.
+     *
      * @param row
      */
     public void prepare(Row row) {
@@ -240,5 +211,31 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
                 }
             }
         }
+    }
+
+    /**
+     * @param containsHeader
+     *            {@link #containsHeader}
+     */
+    @Override
+    public void setContainsHeader(boolean containsHeader) {
+        this.containsHeader = containsHeader;
+    }
+
+    /**
+     * @param excelFileType
+     *            {@link #ExcelFileTypes}
+     */
+    public void setExcelFileType(ExcelFileTypes excelFileType) {
+        this.excelFileType = excelFileType;
+    }
+
+
+    /**
+     * @param sheetIndex
+     *            {@link #sheetIndex}
+     */
+    public void setSheetIndex(int sheetIndex) {
+        this.sheetIndex = sheetIndex;
     }
 }

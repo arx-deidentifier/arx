@@ -1,24 +1,23 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.framework.check;
 
-import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -51,74 +50,65 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 public class Transformer {
 
     /** The buffer. */
-    protected int[][]                         buffer;
+    protected int[][]                          buffer;
 
-    protected final ARXConfiguration             config;
+    /** Sensitive attribute values. */
+    protected int[][]                          sensitive;
+
+    /** The config. */
+    protected final ARXConfigurationInternal config;
 
     /** The data. */
-    protected final int[][]                   data;
+    protected final int[][]                    data;
 
-    /** The dictionary for the snapshot compression **/
-    protected IntArrayDictionary              dictionarySensFreq;
+    /** The dictionary for the snapshot compression *. */
+    protected IntArrayDictionary               dictionarySensFreq;
 
-    /** The dictionary for the snapshot compression **/
-    protected IntArrayDictionary              dictionarySensValue;
+    /** The dictionary for the snapshot compression *. */
+    protected IntArrayDictionary               dictionarySensValue;
 
     /** The dimensions. */
-    protected final int                       dimensions;
+    protected final int                        dimensions;
+
     /** The hierarchies. */
-    protected final GeneralizationHierarchy[] hierarchies;
+    protected final GeneralizationHierarchy[]  hierarchies;
 
     /** The instances. */
-    protected final AbstractTransformer[]     instances;
-
-    protected int[]                           sensitiveValues;
+    protected final AbstractTransformer[]      instances;
 
     /**
      * Instantiates a new transformer.
-     * 
+     *
      * @param data
      * @param hierarchies
-     * @param sensitiveData
+     * @param sensitive
      * @param config
      * @param dictionarySensValue
      * @param dictionarySensFreq
      */
     public Transformer(final int[][] data,
                        final GeneralizationHierarchy[] hierarchies,
-                       final int[][] sensitiveData,
-                       final ARXConfiguration config,
+                       final int[][] sensitive,
+                       final ARXConfigurationInternal config,
                        final IntArrayDictionary dictionarySensValue,
                        final IntArrayDictionary dictionarySensFreq) {
 
         this.config = config;
         this.data = data;
         this.hierarchies = hierarchies;
-        instances = new AbstractTransformer[16];
-        // init buffer
-        buffer = new int[data.length][];
+        this.instances = new AbstractTransformer[16];
+        this.buffer = new int[data.length][];
+        
         for (int i = 0; i < data.length; i++) {
             buffer[i] = new int[data[0].length];
         }
 
-        dimensions = data[0].length;
-
-        sensitiveValues = new int[data.length];
+        this.dimensions = data[0].length;
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
-
-        if ((sensitiveData != null) && (sensitiveData.length == data.length) &&
-            (sensitiveData[0].length > 0)) {
-            for (int i = 0; i < sensitiveValues.length; i++) { // BEWARE: only
-                                                               // the first
-                                                               // sensitive
-                                                               // value is used
-                sensitiveValues[i] = sensitiveData[i][0];
-            }
-        }
+        this.sensitive = sensitive;
 
         buildApplicators();
-
     }
 
     /**
@@ -208,97 +198,97 @@ public class Transformer {
     private void buildApplicators() {
         instances[15] = new Transformer15(data,
                                           hierarchies,
-                                          sensitiveValues,
+                                          sensitive,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
         instances[14] = new Transformer14(data,
                                           hierarchies,
-                                          sensitiveValues,
+                                          sensitive,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
         instances[13] = new Transformer13(data,
                                           hierarchies,
-                                          sensitiveValues,
+                                          sensitive,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
         instances[12] = new Transformer12(data,
                                           hierarchies,
-                                          sensitiveValues,
+                                          sensitive,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
         instances[11] = new Transformer11(data,
                                           hierarchies,
-                                          sensitiveValues,
+                                          sensitive,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
         instances[10] = new Transformer10(data,
                                           hierarchies,
-                                          sensitiveValues,
+                                          sensitive,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
         instances[9] = new Transformer09(data,
                                          hierarchies,
-                                         sensitiveValues,
+                                         sensitive,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
         instances[8] = new Transformer08(data,
                                          hierarchies,
-                                         sensitiveValues,
+                                         sensitive,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
         instances[7] = new Transformer07(data,
                                          hierarchies,
-                                         sensitiveValues,
+                                         sensitive,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
         instances[6] = new Transformer06(data,
                                          hierarchies,
-                                         sensitiveValues,
+                                         sensitive,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
         instances[5] = new Transformer05(data,
                                          hierarchies,
-                                         sensitiveValues,
+                                         sensitive,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
         instances[4] = new Transformer04(data,
                                          hierarchies,
-                                         sensitiveValues,
+                                         sensitive,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
         instances[3] = new Transformer03(data,
                                          hierarchies,
-                                         sensitiveValues,
+                                         sensitive,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
         instances[2] = new Transformer02(data,
                                          hierarchies,
-                                         sensitiveValues,
+                                         sensitive,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
         instances[1] = new Transformer01(data,
                                          hierarchies,
-                                         sensitiveValues,
+                                         sensitive,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
         instances[0] = new TransformerAll(data,
                                           hierarchies,
-                                          sensitiveValues,
+                                          sensitive,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);

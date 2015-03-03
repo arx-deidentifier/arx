@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.framework.data;
@@ -23,29 +22,29 @@ import java.util.Arrays;
 /**
  * Encodes a data object consisting of a dictionary encoded two-dimensional
  * array, an associated dictionary, a header and a mapping to the columns in the
- * input data set
- * 
+ * input data set.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class Data implements Cloneable{
 
-    /** The outliers mask */
+    /** The outliers mask. */
     public static final int  OUTLIER_MASK        = 1 << 31;
 
-    /** The inverse outliers mask */
+    /** The inverse outliers mask. */
     public static final int  REMOVE_OUTLIER_MASK = ~OUTLIER_MASK;
 
     /** Row, Dimension. */
     private final int[][]    data;
 
-    /** The header */
+    /** The header. */
     private final String[]   header;
 
-    /** The associated dictionary */
+    /** The associated dictionary. */
     private final Dictionary dictionary;
 
-    /** The associated map */
+    /** The associated map. */
     private final int[]      map;
 
     /**
@@ -71,8 +70,8 @@ public class Data implements Cloneable{
     }
 
     /**
-     * Returns the data array
-     * 
+     * Returns the data array.
+     *
      * @return
      */
     public int[][] getArray() {
@@ -80,8 +79,8 @@ public class Data implements Cloneable{
     }
 
     /**
-     * Returns the data
-     * 
+     * Returns the data.
+     *
      * @return
      */
     public int[][] getData() {
@@ -98,8 +97,8 @@ public class Data implements Cloneable{
     }
 
     /**
-     * Returns the dictionary
-     * 
+     * Returns the dictionary.
+     *
      * @return
      */
     public Dictionary getDictionary() {
@@ -107,8 +106,8 @@ public class Data implements Cloneable{
     }
 
     /**
-     * Returns the header
-     * 
+     * Returns the header.
+     *
      * @return
      */
     public String[] getHeader() {
@@ -116,14 +115,17 @@ public class Data implements Cloneable{
     }
 
     /**
-     * Returns the map
-     * 
+     * Returns the map.
+     *
      * @return
      */
     public int[] getMap() {
         return map;
     }
     
+    /* (non-Javadoc)
+     * @see java.lang.Object#clone()
+     */
     @Override
     public Data clone(){
         int[][] newData = new int[data.length][];

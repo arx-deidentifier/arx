@@ -1,26 +1,25 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.impl.define.ViewHierarchy;
+import org.deidentifier.arx.gui.view.impl.common.ViewHierarchy;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -29,28 +28,34 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
 
 /**
- * The final page that shows an overview of the resulting hierarchy
- * @author Fabian Prasser
+ * The final page that shows an overview of the resulting hierarchy.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardPageFinal<T> extends WizardPage{
 
-    /** Var */
+    /** Var. */
     private final HierarchyWizard<T> wizard;
-    /** Var */
+    
+    /** Var. */
     private Composite                composite;
-    /** Var */
+    
+    /** Var. */
     private List                     list;
-    /** Var */
+    
+    /** Var. */
     private ViewHierarchy            view;
-    /** Var */
+    
+    /** Var. */
     private int[]                    groups;
-    /** Var */
+    
+    /** Var. */
     private Hierarchy                hierarchy;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param wizard
      */
     public HierarchyWizardPageFinal(final HierarchyWizard<T> wizard) {
@@ -61,11 +66,17 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
         setPageComplete(true);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
+     */
     @Override
     public boolean canFlipToNextPage() {
         return isPageComplete();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     public void  createControl(final Composite parent) {
         composite = new Composite(parent, SWT.NONE);
@@ -92,13 +103,17 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
         setControl(composite);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
+     */
     @Override
     public boolean isPageComplete() {
         return false;
     }
     
     /**
-     * Sets the groups
+     * Sets the groups.
+     *
      * @param groups
      */
     public void setGroups(int[] groups){
@@ -106,13 +121,17 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
     }
     
     /**
-     * Sets the hierarchy
+     * Sets the hierarchy.
+     *
      * @param hierarchy
      */
     public void setHierarchy(Hierarchy hierarchy){
         this.hierarchy = hierarchy;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+     */
     @Override
     public void setVisible(boolean value){
         
@@ -132,6 +151,7 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
                 view.setHierarchy(hierarchy);
             }
             
+            this.composite.layout(true);
             this.composite.setRedraw(true);
 
             // Deactivate buttons

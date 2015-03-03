@@ -1,26 +1,26 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.framework.check.groupify;
 
-import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.data.Data;
@@ -35,24 +35,42 @@ import org.deidentifier.arx.framework.data.Data;
 public class HashGroupify implements IHashGroupify {
 
     /**
-     * Statistics about the groups, excluding outliers
+     * Statistics about the groups, excluding outliers.
+     *
      * @author Fabian Prasser
      */
     public static class GroupStatistics {
 
+        /**  TODO */
         private double averageEquivalenceClassSize;
+        
+        /**  TODO */
         private int    maximalEquivalenceClassSize;
+        
+        /**  TODO */
         private int    minimalEquivalenceClassSize;
+        
+        /**  TODO */
         private double averageEquivalenceClassSizeIncludingOutliers;
+        
+        /**  TODO */
         private int    maximalEquivalenceClassSizeIncludingOutliers;
+        
+        /**  TODO */
         private int    minimalEquivalenceClassSizeIncludingOutliers;
+        
+        /**  TODO */
         private int    numberOfGroups;
+        
+        /**  TODO */
         private int    numberOfOutlyingEquivalenceClasses;
+        
+        /**  TODO */
         private int    numberOfOutlyingTuples;
 
         /**
-         * Creates a new instance
-         * @param handle
+         * Creates a new instance.
+         *
          * @param averageEquivalenceClassSize
          * @param maximalEquivalenceClassSize
          * @param minimalEquivalenceClassSize
@@ -84,7 +102,8 @@ public class HashGroupify implements IHashGroupify {
         }
 
         /**
-         * Returns the maximal size of an equivalence class
+         * Returns the maximal size of an equivalence class.
+         *
          * @return
          */
         public double getAverageEquivalenceClassSize() {
@@ -101,7 +120,8 @@ public class HashGroupify implements IHashGroupify {
         }
 
         /**
-         * Returns the maximal size of an equivalence class
+         * Returns the maximal size of an equivalence class.
+         *
          * @return
          */
         public int getMaximalEquivalenceClassSize() {
@@ -118,7 +138,8 @@ public class HashGroupify implements IHashGroupify {
         }
 
         /**
-         * Returns the minimal size of an equivalence class
+         * Returns the minimal size of an equivalence class.
+         *
          * @return
          */
         public int getMinimalEquivalenceClassSize() {
@@ -136,8 +157,8 @@ public class HashGroupify implements IHashGroupify {
 
         /**
          * Returns the number of equivalence classes in the currently selected data
-         * representation
-         * 
+         * representation.
+         *
          * @return
          */
         public int getNumberOfGroups() {
@@ -146,8 +167,8 @@ public class HashGroupify implements IHashGroupify {
 
         /**
          * Returns the number of outlying equivalence classes in the currently selected data
-         * representation
-         * 
+         * representation.
+         *
          * @return
          */
         public int getNumberOfOutlyingEquivalenceClasses() {
@@ -156,14 +177,20 @@ public class HashGroupify implements IHashGroupify {
 
         /**
          * Returns the number of outliers in the currently selected data
-         * representation
-         * 
+         * representation.
+         *
          * @return
          */
         public int getNumberOfOutlyingTuples() {
             return numberOfOutlyingTuples;
         }
     }
+
+    /** Is the result k-anonymous?. */
+    private boolean                  kAnonymous;
+
+    /** Is the result anonymous. */
+   private boolean                   anonymous;
 
     /** The current outliers. */
     private int                      currentOutliers;
@@ -186,25 +213,28 @@ public class HashGroupify implements IHashGroupify {
     /** Maximum number of elements that can be put in this map before having to rehash. */
     private int                      threshold;
 
-    /** Allowed tuple outliers */
+    /** Allowed tuple outliers. */
     private final int                absoluteMaxOutliers;
 
-    /** The parameter k, if k-anonymity is contained in the set of criteria */
+    /** The parameter k, if k-anonymity is contained in the set of criteria. */
     private final int                k;
 
-    /** The research subset, if d-presence is contained in the set of criteria */
+    /** The research subset, if d-presence is contained in the set of criteria. */
     private final RowSet             subset;
 
-    /** Criteria*/
+    /** True, if the contained d-presence criterion is not inclusion. */
+    private final boolean            dpresence;
+
+    /** Criteria. */
     private final PrivacyCriterion[] criteria;
 
     /**
-     * Constructs a new hash groupify operator
-     * 
+     * Constructs a new hash groupify operator.
+     *
      * @param capacity The capacity
      * @param config The config
      */
-    public HashGroupify(int capacity, final ARXConfiguration config) {
+    public HashGroupify(int capacity, final ARXConfigurationInternal config) {
 
         // Set capacity
         capacity = HashTableUtil.calculateCapacity(capacity);
@@ -217,55 +247,88 @@ public class HashGroupify implements IHashGroupify {
 
         // Extract research subset
         if (config.containsCriterion(DPresence.class)) {
-            subset = config.getCriterion(DPresence.class).getSubset().getSet();
+            this.subset = config.getCriterion(DPresence.class).getSubset().getSet();
         } else {
-            subset = null;
+            this.subset = null;
         }
 
         // Extract criteria
-        criteria = config.getCriteriaAsArray();
-        k = config.getMinimalGroupSize();
+        this.criteria = config.getCriteriaAsArray();
+        this.k = config.getMinimalGroupSize();
+        
+        // Sanity check: by convention, d-presence must be the first criterion 
+        // See analyze() and isAnonymous(Entry) for more details
+        for (int i=1; i<criteria.length; i++) {
+            if (criteria[i] instanceof DPresence) {
+                throw new RuntimeException("D-Presence must be the first criterion in the array");
+            }
+        }
+        
+        // Remember, if (real) d-presence is part of the criteria that must be enforced
+        dpresence = (criteria.length > 0 && (criteria[0] instanceof DPresence) && !(criteria[0] instanceof Inclusion));
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#addAll(int[], int, int, int[], int)
+     */
     @Override
-    public void addAll(int[] key, int representant, int count, int sensitive, int pcount) {
+    public void addAll(int[] key, int representant, int count, int[] sensitive, int pcount) {
 
         // Add
         final int hash = HashTableUtil.hashcode(key);
         final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
 
         // Is a sensitive attribute provided
-        if (sensitive != -1) {
-            if (entry.distribution == null) {
-                entry.distribution = new Distribution();
+        if (sensitive != null) {
+            if (entry.distributions == null) {
+                entry.distributions = new Distribution[sensitive.length];
+                
+                // TODO: Improve!
+                for (int i=0; i<entry.distributions.length; i++){
+                    entry.distributions[i] = new Distribution();
+                }
             }
 
             // Only add sensitive value if in research subset
             if (subset == null || subset.contains(representant)) {
-                entry.distribution.add(sensitive);
+
+                // TODO: Improve!
+                for (int i=0; i<entry.distributions.length; i++){
+                    entry.distributions[i].add(sensitive[i]);
+                }
             }
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#addGroupify(int[], int, int, org.deidentifier.arx.framework.check.distribution.Distribution[], int)
+     */
     @Override
-    public void addGroupify(int[] key, int representant, int count, Distribution distribution, int pcount) {
+    public void addGroupify(int[] key, int representant, int count, Distribution[] distributions, int pcount) {
 
         // Add
         final int hash = HashTableUtil.hashcode(key);
         final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
 
         // Is a distribution provided
-        if (distribution != null) {
-            if (entry.distribution == null) {
-                entry.distribution = distribution;
+        if (distributions != null) {
+            if (entry.distributions == null) {
+                entry.distributions = distributions;
             } else {
-                entry.distribution.merge(distribution);
+
+                // TODO: Improve!
+                for (int i=0; i<entry.distributions.length; i++){
+                    entry.distributions[i].merge(distributions[i]);
+                }
             }
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#addSnapshot(int[], int, int, int[][], int[][], int)
+     */
     @Override
-    public void addSnapshot(int[] key, int representant, int count, int[] elements, int[] frequencies, int pcount) {
+    public void addSnapshot(int[] key, int representant, int count, int[][] elements, int[][] frequencies, int pcount) {
 
         // Add
         final int hash = HashTableUtil.hashcode(key);
@@ -273,12 +336,31 @@ public class HashGroupify implements IHashGroupify {
 
         // Is a distribution provided
         if (elements != null) {
-            if (entry.distribution == null) {
-                entry.distribution = new Distribution(elements, frequencies);
+            if (entry.distributions == null) {
+                
+                entry.distributions = new Distribution[elements.length];
+                
+                // TODO: Improve!
+                for (int i=0; i<entry.distributions.length; i++){
+                    entry.distributions[i] = new Distribution(elements[i], frequencies[i]);
+                }
             } else {
-                entry.distribution.merge(elements, frequencies);
+
+                // TODO: Improve!
+                for (int i=0; i<entry.distributions.length; i++){
+                    entry.distributions[i].merge(elements[i], frequencies[i]);
+                }
             }
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#analyze(boolean)
+     */
+    @Override
+    public void analyze(boolean force){
+        if (force) analyzeAll();
+        else analyzeWithEarlyAbort();
     }
 
     /*
@@ -289,11 +371,11 @@ public class HashGroupify implements IHashGroupify {
     @Override
     public void clear() {
         if (elementCount > 0) {
-            elementCount = 0;
+            this.elementCount = 0;
+            this.currentOutliers = 0;
+            this.firstEntry = null;
+            this.lastEntry = null;
             HashTableUtil.nullifyArray(buckets);
-            currentOutliers = 0;
-            firstEntry = null;
-            lastEntry = null;
         }
     }
 
@@ -309,8 +391,11 @@ public class HashGroupify implements IHashGroupify {
         return firstEntry;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#getGroupStatistics()
+     */
     @Override
-    public GroupStatistics getGroupStatistics(boolean anonymous) {
+    public GroupStatistics getGroupStatistics() {
 
         // Statistics about equivalence classes
         double averageEquivalenceClassSize = 0;
@@ -326,7 +411,7 @@ public class HashGroupify implements IHashGroupify {
         while (entry != null) {
             if (entry.count > 0){
                 numberOfEquivalenceClasses++;
-                if (anonymous && !isAnonymous(entry)) {
+                if (!entry.isNotOutlier) { 
                      numberOfOutlyingEquivalenceClasses++;
                      numberOfOutlyingTuples += entry.count;
                 } else {
@@ -380,70 +465,57 @@ public class HashGroupify implements IHashGroupify {
                                     numberOfOutlyingTuples);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#isAnonymous()
+     */
     @Override
     public boolean isAnonymous() {
-
-        if (criteria.length == 0) { return isKAnonymous(); }
-
-        if (k != Integer.MAX_VALUE && !isKAnonymous()) { return false; }
-
-        // Iterate over all classes
-        currentOutliers = 0;
-        HashGroupifyEntry entry = firstEntry;
-        while (entry != null) {
-
-            // Check for anonymity
-            final boolean anonymous = isAnonymous(entry);
-
-            // Determine outliers
-            if (!anonymous) {
-                currentOutliers += entry.count;
-
-                // Break as soon as too many classes are not anonymous
-                if (currentOutliers > absoluteMaxOutliers) { return false; }
-            }
-
-            // Next class
-            entry.isNotOutlier = anonymous;
-            entry = entry.nextOrdered;
-        }
-
-        // All classes are anonymous
-        return true;
+        return anonymous;
     }
 
-    /**
-     * Is the current transformation k-anonymous? CAUTION: Call before
-     * isAnonymous()!
-     * 
-     * @return
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#isKAnonymous()
      */
     @Override
     public boolean isKAnonymous() {
-        if (currentOutliers > absoluteMaxOutliers) {
-            return false;
-        } else {
-            return true;
-        }
+        return kAnonymous;
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#markOutliers(int[][])
+     */
     @Override
     public void markOutliers(final int[][] data) {
+        
         for (int row = 0; row < data.length; row++) {
-            final int[] key = data[row];
-            final int hash = HashTableUtil.hashcode(key);
-            final int index = hash & (buckets.length - 1);
-            HashGroupifyEntry m = buckets[index];
-            while ((m != null) && ((m.hashcode != hash) || !equalsIgnoringOutliers(key, m.key))) {
-                m = m.next;
-            }
-            if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before marking outliers!"); }
-            if (!m.isNotOutlier) {
-                key[0] |= Data.OUTLIER_MASK;
+            if (subset == null || subset.contains(row)){
+                final int[] key = data[row];
+                final int hash = HashTableUtil.hashcode(key);
+                final int index = hash & (buckets.length - 1);
+                HashGroupifyEntry m = buckets[index];
+                while ((m != null) && ((m.hashcode != hash) || !equalsIgnoringOutliers(key, m.key))) {
+                    m = m.next;
+                }
+                if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before marking outliers!"); }
+                if (!m.isNotOutlier) {
+                    key[0] |= Data.OUTLIER_MASK;
+                }
             }
         }
     }
 
+    /**
+     * This method will reset all flags that indicate that equivalence classes are suppressed.
+     */
+    public void resetSuppression() {
+        HashGroupifyEntry entry = firstEntry;
+        while (entry != null) {
+            entry.isNotOutlier = true;
+            entry = entry.nextOrdered;
+        }
+        this.currentOutliers = 0;
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -456,15 +528,12 @@ public class HashGroupify implements IHashGroupify {
 
     /**
      * Internal adder method.
-     * 
-     * @param key
-     *            the key
-     * @param line
-     *            the line
-     * @param value
-     *            the value
-     * @param hash
-     *            the hash
+     *
+     * @param key the key
+     * @param hash the hash
+     * @param representant
+     * @param count
+     * @param pcount
      * @return the hash groupify entry
      */
     private final HashGroupifyEntry addInternal(final int[] key, final int hash, final int representant, int count, final int pcount) {
@@ -490,9 +559,8 @@ public class HashGroupify implements IHashGroupify {
         if (subset != null) {
             entry.pcount += pcount;
             if (count > 0) {
-                // this is a research subset line
-                // reset representant, necessary for rollup / history
-                // (otherwise researchSubset.get(line) would potentially be false)
+                // this is a tuple from the research subset: Reset its representative, necessary for rollup / history
+                // (otherwise subset.contains(tupleID) could potentially return false)
                 entry.representant = representant;
             }
         }
@@ -508,6 +576,113 @@ public class HashGroupify implements IHashGroupify {
         }
 
         return entry;
+    }
+
+    /**
+     * Analyze.
+     */
+    private void analyzeAll(){
+
+        // We have only checked k-anonymity so far
+        kAnonymous = (currentOutliers <= absoluteMaxOutliers);
+        
+        // Iterate over all classes
+        boolean dpresent = true;
+        currentOutliers = 0;
+        HashGroupifyEntry entry = firstEntry;
+        while (entry != null) {
+            
+            // Check for anonymity
+            int anonymous = isAnonymous(entry);
+            
+            // Determine outliers
+            if (anonymous != -1) {
+                
+                // Note: If d-presence exists, it is stored at criteria[0] by convention.
+                // If it fails, isAnonymous(entry) thus returns 1.
+                // Tuples from the public table that have no matching candidates in the private table
+                // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
+                // transformation must be considered to not fulfill the privacy criteria.
+                if (dpresence && entry.count == 0 && anonymous == 1) {
+                    dpresent = false;
+                }
+                
+                currentOutliers += entry.count;
+            }
+            
+            // We only suppress classes that are contained in the research subset
+            entry.isNotOutlier = entry.count != 0 ? (anonymous == -1) : true;
+            
+            // Next class
+            entry = entry.nextOrdered;
+        }
+        
+        this.anonymous = (currentOutliers <= absoluteMaxOutliers) && dpresent;
+    }
+
+    /**
+     * Analyze.
+     */
+    private void analyzeWithEarlyAbort(){
+        
+        // We have only checked k-anonymity so far
+        kAnonymous = (currentOutliers <= absoluteMaxOutliers);
+        
+        // Abort early, if only k-anonymity was specified
+        if (criteria.length == 0) { 
+            anonymous = kAnonymous;
+            return;
+        }
+        
+        // Abort early, if k-anonymity sub-criterion is not fulfilled
+        // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
+        //          for non-anonymous transformations
+        if (k != Integer.MAX_VALUE && !kAnonymous) {
+            anonymous = false;
+            return; 
+        }
+        
+        // Iterate over all classes
+        currentOutliers = 0;
+        HashGroupifyEntry entry = firstEntry;
+        while (entry != null) {
+            
+            // Check for anonymity
+            int anonymous = isAnonymous(entry);
+            
+            // Determine outliers
+            if (anonymous != -1) {
+                
+                // Note: If d-presence exists, it is stored at criteria[0] by convention.
+                // If it fails, isAnonymous(entry) thus returns 1.
+                // Tuples from the public table that have no matching candidates in the private table
+                // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
+                // transformation must be considered to not fulfill the privacy criteria.
+                // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
+                //          for non-anonymous transformations
+                if (dpresence && entry.count == 0 && anonymous == 1) {
+                    this.anonymous = false;
+                    return;
+                }
+                currentOutliers += entry.count;
+                
+                // Break as soon as too many classes are not anonymous
+                // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
+                //          for non-anonymous transformations
+                if (currentOutliers > absoluteMaxOutliers) { 
+                    this.anonymous = false;
+                    return;
+                }
+            }
+            
+            // We only suppress classes that are contained in the research subset
+            entry.isNotOutlier = entry.count != 0 ? (anonymous == -1) : true;
+            
+            // Next class
+            entry = entry.nextOrdered;
+        }
+        
+        this.anonymous = true;
     }
 
     /**
@@ -539,8 +714,8 @@ public class HashGroupify implements IHashGroupify {
     }
 
     /**
-     * TODO: Ugly!
-     * 
+     * TODO: Ugly!.
+     *
      * @param a
      * @param a2
      * @return
@@ -572,20 +747,28 @@ public class HashGroupify implements IHashGroupify {
     }
 
     /**
-     * Checks whether the given entry is anonymous
+     * Checks whether the given entry is anonymous.
+     *
      * @param entry
      * @return
+     * @returns -1, if all criteria are fulfilled, 0, if minimal group size is not fulfilled, (index+1) if criteria[index] is not fulfilled
      */
-    private boolean isAnonymous(HashGroupifyEntry entry) {
+    private int isAnonymous(HashGroupifyEntry entry) {
 
         // Check minimal group size
-        if (k != Integer.MAX_VALUE && entry.count < k) { return false; }
+        if (k != Integer.MAX_VALUE && entry.count < k) {
+            return 0;
+        }
 
         // Check other criteria
+        // Note: The d-presence criterion must be checked first to ensure correct handling of d-presence with tuple suppression.
+        //       This is currently ensured by convention. See ARXConfiguration.getCriteriaAsArray();
         for (int i = 0; i < criteria.length; i++) {
-            if (!criteria[i].isAnonymous(entry)) { return false; }
+            if (!criteria[i].isAnonymous(entry)) {
+                return i + 1;
+            }
         }
-        return true;
+        return -1;
     }
 
     /**

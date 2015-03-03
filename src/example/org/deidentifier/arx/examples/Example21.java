@@ -1,20 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
- * Copyright (C) 2014 Fabian Prasser
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * ARX: Powerful Data Anonymization
+ * Copyright 2014 Karol Babioch <karol@babioch.de>
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.examples;
@@ -40,8 +38,9 @@ import org.deidentifier.arx.DataType;
 public class Example21 extends Example {
 
     /**
-     * Main entry point
-     * 
+     * Main entry point.
+     *
+     * @param args
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
@@ -60,6 +59,8 @@ public class Example21 extends Example {
      * uses more advanced features than {@link #Example2}. Columns are renamed,
      * and individual columns can be ignored. Furthermore a data type for each
      * column is specified, which describes the format of the appropriate data.
+     *
+     * @throws IOException
      */
     private static void exampleCSV() throws IOException {
 

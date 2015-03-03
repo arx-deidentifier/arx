@@ -1,20 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
- * Copyright (C) 2014 Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.io;
@@ -37,9 +35,6 @@ import org.deidentifier.arx.DataType;
  */
 abstract public class ImportAdapter implements Iterator<String[]> {
     
-    /** The header*/
-    protected String[] header;
-
     /**
      * Factory method
      * 
@@ -66,9 +61,10 @@ abstract public class ImportAdapter implements Iterator<String[]> {
         }
     }
 
-    /**
-     * Array of datatypes describing the columns
-     */
+    /** The header. */
+    protected String[] header;
+
+    /** Array of datatypes describing the columns. */
     protected DataType<?>[]     dataTypes;
 
     /**
@@ -79,16 +75,13 @@ abstract public class ImportAdapter implements Iterator<String[]> {
      */
     protected int[]             indexes;
 
-    /**
-     * Data source configuration used to import actual data
-     */
+    /** Data source configuration used to import actual data. */
     private ImportConfiguration config = null;
 
     /**
-     * Creates a new instance of this object with given configuration
-     * 
-     * @param config
-     *            {@link #config}
+     * Creates a new instance of this object with given configuration.
+     *
+     * @param config {@link #config}
      */
     protected ImportAdapter(ImportConfiguration config) {
 
@@ -99,8 +92,8 @@ abstract public class ImportAdapter implements Iterator<String[]> {
     }
 
     /**
-     * Returns the configuration used by the import adapter
-     * 
+     * Returns the configuration used by the import adapter.
+     *
      * @return {@link #config}
      */
     public ImportConfiguration getConfig() {
@@ -108,23 +101,24 @@ abstract public class ImportAdapter implements Iterator<String[]> {
     }
 
     /**
-     * Returns the percentage of data has has already been imported
-     * 
-     * @return Percentage of data already imported, 0 - 100
-     */
-    public abstract int getProgress();
-    
-    /**
-     * Returns the header
+     * Returns the header.
+     *
      * @return
      */
     public String[] getHeader() {
         return header;
     }
+    
+    /**
+     * Returns the percentage of data has has already been imported.
+     *
+     * @return Percentage of data already imported, 0 - 100
+     */
+    public abstract int getProgress();
 
     /**
-     * Returns an array with datatypes of columns that should be imported
-     * 
+     * Returns an array with datatypes of columns that should be imported.
+     *
      * @return Array containing datatypes of columns that should be imported
      */
     protected DataType<?>[] getColumnDatatypes() {

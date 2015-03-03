@@ -1,24 +1,23 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.framework.check.transformer;
 
-import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
@@ -32,18 +31,20 @@ public class Transformer15 extends AbstractTransformer {
 
     /**
      * Instantiates a new transformer.
-     * 
-     * @param data
-     *            the data
-     * @param hierarchies
-     *            the hierarchies
+     *
+     * @param data the data
+     * @param hierarchies the hierarchies
+     * @param sensitiveValues
+     * @param dictionarySensValue
+     * @param dictionarySensFreq
+     * @param config
      */
     public Transformer15(final int[][] data,
                          final GeneralizationHierarchy[] hierarchies,
-                         final int[] sensitiveValues,
+                         final int[][] sensitiveValues,
                          final IntArrayDictionary dictionarySensValue,
                          final IntArrayDictionary dictionarySensFreq,
-                         final ARXConfiguration config) {
+                         final ARXConfigurationInternal config) {
         super(data, hierarchies, sensitiveValues, dictionarySensValue, dictionarySensFreq, config);
     }
 
@@ -58,21 +59,21 @@ public class Transformer15 extends AbstractTransformer {
         for (int i = startIndex; i < stopIndex; i++) {
             intuple = data[i];
             outtuple = buffer[i];
-            outtuple[outindex0] = idindex0[intuple[index0]][stateindex0];
-            outtuple[outindex1] = idindex1[intuple[index1]][stateindex1];
-            outtuple[outindex2] = idindex2[intuple[index2]][stateindex2];
-            outtuple[outindex3] = idindex3[intuple[index3]][stateindex3];
-            outtuple[outindex4] = idindex4[intuple[index4]][stateindex4];
-            outtuple[outindex5] = idindex5[intuple[index5]][stateindex5];
-            outtuple[outindex6] = idindex6[intuple[index6]][stateindex6];
-            outtuple[outindex7] = idindex7[intuple[index7]][stateindex7];
-            outtuple[outindex8] = idindex8[intuple[index8]][stateindex8];
-            outtuple[outindex9] = idindex9[intuple[index9]][stateindex9];
-            outtuple[outindex10] = idindex10[intuple[index10]][stateindex10];
-            outtuple[outindex11] = idindex11[intuple[index11]][stateindex11];
-            outtuple[outindex12] = idindex12[intuple[index12]][stateindex12];
-            outtuple[outindex13] = idindex13[intuple[index13]][stateindex13];
-            outtuple[outindex14] = idindex14[intuple[index14]][stateindex14];
+            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
+            outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
+            outtuple[outindex2] = idindex2[intuple[index2]][generalizationindex2];
+            outtuple[outindex3] = idindex3[intuple[index3]][generalizationindex3];
+            outtuple[outindex4] = idindex4[intuple[index4]][generalizationindex4];
+            outtuple[outindex5] = idindex5[intuple[index5]][generalizationindex5];
+            outtuple[outindex6] = idindex6[intuple[index6]][generalizationindex6];
+            outtuple[outindex7] = idindex7[intuple[index7]][generalizationindex7];
+            outtuple[outindex8] = idindex8[intuple[index8]][generalizationindex8];
+            outtuple[outindex9] = idindex9[intuple[index9]][generalizationindex9];
+            outtuple[outindex10] = idindex10[intuple[index10]][generalizationindex10];
+            outtuple[outindex11] = idindex11[intuple[index11]][generalizationindex11];
+            outtuple[outindex12] = idindex12[intuple[index12]][generalizationindex12];
+            outtuple[outindex13] = idindex13[intuple[index13]][generalizationindex13];
+            outtuple[outindex14] = idindex14[intuple[index14]][generalizationindex14];
 
             // Call
             delegate.callAll(outtuple, i);
@@ -92,21 +93,21 @@ public class Transformer15 extends AbstractTransformer {
 
             intuple = data[element.representant];
             outtuple = buffer[element.representant];
-            outtuple[outindex0] = idindex0[intuple[index0]][stateindex0];
-            outtuple[outindex1] = idindex1[intuple[index1]][stateindex1];
-            outtuple[outindex2] = idindex2[intuple[index2]][stateindex2];
-            outtuple[outindex3] = idindex3[intuple[index3]][stateindex3];
-            outtuple[outindex4] = idindex4[intuple[index4]][stateindex4];
-            outtuple[outindex5] = idindex5[intuple[index5]][stateindex5];
-            outtuple[outindex6] = idindex6[intuple[index6]][stateindex6];
-            outtuple[outindex7] = idindex7[intuple[index7]][stateindex7];
-            outtuple[outindex8] = idindex8[intuple[index8]][stateindex8];
-            outtuple[outindex9] = idindex9[intuple[index9]][stateindex9];
-            outtuple[outindex10] = idindex10[intuple[index10]][stateindex10];
-            outtuple[outindex11] = idindex11[intuple[index11]][stateindex11];
-            outtuple[outindex12] = idindex12[intuple[index12]][stateindex12];
-            outtuple[outindex13] = idindex13[intuple[index13]][stateindex13];
-            outtuple[outindex14] = idindex14[intuple[index14]][stateindex14];
+            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
+            outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
+            outtuple[outindex2] = idindex2[intuple[index2]][generalizationindex2];
+            outtuple[outindex3] = idindex3[intuple[index3]][generalizationindex3];
+            outtuple[outindex4] = idindex4[intuple[index4]][generalizationindex4];
+            outtuple[outindex5] = idindex5[intuple[index5]][generalizationindex5];
+            outtuple[outindex6] = idindex6[intuple[index6]][generalizationindex6];
+            outtuple[outindex7] = idindex7[intuple[index7]][generalizationindex7];
+            outtuple[outindex8] = idindex8[intuple[index8]][generalizationindex8];
+            outtuple[outindex9] = idindex9[intuple[index9]][generalizationindex9];
+            outtuple[outindex10] = idindex10[intuple[index10]][generalizationindex10];
+            outtuple[outindex11] = idindex11[intuple[index11]][generalizationindex11];
+            outtuple[outindex12] = idindex12[intuple[index12]][generalizationindex12];
+            outtuple[outindex13] = idindex13[intuple[index13]][generalizationindex13];
+            outtuple[outindex14] = idindex14[intuple[index14]][generalizationindex14];
 
             // Call
             delegate.callGroupify(outtuple, element);
@@ -132,21 +133,21 @@ public class Transformer15 extends AbstractTransformer {
         for (int i = startIndex; i < stopIndex; i += ssStepWidth) {
             intuple = data[snapshot[i]];
             outtuple = buffer[snapshot[i]];
-            outtuple[outindex0] = idindex0[intuple[index0]][stateindex0];
-            outtuple[outindex1] = idindex1[intuple[index1]][stateindex1];
-            outtuple[outindex2] = idindex2[intuple[index2]][stateindex2];
-            outtuple[outindex3] = idindex3[intuple[index3]][stateindex3];
-            outtuple[outindex4] = idindex4[intuple[index4]][stateindex4];
-            outtuple[outindex5] = idindex5[intuple[index5]][stateindex5];
-            outtuple[outindex6] = idindex6[intuple[index6]][stateindex6];
-            outtuple[outindex7] = idindex7[intuple[index7]][stateindex7];
-            outtuple[outindex8] = idindex8[intuple[index8]][stateindex8];
-            outtuple[outindex9] = idindex9[intuple[index9]][stateindex9];
-            outtuple[outindex10] = idindex10[intuple[index10]][stateindex10];
-            outtuple[outindex11] = idindex11[intuple[index11]][stateindex11];
-            outtuple[outindex12] = idindex12[intuple[index12]][stateindex12];
-            outtuple[outindex13] = idindex13[intuple[index13]][stateindex13];
-            outtuple[outindex14] = idindex14[intuple[index14]][stateindex14];
+            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
+            outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
+            outtuple[outindex2] = idindex2[intuple[index2]][generalizationindex2];
+            outtuple[outindex3] = idindex3[intuple[index3]][generalizationindex3];
+            outtuple[outindex4] = idindex4[intuple[index4]][generalizationindex4];
+            outtuple[outindex5] = idindex5[intuple[index5]][generalizationindex5];
+            outtuple[outindex6] = idindex6[intuple[index6]][generalizationindex6];
+            outtuple[outindex7] = idindex7[intuple[index7]][generalizationindex7];
+            outtuple[outindex8] = idindex8[intuple[index8]][generalizationindex8];
+            outtuple[outindex9] = idindex9[intuple[index9]][generalizationindex9];
+            outtuple[outindex10] = idindex10[intuple[index10]][generalizationindex10];
+            outtuple[outindex11] = idindex11[intuple[index11]][generalizationindex11];
+            outtuple[outindex12] = idindex12[intuple[index12]][generalizationindex12];
+            outtuple[outindex13] = idindex13[intuple[index13]][generalizationindex13];
+            outtuple[outindex14] = idindex14[intuple[index14]][generalizationindex14];
 
             // Call
             delegate.callSnapshot(outtuple, snapshot, i);

@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.define;
@@ -38,6 +37,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.common.ViewHierarchy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -58,34 +58,59 @@ import org.eclipse.swt.widgets.Text;
  */
 public class ViewAttributeDefinition implements IView {
 
+    /**  TODO */
     private static final AttributeType[] COMBO1_TYPES  = new AttributeType[] { 
                                         AttributeType.INSENSITIVE_ATTRIBUTE,
                                         AttributeType.SENSITIVE_ATTRIBUTE,
                                         null,
                                         AttributeType.IDENTIFYING_ATTRIBUTE };
     
+    /**  TODO */
     private static final String[]       COMBO1_VALUES = new String[] { 
                                         Resources.getMessage("AttributeDefinitionView.0"), //$NON-NLS-1$
                                         Resources.getMessage("AttributeDefinitionView.1"), //$NON-NLS-1$
                                         Resources.getMessage("AttributeDefinitionView.2"), //$NON-NLS-1$
                                         Resources.getMessage("AttributeDefinitionView.3") }; //$NON-NLS-1$
 
+    /**  TODO */
     private String                       attribute     = null;
+    
+    /**  TODO */
     private Model                        model;
 
+    /**  TODO */
     private final Controller             controller;
+    
+    /**  TODO */
     private final Combo                  dataTypeCombo;
+    
+    /**  TODO */
     private final Text                   dataTypeText;
+    
+    /**  TODO */
     private final ViewHierarchy          editor;
+    
+    /**  TODO */
     private final Image                  IMAGE_IDENTIFYING;
+    
+    /**  TODO */
     private final Image                  IMAGE_INSENSITIVE;
+    
+    /**  TODO */
     private final Image                  IMAGE_QUASI_IDENTIFYING;
+    
+    /**  TODO */
     private final Image                  IMAGE_SENSITIVE;
+    
+    /**  TODO */
     private final CTabItem               tab;
+    
+    /**  TODO */
     private final Combo                  typeCombo;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param parent
      * @param attribute
      * @param controller
@@ -233,7 +258,8 @@ public class ViewAttributeDefinition implements IView {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                             String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
-                                                                                    text1, text2, DataType.STRING, getValuesAsArray());
+                                                                                    text1, text2, DataType.STRING, 
+                                                                                    model.getLocale(), getValuesAsArray());
                             if (array == null) {
                                 type = DataType.STRING;
                             } else {
@@ -252,11 +278,11 @@ public class ViewAttributeDefinition implements IView {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                             final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
-                                                                                         text1, text2, description, getValuesAsList());
+                                                                                         text1, text2, model.getLocale(), description, getValuesAsList());
                             if (format == null) {
                                 type = DataType.STRING;
                             } else {
-                                type = description.newInstance(format);
+                                type = description.newInstance(format, model.getLocale());
                             }
                         } else {
                             type = description.newInstance();
@@ -288,6 +314,9 @@ public class ViewAttributeDefinition implements IView {
         tab.setControl(group);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         
@@ -302,11 +331,17 @@ public class ViewAttributeDefinition implements IView {
         IMAGE_IDENTIFYING.dispose();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         dataTypeText.setText("");
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
@@ -327,7 +362,8 @@ public class ViewAttributeDefinition implements IView {
     }
     
     /**
-     * Returns a description for the given label
+     * Returns a description for the given label.
+     *
      * @param label
      * @return
      */
@@ -341,7 +377,8 @@ public class ViewAttributeDefinition implements IView {
     }
     
     /**
-     * Returns the labels of all available data types
+     * Returns the labels of all available data types.
+     *
      * @return
      */
     private String[] getDataTypes(){
@@ -353,7 +390,8 @@ public class ViewAttributeDefinition implements IView {
     }
     
     /**
-     * Returns the index of a given data type
+     * Returns the index of a given data type.
+     *
      * @param type
      * @return
      */
@@ -367,9 +405,10 @@ public class ViewAttributeDefinition implements IView {
         }
         throw new RuntimeException("Unknown data type: "+type.getDescription().getLabel());
     }
+    
     /**
-     * Create an array of the values in the column for this attribute
-     * 
+     * Create an array of the values in the column for this attribute.
+     *
      * @return
      */
     private String[] getValuesAsArray() {
@@ -378,8 +417,8 @@ public class ViewAttributeDefinition implements IView {
     }
     
     /**
-     * Create a collection of the values in the column for this attribute
-     * 
+     * Create a collection of the values in the column for this attribute.
+     *
      * @return
      */
     private Collection<String> getValuesAsList() {
@@ -387,7 +426,8 @@ public class ViewAttributeDefinition implements IView {
     }
 
     /**
-     * Checks whether the data type is valid
+     * Checks whether the data type is valid.
+     *
      * @param type
      * @param values
      * @return
@@ -401,8 +441,9 @@ public class ViewAttributeDefinition implements IView {
         return true;
     }
 
-    /** 
-     * Update the attribute type
+    /**
+     * 
+     * Update the attribute type.
      */
     private void updateAttributeType() {
         AttributeType type = model.getInputDefinition()
@@ -419,7 +460,7 @@ public class ViewAttributeDefinition implements IView {
     }
 
     /**
-     * Update the data type
+     * Update the data type.
      */
     private void updateDataType() {
 
@@ -444,7 +485,7 @@ public class ViewAttributeDefinition implements IView {
     }
 
     /**
-     * Update the column icon
+     * Update the column icon.
      */
     private void updateIcon() {
         AttributeType type = model.getInputDefinition()

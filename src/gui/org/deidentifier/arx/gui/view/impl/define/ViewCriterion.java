@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.define;
@@ -27,24 +26,31 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * A base class for views on privacy criteria
+ * A base class for views on privacy criteria.
+ *
  * @author Fabian Prasser
  */
 public abstract class ViewCriterion implements IView {
 
-	protected static final int SLIDER_MAX = 1000;
+	/**  TODO */
 	protected static final int LABEL_WIDTH = 50;
 
+	/**  TODO */
 	protected Controller controller;
+	
+	/**  TODO */
 	protected Model model;
+	
+	/**  TODO */
 	protected Composite root;
 
 	/**
-	 * Creates a new instance
-	 * @param parent
-	 * @param controller
-	 * @param model
-	 */
+     * Creates a new instance.
+     *
+     * @param parent
+     * @param controller
+     * @param model
+     */
 	public ViewCriterion(final Composite parent, final Controller controller,
 			final Model model) {
 		this.controller = controller;
@@ -56,16 +62,25 @@ public abstract class ViewCriterion implements IView {
 		SWTUtil.disable(root);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+	 */
 	@Override
 	public void dispose() {
 		controller.removeListener(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.gui.view.def.IView#reset()
+	 */
 	@Override
 	public void reset() {
 		SWTUtil.disable(root);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+	 */
 	@Override
 	public void update(ModelEvent event) {
 		if (event.part == ModelPart.MODEL) {
@@ -79,84 +94,16 @@ public abstract class ViewCriterion implements IView {
 	}
 
 	/**
-	 * Implement this to build the view
-	 * @param parent
-	 * @return
-	 */
+     * Implement this to build the view.
+     *
+     * @param parent
+     * @return
+     */
 	protected abstract Composite build(Composite parent);
 
 	/**
-	 * TODO: OK?
-	 */
-	protected int doubleToSlider(final double min, final double max,
-			final double value) {
-		double val = ((value - min) / max) * SLIDER_MAX;
-		val = Math.round(val * SLIDER_MAX) / (double) SLIDER_MAX;
-		if (val < 0) {
-			val = 0;
-		}
-		if (val > SLIDER_MAX) {
-			val = SLIDER_MAX;
-		}
-		return (int) val;
-	}
-
-	/**
-	 * TODO: OK?
-	 */
-	protected int intToSlider(final int min, final int max, final int value) {
-
-		int val = (int) Math.round(((double) (value - min) / (double) max) * SLIDER_MAX);
-		if (val < 0) {
-			val = 0;
-		}
-		if (val > SLIDER_MAX) {
-			val = SLIDER_MAX;
-		}
-		return val;
-	}
-
-	/**
-	 * Implement this to parse the settings into a privacy criterion
-	 */
+     * Implement this to parse the settings into a privacy criterion.
+     */
 	protected abstract void parse();
 
-	/**
-	 * TODO: Ok?
-	 * @param min
-	 * @param max
-	 * @param value
-	 * @return
-	 */
-	protected double sliderToDouble(final double min, final double max,
-			final int value) {
-		double val = ((double) value / (double) SLIDER_MAX) * max;
-		val = Math.round(val * SLIDER_MAX) / (double) SLIDER_MAX;
-		if (val < min) {
-			val = min;
-		}
-		if (val > max) {
-			val = max;
-		}
-		return val;
-	}
-
-	/**
-	 * TODO: Ok?
-	 * @param min
-	 * @param max
-	 * @param value
-	 * @return
-	 */
-	protected int sliderToInt(final int min, final int max, final int value) {
-		int val = (int) Math
-				.round(((double) value / (double) SLIDER_MAX) * max);
-		if (val < min) {
-			val = min;
-		}
-		if (val > max) {
-			val = max;
-		}
-		return val;
-	}
 }

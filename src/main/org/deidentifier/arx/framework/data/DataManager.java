@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.framework.data;
@@ -30,6 +29,9 @@ import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
+import com.carrotsearch.hppc.IntOpenHashSet;
 
 /**
  * Holds all data needed for the anonymization process.
@@ -51,10 +53,10 @@ public class DataManager {
     /** The generalization hierarchiesQI. */
     protected final GeneralizationHierarchy[]            hierarchiesQI;
 
-    /** The sensitive attributes */
+    /** The sensitive attributes. */
     protected final Map<String, GeneralizationHierarchy> hierarchiesSE;
 
-    /** The indexes of sensitive attributes*/
+    /** The indexes of sensitive attributes. */
     protected final Map<String, Integer>                 indexesSE;
 
     /** The hierarchy heights for each QI. */
@@ -66,18 +68,18 @@ public class DataManager {
     /** The minimum level for each QI. */
     protected final int[]                                minLevels;
 
-    /** The original input header */
+    /** The original input header. */
     protected final String[]                             header;
 
-    /** The research subset, if any*/
+    /** The research subset, if any. */
     protected RowSet                           subset     = null;
 
-    /** The size of the research subset*/
+    /** The size of the research subset. */
     protected int                                        subsetSize = 0;
 
     /**
-     * Creates a new data manager from pre-encoded data
-     * 
+     * Creates a new data manager from pre-encoded data.
+     *
      * @param header
      * @param data
      * @param dictionary
@@ -166,18 +168,16 @@ public class DataManager {
                 if ((dictionaryIndex >= 0) && (dictionaryIndex < 999)) {
                     final String name = header[i];
 
-                    boolean isEmpty = false;
                     if (definition.getAttributeType(name) instanceof Hierarchy) {
                         hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, definition.getHierarchy(name), dictionaryIndex, dictionaryQI);
                     } else {
-                        isEmpty = true;
-                        hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, dictionaryIndex, dictionaryQI);
+                        throw new IllegalStateException("No hierarchy available for attribute ("+header[i]+")");
                     }
                     // Initialize hierarchy height and minimum / maximum generalization
                     hierarchyHeights[dictionaryIndex] = hierarchiesQI[dictionaryIndex].getArray()[0].length;
-                    final Integer minGenLevel = isEmpty ? 0 : definition.getMinimumGeneralization(name);
+                    final Integer minGenLevel = definition.getMinimumGeneralization(name);
                     minLevels[dictionaryIndex] = minGenLevel == null ? 0 : minGenLevel;
-                    final Integer maxGenLevel = isEmpty ? 0 : definition.getMaximumGeneralization(name);
+                    final Integer maxGenLevel = definition.getMaximumGeneralization(name);
                     maxLevels[dictionaryIndex] = maxGenLevel == null ? hierarchyHeights[dictionaryIndex] - 1 : maxGenLevel;
                 }
             }
@@ -224,6 +224,20 @@ public class DataManager {
 
     }
 
+    /**
+     * 
+     *
+     * @param dataQI
+     * @param dataSE
+     * @param dataIS
+     * @param hierarchiesQI
+     * @param hierarchiesSE
+     * @param indexesSE
+     * @param hierarchyHeights
+     * @param maxLevels
+     * @param minLevels
+     * @param header
+     */
     protected DataManager(final Data dataQI,
                           final Data dataSE,
                           final Data dataIS,
@@ -247,69 +261,8 @@ public class DataManager {
     }
 
     /**
-     * Encodes the data
-     * 
-     * @param data
-     * @param map
-     * @param mapQI
-     * @param mapSE
-     * @param mapIS
-     * @param dictionaryQI
-     * @param dictionarySE
-     * @param dictionaryIS
-     * @param headerQI
-     * @param headerSE
-     * @param headerIS
-     * @return
-     */
-    private Data[] encode(final int[][] data,
-                          final int[] map,
-                          final int[] mapQI,
-                          final int[] mapSE,
-                          final int[] mapIS,
-                          final Dictionary dictionaryQI,
-                          final Dictionary dictionarySE,
-                          final Dictionary dictionaryIS,
-                          final String[] headerQI,
-                          final String[] headerSE,
-                          final String[] headerIS) {
-
-        // Parse the dataset
-        final int[][] valsQI = new int[data.length][];
-        final int[][] valsSE = new int[data.length][];
-        final int[][] valsIS = new int[data.length][];
-
-        int index = 0;
-        for (final int[] tuple : data) {
-
-            // Process a tuple
-            final int[] tupleQI = new int[headerQI.length];
-            final int[] tupleSE = new int[headerSE.length];
-            final int[] tupleIS = new int[headerIS.length];
-
-            for (int i = 0; i < tuple.length; i++) {
-                if (map[i] >= 1000) {
-                    tupleIS[map[i] - 1000] = tuple[i];
-                } else if (map[i] > 0) {
-                    tupleQI[map[i] - 1] = tuple[i];
-                } else if (map[i] < 0) {
-                    tupleSE[-map[i] - 1] = tuple[i];
-                }
-            }
-            valsQI[index] = tupleQI;
-            valsIS[index] = tupleIS;
-            valsSE[index] = tupleSE;
-            index++;
-        }
-
-        // Build data object
-        final Data[] result = { new Data(valsQI, headerQI, mapQI, dictionaryQI), new Data(valsSE, headerSE, mapSE, dictionarySE), new Data(valsIS, headerIS, mapIS, dictionaryIS) };
-        return result;
-    }
-
-    /**
-     * Returns the data
-     * 
+     * Returns the data.
+     *
      * @return the data
      */
     public Data getDataIS() {
@@ -317,8 +270,8 @@ public class DataManager {
     }
 
     /**
-     * Returns the data
-     * 
+     * Returns the data.
+     *
      * @return the data
      */
     public Data getDataQI() {
@@ -326,8 +279,8 @@ public class DataManager {
     }
 
     /**
-     * Returns the data
-     * 
+     * Returns the data.
+     *
      * @return the data
      */
     public Data getDataSE() {
@@ -367,8 +320,8 @@ public class DataManager {
     }
 
     /**
-     * The original data header
-     * 
+     * The original data header.
+     *
      * @return
      */
     public String[] getHeader() {
@@ -457,13 +410,13 @@ public class DataManager {
 
         // Temporary class for nodes
         class TNode {
-            HashSet<Integer> children = new HashSet<Integer>();
-            int              offset   = 0;
-            int              level    = 0;
+            IntOpenHashSet children = new IntOpenHashSet();
+            int            offset   = 0;
+            int            level    = 0;
         }
 
         final int offsetsExtras = offsetLeafs + numLeafs;
-        final HashMap<Integer, TNode> nodes = new HashMap<Integer, TNode>();
+        final IntObjectOpenHashMap<TNode> nodes = new IntObjectOpenHashMap<TNode>();
         final ArrayList<ArrayList<TNode>> levels = new ArrayList<ArrayList<TNode>>();
         
         // Init levels
@@ -503,14 +456,14 @@ public class DataManager {
                     treeList.add(node.children.size());
                     treeList.add(node.level);
 
-                    for (final int child : node.children) {
-                        if (node.level == 1) { // level 1
-                            treeList.add(child + offsetsExtras);
-                        } else {
-                            treeList.add(nodes.get(child).offset);
+                    final int [] keys = node.children.keys;
+                    final boolean [] allocated = node.children.allocated;
+                    for (int i=0; i<allocated.length; i++){
+                        if (allocated[i]) {
+                            treeList.add(node.level==1 ? keys[i] + offsetsExtras : nodes.get(keys[i]).offset);
                         }
                     }
-
+                    
                     treeList.add(0); // pos_e
                     treeList.add(0); // neg_e
                 }
@@ -527,10 +480,72 @@ public class DataManager {
     }
 
     /**
-     * Performs a sanity check and returns all identifying attributes
-     * 
+     * Encodes the data.
+     *
+     * @param data
+     * @param map
+     * @param mapQI
+     * @param mapSE
+     * @param mapIS
+     * @param dictionaryQI
+     * @param dictionarySE
+     * @param dictionaryIS
+     * @param headerQI
+     * @param headerSE
+     * @param headerIS
+     * @return
+     */
+    private Data[] encode(final int[][] data,
+                          final int[] map,
+                          final int[] mapQI,
+                          final int[] mapSE,
+                          final int[] mapIS,
+                          final Dictionary dictionaryQI,
+                          final Dictionary dictionarySE,
+                          final Dictionary dictionaryIS,
+                          final String[] headerQI,
+                          final String[] headerSE,
+                          final String[] headerIS) {
+
+        // Parse the dataset
+        final int[][] valsQI = new int[data.length][];
+        final int[][] valsSE = new int[data.length][];
+        final int[][] valsIS = new int[data.length][];
+
+        int index = 0;
+        for (final int[] tuple : data) {
+
+            // Process a tuple
+            final int[] tupleQI = new int[headerQI.length];
+            final int[] tupleSE = new int[headerSE.length];
+            final int[] tupleIS = new int[headerIS.length];
+
+            for (int i = 0; i < tuple.length; i++) {
+                if (map[i] >= 1000) {
+                    tupleIS[map[i] - 1000] = tuple[i];
+                } else if (map[i] > 0) {
+                    tupleQI[map[i] - 1] = tuple[i];
+                } else if (map[i] < 0) {
+                    tupleSE[-map[i] - 1] = tuple[i];
+                }
+            }
+            valsQI[index] = tupleQI;
+            valsIS[index] = tupleIS;
+            valsSE[index] = tupleSE;
+            index++;
+        }
+
+        // Build data object
+        final Data[] result = { new Data(valsQI, headerQI, mapQI, dictionaryQI), new Data(valsSE, headerSE, mapSE, dictionarySE), new Data(valsIS, headerIS, mapIS, dictionaryIS) };
+        return result;
+    }
+
+    /**
+     * Performs a sanity check and returns all identifying attributes.
+     *
      * @param columns
      * @param definition
+     * @return
      */
     private Set<String> getIdentifiers(final String[] columns, final DataDefinition definition) {
 

@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl;
@@ -23,12 +22,17 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.Model.Perspective;
+import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
@@ -40,10 +44,12 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
+import org.deidentifier.arx.gui.view.impl.menu.DialogAuditTrail;
 import org.deidentifier.arx.gui.view.impl.menu.DialogComboSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogDebug;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
+import org.deidentifier.arx.gui.view.impl.menu.DialogFindReplace;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
 import org.deidentifier.arx.gui.view.impl.menu.DialogOrderSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
@@ -54,64 +60,67 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This class implements the global application window
+ * This class implements the global application window.
+ *
  * @author Fabian Prasser
  */
 public class MainWindow implements IView {
 
-    public static final Font            FONT                      = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-
-    private static final String         TITLE                     = Resources.getMessage("MainWindow.0");                     //$NON-NLS-1$
-    private static final String         TAB_ANALYZE_DATA          = Resources.getMessage("MainWindow.1");                     //$NON-NLS-1$
-    private static final String         TAB_DEFINE_TRANSFORMATION = Resources.getMessage("MainWindow.2");                     //$NON-NLS-1$
-    private static final String         TAB_EXPLORE_SEARCHSPACE   = Resources.getMessage("MainWindow.3");                     //$NON-NLS-1$
-
-    private final Display               display;
-    private final Shell                 shell;
+    /** Controller */
     private final Controller            controller;
-    private final MainToolTip           tooltip;
-    private final MainContextMenu       popup;
-    private final MainMenu              menu;
 
+    /** View */
+    private final Display               display;
+    /** View */
+    private final Shell                 shell;
+    /** View */
+    private final AbstractMenu          menu;
+    /** View */
     private final ComponentTitledFolder root;
+    /** View */
+    private final LayoutExplore         layoutExplore;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
+     * @param display
+     * @param monitor
      */
-    public MainWindow() {
+    public MainWindow(Display display, Monitor monitor) {
 
         // Init
-        Display current = Display.getCurrent();
-        display = current != null ? current : new Display();
-        shell = new Shell(display);
+        this.display = display;
+        this.shell = new Shell(display);
 
         // Build controller
         controller = new Controller(this);
         controller.addListener(ModelPart.MODEL, this);
 
         // Style
-        shell.setImage(controller.getResources().getImage("logo.png")); //$NON-NLS-1$
-        shell.setMaximized(true);
-        shell.setText(TITLE);
+        shell.setImages(Resources.getIconSet(display));
+        shell.setText(Resources.getMessage("MainWindow.0")); //$NON-NLS-1$
         shell.setMinimumSize(800, 600);
 
-        tooltip = new MainToolTip(shell);
-        popup = new MainContextMenu(shell, tooltip);
-        tooltip.setPopUp(popup);
-
+        // Center
+        SWTUtil.center(shell, monitor);
+        
+        // Maximize
+        shell.setMaximized(true);
+        
         // Close listener
         shell.addListener(SWT.Close, new Listener() {
             @Override
@@ -122,8 +131,9 @@ public class MainWindow implements IView {
         });
 
         // Build menu
-        menu = new MainMenu(shell, controller);
-        new MainToolBar(shell, controller);
+        List<MainMenuItem> items = getMenu();
+        menu = new MainMenu(shell, controller, items);
+        new MainToolBar(shell, controller, items);
 
         // Create shell
         shell.setLayout(SWTUtil.createGridLayout(1));
@@ -132,53 +142,58 @@ public class MainWindow implements IView {
         root = new ComponentTitledFolder(shell, controller, null, "id-70");
         root.setLayoutData(SWTUtil.createFillGridData());
 
-        // TODO: Remove? Fixes an SWT Bug!
-        // root.setBackground(shell.getBackground());
-
         // Create the subviews
-        Composite item1 = root.createItem(TAB_DEFINE_TRANSFORMATION, controller.getResources().getImage("perspective_define.png")); //$NON-NLS-1$
+        Composite item1 = root.createItem(Resources.getMessage("MainWindow.2"), controller.getResources().getImage("perspective_define.png")); //$NON-NLS-1$ //$NON-NLS-2$
         new LayoutDefinition(item1, controller);
-        Composite item2 = root.createItem(TAB_EXPLORE_SEARCHSPACE, controller.getResources().getImage("perspective_explore.png")); //$NON-NLS-1$
-        new LayoutExplore(item2, controller);
-        Composite item3 = root.createItem(TAB_ANALYZE_DATA, controller.getResources().getImage("perspective_analyze.png")); //$NON-NLS-1$
+        Composite item2 = root.createItem(Resources.getMessage("MainWindow.3"), controller.getResources().getImage("perspective_explore.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        this.layoutExplore = new LayoutExplore(item2, controller);
+        Composite item3 = root.createItem(Resources.getMessage("MainWindow.1"), controller.getResources().getImage("perspective_analyze.png")); //$NON-NLS-1$ //$NON-NLS-2$
         new LayoutAnalyze(item3, controller);
 
+        // Hack to update visualizations
+        root.addSelectionListener(new SelectionAdapter(){
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                switch (root.getSelectionIndex()) {
+                    case 0: 
+                        controller.getModel().setPerspective(Perspective.CONFIGURATION);
+                        break;
+                    case 1: 
+                        controller.getModel().setPerspective(Perspective.EXPLORATION);
+                        break;
+                    case 2: 
+                        controller.getModel().setPerspective(Perspective.ANALYSIS);
+                        break;
+                }
+                controller.update(new ModelEvent(this, ModelPart.VISUALIZATION, null));
+                controller.update(new ModelEvent(this, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+        });
+        
         // Now reset and disable
         controller.reset();
     }
 
-    /**
-     * Adds a listener
-     * @param event
-     * @param listener
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
      */
-    public void addListener(int event, Listener listener) {
-        shell.addListener(event, listener);
-    }
-
-    /**
-     * Adds a shell listener
-     * @param listener
-     */
-    public void addShellListener(ShellListener listener) {
-        this.shell.addShellListener(listener);
-    }
-
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
 
     /**
-     * Returns the popup window
+     * Returns the controller.
+     *
      * @return
      */
-    public MainContextMenu getPopUp() {
-        return popup;
+    public Controller getController() {
+        return this.controller;
     }
 
     /**
-     * Returns the shell
+     * Returns the shell.
+     *
      * @return
      */
     public Shell getShell() {
@@ -186,15 +201,33 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Returns the tooltip window
+     * Is this shell disposed.
+     *
      * @return
      */
-    public MainToolTip getToolTip() {
-        return tooltip;
+    public boolean isDisposed() {
+        return this.shell.isDisposed();
     }
 
     /**
-     * Resets the GUI
+     * Executes the given runnable on show.
+     *
+     * @param runnable
+     */
+    public void onShow(final Runnable runnable){
+        
+        // Using a paint listener is a hack to reliably determine when the shell is visible
+        shell.addPaintListener(new PaintListener(){
+            @Override
+            public void paintControl(PaintEvent arg0) {
+                shell.removePaintListener(this);
+                display.timerExec(200, runnable);
+            }
+        });
+    }
+
+    /**
+     * Resets the GUI.
      */
     public void reset() {
         root.setSelection(0);
@@ -202,93 +235,119 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Main SWT event loop
+     * Main SWT event loop.
      */
     public void show() {
         shell.open();
-        while (!shell.isDisposed()) {
-            try {
-                if (!display.readAndDispatch()) {
-                    display.sleep();
-                }
-            } catch (final Exception e) {
-                controller.actionShowErrorDialog(shell, Resources.getMessage("MainWindow.9") + Resources.getMessage("MainWindow.10"), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-                controller.getResources().getLogger().info(sw.toString());
-            }
-        }
-        display.dispose();
     }
 
     /**
-     * Shows a debug dialog
-     */
-    public void showDebugDialog() {
-        final DialogDebug dialog = new DialogDebug(shell, controller);
-        dialog.create();
-        dialog.open();
-    }
-
-    /**
-     * Shows an about dialog
+     * Shows an about dialog.
      */
     public void showAboutDialog() {
         final DialogAbout dialog = new DialogAbout(shell, controller);
         dialog.create();
         dialog.open();
     }
-
+    
     /**
-     * Shows an error dialog
-     * @param header
-     * @param message
-     * @param t
+     * Shows the audit trail
      */
-    public void showErrorDialog(final Shell shell, final String message, final Throwable t) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        t.printStackTrace(pw);
-        final String trace = sw.toString();
-        final DialogError dialog = new DialogError(shell, controller, message, trace);
+    public void showAuditTrail(List<ModelAuditTrailEntry> auditTrail) {
+        DialogAuditTrail dialog = new DialogAuditTrail(shell, auditTrail);
         dialog.create();
         dialog.open();
     }
 
     /**
-     * Shows an input dialog for ordering data items
-     * @param header
-     * @param text
-     * @param type
-     * @param values
-     * @return
+     * Shows a debug dialog.
      */
-    public String[] showOrderValuesDialog(final Shell shell, final String header, final String text, final DataType<?> type, final String[] values) {
-
-        // Open dialog
-        DialogOrderSelection dlg = new DialogOrderSelection(shell, values, type, controller);
-        if (dlg.open() == Window.OK) {
-            return dlg.getResult();
-        } else {
-            return null;
-        }
+    public void showDebugDialog() {
+        final DialogDebug dialog = new DialogDebug(shell, controller);
+        dialog.create();
+        dialog.open();
+    }
+    
+    /**
+     * Shows an error dialog.
+     *
+     * @param shell
+     * @param message
+     * @param text
+     */
+    public void showErrorDialog(final Shell shell, final String message, final String text) {
+        DialogError dialog = new DialogError(shell, controller, message, text);
+        dialog.create();
+        dialog.open();
     }
 
     /**
-     * Shows an input dialog for selecting formats string for data types
+     * Shows an error dialog.
+     *
+     * @param shell
+     * @param message
+     * @param throwable
+     */
+    public void showErrorDialog(final Shell shell, final String message, final Throwable throwable) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        if (throwable != null) throwable.printStackTrace(pw);
+        final String trace = sw.toString();
+        showErrorDialog(shell, message, trace);
+    }
+    
+    /**
+     * Shows an error dialog.
+     *
+     * @param message
+     * @param text
+     */
+    public void showErrorDialog(final String message, final String text) {
+        showErrorDialog(this.shell, message, text);
+    }
+
+    /**
+     * Shows an error dialog.
+     *
+     * @param message
+     * @param throwable
+     */
+    public void showErrorDialog(final String message, final Throwable throwable) {
+        showErrorDialog(this.shell, message, throwable);
+    }
+
+    /**
+     * Shows a find & replace dialog
+     * @param handle
+     * @param column
+     * @return A pair containing the string to be found and the string with which it is to be replaced,
+     *         <code>null</code> if cancel was pressed.
+     */
+    public Pair<String, String> showFindReplaceDialog(Model model, DataHandle handle, int column) {
+        DialogFindReplace dialog = new DialogFindReplace(shell, model, handle, column);
+        dialog.create();
+        dialog.open();
+        return dialog.getValue();
+    }
+
+    /**
+     * Shows an input dialog for selecting formats string for data types.
+     *
      * @param shell
      * @param header
      * @param text
      * @param preselected Preselected format string, can be null
+     * @param locale The current locale
      * @param description
      * @param values
      * @return
      */
-    public String showFormatInputDialog(final Shell shell, final String header, final String text, final String preselected, final DataTypeDescription<?> description, final Collection<String> values) {
+    public String showFormatInputDialog(final Shell shell, final String header, final String text, final String preselected, final Locale locale, final DataTypeDescription<?> description, final Collection<String> values) {
 
         // Check
-        if (!description.hasFormat()) { throw new RuntimeException("This dialog can only be used for data types with format"); }
+        if (!description.hasFormat()) {
+            throw new RuntimeException("This dialog can only be used for data types with format");
+        }
 
         // Init
         final String DEFAULT = "Default";
@@ -302,13 +361,14 @@ public class MainWindow implements IView {
                     if (arg0.equals(DEFAULT)) {
                         type = description.newInstance();
                     } else {
-                        type = description.newInstance(arg0);
+                        type = description.newInstance(arg0, locale);
                     }
                 } catch (final Exception e) {
                     return Resources.getMessage("MainWindow.11"); //$NON-NLS-1$
                 }
                 for (final String value : values) {
-                    if (!type.isValid(value)) { return Resources.getMessage("MainWindow.13"); //$NON-NLS-1$
+                    if (!type.isValid(value)) {
+                        return Resources.getMessage("MainWindow.13"); //$NON-NLS-1$
                     }
                 }
                 return null;
@@ -347,17 +407,29 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a help dialog
+     * Shows a help dialog.
+     *
      * @param id
      */
     public void showHelpDialog(String id) {
-        final DialogHelp dialog = new DialogHelp(shell, controller, id);
-        dialog.create();
-        dialog.open();
+    	try {
+    		final DialogHelp dialog = new DialogHelp(shell, controller, id);
+            dialog.create();
+            dialog.open();	
+    	} catch (Exception e) {
+    		if (e.getMessage().contains("Mozilla")) {
+    			this.showErrorDialog("Your installation of Mozilla Firefox cannot be launched", 
+    					"See http://www.eclipse.org/swt/faq.php#browserlinuxrcp for information on how to fix this issue.");
+    		} else {
+    		    this.showErrorDialog("Your browser cannot be launched", e);
+    		}
+    	}
     }
 
     /**
-     * Shows an info dialog
+     * Shows an info dialog.
+     *
+     * @param shell
      * @param header
      * @param text
      */
@@ -366,7 +438,9 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows an input dialog
+     * Shows an input dialog.
+     *
+     * @param shell
      * @param header
      * @param text
      * @param initial
@@ -383,7 +457,9 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a file open dialog
+     * Shows a file open dialog.
+     *
+     * @param shell
      * @param filter
      * @return
      */
@@ -395,7 +471,30 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a progress dialog
+     * Shows an input dialog for ordering data items.
+     *
+     * @param shell
+     * @param header
+     * @param text
+     * @param type
+     * @param locale
+     * @param values
+     * @return
+     */
+    public String[] showOrderValuesDialog(final Shell shell, final String header, final String text, final DataType<?> type, final Locale locale, final String[] values) {
+
+        // Open dialog
+        DialogOrderSelection dlg = new DialogOrderSelection(shell, values, type, locale, controller);
+        if (dlg.open() == Window.OK) {
+            return dlg.getResult();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Shows a progress dialog.
+     *
      * @param text
      * @param worker
      */
@@ -408,7 +507,8 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a query dialog for selecting a research subset
+     * Shows a query dialog for selecting a research subset.
+     *
      * @param query
      * @param data
      * @return
@@ -426,7 +526,9 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a question dialog
+     * Shows a question dialog.
+     *
+     * @param shell
      * @param header
      * @param text
      * @return
@@ -436,7 +538,9 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a file save dialog
+     * Shows a file save dialog.
+     *
+     * @param shell
      * @param filter
      * @return
      */
@@ -448,7 +552,8 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a dialog for selecting privacy criteria
+     * Shows a dialog for selecting privacy criteria.
+     *
      * @param others
      * @return
      */
@@ -464,15 +569,393 @@ public class MainWindow implements IView {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
 
         // Careful! In the main window, this is also called after editing the project properties
         if (event.part == ModelPart.MODEL) {
             final Model model = (Model) event.data;
-            shell.setText(TITLE + " - " + model.getName()); //$NON-NLS-1$
+            shell.setText(Resources.getMessage("MainWindow.0") + " - " + model.getName()); //$NON-NLS-1$
             root.setEnabled(true);
             menu.update(event);
         }
+    }
+    
+    /**
+     * Creates the global menu
+     * @return
+     */
+    private List<MainMenuItem> getMenu() {
+        
+        List<MainMenuItem> menu = new ArrayList<MainMenuItem>();
+
+        menu.add(getMenuFile());
+        menu.add(getEditMenu());
+        menu.add(getViewMenu());
+        menu.add(getHelpMenu());
+        
+        return menu;
+    }
+    
+
+    /**
+     * Creates the help menu
+     * @return
+     */
+    private MainMenuItem getViewMenu() {
+
+
+        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.2"), //$NON-NLS-1$
+                                   controller.getResources().getImage("perspective_define.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(0);
+                controller.getModel().setPerspective(Perspective.CONFIGURATION);
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.CONFIGURATION; }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.3"), //$NON-NLS-1$
+                                   controller.getResources().getImage("perspective_explore.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(1);
+                controller.getModel().setPerspective(Perspective.EXPLORATION);
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.EXPLORATION; }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.1"), //$NON-NLS-1$
+                                   controller.getResources().getImage("perspective_analyze.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(2);
+                controller.getModel().setPerspective(Perspective.ANALYSIS);
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.ANALYSIS; }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.0"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                   controller.getResources().getImage("explore_lattice.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { 
+                layoutExplore.showLattice(); 
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { 
+                return model != null && 
+                       model.getPerspective() == Perspective.EXPLORATION && 
+                       model.getResult() != null &&
+                       !layoutExplore.isShowLattice(); 
+            }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.2"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                   controller.getResources().getImage("explore_list.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { 
+                layoutExplore.showList();
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { 
+                return model != null && 
+                       model.getPerspective() == Perspective.EXPLORATION && 
+                       model.getResult() != null &&
+                       !layoutExplore.isShowList();
+            }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.3"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                   controller.getResources().getImage("explore_tiles.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { 
+                layoutExplore.showTiles(); 
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { 
+                return model != null && 
+                       model.getPerspective() == Perspective.EXPLORATION && 
+                       model.getResult() != null &&
+                       !layoutExplore.isShowTiles();
+            }
+        });
+
+        
+        return new MainMenuGroup(Resources.getMessage("MainMenu.33"), items) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return true;
+            }  
+        };
+    }
+
+
+    /**
+     * Creates the help menu
+     * @return
+     */
+    private MainMenuItem getHelpMenu() {
+
+
+        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.27"), //$NON-NLS-1$
+                                   controller.getResources().getImage("help.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuHelpHelp(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.29"), //$NON-NLS-1$
+                                   controller.getResources().getImage("information.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuHelpAbout(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.32"), //$NON-NLS-1$
+                                   controller.getResources().getImage("information.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuHelpDebug(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.isDebugEnabled(); 
+            }
+        });
+        
+        return new MainMenuGroup(Resources.getMessage("MainMenu.2"), items) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return true;
+            }  
+        };
+    }
+
+    /**
+     * Creates the edit menu
+     * @return
+     */
+    private MainMenuItem getEditMenu() {
+        
+        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.21"), //$NON-NLS-1$
+                                   controller.getResources().getImage("edit_anonymize.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuEditAnonymize(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.23"), //$NON-NLS-1$
+                                   controller.getResources().getImage("edit_create_hierarchy.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuEditCreateHierarchy(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.30"), //$NON-NLS-1$
+                                   controller.getResources().getImage("edit_find_replace.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionFindReplace(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.31"), //$NON-NLS-1$
+                                   controller.getResources().getImage("edit_audit_trail.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionShowAuditTrail(); }
+            public boolean isEnabled(Model model) { 
+                return model != null;
+            }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        List<MainMenuItem> subset = new ArrayList<MainMenuItem>();
+
+        subset.add(new MainMenuItem(Resources.getMessage("SubsetDefinitionView.1"), //$NON-NLS-1$
+                                   controller.getResources().getImage("page_white.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionSubsetNone(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null;
+            }
+        });
+        
+        subset.add(new MainMenuItem(Resources.getMessage("SubsetDefinitionView.2"), //$NON-NLS-1$
+                                   controller.getResources().getImage("page_white_text.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionSubsetAll(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null;
+            }
+        });
+        
+        subset.add(new MainMenuItem(Resources.getMessage("SubsetDefinitionView.3"), //$NON-NLS-1$
+                                   controller.getResources().getImage("disk.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionSubsetFile(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null;
+            }
+        });
+        
+        subset.add(new MainMenuItem(Resources.getMessage("SubsetDefinitionView.4"), //$NON-NLS-1$
+                                   controller.getResources().getImage("find.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionSubsetQuery(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null;
+            }
+        });
+
+        items.add(new MainMenuGroup(Resources.getMessage("MainMenu.35"), subset) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null;
+            }  
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.37"), //$NON-NLS-1$
+                                   controller.getResources().getImage("apply.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionApplySelectedTransformation(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getResult() != null && model.getSelectedNode() != null;
+            }
+        });
+        
+        items.add(new MainMenuSeparator());
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.25"), //$NON-NLS-1$
+                                   controller.getResources().getImage("edit_settings.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuEditSettings(); }
+            public boolean isEnabled(Model model) { 
+                return model != null;
+            }
+        });
+
+        return new MainMenuGroup(Resources.getMessage("MainMenu.1"), items) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return true;
+            }  
+        };
+    }
+
+    /**
+     * Creates the file menu
+     * @return
+     */
+    private MainMenuItem getMenuFile() {
+        
+        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.3"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_new.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileNew(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.5"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_load.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileOpen(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.4"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_save.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileSave(); }
+            public boolean isEnabled(Model model) { return model != null; }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.9"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_save_as.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileSaveAs(); }
+            public boolean isEnabled(Model model) { return model != null; }
+        });
+        
+        items.add(new MainMenuSeparator());
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.11"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_import_data.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileImportData(); }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() == Perspective.CONFIGURATION; }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.13"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_export_data.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileExportData(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getOutput() != null && model.getPerspective() == Perspective.ANALYSIS;
+            }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.15"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_import_hierarchy.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileImportHierarchy(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.17"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_export_hierarchy.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileExportHierarchy(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.19"), //$NON-NLS-1$
+                                   controller.getResources().getImage("exit.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuFileExit(); }
+            public boolean isEnabled(Model model) { 
+                return true;
+            }
+        });
+        
+        return new MainMenuGroup(Resources.getMessage("MainMenu.0"), items) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return true;
+            }  
+        };
     }
 }

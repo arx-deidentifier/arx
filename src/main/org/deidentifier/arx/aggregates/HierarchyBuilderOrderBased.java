@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.deidentifier.arx.aggregates;
 
@@ -33,39 +32,66 @@ import org.deidentifier.arx.DataType;
 
 /**
  * This class enables building hierarchies for categorical and non-categorical values
- * by ordering the data items and merging into groups with predefined sizes
- * 
- * @author Fabian Prasser
+ * by ordering the data items and merging into groups with predefined sizes.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased<T> {
 
     /**
-     * A serializable comparator
-     * @author Fabian Prasser
+     * A serializable comparator.
      *
+     * @author Fabian Prasser
      * @param <T>
      */
     public static abstract class SerializableComparator<T> implements Comparator<T>, Serializable {
+        
+        /**  TODO */
         private static final long serialVersionUID = 3851134667082727602L;
     }
     
+    /**
+     * 
+     *
+     * @param <T>
+     */
     @SuppressWarnings("hiding")
     protected class CloseElements<T> extends AbstractGroup {
         
+        /**  TODO */
         private static final long serialVersionUID = 7224062023293601561L;
+        
+        /**  TODO */
         private String[] values;
 
+        /**
+         * 
+         *
+         * @param values
+         * @param function
+         */
         protected CloseElements(String[] values, AggregateFunction<T> function) {
             super(function.aggregate(values));
             this.values = values;
         }
 
+        /**
+         * 
+         *
+         * @return
+         */
         protected String[] getValues(){
             return values;
         }
 
+        /**
+         * 
+         *
+         * @param list
+         * @param function
+         * @return
+         */
         @SuppressWarnings("rawtypes")
         protected CloseElements merge(List<CloseElements<T>> list, AggregateFunction<T> function) {
             List<String> values = new ArrayList<String>();
@@ -78,13 +104,17 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         }
     }
     
+    /**  TODO */
     private static final long serialVersionUID = -2749758635401073668L;
     
     /**
-     * Creates a new instance. Either preserves the given order, or 
+     * Creates a new instance. Either preserves the given order, or
      * sorts the items according to the order induced by the given data type
+     *
+     * @param <T>
      * @param type The data type is also used for ordering data items
      * @param order Should the items be sorted according to the order induced by the data type
+     * @return
      */
     public static <T> HierarchyBuilderOrderBased<T> create(final DataType<T> type, boolean order) {
         return new HierarchyBuilderOrderBased<T>(type, order);
@@ -92,8 +122,11 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
 
     /**
      * Creates a new instance. Uses the comparator for ordering data items
+     *
+     * @param <T>
      * @param type The data type
      * @param comparator Use this comparator for ordering data items
+     * @return
      */
     public static <T> HierarchyBuilderOrderBased<T> create(final DataType<T> type, final Comparator<T> comparator) {
         return new HierarchyBuilderOrderBased<T>(type, comparator);
@@ -101,15 +134,20 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
 
     /**
      * Creates a new instance. Uses the defined order for data items
+     *
+     * @param <T>
      * @param type The data type
      * @param order Use this for ordering data items
+     * @return
      */
     public static <T> HierarchyBuilderOrderBased<T> create(final DataType<T> type, final String[] order) {
         return new HierarchyBuilderOrderBased<T>(type, order);
     }
     
     /**
-     * Loads a builder specification from the given file
+     * Loads a builder specification from the given file.
+     *
+     * @param <T>
      * @param file
      * @return
      * @throws IOException
@@ -129,7 +167,9 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
     
     /**
-     * Loads a builder specification from the given file
+     * Loads a builder specification from the given file.
+     *
+     * @param <T>
      * @param file
      * @return
      * @throws IOException
@@ -138,12 +178,14 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         return create(new File(file));
     }
 
+    /**  TODO */
     private final Comparator<String> comparator;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param type The data type is also used for ordering data items
-     * @param order Should the items be sorted according to the order induced by the data type 
+     * @param order Should the items be sorted according to the order induced by the data type
      */
     private HierarchyBuilderOrderBased(final DataType<T> type, boolean order) {
         super(Type.ORDER_BASED, type);
@@ -166,7 +208,8 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param type The data type
      * @param order Use this for ordering data items
      */
@@ -192,7 +235,8 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param type The data type
      * @param comparator Use this comparator for ordering data items
      */
@@ -216,13 +260,17 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
     
     /**
-     * Returns the comparator
+     * Returns the comparator.
+     *
      * @return
      */
     public Comparator<String> getComparator(){
         return comparator;
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased#prepareGroups()
+     */
     @SuppressWarnings("unchecked")
     @Override
     protected AbstractGroup[][] prepareGroups() {

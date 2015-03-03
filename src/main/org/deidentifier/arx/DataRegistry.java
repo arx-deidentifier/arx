@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx;
@@ -32,31 +31,53 @@ import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
 
 /**
- * This class implements sorting and swapping for a set of paired data handles
+ * This class implements sorting and swapping for a set of paired data handles.
+ *
  * @author Fabian Prasser
  */
 class DataRegistry {
 
-    /** The input handle, if any*/
+    /** The input handle, if any. */
     private DataHandleInput input;
-    /** The input subset handle, if any*/
+    
+    /** The input subset handle, if any. */
     private DataHandleSubset inputSubset;
-    /** The output handle, if any*/
+    
+    /** The output handle, if any. */
     private Map<ARXNode, DataHandleOutput> output = new HashMap<ARXNode, DataHandleOutput>();
-    /** The output subset handle, if any*/
+    
+    /** The output subset handle, if any. */
     private Map<ARXNode, DataHandleSubset> outputSubset = new HashMap<ARXNode, DataHandleSubset>();
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     public DataRegistry(){
         // Empty by design
     }
     
     /**
-     * Helper that creates a view on a research subset
+     * Replace a value in the given column
+     * @param column
+     * @param original
+     * @param replacement
+     * @return
+     */
+    public boolean replace(int column, String original, String replacement) {
+        boolean replaced = false; 
+        replaced |= input.internalReplace(column, original, replacement);
+        if (!output.isEmpty()) {
+            replaced |= output.values().iterator().next().internalReplace(column, original, replacement);
+        }
+        return replaced;
+    }
+    
+    /**
+     * Helper that creates a view on a research subset.
+     *
      * @param handle
      * @param subset
+     * @param eqStatistics
      * @return
      */
     private DataHandleSubset createSubset(DataHandle handle, DataSubset subset, StatisticsEquivalenceClasses eqStatistics) {
@@ -67,7 +88,8 @@ class DataRegistry {
     }
     
     /**
-     * Returns any of the registered subsets
+     * Returns any of the registered subsets.
+     *
      * @return
      */
     private DataHandleSubset getSubset() {
@@ -81,7 +103,8 @@ class DataRegistry {
     }
     
     /**
-     * Sort
+     * Sort.
+     *
      * @param handle
      * @param swapper
      * @param from
@@ -121,9 +144,10 @@ class DataRegistry {
             subset.internalRebuild();
         }
     }
-    
+
     /**
-     * Sort
+     * Sort.
+     *
      * @param handle
      * @param swapper
      * @param from
@@ -157,9 +181,10 @@ class DataRegistry {
         // No need to swap and rebuild the subset views
         GenericSorting.mergeSort(from, to, c, s);
     }
-
+    
     /**
-     * Swap
+     * Swap.
+     *
      * @param handle
      * @param row1
      * @param row2
@@ -177,7 +202,8 @@ class DataRegistry {
     }
     
     /**
-     * Swap
+     * Swap.
+     *
      * @param handle
      * @param row1
      * @param row2
@@ -190,9 +216,11 @@ class DataRegistry {
         if (input!=null) input.internalSwap(row1, row2);
         for (DataHandleOutput outhandle : output.values()) outhandle.internalSwap(row1, row2);
     }
-    
+
     /**
-     * Creates the views on the subset
+     * Creates the views on the subset.
+     *
+     * @param config
      */
     protected void createInputSubset(ARXConfiguration config){
         
@@ -205,16 +233,44 @@ class DataRegistry {
     }
 
     /**
-     * Returns the base data type without generalization
+     * Creates the views on the subset.
+     *
+     * @param node
+     * @param config
+     * @param peqStatistics
+     */
+    protected void createOutputSubset(ARXNode node, ARXConfiguration config, StatisticsEquivalenceClasses peqStatistics){
+        if (config.containsCriterion(DPresence.class)) {
+            this.outputSubset.put(node, createSubset(this.output.get(node), config.getCriterion(DPresence.class).getSubset(), peqStatistics));
+        } else {
+            this.outputSubset.remove(node);
+        }
+        this.output.get(node).setView(this.outputSubset.get(node));
+    }
+
+    /**
+     * Returns the base data type without generalization.
+     *
      * @param attribute
      * @return
      */
     protected DataType<?> getBaseDataType(String attribute) {
         return this.input.getBaseDataType(attribute);
     }
+    
+    /**
+     * Returns a registered handle, if any.
+     *
+     * @param node
+     * @return
+     */
+    protected DataHandle getOutputHandle(ARXNode node) {
+        return this.output.get(node);
+    }
 
     /**
-     * Implementation of {@link DataHandle#isOutlier(row)}
+     * Implementation of {@link DataHandle#isOutlier(row)}.
+     *
      * @param handle
      * @param row
      * @return
@@ -233,11 +289,44 @@ class DataRegistry {
     }
 
     /**
-     * Removes the association to all handles, but the input handle
+     * Releases the given handle.
+     *
+     * @param handle
+     */
+    protected void release(DataHandle handle) {
+        
+        // Handle subsets
+        if (handle instanceof DataHandleSubset) {
+           return;
+        }
+        
+        // Handle output
+        Iterator<Entry<ARXNode, DataHandleOutput>> iter = output.entrySet().iterator();
+        while (iter.hasNext()) {
+            Entry<ARXNode, DataHandleOutput> entry = iter.next();
+            if (entry.getValue().equals(handle)) {
+                outputSubset.remove(entry.getKey());
+                iter.remove();
+                handle.doRelease();
+                return;
+            }
+        }
+        
+        // Handle input
+        if (handle.equals(input)) {
+            this.reset();
+            input.doRelease();
+        }
+    }
+    
+    /**
+     * Removes the association to all handles, but the input handle.
      */
     protected void reset() {
-        for (DataHandle handle : this.output.values()) {
-            release(handle);
+        while (!this.output.entrySet().isEmpty()) {
+            Entry<ARXNode, DataHandleOutput> entry = this.output.entrySet().iterator().next();
+            release(entry.getValue());
+            this.output.remove(entry.getKey());
         }
         this.output.clear();
         
@@ -251,7 +340,7 @@ class DataRegistry {
             this.inputSubset = null;
         }
     }
-    
+
     /**
      * Implementation of {@link DataHandle#sort(boolean, int...)}
      * @param handle
@@ -288,7 +377,7 @@ class DataRegistry {
     protected void sort(final DataHandle handle, final Swapper swapper, final boolean ascending, final int... columns) {
         sort(handle, swapper, 0, handle.getNumRows(), ascending, columns);
     }
-    
+
     /**
      * Implementation of {@link DataHandle#sort(Swapper, int, int, boolean, int...)}
      * @param handle
@@ -316,8 +405,9 @@ class DataRegistry {
     }
 
     /**
-     * Implementation of {@link DataHandle#swap(int, int)}
-     * @param dataHandle
+     * Implementation of {@link DataHandle#swap(int, int)}.
+     *
+     * @param handle
      * @param row1
      * @param row2
      */
@@ -330,7 +420,8 @@ class DataRegistry {
     }
 
     /**
-     * Update the registry
+     * Update the registry.
+     *
      * @param input
      */
     protected void updateInput(DataHandleInput input){
@@ -338,7 +429,8 @@ class DataRegistry {
     }
 
     /**
-     * Update the registry
+     * Update the registry.
+     *
      * @param inputSubset
      */
     protected void updateInputSubset(DataHandleSubset inputSubset){
@@ -346,7 +438,9 @@ class DataRegistry {
     }
 
     /**
-     * Update the registry
+     * Update the registry.
+     *
+     * @param node
      * @param output
      */
     protected void updateOutput(ARXNode node, DataHandleOutput output){
@@ -354,62 +448,12 @@ class DataRegistry {
     }
 
     /**
-     * Update the registry
+     * Update the registry.
+     *
+     * @param node
      * @param outputSubset
      */
     protected void updateOutputSubset(ARXNode node, DataHandleSubset outputSubset){
         this.outputSubset.put(node, outputSubset);
-    }
-
-    /**
-     * Returns a registered handle, if any
-     * @param node
-     * @return
-     */
-    protected DataHandle getOutputHandle(ARXNode node) {
-        return this.output.get(node);
-    }
-
-    /**
-     * Creates the views on the subset
-     * @param peqStatistics 
-     */
-    protected void createOutputSubset(ARXNode node, ARXConfiguration config, StatisticsEquivalenceClasses peqStatistics){
-        if (config.containsCriterion(DPresence.class)) {
-            this.outputSubset.put(node, createSubset(this.output.get(node), config.getCriterion(DPresence.class).getSubset(), peqStatistics));
-        } else {
-            this.outputSubset.remove(node);
-        }
-        this.output.get(node).setView(this.outputSubset.get(node));
-    }
-
-    /**
-     * Releases the given handle
-     * @param dataHandle
-     */
-    protected void release(DataHandle handle) {
-        
-        // Handle subsets
-        if (handle instanceof DataHandleSubset) {
-           return;
-        }
-        
-        // Handle output
-        Iterator<Entry<ARXNode, DataHandleOutput>> iter = output.entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry<ARXNode, DataHandleOutput> entry = iter.next();
-            if (entry.getValue().equals(handle)) {
-                outputSubset.remove(entry.getKey());
-                iter.remove();
-                handle.doRelease();
-                return;
-            }
-        }
-        
-        // Handle input
-        if (handle.equals(input)) {
-            this.reset();
-            input.doRelease();
-        }
     }
 }

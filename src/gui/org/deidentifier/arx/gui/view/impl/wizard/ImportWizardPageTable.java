@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
+ * ARX: Powerful Data Anonymization
+ * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
@@ -60,19 +59,43 @@ import org.eclipse.swt.widgets.TableColumn;
 public class ImportWizardPageTable extends WizardPage {
 
     /**
-     * Reference to the wizard containing this page
+     * Returns a human readable string representation of <code>rows</code>
+     *
+     * This converts rows into a human readable string, e.g. 1000000 gets
+     * converted to 1M.
+     *
+     * The code is based upon <a href="http://bit.ly/1m4UetX">this</a> snippet.
+     *
+     * @param rows The number of rows to be converted
+     *
+     * @return Human readable string representation of <code>rows</code>
      */
-    private ImportWizard wizardImport;
+    private static String humanReadableRowCount(long rows) {
 
+        int unit = 1000;
+        if (rows < unit) {
+            return new Long(rows).toString();
+        } else {
+            int exp = (int) (Math.log(rows) / Math.log(unit));
+            char pre = "kMGTPE".charAt(exp - 1);
+            return String.format("%.1f%s", rows / Math.pow(unit, exp), pre);
+        }
+    }
+
+    /** Reference to the wizard containing this page. */
+    private ImportWizard wizardImport;
+    
     /* SWT Widgets */
+    /**  TODO */
     private Table        table;
+
+    /**  TODO */
     private TableViewer  tableViewer;
 
     /**
-     * Creates a new instance of this page and sets its title and description
-     * 
-     * @param wizardImport
-     *            Reference to wizard containing this page
+     * Creates a new instance of this page and sets its title and description.
+     *
+     * @param wizardImport Reference to wizard containing this page
      */
     public ImportWizardPageTable(ImportWizard wizardImport) {
 
@@ -83,7 +106,9 @@ public class ImportWizardPageTable extends WizardPage {
     }
 
     /**
-     * Creates the design of this page along with the appropriate listeners
+     * Creates the design of this page along with the appropriate listeners.
+     *
+     * @param parent
      */
     public void createControl(Composite parent) {
 
@@ -221,7 +246,9 @@ public class ImportWizardPageTable extends WizardPage {
     }
 
     /**
-     * Applies previously detected tables to {@link #tableViewer}
+     * Applies previously detected tables to {@link #tableViewer}.
+     *
+     * @param visible
      */
     @Override
     public void setVisible(boolean visible) {
@@ -276,37 +303,6 @@ public class ImportWizardPageTable extends WizardPage {
     }
 
     /**
-     * Gets the number of rows for given table
-     * 
-     * This uses the JDBC connection
-     * {@link ImportWizardModel#getJdbcConnection()} to determine the number of
-     * rows for given table.
-     * 
-     * @param table
-     *            Table number of rows should be returned for
-     * 
-     * @return Number of rows for given table, -1 in case of error
-     */
-    protected long getNumberOfRows(String table) {
-
-        try {
-            Statement statement = wizardImport.getData()
-                                              .getJdbcConnection()
-                                              .createStatement();
-            statement.execute("SELECT COUNT(*) FROM " + table);
-            ResultSet resultSet = statement.getResultSet();
-
-            if (resultSet.next()) {
-                return resultSet.getLong(1);
-            }
-
-        } catch (SQLException e) {
-            /* Ignore silently*/
-        }
-        return -1L;
-    }
-
-    /**
      * Gets the number of columns for given table
      *
      * This uses the JDBC connection
@@ -343,6 +339,37 @@ public class ImportWizardPageTable extends WizardPage {
     }
 
     /**
+     * Gets the number of rows for given table
+     * 
+     * This uses the JDBC connection
+     * {@link ImportWizardModel#getJdbcConnection()} to determine the number of
+     * rows for given table.
+     * 
+     * @param table
+     *            Table number of rows should be returned for
+     * 
+     * @return Number of rows for given table, -1 in case of error
+     */
+    protected long getNumberOfRows(String table) {
+
+        try {
+            Statement statement = wizardImport.getData()
+                                              .getJdbcConnection()
+                                              .createStatement();
+            statement.execute("SELECT COUNT(*) FROM " + table);
+            ResultSet resultSet = statement.getResultSet();
+
+            if (resultSet.next()) {
+                return resultSet.getLong(1);
+            }
+
+        } catch (SQLException e) {
+            /* Ignore silently*/
+        }
+        return -1L;
+    }
+
+    /**
      * Reads in the preview data for currently selected table
      * 
      * If this can be performed successful, the preview data will be made
@@ -360,7 +387,7 @@ public class ImportWizardPageTable extends WizardPage {
         try {
 
             Statement statement = connection.createStatement();
-            statement.setMaxRows(ImportWizardModel.previewDataMaxLines);
+            statement.setMaxRows(ImportWizardModel.PREVIEW_MAX_LINES);
             statement.execute("SELECT * FROM " + selectedTable);
             ResultSet rs = statement.getResultSet();
 
@@ -379,29 +406,5 @@ public class ImportWizardPageTable extends WizardPage {
 
         wizardImport.getData().setPreviewData(previewData);
 
-    }
-
-    /**
-     * Returns a human readable string representation of <code>rows</code>
-     *
-     * This converts rows into a human readable string, e.g. 1000000 gets
-     * converted to 1M.
-     *
-     * The code is based upon <a href="http://bit.ly/1m4UetX">this</a> snippet.
-     *
-     * @param rows The number of rows to be converted
-     *
-     * @return Human readable string representation of <code>rows</code>
-     */
-    private static String humanReadableRowCount(long rows) {
-
-        int unit = 1000;
-        if (rows < unit) {
-            return new Long(rows).toString();
-        } else {
-            int exp = (int) (Math.log(rows) / Math.log(unit));
-            char pre = "kMGTPE".charAt(exp - 1);
-            return String.format("%.1f%s", rows / Math.pow(unit, exp), pre);
-        }
     }
 }

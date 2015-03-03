@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
+ * ARX: Powerful Data Anonymization
+ * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
@@ -70,30 +69,6 @@ import org.eclipse.swt.widgets.TableColumn;
 public class ImportWizardPageColumns extends WizardPage {
     
     /**
-     * Works around JFace bugs. 
-     * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=230398
-     *
-     */
-    private static class AutoDropComboBoxViewerCellEditor extends ComboBoxViewerCellEditor {
-        protected AutoDropComboBoxViewerCellEditor(Composite parent) {
-            super(parent, SWT.READ_ONLY);
-            setActivationStyle(DROP_DOWN_ON_MOUSE_ACTIVATION);
-        }
-
-        @Override
-        protected Control createControl(Composite parent) {
-            final Control control = super.createControl(parent);
-            getViewer().getCCombo().addSelectionListener(new SelectionAdapter() {
-                @Override
-                public void widgetSelected(SelectionEvent e) {
-                    focusLost();
-                }
-            });
-            return control;
-        }
-    }
-
-    /**
      * Implements editing support for datatype column within the column page
      * 
      * This allows to change the datatype of columns. The modifications are
@@ -101,9 +76,7 @@ public class ImportWizardPageColumns extends WizardPage {
      */
     public class DatatypeEditingSupport extends EditingSupport {
 
-        /**
-         * Reference to actual editor
-         */
+        /** Reference to actual editor. */
         private AutoDropComboBoxViewerCellEditor editor;
 
         /**
@@ -140,7 +113,10 @@ public class ImportWizardPageColumns extends WizardPage {
         }
 
         /**
-         * Indicates that enabled cells within this column can be edited
+         * Indicates that enabled cells within this column can be edited.
+         *
+         * @param column
+         * @return
          */
         @Override
         protected boolean canEdit(Object column) {
@@ -149,6 +125,9 @@ public class ImportWizardPageColumns extends WizardPage {
 
         /**
          * Returns a reference to {@link #editor}.
+         *
+         * @param arg0
+         * @return
          */
         @Override
         protected CellEditor getCellEditor(Object arg0) {
@@ -156,7 +135,10 @@ public class ImportWizardPageColumns extends WizardPage {
         }
 
         /**
-         * Returns current index of {@link #choices} for given column datatype
+         * Returns current index of {@link #choices} for given column datatype.
+         *
+         * @param element
+         * @return
          */
         @Override
         protected Object getValue(Object element) {
@@ -176,6 +158,9 @@ public class ImportWizardPageColumns extends WizardPage {
          * the other hand will try to apply the format string to the available
          * preview data {@link ImportWizardModel#getPreviewData()} making sure
          * that it matches. In case of an error the choice is discarded.
+         *
+         * @param element
+         * @param value
          */
         @Override
         protected void setValue(Object element, Object value) {
@@ -203,6 +188,7 @@ public class ImportWizardPageColumns extends WizardPage {
                                                                             HEADER,
                                                                             BODY,
                                                                             ((DataTypeWithFormat) column.getDataType()).getFormat(),
+                                                                            wizardImport.getModel().getLocale(),
                                                                             description,
                                                                             previewData);
 
@@ -210,12 +196,13 @@ public class ImportWizardPageColumns extends WizardPage {
                             format = controller.actionShowFormatInputDialog(getShell(),
                                                                             HEADER,
                                                                             BODY,
+                                                                            wizardImport.getModel().getLocale(),
                                                                             description,
                                                                             previewData);
                         }
 
                         if (format != null) {
-                            datatype = description.newInstance(format);
+                            datatype = description.newInstance(format, wizardImport.getModel().getLocale());
                         } else {
                             /* Invalid string or aborted by user */
                             return;
@@ -248,9 +235,7 @@ public class ImportWizardPageColumns extends WizardPage {
      */
     public class NameEditingSupport extends EditingSupport {
 
-        /**
-         * Reference to actual editor
-         */
+        /** Reference to actual editor. */
         private TextCellEditor editor;
 
         /**
@@ -266,20 +251,29 @@ public class ImportWizardPageColumns extends WizardPage {
         }
 
         /**
-         * Indicates that enabled cells within this column can be edited
+         * Indicates that enabled cells within this column can be edited.
+         *
+         * @param column
+         * @return
          */
         @Override
         protected boolean canEdit(Object column) {
             return ((ImportWizardModelColumn) column).isEnabled();
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.Object)
+         */
         @Override
         protected CellEditor getCellEditor(Object arg0) {
             return editor;
         }
 
         /**
-         * Retrieves name of column ({@link ImportColumn#getAliasName()})
+         * Retrieves name of column ({@link ImportColumn#getAliasName()}).
+         *
+         * @param arg0
+         * @return
          */
         @Override
         protected Object getValue(Object arg0) {
@@ -287,14 +281,50 @@ public class ImportWizardPageColumns extends WizardPage {
         }
 
         /**
-         * Sets name for given column ({@link ImportColumn#setAliasName(String)})
+         * Sets name for given column ({@link ImportColumn#setAliasName(String)}).
+         *
+         * @param element
+         * @param value
          */
         @Override
         protected void setValue(Object element, Object value) {
 
-            ((ImportWizardModelColumn) element).getColumn()
-                                               .setAliasName((String) value);
+            ((ImportWizardModelColumn) element).getColumn().setAliasName((String) value);
             getViewer().update(element, null);
+            check();
+        }
+    }
+
+    /**
+     * Works around JFace bugs. 
+     * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=230398
+     *
+     */
+    private static class AutoDropComboBoxViewerCellEditor extends ComboBoxViewerCellEditor {
+        
+        /**
+         * 
+         *
+         * @param parent
+         */
+        protected AutoDropComboBoxViewerCellEditor(Composite parent) {
+            super(parent, SWT.READ_ONLY);
+            setActivationStyle(DROP_DOWN_ON_MOUSE_ACTIVATION);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ComboBoxViewerCellEditor#createControl(org.eclipse.swt.widgets.Composite)
+         */
+        @Override
+        protected Control createControl(Composite parent) {
+            final Control control = super.createControl(parent);
+            getViewer().getCCombo().addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    focusLost();
+                }
+            });
+            return control;
         }
     }
     /**
@@ -308,9 +338,10 @@ public class ImportWizardPageColumns extends WizardPage {
         /**
          * (Un)checks all of the items at once
          * 
-         * This iterates through all of the items and invokes
-         * {@link #setChecked(int, Boolean)} for all of them. Furthermore the
+         * This iterates through all of the items and invokes {@link #setChecked(int, Boolean)} for all of them. Furthermore the
          * tooltip is changed appropriately.
+         *
+         * @param arg0
          */
         @Override
         public void widgetSelected(SelectionEvent arg0) {
@@ -328,15 +359,14 @@ public class ImportWizardPageColumns extends WizardPage {
                 tblclmnEnabled.setToolTipText("Deselect all");
                 tblclmnEnabled.setText("DA");
             }
+            check();
         }
 
         /**
-         * Applies a boolean value to the given item
-         * 
-         * @param i
-         *            Item that <code>check</code> should be applied to
-         * @param check
-         *            Value that should be applied to item <code>i</code>
+         * Applies a boolean value to the given item.
+         *
+         * @param i Item that <code>check</code> should be applied to
+         * @param check Value that should be applied to item <code>i</code>
          */
         private void setChecked(int i, Boolean check) {
 
@@ -355,37 +385,53 @@ public class ImportWizardPageColumns extends WizardPage {
             }
         }
     }
-    /**
-     * Reference to the wizard containing this page
-     */
+    
+    /** Reference to the wizard containing this page. */
     private ImportWizard        wizardImport;
     /* Widgets */
+    /**  TODO */
     private Table               table;
+    
+    /**  TODO */
     private CheckboxTableViewer checkboxTableViewer;
+    
+    /**  TODO */
     private TableColumn         tblclmnName;
+    
+    /**  TODO */
     private TableViewerColumn   tableViewerColumnName;
+    
+    /**  TODO */
     private TableColumn         tblclmnDatatype;
+    
+    /**  TODO */
     private TableViewerColumn   tableViewerColumnDatatype;
+    
+    /**  TODO */
     private TableColumn         tblclmnEnabled;
+    
+    /**  TODO */
     private TableViewerColumn   tableViewerColumnEnabled;
+    
+    /**  TODO */
     private TableColumn         tblclmnFormat;
 
+    /**  TODO */
     private TableViewerColumn   tableViewerColumnFormat;
 
+    /**  TODO */
     private Button              btnUp;
 
+    /**  TODO */
     private Button              btnDown;
 
-    /**
-     * Indicator for the next action of {@link ColumnEnabledSelectionListener}
-     */
+    /** Indicator for the next action of {@link ColumnEnabledSelectionListener}. */
     private boolean             selectAll = false;
 
     /**
-     * Creates a new instance of this page and sets its title and description
-     * 
-     * @param wizardImport
-     *            Reference to wizard containing this page
+     * Creates a new instance of this page and sets its title and description.
+     *
+     * @param wizardImport Reference to wizard containing this page
      */
     public ImportWizardPageColumns(ImportWizard wizardImport) {
 
@@ -397,9 +443,48 @@ public class ImportWizardPageColumns extends WizardPage {
         setDescription("Please check and/or modify the detected columns");
 
     }
+    
+    /**
+     * Checks whether the current selection of columns is suited for import
+     */
+    private void check(){
+
+        // Check selection
+        boolean selected = false;
+        for (ImportWizardModelColumn column : wizardImport.getData()
+                                                          .getWizardColumns()) {
+            selected |= column.isEnabled();
+        }
+        
+        if (!selected) {
+            setErrorMessage("You need to select at least one column");
+            setPageComplete(false);
+            return;
+        }
+
+        // Check names
+        for (ImportWizardModelColumn c1 : wizardImport.getData().getWizardColumns()) {
+            if (c1.isEnabled()) {
+                String name1 = c1.getColumn().getAliasName();
+                for (ImportWizardModelColumn c2 : wizardImport.getData().getWizardColumns()) {
+                    if (c2.isEnabled() && c1 != c2 && name1.equals(c2.getColumn().getAliasName())) {
+                        setErrorMessage("Column names need to be unique: " + name1);
+                        setPageComplete(false);
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // Everything is fine
+        setErrorMessage(null);
+        setPageComplete(true);
+    }
 
     /**
-     * Creates the design of this page along with the appropriate listeners
+     * Creates the design of this page along with the appropriate listeners.
+     *
+     * @param parent
      */
     public void createControl(Composite parent) {
 
@@ -410,8 +495,7 @@ public class ImportWizardPageColumns extends WizardPage {
 
         /* TableViewer for the columns with a checkbox in each row */
         checkboxTableViewer = CheckboxTableViewer.newCheckList(container,
-                                                               SWT.BORDER |
-                                                                       SWT.FULL_SELECTION);
+                                                               SWT.BORDER | SWT.FULL_SELECTION);
         checkboxTableViewer.setContentProvider(new ArrayContentProvider());
         checkboxTableViewer.setCheckStateProvider(new ICheckStateProvider() {
 
@@ -439,17 +523,8 @@ public class ImportWizardPageColumns extends WizardPage {
              */
             @Override
             public void checkStateChanged(CheckStateChangedEvent event) {
-
-                setPageComplete(false);
                 ((ImportWizardModelColumn) event.getElement()).setEnabled(event.getChecked());
-                for (ImportWizardModelColumn column : wizardImport.getData()
-                                                                  .getWizardColumns()) {
-
-                    if (column.isEnabled()) {
-                        setPageComplete(true);
-                        return;
-                    }
-                }
+                check();
             }
         });
 
@@ -516,15 +591,6 @@ public class ImportWizardPageColumns extends WizardPage {
              */
             @Override
             public String getText(Object element) {
-
-                if (!uniqueColumnNames()) {
-                    setErrorMessage("Column names need to be unique");
-                    setPageComplete(false);
-                } else {
-                    setErrorMessage(null);
-                    setPageComplete(true);
-                }
-
                 ImportWizardModelColumn column = (ImportWizardModelColumn) element;
                 return column.getColumn().getAliasName();
             }
@@ -670,7 +736,9 @@ public class ImportWizardPageColumns extends WizardPage {
     }
 
     /**
-     * Adds input to table viewer once page gets visible
+     * Adds input to table viewer once page gets visible.
+     *
+     * @param visible
      */
     @Override
     public void setVisible(boolean visible) {
@@ -679,32 +747,7 @@ public class ImportWizardPageColumns extends WizardPage {
         if (visible) {
             checkboxTableViewer.setInput(wizardImport.getData()
                                                      .getWizardColumns());
-            setPageComplete((wizardImport.getData().getWizardColumns().size() > 0));
+            check();
         }
-    }
-
-    /**
-     * Checks whether column names are unique
-     * 
-     * @return True if column names are unique, false otherwise
-     */
-    protected boolean uniqueColumnNames() {
-
-        for (ImportWizardModelColumn c1 : wizardImport.getData()
-                                                      .getWizardColumns()) {
-
-            for (ImportWizardModelColumn c2 : wizardImport.getData()
-                                                          .getWizardColumns()) {
-
-                if (c1 != c2 &&
-                    c1.getColumn()
-                      .getAliasName()
-                      .equals(c2.getColumn().getAliasName())) {
-
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 }

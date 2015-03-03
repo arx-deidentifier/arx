@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view;
@@ -24,25 +23,45 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * This class provides some utility methods for working with SWT
- * @author Fabian Prasser
+ * This class provides some utility methods for working with SWT.
  *
+ * @author Fabian Prasser
  */
 public class SWTUtil {
+    
+    /** Static settings. */
+    public static final int SLIDER_MAX = 1000;
 
     /**
-     * Centers the given shell
+     * Centers the shell on the given monitor.
+     *
+     * @param shell
+     * @param monitor
+     */
+    public static void center(Shell shell, Monitor monitor) {
+        Rectangle shellRect = shell.getBounds();
+        Rectangle displayRect = monitor.getBounds();
+        int x = (displayRect.width - shellRect.width) / 2;
+        int y = (displayRect.height - shellRect.height) / 2;
+        shell.setLocation(displayRect.x + x, displayRect.y + y);
+    }
+    
+    /**
+     * Centers the given shell.
+     *
      * @param shell
      * @param parent
      */
@@ -56,7 +75,19 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Registers an image for a tool item. Generates a version of the image
+     * that renders well on windows toolbars, when disabled.
+     * 
+     * @param item
+     * @param image
+     */
+    public static void createDisabledImage(ToolItem item) {
+        item.setDisabledImage(new Image(item.getDisplay(), item.getImage(), SWT.IMAGE_GRAY));
+    }
+
+    /**
+     * Creates grid data.
+     *
      * @return
      */
     public static GridData createFillGridData() {
@@ -71,7 +102,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @return
      */
     public static GridData createFillHorizontallyGridData() {
@@ -86,7 +118,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @return
      */
     public static GridData createFillVerticallyGridData() {
@@ -101,7 +134,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @return
      */
     public static GridData createGridData() {
@@ -114,7 +148,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates a grid layout
+     * Creates a grid layout.
+     *
      * @param columns
      * @return
      */
@@ -131,7 +166,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates a grid layout
+     * Creates a grid layout.
+     *
      * @param columns
      * @param compact
      * @return
@@ -144,7 +180,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates a help button in the given folder
+     * Creates a help button in the given folder.
+     *
      * @param controller
      * @param tabFolder
      * @param id
@@ -167,7 +204,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @return
      */
     public static GridData createNoFillGridData() {
@@ -180,7 +218,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @param i
      * @return
      */
@@ -193,7 +232,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @param i
      * @return
      */
@@ -205,17 +245,19 @@ public class SWTUtil {
         return d;
     }
 
+
     /**
-     * Disables the composite and its children
+     * Disables the composite and its children.
+     *
      * @param elem
      */
     public static void disable(final Composite elem) {
         setEnabled(elem, false);
     }
 
-
     /**
-     * Disables the control
+     * Disables the control.
+     *
      * @param elem
      */
     public static void disable(final Control elem) {
@@ -223,15 +265,29 @@ public class SWTUtil {
     }
 
     /**
-     * Enables the control
-     * @param elem
+     * Converts the double value to a slider selection.
+     *
+     * @param min
+     * @param max
+     * @param value
+     * @return
      */
-    public static void enable(final Control elem) {
-        elem.setEnabled(true);
+    public static int doubleToSlider(final double min,
+                                     final double max,
+                                     final double value) {
+        int val = (int)Math.round((value - min) / (max - min) * SLIDER_MAX);
+        if (val < 0) {
+            val = 0;
+        }
+        if (val > SLIDER_MAX) {
+            val = SLIDER_MAX;
+        }
+        return val;
     }
 
     /**
-     * Enables the composite and its children
+     * Enables the composite and its children.
+     *
      * @param elem
      */
     public static void enable(final Composite elem) {
@@ -239,7 +295,62 @@ public class SWTUtil {
     }
 
     /**
-     * En-/disables the composite and its children
+     * Enables the control.
+     *
+     * @param elem
+     */
+    public static void enable(final Control elem) {
+        elem.setEnabled(true);
+    }
+
+    /**
+     * Converts the integer value to a slider selection.
+     *
+     * @param min
+     * @param max
+     * @param value
+     * @return
+     */
+    public static int intToSlider(final int min, final int max, final int value) {
+        return doubleToSlider(min, max, value);
+    }
+
+    /**
+     * Converts the slider value to a double.
+     *
+     * @param min
+     * @param max
+     * @param value
+     * @return
+     */
+    public static double sliderToDouble(final double min,
+                                        final double max,
+                                        final int value) {
+        double val = ((double) value / (double) SLIDER_MAX) * (max - min) + min;
+        if (val < min) {
+            val = min;
+        }
+        if (val > max) {
+            val = max;
+        }
+        return val;
+    }
+
+    /**
+     * Converts the slider value to an integer.
+     *
+     * @param min
+     * @param max
+     * @param value
+     * @return
+     */
+    public static int sliderToInt(final int min, final int max, final int value) {
+        return (int)Math.round(sliderToDouble(min, max, value));
+    }
+
+    /**
+     * En-/disables the composite and its children.
+     *
      * @param elem
      * @param val
      */
@@ -253,4 +364,5 @@ public class SWTUtil {
             }
         }
     }
+
 }

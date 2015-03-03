@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.framework.check.distribution;
@@ -31,8 +30,8 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
 public class IntArrayDictionary {
 
     /**
-     * Calculates the MURMUR v3 hashcode
-     * 
+     * Calculates the MURMUR v3 hashcode.
+     *
      * @param key
      * @return
      */
@@ -67,7 +66,7 @@ public class IntArrayDictionary {
     /** Current number of elements. */
     private int                                      elementCount;
 
-    /** The list */
+    /** The list. */
     private final ArrayList<IntArrayDictionaryEntry> list;
 
     /** Load factor. */
@@ -80,10 +79,9 @@ public class IntArrayDictionary {
     private int                                      threshold;
 
     /**
-     * Constructs a new dictionary
-     * 
-     * @param capacity
-     *            the capacity
+     * Constructs a new dictionary.
+     *
+     * @param capacity the capacity
      */
     public IntArrayDictionary(int capacity) {
         list = new ArrayList<IntArrayDictionaryEntry>();
@@ -111,9 +109,9 @@ public class IntArrayDictionary {
     }
 
     /**
-     * Removes a element from the dictionary
-     * 
-     * @param element
+     * Removes a element from the dictionary.
+     *
+     * @param index
      */
     public void decrementRefCount(final int index) {
 
@@ -146,8 +144,8 @@ public class IntArrayDictionary {
     }
 
     /**
-     * Returns the according entry
-     * 
+     * Returns the according entry.
+     *
      * @param index
      * @return
      */
@@ -158,9 +156,9 @@ public class IntArrayDictionary {
     /**
      * Probes the dictionary and either inserts a new entry index or returns the
      * corresponding entry index.
-     * 
-     * @param key
-     *            the key
+     *
+     * @param key the key
+     * @return
      */
     public int probe(final int[] key) {
 
@@ -182,8 +180,8 @@ public class IntArrayDictionary {
     }
 
     /**
-     * Returns the element count of the dictionary
-     * 
+     * Returns the element count of the dictionary.
+     *
      * @return the int
      */
     public int size() {
@@ -192,15 +190,10 @@ public class IntArrayDictionary {
 
     /**
      * Creates a new entry.
-     * 
-     * @param key
-     *            the key
-     * @param index
-     *            the index
-     * @param hash
-     *            the hash
-     * @param value
-     *            the value
+     *
+     * @param key the key
+     * @param index the index
+     * @param hash the hash
      * @return the hash groupify entry
      */
     private IntArrayDictionaryEntry createEntry(final int[] key,

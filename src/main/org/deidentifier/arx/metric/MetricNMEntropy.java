@@ -1,32 +1,31 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.metric;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
+
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class provides an efficient implementation of a non-monotonic and
@@ -43,72 +42,98 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricNMEntropy extends MetricEntropy {
 
-    /**
-     * 
-     */
+    /** SVUID. */
     private static final long serialVersionUID = 5789738609326541247L;
-
+    
+    /**
+     * Creates a new instance.
+     */
     protected MetricNMEntropy() {
         super(false, false);
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricEntropy#toString()
+     */
     @Override
-    @SuppressWarnings("unchecked")
-    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    public String toString() {
+        return "Non-Monotonic Non-Uniform Entropy";
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricEntropy#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
+    @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
         // Obtain "standard" value
-        final InformationLossDefault originalInfoLossDefault = super.evaluateInternal(node, g);
-        
-        // Ignore outliers if node is not anonymous
-        if (!node.isAnonymous()) return originalInfoLossDefault;
+        final InformationLossDefault originalInfoLossDefault = node.getLowerBound() != null ? (InformationLossDefault)node.getLowerBound() :
+                                                               super.getInformationLossInternal(node, g).getInformationLoss();
         
         // Compute loss induced by suppression
-        // TODO: Use lightweight alternative to Map<Integer, Integer>();
-        final double originalInfoLoss = originalInfoLossDefault.getValue();
+        double originalInfoLoss = originalInfoLossDefault.getValue();
         double suppressedTuples = 0;
         double additionalInfoLoss = 0;
-        int key;
-        Integer val;
-        final Map<Integer, Integer>[] original = new Map[node.getTransformation().length];
+        final IntIntOpenHashMap[] original = new IntIntOpenHashMap[node.getTransformation().length];
         for (int i = 0; i < original.length; i++) {
-            original[i] = new HashMap<Integer, Integer>();
+            original[i] = new IntIntOpenHashMap();
         }
 
         // Compute counts for suppressed values in each column 
-        // No change for d-presence needed; m.count contains the research subset count already
+        // m.count only counts tuples from the research subset
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
-            if (!m.isNotOutlier && m.count>0) {
+            if (!m.isNotOutlier && m.count > 0) {
                 suppressedTuples += m.count;
                 for (int i = 0; i < original.length; i++) {
-                    key = m.key[i];
-                    val = original[i].get(key);
-                    if (val == null) {
-                        original[i].put(key, m.count);
-                    } else {
-                        original[i].put(key, m.count + val);
-                    }
+                    original[i].putOrAdd(m.key[i], m.count, m.count);
                 }
             }
             m = m.nextOrdered;
         }
 
         // Evaluate entropy for suppressed tuples
-        // TODO: Skipping the whole computation in this case by accessing HashGroupify.currentOutliers possible?
         if (suppressedTuples != 0){
 	        for (int i = 0; i < original.length; i++) {
-	            for (final double count : original[i].values()) {
-	                additionalInfoLoss += count * MetricEntropy.log2(count / suppressedTuples);
+	            IntIntOpenHashMap map = original[i];
+	            for (int j = 0; j < map.allocated.length; j++) {
+	                if (map.allocated[j]) {
+	                    double count = map.values[j];
+	                    additionalInfoLoss += count * MetricEntropy.log2(count / suppressedTuples);
+	                }
 	            }
 	        }
         }
         
         // Return sum of both values
-        return new InformationLossDefault(originalInfoLoss - additionalInfoLoss);
+        return new InformationLossDefaultWithBound(round(originalInfoLoss - additionalInfoLoss), originalInfoLossDefault.getValue());
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricEntropy#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
-    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
-        super.initializeInternal(input, ahierarchies, config);
+    protected InformationLossDefault getLowerBoundInternal(Node node) {
+        return super.getInformationLossInternal(node, null).getInformationLoss();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricEntropy#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node,
+                                                           IHashGroupify groupify) {
+        return getLowerBoundInternal(node);
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricEntropy#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
+     */
+    @Override
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] ahierarchies, 
+                                      final ARXConfiguration config) {
+        super.initializeInternal(definition, input, ahierarchies, config);
     }
 }

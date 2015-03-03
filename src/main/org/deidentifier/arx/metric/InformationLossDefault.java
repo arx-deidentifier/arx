@@ -1,102 +1,155 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.metric;
 
 /**
- * This class implements a default information loss which represents one single
- * metric.
+ * This class implements an information loss which can be represented as
+ * a single decimal number.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-class InformationLossDefault extends InformationLoss {
+class InformationLossDefault extends InformationLoss<Double> {
 
-    /** Max value */
-    public static final InformationLoss MAX              = new InformationLossDefault(Double.MAX_VALUE);
-
-    /** Min value */
-    public static final InformationLoss MIN              = new InformationLossDefault(0);
-
-    /** serialVersionUID */
+    /** serialVersionUID. */
     private static final long           serialVersionUID = -4341081298410703417L;
 
-    /** Current value */
+    /** Current value. */
     private double                      value;
-
-    InformationLossDefault(final double value) {
+    
+    /**
+     * Creates a new instance.
+     *
+     * @param value
+     */
+    InformationLossDefault(final double value){
         this.value = value;
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#clone()
+     */
     @Override
-    public int compareTo(final InformationLoss o) {
-        if (getValue() > o.getValue()) {
-            return 1;
-        } else if (getValue() < o.getValue()) {
-            return -1;
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public double getValue() {
-        return value;
-    }
-
-    @Override
-    public void max(final InformationLoss other) {
-        if (other == null) { return; }
-        if (other.getValue() > getValue()) {
-            value = other.getValue();
-        }
-    }
-
-    @Override
-    public void min(final InformationLoss other) {
-        if (other == null) { return; }
-        if (other.getValue() < getValue()) {
-            value = other.getValue();
-        }
-    }
-
-    @Override
-    protected InformationLoss clone() {
+    public InformationLoss<Double> clone() {
         return new InformationLossDefault(value);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#compareTo(org.deidentifier.arx.metric.InformationLoss)
+     */
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(value);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
+    public int compareTo(InformationLoss<?> other) {
+        InformationLossDefault o = convert(other);
+        if (other == null) return +1;
+        else return Double.valueOf(value).compareTo(o.getValue());
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         InformationLossDefault other = (InformationLossDefault) obj;
         if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value)) return false;
         return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#getValue()
+     */
+    @Override
+    public Double getValue() {
+        return value;
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return Double.valueOf(value).hashCode();
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#max(org.deidentifier.arx.metric.InformationLoss)
+     */
+    @Override
+    public void max(final InformationLoss<?> other) {
+        InformationLossDefault o = convert(other);
+        if (other == null) { return; }
+        if (o.getValue() > getValue()) {
+            value = o.getValue();
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#min(org.deidentifier.arx.metric.InformationLoss)
+     */
+    @Override
+    public void min(final InformationLoss<?> other) {
+        InformationLossDefault o = convert(other);
+        if (other == null) { return; }
+        if (o.getValue() < getValue()) {
+            value = o.getValue();
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#relativeTo(org.deidentifier.arx.metric.InformationLoss, org.deidentifier.arx.metric.InformationLoss)
+     */
+    @Override
+    public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
+        if (min == null) {
+            throw new IllegalArgumentException("Minimum is null");
+        } else if (max == null) {
+            throw new IllegalArgumentException("Maximum is null");
+        }
+        InformationLossDefault _min = convert(min);
+        InformationLossDefault _max = convert(max);
+        if (_max.value - _min.value == 0d) return 0d;
+        else return (this.value - _min.value) / (_max.value - _min.value);
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#toString()
+     */
+    @Override
+    public String toString() {
+        return Double.valueOf(this.value).toString();
+    }
+
+    /**
+     * Converter method.
+     *
+     * @param other
+     * @return
+     */
+    private InformationLossDefault convert(InformationLoss<?> other){
+        if (other == null) return null;
+        if (!(other instanceof InformationLossDefault)) {
+            throw new IllegalStateException("Information loss must be of the same type. This: " +
+                                            this.getClass().getSimpleName() +
+                                            ". Other: " +
+                                            other.getClass().getSimpleName());
+        } else {
+            return (InformationLossDefault)other;
+        }
     }
 }

@@ -1,121 +1,209 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.model;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 
+/**
+ * This class implements a filter for a generalization lattice.
+ *
+ * @author Fabian Prasser
+ */
 public class ModelNodeFilter implements Serializable {
 
+    /** SVUID. */
     private static final long    serialVersionUID   = 5451641489562102719L;
 
+    /** The anonymity properties allowed. */
     private final Set<Anonymity> anonymity          = new HashSet<Anonymity>();
+    
+    /** The generalization levels allowed. */
     private Set<Integer>[]       generalizations    = null;
-    private double               maxInformationLoss = Double.MAX_VALUE;
-    private int[]                maxLevels          = null;
+    
+    /** The initial number of nodes. */
     private int                  maxNumNodesInitial = 0;
-    private double               minInformationLoss = 0;
+    
+    /** Bound for min information loss. */
+    private double               minInformationLoss = 0d;
+    
+    /** Bound for max information loss. */
+    private double               maxInformationLoss = 1d;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param maxLevels
+     * @param maxNumNodesInitial
+     */
     @SuppressWarnings("unchecked")
     public ModelNodeFilter(final int[] maxLevels, final int maxNumNodesInitial) {
         this.maxNumNodesInitial = maxNumNodesInitial;
-        generalizations = new Set[maxLevels.length];
+        this.generalizations = new Set[maxLevels.length];
         for (int i = 0; i < generalizations.length; i++) {
             generalizations[i] = new HashSet<Integer>();
         }
-        this.maxLevels = maxLevels;
     }
+    
+    /**
+     * Creates a new instance used for cloning.
+     * 
+     * @param anonymity
+     * @param generalizations
+     * @param maxNumNodesInitial
+     * @param minInformationLoss
+     * @param maxInformationLoss
+     */
+    @SuppressWarnings("unchecked")
+    private ModelNodeFilter(Set<Anonymity> anonymity, Set<Integer>[] generalizations, int maxNumNodesInitial, double minInformationLoss, double maxInformationLoss) {
+        for (Anonymity element : anonymity) {
+            this.anonymity.add(element);
+        }
 
-    public void allowAll() {
-    	// TODO: Introduce uncertain values in GUI
-        anonymity.add(Anonymity.ANONYMOUS);
-        anonymity.add(Anonymity.NOT_ANONYMOUS);
-        anonymity.add(Anonymity.PROBABLY_ANONYMOUS);
-        anonymity.add(Anonymity.PROBABLY_NOT_ANONYMOUS);
-        minInformationLoss = Double.NEGATIVE_INFINITY;
-        maxInformationLoss = Double.MAX_VALUE;
-        for (int i = 0; i < maxLevels.length; i++) {
-            for (int j = 0; j < maxLevels[i]; j++) {
-                generalizations[i].add(j);
+        this.generalizations = new Set[generalizations.length];
+        for (int i = 0; i < generalizations.length; i++) {
+            Set<Integer> current = generalizations[i];
+            this.generalizations[i] = new HashSet<Integer>();
+            for (Integer integer : current) {
+                this.generalizations[i].add(integer);
             }
         }
+
+        this.maxNumNodesInitial = maxNumNodesInitial;
+        this.minInformationLoss = minInformationLoss;
+        this.maxInformationLoss = maxInformationLoss;
+
     }
 
+    /**
+     * Clones the ModelNodeFilter instance.
+     */
+    public ModelNodeFilter clone() {
+        return new ModelNodeFilter(anonymity, generalizations, maxNumNodesInitial, minInformationLoss, maxInformationLoss);
+    }
+
+
+    /**
+     * Allows transformations with any information loss to pass the filter.
+     */
     public void allowAllInformationLoss() {
-        minInformationLoss = 0;
-        maxInformationLoss = Double.MAX_VALUE;
+        minInformationLoss = 0d;
+        maxInformationLoss = 1d;
     }
 
+    /**
+     * Allows anonymous transformations to pass the filter.
+     */
     public void allowAnonymous() {
         anonymity.add(Anonymity.ANONYMOUS);
     }
 
+    /**
+     * Allows transformations with certain generalization level to pass the filter.
+     *
+     * @param dimension
+     * @param level
+     */
     public void allowGeneralization(final int dimension, final int level) {
         generalizations[dimension].add(level);
     }
 
+    /**
+     * Allows transformations with certain information loss to pass the filter.
+     *
+     * @param min
+     * @param max
+     */
     public void allowInformationLoss(final double min, final double max) {
+        if (min<0d || min>1d || max <0d || max>1d) {
+            throw new IllegalArgumentException("Threshold must be in range [0,1]");
+        }
         minInformationLoss = min;
         maxInformationLoss = max;
     }
 
+    /**
+     * Allows non-anonymous transformations to pass the filter.
+     */
     public void allowNonAnonymous() {
         anonymity.add(Anonymity.NOT_ANONYMOUS);
     }
 
+    /**
+     * Allows unknown transformations to pass the filter.
+     */
     public void allowUnknown() {
-    	// TODO: Introduce uncertain values in GUI
         anonymity.add(Anonymity.PROBABLY_NOT_ANONYMOUS);
         anonymity.add(Anonymity.PROBABLY_ANONYMOUS);
+        anonymity.add(Anonymity.UNKNOWN);
     }
 
+    /**
+     * Allows no transformaions to pass the filter.
+     */
     public void disallowAll() {
         anonymity.clear();
-        minInformationLoss = Double.MAX_VALUE;
-        maxInformationLoss = 0;
-        for (int i = 0; i < maxLevels.length; i++) {
+        minInformationLoss = 0d;
+        maxInformationLoss = 1d;
+        for (int i = 0; i < generalizations.length; i++) {
             generalizations[i].clear();
         }
     }
 
+    /**
+     * Filters out anonymous transformations.
+     */
     public void disallowAnonymous() {
         anonymity.remove(Anonymity.ANONYMOUS);
     }
 
+    /**
+     * Filters out transformations with certain generalization level.
+     *
+     * @param dimension
+     * @param level
+     */
     public void disallowGeneralization(final int dimension, final int level) {
         generalizations[dimension].remove(level);
     }
 
+    /**
+     * Filters out non-anonymous transformations.
+     */
     public void disallowNonAnonymous() {
         anonymity.remove(Anonymity.NOT_ANONYMOUS);
     }
 
+    /**
+     * Filters out unknown transformations.
+     */
     public void disallowUnknown() {
-    	// TODO: Introduce uncertain values in GUI
         anonymity.remove(Anonymity.PROBABLY_ANONYMOUS);
         anonymity.remove(Anonymity.PROBABLY_NOT_ANONYMOUS);
+        anonymity.remove(Anonymity.UNKNOWN);
     }
 
     /**
@@ -126,6 +214,9 @@ public class ModelNodeFilter implements Serializable {
     }
 
     /**
+     * 
+     *
+     * @param dimension
      * @return the generalizations
      */
     public Set<Integer> getAllowedGeneralizations(final int dimension) {
@@ -147,8 +238,8 @@ public class ModelNodeFilter implements Serializable {
     }
 
     /**
-     * Creates a node filter for the given result
-     * 
+     * Creates a node filter for the given result.
+     *
      * @param result
      */
     public void initialize(final ARXResult result) {
@@ -157,14 +248,10 @@ public class ModelNodeFilter implements Serializable {
 
             // Allow specializations and generalizations of optimum
             allowAnonymous();
-            final double max = result.getLattice()
-                                     .getTop()
-                                     .getMaximumInformationLoss()
-                                     .getValue();
-            final double min = result.getLattice()
-                                     .getBottom()
-                                     .getMinimumInformationLoss()
-                                     .getValue();
+            final double min = 0d;
+            final double max = 1d;
+            
+            
             allowInformationLoss(min, max);
             final int[] optimum = result.getGlobalOptimum().getTransformation();
             for (int i = 0; i < optimum.length; i++) {
@@ -177,7 +264,7 @@ public class ModelNodeFilter implements Serializable {
             visible.add(result.getGlobalOptimum());
             for (final ARXNode[] level : result.getLattice().getLevels()) {
                 for (final ARXNode node : level) {
-                    if (node.isAnonymous() == Anonymity.ANONYMOUS) {
+                    if (node.getAnonymity() == Anonymity.ANONYMOUS) {
                         if (!node.equals(result.getGlobalOptimum())) {
                             hidden.add(node);
                         }
@@ -199,7 +286,7 @@ public class ModelNodeFilter implements Serializable {
                     final int gen = optimum[i] - j;
                     if (gen >= 0) {
                         allowGeneralization(i, gen);
-                        final int current = count(visible, hidden);
+                        final int current = count(result.getLattice(), visible, hidden);
                         if (current > maxNumNodesInitial) {
                             disallowGeneralization(i, gen);
                             return;
@@ -214,7 +301,7 @@ public class ModelNodeFilter implements Serializable {
                     final int gen = optimum[i] + j;
                     if (gen <= result.getLattice().getTop().getTransformation()[i]) {
                         allowGeneralization(i, gen);
-                        final int current = count(visible, hidden);
+                        final int current = count(result.getLattice(), visible, hidden);
                         if (current > maxNumNodesInitial) {
                             disallowGeneralization(i, gen);
                             return;
@@ -224,19 +311,13 @@ public class ModelNodeFilter implements Serializable {
             }
 
             // Clean up
-            clean(visible, optimum);
+            clean(result.getLattice(), visible, optimum);
         } else {
 
             // Allow generalizations of bottom
             allowNonAnonymous();
-            final double max = result.getLattice()
-                                     .getTop()
-                                     .getMaximumInformationLoss()
-                                     .getValue();
-            final double min = result.getLattice()
-                                     .getBottom()
-                                     .getMinimumInformationLoss()
-                                     .getValue();
+            final double max = 1d;
+            final double min = 0d;
             allowInformationLoss(min, max);
             final int[] base = result.getLattice()
                                      .getBottom()
@@ -251,7 +332,7 @@ public class ModelNodeFilter implements Serializable {
             visible.add(result.getLattice().getBottom());
             for (final ARXNode[] level : result.getLattice().getLevels()) {
                 for (final ARXNode node : level) {
-                    if (node.isAnonymous() == Anonymity.NOT_ANONYMOUS) {
+                    if (node.getAnonymity() == Anonymity.NOT_ANONYMOUS) {
                         if (!node.equals(result.getLattice().getBottom())) {
                             hidden.add(node);
                         }
@@ -273,7 +354,7 @@ public class ModelNodeFilter implements Serializable {
                     final int gen = base[i] + j;
                     if (gen <= result.getLattice().getTop().getTransformation()[i]) {
                         allowGeneralization(i, gen);
-                        final int current = count(visible, hidden);
+                        final int current = count(result.getLattice(), visible, hidden);
                         if (current > maxNumNodesInitial) {
                             disallowGeneralization(i, gen);
                             return;
@@ -283,16 +364,29 @@ public class ModelNodeFilter implements Serializable {
             }
 
             // Clean up
-            clean(visible, base);
+            clean(result.getLattice(), visible, base);
         }
     }
 
-    public boolean isAllowed(final ARXNode node) {
-        if (node.getMaximumInformationLoss().getValue() < minInformationLoss) {
+    /**
+     * Returns whether the given node is allowed to pass this filter.
+     *
+     * @param lattice
+     * @param node
+     * @return
+     */
+    public boolean isAllowed(final ARXLattice lattice, final ARXNode node) {
+        
+        double max = node.getMaximumInformationLoss().relativeTo(lattice.getMinimumInformationLoss(), 
+                                                                 lattice.getMaximumInformationLoss());
+        double min = node.getMinimumInformationLoss().relativeTo(lattice.getMinimumInformationLoss(), 
+                                                                 lattice.getMaximumInformationLoss());
+        
+        if (max < minInformationLoss) {
             return false;
-        } else if (node.getMinimumInformationLoss().getValue() > maxInformationLoss) {
+        } else if (min > maxInformationLoss) {
             return false;
-        } else if (!anonymity.contains(node.isAnonymous())) { return false; }
+        } else if (!anonymity.contains(node.getAnonymity())) { return false; }
         final int[] transformation = node.getTransformation();
         for (int i = 0; i < transformation.length; i++) {
             if (!generalizations[i].contains(transformation[i])) { return false; }
@@ -300,13 +394,18 @@ public class ModelNodeFilter implements Serializable {
         return true;
     }
 
+    /**
+     * Returns setting.
+     *
+     * @return
+     */
     public boolean isAllowedAnonymous() {
         return anonymity.contains(Anonymity.ANONYMOUS);
     }
 
     /**
-     * Returns whether the given generalization is allowed
-     * 
+     * Returns whether the given generalization is allowed.
+     *
      * @param dimension
      * @param level
      * @return
@@ -316,28 +415,40 @@ public class ModelNodeFilter implements Serializable {
         return generalizations[dimension].contains(level);
     }
 
+    /**
+     * Returns setting.
+     *
+     * @return
+     */
     public boolean isAllowedNonAnonymous() {
         return anonymity.contains(Anonymity.NOT_ANONYMOUS);
     }
 
+    /**
+     * Returns setting.
+     *
+     * @return
+     */
     public boolean isAllowedUnknown() {
         return anonymity.contains(Anonymity.PROBABLY_ANONYMOUS) ||
-        	   anonymity.contains(Anonymity.PROBABLY_NOT_ANONYMOUS); 
+        	   anonymity.contains(Anonymity.PROBABLY_NOT_ANONYMOUS) ||
+               anonymity.contains(Anonymity.UNKNOWN);
     }
 
     /**
-     * Cleans up the settings
-     * 
+     * Cleans up the settings.
+     *
      * @param lattice
-     * @return
+     * @param visible
+     * @param optimum
      */
-    private void clean(final Set<ARXNode> visible, final int[] optimum) {
+    private void clean(final ARXLattice lattice, final Set<ARXNode> visible, final int[] optimum) {
 
         // Remove hidden from visible
         final Iterator<ARXNode> i = visible.iterator();
         while (i.hasNext()) {
             final ARXNode node = i.next();
-            if (!isAllowed(node)) {
+            if (!isAllowed(lattice, node)) {
                 i.remove();
             }
         }
@@ -367,21 +478,49 @@ public class ModelNodeFilter implements Serializable {
     }
 
     /**
-     * Counts the number of visible nodes
-     * 
+     * Counts the number of visible nodes.
+     *
      * @param lattice
+     * @param visible
+     * @param hidden
      * @return
      */
-    private int
-            count(final Set<ARXNode> visible, final Set<ARXNode> hidden) {
+    private int count(final ARXLattice lattice, final Set<ARXNode> visible, final Set<ARXNode> hidden) {
         final Iterator<ARXNode> i = hidden.iterator();
         while (i.hasNext()) {
             final ARXNode node = i.next();
-            if (isAllowed(node)) {
+            if (isAllowed(lattice, node)) {
                 i.remove();
                 visible.add(node);
             }
         }
         return visible.size();
+    }
+    
+
+    /**
+     * 
+     *
+     * @param stream
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        
+        stream.defaultReadObject();
+        
+        if (this.minInformationLoss < 0d) {
+            this.minInformationLoss = 0d;
+        }
+        if (this.minInformationLoss > 1d) {
+            this.minInformationLoss = 1d;
+        }
+        if (this.maxInformationLoss < 0d) {
+            this.maxInformationLoss = 0d;
+        }
+        if (this.maxInformationLoss > 1d) {
+            this.maxInformationLoss = 1d;
+        }
+        
     }
 }

@@ -1,3 +1,19 @@
+/*
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.util.ArrayList;
@@ -10,17 +26,24 @@ import java.util.List;
 public class DialogHelpConfig {
 
     /**
-     * An entry in the help dialog
+     * An entry in the help dialog.
+     *
      * @author Fabian Prasser
      */
     public static class Entry {
         
+        /**  TODO */
         public final String id;
+        
+        /**  TODO */
         public final String title;
+        
+        /**  TODO */
         public final String url;
         
         /**
-         * Creates a new entry
+         * Creates a new entry.
+         *
          * @param id
          * @param title
          * @param url
@@ -32,10 +55,11 @@ public class DialogHelpConfig {
         }
     }
     
+    /**  TODO */
     private List<Entry> entries = new ArrayList<Entry>();
     
     /**
-     * Creates a new config
+     * Creates a new config.
      */
     public DialogHelpConfig(){
         
@@ -55,17 +79,21 @@ public class DialogHelpConfig {
                               "2.1. Defining attribute properties",
                               "http://arx.deidentifier.org/?page_id=1074&content-only=1&css=1"));
         
+        entries.add(new Entry("id-51",
+                              "2.2. Creating generalization hierarchies",
+                              "http://arx.deidentifier.org/?page_id=3638&content-only=1&css=1"));
+        
         entries.add(new Entry("id-80",
-                              "2.2. Defining privacy criteria",
+                              "2.3. Defining privacy criteria",
                               "http://arx.deidentifier.org/?page_id=1059&content-only=1&css=1"));
         
         entries.add(new Entry("id-60",
                               // TODO: Change title
-                              "2.3. Defining general properties",
+                              "2.4. Defining general properties",
                               "http://arx.deidentifier.org/?page_id=1061&content-only=1&css=1"));
 
         entries.add(new Entry("id-40",
-                              "2.4. Defining a research subset",
+                              "2.5. Defining a research subset",
                               "http://arx.deidentifier.org/?page_id=1057&content-only=1&css=1"));
 
         entries.add(new Entry("id-4",
@@ -98,7 +126,8 @@ public class DialogHelpConfig {
     }
     
     /**
-     * Returns all entries
+     * Returns all entries.
+     *
      * @return
      */
     public List<Entry> getEntries(){
@@ -106,16 +135,23 @@ public class DialogHelpConfig {
     }
 
     /**
-     * Returns the URL for a given index
-     * @param index
+     * Returns the index for a given ID.
+     *
+     * @param id
      * @return
      */
-    public String getUrlForIndex(int index) {
-        return entries.get(index).url;
+    public int getIndexForId(String id) {
+        for (int i = 0; i < entries.size(); i++){
+            if (entries.get(i).id.equals(id)) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     /**
-     * Returns the index of a given URL
+     * Returns the index of a given URL.
+     *
      * @param url
      * @return
      */
@@ -129,16 +165,12 @@ public class DialogHelpConfig {
     }
 
     /**
-     * Returns the index for a given ID
-     * @param id
+     * Returns the URL for a given index.
+     *
+     * @param index
      * @return
      */
-    public int getIndexForId(String id) {
-        for (int i = 0; i < entries.size(); i++){
-            if (entries.get(i).id.equals(id)) {
-                return i;
-            }
-        }
-        return 0;
+    public String getUrlForIndex(int index) {
+        return entries.get(index).url;
     }
 }

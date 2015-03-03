@@ -1,64 +1,128 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
- * Copyright (C) 2014 Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.io;
 
-
 /**
- * Configuration describing a CSV file
- * 
+ * Configuration describing a CSV file.
+ *
  * @author Karol Babioch
  * @author Fabian Prasser
  */
-public class ImportConfigurationCSV extends ImportConfigurationFile implements
-        IImportConfigurationWithHeader {
+public class ImportConfigurationCSV extends ImportConfigurationFile implements IImportConfigurationWithHeader {
+
+    /** Character that separates the columns from each other. */
+    private final char   delimiter;
+
+    /** Character that delimits strings. */
+    private final char   quote;
+
+    /** Characters that delimits lines. */
+    private final char[] linebreak;
+
+    /** Character that escapes. */
+    private final char   escape;
 
     /**
-     * Character that separates the columns from each other
-     */
-    private char    separator;
-
-    /**
-     * Indicates whether first row contains header (names of columns)
+     * Indicates whether first row contains header (names of columns).
      * 
      * @see {@link IImportConfigurationWithHeader}
      */
-    private boolean containsHeader;
+    private boolean      containsHeader;
 
     /**
-     * Creates a new instance of this object
-     * 
-     * @param fileLocation
-     *            {@link #setFileLocation(String)}
-     * @param separator
-     *            {@link #separator}
-     * @param containsHeader
-     *            {@link #containsHeader}
+     * Creates a new instance of this object.
+     *
+     * @param fileLocation {@link #setFileLocation(String)}
+     * @param containsHeader {@link #containsHeader}
      */
     public ImportConfigurationCSV(String fileLocation,
-                                  char separator,
+                                  boolean containsHeader) {
+        this(fileLocation, CSVSyntax.DEFAULT_DELIMITER, CSVSyntax.DEFAULT_QUOTE, CSVSyntax.DEFAULT_ESCAPE, containsHeader);
+    }
+
+    /**
+     * Creates a new instance of this object.
+     *
+     * @param fileLocation {@link #setFileLocation(String)}
+     * @param delimiter {@link #separator}
+     * @param containsHeader {@link #containsHeader}
+     */
+    public ImportConfigurationCSV(String fileLocation,
+                                  char delimiter,
+                                  boolean containsHeader) {
+        this(fileLocation, delimiter, CSVSyntax.DEFAULT_QUOTE, CSVSyntax.DEFAULT_ESCAPE, containsHeader);
+    }
+
+    /**
+     * Creates a new instance of this object.
+     *
+     * @param fileLocation {@link #setFileLocation(String)}
+     * @param delimiter {@link #delimiter}
+     * @param quote {@link #quote}
+     * @param containsHeader {@link #containsHeader}
+     */
+    public ImportConfigurationCSV(String fileLocation,
+                                  char delimiter,
+                                  char quote,
+                                  boolean containsHeader) {
+        this(fileLocation, delimiter, quote, CSVSyntax.DEFAULT_ESCAPE, containsHeader);
+    }
+
+    /**
+     * Creates a new instance of this object.
+     *
+     * @param fileLocation {@link #setFileLocation(String)}
+     * @param delimiter {@link #delimiter}
+     * @param quote {@link #quote}
+     * @param escape {@link #escape}
+     * @param containsHeader {@link #containsHeader}
+     */
+    public ImportConfigurationCSV(String fileLocation,
+                                  char delimiter,
+                                  char quote,
+                                  char escape,
+                                  boolean containsHeader) {
+        this(fileLocation, delimiter, quote, escape, CSVSyntax.DEFAULT_LINEBREAK, containsHeader);
+    }
+
+    /**
+     * Creates a new instance of this object.
+     *
+     * @param fileLocation the file location
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @param containsHeader the contains header
+     */
+    public ImportConfigurationCSV(String fileLocation,
+                                  char delimiter,
+                                  char quote,
+                                  char escape,
+                                  char[] linebreak,
                                   boolean containsHeader) {
 
         setFileLocation(fileLocation);
-        this.separator = separator;
+        this.quote = quote;
+        this.delimiter = delimiter;
+        this.escape = escape;
         this.containsHeader = containsHeader;
-
+        this.linebreak = linebreak;
     }
 
     /**
@@ -76,34 +140,36 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
         if (!(column instanceof ImportColumnCSV)) {
             throw new IllegalArgumentException("Column needs to be of type CSVColumn");
         }
-        
-        if (!((ImportColumnCSV) column).isIndexSpecified() && 
-            !this.getContainsHeader()){
+
+        if (!((ImportColumnCSV) column).isIndexSpecified() &&
+            !getContainsHeader()) {
             final String ERROR = "Adressing columns by name is only possible if the source contains a header";
             throw new IllegalArgumentException(ERROR);
         }
 
         for (ImportColumn c : columns) {
             if (((ImportColumnCSV) column).isIndexSpecified() &&
-                ((ImportColumnCSV) column).getIndex() == ((ImportColumnCSV) c).getIndex()) {
+                (((ImportColumnCSV) column).getIndex() == ((ImportColumnCSV) c).getIndex())) {
                 throw new IllegalArgumentException("Column for this index already assigned");
             }
-            
+
             if (!((ImportColumnCSV) column).isIndexSpecified() &&
-                    ((ImportColumnCSV) column).getName().equals(((ImportColumnCSV) c).getName())) {
-                    throw new IllegalArgumentException("Column for this name already assigned");
+                ((ImportColumnCSV) column).getName().equals(((ImportColumnCSV) c).getName())) {
+                throw new IllegalArgumentException("Column for this name already assigned");
             }
 
-            if (column.getAliasName() != null && c.getAliasName() != null &&
+            if ((column.getAliasName() != null) && (c.getAliasName() != null) &&
                 c.getAliasName().equals(column.getAliasName())) {
                 throw new IllegalArgumentException("Column names need to be unique");
             }
         }
 
-        this.columns.add(column);
+        columns.add(column);
     }
 
     /**
+     * Gets the contains header.
+     *
      * @return {@link #containsHeader}
      */
     @Override
@@ -112,25 +178,45 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
     }
 
     /**
-     * @return {@link #separator}
+     * Gets the delimiter.
+     *
+     * @return {@link #delimiter}
      */
-    public char getSeparator() {
-        return separator;
+    public char getDelimiter() {
+        return delimiter;
     }
 
     /**
-     * @param containsHeader
-     *            {@link #containsHeader}
+     * Gets the escape.
+     *
+     * @return {@link #quote}
      */
-    @Override
-    public void setContainsHeader(boolean containsHeader) {
-        this.containsHeader = containsHeader;
+    public char getEscape() {
+        return escape;
     }
 
     /**
-     * Sets the indexes based on the header
-     * 
-     * @param row
+     * Gets the linebreak.
+     *
+     * @return {@link #linebreak}
+     */
+    public char[] getLinebreak() {
+        return linebreak;
+    }
+
+    /**
+     * Gets the quote.
+     *
+     * @return {@link #quote}
+     */
+    public char getQuote() {
+        return quote;
+    }
+
+    /**
+     * Sets the indexes based on the header.
+     *
+     * @param row the row
      */
     public void prepare(String[] row) {
 
@@ -149,5 +235,15 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
                 }
             }
         }
+    }
+
+    /**
+     * Sets the contains header.
+     *
+     * @param containsHeader {@link #containsHeader}
+     */
+    @Override
+    public void setContainsHeader(boolean containsHeader) {
+        this.containsHeader = containsHeader;
     }
 }

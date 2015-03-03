@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.criteria;
@@ -22,51 +21,74 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 
 /**
- * The t-closeness criterion with equal-distance EMD
+ * The t-closeness criterion with equal-distance EMD.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class EqualDistanceTCloseness extends TCloseness {
 
+    /**  TODO */
     private static final long serialVersionUID = -1383357036299011323L;
 
-    /** The original distribution*/
+    /** The original distribution. */
     private double[]          distribution;
     
     /**
      * Creates a new instance of the t-closeness criterion with equal earth-movers-distance as proposed in:
-     * Li N, Li T, Venkatasubramanian S. 
-     * t-Closeness: Privacy beyond k-anonymity and l-diversity. 
-     * 23rd International Conference on Data Engineering. 2007:106-115. 
+     * Li N, Li T, Venkatasubramanian S.
+     * t-Closeness: Privacy beyond k-anonymity and l-diversity.
+     * 23rd International Conference on Data Engineering. 2007:106-115.
+     *
+     * @param attribute
      * @param t
      */
     public EqualDistanceTCloseness(String attribute, double t) {
         super(attribute, t);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.ExplicitPrivacyCriterion#initialize(org.deidentifier.arx.framework.data.DataManager)
+     */
     @Override
     public void initialize(DataManager manager) {
+        super.initialize(manager);
         distribution = manager.getDistribution(attribute);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
+     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
         // Calculate EMD with equal distance
-        int[] buckets = entry.distribution.getBuckets();
-        int totalElements = 0;
-        for (int i = 0; i < buckets.length; i += 2) {
-            if (buckets[i] != -1) { // bucket not empty
-                totalElements += buckets[i + 1];
-            }
-        }
-
+        int[] buckets = entry.distributions[index].getBuckets();
+        double count = entry.count;
+        
+        /* 
+         * P = Set of ids of values in local frequency set
+         * Q = Set of ids of values in global dataset
+         * 
+         * According to Li et al., EMD with equal ground distance is:
+         * D[P, Q] = 1/2 SUM_{i \in Q} (|p_i - q_i|)
+         * 
+         * This can be reformulated as:
+         * D[P, Q] = 1/2 * (SUM_{i \in Q\P} q_i + SUM_{i \in P}(|p_i - q_i|))
+         * 
+         * Additionally,
+         * SUM_{i \in Q\P} q_i = 1 - SUM_{i \in P} q_i = 1 + SUM_{i \in P} - q_i
+         * 
+         * As a result, we implement the metric as follows
+         * 
+         * D[P, Q] = 1/2 * ( 1 + SUM_{i \in P} (|p_i - q_i| - q_i))
+         */
+        
         double val = 1.0d;
         for (int i = 0; i < buckets.length; i += 2) {
             if (buckets[i] != -1) { // bucket not empty
                 double frequency = distribution[buckets[i]];
-                // TODO: Can this be simplified (only one appearance of frequency)
-                val += Math.abs((frequency - ((double) buckets[i + 1] / (double) totalElements))) - frequency;
+                val += Math.abs((frequency - ((double) buckets[i + 1] / count))) - frequency;
             }
         }
         val /= 2;
@@ -75,6 +97,9 @@ public class EqualDistanceTCloseness extends TCloseness {
         return val <= t;
     }
 
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
+	 */
 	@Override
 	public String toString() {
 		return t+"-closeness with equal distance for attribute '"+attribute+"'";

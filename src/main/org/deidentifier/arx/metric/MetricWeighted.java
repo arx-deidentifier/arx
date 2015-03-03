@@ -1,123 +1,101 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.metric;
 
-import java.util.Map;
+import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
- * A metric that consists of several metrics that are evaluated and combined by
- * applying weights
- * 
+ * This class provides an abstract skeleton for the implementation of weighted metrics.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @param <T>
  */
-public class MetricWeighted extends Metric<InformationLossCombined> {
+public abstract class MetricWeighted<T extends InformationLoss<?>> extends Metric<T> {
+
+    /** SSUID. */
+    private static final long         serialVersionUID = 6508220940790010968L;
+    
+    /** The weights. */
+    protected double[]                weights;
 
     /**
-     * 
+     * Constructor.
+     *
+     * @param monotonic
+     * @param independent
      */
-    private static final long serialVersionUID = 8922811727606112026L;
+    public MetricWeighted(final boolean monotonic, final boolean independent) {
+        super(monotonic, independent);
+    }
 
-    /**
-     * Determines whether the metric is independent
-     * 
-     * @param weights
-     * @return
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
      */
-    private static boolean isIndependent(final Map<Metric<?>, Double> weights) {
-        boolean independent = true;
-        for (final Metric<?> key : weights.keySet()) {
-            independent &= key.isMonotonic();
-        }
-        return independent;
+    @Override
+    @SuppressWarnings("unchecked")
+    protected T getLowerBoundInternal(final Node node) {
+        return (T)node.getLowerBound();
     }
 
-    /**
-     * Determines whether the combination is montonic
-     * 
-     * @param weights
-     * @return
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
      */
-    private static boolean isMonotonic(final Map<Metric<?>, Double> weights) {
-        boolean monotonic = true;
-        for (final Metric<?> key : weights.keySet()) {
-            monotonic &= key.isMonotonic();
-        }
-        return monotonic;
+    @Override
+    @SuppressWarnings("unchecked")
+    protected T getLowerBoundInternal(final Node node, final IHashGroupify groupify) {
+        return (T)node.getLowerBound();
     }
 
-    /** The weights */
-    private final Map<Metric<?>, Double> weights;
-
-    /**
-     * Creates a new weighted metric
-     * 
-     * @param main
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
      */
-    protected MetricWeighted(final Map<Metric<?>, Double> weights) {
-        super(isMonotonic(weights), isIndependent(weights));
-        this.weights = weights;
-    }
-
     @Override
-    protected InformationLossCombined evaluateInternal(final Node node, final IHashGroupify groupify) {
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
 
-        double value = 0;
-        for (final Metric<?> metric : weights.keySet()) {
-            value += metric.evaluateInternal(node, groupify).getValue() * weights.get(metric);
+        // Initialize weights
+        weights = new double[hierarchies.length];
+        double total = 0d;
+        for (int i = 0; i < hierarchies.length; i++) {
+            String attribute = hierarchies[i].getName();
+            double weight = config.getAttributeWeight(attribute);
+            weights[i] = weight;
+            total += weight;
         }
-        final InformationLossCombined result = new InformationLossCombined(value);
-        for (final Metric<?> metric : weights.keySet()) {
-            result.setValue(metric, metric.evaluateInternal(node, groupify));
+        
+        // Normalize: default case
+        if (total == 0d) {
+            Arrays.fill(weights, 1d);
+        // Weighted case
+        } else {
+            for (int i=0; i<weights.length; i++){
+                weights[i] /= total;
+            }
         }
-        return result;
-    }
-
-    @Override
-    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
-        for (final Metric<?> metric : weights.keySet()) {
-            metric.initializeInternal(input, hierarchies, config);
-        }
-    }
-
-    @Override
-    protected InformationLoss maxInternal() {
-        final InformationLossCombined max = new InformationLossCombined(InformationLossDefault.MAX.getValue());
-        for (final Metric<?> metric : weights.keySet()) {
-            max.setValue(metric, metric.max());
-        }
-        return max;
-    }
-
-    @Override
-    protected InformationLoss minInternal() {
-
-        final InformationLossCombined min = new InformationLossCombined(InformationLossDefault.MIN.getValue());
-        for (final Metric<?> metric : weights.keySet()) {
-            min.setValue(metric, metric.min());
-        }
-        return min;
     }
 }

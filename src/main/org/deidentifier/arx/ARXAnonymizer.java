@@ -1,34 +1,27 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
-import org.deidentifier.arx.algorithm.AbstractFLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.criteria.KAnonymity;
@@ -41,7 +34,6 @@ import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.LatticeBuilder;
-import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -54,51 +46,14 @@ import org.deidentifier.arx.metric.Metric;
 public class ARXAnonymizer {
 
     /**
-     * TODO: This is a clone from ARXLattice
-     * @author Fabian Prasser
-     */
-    private static class IntArrayWrapper {
-
-        private final int[] array;
-        private final int   hashCode;
-
-        public IntArrayWrapper(final int[] array) {
-            this.array = array;
-            hashCode = Arrays.hashCode(array);
-        }
-
-        @Override
-        public final boolean equals(final Object obj) {
-            if (this == obj) { return true; }
-            if (obj == null) return false;
-            return Arrays.equals(array, ((IntArrayWrapper) obj).array);
-        }
-
-        @Override
-        public final int hashCode() {
-            return hashCode;
-        }
-
-        @Override
-        public final String toString() {
-            return Arrays.toString(array);
-        }
-
-    }
-
-    private static interface LatticeManipulator {
-        public void process(Lattice lattice, Node node);
-    }
-
-    /**
      * Temporary result of the ARX algorithm.
      * 
      * @author Fabian Prasser
- * @author Florian Kohlmayer
+     * @author Florian Kohlmayer
      */
     class Result {
 
-        /** The algorithm */
+        /** The algorithm. */
         final AbstractAlgorithm algorithm;
 
         /** The checker. */
@@ -107,45 +62,53 @@ public class ARXAnonymizer {
         /** The lattice. */
         final Lattice           lattice;
 
-        /** The data manager */
+        /** The data manager. */
         final DataManager       manager;
 
         /** The metric. */
         final Metric<?>         metric;
+        
+        /** The time. */
+        final long              time;  
 
         /**
          * Creates a new instance.
-         * 
-         * @param metric  the metric
+         *
+         * @param metric the metric
          * @param checker the checker
          * @param lattice the lattice
          * @param manager the manager
+         * @param algorithm
+         * @param time
          */
         Result(final Metric<?> metric,
                final INodeChecker checker,
                final Lattice lattice,
                final DataManager manager,
-               final AbstractAlgorithm algorithm) {
+               final AbstractAlgorithm algorithm,
+               final long time) {
             this.metric = metric;
             this.checker = checker;
             this.lattice = lattice;
             this.manager = manager;
             this.algorithm = algorithm;
+            this.time = time;
         }
 
         /**
-         * Creates a final result from this temporary result
-         * @param anonymizer
+         * Creates a final result from this temporary result.
+         *
+         * @param config
          * @param handle
-         * @param time
          * @return
          */
-		public ARXResult asResult(ARXConfiguration config, DataHandle handle, long time) {
+		public ARXResult asResult(ARXConfiguration config, DataHandle handle) {
 
 		    // Create lattice
 	        final ARXLattice flattice = new ARXLattice(lattice,
+	                                                   algorithm.getGlobalOptimum(),
 	                                                   manager.getDataQI().getHeader(),
-	                                                   config);
+	                                                   config.getInternalConfiguration());
 
 			// Create output handle
 	        ((DataHandleInput)handle).setLocked(true);
@@ -155,33 +118,31 @@ public class ARXAnonymizer {
                                  handle.getDefinition(),
                                  config,
                                  flattice,
-                                 System.currentTimeMillis() - time,
-                                 suppressionString,
-                                 removeOutliers);      
+                                 System.currentTimeMillis() - time);      
 		}
     }
 
     /** History size. */
-    private int           historySize           = 200;
+    private int         historySize          = 200;
 
     /** The listener, if any. */
-    private ARXListener   listener              = null;
-
-    /** Remove outliers? */
-    private boolean       removeOutliers        = true;
+    private ARXListener listener             = null;
 
     /** Snapshot size. */
-    private double        snapshotSizeDataset   = 0.2d;
+    private double      snapshotSizeDataset  = 0.2d;
 
-    /** Snapshot size snapshot */
-    private double        snapshotSizeSnapshot  = 0.8d;
+    /** Snapshot size snapshot. */
+    private double      snapshotSizeSnapshot = 0.8d;
 
-    /** The string to insert for outliers. */
-    private String        suppressionString     = "*";
+    /** The maximal number of QIs that can be processed. */
+    private int         maxQuasiIdentifiers  = Integer.MAX_VALUE;
+
+    /** The maximal size of the search space that can be processed. */
+    private int         maxTransformations   = 200000;
 
 
     /**
-     * Creates a new anonymizer with the default configuration
+     * Creates a new anonymizer with the default configuration.
      */
     public ARXAnonymizer() {
         // Empty by design
@@ -207,37 +168,8 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Creates a new anonymizer with the given configuration.
-     * 
-     * @param suppressionString The string inserted for suppressed values
-     */
-    public ARXAnonymizer(final String suppressionString) {
-        this.suppressionString = suppressionString;
-    }
-
-    /**
-     * Creates a new anonymizer with the given configuration.
-     * 
-     * @param suppressionString The string inserted for suppressed values
-     * @param historySize The maximum number of snapshots stored in the buffer [default=200]
-     * @param snapshotSizeDataset The maximum relative size of a snapshot compared to the dataset [default=0.2]
-     * @param snapshotSizeSnapshot The maximum relative size of a snapshot compared to its predecessor [default=0.8]
-     */
-    public ARXAnonymizer(final String suppressionString, final int historySize, final double snapshotSizeDataset, final double snapshotSizeSnapshot) {
-        this.suppressionString = suppressionString;
-        if (historySize<0) 
-            throw new RuntimeException("History size must be >=0");
-        this.historySize = historySize;
-        if (snapshotSizeDataset<=0 || snapshotSizeDataset>=1) 
-            throw new RuntimeException("SnapshotSizeDataset must be >0 and <1");
-        this.snapshotSizeDataset = snapshotSizeDataset;
-        if (snapshotSizeSnapshot<=0 || snapshotSizeSnapshot>=1) 
-            throw new RuntimeException("snapshotSizeSnapshot must be >0 and <1");
-        this.snapshotSizeSnapshot = snapshotSizeSnapshot;
-    }
-
-    /**
-     * Performs data anonymization
+     * Performs data anonymization.
+     *
      * @param data The data
      * @param config The privacy config
      * @return ARXResult
@@ -249,110 +181,19 @@ public class ARXAnonymizer {
             throw new RuntimeException("This data handle is locked. Please release it first");
         }
         
-        DataHandle handle = data.getHandle();
-
-        // TODO: Fix this
-        if (config.getMaxOutliers()>0d &&
-            handle.getDefinition().getSensitiveAttributes().size()>1){
-            throw new UnsupportedOperationException(
-                      "Combining tuple suppression with " +
-                      "multiple sensitive attributes is currently not supported!");
+        
+        if (data.getDefinition().getSensitiveAttributes().size() > 1 && config.isProtectSensitiveAssociations()) {
+            throw new UnsupportedOperationException("Currently not supported!");
         }
         
-        final long time = System.currentTimeMillis();
+        DataHandle handle = data.getHandle();
+        handle.getDefinition().materialize(handle);
         checkBeforeEncoding(handle, config);
         handle.getRegistry().reset();
         handle.getRegistry().createInputSubset(config);
 
-        if (handle.getDefinition().getSensitiveAttributes().size()>1) {
-        	
-        	// Determine with what the other sensitive attributes need to be replaced
-			final AttributeType substition;
-			if (config.isProtectSensitiveAssociations()) {
-				substition = AttributeType.QUASI_IDENTIFYING_ATTRIBUTE;
-			} else {
-				substition = AttributeType.INSENSITIVE_ATTRIBUTE;
-			}
-			
-			// Store original config & definition
-			DataDefinition definition = handle.getDefinition().clone();
-
-			// The temporary result
-			Result result = null;
-			
-			// Iterate for each sensitive attribute
-			List<String> sensitive = new ArrayList<String>(handle.getDefinition().getSensitiveAttributes());
-			DataDefinition currentDefinition = null;
-			DataDefinition previousDefinition = handle.getDefinition();
-			for (int i = 0; i < sensitive.size(); i++) {
-
-				// Extract current sensitive attribute
-				String attribute = sensitive.get(i);
-				ARXConfiguration currentConfig = config.clone();
-				previousDefinition = currentDefinition;
-				currentDefinition = handle.getDefinition().clone();
-				
-				// Unlock
-				currentDefinition.setLocked(false);
-
-				// Remove all other l-diversity and substitute
-				for (LDiversity c : currentConfig.getCriteria(LDiversity.class)) {
-					if (!c.getAttribute().equals(attribute)) {
-						currentConfig.removeCriterion(c);
-						currentDefinition.setAttributeType(c.getAttribute(), substition);
-					}
-				}
-
-				// Remove all other t-closeness and substitute
-				for (TCloseness c : currentConfig.getCriteria(TCloseness.class)) {
-					if (!c.getAttribute().equals(attribute)) {
-						currentConfig.removeCriterion(c);
-						currentDefinition.setAttributeType(c.getAttribute(), substition);
-					}
-				}
-				
-				// Lock
-				currentDefinition.setLocked(true);
-
-				// Adopt results from the previous iteration
-				Lattice lattice = null;
-				AbstractAlgorithm algorithm = null;
-				if (result != null){
-
-					// Reset the lattice
-					int numAnonymous = alterLattice(result.lattice, config, ((DataHandleInput) handle).header, previousDefinition, currentDefinition);
-                    lattice = result.lattice;
-					algorithm = result.algorithm;
-					
-					// Abort early
-					if (numAnonymous == 0){
-					    // TODO: This fires an invalid number of events
-					    break;
-					}
-				}
-				
-				// Next iteration
-				result = anonymizeInternal(handle, currentDefinition, currentConfig, lattice, sensitive.size(), algorithm, null);
-			}
-			
-			// If sensitive associations have been preserved 
-			// all data needs to be re-encoded according to the original definition
-			if (config.isProtectSensitiveAssociations()) {
-			    DataDefinition finalDefinition = createFinalDefinition(definition);
-			    ARXConfiguration finalConfig = createFinalConfig(config);
-			    LatticeManipulator finalManipulator = createFinalManipulator(result.lattice, config, ((DataHandleInput) handle).header, currentDefinition, definition);
-			    ((DataHandleInput)handle).setDefinition(finalDefinition);
-			    result = anonymizeInternal(handle, finalDefinition, finalConfig, null, 1, null, finalManipulator);
-			}
-			
-			// Return the result from the last iteration
-			return result.asResult(config, handle, time);
-			
-        } else {
-
-        	// Execute
-            return anonymizeInternal(handle, handle.getDefinition(), config).asResult(config, handle, time);
-        }
+        // Execute
+        return anonymizeInternal(handle, handle.getDefinition(), config).asResult(config, handle);
     }
     
     /**
@@ -384,23 +225,22 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Returns the string with which outliers are replaced.
-     * 
-     * @return the relativeMaxOutliers string
+     * Returns the maximal number of quasi-identifiers.
+     * @return
      */
-    public String getSuppressionString() {
-        return suppressionString;
+    public int getMaxQuasiIdentifiers() {
+        return maxQuasiIdentifiers;
     }
 
     /**
-     * Does the anonymizer remove outliers from the dataset?
-     * 
+     * Returns the maximal size of the search space.
+     *
      * @return
      */
-    public boolean isRemoveOutliers() {
-        return removeOutliers;
+    public int getMaxTransformations() {
+        return maxTransformations;
     }
-    
+
     /**
      * Sets the maximum number of snapshots allowed to store in the history.
      * 
@@ -408,7 +248,7 @@ public class ARXAnonymizer {
      *            The size
      */
     public void setHistorySize(final int historySize) {
-        if (historySize < 1) { throw new IllegalArgumentException("history size must be positive and not 0"); }
+        if (historySize < 0) { throw new IllegalArgumentException("Max. number of snapshots must be positive or 0"); }
         this.historySize = historySize;
     }
 
@@ -424,9 +264,8 @@ public class ARXAnonymizer {
 
     /**
      * Sets the maximum size of a snapshot relative to the dataset size.
-     * 
-     * @param snapshotSizeDataset
-     *            The size
+     *
+     * @param snapshotSize
      */
     public void setMaximumSnapshotSizeDataset(final double snapshotSize) {
         // Perform sanity checks
@@ -435,10 +274,9 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Sets the maximum size of a snapshot relative to the previous snapshot
-     * 
-     * @param snapshotSizeSnapshot
-     *            The size
+     * Sets the maximum size of a snapshot relative to the previous snapshot.
+     *
+     * @param snapshotSizeSnapshot The size
      */
     public void setMaximumSnapshotSizeSnapshot(final double snapshotSizeSnapshot) {
         // Perform sanity checks
@@ -447,80 +285,28 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Set whether the anonymizer should remove outliers
-     * 
-     * @param value
+     * Sets the maximal number of quasi-identifiers. Set to Integer.MAX_VALUE to disable the 
+     * restriction. By default, the restriction is disabled.
+     * @param maxQuasiIdentifiers
      */
-    public void setRemoveOutliers(final boolean value) {
-        removeOutliers = value;
+    public void setMaxQuasiIdentifiers(int maxQuasiIdentifiers) {
+        this.maxQuasiIdentifiers = maxQuasiIdentifiers;
     }
 
     /**
-     * Sets the string with which suppressed values are to be replaced.
-     * 
-     * @param suppressionString
-     *            The relativeMaxOutliers string
+     * Sets the maximal size of the search space. Set to Integer.MAX_VALUE to disable the 
+     * restriction. Default is 200,000.
+     * @param maxTransformations
      */
-    public void setSuppressionString(final String suppressionString) {
-        if (suppressionString == null) { throw new NullPointerException("suppressionString must not be null"); }
-        this.suppressionString = suppressionString;
+    public void setMaxTransformations(int maxTransformations) {
+        this.maxTransformations = maxTransformations;
     }
-
-    /**
-     * Adopts the lattice to the new run, i.e., it changes the order of quasi identifiers and
-     * marks all anonymous transformations as "not visited"
-     * @param lattice
-     * @return The number of anonymous nodes in the lattice
-     */
-    private int alterLattice(Lattice lattice, ARXConfiguration config, String[] header, DataDefinition previousDefinition, DataDefinition currentDefinition) {
-        
-        // If sensitive associations have been preserved
-        // change the position of the artificial quasi-identifiers
-        int from = 0;
-        int to = 0;
-        if (config.isProtectSensitiveAssociations()) {
-           from = getIndexOfArtificialQI(header, previousDefinition, currentDefinition);
-           to = getIndexOfArtificialQI(header, currentDefinition, previousDefinition);
-        }
-        
-        int count = 0;
-        lattice.clearTags();
-		for (Node[] level : lattice.getLevels()){
-			for (Node node : level){
-
-			    // Transform arrays of transformations
-			    if (config.isProtectSensitiveAssociations()) {
-			        shift(node.getTransformation(), from, to);
-			    }
-			    
-			    // Relabel
-				if (node.isAnonymous()){
-				    count++;
-					node.setNotTagged();
-					node.setNotChecked();
-					node.setAnonymous(false);
-					node.setKAnonymous(node.isKAnonymous());
-				} else {
-				    node.setTagged();
-                    node.setChecked();
-					lattice.triggerTagged();
-					lattice.decUntaggedCount(node.getLevel());
-				}
-			}
-		}
-
-        // Transform array of maximal generalizations
-        if (config.isProtectSensitiveAssociations()) {
-            shift(lattice.getMaximumGeneralizationLevels(), from, to);
-        }
-		return count;
-	}
 
     /**
      * Performs some sanity checks.
-     * 
-     * @param manager
-     *            the manager
+     *
+     * @param config
+     * @param manager the manager
      */
     private void checkAfterEncoding(final ARXConfiguration config, final DataManager manager) {
 
@@ -540,7 +326,7 @@ public class ARXAnonymizer {
         
         // Check whether all hierarchies are monotonic
         for (final GeneralizationHierarchy hierarchy : manager.getHierarchies()) {
-            if (!hierarchy.isMonotonic()) { throw new IllegalArgumentException("The hierarchy for the attribute '" + hierarchy.getName() + "' is not monotonic!"); }
+            hierarchy.checkMonotonicity(manager);
         }
 
         // check min and max sizes
@@ -571,7 +357,7 @@ public class ARXAnonymizer {
 
 
         // Lots of checks
-        if (handle == null) { throw new NullPointerException("Data cannot be null!"); }
+        if (handle == null) { throw new NullPointerException("Data must not be null!"); }
         if (config.containsCriterion(LDiversity.class) ||
             config.containsCriterion(TCloseness.class)){
             if (handle.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
@@ -611,6 +397,7 @@ public class ARXAnonymizer {
         if (!(handle instanceof DataHandleInput)) { throw new IllegalArgumentException("Invalid data handle provided!"); }
 
         // Check if all defines are correct
+        DataDefinition definition = handle.getDefinition();
         Set<String> attributes = new HashSet<String>();
         for (int i=0; i<handle.getNumColumns(); i++){
             attributes.add(handle.getAttributeName(i));
@@ -637,147 +424,29 @@ public class ARXAnonymizer {
         }
         
         // Perform sanity checks
-        Map<String, String[][]> hierarchies = handle.getDefinition().getHierarchies();
-        if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() >= 1d)) { throw new IllegalArgumentException("Suppression rate " + config.getMaxOutliers() + "must be in [0, 1["); }
-        if (hierarchies.size() > 15) { throw new IllegalArgumentException("The curse of dimensionality strikes. Too many quasi-identifiers: " + hierarchies.size()); }
-        if (hierarchies.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier"); }
-    }
-
-    /**
-     * Creates the final config in the iterative process
-     * @param config
-     * @return
-     */
-    private ARXConfiguration createFinalConfig(ARXConfiguration config) {
-        ARXConfiguration result = config.clone();
-        for (LDiversity l : result.getCriteria(LDiversity.class)){
-            result.removeCriterion(l);
+        Set<String> qis = definition.getQuasiIdentifyingAttributes();
+        if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() > 1d)) { throw new IllegalArgumentException("Suppression rate " + config.getMaxOutliers() + "must be in [0, 1]"); }
+        if (qis.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier"); }
+        if (qis.size() > maxQuasiIdentifiers) { 
+            throw new IllegalArgumentException("Too many quasi-identifiers (" + qis.size()+"). This restriction is configurable."); 
         }
-        for (TCloseness t : result.getCriteria(TCloseness.class)){
-            result.removeCriterion(t);
+        int transformations = 1;
+        for (String qi : qis) {
+            transformations *= definition.getMaximumGeneralization(qi) - definition.getMinimumGeneralization(qi) + 1;
         }
-        return result;
-    }
-
-    /**
-     * Creates the final data definition in the iterative process
-     * @param definition
-     * @return
-     */
-    private DataDefinition createFinalDefinition(DataDefinition definition) {
-        DataDefinition result = definition.clone();
-        result.setLocked(false);
-        for (String attr : definition.getSensitiveAttributes()) {
-            result.setAttributeType(attr, AttributeType.SENSITIVE_ATTRIBUTE);
+        if (transformations > maxTransformations) { 
+            throw new IllegalArgumentException("Too many transformations in the search space (" + transformations+ "). This restriction is configurable."); 
         }
-        result.setLocked(true);
-        return result;
-    }
-
-    /**
-     * Creates the manipulator for the final lattice in the iterative process
-     * @param lattice
-     * @param config
-     * @param header
-     * @param definition
-     * @return
-     */
-    private LatticeManipulator createFinalManipulator(Lattice lattice,
-                                       ARXConfiguration config,
-                                       String[] header,
-                                       DataDefinition previous,
-                                       DataDefinition definition) {
-
-        // Init
-        final Map<IntArrayWrapper, Node> map = new HashMap<IntArrayWrapper, Node>();
-        final Set<String> previousQI = previous.getQuasiIdentifyingAttributes();
-        final Set<String> currentQI = definition.getQuasiIdentifyingAttributes();
-        
-        // Traverse old lattice and build map
-        for (Node[] level : lattice.getLevels()) {
-            for (Node node : level) {
-                
-                int[] key = new int[currentQI.size()];
-                int previousIdx = -1;
-                int currentIdx = -1;
-                for (int i=0; i<header.length; i++){
-                    
-                    if (previousQI.contains(header[i])) {
-                        previousIdx++;
-                    }
-                    if (currentQI.contains(header[i])) {
-                        currentIdx++;
-                        key[currentIdx] = node.getTransformation()[previousIdx];
-                    }
-                }
-                
-                map.put(new IntArrayWrapper(key), node);
-            }
-        }
-        
-        // Return
-        return new LatticeManipulator(){
-
-            @Override
-            public void process(Lattice lattice, Node node) {
-                
-                // The node from which to take the properties
-                Node other = map.get(new IntArrayWrapper(node.getTransformation()));
-
-                // Set properties
-                if (other.isAnonymous()){
-                    node.setAnonymous(false);
-                    node.setNotTagged();
-                    node.setNotChecked();
-                } else {
-                    node.setAnonymous(false);
-                    node.setTagged();
-                    node.setChecked();
-                    lattice.triggerTagged();
-                    lattice.decUntaggedCount(node.getLevel());
-                }
-            }
-        };
-    }
-
-    /**
-     * Returns the index of the artificial QI as defined in the given definition, i.e., the QI that
-     * is not defined in the given other definition
-     * @param header
-     * @param definition
-     * @param other
-     * @return
-     */
-	private int getIndexOfArtificialQI(String[] header, DataDefinition current, DataDefinition other) {
-
-        int idx = 0;
-        for (int i=0; i<header.length; i++){
-            
-            boolean inOther = other.getAttributeType(header[i]).getType() == AttributeType.ATTR_TYPE_QI; 
-            boolean inCurrent  = current.getAttributeType(header[i]).getType() == AttributeType.ATTR_TYPE_QI;
-            
-            if (inCurrent && !inOther){
-                return idx;
-            } else if (inCurrent){
-                idx++;
-            }
-        }
-        
-        throw new RuntimeException("Internal error: could not find artificial QI");
     }
 
     /**
      * Prepares the data manager.
-     * 
-     * @param handle
-     *            the handle
-     * @param config
-     *            the config
-     * @param definition
-     * 			  the definition
+     *
+     * @param handle the handle
+     * @param definition the definition
+     * @param config the config
      * @return the data manager
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private DataManager prepareDataManager(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException {
 
@@ -790,67 +459,17 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Removes the element at index 'from' and shifts all other elements to the left.
-     * Then inserts the original value from index 'from' into the new position at index 'to'.
-     * An analogous procedure is performed if to < from.
-     * @param transformation
-     * @param from
-     * @param to
-     */
-    private void shift(int[] transformation, int from, int to) {
-        
-        int value = transformation[from];
-        if (from < to){
-            
-            /*
-             * Case 1: from=1 < to=2
-             * [6, 1, 3] -> [6, 3, 1]
-             */
-            for (int i=from; i<=to-1; i++){
-                transformation[i] = transformation[i+1];
-            }
-        } else if (from > to){
-            
-            /*
-             * Case 2: from=2 < to=1
-             * [6, 3, 1] -> [6, 1, 3]
-             */
-            for (int i=from; i>=to+1; i--){
-                transformation[i] = transformation[i-1];
-            }
-        }
-        transformation[to] = value;
-    }
-
-    /**
-     * Build a new lattice and run the algorithm
+     * Reset a previous lattice and run the algorithm .
+     *
      * @param handle
      * @param definition
      * @param config
-     * @return
-     * @throws IOException
-     */
-    protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException{
-    	return anonymizeInternal(handle, definition, config, null, 1, null, null);
-    }
-
-    /**
-     * Reset a previous lattice and run the algorithm 
-     * @param handle
-     * @param definition
-     * @param config
-     * @param lattice
-     * @param algorithm
      * @return
      * @throws IOException
      */
     protected Result anonymizeInternal(final DataHandle handle,
                                        final DataDefinition definition,
-                                       final ARXConfiguration config,
-                                       Lattice lattice,
-                                       int multiplier,
-                                       AbstractAlgorithm algorithm,
-                                       LatticeManipulator manipulator) throws IOException {
+                                       final ARXConfiguration config) throws IOException {
 
         // Encode
         final DataManager manager = prepareDataManager(handle, definition, config);
@@ -867,36 +486,22 @@ public class ARXAnonymizer {
         checkAfterEncoding(config, manager);
 
         // Build or clean the lattice
-        if (lattice==null){
-        	lattice = new LatticeBuilder(manager.getMaxLevels(), manager.getMinLevels(), manager.getHierachyHeights()).build();
-        	if (manipulator != null){
-        	    for (Node[] level : lattice.getLevels()) {
-        	        for (Node node : level){
-        	            manipulator.process(lattice, node);
-        	        }
-        	    }
-        	}
-        } 
- 
-        // Attach the listener
+        Lattice lattice = new LatticeBuilder(manager.getMaxLevels(), manager.getMinLevels()).build();
         lattice.setListener(listener);
-        lattice.setMultiplier(multiplier);
 
         // Build a node checker
-        final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config, historySize, snapshotSizeDataset, snapshotSizeSnapshot);
+        final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config.getInternalConfiguration(), historySize, snapshotSizeDataset, snapshotSizeSnapshot);
 
         // Initialize the metric
-        config.getMetric().initialize(manager.getDataQI(), manager.getHierarchies(), config);
+        config.getMetric().initialize(definition, manager.getDataQI(), manager.getHierarchies(), config);
 
         // Create an algorithm instance
-        if (algorithm != null){
-            algorithm = FLASHAlgorithm.create((AbstractFLASHAlgorithm)algorithm, checker);
-        } else {
-            algorithm = FLASHAlgorithm.create(lattice, checker, 
-                                              new FLASHStrategy(lattice, manager.getHierarchies()));
-        }
+        FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());
+        AbstractAlgorithm algorithm = FLASHAlgorithm.create(lattice, checker, strategy);
         
         // Execute
+
+        final long time = System.currentTimeMillis();
         algorithm.traverse();
         
         // Deactivate history to prevent bugs when sorting data
@@ -904,6 +509,6 @@ public class ARXAnonymizer {
         checker.getHistory().setSize(0);
         
         // Return the result
-        return new Result(config.getMetric(), checker, lattice, manager, algorithm);
+        return new Result(config.getMetric(), checker, lattice, manager, algorithm, time);
     }
 }

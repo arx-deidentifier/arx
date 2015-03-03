@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.deidentifier.arx.aggregates;
 
@@ -32,38 +31,44 @@ import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 
 /**
  * This class enables building hierarchies for non-categorical values by mapping them
- * into given intervals
- * 
- * @author Fabian Prasser
+ * into given intervals.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBased<T> {
     
     /**
-     * This class represents an node
+     * This class represents an node.
+     *
      * @author Fabian Prasser
      */
     public class IndexNode implements Serializable {
         
+        /**  TODO */
         private static final long serialVersionUID = 5985820929677249525L;
 
-        /** Children */
+        /** Children. */
         private final IndexNode[]   children;
-        /** IsLeaf */
+        
+        /** IsLeaf. */
         private final boolean       isLeaf;
-        /** Leafs */
+        
+        /** Leafs. */
         private final Interval<T>[] leafs;
-        /** Max is exclusive */
+        
+        /** Max is exclusive. */
         private final T             max;
-        /** Min is inclusive */
+        
+        /** Min is inclusive. */
         private final T             min;
 
         /**
          * Creates a new instance. Min is inclusive, max is exclusive
+         *
          * @param min
          * @param max
-         * @param function
+         * @param children
          */
         public IndexNode(T min, T max, IndexNode[] children) {
             this.min = min;
@@ -75,9 +80,10 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
 
         /**
          * Creates a new instance. Min is inclusive, max is exclusive
+         *
          * @param min
          * @param max
-         * @param function
+         * @param leafs
          */
         public IndexNode(T min, T max, Interval<T>[] leafs) {
             this.min = min;
@@ -87,11 +93,20 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             this.isLeaf = true;
         }
         
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
         @Override
         public String toString(){
             return toString("");
         }
         
+        /**
+         * 
+         *
+         * @param prefix
+         * @return
+         */
         private String toString(String prefix){
             final String INTEND = "   ";
             StringBuilder b = new StringBuilder();
@@ -120,27 +135,37 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
     
     /**
-     * This class represents an interval
+     * This class represents an interval.
+     *
      * @author Fabian Prasser
+     * @param <T>
      */
     public static class Interval<T> extends AbstractGroup {
         
+        /**  TODO */
         private static final long serialVersionUID = 5985820929677249525L;
 
-        /** The function*/
+        /** The function. */
         private final AggregateFunction<T> function;
-        /** Max is exclusive */
+        
+        /** Max is exclusive. */
         private final T max;
-        /** Min is inclusive */
+        
+        /** Min is inclusive. */
         private final T min;
-        /** The builder*/
+        
+        /** The builder. */
         private final HierarchyBuilderGroupingBased<T> builder;
-        /** Null for normal intervals, true if <min, false if >max*/
+        
+        /** Null for normal intervals, true if <min, false if >max. */
         private final Boolean lower;
         
         /**
-         * Constructor for creating out of bounds labels
-         * @param b
+         * Constructor for creating out of bounds labels.
+         *
+         * @param builder
+         * @param lower
+         * @param value
          */
         private Interval(HierarchyBuilderGroupingBased<T> builder, boolean lower, T value) {
             super(lower ? "<" + ((DataType<T>)builder.getDataType()).format(value) : 
@@ -154,6 +179,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
 
         /**
          * Creates a new instance. Min is inclusive, max is exclusive
+         *
+         * @param builder
+         * @param type
          * @param min
          * @param max
          * @param function
@@ -223,6 +251,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return result;
         }
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
         @Override
         public String toString(){
             DataType<T> type = (DataType<T>)builder.getDataType();
@@ -235,22 +266,27 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * repeat-bound is reached. The outmost intervals will than be exptended to the snap-bound. Values between
      * the snap-bound and the label-bound will be replaced by an out-of-bounds-label. For values larger than
      * the label-bound exceptions will be raised.
-     * 
+     *
      * @author Fabian Prasser
+     * @param <U>
      */
     public static class Range<U> implements Serializable {
         
+        /**  TODO */
         private static final long serialVersionUID = -5385139177770612960L;
         
-        /** Bound*/
+        /** Bound. */
         private U repeatBound;
-        /** Bound*/
+        
+        /** Bound. */
         private U snapBound;
-        /** Bound*/
+        
+        /** Bound. */
         private U labelBound;
             
         /**
-         * Creates a new instance
+         * Creates a new instance.
+         *
          * @param repeatBound
          * @param snapBound
          * @param labelBound
@@ -289,6 +325,15 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return snapBound;
         }
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
+        @Override
+        public String toString() {
+            return "Range [repeat=" + repeatBound + ", snap=" +
+                   snapBound + ", label=" + labelBound + "]";
+        }
+
         /**
          * @param labelBound the labelBound to set
          */
@@ -309,39 +354,42 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         private void setSnapBound(U snapBound) {
             this.snapBound = snapBound;
         }
-
-        @Override
-        public String toString() {
-            return "Range [repeat=" + repeatBound + ", snap=" +
-                   snapBound + ", label=" + labelBound + "]";
-        }
     }
 
-    /** TODO: Is this parameter OK? */
+    /** TODO: Is this parameter OK?. */
     private static final int  INDEX_FANOUT     = 2;
 
-    /** SVUID */
+    /** SVUID. */
     private static final long serialVersionUID = 3663874945543082808L;
     
     /**
      * Creates a new instance. Snapping is disabled. Repetition is disabled. Bound is determined dynamically.
+     *
+     * @param <T>
      * @param type
+     * @return
      */
     public static <T> HierarchyBuilderIntervalBased<T> create(DataType<T> type) {
         return new HierarchyBuilderIntervalBased<T>(type);
     }
+    
     /**
      * Creates a new instance. Data points that are out of range are handled according to the given settings.
+     *
+     * @param <T>
      * @param type
      * @param lowerRange
      * @param upperRange
+     * @return
      */
     public static <T> HierarchyBuilderIntervalBased<T> create(DataType<T> type, Range<T> lowerRange, Range<T> upperRange) {
         return new HierarchyBuilderIntervalBased<T>(type, lowerRange, upperRange);
     }
     
     /**
-     * Loads a builder specification from the given file
+     * Loads a builder specification from the given file.
+     *
+     * @param <T>
      * @param file
      * @return
      * @throws IOException
@@ -361,7 +409,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
     
     /**
-     * Loads a builder specification from the given file
+     * Loads a builder specification from the given file.
+     *
+     * @param <T>
      * @param file
      * @return
      * @throws IOException
@@ -369,21 +419,21 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     public static <T> HierarchyBuilderIntervalBased<T> create(String file) throws IOException{
         return create(new File(file));
     }
-    
-    /** Adjustment */
-    private Range<T>     lowerRange;
 
-    /** Adjustment */
-    private Range<T>     upperRange;
+    /** Adjustment. */
+    private Range<T>          lowerRange;
 
-    /** Defined intervals */
-    private List<Interval<T>> intervals        = new ArrayList<Interval<T>>();
+    /** Adjustment. */
+    private Range<T>          upperRange;
+
+    /** Defined intervals. */
+    private List<Interval<T>> intervals = new ArrayList<Interval<T>>();
 
     /**
      * Creates a new instance. Snapping is disabled. Repetition is disabled. Bound is determined dynamically.
      * @param type
      */
-    private HierarchyBuilderIntervalBased(DataType<T> type) {
+    protected HierarchyBuilderIntervalBased(DataType<T> type) {
         super(Type.INTERVAL_BASED, type);
         if (!(type instanceof DataTypeWithRatioScale)) {
             throw new IllegalArgumentException("Data type must have a ratio scale");
@@ -399,7 +449,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @param lowerRange
      * @param upperRange
      */
-    private HierarchyBuilderIntervalBased(DataType<T> type, Range<T> lowerRange, Range<T> upperRange) {
+    protected HierarchyBuilderIntervalBased(DataType<T> type, Range<T> lowerRange, Range<T> upperRange) {
         super(Type.INTERVAL_BASED, type);
         if (!(type instanceof DataTypeWithRatioScale)) {
             throw new IllegalArgumentException("Data type must have a ratio scale");
@@ -460,11 +510,10 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         this.setPrepared(false);
         return this;
     }
-
+    
     /**
      * Adds an interval. Min is inclusive, max is exclusive. Uses the predefined default aggregate function
-     * @param min
-     * @param max
+     *
      * @return
      */
     public HierarchyBuilderIntervalBased<T> clearIntervals() {
@@ -474,7 +523,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
 
     /**
-     * Returns all currently defined intervals
+     * Returns all currently defined intervals.
+     *
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -483,21 +533,26 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
 
     /**
-     * Returns the lower range
+     * Returns the lower range.
+     *
      * @return
      */
     public Range<T> getLowerRange() {
         return this.lowerRange;
     }
-    
+
     /**
-     * Returns the upper range
+     * Returns the upper range.
+     *
      * @return
      */
     public Range<T> getUpperRange() {
         return this.upperRange;
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased#isValid()
+     */
     @Override
     @SuppressWarnings("unchecked")
     public String isValid() {
@@ -558,7 +613,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
 
     /**
-     * Checks the interval
+     * Checks the interval.
+     *
+     * @param <U>
      * @param type
      * @param min
      * @param max
@@ -575,7 +632,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
 
     /**
-     * Returns the according group from the cache
+     * Returns the according group from the cache.
+     *
      * @param cache
      * @param interval
      * @return
@@ -589,9 +647,10 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return interval;
         }
     }
-    
+
     /**
-     * Returns the matching interval
+     * Returns the matching interval.
+     *
      * @param index
      * @param type
      * @param tValue
@@ -613,9 +672,11 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         T upper = type.add(interval.max, offset);
         return new Interval<T>(this, (DataType<T>)type, lower, upper, interval.function);
     }
-
+    
     /**
-     * Performs the index lookup
+     * Performs the index lookup.
+     *
+     * @param node
      * @param value
      * @return
      */
@@ -639,7 +700,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
 
     /**
-     * Returns the matching interval
+     * Returns the matching interval.
+     *
      * @param index
      * @param type
      * @param tValue
@@ -649,7 +711,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     private Interval<T> getIntervalUpperSnap(IndexNode index, DataTypeWithRatioScale<T> type, T tValue) {
 
         // Find interval
-        int shift = (int)Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
+        double shift = Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
         T offset = type.multiply(type.subtract(index.max, index.min), shift);
         T value = type.subtract(tValue, offset);
         Interval<T> interval = null;
@@ -696,16 +758,22 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         return new Interval<T>(this, (DataType<T>)type, lower, upper, interval.function);
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    protected AbstractGroup[][] prepareGroups() {
+    /**
+     * Adds an interval.
+     *
+     * @param interval
+     */
+    protected void addInterval(Interval<T> interval) {
+        this.intervals.add(interval);
+    }
 
-        // Check
-        String valid = isValid();
-        if (valid != null) {
-            throw new IllegalArgumentException(valid);
-        }
-        
+    /**
+     * Returns adjusted ranges.
+     *
+     * @return Array containing {lower, upper}
+     */
+    @SuppressWarnings("unchecked")
+    protected Range<T>[] getAdjustedRanges() {
         // Create adjustments
         Range<T> tempLower = new Range<T>(null, null, null);
         Range<T> tempUpper = new Range<T>(null, null, null);
@@ -739,6 +807,26 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         } else {
             tempUpper.setLabelBound(tempUpper.getSnapBound());
         }
+        return new Range[]{tempLower, tempUpper};
+    }
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased#prepareGroups()
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    protected AbstractGroup[][] prepareGroups() {
+
+        // Check
+        String valid = isValid();
+        if (valid != null) {
+            throw new IllegalArgumentException(valid);
+        }
+        
+        // Create adjustments
+        Range<T>[] ranges = getAdjustedRanges();
+        Range<T> tempLower = ranges[0];
+        Range<T> tempUpper = ranges[1];
         
         // Build leaf level index
         ArrayList<IndexNode> nodes = new ArrayList<IndexNode>();
@@ -902,5 +990,23 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         
         // Return
         return result.toArray(new AbstractGroup[0][0]);
+    }
+
+    /**
+     * Sets the data array.
+     *
+     * @param data
+     */
+    protected void setData(String[] data){
+        super.setData(data);
+    }
+    
+    /**
+     * Sets the groups on higher levels of the hierarchy.
+     *
+     * @param levels
+     */
+    protected void setLevels(List<Level<T>> levels) {
+        super.setLevels(levels);
     }
 }

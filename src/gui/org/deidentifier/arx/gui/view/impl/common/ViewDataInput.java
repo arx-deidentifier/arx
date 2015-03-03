@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.common;
@@ -27,31 +26,92 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 /**
- * A view on a <code>Data</code> object
+ * A view on a <code>Data</code> object.
+ *
  * @author Fabian Prasser
  */
 public class ViewDataInput extends ViewData {
-
-    /** 
-     * Creates a new data view
+ 
+    /**
      * 
+     * Creates a new (non-editable) data view.
+     *
      * @param parent
      * @param controller
      */
     public ViewDataInput(final Composite parent,
                          final Controller controller) {
+        this (parent, controller, false);
+    }
+    
+    /**
+     * 
+     * Creates a new data view.
+     *
+     * @param parent
+     * @param controller
+     * @param editable
+     */
+    public ViewDataInput(final Composite parent,
+                         final Controller controller,
+                         boolean editable) {
         
         super(parent, controller, Resources.getMessage("AnalyzeView.1")); //$NON-NLS-1$
-
+        
         // Register
         controller.addListener(ModelPart.RESEARCH_SUBSET, this);
         controller.addListener(ModelPart.RESULT, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
+        
+        // Make editable
+        if (editable) {
+            final Menu menu = new Menu(parent.getShell());
+            MenuItem item1 = new MenuItem(menu, SWT.NONE);
+            item1.setText("Find/Replace...");
+            item1.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(final SelectionEvent arg0) {
+                    controller.actionFindReplace();
+                }
+            });
+
+            table.addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mouseUp(MouseEvent arg0) {
+                    if (model != null && model.getSelectedAttribute() != null &&
+                        model.getInputConfig() != null &&
+                        model.getInputConfig().getInput() != null &&
+                        model.getInputConfig().getInput().getHandle() != null) {
+                        menu.setEnabled(true);
+                    } else {
+                        menu.setEnabled(false);
+                    } 
+                    if (arg0.button == 3 && menu.isEnabled()) {
+                        Point display = table.toDisplay(arg0.x, arg0.y);
+                        menu.setLocation(display.x, display.y);
+                        menu.setVisible(true);
+                    }
+                }
+            });
+        }
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#actionCellSelected(org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent)
+     */
     @Override
     protected void actionCellSelected(CellSelectionEvent arg1) {
 
@@ -83,17 +143,26 @@ public class ViewDataInput extends ViewData {
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#actionSort()
+     */
     @Override
     protected void actionSort(){
         controller.actionDataSort(true);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#getDefinition()
+     */
     @Override
     protected DataDefinition getDefinition() {
         if (model == null) return null;
         else return model.getInputDefinition();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#getHandle()
+     */
     @Override
     protected DataHandle getHandle() {
         if (model != null){
@@ -110,6 +179,9 @@ public class ViewDataInput extends ViewData {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
         
@@ -161,6 +233,9 @@ public class ViewDataInput extends ViewData {
             
             // Update research subset
             table.setResearchSubset((RowSet)event.data);
+            table.redraw();
+            
+        } else if (event.part == ModelPart.ATTRIBUTE_VALUE) {
             table.redraw();
             
         } else if (event.part == ModelPart.VIEW_CONFIG || event.part == ModelPart.RESULT) {

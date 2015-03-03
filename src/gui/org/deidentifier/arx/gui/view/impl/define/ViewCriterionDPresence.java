@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.define;
@@ -35,30 +34,42 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
 /**
- * A view on a d-presence criterion
+ * A view on a d-presence criterion.
+ *
  * @author Fabian Prasser
  */
-public class ViewCriterionDPresence extends ViewCriterion{
+public class ViewCriterionDPresence extends ViewCriterion {
 
-    private Scale                  sliderDMin;
-    private Scale                  sliderDMax;
-    private Label                  labelDMin;
-    private Label                  labelDMax;
+    /**  TODO */
+    private Scale sliderDMin;
+    
+    /**  TODO */
+    private Scale sliderDMax;
+    
+    /**  TODO */
+    private Label labelDMin;
+    
+    /**  TODO */
+    private Label labelDMax;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param model
      */
     public ViewCriterionDPresence(final Composite parent,
-                         final Controller controller,
-                         final Model model) {
+                                  final Controller controller,
+                                  final Model model) {
 
-    	super(parent, controller, model);
-    	this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        super(parent, controller, model);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(ModelEvent event) {
         if (event.part == ModelPart.ATTRIBUTE_TYPE) {
@@ -66,19 +77,25 @@ public class ViewCriterionDPresence extends ViewCriterion{
         }
         super.update(event);
     }
-    
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#reset()
+     */
     @Override
-	public void reset() {
+    public void reset() {
 
         sliderDMin.setSelection(0);
         sliderDMax.setSelection(0);
-        labelDMin.setText("0.001"); //$NON-NLS-1$
-        labelDMax.setText("0.001"); //$NON-NLS-1$
+        updateDMinLabel("0"); //$NON-NLS-1$
+        updateDMaxLabel("0"); //$NON-NLS-1$
         super.reset();
-	}
+    }
 
-	@Override
-	protected Composite build(Composite parent) {
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#build(org.eclipse.swt.widgets.Composite)
+     */
+    @Override
+    protected Composite build(Composite parent) {
 
         // Create input group
         final Composite group = new Composite(parent, SWT.NONE);
@@ -96,25 +113,25 @@ public class ViewCriterionDPresence extends ViewCriterion{
         d9.minimumWidth = LABEL_WIDTH;
         d9.widthHint = LABEL_WIDTH;
         labelDMin.setLayoutData(d9);
-        labelDMin.setText("0.001"); //$NON-NLS-1$
+        updateDMinLabel("0"); //$NON-NLS-1$
 
         sliderDMin = new Scale(group, SWT.HORIZONTAL);
         final GridData d6 = SWTUtil.createFillHorizontallyGridData();
         d6.horizontalSpan = 1;
         sliderDMin.setLayoutData(d6);
-        sliderDMin.setMaximum(SLIDER_MAX);
+        sliderDMin.setMaximum(SWTUtil.SLIDER_MAX);
         sliderDMin.setMinimum(0);
         sliderDMin.setSelection(0);
         final Object outer = this;
         sliderDMin.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getDPresenceModel().setDmin(sliderToDouble(0.001, 1, sliderDMin.getSelection()));
-                labelDMin.setText(String.valueOf(model.getDPresenceModel().getDmin()));
+                model.getDPresenceModel().setDmin(SWTUtil.sliderToDouble(0, 1, sliderDMin.getSelection()));
+                String dmin = String.valueOf(model.getDPresenceModel().getDmin());
+                updateDMinLabel(dmin);
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getDPresenceModel()));
             }
         });
-
 
         // Create dax slider
         final Label z2Label = new Label(group, SWT.NONE);
@@ -125,44 +142,68 @@ public class ViewCriterionDPresence extends ViewCriterion{
         d91.minimumWidth = LABEL_WIDTH;
         d91.widthHint = LABEL_WIDTH;
         labelDMax.setLayoutData(d91);
-        labelDMax.setText("0.001"); //$NON-NLS-1$
+        updateDMaxLabel("0"); //$NON-NLS-1$
 
         sliderDMax = new Scale(group, SWT.HORIZONTAL);
         final GridData d62 = SWTUtil.createFillHorizontallyGridData();
         d62.horizontalSpan = 1;
         sliderDMax.setLayoutData(d62);
-        sliderDMax.setMaximum(SLIDER_MAX);
+        sliderDMax.setMaximum(SWTUtil.SLIDER_MAX);
         sliderDMax.setMinimum(0);
         sliderDMax.setSelection(0);
         sliderDMax.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getDPresenceModel().setDmax(sliderToDouble(0.001, 1, sliderDMax.getSelection()));
-                labelDMax.setText(String.valueOf(model.getDPresenceModel().getDmax()));
+                model.getDPresenceModel().setDmax(SWTUtil.sliderToDouble(0, 1, sliderDMax.getSelection()));
+                String dmax = String.valueOf(model.getDPresenceModel().getDmax());
+                updateDMaxLabel(dmax);
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getDPresenceModel()));
             }
         });
 
         return group;
-	}
+    }
 
-	@Override
-	protected void parse() {
-		ModelDPresenceCriterion m = model.getDPresenceModel();
-		if (m==null){
-			reset();
-			return;
-		}
-		root.setRedraw(false);
-		labelDMin.setText(String.valueOf(m.getDmin()));
-		sliderDMin.setSelection(doubleToSlider(0.001d, 1d, m.getDmin()));
-		labelDMax.setText(String.valueOf(m.getDmax()));
-		sliderDMax.setSelection(doubleToSlider(0.001d, 1d, m.getDmax()));
-		if (m.isActive() && m.isEnabled()) {
-			SWTUtil.enable(root);
-		} else {
-			SWTUtil.disable(root);
-		}
-		root.setRedraw(true);
-	}
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#parse()
+     */
+    @Override
+    protected void parse() {
+        ModelDPresenceCriterion m = model.getDPresenceModel();
+        if (m == null) {
+            reset();
+            return;
+        }
+        root.setRedraw(false);
+        updateDMinLabel(String.valueOf(m.getDmin()));
+        sliderDMin.setSelection(SWTUtil.doubleToSlider(0, 1d, m.getDmin()));
+        updateDMaxLabel(String.valueOf(m.getDmax()));
+        sliderDMax.setSelection(SWTUtil.doubleToSlider(0, 1d, m.getDmax()));
+        if (m.isActive() && m.isEnabled()) {
+            SWTUtil.enable(root);
+        } else {
+            SWTUtil.disable(root);
+        }
+        root.setRedraw(true);
+    }
+
+    /**
+     * Updates the "dMin" label and tooltip text.
+     *
+     * @param text
+     */
+    private void updateDMinLabel(String text) {
+        labelDMin.setText(text);
+        labelDMin.setToolTipText(text);
+    }
+
+    /**
+     * Updates the "dMax" label and tooltip text.
+     *
+     * @param text
+     */
+    private void updateDMaxLabel(String text) {
+        labelDMax.setText(text);
+        labelDMax.setToolTipText(text);
+    }
 }

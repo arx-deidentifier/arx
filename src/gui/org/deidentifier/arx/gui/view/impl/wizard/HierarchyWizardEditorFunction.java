@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
@@ -34,42 +33,56 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * Editor for functions
- * @author Fabian Prasser
+ * Editor for functions.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardEditorFunction<T> {
     
     /**
-     * Tiny callback for parents
-     * @author Fabian Prasser
+     * Tiny callback for parents.
      *
+     * @author Fabian Prasser
      * @param <T>
      */
     public static interface IHierarchyFunctionEditorParent<T> {
+        
+        /**
+         * 
+         *
+         * @param function
+         */
         public void setFunction(AggregateFunction<T> function);
     }
 
-    /** Var */
+    /** Var. */
     private final AggregateFunction<T>            defaultFunction;
-    /** Var */
+    
+    /** Var. */
     private final List<AggregateFunction<T>>      functions;
-    /** Var */
+    
+    /** Var. */
     private final List<String>                    labels;
-    /** Var */
+    
+    /** Var. */
     private final EditorSelection                 editor1;
-    /** Var */
+    
+    /** Var. */
     private final EditorString                    editor2;
-    /** Var */
+    
+    /** Var. */
     private AggregateFunction<T>                  function = null;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardModelGrouping<T> model;
-    /** Var */
+    
+    /** Var. */
     private final boolean                         general;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param model
      * @param composite
@@ -162,24 +175,45 @@ public class HierarchyWizardEditorFunction<T> {
     }
     
     /**
-     * Returns the default function
+     * Return control1.
+     *
+     * @return
+     */
+    public Control getControl1() {
+        return editor1.getControl();
+    }
+    
+    /**
+     * Return control2.
+     *
+     * @return
+     */
+    public Control getControl2() {
+        return editor2.getControl();
+    }
+
+    /**
+     * Returns the default function.
+     *
      * @return
      */
     public AggregateFunction<T> getDefaultFunction(){
         return this.defaultFunction;
     }
-    
+
     /**
-     * Returns whether this is the default function
+     * Returns whether this is the default function.
+     *
      * @param function
      * @return
      */
     public boolean isDefaultFunction(AggregateFunction<T> function){
         return this.defaultFunction == function;
     }
-
+    
     /**
-     * Sets the function to display
+     * Sets the function to display.
+     *
      * @param function
      */
     public void setFunction(AggregateFunction<T> function){
@@ -189,9 +223,9 @@ public class HierarchyWizardEditorFunction<T> {
         this.function = function;
         this.update();
     }
-
+    
     /**
-     * Updates all editors
+     * Updates all editors.
      */
     public void update() {
 
@@ -210,18 +244,20 @@ public class HierarchyWizardEditorFunction<T> {
             SWTUtil.disable(editor2.getControl());
         }
     }
-    
+
     /**
-     * Creates a function entry
+     * Creates a function entry.
+     *
      * @param function
      */
     private void createEntry(AggregateFunction<T> function) {
         this.functions.add(function);
         this.labels.add(function.toLabel());
     }
-    
+
     /**
-     * Creates a label
+     * Creates a label.
+     *
      * @param composite
      * @param string
      * @return
@@ -234,21 +270,5 @@ public class HierarchyWizardEditorFunction<T> {
         data.verticalAlignment = SWT.CENTER;
         label.setLayoutData(data);
         return label;
-    }
-
-    /**
-     * Return control1
-     * @return
-     */
-    public Control getControl1() {
-        return editor1.getControl();
-    }
-
-    /**
-     * Return control2
-     * @return
-     */
-    public Control getControl2() {
-        return editor2.getControl();
     }
 }

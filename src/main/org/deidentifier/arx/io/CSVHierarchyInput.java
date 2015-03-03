@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.io;
@@ -26,65 +25,245 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Reads a CSV encoded generalization hierarchy
- * 
- * @author Fabian Prasser 
+ * Reads a CSV encoded generalization hierarchy.
+ *
+ * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class CSVHierarchyInput {
 
-    /** The data */
+    /** The data. */
     private String[][] data;
 
     /**
-     * Create from file
-     * 
-     * @param file
-     * @param separator
-     * @throws IOException
+     * Instantiate.
+     *
+     * @param file the file
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final File file, final char separator) throws IOException {
-        load(new CSVDataInput(file, separator));
+    public CSVHierarchyInput(final File file) throws IOException {
+        load(new CSVDataInput(file));
     }
 
     /**
-     * Create from stream
-     * 
-     * @param stream
-     * @param separator
-     * @throws IOException
+     * Instantiate.
+     *
+     * @param file the file
+     * @param delimiter the delimiter
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final InputStream stream, final char separator) throws IOException {
-        load(new CSVDataInput(stream, separator));
+    public CSVHierarchyInput(final File file, final char delimiter) throws IOException {
+        load(new CSVDataInput(file, delimiter));
     }
 
     /**
-     * Create from path
-     * 
-     * @param file
-     * @param separator
-     * @throws IOException
+     * Instantiate.
+     *
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final String file, final char separator) throws IOException {
-        load(new CSVDataInput(file, separator));
+    public CSVHierarchyInput(final File file, final char delimiter, final char quote) throws IOException {
+        load(new CSVDataInput(file, delimiter, quote));
     }
 
     /**
-     * Returns the hierarchy
-     * 
-     * @return
+     * Instantiate.
+     *
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final File file, final char delimiter, final char quote, final char escape) throws IOException {
+        load(new CSVDataInput(file, delimiter, quote, escape));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        load(new CSVDataInput(file, delimiter, quote, escape, linebreak));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param file the file
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final File file, final CSVSyntax config) throws IOException {
+        load(new CSVDataInput(file, config));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final InputStream stream) throws IOException {
+        load(new CSVDataInput(stream));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final InputStream stream, final char delimiter) throws IOException {
+        load(new CSVDataInput(stream, delimiter));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final InputStream stream, final char delimiter, final char quote) throws IOException {
+        load(new CSVDataInput(stream, delimiter, quote));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final InputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
+        load(new CSVDataInput(stream, delimiter, quote, escape));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final InputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        load(new CSVDataInput(stream, delimiter, quote, escape, linebreak));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final InputStream stream, final CSVSyntax config) throws IOException {
+        load(new CSVDataInput(stream, config));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final String filename) throws IOException {
+        load(new CSVDataInput(filename));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final String filename, final char delimiter) throws IOException {
+        load(new CSVDataInput(filename, delimiter));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final String filename, final char delimiter, final char quote) throws IOException {
+        load(new CSVDataInput(filename, delimiter, quote));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final String filename, final char delimiter, final char quote, final char escape) throws IOException {
+        load(new CSVDataInput(filename, delimiter, quote, escape));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final String filename, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        load(new CSVDataInput(filename, delimiter, quote, escape, linebreak));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final String filename, final CSVSyntax config) throws IOException {
+        load(new CSVDataInput(filename, config));
+    }
+
+    /**
+     * Returns the hierarchy.
+     *
+     * @return the hierarchy
      */
     public String[][] getHierarchy() {
         return data;
     }
 
     /**
-     * Loads the data
-     * 
-     * @param input
-     * @throws IOException
+     * Loads the data.
+     *
+     * @param input the input
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    private void load(final CSVAbstractInput input) throws IOException {
+    private void load(final CSVDataInput input) throws IOException {
 
         final Iterator<String[]> iter = input.iterator();
         final List<String[]> elems = new ArrayList<String[]>();

@@ -1,24 +1,24 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
@@ -30,40 +30,46 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 
 /**
- * The base model for the wizard
- * @author Fabian Prasser
+ * The base model for the wizard.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardModel<T> {
 
-    /** Var */
+    /** Var. */
     private Type                             type;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardModelOrder<T>     orderModel;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardModelIntervals<T> intervalModel;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardModelRedaction<T> redactionModel;
-    /** Var */
+    
+    /** Var. */
     private final DataType<T>                dataType;
-    /** Var */
+    
+    /** Var. */
     private final String[]                   data;
     
     /**
-     * Creates a new instance for the given data type
+     * Creates a new instance for the given data type.
+     *
      * @param dataType
+     * @param locale
      * @param data
-     * @param builder 
      */
-    public HierarchyWizardModel(DataType<T> dataType, String[] data){
+    public HierarchyWizardModel(DataType<T> dataType, Locale locale, String[] data){
         
         // Store
         this.data = data;
         this.dataType = dataType;
         
         // Create models
-        orderModel = new HierarchyWizardModelOrder<T>(dataType, getOrderData());
+        orderModel = new HierarchyWizardModelOrder<T>(dataType, locale, getOrderData());
         if (dataType instanceof DataTypeWithRatioScale){
             intervalModel = new HierarchyWizardModelIntervals<T>(dataType, data);
         }
@@ -84,8 +90,11 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Returns the current builder
+     * Returns the current builder.
+     *
+     * @param serializable
      * @return
+     * @throws Exception
      */
     public HierarchyBuilder<T> getBuilder(boolean serializable) throws Exception {
         if (type == Type.INTERVAL_BASED) {
@@ -100,7 +109,8 @@ public class HierarchyWizardModel<T> {
     }
     
     /**
-     * Returns the data type
+     * Returns the data type.
+     *
      * @return
      */
     public DataType<T> getDataType() {
@@ -108,7 +118,8 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Returns the current hierarchy
+     * Returns the current hierarchy.
+     *
      * @return
      */
     public Hierarchy getHierarchy() {
@@ -124,7 +135,8 @@ public class HierarchyWizardModel<T> {
     }
     
     /**
-     * Returns the model of the interval-based builder
+     * Returns the model of the interval-based builder.
+     *
      * @return
      */
     public HierarchyWizardModelIntervals<T> getIntervalModel() {
@@ -132,7 +144,8 @@ public class HierarchyWizardModel<T> {
     }
     
     /**
-     * Returns the model of the order-based builder
+     * Returns the model of the order-based builder.
+     *
      * @return
      */
     public HierarchyWizardModelOrder<T> getOrderModel() {
@@ -140,7 +153,8 @@ public class HierarchyWizardModel<T> {
     }
     
     /**
-     * Returns the model of the redaction-based builder
+     * Returns the model of the redaction-based builder.
+     *
      * @return
      */
     public HierarchyWizardModelRedaction<T> getRedactionModel() {
@@ -148,7 +162,8 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Returns the type
+     * Returns the type.
+     *
      * @return
      */
     public Type getType(){
@@ -156,8 +171,10 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Updates the model with a new specification
+     * Updates the model with a new specification.
+     *
      * @param builder
+     * @throws IllegalArgumentException
      */
     public void parse(HierarchyBuilder<T> builder) throws IllegalArgumentException{
         
@@ -178,7 +195,8 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Sets the type
+     * Sets the type.
+     *
      * @param type
      */
     public void setType(Type type){
@@ -188,7 +206,8 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Simple comparison of data types
+     * Simple comparison of data types.
+     *
      * @param type
      * @param other
      * @return
@@ -198,9 +217,8 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Returns data for the order-based builder
-     * @param type
-     * @param data
+     * Returns data for the order-based builder.
+     *
      * @return
      */
     private String[] getOrderData(){

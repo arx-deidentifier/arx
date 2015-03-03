@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.common;
@@ -38,33 +37,37 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * This class implements a titled folder
+ * This class implements a titled folder.
+ *
  * @author Fabian Prasser
  */
 public class ComponentTitledFolder implements IComponent {
     
+    /**  TODO */
     private final CTabFolder folder;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param bar
      * @param id
      */
-    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitleBar bar, String id){
+    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButton bar, String id){
         this(parent, controller, bar, id, false);
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param bar
      * @param id
      * @param bottom
      */
-    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitleBar bar, String id, boolean bottom){
+    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButton bar, String id, boolean bottom){
 
         int flags = SWT.BORDER | SWT.FLAT;
         if (bottom) flags |= SWT.BOTTOM;
@@ -88,20 +91,145 @@ public class ComponentTitledFolder implements IComponent {
     }
     
     /**
-     * Adds a selection listener
+     * Adds a selection listener.
+     *
      * @param listener
      */
     public void addSelectionListener(SelectionListener listener) {
         folder.addSelectionListener(listener);
     }
+
+    /**
+     * Creates a new entry in the folder.
+     *
+     * @param title
+     * @param image
+     * @param index
+     * @return
+     */
+    public Composite createItem(String title, Image image, int index){
+
+        Composite composite = new Composite(folder, SWT.NONE);
+        composite.setLayout(new GridLayout());
+        
+        CTabItem item = new CTabItem(folder, SWT.NULL, index);
+        item.setText(title);
+        if (image!=null) item.setImage(image);
+        item.setShowClose(false);
+        item.setControl(composite);
+        
+        return composite;
+    }
+
+    /**
+     * Creates a new entry in the folder.
+     *
+     * @param title
+     * @param image
+     * @return
+     */
+    public Composite createItem(String title, Image image){
+        return createItem(title, image, getItemCount());
+    }
+
+    /**
+     * Disposes the given item.
+     *
+     * @param text
+     */
+    public void disposeItem(String text) {
+        for (CTabItem item : folder.getItems()) {
+            if (item.getText().equals(text)) {
+                item.dispose();
+            }
+        }
+    }
     
     /**
-     * Creates the bar 
+     * Returns the button item for the given text.
+     *
+     * @param text
+     * @return
+     */
+    public ToolItem getButtonItem(String text) {
+        Control c = folder.getTopRight();
+        if (c == null) return null;
+        if (!(c instanceof ToolBar)) return null;
+        ToolBar t = (ToolBar)c;
+        for (ToolItem i : t.getItems()){
+            if (i.getToolTipText().equals(text)) return i;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the number of items in the folder.
+     *
+     * @return
+     */
+    public int getItemCount() {
+        return folder.getItemCount();
+    }
+
+    /**
+     * Returns the currently selected index.
+     *
+     * @return
+     */
+    public int getSelectionIndex() {
+        return folder.getSelectionIndex();
+    }
+
+    /**
+     * Returns the tab item for the given text.
+     *
+     * @param text
+     * @return
+     */
+    public CTabItem getTabItem(String text) {
+        for (CTabItem item : folder.getItems()){
+            if (item.getText().equals(text)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Enables/disables the component.
+     *
+     * @param b
+     */
+    public void setEnabled(boolean b) {
+        folder.setEnabled(b);
+    }
+
+    /**
+     * Sets layout data.
+     *
+     * @param data
+     */
+    public void setLayoutData(Object data){
+        folder.setLayoutData(data);
+    }
+
+    /**
+     * Sets the current selection.
+     *
+     * @param index
+     */
+    public void setSelection(int index) {
+        folder.setSelection(index);
+    }
+
+    /**
+     * Creates the bar .
+     *
      * @param controller
      * @param folder
      * @param bar
      */
-    private void createBar(final Controller controller, final CTabFolder folder, final ComponentTitleBar bar) {
+    private void createBar(final Controller controller, final CTabFolder folder, final ComponentTitledFolderButton bar) {
         ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
         folder.setTopRight( toolbar, SWT.RIGHT );
         
@@ -133,73 +261,5 @@ public class ComponentTitledFolder implements IComponent {
         
         int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         folder.setTabHeight(Math.max(height, folder.getTabHeight()));
-    }
-
-    /**
-     * Creates a new entry in the folder
-     * @param title
-     * @param image
-     * @return
-     */
-    public Composite createItem(String title, Image image){
-
-        Composite composite = new Composite(folder, SWT.NONE);
-        composite.setLayout(new GridLayout());
-        
-        CTabItem item = new CTabItem(folder, SWT.NULL);
-        item.setText(title);
-        if (image!=null) item.setImage(image);
-        item.setShowClose(false);
-        item.setControl(composite);
-        
-        return composite;
-    }
-
-    /**
-     * Returns the item for the given title
-     * @param text
-     * @return
-     */
-    public ToolItem getBarItem(String text) {
-        Control c = folder.getTopRight();
-        if (c == null) return null;
-        if (!(c instanceof ToolBar)) return null;
-        ToolBar t = (ToolBar)c;
-        for (ToolItem i : t.getItems()){
-            if (i.getToolTipText().equals(text)) return i;
-        }
-        return null;
-    }
-
-    /**
-     * Returns the currently selected index
-     * @return
-     */
-    public int getSelectionIndex() {
-        return folder.getSelectionIndex();
-    }
-
-    /**
-     * Enables/disables the component
-     * @param b
-     */
-    public void setEnabled(boolean b) {
-        folder.setEnabled(b);
-    }
-
-    /**
-     * Sets layout data
-     * @param data
-     */
-    public void setLayoutData(Object data){
-        folder.setLayoutData(data);
-    }
-
-    /**
-     * Sets the current selection
-     * @param index
-     */
-    public void setSelection(int index) {
-        folder.setSelection(index);
     }
 }

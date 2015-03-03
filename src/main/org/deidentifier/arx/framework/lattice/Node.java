@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.framework.lattice;
@@ -30,71 +29,80 @@ import org.deidentifier.arx.metric.InformationLoss;
  */
 public class Node {
 
-    /** The anonymous. */
-    private boolean         anonymous;
+    /** All privacy criteria are fulfilled. */
+    public static final int    PROPERTY_ANONYMOUS            = 1 << 0;
 
-    /** The downwards. */
-    private Node[]          predecessors;
+    /** Not all privacy criteria are fulfilled. */
+    public static final int    PROPERTY_NOT_ANONYMOUS        = 1 << 1;
+
+    /** A k-anonymity sub-criterion is fulfilled. */
+    public static final int    PROPERTY_K_ANONYMOUS          = 1 << 2;
+
+    /** A k-anonymity sub-criterion is not fulfilled. */
+    public static final int    PROPERTY_NOT_K_ANONYMOUS      = 1 << 3;
+
+    /** The transformation results in insufficient utility. */
+    public static final int    PROPERTY_INSUFFICIENT_UTILITY = 1 << 4;
+
+    /** The transformation has been checked explicitly. */
+    public static final int    PROPERTY_CHECKED              = 1 << 5;
+
+    /** A snapshot for this transformation must be created if it fits the size limits, regardless of whether it triggers the storage condition. */
+    public static final int    PROPERTY_FORCE_SNAPSHOT       = 1 << 6;
+
+    /** This node has already been visited during the second phase. */
+    public static final int    PROPERTY_VISITED              = 1 << 7;
+
+    /** Marks nodes for which the search algorithm guarantees to never check any of its successors. */
+    public static final int    PROPERTY_SUCCESSORS_PRUNED    = 1 << 8;
+
+    /** We have already fired an event for this node. */
+    public static final int    PROPERTY_EVENT_FIRED          = 1 << 9;
 
     /** The id. */
-    public final int        id;
+    public final int           id;
+
+    /** Set of properties. */
+    private int                properties;
+
+    /** The predecessors. */
+    private Node[]             predecessors;
 
     /** The level. */
-    private int             level;
+    private int                level;
 
     /** The information loss. */
-    private InformationLoss informationLoss;
+    private InformationLoss<?> informationLoss;
+
+    /** The lower bound. */
+    private InformationLoss<?> lowerBound;
 
     /** The transformation. */
-    private int[]           transformation;
-
-    /** The tagged. */
-    private boolean         tagged;
-
-    /** Indicates if the node has been explicitly checked by the algorithm. */
-    private boolean         checked;
+    private int[]              transformation;
 
     /** The upwards. */
-    private Node[]          successors;
+    private Node[]             successors;
 
     /** The down index. */
-    private int             preIndex;
+    private int                preIndex;
 
     /** The up index. */
-    private int             sucIndex;
+    private int                sucIndex;
 
-    /** K anonymous */
-    private boolean         kAnonymous;
+    /** Associated data. */
+    private Object             data;
 
     /**
      * Instantiates a new node.
+     *
+     * @param id
      */
-    public Node(final int id) {
+    public Node(int id) {
         this.id = id;
-        anonymous = false;
-        tagged = false;
-        informationLoss = null;
-        preIndex = 0;
-        sucIndex = 0;
-        checked = false;
-    }
-
-    /**
-     * Adds a predecessor
-     * 
-     * @param predecessor
-     */
-    public void addPredecessor(final Node predecessor) {
-        predecessors[preIndex++] = predecessor;
-    }
-
-    /**
-     * Adds a successor
-     * 
-     * @param successor
-     */
-    public void addSuccessor(final Node successor) {
-        successors[sucIndex++] = successor;
+        this.informationLoss = null;
+        this.preIndex = 0;
+        this.sucIndex = 0;
+        this.properties = 0;
     }
 
     /*
@@ -103,7 +111,7 @@ public class Node {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) { return true; }
         if (obj == null) { return false; }
         if (getClass() != obj.getClass()) { return false; }
@@ -113,17 +121,26 @@ public class Node {
     }
 
     /**
-     * Returns the information loss
-     * 
+     * Associated data.
+     *
      * @return
      */
-    public InformationLoss getInformationLoss() {
+    public Object getData() {
+        return data;
+    }
+
+    /**
+     * Returns the information loss.
+     *
+     * @return
+     */
+    public InformationLoss<?> getInformationLoss() {
         return informationLoss;
     }
 
     /**
-     * Returns the level
-     * 
+     * Returns the level.
+     *
      * @return
      */
     public int getLevel() {
@@ -131,8 +148,15 @@ public class Node {
     }
 
     /**
-     * Returns the predecessors
-     * 
+     * @return the lowerBound
+     */
+    public InformationLoss<?> getLowerBound() {
+        return lowerBound;
+    }
+
+    /**
+     * Returns the predecessors.
+     *
      * @return
      */
     public Node[] getPredecessors() {
@@ -140,8 +164,8 @@ public class Node {
     }
 
     /**
-     * Returns the successors
-     * 
+     * Returns the successors.
+     *
      * @return
      */
     public Node[] getSuccessors() {
@@ -149,8 +173,8 @@ public class Node {
     }
 
     /**
-     * Returns the transformation
-     * 
+     * Returns the transformation.
+     *
      * @return
      */
     public int[] getTransformation() {
@@ -164,127 +188,104 @@ public class Node {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result) + Arrays.hashCode(transformation);
-        return result;
+        return Arrays.hashCode(transformation);
     }
 
     /**
-     * Is it anonymous
-     * 
+     * Returns whether the node has the given property.
+     *
+     * @param property
      * @return
      */
-    public boolean isAnonymous() {
-        return anonymous;
+    public boolean hasProperty(int property){
+        return (properties & property) == property;
     }
 
     /**
-     * @return the checked
+     * Associated data.
+     *
+     * @param data
      */
-    public boolean isChecked() {
-        return checked;
+    public void setData(Object data) {
+        this.data = data;
     }
 
     /**
-     * Is it k-anonymous
-     * 
-     * @return
-     */
-    public boolean isKAnonymous() {
-        return kAnonymous;
-    }
-
-    /**
-     * Is it tagged
-     * 
-     * @return
-     */
-    public boolean isTagged() {
-        return tagged;
-    }
-
-    /**
-     * Marks as anonymous
-     * 
-     * @param anonymous2
-     */
-    public void setAnonymous(final boolean anonymous) {
-        this.anonymous = anonymous;
-    }
-
-    /**
-     * Marks as checked
-     */
-    public void setChecked() {
-        checked = true;
-    }
-
-    /**
-     * Sets the information loss
-     * 
-     * @param informationLoss
-     */
-    public void setInformationLoss(final InformationLoss informationLoss) {
-        this.informationLoss = informationLoss;
-    }
-
-    /**
-     * Is this transformation kAnonymous
-     * 
-     * @param kAnonymous
-     */
-    public void setKAnonymous(final boolean kAnonymous) {
-        this.kAnonymous = kAnonymous;
-    }
-
-    /**
-     * Sets a node not tagged
-     */
-    public void setNotTagged() {
-        tagged = false;
-    }
-
-    /**
-     * Sets the predecessors
-     * 
-     * @param nodes
-     */
-    public void setPredecessors(final Node[] nodes) {
-        predecessors = nodes;
-    }
-
-    /**
-     * Sets the successors
-     * 
-     * @param nodes
-     */
-    public void setSuccessors(final Node[] nodes) {
-        successors = nodes;
-    }
-
-    /**
-     * Marks as tagged
-     */
-    public void setTagged() {
-        tagged = true;
-    }
-
-    /**
-     * Sets the transformation
-     * 
+     * Sets the transformation.
+     *
      * @param transformation
+     * @param level
      */
-    public void setTransformation(final int[] transformation, final int level) {
+    public void setTransformation(int[] transformation, int level) {
         this.transformation = transformation;
         this.level = level;
     }
 
     /**
-     * Marks a node as "not checked"
+     * Sets the information loss.
+     *
+     * @param informationLoss
      */
-	public void setNotChecked() {
-		this.checked = false;
-	}
+    protected void setInformationLoss(final InformationLoss<?> informationLoss) {
+        if (this.informationLoss == null) {
+            this.informationLoss = informationLoss;
+        }
+    }
 
+    /**
+     * Sets the information loss.
+     *
+     * @param lowerBound
+     */
+    protected void setLowerBound(final InformationLoss<?> lowerBound) {
+        if (this.lowerBound == null) {
+            this.lowerBound = lowerBound;
+        }
+    }
+
+    
+    /**
+     * Sets the predecessors.
+     *
+     * @param nodes
+     */
+    protected void setPredecessors(Node[] nodes) {
+        predecessors = nodes;
+    }
+
+    /**
+     * Sets the given property.
+     *
+     * @param property
+     */
+    protected void setProperty(int property){
+        properties |= property;
+    }
+  
+    /**
+     * Sets the successors.
+     *
+     * @param nodes
+     */
+    protected void setSuccessors(Node[] nodes) {
+        successors = nodes;
+    }
+
+    /**
+     * Adds a predecessor.
+     *
+     * @param predecessor
+     */
+    void addPredecessor(Node predecessor) {
+        predecessors[preIndex++] = predecessor;
+    }
+
+    /**
+     * Adds a successor.
+     *
+     * @param successor
+     */
+    void addSuccessor(Node successor) {
+        successors[sucIndex++] = successor;
+    }
 }

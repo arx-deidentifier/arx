@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.define;
@@ -27,7 +26,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -36,29 +35,51 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * This view displays basic information about the research subset
+ * This view displays basic information about the research subset.
+ *
  * @author Fabian Prasser
  */
 public class ViewSubsetDefinition implements IView{
 
+    /**  TODO */
     private Controller controller;
+    
+    /**  TODO */
     private Composite root;
+    
+    /**  TODO */
     private Model model;
     
+    /**  TODO */
     private Label size;
+    
+    /**  TODO */
     private Label origin;
+    
+    /**  TODO */
     private Label total;
+    
+    /**  TODO */
     private Label percent;
 
+    /**  TODO */
     private ToolItem all;
+    
+    /**  TODO */
     private ToolItem none;
+    
+    /**  TODO */
     private ToolItem file;
+    
+    /**  TODO */
     private ToolItem filter;
     
+    /**  TODO */
     private DecimalFormat format = new DecimalFormat("##0.00");
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */
@@ -73,13 +94,14 @@ public class ViewSubsetDefinition implements IView{
     }
 
     /**
-     * Builds the view
+     * Builds the view.
+     *
      * @param parent
      * @return
      */
     private Composite build(Composite parent) {
 
-        ComponentTitleBar bar = new ComponentTitleBar("id-40");
+        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-40");
         bar.add(Resources.getMessage("SubsetDefinitionView.1"), 
                 controller.getResources().getImage("page_white.png"),
                 new Runnable() {
@@ -146,19 +168,25 @@ public class ViewSubsetDefinition implements IView{
         origin.setText("");
         origin.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
-        all = folder.getBarItem(Resources.getMessage("SubsetDefinitionView.1"));
-        none = folder.getBarItem(Resources.getMessage("SubsetDefinitionView.2"));
-        file = folder.getBarItem(Resources.getMessage("SubsetDefinitionView.3"));
-        filter = folder.getBarItem(Resources.getMessage("SubsetDefinitionView.4"));
+        all = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.1"));
+        none = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.2"));
+        file = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.3"));
+        filter = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.4"));
         
         return group;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         size.setText("0");
@@ -169,7 +197,7 @@ public class ViewSubsetDefinition implements IView{
     }
     
     /**
-     * Enables the view
+     * Enables the view.
      */
     private void enable(){
         // TODO: Maybe make this a default for all views?
@@ -181,7 +209,7 @@ public class ViewSubsetDefinition implements IView{
     }
     
     /**
-     * Disables the view
+     * Disables the view.
      */
     private void disable(){
         // TODO: Maybe make this a default for all views?
@@ -192,6 +220,9 @@ public class ViewSubsetDefinition implements IView{
         SWTUtil.disable(root);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
@@ -214,7 +245,7 @@ public class ViewSubsetDefinition implements IView{
     }
 
     /**
-     * Updates the view
+     * Updates the view.
      */
     private void update() {
         // TODO: Maybe make this a default for all views?

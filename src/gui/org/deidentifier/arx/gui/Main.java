@@ -1,110 +1,151 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.swing.JOptionPane;
-import javax.swing.Timer;
 
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.MainSplash;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Monitor;
 
 /**
- * Main entry point
- * 
+ * Main entry point.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class Main {
 
-	private static final String JDK16_FRAME = "apple.awt.CEmbeddedFrame";
-	private static final String JDK17_FRAME = "sun.lwawt.macosx.CViewEmbeddedFrame";
-	
+    /** Is the project already loaded. */
+    private static String     loaded = null;
+    
+    /** The splash. */
     private static MainSplash splash = null;
+    
+    /** The main window. */
+    private static MainWindow main   = null;
 
+    /**
+     * Main entry point.
+     *
+     * @param args
+     */
     public static void main(final String[] args) {
 
         try {
-
-            if (!isOSX()) {
-                splash = new MainSplash();
-                splash.setVisible(true);
-            } else {
-            	try {
-            		Class.forName(JDK16_FRAME);
-            	} catch (Exception e){
-            		SWT_AWT.embeddedFrameClass = JDK17_FRAME;
-            	}
-            }
-
-            System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-
-            MainWindow main = new MainWindow();
-            main.addShellListener(new ShellAdapter() {
-                @Override
-                public void shellActivated(ShellEvent arg0) {
-                    hideSplash();
-                }
-            });
-            main.addListener(SWT.Show, new Listener(){
-                @Override
-                public void handleEvent(Event arg0) {
-                    hideSplash();
-                }
-            });
-            main.show();
-
-        } catch (Throwable e) {
             
-            hideSplash();
+            // Display
+            Display display = new Display();
+            
+            // Monitor
+            Monitor monitor = getMonitor(display);
+            
+            // Splash
+            splash = new MainSplash(display, monitor);
+            splash.show();
+            
+            // Create main window
+            main = new MainWindow(display, monitor);
+            
+            // Handler for loading a project
+            if (args.length > 0 && args[0].endsWith(".deid")) {
+                main.onShow(new Runnable() {
+                    public void run(){
+                        load(main, args[0]);
+                    }
+                });
+            }
+            
+            // Show window
+            main.show();
+            
+            // Main event loop
+            while (!main.isDisposed()) {
+                try {
+                    
+                    // Event handling                    
+                    if (!display.readAndDispatch()) {
+                        display.sleep();
+                    }
+                } catch (final Exception e) {
+                    
+                    // Error handling
+                    main.showErrorDialog(Resources.getMessage("MainWindow.9") + Resources.getMessage("MainWindow.10"), e); //$NON-NLS-1$ //$NON-NLS-2$
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+                    main.getController().getResources().getLogger().info(sw.toString());
+                }
+            }
+            
+            // Dispose display
+            if (!display.isDisposed()) {
+                display.dispose();
+            }
+        } catch (Throwable e) {
+
+            // Error handling outside of SWT
+            if (splash != null) splash.hide();
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             final String trace = sw.toString();
 
+            // Show message
             JOptionPane.showMessageDialog(null, trace, "Unexpected error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
 
         }
     }
 
-    private static void hideSplash() {
-        new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                if (splash != null) splash.setVisible(false);
+    /**
+     * Returns the monitor on which the application was launched.
+     *
+     * @param display
+     * @return
+     */
+    private static Monitor getMonitor(Display display) {
+        Point mouse = display.getCursorLocation();
+        for (Monitor monitor : display.getMonitors()) {
+            if (monitor.getBounds().contains(mouse)) {
+                return monitor;
             }
-        }).start();
+        }
+        return display.getPrimaryMonitor();
     }
 
-    private static boolean isOSX() {
-        String osName = System.getProperty("os.name");
-        return osName.contains("OS X");
+    /**
+     * Loads a project.
+     *
+     * @param main
+     * @param path
+     */
+    private static void load(MainWindow main, String path) {
+        if (loaded == null) {
+            loaded = path;
+            if (splash != null) splash.hide();
+            main.getController().actionOpenProject(path);
+        }
     }
 }

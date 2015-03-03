@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.framework.check;
@@ -79,7 +78,7 @@ public class StateMachine {
     /** The current snapshot, if any. */
     private int[]      snapshot = null;
 
-    /** The node for the current snapshot */
+    /** The node for the current snapshot. */
     private Node       snapshotNode;
 
     /**
@@ -95,14 +94,19 @@ public class StateMachine {
     }
 
     /**
-     * Returns the last node
-     * 
+     * Returns the last node.
+     *
      * @return the last node, which has been checked for k-anonymity
      */
     public Node getLastNode() {
         return lastNode;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public Transition getLastTransition() {
         return lastTransition;
     }
@@ -149,24 +153,23 @@ public class StateMachine {
      */
     private boolean isPossibleSnapshot(final Node currentNode) {
         snapshot = history.get(currentNode);
-        snapshotNode = history.getNode();
+        snapshotNode = history.getTransformation();
         if (snapshot != null) { return true; }
         return false;
     }
 
     /**
-     * Is node1 a predecessor of or equal to node2 ?
-     * 
-     * @param currentNode
-     *            the current node
-     * @return true, if is possible rollup
+     * Is node2 a predecessor of or equal to node1?.
+     *
+     * @param node1
+     * @param node2
+     * @return
      */
     private boolean isPredecessor(final Node node1, final Node node2) {
         for (int i = 0; i < node2.getTransformation().length; i++) {
             if (node1.getTransformation()[i] < node2.getTransformation()[i]) { return false; }
         }
         return true;
-
     }
 
     /**

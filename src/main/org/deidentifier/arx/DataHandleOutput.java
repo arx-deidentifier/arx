@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx;
@@ -23,6 +22,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.framework.data.Data;
@@ -98,54 +98,52 @@ public class DataHandleOutput extends DataHandle {
         }
     }
 
-    /** The current result */
-    private ARXResult      result;
+    /** The current result. */
+    private ARXResult     result;
 
-    /** The current node */
-    private ARXNode        node;
-
-    /** The data. */
-    protected Data         dataIS;
+    /** The current node. */
+    private ARXNode       node;
 
     /** The data. */
-    protected Data         dataQI;
+    protected Data        dataIS;
 
     /** The data. */
-    protected Data         dataSE;
+    protected Data        dataQI;
+
+    /** The data. */
+    protected Data        dataSE;
 
     /** An inverse map to data arrays. */
-    private int[][][]    inverseData;
+    private int[][][]     inverseData;
 
     /** An inverse map to dictionaries. */
-    private Dictionary[] inverseDictionaries;
+    private Dictionary[]  inverseDictionaries;
 
     /** An inverse map for column indices. */
-    private int[]        inverseMap;
+    private int[]         inverseMap;
 
     /** The generalization hierarchies. */
-    private int[][][]    map;
+    private int[][][]     map;
 
     /** The names of the quasiIdentifer. */
-    private String[]     quasiIdentifiers;
+    private String[]      quasiIdentifiers;
 
-    /** Should we remove outliers */
-    private boolean      removeOutliers;
+    /** Suppression handling. */
+    private final int     suppressedAttributeTypes;
 
-    /** The string to insert. */
-    private String       suppressionString;
+    /** Suppression handling. */
+    private final String  suppressionString;
 
     /**
      * Instantiates a new handle.
-     * 
+     *
+     * @param result
      * @param registry The registry
      * @param manager The data manager
-     * @param checker The node checker
-     * @param node The node to apply
-     * @param statistics Statistics for the dataset
-     * @param suppressionString The suppression string
-     * @param definition The data definition
-     * @param removeOutliers Do we remove outliers
+     * @param buffer
      * @param node The underlying transformation
+     * @param statistics Statistics for the dataset
+     * @param definition The data definition
      * @param config The underlying config
      */
     protected DataHandleOutput(final ARXResult result,
@@ -154,17 +152,16 @@ public class DataHandleOutput extends DataHandle {
                                final Data buffer,
                                final ARXNode node,
                                final StatisticsEquivalenceClasses statistics,
-                               final String suppressionString,
                                final DataDefinition definition,
-                               final boolean removeOutliers,
                                final ARXConfiguration config) {
 
         registry.updateOutput(node, this);
         this.setRegistry(registry);
 
+        // Init
+        this.suppressionString = config.getSuppressionString();
+        this.suppressedAttributeTypes = config.getSuppressedAttributeTypes();
         this.result = result;
-        this.removeOutliers = removeOutliers;
-        this.suppressionString = suppressionString;
         this.definition = definition;
         this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), statistics);
         this.node = node;
@@ -232,6 +229,9 @@ public class DataHandleOutput extends DataHandle {
         return header[col];
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getDataType(java.lang.String)
+     */
     @Override
     public DataType<?> getDataType(String attribute) {
         
@@ -249,28 +249,9 @@ public class DataHandleOutput extends DataHandle {
         }
     }
 
-    /**
-     * Gets the distinct values.
-     * 
-     * @param col
-     *            the col
-     * @return the distinct values
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getGeneralization(java.lang.String)
      */
-    @Override
-    public String[] getDistinctValues(final int col) {
-
-        // Check
-        checkRegistry();
-        checkColumn(col);
-
-        // TODO: Inefficient
-        final Set<String> vals = new HashSet<String>();
-        for (int i = 0; i < getNumRows(); i++) {
-            vals.add(getValue(i, col));
-        }
-        return vals.toArray(new String[vals.size()]);
-    }
-
     @Override
     public int getGeneralization(final String attribute) {
         checkRegistry();
@@ -298,7 +279,6 @@ public class DataHandleOutput extends DataHandle {
         checkRegistry();
         return dataQI.getDataLength();
     }
-
 
     /**
      * Gets the value.
@@ -333,8 +313,37 @@ public class DataHandleOutput extends DataHandle {
         return new ResultIterator();
     }
 
+    @Override
+    public boolean replace(int column, String original, String replacement) {
+        throw new UnsupportedOperationException("This operation is only supported by handles for data input");
+    }
+
+    /**
+     * Releases all resources.
+     */
+    protected void doRelease() {
+        result.releaseBuffer(this);
+        node = null;
+        dataIS = null;
+        dataQI = null;
+        dataSE = null;
+        inverseData = null;
+        inverseDictionaries = null;
+        inverseMap = null;
+        map = null;
+        quasiIdentifiers = null;
+        registry = null;
+        subset = null;
+        dataTypes = null;
+        definition = null;
+        header = null;
+        statistics = null;
+        node = null;
+    }
     /**
      * Creates the data type array.
+     *
+     * @return
      */
     @Override
     protected DataType<?>[][] getDataTypeArray() {
@@ -373,7 +382,31 @@ public class DataHandleOutput extends DataHandle {
     }
  
     /**
-     * Returns the suppression string
+     * Gets the distinct values.
+     *
+     * @param col the column
+     * @param handler
+     * @return the distinct values
+     */
+    @Override
+    protected String[] getDistinctValues(final int col, InterruptHandler handler) {
+
+        // Check
+        checkRegistry();
+        checkColumn(col);
+
+        final Set<String> vals = new HashSet<String>();
+        for (int i = 0; i < getNumRows(); i++) {
+            handler.checkInterrupt();
+            vals.add(getValue(i, col));
+        }
+        handler.checkInterrupt();
+        return vals.toArray(new String[vals.size()]);
+    }
+
+    /**
+     * Returns the suppression string.
+     *
      * @return
      */
     protected String getSuppressionString(){
@@ -448,7 +481,7 @@ public class DataHandleOutput extends DataHandle {
             final int index = inverseMap[col] & AttributeType.MASK;
             final int[][] data = inverseData[type];
 
-            if (removeOutliers &&
+            if ((suppressedAttributeTypes & (1 << type)) != 0 &&
                 ((dataQI.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) { return suppressionString; }
 
             final int value = data[row][index] & Data.REMOVE_OUTLIER_MASK;
@@ -456,16 +489,45 @@ public class DataHandleOutput extends DataHandle {
             return dictionary[index][value];
         }
     }
-
+    
     /**
-     * Returns whether the given row is an outlier
+     * Returns whether the given row is an outlier.
+     *
      * @param row
      * @return
      */
     protected boolean internalIsOutlier(final int row) {
         return ((dataQI.getArray()[row][0] & Data.OUTLIER_MASK) != 0);
     }
-    
+
+    @Override
+    protected boolean internalReplace(int column,
+                                      String original,
+                                      String replacement) {
+
+
+        // Init and check
+        if (column >= inverseMap.length) return false;
+        int type = inverseMap[column] >>> AttributeType.SHIFT;
+        if (type >= inverseDictionaries.length) return false;
+        String[][] dictionary = inverseDictionaries[type].getMapping();
+        int index = inverseMap[column] & AttributeType.MASK;
+        if (index >= dictionary.length) return false;
+        String[] values = dictionary[index];
+        
+        // Replace
+        boolean found = false;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equals(original)) {
+                values[i] = replacement;
+                found = true;
+            }
+        }
+        
+        // Return
+        return found;
+    }
+
     /**
      * Swap internal.
      * 
@@ -478,29 +540,5 @@ public class DataHandleOutput extends DataHandle {
         int[] temp = dataQI.getArray()[row1];
         dataQI.getArray()[row1] = dataQI.getArray()[row2];
         dataQI.getArray()[row2] = temp;
-    }
-
-    /**
-     * Releases all resources
-     */
-    protected void doRelease() {
-        result.releaseBuffer(this);
-        node = null;
-        dataIS = null;
-        dataQI = null;
-        dataSE = null;
-        inverseData = null;
-        inverseDictionaries = null;
-        inverseMap = null;
-        map = null;
-        quasiIdentifiers = null;
-        suppressionString = null;
-        registry = null;
-        subset = null;
-        dataTypes = null;
-        definition = null;
-        header = null;
-        statistics = null;
-        node = null;
     }
 }

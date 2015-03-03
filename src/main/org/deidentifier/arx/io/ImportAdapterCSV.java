@@ -1,20 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
- * Copyright (C) 2014 Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.io;
@@ -43,14 +41,10 @@ import org.apache.commons.io.input.CountingInputStream;
  */
 public class ImportAdapterCSV extends ImportAdapter {
 
-    /**
-     * The configuration describing the CSV file being used
-     */
+    /** The configuration describing the CSV file being used. */
     private ImportConfigurationCSV config;
 
-    /**
-     * The size of the CSV file
-     */
+    /** The size of the CSV file. */
     private long                   bytesTotal;
 
     /**
@@ -67,15 +61,15 @@ public class ImportAdapterCSV extends ImportAdapter {
     private CSVDataInput           in;
 
     /**
-     * Actual iterator used to go through data within CSV file
-     * 
+     * Actual iterator used to go through data within CSV file.
+     *
      * @see {@link CSVDataInput#iterator()}
      */
     private Iterator<String[]>     it;
 
     /**
-     * Contains the last row as returned by {@link CSVDataInput#iterator()}
-     * 
+     * Contains the last row as returned by {@link CSVDataInput#iterator()}.
+     *
      * @note This row cannot be simply returned, but needs to be further
      *       processed, e.g. to return only selected columns.
      */
@@ -92,13 +86,10 @@ public class ImportAdapterCSV extends ImportAdapter {
     private boolean                headerReturned = false;
 
     /**
-     * Creates a new instance of this object with given configuration
-     * 
-     * @param config
-     *            {@link #config}
-     * 
-     * @throws IOException
-     *             In case file doesn't contain actual data
+     * Creates a new instance of this object with given configuration.
+     *
+     * @param config {@link #config}
+     * @throws IOException In case file doesn't contain actual data
      */
     protected ImportAdapterCSV(ImportConfigurationCSV config) throws IOException {
 
@@ -110,7 +101,7 @@ public class ImportAdapterCSV extends ImportAdapter {
         cin = new CountingInputStream(new FileInputStream(new File(config.getFileLocation())));
 
         /* Get CSV iterator */
-        in = new CSVDataInput(cin, config.getSeparator());
+        in = new CSVDataInput(cin, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
         it = in.iterator();
 
         /* Check whether there is actual data within the CSV file */
@@ -134,6 +125,8 @@ public class ImportAdapterCSV extends ImportAdapter {
      * 
      * This divides the amount of bytes that have already been read by the
      * amount of total bytes and casts the result into a percentage.
+     *
+     * @return
      */
     @Override
     public int getProgress() {
@@ -152,6 +145,8 @@ public class ImportAdapterCSV extends ImportAdapter {
      * 
      * This returns true when the CSV file has another line, which would be
      * assigned to {@link #row} during the last iteration of {@link #next()}.
+     *
+     * @return
      */
     @Override
     public boolean hasNext() {
@@ -161,13 +156,11 @@ public class ImportAdapterCSV extends ImportAdapter {
     /**
      * Returns the next row
      * 
-     * The returned element is sorted as defined by {@link ImportColumn#index}
-     * and contains as many elements as there are columns selected to import
+     * The returned element is sorted as defined by {@link ImportColumn#index} and contains as many elements as there are columns selected to import
      * from {@link #indexes}. The first row will always contain the names of the
      * columns. {@link #headerReturned} is used to keep track of that.
-     * 
-     * @throws IllegalArgumentException
-     *             In case defined datatypes don't match
+     *
+     * @return
      */
     @Override
     public String[] next() {
@@ -199,7 +192,7 @@ public class ImportAdapterCSV extends ImportAdapter {
     }
 
     /**
-     * Dummy
+     * Dummy.
      */
     @Override
     public void remove() {
@@ -215,6 +208,8 @@ public class ImportAdapterCSV extends ImportAdapter {
      * whether or not names have been assigned explicitly either the appropriate
      * values will be returned, or names will be made up on the fly following
      * the pattern "Column #x", where x is incremented for each column.
+     *
+     * @return
      */
     private String[] createHeader() {
         
@@ -266,7 +261,7 @@ public class ImportAdapterCSV extends ImportAdapter {
     /**
      * Returns an array with indexes of columns that should be imported
      * 
-     * Only columns listed within {@link #columns} will be imported. This
+     * Only columns listed within {@link #column} will be imported. This
      * iterates over the list of columns and returns an array with indexes of
      * columns that should be imported.
      * 

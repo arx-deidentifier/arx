@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.menu;
@@ -53,17 +52,43 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+/**
+ * 
+ */
 public class DialogSeparator extends TitleAreaDialog implements IDialog {
 
+    /**  TODO */
     private static final int        LINES      = 5;
+    
+    /**  TODO */
     private int                     selection;
+    
+    /**  TODO */
     private Table                   table;
+    
+    /**  TODO */
     private final List<TableColumn> columns    = new ArrayList<TableColumn>();
+    
+    /**  TODO */
     private final char[]            separators = { ';', ',', '|', '\t' };
+    
+    /**  TODO */
     private final String[]          labels     = { ";", ",", "|", "Tab" };    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    
+    /**  TODO */
     private final String            file;
+    
+    /**  TODO */
     private final boolean           data;
 
+    /**
+     * 
+     *
+     * @param parent
+     * @param controller
+     * @param file
+     * @param data
+     */
     public DialogSeparator(final Shell parent,
                            final Controller controller,
                            final String file,
@@ -72,7 +97,10 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         this.file = file;
         this.data = data;
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#create()
+     */
     @Override
     public void create() {
         super.create();
@@ -82,98 +110,19 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         super.getShell().layout();
         SWTUtil.center(super.getShell(), super.getParentShell());
     }
-
-    @Override
-    protected void createButtonsForButtonBar(final Composite parent) {
-
-        // Create OK Button
-        parent.setLayoutData(SWTUtil.createFillGridData());
-        final Button ok = createButton(parent,
-                                       Window.OK,
-                                       Resources.getMessage("SeparatorDialog.7"), true); //$NON-NLS-1$
-        ok.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                setReturnCode(Window.OK);
-                close();
-            }
-        });
-
-        // Create cancel Button
-        parent.setLayoutData(SWTUtil.createFillGridData());
-        final Button cancel = createButton(parent,
-                                           Window.CANCEL,
-                                           Resources.getMessage("SeparatorDialog.8"), false); //$NON-NLS-1$
-        cancel.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                setReturnCode(Window.CANCEL);
-                close();
-            }
-        });
-    }
-
-    @Override
-    protected Control createDialogArea(final Composite parent) {
-        parent.setLayout(new GridLayout());
-        final GridLayout l = new GridLayout();
-        l.numColumns = 2;
-        parent.setLayout(l);
-
-        // Build components
-        table = new Table(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-        GridData d = SWTUtil.createFillGridData();
-        d.horizontalSpan = 2;
-        d.grabExcessHorizontalSpace = true;
-        d.grabExcessVerticalSpace = true;
-        table.setLayoutData(d);
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
-
-        try {
-            detect(file);
-            read(file);
-        } catch (final Exception e) {
-            if (e instanceof RuntimeException){
-                throw (RuntimeException)e;
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
-
-        final Combo combo = new Combo(parent, SWT.NONE);
-        d = SWTUtil.createFillHorizontallyGridData();
-        d.horizontalSpan = 2;
-        combo.setLayoutData(d);
-        for (final String s : labels) {
-            combo.add(s);
-        }
-        combo.select(selection);
-        combo.pack();
-        combo.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-
-                try {
-                    if (combo.getSelectionIndex() == -1) { return; }
-                    selection = combo.getSelectionIndex();
-                    read(file);
-                } catch (final Exception e) {
-                    if (e instanceof RuntimeException){
-                        throw (RuntimeException)e;
-                    } else {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        });
-
-        return parent;
+    
+    /**
+     * 
+     *
+     * @return
+     */
+    public char getSeparator() {
+        return separators[selection];
     }
 
     /**
-     * Detects the most frequent separator in the first few lines
-     * 
+     * Detects the most frequent separator in the first few lines.
+     *
      * @param file
      * @throws IOException
      */
@@ -216,30 +165,10 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         }
     }
 
-    public char getSeparator() {
-        return separators[selection];
-    }
-
-    @Override
-    protected ShellListener getShellListener() {
-        return new ShellAdapter() {
-            @Override
-            public void shellClosed(final ShellEvent event) {
-                event.doit = false;
-            }
-        };
-    }
-
-    @Override
-    protected boolean isResizable() {
-        return false;
-    }
-
     /**
-     * Reds the first few files with chosen separator
-     * 
+     * Reds the first few files with chosen separator.
+     *
      * @param file
-     * @return
      * @throws IOException
      */
     private void read(final String file) throws IOException {
@@ -299,5 +228,129 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         }
         table.setRedraw(true);
         table.redraw();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+     */
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+     */
+    @Override
+    protected void createButtonsForButtonBar(final Composite parent) {
+
+        // Create OK Button
+        parent.setLayoutData(SWTUtil.createFillGridData());
+        final Button ok = createButton(parent,
+                                       Window.OK,
+                                       Resources.getMessage("SeparatorDialog.7"), true); //$NON-NLS-1$
+        ok.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                setReturnCode(Window.OK);
+                close();
+            }
+        });
+
+        // Create cancel Button
+        parent.setLayoutData(SWTUtil.createFillGridData());
+        final Button cancel = createButton(parent,
+                                           Window.CANCEL,
+                                           Resources.getMessage("SeparatorDialog.8"), false); //$NON-NLS-1$
+        cancel.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                setReturnCode(Window.CANCEL);
+                close();
+            }
+        });
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
+    @Override
+    protected Control createDialogArea(final Composite parent) {
+        parent.setLayout(new GridLayout());
+        final GridLayout l = new GridLayout();
+        l.numColumns = 2;
+        parent.setLayout(l);
+
+        // Build components
+        table = new Table(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        GridData d = SWTUtil.createFillGridData();
+        d.horizontalSpan = 2;
+        d.grabExcessHorizontalSpace = true;
+        d.grabExcessVerticalSpace = true;
+        table.setLayoutData(d);
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true);
+
+        try {
+            detect(file);
+            read(file);
+        } catch (final Exception e) {
+            if (e instanceof RuntimeException){
+                throw (RuntimeException)e;
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
+
+        final Combo combo = new Combo(parent, SWT.NONE);
+        d = SWTUtil.createFillHorizontallyGridData();
+        d.horizontalSpan = 2;
+        combo.setLayoutData(d);
+        for (final String s : labels) {
+            combo.add(s);
+        }
+        combo.select(selection);
+        combo.pack();
+        combo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+
+                try {
+                    if (combo.getSelectionIndex() == -1) { return; }
+                    selection = combo.getSelectionIndex();
+                    read(file);
+                } catch (final Exception e) {
+                    if (e instanceof RuntimeException){
+                        throw (RuntimeException)e;
+                    } else {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
+
+        return parent;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#getShellListener()
+     */
+    @Override
+    protected ShellListener getShellListener() {
+        return new ShellAdapter() {
+            @Override
+            public void shellClosed(final ShellEvent event) {
+                event.doit = false;
+            }
+        };
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    @Override
+    protected boolean isResizable() {
+        return false;
     }
 }

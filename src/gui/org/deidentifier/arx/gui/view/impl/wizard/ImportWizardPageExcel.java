@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
+ * ARX: Powerful Data Anonymization
+ * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
@@ -89,14 +88,12 @@ public class ImportWizardPageExcel extends WizardPage {
      */
     class ExcelColumnLabelProvider extends ColumnLabelProvider {
 
-        /**
-         * Index of the column this instance is representing
-         */
+        /** Index of the column this instance is representing. */
         private int index;
 
 
         /**
-         * Creates new instance of this class for the given index
+         * Creates new instance of this class for the given index.
          *
          * @param index Index the instance should be created for
          */
@@ -105,65 +102,59 @@ public class ImportWizardPageExcel extends WizardPage {
         }
 
         /**
-         * Returns the string value for the given column
+         * Returns the string value for the given column.
+         *
+         * @param element
+         * @return
          */
         @Override
         public String getText(Object element) {
             return ((String[]) element)[index];
         }
-
-        /**
-         * Returns tooltip for each element of given column
-         *
-         * The tooltip contains the current row as well as the column index
-         * itself.
-         */
-        @Override
-        public String getToolTipText(Object element) {
-
-            int row = previewData.indexOf(element);
-            return "Row: " + (row + 1) + ", Column: " + (index + 1);
-        }
     }
 
-    /**
-     * Reference to the wizard containing this page
-     */
+    /** Reference to the wizard containing this page. */
     private ImportWizard wizardImport;
 
-    /**
-     * Columns detected by this page and passed on to {@link ImportWizardModel}
-     */
+    /** Columns detected by this page and passed on to {@link ImportWizardModel}. */
     private ArrayList<ImportWizardModelColumn> wizardColumns;
     /* Widgets */
+    /**  TODO */
     private Label lblLocation;
+    
+    /**  TODO */
     private Combo comboLocation;
+    
+    /**  TODO */
     private Button btnChoose;
+    
+    /**  TODO */
     private Button btnContainsHeader;
+    
+    /**  TODO */
     private Combo comboSheet;
+    
+    /**  TODO */
     private Label lblSheet;
+    
+    /**  TODO */
     private Table tablePreview;
 
+    /**  TODO */
     private TableViewer tableViewerPreview;
 
-    /**
-     * Preview data
-     */
+    /** Preview data. */
     ArrayList<String[]> previewData = new ArrayList<String[]>();
 
 
-    /**
-     * Workbook
-     *
-     * Either HSSFWorkbook or XSSFWorkbook, depending upon file type
-     */
+    /** Workbook Either HSSFWorkbook or XSSFWorkbook, depending upon file type. */
     private Workbook workbook;
     
-    /** Input stream*/
+    /** Input stream. */
     private InputStream stream;
 
     /**
-     * Creates a new instance of this page and sets its title and description
+     * Creates a new instance of this page and sets its title and description.
      *
      * @param wizardImport Reference to wizard containing this page
      */
@@ -180,9 +171,10 @@ public class ImportWizardPageExcel extends WizardPage {
 
     /**
      * Creates the design of this page
-     *
+     * 
      * This adds all the controls to the page along with their listeners.
      *
+     * @param parent
      * @note {@link #tablePreview} is not visible until a file is loaded.
      */
     public void createControl(Composite parent)
@@ -328,6 +320,19 @@ public class ImportWizardPageExcel extends WizardPage {
 
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+     */
+    @Override
+    public void setVisible(boolean value){
+        super.setVisible(value);
+        try { 
+            if (stream != null) stream.close();
+        } catch (Exception e){
+            /* Die silently*/
+        }
+    }
+
     /**
      * Evaluates the page
      *
@@ -374,11 +379,11 @@ public class ImportWizardPageExcel extends WizardPage {
 
     /**
      * Reads in preview data
+     * 
+     * This goes through up to {@link ImportWizardModel#PREVIEW_MAX_LINES} lines
+     * within the appropriate file and reads them in. It uses {@link ImportAdapter} in combination with {@link ImportConfigurationExcel} to actually read in the data.
      *
-     * This goes through up to {@link ImportWizardModel#previewDataMaxLines} lines
-     * within the appropriate file and reads them in. It uses
-     * {@link ImportAdapter} in combination with
-     * {@link ImportConfigurationExcel} to actually read in the data.
+     * @throws IOException
      */
     private void readPreview() throws IOException {
 
@@ -424,7 +429,7 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /* Get up to {ImportData#previewDataMaxLines} lines for previewing */
         int count = 0;
-        while (importAdapter.hasNext() && (count <= ImportWizardModel.previewDataMaxLines)) {
+        while (importAdapter.hasNext() && (count <= ImportWizardModel.PREVIEW_MAX_LINES)) {
             previewData.add(importAdapter.next());
             count++;
         }
@@ -468,12 +473,13 @@ public class ImportWizardPageExcel extends WizardPage {
         tablePreview.layout();
         tablePreview.setRedraw(true);
     }
-
+    
     /**
      * Reads in the available sheets from file
+     * 
+     * This reads in the available sheets from the file chosen at {@link #comboLocation} and adds them as items to {@link #comboSheet}.
      *
-     * This reads in the available sheets from the file chosen at
-     * {@link #comboLocation} and adds them as items to {@link #comboSheet}.
+     * @throws IOException
      */
     private void readSheets() throws IOException {
 
@@ -497,16 +503,6 @@ public class ImportWizardPageExcel extends WizardPage {
         /* Add all sheets to combo */
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             comboSheet.add(workbook.getSheetName(i));
-        }
-    }
-    
-    @Override
-    public void setVisible(boolean value){
-        super.setVisible(value);
-        try { 
-            if (stream != null) stream.close();
-        } catch (Exception e){
-            /* Die silently*/
         }
     }
 }

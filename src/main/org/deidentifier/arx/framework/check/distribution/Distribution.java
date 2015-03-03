@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.framework.check.distribution;
@@ -31,22 +30,25 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
  */
 public class Distribution {
 
-    /** The size */
+    /** The size. */
     private int                 size;
-    /** The threshold used for rehashing */
+    
+    /** The threshold used for rehashing. */
     private int                 threshold;
 
     /** The elements. Even index contains value, odd index contains frequency */
     private int[]               elements;
-    /** The sorted element array - used for history entries only */
+    
+    /** The sorted element array - used for history entries only. */
     private int[]               packedElements;
-    /** The sorted frequency array - used for history entries only */
+    
+    /** The sorted frequency array - used for history entries only. */
     private int[]               packedFrequencies;
 
-    /** The loadfactor */
+    /** The loadfactor. */
     private final static float  LOADFACTOR       = 0.75f;
 
-    /** The initial default capacity of the hashtable */
+    /** The initial default capacity of the hashtable. */
     private static final int    DEFAULT_CAPACITY = 8;          // power of two
 
     /**
@@ -54,6 +56,21 @@ public class Distribution {
      */
     public Distribution() {
         this(DEFAULT_CAPACITY);
+    }
+
+    /**
+     * Constructor used to create frequency set from a history entry.
+     *
+     * @param element
+     * @param frequency
+     */
+    public Distribution(final int[] element, final int[] frequency) {
+        this(element.length);
+        for (int i = 0; i < element.length; i++) {
+            if (element[i] != -1) {
+                this.add(element[i], frequency[i]);
+            }
+        }
     }
 
     /**
@@ -71,21 +88,6 @@ public class Distribution {
     }
 
     /**
-     * Constructor used to create frequency set from a history entry
-     * 
-     * @param element
-     * @param frequency
-     */
-    public Distribution(final int[] element, final int[] frequency) {
-        this(element.length);
-        for (int i = 0; i < element.length; i++) {
-            if (element[i] != -1) {
-                this.add(element[i], frequency[i]);
-            }
-        }
-    }
-
-    /**
      * Adds a element to the hashtable. Frequency value 1.
      * 
      * @param element
@@ -95,39 +97,7 @@ public class Distribution {
     }
 
     /**
-     * Adds an element with the given frequency
-     * 
-     * @param element
-     * @param value
-     */
-    private void add(final int element, final int value) {
-
-        final int mask = (elements.length - 1);
-        int index = (element & ((elements.length >> 1) - 1)) << 1; // start at
-                                                                   // home
-                                                                   // bucket
-        while (true) {
-            if (elements[index] == -1) { // empty bucket, not found
-
-                elements[index] = element;
-                elements[index + 1] = value;
-                size++;
-
-                if (size > threshold) {
-                    rehash();
-                }
-                break;
-            } else if (elements[index] == element) { // element found
-                elements[index + 1] += value;
-                break;
-            }
-            index = (index + 2) & mask; // next bucket
-        }
-
-    }
-
-    /**
-     * Clears the table
+     * Clears the table.
      */
     public void clear() {
         Arrays.fill(elements, -1);
@@ -135,8 +105,8 @@ public class Distribution {
     }
 
     /**
-     * Gets all buckets of the hash table
-     * 
+     * Gets all buckets of the hash table.
+     *
      * @return
      */
     public int[] getBuckets() {
@@ -144,8 +114,8 @@ public class Distribution {
     }
 
     /**
-     * Gets all elements of the packed table
-     * 
+     * Gets all elements of the packed table.
+     *
      * @return
      */
     public int[] getPackedElements() {
@@ -153,8 +123,8 @@ public class Distribution {
     }
 
     /**
-     * Gets the frequency of the packed table
-     * 
+     * Gets the frequency of the packed table.
+     *
      * @return
      */
     public int[] getPackedFrequency() {
@@ -176,8 +146,8 @@ public class Distribution {
     }
 
     /**
-     * Merge a frequency set with a history entry
-     * 
+     * Merge a frequency set with a history entry.
+     *
      * @param elements
      * @param frequency
      */
@@ -214,7 +184,48 @@ public class Distribution {
     }
 
     /**
-     * Rehashes the frequency set table
+     * Gets the current size.
+     * 
+     * @return
+     */
+    public int size() {
+        return size;
+    }
+
+    /**
+     * Adds an element with the given frequency.
+     *
+     * @param element
+     * @param value
+     */
+    private void add(final int element, final int value) {
+
+        final int mask = (elements.length - 1);
+        int index = (element & ((elements.length >> 1) - 1)) << 1; // start at
+                                                                   // home
+                                                                   // bucket
+        while (true) {
+            if (elements[index] == -1) { // empty bucket, not found
+
+                elements[index] = element;
+                elements[index + 1] = value;
+                size++;
+
+                if (size > threshold) {
+                    rehash();
+                }
+                break;
+            } else if (elements[index] == element) { // element found
+                elements[index + 1] += value;
+                break;
+            }
+            index = (index + 2) & mask; // next bucket
+        }
+
+    }
+
+    /**
+     * Rehashes the frequency set table.
      */
     private void rehash() {
         final int capacity = HashTableUtil.calculateCapacity(elements.length);
@@ -240,14 +251,5 @@ public class Distribution {
 
         threshold = (int) (capacity * LOADFACTOR);
         elements = newelements;
-    }
-
-    /**
-     * Gets the current size.
-     * 
-     * @return
-     */
-    public int size() {
-        return size;
     }
 }

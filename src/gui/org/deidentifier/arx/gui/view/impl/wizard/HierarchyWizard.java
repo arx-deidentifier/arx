@@ -1,22 +1,23 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
+
+import java.util.Locale;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
@@ -36,23 +37,33 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 
 /**
- * This class implements a wizard for generalization hierarchies
- * @author Fabian Prasser
+ * This class implements a wizard for generalization hierarchies.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     
     /**
-     * Result of the wizard
-     * @author Fabian Prasser
+     * Result of the wizard.
      *
+     * @author Fabian Prasser
      * @param <T>
      */
     public static class HierarchyWizardResult<T> {
 
+        /**  TODO */
         public final Hierarchy hierarchy;
+        
+        /**  TODO */
         public final HierarchyBuilder<T> builder;
+        
+        /**
+         * 
+         *
+         * @param hierarchy
+         * @param builder
+         */
         public HierarchyWizardResult(Hierarchy hierarchy,
                                      HierarchyBuilder<T> builder) {
             this.hierarchy = hierarchy;
@@ -61,53 +72,70 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     }
     
     /**
-     * Updateable part of the wizard
+     * Updateable part of the wizard.
+     *
      * @author Fabian Prasser
      */
     public static interface HierarchyWizardView {
-        /** Update*/
+        
+        /**
+         * Update.
+         */
         public void update();
     }
     
-    /** Var */
+    /** Var. */
     private HierarchyWizardModel<T>   model;
-    /** Var */
+    
+    /** Var. */
     private final Controller                controller;
-    /** Var */
+    
+    /** Var. */
     private final ARXWizardButton           buttonLoad;
-    /** Var */
+    
+    /** Var. */
     private final ARXWizardButton           buttonSave;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardPageIntervals<T> pageIntervals;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardPageOrder<T>     pageOrder;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardPageRedaction<T> pageRedaction;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardPageFinal<T>     pageFinal;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardPageType<T>      pageType;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param controller
      * @param attribute
      * @param datatype
+     * @param locale
      * @param items
      */
     public HierarchyWizard(final Controller controller,
                            final String attribute,
                            final DataType<T> datatype,
+                           final Locale locale,
                            final String[] items) {
-        this(controller, attribute, null, datatype, items);
+        this(controller, attribute, null, datatype, locale, items);
     }
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param controller
      * @param attribute
      * @param builder
      * @param datatype
+     * @param locale
      * @param items
      */
     @SuppressWarnings("unchecked")
@@ -115,11 +143,12 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
                            final String attribute,
                            final HierarchyBuilder<?> builder,
                            final DataType<T> datatype,
+                           final Locale locale,
                            final String[] items) {
         super(new Point(800, 400));
         
         // Store
-        this.model = new HierarchyWizardModel<T>(datatype, items);
+        this.model = new HierarchyWizardModel<T>(datatype, locale, items);
         this.controller = controller;
         
         // Parse given builder, if needed
@@ -129,7 +158,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             }
         } catch (Exception e){ 
             /* Die silently, and recover*/
-            this.model = new HierarchyWizardModel<T>(datatype, items);
+            this.model = new HierarchyWizardModel<T>(datatype, locale, items);
         }
         
         // Initialize window
@@ -149,7 +178,14 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
                 save();
             }
         });
-        this.setButtons(this.buttonLoad, this.buttonSave);
+        
+        ARXWizardButton help = new ARXWizardButton("Help...", new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                help();
+            }
+        });
+        
+        this.setButtons(help, this.buttonLoad, this.buttonSave);
         
         // Initialize pages
         pageFinal = new HierarchyWizardPageFinal<T>(this);
@@ -163,6 +199,9 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         pageType = new HierarchyWizardPageType<T>(this, model, pageIntervals, pageOrder, pageRedaction);
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.Wizard#addPages()
+     */
     @Override
     public void addPages() {
         
@@ -175,13 +214,17 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.Wizard#canFinish()
+     */
     @Override
     public boolean canFinish() {
         return getDialog().getCurrentPage() instanceof HierarchyWizardPageFinal;
     }
 
     /**
-     * Returns the created builder
+     * Returns the created builder.
+     *
      * @return
      */
     public HierarchyWizardResult<T> getResult(){
@@ -193,7 +236,14 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     }
     
     /**
-     * Loads a specification
+     * Shows the help dialog.
+     */
+    private void help() {
+        controller.actionShowHelpDialog("id-51");
+    }
+    
+    /**
+     * Loads a specification.
      */
     private void load(){
 
@@ -263,9 +313,9 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             break;
         }
     }
-    
+
     /**
-     * Saves the current specification
+     * Saves the current specification.
      */
     private void save(){
         
@@ -298,7 +348,8 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     }
     
     /**
-     * Returns the load button
+     * Returns the load button.
+     *
      * @return
      */
     protected Button getLoadButton(){
@@ -306,7 +357,8 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     }
 
     /**
-     * Returns the load button
+     * Returns the load button.
+     *
      * @return
      */
     protected Button getSaveButton(){

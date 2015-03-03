@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.examples;
@@ -25,21 +24,16 @@ import java.util.Iterator;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
-import org.deidentifier.arx.criteria.DistinctLDiversity;
-import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an simple example for using multiple sensitive attributes and
- * enforcing different privacy criteria while also protecting the sensitive associations between
- * the values
- * 
+ * This class implements an example on how to use the NDS Metric.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
@@ -54,133 +48,69 @@ public class Example14 extends Example {
     public static void main(final String[] args) {
 
         // Define data
-        final Data data = getData();
+        final DefaultData data = Data.create();
+        data.add("age", "gender", "zipcode");
+        data.add("34", "male", "81667");
+        data.add("45", "female", "81675");
+        data.add("66", "male", "81925");
+        data.add("70", "female", "81931");
+        data.add("34", "female", "81931");
+        data.add("70", "male", "81931");
+        data.add("45", "male", "81931");
 
-        // Define attribute types
-        data.getDefinition().setAttributeType("age", getHierarchyAge());
-        data.getDefinition().setAttributeType("zipcode", getHierarchyZipcode());
-        data.getDefinition().setAttributeType("disease1", AttributeType.SENSITIVE_ATTRIBUTE);
-        data.getDefinition().setAttributeType("gender", AttributeType.SENSITIVE_ATTRIBUTE);
+        // Define hierarchies
+        final DefaultHierarchy age = Hierarchy.create();
+        age.add("34", "<50", "*");
+        age.add("45", "<50", "*");
+        age.add("66", ">=50", "*");
+        age.add("70", ">=50", "*");
+
+        final DefaultHierarchy gender = Hierarchy.create();
+        gender.add("male", "*");
+        gender.add("female", "*");
+
+        // Only excerpts for readability
+        final DefaultHierarchy zipcode = Hierarchy.create();
+        zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
+        zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
+        zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
+        zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
+
+        data.getDefinition().setAttributeType("age", age);
+        data.getDefinition().setAttributeType("gender", gender);
+        data.getDefinition().setAttributeType("zipcode", zipcode);
 
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
-        config.addCriterion(new DistinctLDiversity("gender", 2));
-        config.setProtectSensitiveAssociations(true);
-        config.setMaxOutliers(0d);
-        config.setMetric(Metric.createEntropyMetric());
-        try {
-
-            // Now anonymize
-            final ARXResult result = anonymizer.anonymize(data, config);
+        config.addCriterion(new KAnonymity(3));
         
+        // NDS-specific settings
+        config.setMaxOutliers(1d); // Recommended default: 1d
+        config.setAttributeWeight("age", 0.5d); // attribute weight
+        config.setAttributeWeight("gender", 0.3d); // attribute weight
+        config.setAttributeWeight("zipcode", 0.5d); // attribute weight
+        config.setMetric(Metric.createLossMetric(0.5d)); // suppression/generalization-factor
+        
+        try {
+            final ARXResult result = anonymizer.anonymize(data, config);
+
             // Print info
             printResult(result, data);
 
             // Process results
-            if (result.getGlobalOptimum() != null){
-                System.out.println(" - Transformed data:");
-                final Iterator<String[]> transformed = result.getOutput(false)
-                                                             .iterator();
-                while (transformed.hasNext()) {
-                    System.out.print("   ");
-                    System.out.println(Arrays.toString(transformed.next()));
-                }
+            System.out.println(" - Transformed data:");
+            final Iterator<String[]> transformed = result.getOutput(false)
+                                                         .iterator();
+            while (transformed.hasNext()) {
+                System.out.print("   ");
+                System.out.println(Arrays.toString(transformed.next()));
             }
+
         } catch (final IllegalArgumentException e) {
             throw new RuntimeException(e);
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static Hierarchy getHierarchyDisease() {
-        final DefaultHierarchy disease = Hierarchy.create();
-        disease.add("flu",
-                    "respiratory infection",
-                    "vascular lung disease",
-                    "respiratory & digestive system disease");
-        disease.add("pneumonia",
-                    "respiratory infection",
-                    "vascular lung disease",
-                    "respiratory & digestive system disease");
-        disease.add("bronchitis",
-                    "respiratory infection",
-                    "vascular lung disease",
-                    "respiratory & digestive system disease");
-        disease.add("pulmonary edema",
-                    "vascular lung disease",
-                    "vascular lung disease",
-                    "respiratory & digestive system disease");
-        disease.add("pulmonary embolism",
-                    "vascular lung disease",
-                    "vascular lung disease",
-                    "respiratory & digestive system disease");
-        disease.add("gastric ulcer",
-                    "stomach disease",
-                    "digestive system disease",
-                    "respiratory & digestive system disease");
-        disease.add("stomach cancer",
-                    "stomach disease",
-                    "digestive system disease",
-                    "respiratory & digestive system disease");
-        disease.add("gastritis",
-                    "stomach disease",
-                    "digestive system disease",
-                    "respiratory & digestive system disease");
-        disease.add("colitis",
-                    "colon disease",
-                    "digestive system disease",
-                    "respiratory & digestive system disease");
-        disease.add("colon cancer",
-                    "colon disease",
-                    "digestive system disease",
-                    "respiratory & digestive system disease");
-        return disease;
-    }
-
-    private static Hierarchy getHierarchyZipcode() {
-        final DefaultHierarchy zipcode = Hierarchy.create();
-        zipcode.add("47677", "4767*", "476**", "47***", "4****", "*****");
-        zipcode.add("47602", "4760*", "476**", "47***", "4****", "*****");
-        zipcode.add("47678", "4767*", "476**", "47***", "4****", "*****");
-        zipcode.add("47905", "4790*", "479**", "47***", "4****", "*****");
-        zipcode.add("47909", "4790*", "479**", "47***", "4****", "*****");
-        zipcode.add("47906", "4790*", "479**", "47***", "4****", "*****");
-        zipcode.add("47605", "4760*", "476**", "47***", "4****", "*****");
-        zipcode.add("47673", "4767*", "476**", "47***", "4****", "*****");
-        zipcode.add("47607", "4760*", "476**", "47***", "4****", "*****");
-        return zipcode;
-    }
-
-    private static Hierarchy getHierarchyAge() {
-        final DefaultHierarchy age = Hierarchy.create();
-        age.add("29", "<=40", "*");
-        age.add("22", "<=40", "*");
-        age.add("27", "<=40", "*");
-        age.add("43", ">40", "*");
-        age.add("52", ">40", "*");
-        age.add("47", ">40", "*");
-        age.add("30", "<=40", "*");
-        age.add("36", "<=40", "*");
-        age.add("32", "<=40", "*");
-        return age;
-    }
-
-    private static Data getData() {
-        DefaultData data = Data.create();
-        data.add("zipcode", "disease1", "age", "gender");
-        data.add("47677", "gastritis", "29", "m");
-        data.add("47602", "gastritis", "22", "f");
-        data.add("47678", "stomach cancer", "27", "f");
-        data.add("47905", "stomach cancer", "43", "m");
-        data.add("47909", "flu", "52", "m");
-        data.add("47906", "flu", "47", "f");
-        data.add("47605", "bronchitis", "30", "f");
-        data.add("47673", "bronchitis", "36", "m");
-        data.add("47607", "stomach cancer", "32", "m");
-        return data;
     }
 }

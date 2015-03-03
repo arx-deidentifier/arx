@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.examples;
@@ -30,16 +29,16 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 
 /**
- * This class provides a base class for examples
- * 
+ * This class provides a base class for examples.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public abstract class Example {
 
     /**
-     * Prints the result
-     * 
+     * Prints the result.
+     *
      * @param result
      * @param data
      */
@@ -68,7 +67,9 @@ public abstract class Example {
             identifiers[i] = new StringBuffer();
             generalizations[i] = new StringBuffer();
             identifiers[i].append(qis.get(i));
-            generalizations[i].append(optimum.getGeneralization(qis.get(i))).append("/").append(data.getDefinition().getHierarchyHeight(qis.get(i)) - 1);
+            generalizations[i].append(optimum.getGeneralization(qis.get(i)));
+            if (data.getDefinition().isHierarchyAvailable(qis.get(i)))
+                generalizations[i].append("/").append(data.getDefinition().getHierarchy(qis.get(i))[0].length - 1);
             lengthI = Math.max(lengthI, identifiers[i].length());
             lengthG = Math.max(lengthG, generalizations[i].length());
         }
@@ -84,7 +85,7 @@ public abstract class Example {
         }
 
         // Print
-        System.out.println(" - Information loss: " + result.getGlobalOptimum().getMaximumInformationLoss().getValue());
+        System.out.println(" - Information loss: " + result.getGlobalOptimum().getMaximumInformationLoss());
         System.out.println(" - Optimal generalization");
         for (int i = 0; i < qis.size(); i++) {
             System.out.println("   * " + identifiers[i] + ": " + generalizations[i]);
@@ -92,7 +93,8 @@ public abstract class Example {
     }
 
     /**
-     * Prints a given datahandle
+     * Prints a given data handle.
+     *
      * @param handle
      */
     protected static void print(DataHandle handle) {
@@ -101,7 +103,8 @@ public abstract class Example {
     }
 
     /**
-     * Prints a given iterator
+     * Prints a given iterator.
+     *
      * @param iterator
      */
     protected static void print(Iterator<String[]> iterator) {
@@ -112,8 +115,9 @@ public abstract class Example {
     }
 
     /**
-     * Prints java array
-     * @param iterator
+     * Prints java array.
+     *
+     * @param array
      */
     protected static void printArray(String[][] array) {
         System.out.print("{");
@@ -136,7 +140,8 @@ public abstract class Example {
     }
     
     /**
-     * Prints java array
+     * Prints java array.
+     *
      * @param iterator
      */
     protected static void printIterator(Iterator<String[]> iterator) {
@@ -160,7 +165,8 @@ public abstract class Example {
     }
     
     /**
-     * Prints a given data handle
+     * Prints a given data handle.
+     *
      * @param handle
      */
     protected static void printHandle(DataHandle handle) {

@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.deidentifier.arx.aggregates;
 
@@ -32,29 +31,33 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
 
 /**
- * This abstract base class enables building hierarchies for categorical and non-categorical values
- * 
- * @author Fabian Prasser
+ * This abstract base class enables building hierarchies for categorical and non-categorical values.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<T> implements Serializable {
 
     /**
-     * This class represents a fanout parameter
+     * This class represents a fanout parameter.
+     *
      * @author Fabian Prasser
+     * @param <U>
      */
     public static class Group<U> implements Serializable {
         
+        /**  TODO */
         private static final long serialVersionUID = -5767501048737045793L;
         
-        /** Fanout*/
+        /** Fanout. */
         private final int size;
-        /** Aggregate function*/
+        
+        /** Aggregate function. */
         private final AggregateFunction<U> function;
         
         /**
-         * Creates a new instance
+         * Creates a new instance.
+         *
          * @param size
          * @param function
          */
@@ -83,6 +86,9 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             return size;
         }
         
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
         @Override
         public String toString(){
             return "Group[length="+size+", function="+function.toString()+"]";
@@ -90,21 +96,29 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
     
     /**
-     * This class represents a level in the hierarchy
+     * This class represents a level in the hierarchy.
+     *
      * @author Fabian Prasser
+     * @param <U>
      */
     public static class Level<U> implements Serializable{
         
+        /**  TODO */
         private static final long serialVersionUID = 1410005675926162598L;
-        /** Level*/
+        
+        /** Level. */
         private final int level;
-        /** List of groups*/
+        
+        /** List of groups. */
         private final List<Group<U>> list = new ArrayList<Group<U>>();
-        /** Builder*/
+        
+        /** Builder. */
         private final HierarchyBuilderGroupingBased<U> builder;
         
         /**
-         * Creates a new instance
+         * Creates a new instance.
+         *
+         * @param builder
          * @param level
          */
         private Level(HierarchyBuilderGroupingBased<U> builder, int level) {
@@ -113,7 +127,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
         
         /**
-         * Adds the given group with the default aggregate function
+         * Adds the given group with the default aggregate function.
+         *
          * @param size
          * @return
          */
@@ -127,7 +142,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
 
         /**
-         * Adds the given group with the given aggregate function
+         * Adds the given group with the given aggregate function.
+         *
          * @param size
          * @param function
          * @return
@@ -151,7 +167,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
 
         /**
-         * Removes all groups on this level
+         * Removes all groups on this level.
+         *
          * @return
          */
         public Level<U> clearGroups() {
@@ -161,7 +178,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
         
         /**
-         * Returns the list
+         * Returns the list.
+         *
          * @return
          */
         @SuppressWarnings("unchecked")
@@ -176,6 +194,9 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             return level;
         }
      
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
         @Override
         public String toString(){
             StringBuilder b = new StringBuilder();
@@ -190,40 +211,63 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
     
     /**
-     * A group representation to be used by subclasses
+     * A group representation to be used by subclasses.
+     *
      * @author Fabian Prasser
      */
     protected abstract static class AbstractGroup implements Serializable {
         
+        /**  TODO */
         private static final long serialVersionUID = -7657969446040078411L;
         
+        /**  TODO */
         private String label;
         
+        /**
+         * 
+         *
+         * @param label
+         */
         protected AbstractGroup(String label){
             this.label = label;
         }
+        
+        /**
+         * 
+         *
+         * @return
+         */
         protected String getLabel(){
             return label;
         }
     }
     
+    /**  TODO */
     private static final long serialVersionUID = 3208791665131141362L;
-    /** The data array*/
+    
+    /** The data array. */
     private transient String[] data;
-    /** All fanouts for each level */
+    
+    /** All fanouts for each level. */
     private Map<Integer, Level<T>> groups = new HashMap<Integer, Level<T>>();
-    /** The groups on the first level*/
+    
+    /** The groups on the first level. */
     private transient AbstractGroup[][] abstractGroups;
-    /** Are we ready to go*/
+    
+    /** Are we ready to go. */
     private transient boolean prepared = false;
-    /** The data type*/
+    
+    /** The data type. */
     private DataType<T> datatype;
-    /** The default aggregate function, might be null*/
+    
+    /** The default aggregate function, might be null. */
     protected AggregateFunction<T> function;
 
     /**
-     * Creates a new instance for the given data type
+     * Creates a new instance for the given data type.
+     *
      * @param type
+     * @param datatype
      */
     protected HierarchyBuilderGroupingBased(Type type, DataType<T> datatype){
         super(type);
@@ -231,17 +275,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
     
     /**
-     * Creates a new hierarchy, based on the predefined specification
-     * @param data
-     * @return
-     */
-    public Hierarchy build(String[] data){
-        prepare(data);
-        return build();
-    }
-    
-    /**
-     * Creates a new hierarchy, based on the predefined specification
+     * Creates a new hierarchy, based on the predefined specification.
+     *
      * @return
      */
     public Hierarchy build(){
@@ -275,7 +310,19 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
     
     /**
-     * Returns the data type
+     * Creates a new hierarchy, based on the predefined specification.
+     *
+     * @param data
+     * @return
+     */
+    public Hierarchy build(String[] data){
+        prepare(data);
+        return build();
+    }
+    
+    /**
+     * Returns the data type.
+     *
      * @return
      */
     public DataType<T> getDataType(){
@@ -283,7 +330,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
 
     /**
-     * Returns the default aggregate function
+     * Returns the default aggregate function.
+     *
      * @return
      */
     public AggregateFunction<T> getDefaultFunction(){
@@ -291,9 +339,10 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
 
     /**
-     * Returns the given level
+     * Returns the given level.
+     *
      * @param level
-     * @return 
+     * @return
      */
     public Level<T> getLevel(int level){
         if (!this.groups.containsKey(level)) {
@@ -304,7 +353,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
     
     /**
-     * Returns all currently defined levels
+     * Returns all currently defined levels.
+     *
      * @return
      */
     public List<Level<T>> getLevels(){
@@ -350,6 +400,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     
     /**
      * Prepares the builder. Returns a list of the number of equivalence classes per level
+     *
+     * @param data
      * @return
      */
     public int[] prepare(String[] data){
@@ -361,7 +413,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         this.abstractGroups = prepareGroups();
         this.prepared = true;
         
-       // TODO: This assumes that input data does not contain duplicates
+        // TODO: This assumes that input data does not contain duplicates
         int[] result = new int[this.abstractGroups.length + 1];
         result[0] = data.length; 
         for (int i=0; i<result.length - 1; i++){
@@ -375,7 +427,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
     
     /**
-     * Sets the default aggregate function to be used by all fanouts
+     * Sets the default aggregate function to be used by all fanouts.
+     *
      * @param function
      */
     public void setAggregateFunction(AggregateFunction<T> function){
@@ -412,7 +465,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
     
     /**
-     * Returns the data array
+     * Returns the data array.
+     *
      * @return
      */
     protected String[] getData(){
@@ -420,12 +474,44 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
     
     /**
-     * Tells the implementing class to prepare the generalization process
+     * Returns the prepared groups for recursion.
+     *
+     * @return
+     */
+    protected AbstractGroup[][] getPreparedGroups(){
+        return this.abstractGroups;
+    }
+    
+    /**
+     * Tells the implementing class to prepare the generalization process.
+     *
+     * @return
      */
     protected abstract AbstractGroup[][] prepareGroups();
     
     /**
-     * Is this builder prepared allready
+     * Sets the data array.
+     *
+     * @param data
+     */
+    protected void setData(String[] data){
+        this.data = data;
+    }
+    
+    /**
+     * Sets the groups on higher levels of the hierarchy.
+     *
+     * @param levels
+     */
+    protected void setLevels(List<Level<T>> levels) {
+        for (Level<T> level : levels) {
+            this.groups.put(level.getLevel(), level);
+        }
+    }
+
+    /**
+     * Is this builder prepared allready.
+     *
      * @param prepared
      */
     protected void setPrepared(boolean prepared){
@@ -433,13 +519,5 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         if (prepared == false) {
             this.abstractGroups = null;
         }
-    }
-
-    /**
-     * Returns the prepared groups for recursion
-     * @return 
-     */
-    protected AbstractGroup[][] getPreparedGroups(){
-        return this.abstractGroups;
     }
 }

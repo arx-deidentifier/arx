@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.worker.io;
@@ -28,52 +27,60 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 
 /**
- * A writer for XML documents that can handle common objects from the ARX model
+ * A writer for XML documents that can handle common objects from the ARX model.
+ *
  * @author Fabian Prasser
  */
 public class XMLWriter {
 	
-	/** The current prefix for indentation*/
+	/** The current prefix for indentation. */
 	private StringBuilder prefix = new StringBuilder();
-	/** A backing string builder*/
+	
+	/** A backing string builder. */
 	private StringBuilder sBuilder = null;
-	/** A backing file builder*/
+	
+	/** A backing file builder. */
 	private FileBuilder fBuilder = null;
-	/** The current stack of nested elements*/
+	
+	/** The current stack of nested elements. */
 	private Stack<String> elements = new Stack<String>();
 
 	/**
-	 * Creates a new writer backed by a StringBuilder
-	 * @throws IOException
-	 */
+     * Creates a new writer backed by a StringBuilder.
+     *
+     * @throws IOException
+     */
 	public XMLWriter() throws IOException{
 		this.sBuilder = new StringBuilder();
 	}
 	
 	/**
-	 * Creates a new writer backed by the given FileBuilder
-	 * @param builder
-	 * @throws IOException
-	 */
+     * Creates a new writer backed by the given FileBuilder.
+     *
+     * @param builder
+     * @throws IOException
+     */
 	public XMLWriter(FileBuilder builder) throws IOException{
 		this.fBuilder = builder;
 	}
 	
 	/**
-	 * Append stuff to the backing builder
-	 * @param value
-	 * @throws IOException
-	 */
+     * Append stuff to the backing builder.
+     *
+     * @param value
+     * @throws IOException
+     */
 	private void append(String value) throws IOException{
 		if (fBuilder != null) fBuilder.append(value);
 		else sBuilder.append(value);
 	}
 
 	/**
-	 * Intend the document
-	 * @param element
-	 * @throws IOException
-	 */
+     * Intend the document.
+     *
+     * @param element
+     * @throws IOException
+     */
 	public void indent(String element) throws IOException{
 		elements.push(element);
 		this.append(prefix.toString());
@@ -84,12 +91,13 @@ public class XMLWriter {
 	}
 
 	/**
-	 * Intend the document
-	 * @param element
-	 * @param attribute
-	 * @param value
-	 * @throws IOException
-	 */
+     * Intend the document.
+     *
+     * @param element
+     * @param attribute
+     * @param value
+     * @throws IOException
+     */
 	public void indent(String element, String attribute, int value) throws IOException{
 		elements.push(element);
 		this.append(prefix.toString());
@@ -105,16 +113,19 @@ public class XMLWriter {
 	}
 
 	/**
-	 * Returns a string representation
-	 */
+     * Returns a string representation.
+     *
+     * @return
+     */
 	public String toString(){
 		return sBuilder.toString();
 	}
 
 	/**
-	 * Unintend
-	 * @throws IOException
-	 */
+     * Unintend.
+     *
+     * @throws IOException
+     */
 	public void unindent() throws IOException{
 		this.prefix.setLength(this.prefix.length()-1);
 		String element = elements.pop();
@@ -125,22 +136,24 @@ public class XMLWriter {
 	}
 	
 	/**
-	 * Create an element
-	 * @param attribute
-	 * @param anonymity
-	 * @throws IOException
-	 */
+     * Create an element.
+     *
+     * @param attribute
+     * @param anonymity
+     * @throws IOException
+     */
 	public void write(String attribute, Anonymity anonymity) throws IOException {
 		write(attribute, anonymity.toString());
 	}
 	
 	/**
-	 * Create an element
-	 * @param attribute
-	 * @param array
-	 * @param map
-	 * @throws IOException
-	 */
+     * Create an element.
+     *
+     * @param attribute
+     * @param array
+     * @param map
+     * @throws IOException
+     */
 	public void write(String attribute, ARXNode[] array, Map<String, Integer> map) throws IOException {
 		StringBuilder builder = new StringBuilder();
 		 for (int j = 0; j < array.length; j++) {
@@ -153,61 +166,67 @@ public class XMLWriter {
 	}
 	
 	/**
-	 * Create an element
-	 * @param attribute
-	 * @param value
-	 * @throws IOException
-	 */
+     * Create an element.
+     *
+     * @param attribute
+     * @param value
+     * @throws IOException
+     */
 	public void write(String attribute, boolean value) throws IOException{
 		write(attribute, String.valueOf(value));
 	}
 	
 	/**
-	 * Create an element
-	 * @param attribute
-	 * @param value
-	 * @throws IOException
-	 */
+     * Create an element.
+     *
+     * @param attribute
+     * @param value
+     * @throws IOException
+     */
 	public void write(String attribute, char value) throws IOException{
 		write(attribute, String.valueOf(value));
 	}
 	
 	/**
-	 * Create an element
-	 * @param attribute
-	 * @param value
-	 * @throws IOException
-	 */
+     * Create an element.
+     *
+     * @param attribute
+     * @param value
+     * @throws IOException
+     */
 	public void write(String attribute, double value) throws IOException{
 		write(attribute, String.valueOf(value));
 	}
 
 	/**
-	 * Create an element
-	 * @param attribute
-	 * @param array
-	 * @throws IOException
-	 */
+     * Create an element.
+     *
+     * @param attribute
+     * @param array
+     * @throws IOException
+     */
 	public void write(String attribute, int[] array) throws IOException {
 		write(attribute, Arrays.toString(array));
 	}
 
 	/**
-	 * Create an element
-	 * @param attribute
-	 * @param value
-	 * @throws IOException
-	 */
+     * Create an element.
+     *
+     * @param attribute
+     * @param value
+     * @throws IOException
+     */
 	public void write(String attribute, long value) throws IOException{
 		write(attribute, String.valueOf(value));
 	}
 
 	/**
-	 * Create an element
-	 * @param attribute
-	 * @param value
-	 * @throws IOException
-	 */
+     * Create an element.
+     *
+     * @param attribute
+     * @param value
+     * @throws IOException
+     */
 	public void write(String attribute, String value) throws IOException{
 		this.append(prefix.toString());
 		this.append("<");
@@ -220,10 +239,11 @@ public class XMLWriter {
 	}
 
 	/**
-	 * Appends the string
-	 * @param string
-	 * @throws IOException 
-	 */
+     * Appends the string.
+     *
+     * @param string
+     * @throws IOException
+     */
 	public void write(String string) throws IOException {
 		this.append(string);
 	}

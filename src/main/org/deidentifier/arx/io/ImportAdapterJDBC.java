@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
+ * ARX: Powerful Data Anonymization
+ * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.io;
@@ -36,21 +35,17 @@ import java.util.List;
  */
 public class ImportAdapterJDBC extends ImportAdapter {
 
-    /**
-     * The configuration describing the CSV file being used
-     */
+    /** The configuration describing the CSV file being used. */
     private ImportConfigurationJDBC config;
 
     /**
-     * ResultSet containing rows to return
-     * 
+     * ResultSet containing rows to return.
+     *
      * @see {@link #next()}
      */
     private ResultSet               resultSet;
 
-    /**
-     * Indicates whether there is another row to return
-     */
+    /** Indicates whether there is another row to return. */
     private boolean                 hasNext;
 
     /**
@@ -63,21 +58,17 @@ public class ImportAdapterJDBC extends ImportAdapter {
     private boolean                 headerReturned;
 
     /**
-     * Number of rows that need to be processed in total
-     * 
+     * Number of rows that need to be processed in total.
+     *
      * @see {@link #getProgress()}
      */
     private int                     totalRows;
 
     /**
-     * Creates a new instance of this object with given configuration
-     * 
-     * @param config
-     *            {@link #config}
-     * 
-     * @throws IOException
-     *             In case of communication errors with JDBC
-     * 
+     * Creates a new instance of this object with given configuration.
+     *
+     * @param config {@link #config}
+     * @throws IOException In case of communication errors with JDBC
      * @todo Fix IOException
      */
     protected ImportAdapterJDBC(ImportConfigurationJDBC config) throws IOException {
@@ -129,6 +120,8 @@ public class ImportAdapterJDBC extends ImportAdapter {
      * This divides the number of rows that have already been returned by the
      * number of total rows and casts the result into a percentage. In case of
      * an {@link SQLException} 0 will be returned.
+     *
+     * @return
      */
     @Override
     public int getProgress() {
@@ -143,14 +136,18 @@ public class ImportAdapterJDBC extends ImportAdapter {
     /**
      * Indicates whether there is another element to return
      * 
-     * This returns true when there is another element in the result set
-     * {@link #resultSet}.
+     * This returns true when there is another element in the result set {@link #resultSet}.
+     *
+     * @return
      */
     @Override
     public boolean hasNext() {
         return hasNext;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.Iterator#next()
+     */
     @Override
     public String[] next() {
 
@@ -193,7 +190,7 @@ public class ImportAdapterJDBC extends ImportAdapter {
     }
 
     /**
-     * Dummy
+     * Dummy.
      */
     @Override
     public void remove() {
@@ -207,6 +204,8 @@ public class ImportAdapterJDBC extends ImportAdapter {
      * returned later on by iterating over this object. Depending upon whether
      * or not names have been assigned explicitly either the appropriate values
      * will be returned, or names from the JDBC metadata will be used.
+     *
+     * @return
      */
     private String[] createHeader() {
 
@@ -246,7 +245,7 @@ public class ImportAdapterJDBC extends ImportAdapter {
     /**
      * Returns an array with indexes of columns that should be imported
      * 
-     * Only columns listed within {@link #columns} will be imported. This
+     * Only columns listed within {@link #column} will be imported. This
      * iterates over the list of columns and returns an array with indexes of
      * columns that should be imported.
      * 

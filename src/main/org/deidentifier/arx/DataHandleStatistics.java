@@ -1,70 +1,125 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx;
 
 /**
- * Stupid wrapper class that provides information to StatisticsBuilder
- * TODO: Get rid of this
- * @author Fabian Prasser
+ * Stupid wrapper class that provides information to StatisticsBuilder.
  *
+ * @author Fabian Prasser
  */
 public class DataHandleStatistics {
+
+    /** Stupid interface */
+    public static interface InterruptHandler {
+        
+        /** Stupid method*/
+        public void checkInterrupt();
+    }
     
+    /**  Stupid handle */
     private DataHandle handle;
     
+    /**
+     * Stupid constructor
+     * @param handle
+     */
     protected DataHandleStatistics(DataHandle handle){
         this.handle = handle;
     }
 
-    public String[] getDistinctValues(int column) {
-        return handle.getDistinctValues(column);
-    }
-
+    /**
+     * Stupid method
+     * @param column
+     * @return
+     */
     public String getAttributeName(int column) {
         return handle.getAttributeName(column);
     }
 
-    public DataType<?> getDataType(String attribute) {
-        return handle.getDataType(attribute);
-    }
-
-    public int getGeneralization(String attribute) {
-        return handle.getGeneralization(attribute);
-    }
-
-    public String getSuppressionString() {
-        return handle.getSuppressionString();
-    }
-
+    /**
+     * 
+     *
+     * @param attribute
+     * @return
+     */
     public DataType<?> getBaseDataType(String attribute) {
         return handle.getBaseDataType(attribute);
     }
 
+    /**
+     * Stupid method
+     * @param attribute
+     * @return
+     */
+    public DataType<?> getDataType(String attribute) {
+        return handle.getDataType(attribute);
+    }
+
+    /**
+     * Stupid method
+     * @return
+     */
+    public DataDefinition getDefinition() {
+        return handle.getDefinition();
+    }
+
+    /**
+     * Stupid method
+     * @param column
+     * @param stop
+     * @return
+     */
+    public String[] getDistinctValues(int column, InterruptHandler stop) {
+        return handle.getDistinctValues(column, stop);
+    }
+
+    /**
+     * Stupid method
+     * @param attribute
+     * @return
+     */
+    public int getGeneralization(String attribute) {
+        return handle.getGeneralization(attribute);
+    }
+
+    /**
+     * Stupid method
+     * @return
+     */
     public int getNumRows() {   
         return handle.getNumRows();
     }
 
-    public String getValue(int row, int column) {
-        return handle.getValue(row, column);
+    /**
+     * Stupid method
+     * @return
+     */
+    public String getSuppressionString() {
+        return handle.getSuppressionString();
     }
 
-    public DataDefinition getDefinition() {
-        return handle.getDefinition();
+    /**
+     * Stupid method
+     * @param row
+     * @param column
+     * @return
+     */
+    public String getValue(int row, int column) {
+        return handle.getValue(row, column);
     }
 }

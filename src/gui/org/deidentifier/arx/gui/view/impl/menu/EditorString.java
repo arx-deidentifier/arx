@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.menu;
@@ -30,14 +29,31 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * 
+ */
 public abstract class EditorString implements IEditor<String> {
 
+    /**  TODO */
     private final String  category;
+    
+    /**  TODO */
     private final String  label;
+    
+    /**  TODO */
     private final boolean multi;
+    
+    /**  TODO */
     private final Button  ok;
+    
+    /**  TODO */
     private Text text;
     
+    /**
+     * 
+     *
+     * @param composite
+     */
     public EditorString(Composite composite) {
         this.category = null;
         this.label = null;
@@ -46,6 +62,14 @@ public abstract class EditorString implements IEditor<String> {
         this.createControl(composite);
     }
     
+    /**
+     * 
+     *
+     * @param category
+     * @param label
+     * @param ok
+     * @param multi
+     */
     public EditorString(final String category,
                         final String label,
                         final Button ok,
@@ -56,16 +80,20 @@ public abstract class EditorString implements IEditor<String> {
         this.ok = ok;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     public void createControl(final Composite parent) {
         
         final GridData ldata = SWTUtil.createFillHorizontallyGridData();
         if (multi) {
             text = new Text(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
-            ldata.heightHint = 100;
+            ldata.heightHint = 60;
         } else {
             text = new Text(parent, SWT.SINGLE | SWT.BORDER);
         }
+        ldata.minimumWidth = 60;
         text.setText(getValue());
         text.setLayoutData(ldata);
         text.addModifyListener(new ModifyListener() {
@@ -83,18 +111,33 @@ public abstract class EditorString implements IEditor<String> {
         });
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#getCategory()
+     */
     @Override
     public String getCategory() {
         return category;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
+    public Control getControl() {
+        return text;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#getLabel()
+     */
     @Override
     public String getLabel() {
         return label;
     }
-    
+
     /**
-     * Update
+     * Update.
      */
     public void update(){
         if (text!=null){
@@ -103,9 +146,5 @@ public abstract class EditorString implements IEditor<String> {
                 text.setText(value);
             }
         }
-    }
-
-    public Control getControl() {
-        return text;
     }
 }

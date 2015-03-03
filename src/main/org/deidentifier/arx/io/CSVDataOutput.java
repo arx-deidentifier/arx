@@ -1,149 +1,341 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.io;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Iterator;
+
+import com.univocity.parsers.csv.CsvFormat;
+import com.univocity.parsers.csv.CsvWriter;
+import com.univocity.parsers.csv.CsvWriterSettings;
 
 /**
  * Provides methods for writing CSV encoded data.
  * 
- * @author Fabian Prasser 
+ * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class CSVDataOutput {
 
-    /** The output file. */
-    private final OutputStream out;
+    /** A writer. */
+    private final Writer            writer;
 
-    /** The separator. */
-    private final char         separator;
+    /** Settings. */
+    private final CsvWriterSettings settings;
 
-    /** Size of the buffer */
-    private static final int   BUFFER_SIZE = 1024 * 1024;
-
-    /** Are we writing to a stream? */
-    private boolean            stream      = false;
+    /** Should the writer be closed. */
+    private boolean           close;
 
     /**
-     * New instance
-     * 
-     * @param output
-     * @param separator
-     * @throws FileNotFoundException
+     * Instantiate.
+     *
+     * @param file the file
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVDataOutput(final File file, final char separator) throws FileNotFoundException {
-        this.out = new FileOutputStream(file);
-        this.separator = separator;
+    public CSVDataOutput(final File file) throws IOException {
+        this(file, CSVSyntax.DEFAULT_DELIMITER);
     }
 
     /**
-     * New instance
-     * 
-     * @param out
-     * @param separator
+     * Instantiate.
+     *
+     * @param file the file
+     * @param delimiter the delimiter
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVDataOutput(final OutputStream out, final char separator) {
-        this.out = out;
-        this.separator = separator;
-        this.stream = true;
+    public CSVDataOutput(final File file, final char delimiter) throws IOException {
+        this(file, delimiter, CSVSyntax.DEFAULT_QUOTE);
     }
 
     /**
-     * New instance
-     * 
-     * @param output
-     * @param separator
-     * @throws FileNotFoundException
+     * Instantiate.
+     *
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVDataOutput(final String output, final char separator) throws FileNotFoundException {
-    	this.out = new FileOutputStream(new File(output));
-        this.separator = separator;
+    public CSVDataOutput(final File file, final char delimiter, final char quote) throws IOException {
+        this(file, delimiter, quote, CSVSyntax.DEFAULT_ESCAPE);
     }
 
     /**
-     * Write the results
-     * 
-     * @param iterator
-     * @throws IOException
+     * Instantiate.
+     *
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final File file, final char delimiter, final char quote, final char escape) throws IOException {
+        this(file, delimiter, quote, escape, CSVSyntax.DEFAULT_LINEBREAK);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        this(new FileWriter(file), delimiter, quote, escape, linebreak);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param file the file
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final File file, final CSVSyntax config) throws IOException {
+        this(file, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final OutputStream stream) throws IOException {
+        this(stream, CSVSyntax.DEFAULT_DELIMITER);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final OutputStream stream, final char delimiter) throws IOException {
+        this(stream, delimiter, CSVSyntax.DEFAULT_QUOTE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote) throws IOException {
+        this(stream, delimiter, quote, CSVSyntax.DEFAULT_ESCAPE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
+        this(stream, delimiter, quote, escape, CSVSyntax.DEFAULT_LINEBREAK);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        this(new OutputStreamWriter(stream), delimiter, quote, escape, linebreak);
+        close = false;
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(OutputStream stream, final CSVSyntax config) throws IOException {
+        this(stream, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final String filename) throws IOException {
+        this(filename, CSVSyntax.DEFAULT_DELIMITER);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final String filename, final char delimiter) throws IOException {
+        this(filename, delimiter, CSVSyntax.DEFAULT_QUOTE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final String filename, final char delimiter, final char quote) throws IOException {
+        this(filename, delimiter, quote, CSVSyntax.DEFAULT_ESCAPE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final String filename, final char delimiter, final char quote, final char escape) throws IOException {
+        this(filename, delimiter, quote, escape, CSVSyntax.DEFAULT_LINEBREAK);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final String filename, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        this(new File(filename), delimiter, quote, escape, linebreak);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+
+    public CSVDataOutput(String filename, final CSVSyntax config) throws IOException {
+        this(filename, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
+    }
+
+    /**
+     * Instantiates a new CSV data output.
+     *
+     * @param writer the writer
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final Writer writer, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        this.writer = writer;
+        close = true;
+        settings = createSettings(delimiter, quote, escape, linebreak);
+    }
+
+    /**
+     * Write the results.
+     *
+     * @param iterator the iterator
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public void write(final Iterator<String[]> iterator) throws IOException {
-        write(iterator, Integer.MAX_VALUE);
+
+        CsvWriter csvwriter = new CsvWriter(writer, settings);
+        while (iterator.hasNext()) {
+            csvwriter.writeRow((Object[]) iterator.next());
+        }
+        if (close) {
+            csvwriter.close();
+        } else {
+            csvwriter.flush();
+        }
     }
 
     /**
-     * Write the given number of columns from the results
-     * 
-     * @param iterator
-     * @param numColumns
-     * @throws IOException
+     * Write.
+     *
+     * @param hierarchy the hierarchy
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public void
-            write(final Iterator<String[]> iterator, final int numColumns) throws IOException {
-        BufferedWriter os = null;
-        try {
-            os = new BufferedWriter(new OutputStreamWriter(out), BUFFER_SIZE);
-            while (iterator.hasNext()) {
-                final String[] tuple = iterator.next();
-                for (int i = 0; (i < tuple.length) && (i < numColumns); i++) {
-                    os.write(tuple[i]);
-                    if (i != (tuple.length - 1)) {
-                        os.write(separator);
-                    } else {
-                        os.newLine();
-                    }
-                }
-            }
-            os.flush();
-        } finally {
-            if (!stream && (os != null)) {
-                os.close();
-            }
+    public void write(final String[][] hierarchy) throws IOException {
+
+        CsvWriter csvwriter = new CsvWriter(writer, settings);
+        for (int i = 0; i < hierarchy.length; i++) {
+            csvwriter.writeRow((Object[]) hierarchy[i]);
+        }
+        if (close) {
+            csvwriter.close();
+        } else {
+            csvwriter.flush();
         }
     }
 
-    public void write(final String[][] hierarchy) throws IOException {
-        BufferedWriter os = null;
-        try {
-            os = new BufferedWriter(new OutputStreamWriter(out), BUFFER_SIZE);
-            for (int h = 0; h < hierarchy.length; h++) {
-                final String[] tuple = hierarchy[h];
-                for (int i = 0; i < tuple.length; i++) {
-                    os.write(tuple[i]);
-                    if (i != (tuple.length - 1)) {
-                        os.write(separator);
-                    } else {
-                        os.newLine();
-                    }
-                }
-            }
-            os.flush();
-        } finally {
-            if (!stream && (os != null)) {
-                os.close();
-            }
-        }
+    /**
+     * Creates the settings.
+     *
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @return the csv writer settings
+     */
+    private CsvWriterSettings createSettings(final char delimiter, final char quote, final char escape, final char[] linebreak) {
+        CsvFormat format = new CsvFormat();
+        format.setDelimiter(delimiter);
+        format.setQuote(quote);
+        format.setQuoteEscape(escape);
+        format.setLineSeparator(linebreak);
+        format.setNormalizedNewline(CSVSyntax.getNormalizedLinebreak(linebreak));
+
+        CsvWriterSettings settings = new CsvWriterSettings();
+        settings.setEmptyValue("");
+        settings.setNullValue("");
+        settings.setFormat(format);
+        return settings;
     }
 }

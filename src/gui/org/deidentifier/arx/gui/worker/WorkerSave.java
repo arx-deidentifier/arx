@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.worker;
@@ -27,9 +26,10 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -55,20 +55,24 @@ import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * This worker saves a project file to disk
+ * This worker saves a project file to disk.
+ *
  * @author Fabian Prasser
  */
 public class WorkerSave extends Worker<Model> {
 
-    /** The vocabulary to use*/
+    /** The vocabulary to use. */
     private Vocabulary vocabulary = new Vocabulary_V2();
-	/** The path*/
+	
+	/** The path. */
     private final String     path;
-    /** The model*/
+    
+    /** The model. */
     private final Model      model;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param path
      * @param controller
      * @param model
@@ -80,6 +84,9 @@ public class WorkerSave extends Worker<Model> {
         this.model = model;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+     */
     @Override
     public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                                         InterruptedException {
@@ -89,26 +96,29 @@ public class WorkerSave extends Worker<Model> {
         try {
             final FileOutputStream f = new FileOutputStream(path);
             final ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(f));
+            zip.setLevel(Deflater.BEST_SPEED);
             model.createConfig(); 
             writeMetadata(model, zip);
             arg0.worked(1);
             writeModel(model, zip);
-            arg0.worked(2);
+            arg0.worked(1);
             writeInput(model, zip);
-            arg0.worked(4);
+            arg0.worked(1);
+            writeInputSubset(model, zip);
+            arg0.worked(1);
             writeOutput(model, zip);
-            arg0.worked(5);
+            arg0.worked(1);
             writeOutputSubset(model, zip);
-            arg0.worked(6);
+            arg0.worked(1);
             writeConfiguration(model, zip);
-            arg0.worked(7);
+            arg0.worked(1);
             final Map<String, Integer> map = writeLattice(model, zip);
-            arg0.worked(8);
+            arg0.worked(1);
             writeClipboard(model, map, zip);
-            arg0.worked(9);
+            arg0.worked(1);
             writeFilter(model, zip);
             zip.close();
-            arg0.worked(10);
+            arg0.worked(1);
         } catch (final Exception e) {
             error = e;
             arg0.done();
@@ -120,8 +130,8 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Converts an attribute name to a file name
-     * 
+     * Converts an attribute name to a file name.
+     *
      * @param a
      * @return
      */
@@ -130,21 +140,46 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Converts a configuration to XML
-     * 
-     * @param model
+     * Converts a configuration to XML.
+     *
+     * @param config
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private String toXML(final ModelConfiguration config) throws IOException {
         
     	XMLWriter writer = new XMLWriter(); 
         writer.indent(vocabulary.getConfig());
-        writer.write(vocabulary.getRemoveOutliers(), config.isRemoveOutliers());
+        writer.write(vocabulary.getSuppressionAlwaysEnabled(), config.isSuppressionAlwaysEnabled());
+        writer.write(vocabulary.getSuppressionString(), config.getSuppressionString());
+        
+        // Write suppressed attribute types
+        writer.indent(vocabulary.getSuppressedAttributeTypes());
+        for (AttributeType type : new AttributeType[]{AttributeType.QUASI_IDENTIFYING_ATTRIBUTE,
+                                                      AttributeType.SENSITIVE_ATTRIBUTE,
+                                                      AttributeType.INSENSITIVE_ATTRIBUTE}) {
+            if (config.isAttributeTypeSuppressed(type)) {
+                writer.write(vocabulary.getType(), type.toString());
+            }
+        }
+        writer.unindent();
+        
         writer.write(vocabulary.getPracticalMonotonicity(), config.isPracticalMonotonicity());
         writer.write(vocabulary.getProtectSensitiveAssociations(), config.isProtectSensitiveAssociations());
         writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
-        writer.write(vocabulary.getMetric(), config.getMetric().getClass().getSimpleName());
+        writer.write(vocabulary.getMetric(), config.getMetric().toString());
+
+        // Write weights
+        writer.indent(vocabulary.getAttributeWeights());
+        for (Entry<String, Double> entry : config.getAttributeWeights().entrySet()) {
+            writer.indent(vocabulary.getAttributeWeight());
+            writer.write(vocabulary.getAttribute(), entry.getKey());
+            writer.write(vocabulary.getWeight(), entry.getValue());
+            writer.unindent();
+        }
+        writer.unindent();
+        
+        // Write criteria
         writer.indent(vocabulary.getCriteria());
         for (PrivacyCriterion c : config.getCriteria()) {
         	if (c != null) {
@@ -157,13 +192,13 @@ public class WorkerSave extends Worker<Model> {
     }
     
     /**
-     * Returns an XML representation of the data definition
-     * @param config 
-     * 
+     * Returns an XML representation of the data definition.
+     *
+     * @param config
      * @param handle
      * @param definition
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private String toXML(final ModelConfiguration config, 
                          final DataHandle handle,
@@ -207,12 +242,11 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Returns an XML representation of the lattice
-     * 
+     * Returns an XML representation of the lattice.
+     *
      * @param map
      * @param l
      * @param zip
-     * @return
      * @throws IOException
      */
     private void toXML(final Map<String, Integer> map,
@@ -248,7 +282,7 @@ public class WorkerSave extends Worker<Model> {
                 
                 writer.indent(vocabulary.getNode2(), vocabulary.getId(), currentId);
                 writer.write(vocabulary.getTransformation(), n.getTransformation());
-                writer.write(vocabulary.getAnonymity(), n.isAnonymous());
+                writer.write(vocabulary.getAnonymity(), n.getAnonymity());
                 writer.write(vocabulary.getChecked(), n.isChecked());
                 if (n.getPredecessors().length > 0) {
                 	writer.write(vocabulary.getPredecessors(), n.getPredecessors(), map);
@@ -257,8 +291,8 @@ public class WorkerSave extends Worker<Model> {
                 	writer.write(vocabulary.getSuccessors(), n.getSuccessors(), map);
                 }
                 writer.indent(vocabulary.getInfoloss());
-                writer.write(vocabulary.getMax2(), n.getMaximumInformationLoss().getValue());
-                writer.write(vocabulary.getMin2(), n.getMinimumInformationLoss().getValue());
+                writer.write(vocabulary.getMax2(), n.getMaximumInformationLoss().toString());
+                writer.write(vocabulary.getMin2(), n.getMinimumInformationLoss().toString());
                 writer.unindent();
                 writer.unindent();
             }
@@ -269,15 +303,15 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Returns an XML representation of the clipboard
-     * 
+     * Returns an XML representation of the clipboard.
+     *
      * @param map
      * @param clipboard
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private String toXML(final Map<String, Integer> map,
-                         final Set<ARXNode> clipboard) throws IOException {
+                         final List<ARXNode> clipboard) throws IOException {
 
         XMLWriter writer = new XMLWriter();
         writer.indent(vocabulary.getClipboard()); //$NON-NLS-1$
@@ -289,20 +323,33 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Converts a model to XML
-     * 
+     * Converts a model to XML.
+     *
      * @param model
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private String toXML(final Model model) throws IOException {
     	
         XMLWriter writer = new XMLWriter();
         writer.indent(vocabulary.getProject());
         writer.write(vocabulary.getName(), model.getName());
-        writer.write(vocabulary.getSeparator(), model.getSeparator());
+        
+        writer.write(vocabulary.getSeparator(), model.getCSVSyntax().getDelimiter());
+        writer.write(vocabulary.getEscape(), model.getCSVSyntax().getEscape());
+        writer.write(vocabulary.getQuote(), model.getCSVSyntax().getQuote());
+        
+        String linebreak = "UNIX";
+        char[] _linebreak = model.getCSVSyntax().getLinebreak();
+        if (_linebreak.length == 1 && _linebreak[0] == '\r') {
+            linebreak = "MAC";
+        } else if (_linebreak.length == 2){
+            linebreak = "WINDOWS";
+        }
+        writer.write(vocabulary.getLinebreak(), linebreak);
+        
         writer.write(vocabulary.getDescription(), model.getDescription());
-        writer.write(vocabulary.getSuppressionString(), model.getSuppressionString());
+        writer.write(vocabulary.getLocale(), model.getLocale().getLanguage().toUpperCase());
         writer.write(vocabulary.getHistorySize(), model.getHistorySize());
         writer.write(vocabulary.getSnapshotSizeDataset(), model.getSnapshotSizeDataset());
         writer.write(vocabulary.getSnapshotSizeSnapshot(), model.getSnapshotSizeSnapshot());
@@ -316,8 +363,9 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the clipboard to the file
-     * 
+     * Writes the clipboard to the file.
+     *
+     * @param model
      * @param map
      * @param zip
      * @throws IOException
@@ -325,19 +373,21 @@ public class WorkerSave extends Worker<Model> {
     private void writeClipboard(final Model model,
                                 final Map<String, Integer> map,
                                 final ZipOutputStream zip) throws IOException {
-        if ((model.getClipboard() == null) || model.getClipboard().isEmpty()) { return; }
+        if (model.getClipboard().getClipboardEntries().isEmpty()) { return; }
 
         // Write clipboard
         zip.putNextEntry(new ZipEntry("clipboard.xml")); //$NON-NLS-1$
         final Writer w = new OutputStreamWriter(zip);
-        w.write(toXML(map, model.getClipboard()));
+        w.write(toXML(map, model.getClipboard().getClipboardEntries()));
         w.flush();
 
     }
 
     /**
-     * Writes the configuration to the file
-     * 
+     * Writes the configuration to the file.
+     *
+     * @param config
+     * @param prefix
      * @param zip
      * @throws IOException
      */
@@ -360,8 +410,9 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the configuration to the file
-     * 
+     * Writes the configuration to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */
@@ -376,8 +427,10 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the data definition to the file
-     * 
+     * Writes the data definition to the file.
+     *
+     * @param config
+     * @param prefix
      * @param zip
      * @throws IOException
      */
@@ -400,8 +453,9 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the current filter to the file
-     * 
+     * Writes the current filter to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */
@@ -414,8 +468,10 @@ public class WorkerSave extends Worker<Model> {
     }
     
     /**
-     * Writes the hierarchies to the file
-     * 
+     * Writes the hierarchies to the file.
+     *
+     * @param config
+     * @param prefix
      * @param zip
      * @throws IOException
      */
@@ -425,14 +481,15 @@ public class WorkerSave extends Worker<Model> {
 
         for (Entry<String, Hierarchy> entry : config.getHierarchies().entrySet()) {
             zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(entry.getKey()) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
-            final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+            final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
             out.write(entry.getValue().getHierarchy());
         }
     }
 
     /**
-     * Writes the input to the file
-     * 
+     * Writes the input to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */
@@ -440,7 +497,7 @@ public class WorkerSave extends Worker<Model> {
         if (model.getInputConfig().getInput() != null) {
             if (model.getInputConfig().getInput().getHandle() != null) {
                 zip.putNextEntry(new ZipEntry("data/input.csv")); //$NON-NLS-1$
-                final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+                final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
                 out.write(model.getInputConfig()
                                .getInput()
                                .getHandle()
@@ -449,9 +506,28 @@ public class WorkerSave extends Worker<Model> {
         }
     }
     
+
     /**
-     * Writes the lattice to the file
-     * 
+     * Writes the input subset to the file.
+     *
+     * @param model
+     * @param zip
+     * @throws IOException
+     */
+    private void writeInputSubset(final Model model, final ZipOutputStream zip) throws IOException {
+        if (model.getInputConfig().getInput() != null) {
+            if (model.getInputConfig().getInput().getHandle() != null) {
+                zip.putNextEntry(new ZipEntry("data/input_subset.csv")); //$NON-NLS-1$
+                final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
+                out.write(model.getInputConfig().getInput().getHandle().getView().iterator());
+            }
+        }
+    }
+    
+    /**
+     * Writes the lattice to the file.
+     *
+     * @param model
      * @param zip
      * @return
      * @throws IOException
@@ -479,8 +555,8 @@ public class WorkerSave extends Worker<Model> {
 
         // Write information loss
         zip.putNextEntry(new ZipEntry("infoloss.dat")); //$NON-NLS-1$
-        final Map<Integer, InformationLoss> max = new HashMap<Integer, InformationLoss>();
-        final Map<Integer, InformationLoss> min = new HashMap<Integer, InformationLoss>();
+        final Map<Integer, InformationLoss<?>> max = new HashMap<Integer, InformationLoss<?>>();
+        final Map<Integer, InformationLoss<?>> min = new HashMap<Integer, InformationLoss<?>>();
         for (final ARXNode[] level : l.getLevels()) {
             for (final ARXNode n : level) {
                 final String key = Arrays.toString(n.getTransformation());
@@ -514,9 +590,9 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the meta data to the file
-     * 
-     * @param map
+     * Writes the meta data to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */
@@ -535,8 +611,9 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the project to the file
-     * 
+     * Writes the project to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */
@@ -553,29 +630,31 @@ public class WorkerSave extends Worker<Model> {
     }
 
 	/**
-	 * Writes the output to the file
-	 * 
-	 * @param zip
-	 * @throws IOException
-	 */
+     * Writes the output to the file.
+     *
+     * @param model
+     * @param zip
+     * @throws IOException
+     */
 	private void writeOutput(final Model model, final ZipOutputStream zip) throws IOException {
 		if (model.getOutput() != null) {
 			zip.putNextEntry(new ZipEntry("data/output.csv")); //$NON-NLS-1$
-			final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+			final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
 			out.write(model.getOutput().iterator());
 		}
 	}
 
     /**
-     * Writes the output to the file
-     * 
+     * Writes the output to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */
     private void writeOutputSubset(final Model model, final ZipOutputStream zip) throws IOException {
         if (model.getOutput() != null) {
             zip.putNextEntry(new ZipEntry("data/output_subset.csv")); //$NON-NLS-1$
-            final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+            final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
             out.write(model.getOutput().getView().iterator());
         }
     }

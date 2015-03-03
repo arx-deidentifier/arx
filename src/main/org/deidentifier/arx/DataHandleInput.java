@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx;
@@ -23,38 +22,39 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.framework.data.Dictionary;
 
 /**
- * An implementation of the DataHandle interface for input data
- * 
+ * An implementation of the DataHandle interface for input data.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class DataHandleInput extends DataHandle {
 
-    /** The data */
+    /** The data. */
     protected int[][]    data       = null;
 
-    /** The dictionary */
+    /** The dictionary. */
     protected Dictionary dictionary = null;
 
-    /** The data */
+    /** The data. */
     private int[][]      dataQI     = null;
 
-    /** The data */
+    /** The data. */
     private int[][]      dataSE     = null;
 
-    /** The data */
+    /** The data. */
     private int[][]      dataIS     = null;
     
-    /** Is this handle locked?*/
+    /** Is this handle locked?. */
     private boolean      locked     = false;
 
     /**
-     * Creates a new data handle
-     * 
+     * Creates a new data handle.
+     *
      * @param data
      */
     protected DataHandleInput(final Data data) {
@@ -103,6 +103,9 @@ public class DataHandleInput extends DataHandle {
         this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), null);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getAttributeName(int)
+     */
     @Override
     public String getAttributeName(final int column) {
         checkRegistry();
@@ -110,34 +113,36 @@ public class DataHandleInput extends DataHandle {
         return header[column];
     }
 
-    @Override
-    public String[] getDistinctValues(final int column) {
-        checkRegistry();
-        checkColumn(column);
-        final String[] dict = dictionary.getMapping()[column];
-        final String[] vals = new String[dict.length];
-        System.arraycopy(dict, 0, vals, 0, vals.length);
-        return vals;
-    }
-
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getGeneralization(java.lang.String)
+     */
     @Override
     public int getGeneralization(final String attribute) {
         checkRegistry();
         return 0;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getNumColumns()
+     */
     @Override
     public int getNumColumns() {
         checkRegistry();
         return header.length;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getNumRows()
+     */
     @Override
     public int getNumRows() {
         checkRegistry();
         return data.length;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getValue(int, int)
+     */
     @Override
     public String getValue(final int row, final int column) {
         checkRegistry();
@@ -146,6 +151,17 @@ public class DataHandleInput extends DataHandle {
         return internalGetValue(row, column);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#isOutlier(int)
+     */
+    @Override
+    public boolean isOutlier(int row){
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#iterator()
+     */
     @Override
     public Iterator<String[]> iterator() {
         checkRegistry();
@@ -175,11 +191,45 @@ public class DataHandleInput extends DataHandle {
 
             @Override
             public void remove() {
-                throw new UnsupportedOperationException("Remove is unsupported!");
+                throw new UnsupportedOperationException("Remove is not supported by this iterator");
             }
         };
     }
 
+    /**
+     * Swaps two rows.
+     *
+     * @param row1
+     * @param row2
+     * @param data
+     */
+    private void swap(int row1, int row2, int[][] data){
+        final int[] temp = data[row1];
+        data[row1] = data[row2];
+        data[row2] = temp;
+    }
+    
+    /**
+     * Releases all resources.
+     */
+    protected void doRelease() {
+        this.setLocked(false);
+        dataQI = null;
+        dataSE = null;
+        dataIS = null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getBaseDataType(java.lang.String)
+     */
+    @Override
+    protected DataType<?> getBaseDataType(final String attribute) {
+        return this.getDataType(attribute);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getDataTypeArray()
+     */
     @Override
     protected DataType<?>[][] getDataTypeArray() {
         checkRegistry();
@@ -194,35 +244,22 @@ public class DataHandleInput extends DataHandle {
         }
         return dataTypes;
     }
-    
-    /**
-     * Update the definition
-     * @param data
-     */
-    protected void update(Data data){
 
-        if (!this.isLocked()) {
-            this.definition = data.getDefinition().clone();
-            this.dataTypes = getDataTypeArray();
-            this.definition.setLocked(true);
-        }
-    }
-    
-    /**
-     * Updates the definition with further data to swap
-     * @param dataQI
-     * @param dataSE
-     * @param dataIS
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getDistinctValues(int, org.deidentifier.arx.DataHandleStatistics.InterruptHandler)
      */
-    protected void update(int[][] dataQI, int[][] dataSE, int[][] dataIS) {
-        this.dataQI = dataQI;
-        this.dataSE = dataSE;
-        this.dataIS = dataIS;
-    }
-
     @Override
-    public boolean isOutlier(int row){
-        return false;
+    protected String[] getDistinctValues(final int column, InterruptHandler handler) {
+        checkRegistry();
+        handler.checkInterrupt();
+        checkColumn(column);
+        handler.checkInterrupt();
+        final String[] dict = dictionary.getMapping()[column];
+        handler.checkInterrupt();
+        final String[] vals = new String[dict.length];
+        handler.checkInterrupt();
+        System.arraycopy(dict, 0, vals, 0, vals.length);
+        return vals;
     }
     
     /*
@@ -235,8 +272,25 @@ public class DataHandleInput extends DataHandle {
         return dictionary.getMapping()[column][data[row][column]];
     }
 
+    @Override
+    protected boolean internalReplace(int column,
+                                      String original,
+                                      String replacement) {
+
+        String[] values = dictionary.getMapping()[column];
+        boolean found = false;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equals(original)) {
+                values[i] = replacement;
+                found = true;
+            }
+        }
+        return found;
+    }
+    
     /**
-     * Swaps the rows
+     * Swaps the rows.
+     *
      * @param row1
      * @param row2
      */
@@ -254,32 +308,8 @@ public class DataHandleInput extends DataHandle {
     }
     
     /**
-     * Swaps two rows
-     * @param row1
-     * @param row2
-     * @param data
-     */
-    private void swap(int row1, int row2, int[][] data){
-        final int[] temp = data[row1];
-        data[row1] = data[row2];
-        data[row2] = temp;
-    }
-
-    @Override
-    protected DataType<?> getBaseDataType(final String attribute) {
-        return this.getDataType(attribute);
-    }
-    
-    /**
-     * Lock/unlock this handle
-     * @param locked
-     */
-    protected void setLocked(boolean locked){
-        this.locked = locked;
-    }
-    
-    /**
-     * Is this handle locked?
+     * Is this handle locked?.
+     *
      * @return
      */
     protected boolean isLocked(){
@@ -287,20 +317,47 @@ public class DataHandleInput extends DataHandle {
     }
 
     /**
-     * Releases all resources
-     */
-    protected void doRelease() {
-        this.setLocked(false);
-        dataQI = null;
-        dataSE = null;
-        dataIS = null;
-    }
-
-    /**
-     * Overrides the handles data definition
+     * Overrides the handles data definition.
+     *
      * @param definition
      */
     protected void setDefinition(DataDefinition definition) {
         this.definition = definition;
+    }
+
+    /**
+     * Lock/unlock this handle.
+     *
+     * @param locked
+     */
+    protected void setLocked(boolean locked){
+        this.locked = locked;
+    }
+
+    /**
+     * Update the definition.
+     *
+     * @param data
+     */
+    protected void update(Data data){
+
+        if (!this.isLocked()) {
+            this.definition = data.getDefinition().clone();
+            this.dataTypes = getDataTypeArray();
+            this.definition.setLocked(true);
+        }
+    }
+
+    /**
+     * Updates the definition with further data to swap.
+     *
+     * @param dataQI
+     * @param dataSE
+     * @param dataIS
+     */
+    protected void update(int[][] dataQI, int[][] dataSE, int[][] dataIS) {
+        this.dataQI = dataQI;
+        this.dataSE = dataSE;
+        this.dataIS = dataIS;
     }
 }

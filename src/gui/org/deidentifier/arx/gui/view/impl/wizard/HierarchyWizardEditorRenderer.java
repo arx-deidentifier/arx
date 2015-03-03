@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
@@ -33,48 +32,60 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
- * Renders the content
- * @author Fabian Prasser
+ * Renders the content.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardEditorRenderer<T> {
 
     /**
-     * Base class for rendering contexts
-     * @author Fabian Prasser
+     * Base class for rendering contexts.
      *
+     * @author Fabian Prasser
      * @param <T>
      */
     public abstract static class RenderedComponent<T> {
-        /** Var */
+        
+        /** Var. */
         public Rectangle rectangle1;
-        /** Var */
+        
+        /** Var. */
         public Rectangle rectangle2;
-        /** Var */
+        
+        /** Var. */
         public int       depth;
-        /** Var */
+        
+        /** Var. */
         public boolean   enabled;
-        /** Var */
+        
+        /** Var. */
         public String    label;
-        /** Var */
+        
+        /** Var. */
         public String    bounds;
-        /** Var */
+        
+        /** Var. */
         public T         min;
-        /** Var */
+        
+        /** Var. */
         public T         max;
     }
+    
     /**
-     * A rendering context for a group
-     * @author Fabian Prasser
+     * A rendering context for a group.
      *
+     * @author Fabian Prasser
      * @param <T>
      */
     public static class RenderedGroup<T> extends RenderedComponent<T> {
         
-        /** Var */
+        /** Var. */
         public HierarchyWizardGroupingGroup<T> group;
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
@@ -88,6 +99,9 @@ public class HierarchyWizardEditorRenderer<T> {
             return true;
         }
  
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -96,19 +110,24 @@ public class HierarchyWizardEditorRenderer<T> {
             return result;
         }
     }
+    
     /**
-     * A rendering context for an interval
-     * @author Fabian Prasser
+     * A rendering context for an interval.
      *
+     * @author Fabian Prasser
      * @param <T>
      */
     public static class RenderedInterval<T> extends RenderedComponent<T> {
         
-        /** Var */
+        /** Var. */
         public HierarchyWizardGroupingInterval<T> interval;
-        /** Var */
+        
+        /** Var. */
         public T                                  offset;
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
@@ -122,6 +141,9 @@ public class HierarchyWizardEditorRenderer<T> {
             return true;
         }
  
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -131,29 +153,9 @@ public class HierarchyWizardEditorRenderer<T> {
         }
     }
 
-    /** Constants */
-    public static final Font  FONT                   = getFont();
-    /** Constants */
-    public static final int   OFFSET                 = 10;
-    /** Constants */
-    public static final int   INTERVAL_HEIGHT        = 20;
-    /** Constants */
-    public static final Color WIDGET_BACKGROUND      = GUIHelper.COLOR_WHITE;
-    /** Constants */
-    public static final Color DISABLED_FOREGROUND    = GUIHelper.COLOR_GRAY;
-    /** Constants */
-    public static final Color DISABLED_BACKGROUND    = GUIHelper.getColor(230, 230, 230);
-    /** Constants */
-    public static final Color NORMAL_FOREGROUND      = GUIHelper.COLOR_BLACK;
-    /** Constants */
-    public static final Color ALTERNATIVE_FOREGROUND = GUIHelper.COLOR_WHITE;
-    /** Constants */
-    public static final Color NORMAL_BACKGROUND      = GUIHelper.getColor(230, 230, 230);
-    /** Constants */
-    public static final Color SELECTED_BACKGROUND    = GUIHelper.COLOR_YELLOW;
-
     /**
-     * Returns the font
+     * Returns the font.
+     *
      * @return
      */
     private static Font getFont(){
@@ -162,22 +164,58 @@ public class HierarchyWizardEditorRenderer<T> {
         fontdata.setHeight(9);
         return GUIHelper.getFont(fontdata);
     }
+    
+    /** Constants. */
+    public static final Font  FONT                   = getFont();
+    
+    /** Constants. */
+    public static final int   OFFSET                 = 10;
+    
+    /** Constants. */
+    public static final int   INTERVAL_HEIGHT        = 20;
+    
+    /** Constants. */
+    public static final Color WIDGET_BACKGROUND      = GUIHelper.COLOR_WHITE;
+    
+    /** Constants. */
+    public static final Color DISABLED_FOREGROUND    = GUIHelper.COLOR_GRAY;
+    
+    /** Constants. */
+    public static final Color DISABLED_BACKGROUND    = GUIHelper.getColor(230, 230, 230);
+    
+    /** Constants. */
+    public static final Color NORMAL_FOREGROUND      = GUIHelper.COLOR_BLACK;
+    
+    /** Constants. */
+    public static final Color ALTERNATIVE_FOREGROUND = GUIHelper.COLOR_WHITE;
+    
+    /** Constants. */
+    public static final Color NORMAL_BACKGROUND      = GUIHelper.getColor(230, 230, 230);
 
-    /** Var */
+    /** Constants. */
+    public static final Color SELECTED_BACKGROUND    = GUIHelper.COLOR_YELLOW;
+
+    /** Var. */
     private final List<RenderedInterval<T>>        intervals         = new ArrayList<RenderedInterval<T>>();
-    /** Var */
+    
+    /** Var. */
     private final List<List<RenderedGroup<T>>>     groups            = new ArrayList<List<RenderedGroup<T>>>();
-    /** Var */
+    
+    /** Var. */
     private final List<RenderedInterval<T>>        renderedIntervals = new ArrayList<RenderedInterval<T>>();
-    /** Var */
+    
+    /** Var. */
     private final List<List<RenderedGroup<T>>>     renderedGroups    = new ArrayList<List<RenderedGroup<T>>>();
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardEditorLayout<T> layout;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardModelGrouping<T>  model;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param model
      */
     public HierarchyWizardEditorRenderer(HierarchyWizardModelGrouping<T> model) {
@@ -186,7 +224,8 @@ public class HierarchyWizardEditorRenderer<T> {
     }
 
     /**
-     * Returns all components
+     * Returns all components.
+     *
      * @return
      */
     public List<RenderedComponent<T>> getComponents(){
@@ -200,7 +239,8 @@ public class HierarchyWizardEditorRenderer<T> {
     
 
     /**
-     * Returns the required minimal size
+     * Returns the required minimal size.
+     *
      * @return
      */
     public Point getMinSize() {
@@ -214,16 +254,18 @@ public class HierarchyWizardEditorRenderer<T> {
     }
 
     /**
-     * Mouse click
+     * Mouse click.
+     *
      * @param x
      * @param y
+     * @return
      */
     public boolean select(int x, int y) {
         Object result = null;
         for (RenderedComponent<T> component : getComponents()) {
             if (component.enabled) {
-                if (component.rectangle1.contains(x, y) || 
-                    component.rectangle2.contains(x, y)) {
+                if ((component.rectangle1 != null && component.rectangle1.contains(x, y)) || 
+                    (component.rectangle2 != null && component.rectangle2.contains(x, y))) {
                     if (component instanceof RenderedInterval) {
                         result = ((RenderedInterval<T>)component).interval;
                     } else {
@@ -243,7 +285,7 @@ public class HierarchyWizardEditorRenderer<T> {
     }
     
     /**
-     * Updates the drawing context
+     * Updates the drawing context.
      */
     public void update(){
         
@@ -253,6 +295,113 @@ public class HierarchyWizardEditorRenderer<T> {
         updateGroups(factors, modelIntervals);
     }
 
+    /**
+     * Update graphics layout.
+     *
+     * @param gc
+     */
+    public void update(GC gc){
+        
+        int intervalLabelWidth = 0;
+        int intervalBoundWidth = 0;
+        int intervalTotalWidth = 0;
+        if (model.isShowIntervals()) {
+            intervalLabelWidth = getRequiredLabelWidth(gc, intervals) + OFFSET;
+            intervalBoundWidth = getRequiredBoundWidth(gc, intervals) + OFFSET;
+            intervalTotalWidth = intervalLabelWidth + intervalBoundWidth;
+        }
+        
+        List<Integer> fanoutLabelWidth = new ArrayList<Integer>();
+        List<Integer> fanoutBoundWidth = new ArrayList<Integer>();
+        List<Integer> fanoutTotalWidth = new ArrayList<Integer>();
+        
+        for (List<RenderedGroup<T>> list : groups){
+            int label = getRequiredLabelWidth(gc, list) + OFFSET;
+            int bound = getRequiredBoundWidth(gc, list) + OFFSET;
+            fanoutLabelWidth.add(label);
+            fanoutBoundWidth.add(bound);
+            fanoutTotalWidth.add(label + bound);
+        }
+        
+        int top = OFFSET;
+        if (model.isShowIntervals()) {
+            for (RenderedInterval<T> context : intervals){
+                context.rectangle1 = new Rectangle(OFFSET, top, intervalBoundWidth, INTERVAL_HEIGHT);
+                context.rectangle2 = new Rectangle(OFFSET + intervalBoundWidth, top, intervalLabelWidth, INTERVAL_HEIGHT);
+                top += INTERVAL_HEIGHT + OFFSET;
+            }
+        }
+        
+        int left = OFFSET * 2 + intervalTotalWidth;
+        for (int i=0; i<groups.size(); i++){
+            top = OFFSET;
+            int offset = 0;
+            for (RenderedGroup<T> context : groups.get(i)) {
+                int height = INTERVAL_HEIGHT;
+                if (layout.isPretty()){
+                    if (i==0){
+                        height = INTERVAL_HEIGHT * context.group.size + OFFSET * (context.group.size - 1);
+                    } else {
+                        RenderedGroup<T> reference1 = groups.get(i-1).get(offset);
+                        offset += context.group.size;
+                        RenderedGroup<T> reference2 = groups.get(i-1).get(offset - 1);
+                        height = reference2.rectangle1.y + reference2.rectangle1.height - reference1.rectangle1.y;
+                    }
+                }
+                context.rectangle1 = new Rectangle(left, top, fanoutBoundWidth.get(i), height);
+                context.rectangle2 = new Rectangle(left + fanoutBoundWidth.get(i), top, fanoutLabelWidth.get(i), height);
+                top += height + OFFSET;
+            }
+            left += fanoutTotalWidth.get(i) + OFFSET;
+        }
+        
+        renderedIntervals.clear();
+        renderedIntervals.addAll(intervals);
+        renderedGroups.clear();
+        renderedGroups.addAll(groups);
+    }
+
+    /**
+     * 
+     *
+     * @param gc
+     * @param list
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private int getRequiredBoundWidth(GC gc, List<?> list){
+        gc.setFont(FONT);
+        int width = 0;
+        for (Object elem : list){
+            width = Math.max(width, gc.textExtent(((RenderedComponent<T>)elem).bounds).x);
+        }
+        return width;
+    }
+
+    /**
+     * 
+     *
+     * @param gc
+     * @param list
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private int getRequiredLabelWidth(GC gc, List<?> list){
+        gc.setFont(FONT);
+        int width = 0;
+        for (Object elem : list){
+            
+            width = Math.max(width, gc.textExtent(((RenderedComponent<T>)elem).label).x);
+        }
+        return width;
+    }
+    
+    /**
+     * 
+     *
+     * @param factors
+     * @param modelIntervals
+     */
     @SuppressWarnings("unchecked")
     private void updateGroups(int[] factors, List<HierarchyWizardGroupingInterval<T>> modelIntervals) {
         
@@ -340,6 +489,12 @@ public class HierarchyWizardEditorRenderer<T> {
         }
     }
 
+    /**
+     * 
+     *
+     * @param factors
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private List<HierarchyWizardGroupingInterval<T>> updateIntervals(int[] factors) {
 
@@ -382,92 +537,5 @@ public class HierarchyWizardEditorRenderer<T> {
         }
      
         return modelIntervals;
-    }
-
-    /**
-     * Update graphics layout
-     * @param gc
-     */
-    public void update(GC gc){
-        
-        int intervalLabelWidth = 0;
-        int intervalBoundWidth = 0;
-        int intervalTotalWidth = 0;
-        if (model.isShowIntervals()) {
-            intervalLabelWidth = getRequiredLabelWidth(gc, intervals) + OFFSET;
-            intervalBoundWidth = getRequiredBoundWidth(gc, intervals) + OFFSET;
-            intervalTotalWidth = intervalLabelWidth + intervalBoundWidth;
-        }
-        
-        List<Integer> fanoutLabelWidth = new ArrayList<Integer>();
-        List<Integer> fanoutBoundWidth = new ArrayList<Integer>();
-        List<Integer> fanoutTotalWidth = new ArrayList<Integer>();
-        
-        for (List<RenderedGroup<T>> list : groups){
-            int label = getRequiredLabelWidth(gc, list) + OFFSET;
-            int bound = getRequiredBoundWidth(gc, list) + OFFSET;
-            fanoutLabelWidth.add(label);
-            fanoutBoundWidth.add(bound);
-            fanoutTotalWidth.add(label + bound);
-        }
-        
-        int top = OFFSET;
-        if (model.isShowIntervals()) {
-            for (RenderedInterval<T> context : intervals){
-                context.rectangle1 = new Rectangle(OFFSET, top, intervalBoundWidth, INTERVAL_HEIGHT);
-                context.rectangle2 = new Rectangle(OFFSET + intervalBoundWidth, top, intervalLabelWidth, INTERVAL_HEIGHT);
-                top += INTERVAL_HEIGHT + OFFSET;
-            }
-        }
-        
-        int left = OFFSET * 2 + intervalTotalWidth;
-        for (int i=0; i<groups.size(); i++){
-            top = OFFSET;
-            int offset = 0;
-            for (RenderedGroup<T> context : groups.get(i)) {
-                int height = INTERVAL_HEIGHT;
-                if (layout.isPretty()){
-                    if (i==0){
-                        height = INTERVAL_HEIGHT * context.group.size + OFFSET * (context.group.size - 1);
-                    } else {
-                        RenderedGroup<T> reference1 = groups.get(i-1).get(offset);
-                        offset += context.group.size;
-                        RenderedGroup<T> reference2 = groups.get(i-1).get(offset - 1);
-                        height = reference2.rectangle1.y + reference2.rectangle1.height - reference1.rectangle1.y;
-                    }
-                }
-                context.rectangle1 = new Rectangle(left, top, fanoutBoundWidth.get(i), height);
-                context.rectangle2 = new Rectangle(left + fanoutBoundWidth.get(i), top, fanoutLabelWidth.get(i), height);
-                top += height + OFFSET;
-            }
-            left += fanoutTotalWidth.get(i) + OFFSET;
-        }
-        
-        renderedIntervals.clear();
-        renderedIntervals.addAll(intervals);
-        renderedGroups.clear();
-        renderedGroups.addAll(groups);
-    }
-    
-    @SuppressWarnings("unchecked")
-    private int getRequiredBoundWidth(GC gc, List<?> list){
-        gc.setFont(FONT);
-        int width = 0;
-        for (Object elem : list){
-            
-            width = Math.max(width, gc.textExtent(((RenderedComponent<T>)elem).bounds).x);
-        }
-        return width;
-    }
-
-    @SuppressWarnings("unchecked")
-    private int getRequiredLabelWidth(GC gc, List<?> list){
-        gc.setFont(FONT);
-        int width = 0;
-        for (Object elem : list){
-            
-            width = Math.max(width, gc.textExtent(((RenderedComponent<T>)elem).label).x);
-        }
-        return width;
     }
 }

@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
+ * ARX: Powerful Data Anonymization
+ * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.io;
@@ -26,38 +25,41 @@ import org.deidentifier.arx.DataType;
  * JDBC columns can be referred to by both an index ({@link IIndexColumn}) and
  * by name ({@link IImportColumnNamed}. Use the appropriate constructor that
  * suits your need.
- * 
- * @note For now only the index based addressing works
- * 
- * @warning Don't mix name based and index based addressing
- * 
+ *
  * @author Karol Babioch
  * @author Fabian Prasser
+ * @note For now only the index based addressing works
+ * @warning Don't mix name based and index based addressing
  */
 public class ImportColumnJDBC extends ImportColumn implements
         IImportColumnIndexed, IImportColumnNamed {
 
     /**
-     * Index this column refers to
-     * 
+     * Index this column refers to.
+     *
      * @note Counting starts usually at 0
      */
     private int    index = -1;
 
-    /**
-     * Name this column refers to
-     */
+    /** Name this column refers to. */
     private String name;
 
     /**
-     * Creates a new instance of this object with the given parameters
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param index
+     * @param datatype
      */
     public ImportColumnJDBC(int index, DataType<?> datatype) {
         this(index, null, datatype);
     }
 
     /**
-     * Creates a new instance of this object with the given parameters
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param index
+     * @param aliasName
+     * @param datatype
      */
     public ImportColumnJDBC(int index, String aliasName, DataType<?> datatype) {
         super(aliasName, datatype);
@@ -65,7 +67,10 @@ public class ImportColumnJDBC extends ImportColumn implements
     }
 
     /**
-     * Creates a new instance of this object with the given parameters
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param name
+     * @param datatype
      */
     public ImportColumnJDBC(String name, DataType<?> datatype) {
         super(name, datatype);
@@ -73,7 +78,11 @@ public class ImportColumnJDBC extends ImportColumn implements
     }
 
     /**
-     * Creates a new instance of this object with the given parameters
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param name
+     * @param aliasName
+     * @param datatype
      */
     public ImportColumnJDBC(String name, String aliasName, DataType<?> datatype) {
         super(aliasName, datatype);

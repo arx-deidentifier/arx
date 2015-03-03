@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx;
@@ -22,15 +21,26 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
+import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
+import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.io.CSVDataOutput;
 
 import cern.colt.Swapper;
@@ -49,84 +59,84 @@ import cern.colt.Swapper;
  */
 public abstract class DataHandle {
 
-    /** The data types */
+    /** The data types. */
     protected DataType<?>[][]   dataTypes  = null;
 
-    /** The data definition */
+    /** The data definition. */
     protected DataDefinition    definition = null;
 
-    /** The header */
+    /** The header. */
     protected String[]          header     = null;
 
-    /** The node */
+    /** The node. */
     protected ARXNode           node       = null;
 
-    /** The current registry */
+    /** The current registry. */
     protected DataRegistry      registry   = null;
 
-    /** The statistics */
+    /** The statistics. */
     protected StatisticsBuilder statistics = null;
 
-    /** The current research subset */
+    /** The current research subset. */
     protected DataHandle        subset     = null;
 
     /**
-     * Returns the name of the specified column
-     * 
-     * @param col
-     *            The column index
-     * @return
+     * Returns the name of the specified column.
+     *
+     * @param col The column index
+     * @return the attribute name
      */
     public abstract String getAttributeName(int col);
-    
+
     /**
-     * Returns the index of the given attribute, -1 if it is not in the header
-     * 
-     * @param attribute
-     * @return
+     * Returns the index of the given attribute, -1 if it is not in the header.
+     *
+     * @param attribute the attribute
+     * @return the column index of
      */
     public int getColumnIndexOf(final String attribute) {
         checkRegistry();
         for (int i = 0; i < header.length; i++) {
-            if (header[i].equals(attribute)) { return i; }
+            if (header[i].equals(attribute)) {
+                return i;
+            }
         }
         return -1;
     }
-    
+
     /**
-     * Returns the according datatype
-     * 
-     * @param attribute
-     * @return
+     * Returns the according data type.
+     *
+     * @param attribute the attribute
+     * @return the data type
      */
     public DataType<?> getDataType(final String attribute) {
         checkRegistry();
         return definition.getDataType(attribute);
     }
-    
+
     /**
-     * Returns a date/time value from the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
-     * @return
-     * @throws ParseException
+     * Returns a date/time value from the specified cell.
+     *
+     * @param row The cell's row index
+     * @param col The cell's column index
+     * @return the date
+     * @throws ParseException the parse exception
      */
-    public Date getDate(int row, int col) throws ParseException{
+    public Date getDate(int row, int col) throws ParseException {
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXDate) {
-            return ((ARXDate)type).parse(value);
+            return ((ARXDate) type).parse(value);
         } else {
-            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
+            throw new ParseException("Invalid datatype: " + type.getClass().getSimpleName(), col);
         }
     }
-    
+
     /**
-     * Returns the data definition
-     * @return
+     * Returns the data definition.
+     *
+     * @return the definition
      */
     public DataDefinition getDefinition() {
         checkRegistry();
@@ -134,188 +144,452 @@ public abstract class DataHandle {
     }
 
     /**
-     * Returns a double value from the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
-     * @return
-     * @throws ParseException
+     * Returns an array containing the distinct values in the given column.
+     *
+     * @param column The column to process
+     * @return the distinct values
      */
-    public double getDouble(int row, int col) throws ParseException{
+    public final String[] getDistinctValues(int column) {
+        return getDistinctValues(column, new InterruptHandler() {
+            @Override
+            public void checkInterrupt() {
+                // Nothing to do
+            }
+        });
+    }
+
+    /**
+     * Returns a double value from the specified cell.
+     *
+     * @param row The cell's row index
+     * @param col The cell's column index
+     * @return the double
+     * @throws ParseException the parse exception
+     */
+    public double getDouble(int row, int col) throws ParseException {
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXDecimal) {
-            return ((ARXDecimal)type).parse(value);
+            return ((ARXDecimal) type).parse(value);
         } else if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).parse(value);
+            return ((ARXInteger) type).parse(value);
         } else {
-            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
+            throw new ParseException("Invalid datatype: " + type.getClass().getSimpleName(), col);
         }
     }
 
     /**
-     * Returns a float value from the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
-     * @return
-     * @throws ParseException
+     * Returns a float value from the specified cell.
+     *
+     * @param row The cell's row index
+     * @param col The cell's column index
+     * @return the float
+     * @throws ParseException the parse exception
      */
-    public float getFloat(int row, int col) throws ParseException{
+    public float getFloat(int row, int col) throws ParseException {
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXDecimal) {
-            return ((ARXDecimal)type).parse(value).floatValue();
+            return ((ARXDecimal) type).parse(value).floatValue();
         } else if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).parse(value).floatValue();
+            return ((ARXInteger) type).parse(value).floatValue();
         } else {
-            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
+            throw new ParseException("Invalid datatype: " + type.getClass().getSimpleName(), col);
         }
     }
-    
+
     /**
-     * Returns the generalization level for the attribute
-     * 
-     * @param attribute
-     * @return
+     * Returns the generalization level for the attribute.
+     *
+     * @param attribute the attribute
+     * @return the generalization
      */
     public abstract int getGeneralization(String attribute);
 
     /**
-     * Returns an int value from the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
-     * @return
-     * @throws ParseException
+     * Returns an int value from the specified cell.
+     *
+     * @param row The cell's row index
+     * @param col The cell's column index
+     * @return the int
+     * @throws ParseException the parse exception
      */
-    public int getInt(int row, int col) throws ParseException{
+    public int getInt(int row, int col) throws ParseException {
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).parse(value).intValue();
+            return ((ARXInteger) type).parse(value).intValue();
         } else {
-            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
+            throw new ParseException("Invalid datatype: " + type.getClass().getSimpleName(), col);
         }
     }
 
     /**
-     * Returns a long value from the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
-     * @return
-     * @throws ParseException
+     * Returns a long value from the specified cell.
+     *
+     * @param row The cell's row index
+     * @param col The cell's column index
+     * @return the long
+     * @throws ParseException the parse exception
      */
-    public long getLong(int row, int col) throws ParseException{
+    public long getLong(int row, int col) throws ParseException {
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).parse(value);
+            return ((ARXInteger) type).parse(value);
         } else {
-            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
+            throw new ParseException("Invalid datatype: " + type.getClass().getSimpleName(), col);
         }
     }
-    
-    /** Returns the number of columns in the dataset */
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type.
+     * This method uses the default locale.
+     * This method only returns types that match at least 80% of all values in the column .
+     *
+     * @param column the column
+     * @return the matching data types
+     */
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column) {
+        return getMatchingDataTypes(column, Locale.getDefault(), 0.8d);
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.
+     * This method uses the default locale.
+     * This method only returns types that match at least 80% of all values in the column .
+     *
+     * @param <U> the generic type
+     * @param column the column
+     * @param clazz The wrapped class
+     * @return the matching data types
+     */
+    public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz) {
+        return getMatchingDataTypes(column, clazz, Locale.getDefault(), 0.8d);
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.
+     * This method uses the default locale.
+     *
+     * @param <U> the generic type
+     * @param column the column
+     * @param clazz The wrapped class
+     * @param threshold Relative minimal number of values that must match to include a data type in the results
+     * @return the matching data types
+     */
+    public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz, double threshold) {
+        return getMatchingDataTypes(column, clazz, Locale.getDefault(), threshold);
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.
+     * This method only returns types that match at least 80% of all values in the column .
+     *
+     * @param <U> the generic type
+     * @param column the column
+     * @param clazz The wrapped class
+     * @param locale The locale to use
+     * @return the matching data types
+     */
+    public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz, Locale locale) {
+        return getMatchingDataTypes(column, clazz, locale, 0.8d);
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.
+     *
+     * @param <U> the generic type
+     * @param column the column
+     * @param clazz The wrapped class
+     * @param locale The locale to use
+     * @param threshold Relative minimal number of values that must match to include a data type in the results
+     * @return the matching data types
+     */
+    public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz, Locale locale, double threshold) {
+
+        checkRegistry();
+        checkColumn(column);
+        double distinct = this.getDistinctValues(column).length;
+        List<Pair<DataType<?>, Double>> result = new ArrayList<Pair<DataType<?>, Double>>();
+        DataTypeDescription<U> description = DataType.list(clazz);
+        if (description.hasFormat()) {
+            for (String format : description.getExampleFormats()) {
+                DataType<U> type = description.newInstance(format, locale);
+                double matching = getNumConformingValues(column, type) / distinct;
+                if (matching >= threshold) {
+                    result.add(new Pair<DataType<?>, Double>(type, matching));
+                }
+            }
+        } else {
+            DataType<U> type = description.newInstance();
+            double matching = getNumConformingValues(column, type) / distinct;
+            if (matching >= threshold) {
+                result.add(new Pair<DataType<?>, Double>(type, matching));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type.
+     * This method uses the default locale.
+     *
+     * @param column the column
+     * @param threshold Relative minimal number of values that must match to include a data type in the results
+     * @return the matching data types
+     */
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, double threshold) {
+        return getMatchingDataTypes(column, Locale.getDefault(), threshold);
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type
+     * This method only returns types that match at least 80% of all values in the column .
+     *
+     * @param column the column
+     * @param locale The locale to use
+     * @return the matching data types
+     */
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Locale locale) {
+        return getMatchingDataTypes(column, locale, 0.8d);
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type.
+     *
+     * @param column the column
+     * @param locale The locale to use
+     * @param threshold Relative minimal number of values that must match to include a data type in the results
+     * @return the matching data types
+     */
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Locale locale, double threshold) {
+
+        checkRegistry();
+        checkColumn(column);
+        List<Pair<DataType<?>, Double>> result = new ArrayList<Pair<DataType<?>, Double>>();
+        result.addAll(getMatchingDataTypes(column, Long.class, locale, threshold));
+        result.addAll(getMatchingDataTypes(column, Date.class, locale, threshold));
+        result.addAll(getMatchingDataTypes(column, Double.class, locale, threshold));
+        result.add(new Pair<DataType<?>, Double>(DataType.STRING, 1.0d));
+        Collections.sort(result, new Comparator<Pair<DataType<?>, Double>>() {
+            @Override
+            public int compare(Pair<DataType<?>, Double> o1, Pair<DataType<?>, Double> o2) {
+
+                Class<?> class1 = o1.getFirst().getClass();
+                Class<?> class2 = o2.getFirst().getClass();
+
+                if (class1 == Long.class) {
+                    if (class2 == Long.class) {
+                        return o1.getSecond().compareTo(o2.getSecond());
+                    } else {
+                        return -1;
+                    }
+                } else if (class1 == Date.class) {
+                    if (class2 == Long.class) {
+                        return +1;
+                    } else if (class2 == Date.class) {
+                        return o1.getSecond().compareTo(o2.getSecond());
+                    } else {
+                        return -1;
+                    }
+                } else if (class1 == Double.class) {
+                    if (class2 == Double.class) {
+                        return o1.getSecond().compareTo(o2.getSecond());
+                    } else if (class2 == String.class) {
+                        return -1;
+                    } else {
+                        return +1;
+                    }
+                } else if (class1 == String.class) {
+                    if (class2 == String.class) {
+                        return o1.getSecond().compareTo(o2.getSecond());
+                    } else {
+                        return +1;
+                    }
+                } else {
+                    return 0;
+                }
+            }
+        });
+        return result;
+    }
+
+    /**
+     * Returns a set of values that do not conform to the given data type.
+     *
+     * @param column The column to test
+     * @param type The type to test
+     * @param max The maximal number of values returned by this method
+     * @return the non conforming values
+     */
+    public String[] getNonConformingValues(int column, DataType<?> type, int max) {
+        checkRegistry();
+        checkColumn(column);
+        Set<String> result = new HashSet<String>();
+        for (String value : this.getDistinctValues(column)) {
+            if (!type.isValid(value)) {
+                result.add(value);
+            }
+            if (result.size() == max) {
+                break;
+            }
+        }
+        return result.toArray(new String[result.size()]);
+    }
+
+    /**
+     * Returns the number of columns in the dataset.
+     *
+     * @return the num columns
+     */
     public abstract int getNumColumns();
 
-    /** Returns the number of rows in the dataset */
+    /**
+     * Returns the number of (distinct) values that conform to the given data type.
+     *
+     * @param column The column to test
+     * @param type The type to test
+     * @return the num conforming values
+     */
+    public int getNumConformingValues(int column, DataType<?> type) {
+        checkRegistry();
+        checkColumn(column);
+        int count = 0;
+        for (String value : this.getDistinctValues(column)) {
+            count += type.isValid(value) ? 1 : 0;
+        }
+        return count;
+    }
+
+    /**
+     * Returns the number of rows in the dataset.
+     *
+     * @return the num rows
+     */
     public abstract int getNumRows();
 
     /**
      * Returns an object providing access to basic descriptive statistics about the data represented
-     * by this handle
-     * @return
+     * by this handle.
+     *
+     * @return the statistics
      */
-    public StatisticsBuilder getStatistics(){
+    public StatisticsBuilder getStatistics() {
         return statistics;
     }
 
     /**
-     * Returns the transformation 
-     * @return
+     * Returns the transformation .
+     *
+     * @return the transformation
      */
-    public ARXNode getTransformation(){
+    public ARXNode getTransformation() {
         return node;
     }
-    
+
     /**
-     * Returns the value in the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
-     * @return
+     * Returns the value in the specified cell.
+     *
+     * @param row The cell's row index
+     * @param col The cell's column index
+     * @return the value
      */
     public abstract String getValue(int row, int col);
 
     /**
-     * Returns a new data handle that represents a context specific view on the dataset
-     * @return
+     * Returns a new data handle that represents a context specific view on the dataset.
+     *
+     * @return the view
      */
-    public DataHandle getView(){
+    public DataHandle getView() {
         checkRegistry();
-        if (this.subset == null){
+        if (subset == null) {
             return this;
         } else {
-            return this.subset;
+            return subset;
         }
     }
 
     /**
      * Determines whether this handle is orphaned, i.e., should not be used anymore
-     * @return
+     *
+     * @return true, if is orphaned
      */
     public boolean isOrphaned() {
-        return this.registry == null;
+        return registry == null;
     }
 
     /**
      * Determines whether a given row is an outlier in the currently associated
-     * data transformation
-     * 
-     * @param row
+     * data transformation.
+     *
+     * @param row the row
+     * @return true, if is outlier
      */
-    public boolean isOutlier(int row){
+    public boolean isOutlier(int row) {
         checkRegistry();
         return registry.isOutlier(this, row);
     }
 
     /**
-     * Returns an iterator over the data
-     * 
-     * @return
+     * Returns an iterator over the data.
+     *
+     * @return the iterator
      */
     public abstract Iterator<String[]> iterator();
-    
+
     /**
      * Releases this handle and all associated resources. If a input handle is released all associated results are released
      * as well.
      */
     public void release() {
-        if (registry != null){
+        if (registry != null) {
             registry.release(this);
         }
     }
 
     /**
-     * Writes the data to a CSV file
-     * 
-     * @param file
-     *            A file
-     * @param separator
-     *            The utilized separator character
-     * @throws IOException
+     * Replaces the original value with the replacement in the given column. Only supported by
+     * handles for input data.
+     *
+     * @param column the column
+     * @param original the original
+     * @param replacement the replacement
+     * @return Whether the original value was found
+     */
+    public boolean replace(int column, String original, String replacement) {
+        checkRegistry();
+        checkColumn(column);
+        if (!getDataType(getAttributeName(column)).isValid(replacement)) {
+            throw new IllegalArgumentException("Value does'nt match the attribute's data type");
+        }
+        for (String s : getDistinctValues(column)) {
+            if (s.equals(replacement)) {
+                throw new IllegalArgumentException("Value is already contained in the data set");
+            }
+        }
+        return registry.replace(column, original, replacement);
+    }
+
+    /**
+     * Writes the data to a CSV file.
+     *
+     * @param file the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public void save(final File file) throws IOException {
+        checkRegistry();
+        final CSVDataOutput output = new CSVDataOutput(file);
+        output.write(iterator());
+    }
+
+    /**
+     * Writes the data to a CSV file.
+     *
+     * @param file A file
+     * @param separator The utilized separator character
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public void save(final File file, final char separator) throws IOException {
         checkRegistry();
@@ -324,13 +598,36 @@ public abstract class DataHandle {
     }
 
     /**
-     * Writes the data to a CSV file
-     * 
-     * @param out
-     *            Output stream
-     * @param separator
-     *            The utilized separator character
-     * @throws IOException
+     * Writes the data to a CSV file.
+     *
+     * @param file the file
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public void save(final File file, final CSVSyntax config) throws IOException {
+        checkRegistry();
+        final CSVDataOutput output = new CSVDataOutput(file, config);
+        output.write(iterator());
+    }
+
+    /**
+     * Writes the data to a CSV file.
+     *
+     * @param out the out
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public void save(final OutputStream out) throws IOException {
+        checkRegistry();
+        final CSVDataOutput output = new CSVDataOutput(out);
+        output.write(iterator());
+    }
+
+    /**
+     * Writes the data to a CSV file.
+     *
+     * @param out Output stream
+     * @param separator The utilized separator character
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public void save(final OutputStream out, final char separator) throws IOException {
         checkRegistry();
@@ -339,13 +636,36 @@ public abstract class DataHandle {
     }
 
     /**
-     * Writes the data to a CSV file
-     * 
-     * @param path
-     *            A path
-     * @param separator
-     *            The utilized separator character
-     * @throws IOException
+     * Writes the data to a CSV file.
+     *
+     * @param out the out
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public void save(final OutputStream out, final CSVSyntax config) throws IOException {
+        checkRegistry();
+        final CSVDataOutput output = new CSVDataOutput(out, config);
+        output.write(iterator());
+    }
+
+    /**
+     * Writes the data to a CSV file.
+     *
+     * @param path the path
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public void save(final String path) throws IOException {
+        checkRegistry();
+        final CSVDataOutput output = new CSVDataOutput(path);
+        output.write(iterator());
+    }
+
+    /**
+     * Writes the data to a CSV file.
+     *
+     * @param path A path
+     * @param separator The utilized separator character
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public void save(final String path, final char separator) throws IOException {
         checkRegistry();
@@ -354,13 +674,24 @@ public abstract class DataHandle {
     }
 
     /**
+     * Writes the data to a CSV file.
+     *
+     * @param path the path
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public void save(final String path, final CSVSyntax config) throws IOException {
+        checkRegistry();
+        final CSVDataOutput output = new CSVDataOutput(path, config);
+        output.write(iterator());
+    }
+
+    /**
      * Sorts the dataset according to the given columns. Will sort input and
      * output analogously.
-     * 
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
+     *
+     * @param ascending Sort ascending or descending
+     * @param columns An integer array containing column indicides
      */
     public void sort(boolean ascending, int... columns) {
         checkRegistry();
@@ -370,30 +701,24 @@ public abstract class DataHandle {
     /**
      * Sorts the dataset according to the given columns and the given range.
      * Will sort input and output analogously.
-     * 
-     * @param from
-     *            The lower bound
-     * @param to
-     *            The upper bound
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
+     *
+     * @param from The lower bound
+     * @param to The upper bound
+     * @param ascending Sort ascending or descending
+     * @param columns An integer array containing column indicides
      */
     public void sort(int from, int to, boolean ascending, int... columns) {
         checkRegistry();
         registry.sort(this, from, to, ascending, columns);
     }
-    
+
     /**
      * Sorts the dataset according to the given columns. Will sort input and
      * output analogously.
-     * @param swapper
-     *            A swapper
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
+     *
+     * @param swapper A swapper
+     * @param ascending Sort ascending or descending
+     * @param columns An integer array containing column indicides
      */
     public void sort(Swapper swapper, boolean ascending, int... columns) {
         checkRegistry();
@@ -403,17 +728,12 @@ public abstract class DataHandle {
     /**
      * Sorts the dataset according to the given columns and the given range.
      * Will sort input and output analogously.
-     * 
-     * @param swapper
-     *            A swapper
-     * @param from
-     *            The lower bound
-     * @param to
-     *            The upper bound
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
+     *
+     * @param swapper A swapper
+     * @param from The lower bound
+     * @param to The upper bound
+     * @param ascending Sort ascending or descending
+     * @param columns An integer array containing column indicides
      */
     public void sort(Swapper swapper, int from, int to, boolean ascending, int... columns) {
         checkRegistry();
@@ -421,38 +741,37 @@ public abstract class DataHandle {
     }
 
     /**
-     * Swaps both rows
-     * @param row1
-     * @param row2
+     * Swaps both rows.
+     *
+     * @param row1 the row1
+     * @param row2 the row2
      */
-    public void swap(int row1, int row2){
+    public void swap(int row1, int row2) {
         checkRegistry();
         registry.swap(this, row1, row2);
     }
 
     /**
-     * Checks a column index
-     * 
-     * @param column1
-     * @param length
+     * Checks a column index.
+     *
+     * @param column1 the column1
      */
     protected void checkColumn(final int column1) {
-        if ((column1 < 0) || (column1 > (header.length - 1))) { 
-            throw new IndexOutOfBoundsException("Column index out of range: "+column1+". Valid: 0 - " + (header.length - 1)); 
+        if ((column1 < 0) || (column1 > (header.length - 1))) {
+            throw new IndexOutOfBoundsException("Column index out of range: " + column1 + ". Valid: 0 - " + (header.length - 1));
         }
     }
-    
+
     /**
-     * Checks the column indexes
-     * 
-     * @param columns
-     * @return
+     * Checks the column indexes.
+     *
+     * @param columns the columns
      */
     protected void checkColumns(final int[] columns) {
 
         // Check
-        if ((columns.length == 0) || (columns.length > header.length)) { 
-            throw new IllegalArgumentException("Invalid number of column indices"); 
+        if ((columns.length == 0) || (columns.length > header.length)) {
+            throw new IllegalArgumentException("Invalid number of column indices");
         }
 
         // Create a sorted copy of the input columns
@@ -463,41 +782,44 @@ public abstract class DataHandle {
         // Check
         for (int i = 0; i < cols.length; i++) {
             checkColumn(cols[i]);
-            if ((i > 0) && (cols[i] == cols[i - 1])) { throw new IllegalArgumentException("Duplicate column index"); }
+            if ((i > 0) && (cols[i] == cols[i - 1])) {
+                throw new IllegalArgumentException("Duplicate column index");
+            }
         }
     }
 
     /**
-     * Checks whether a registry is referenced
+     * Checks whether a registry is referenced.
      */
     protected void checkRegistry() {
         if (registry == null) {
-            throw new RuntimeException("This data handle ("+this.getClass().getSimpleName()+"@"+
-                                       this.hashCode()+") is orphaned");
+            throw new RuntimeException("This data handle (" + this.getClass().getSimpleName() + "@" +
+                                       hashCode() + ") is orphaned");
         }
     }
 
     /**
-     * Checks a row index
-     * 
-     * @param row1
-     * @param length
+     * Checks a row index.
+     *
+     * @param row1 the row1
+     * @param length the length
      */
     protected void checkRow(final int row1, final int length) {
-        if ((row1 < 0) || (row1 > length)) { 
-            throw new IndexOutOfBoundsException("Row index (" + row1 + ") out of range (0 <= row <= " + length + ")"); 
+        if ((row1 < 0) || (row1 > length)) {
+            throw new IndexOutOfBoundsException("Row index (" + row1 + ") out of range (0 <= row <= " + length + ")");
         }
     }
-    
+
     /**
-     * Releases all resources
+     * Releases all resources.
      */
     protected abstract void doRelease();
-    
+
     /**
-     * Returns the base data type without generalization
-     * @param attribute
-     * @return
+     * Returns the base data type without generalization.
+     *
+     * @param attribute the attribute
+     * @return the base data type
      */
     protected DataType<?> getBaseDataType(final String attribute) {
         checkRegistry();
@@ -505,34 +827,36 @@ public abstract class DataHandle {
     }
 
     /**
-     * Generates an array of data types
-     * 
-     * @return
+     * Generates an array of data types.
+     *
+     * @return the data type array
      */
     protected abstract DataType<?>[][] getDataTypeArray();
 
     /**
-     * Returns an array containing the distinct values in the given column
-     * 
-     * @param column
-     *            The column to process
-     * @return
+     * Returns the distinct values.
+     *
+     * @param column the column
+     * @param handler the handler
+     * @return the distinct values
      */
-    protected abstract String[] getDistinctValues(int column);
+    protected abstract String[] getDistinctValues(int column, InterruptHandler handler);
 
     /**
-     * Returns the registry associated with this handle
-     * @return
+     * Returns the registry associated with this handle.
+     *
+     * @return the registry
      */
     protected DataRegistry getRegistry() {
-        return this.registry;
+        return registry;
     }
 
     /**
-     * Returns the string inserted for suppressed data items
-     * @return
+     * Returns the string inserted for suppressed data items.
+     *
+     * @return the suppression string
      */
-    protected String getSuppressionString(){
+    protected String getSuppressionString() {
         return null;
     }
 
@@ -541,12 +865,12 @@ public abstract class DataHandle {
      * less than, equal to, or greater than the second. It uses the specified
      * data types for comparison. If no datatype is specified for a specific
      * column it uses string comparison.
-     * 
-     * @param row1
-     * @param row2
-     * @param columns
-     * @param ascending
-     * @return
+     *
+     * @param row1 the row1
+     * @param row2 the row2
+     * @param columns the columns
+     * @param ascending the ascending
+     * @return the int
      */
     protected int internalCompare(final int row1,
                                   final int row2,
@@ -555,8 +879,8 @@ public abstract class DataHandle {
 
         checkRegistry();
         try {
-            for (int i=0; i<columns.length; i++) {
-                
+            for (int i = 0; i < columns.length; i++) {
+
                 int index = columns[i];
                 int cmp = dataTypes[0][index].compare(internalGetValue(row1, index),
                                                       internalGetValue(row2, index));
@@ -571,27 +895,39 @@ public abstract class DataHandle {
     }
 
     /**
-     * Internal representation of get value
-     * 
-     * @param row
-     * @param col
-     * @return
+     * Internal representation of get value.
+     *
+     * @param row the row
+     * @param col the col
+     * @return the string
      */
-    protected abstract String internalGetValue(int row, int col);  
-    
+    protected abstract String internalGetValue(int row, int col);
+
     /**
-     * Updates the registry
-     * @param registry
+     * Internal replacement method.
+     *
+     * @param column the column
+     * @param original the original
+     * @param replacement the replacement
+     * @return true, if successful
      */
-    protected void setRegistry(DataRegistry registry){
+    protected abstract boolean internalReplace(int column, String original, String replacement);
+
+    /**
+     * Updates the registry.
+     *
+     * @param registry the new registry
+     */
+    protected void setRegistry(DataRegistry registry) {
         this.registry = registry;
     }
-    
+
     /**
-     * Sets the subset
-     * @param handle
+     * Sets the subset.
+     *
+     * @param handle the new view
      */
-    protected void setView(DataHandle handle){
-        this.subset = handle;
+    protected void setView(DataHandle handle) {
+        subset = handle;
     }
 }

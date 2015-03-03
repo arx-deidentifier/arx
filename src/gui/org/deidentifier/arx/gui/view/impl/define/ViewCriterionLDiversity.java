@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.define;
@@ -21,8 +20,8 @@ package org.deidentifier.arx.gui.view.impl.define;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
-import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -36,62 +35,85 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
 /**
- * A view on an l-diversity criterion
+ * A view on an l-diversity criterion.
+ *
  * @author Fabian Prasser
  */
-public class ViewCriterionLDiversity extends ViewCriterion{
+public class ViewCriterionLDiversity extends ViewCriterion {
 
-	private static final String    VARIANTS[] = { Resources.getMessage("CriterionDefinitionView.6"), Resources.getMessage("CriterionDefinitionView.7"), Resources.getMessage("CriterionDefinitionView.8") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    /**  TODO */
+    private static final String VARIANTS[] = { Resources.getMessage("CriterionDefinitionView.6"), Resources.getMessage("CriterionDefinitionView.7"), Resources.getMessage("CriterionDefinitionView.8") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-    private Scale                  sliderL;
-    private Scale                  sliderC;
-    private Combo                  comboVariant;
-    private Label                  labelC;
-    private Label                  labelL;
-    private String 				   attribute;
+    /**  TODO */
+    private Scale               sliderL;
+    
+    /**  TODO */
+    private Scale               sliderC;
+    
+    /**  TODO */
+    private Combo               comboVariant;
+    
+    /**  TODO */
+    private Label               labelC;
+    
+    /**  TODO */
+    private Label               labelL;
+    
+    /**  TODO */
+    private String              attribute;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param model
      */
     public ViewCriterionLDiversity(final Composite parent,
-                          final Controller controller,
-                          final Model model) {
-    	
-    	super(parent, controller, model);
-    	this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
-    	this.controller.addListener(ModelPart.INPUT, this);
-    	this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+                                   final Controller controller,
+                                   final Model model) {
+
+        super(parent, controller, model);
+        this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+        this.controller.addListener(ModelPart.INPUT, this);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#reset()
+     */
     @Override
-	public void reset() {
-		sliderL.setSelection(0);
+    public void reset() {
+        sliderL.setSelection(0);
         sliderC.setSelection(0);
         sliderC.setEnabled(false);
-        labelC.setText("0.001"); //$NON-NLS-1$
-        labelL.setText("2"); //$NON-NLS-1$
+        updateCLabel("0.001"); //$NON-NLS-1$
+        updateLLabel("2"); //$NON-NLS-1$
         comboVariant.select(0);
         super.reset();
-	}
+    }
 
-	@Override
-	public void update(ModelEvent event) {
-		if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
-			this.attribute = (String)event.data;
-			this.parse();
-		} else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
-			if (event.data.equals(this.attribute)) {
-				this.parse();
-			}
-		}
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
+    @Override
+    public void update(ModelEvent event) {
+        if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+            this.attribute = (String) event.data;
+            this.parse();
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+            if (event.data.equals(this.attribute)) {
+                this.parse();
+            }
+        }
         super.update(event);
-	}
+    }
 
-	@Override
-	protected Composite build(Composite parent) {
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#build(org.eclipse.swt.widgets.Composite)
+     */
+    @Override
+    protected Composite build(Composite parent) {
 
         // Create input group
         final Composite group = new Composite(parent, SWT.NONE);
@@ -109,22 +131,22 @@ public class ViewCriterionLDiversity extends ViewCriterion{
         d.minimumWidth = LABEL_WIDTH;
         d.widthHint = LABEL_WIDTH;
         labelL.setLayoutData(d);
-        labelL.setText("2"); //$NON-NLS-1$
+        updateLLabel("2"); //$NON-NLS-1$
 
         sliderL = new Scale(group, SWT.HORIZONTAL);
         final GridData d4 = SWTUtil.createFillHorizontallyGridData();
         d4.horizontalSpan = 1;
         sliderL.setLayoutData(d4);
-        sliderL.setMaximum(SLIDER_MAX);
+        sliderL.setMaximum(SWTUtil.SLIDER_MAX);
         sliderL.setMinimum(0);
         sliderL.setSelection(0);
         final Object outer = this;
         sliderL.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-            	ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
-            	m.setL(sliderToInt(2, 100, sliderL.getSelection()));
-                labelL.setText(String.valueOf(m.getL()));
+                ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
+                m.setL(SWTUtil.sliderToInt(2, 100, sliderL.getSelection()));
+                updateLLabel(String.valueOf(m.getL()));
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
             }
         });
@@ -150,22 +172,22 @@ public class ViewCriterionLDiversity extends ViewCriterion{
         d9.minimumWidth = LABEL_WIDTH;
         d9.widthHint = LABEL_WIDTH;
         labelC.setLayoutData(d9);
-        labelC.setText("0.001"); //$NON-NLS-1$
+        updateCLabel("0.001"); //$NON-NLS-1$
 
         sliderC = new Scale(group, SWT.HORIZONTAL);
         final GridData d6 = SWTUtil.createFillHorizontallyGridData();
         d6.horizontalSpan = 1;
         sliderC.setLayoutData(d6);
-        sliderC.setMaximum(SLIDER_MAX);
+        sliderC.setMaximum(SWTUtil.SLIDER_MAX);
         sliderC.setMinimum(0);
         sliderC.setSelection(0);
         sliderC.setEnabled(false);
         sliderC.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-            	ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
-				m.setC(sliderToDouble(0.001d, 100d, sliderC.getSelection()));
-                labelC.setText(String.valueOf(m.getC()));
+                ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
+                m.setC(SWTUtil.sliderToDouble(0.001d, 100d, sliderC.getSelection()));
+                updateCLabel(String.valueOf(m.getC()));
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
             }
         });
@@ -173,46 +195,69 @@ public class ViewCriterionLDiversity extends ViewCriterion{
         comboVariant.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-            	ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
-            	m.setVariant(comboVariant.getSelectionIndex());
-            	if (m.getVariant()==2) {
-            		sliderC.setEnabled(true);
-            	} else {
-            		sliderC.setEnabled(false);
-            	}
-            	controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
+                ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
+                m.setVariant(comboVariant.getSelectionIndex());
+                if (m.getVariant() == 2) {
+                    sliderC.setEnabled(true);
+                } else {
+                    sliderC.setEnabled(false);
+                }
+                controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
             }
         });
 
         return group;
-	}
+    }
 
-	@Override
-	protected void parse() {
-		ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
-		if (m==null){
-			reset();
-			return;
-		}
-		root.setRedraw(false);
-        labelC.setText(String.valueOf(m.getC()));
-        labelL.setText(String.valueOf(m.getL()));
-		sliderL.setSelection(intToSlider(2, 100, m.getL()));
-		sliderC.setSelection(doubleToSlider(0.001d, 100d, m.getC()));
-		
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#parse()
+     */
+    @Override
+    protected void parse() {
+        ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
+        if (m == null) {
+            reset();
+            return;
+        }
+        root.setRedraw(false);
+        updateCLabel(String.valueOf(m.getC()));
+        updateLLabel(String.valueOf(m.getL()));
+        sliderL.setSelection(SWTUtil.intToSlider(2, 100, m.getL()));
+        sliderC.setSelection(SWTUtil.doubleToSlider(0.001d, 100d, m.getC()));
+
         comboVariant.select(m.getVariant());
         if (m.isActive() && m.isEnabled()) {
-			SWTUtil.enable(root);
-		} else {
-			SWTUtil.disable(root);
-		}
+            SWTUtil.enable(root);
+        } else {
+            SWTUtil.disable(root);
+        }
 
         if (m.getVariant() == 2) {
             sliderC.setEnabled(true);
         } else {
             sliderC.setEnabled(false);
         }
-        
+
         root.setRedraw(true);
-	}
+    }
+
+    /**
+     * Updates the "c" label and tooltip text.
+     *
+     * @param text
+     */
+    private void updateCLabel(String text) {
+        labelC.setText(text);
+        labelC.setToolTipText(text);
+    }
+
+    /**
+     * Updates the "l" label and tooltip text.
+     *
+     * @param text
+     */
+    private void updateLLabel(String text) {
+        labelL.setText(text);
+        labelL.setToolTipText(text);
+    }
 }

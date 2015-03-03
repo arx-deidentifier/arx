@@ -1,20 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
- * Copyright (C) 2014 Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
@@ -46,30 +44,37 @@ import org.eclipse.jface.wizard.IWizardPage;
  */
 public class ImportWizard extends ARXWizard<ImportConfiguration> {
 
-    /**
-     * Reference to container storing all the data gathered by the wizard
-     */
+    /** Reference to container storing all the data gathered by the wizard. */
     private ImportWizardModel       data          = new ImportWizardModel();
 
-    /**
-     * Reference of controller being used by this wizard
-     */
+    /** Reference of controller being used by this wizard. */
     private Controller              controller;
 
-    /**
-     * Reference of model being used by this wizard
-     */
+    /** Reference of model being used by this wizard. */
     private Model                   model;
 
     /*
      * All of the pages provided by this wizard
      */
+    /**  TODO */
     private ImportWizardPageSource  sourcePage;
+    
+    /**  TODO */
     private ImportWizardPageCSV     csvPage;
+    
+    /**  TODO */
     private ImportWizardPageColumns columnPage;
+    
+    /**  TODO */
     private ImportWizardPagePreview previewPage;
+    
+    /**  TODO */
     private ImportWizardPageJDBC    jdbcPage;
+    
+    /**  TODO */
     private ImportWizardPageTable   tablePage;
+    
+    /**  TODO */
     private ImportWizardPageExcel   xlsPage;
 
     /**
@@ -90,12 +95,10 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
     private ImportConfiguration           configuration = null;
 
     /**
-     * Creates a new data import wizard and sets the window title
-     * 
-     * @param controller
-     *            Reference to controller
-     * @param model
-     *            Reference to model
+     * Creates a new data import wizard and sets the window title.
+     *
+     * @param controller Reference to controller
+     * @param model Reference to model
      */
     public ImportWizard(Controller controller, Model model) {
 
@@ -107,11 +110,10 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
     }
 
     /**
-     * Adds all of the available pages to the wizard
-     * 
+     * Adds all of the available pages to the wizard.
+     *
      * @note Note that for reasons of simplicity all pages are directly added
-     *       here. The page ordering is handled by
-     *       {@link #getNextPage(IWizardPage)}.
+     *       here. The page ordering is handled by {@link #getNextPage(IWizardPage)}.
      */
     @Override
     public void addPages() {
@@ -144,7 +146,8 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      * The wizard can only be finished on the {@link #previewPage preview page}.
      * This makes sure that the user is signs off on the settings previously
      * made.
-     * 
+     *
+     * @return
      * @see {@link #performFinish()}
      */
     @Override
@@ -198,16 +201,31 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      * The wizard will built an appropriate {@link ImportConfiguration} object once it
      * is about to finish {@link #performFinish()}. This object can then be
      * retrieved using this method.
-     * 
+     *
+     * @return {@link #configuration} The resulting data source configuration
      * @note Note however, that the return value might be null, when the wizard
      *       wasn't completed successfully.
-     * 
-     * @return {@link #configuration} The resulting data source configuration
      */
     public ImportConfiguration getResult() {
         return configuration;
     }
 
+    /**
+     * 
+     * Cancel pressed.
+     *
+     * @return
+     */
+    @Override
+    public boolean performCancel() {
+        try {
+            if (data.getJdbcConnection() != null && !data.getJdbcConnection().isClosed()) {
+                data.getJdbcConnection().close();
+            }
+        } catch (Exception e) { /* Die silently */ }
+        return true;
+    }
+    
     /**
      * Gets executed once the wizard is about to finish
      * 
@@ -217,7 +235,8 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      * 
      * {@link #configuration} will hold a reference of the object. This can be
      * retrieved later on by {@link #getResultingConfiguration()}.
-     * 
+     *
+     * @return
      * @see {@link #getResultingConfiguration()}
      */
     @Override
@@ -226,7 +245,10 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
         if (data.getSourceType() == SourceType.CSV) {
             
             configuration = new ImportConfigurationCSV(data.getFileLocation(),
-                                                     data.getCsvSeparator(),
+                                                     data.getCsvDelimiter(),
+                                                     data.getCsvQuote(),
+                                                     data.getCsvEscape(),
+                                                     data.getCsvLinebreak(),
                                                      data.getFirstRowContainsHeader());
 
         } else if (data.getSourceType() == SourceType.EXCEL) {
@@ -258,36 +280,29 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
         
         return true;
     }
-    
-    /** 
-     * Cancel pressed
-     */
-    @Override
-    public boolean performCancel() {
-        try {
-            if (data.getJdbcConnection() != null && !data.getJdbcConnection().isClosed()) {
-                data.getJdbcConnection().close();
-            }
-        } catch (Exception e) { /* Die silently */ }
-        return true;
-    }
 
     /**
-     * Returns a reference to the controller being used by this wizard
+     * Returns a reference to the controller being used by this wizard.
+     *
+     * @return
      */
     Controller getController() {
         return controller;
     }
 
     /**
-     * Returns a reference to the object containing the gathered data
+     * Returns a reference to the object containing the gathered data.
+     *
+     * @return
      */
     ImportWizardModel getData() {
         return data;
     }
 
     /**
-     * Returns a reference to the model being used by this wizard
+     * Returns a reference to the model being used by this wizard.
+     *
+     * @return
      */
     Model getModel() {
         return model;

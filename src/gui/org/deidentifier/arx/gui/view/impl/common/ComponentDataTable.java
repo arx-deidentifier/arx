@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.common;
@@ -24,7 +23,16 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.def.IComponent;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableBodyLayerStack;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableColumnHeaderConfiguration;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableContext;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableDecorator;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableGridLayer;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableGridLayerStack;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableHandleDataProvider;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableRowHeaderConfiguration;
 import org.eclipse.nebula.widgets.nattable.NatTable;
+import org.eclipse.nebula.widgets.nattable.config.AbstractUiBindingConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
@@ -37,6 +45,10 @@ import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnOverrideLabelAccumul
 import org.eclipse.nebula.widgets.nattable.painter.cell.CheckBoxPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.PaddingDecorator;
+import org.eclipse.nebula.widgets.nattable.resize.action.AutoResizeColumnAction;
+import org.eclipse.nebula.widgets.nattable.resize.action.ColumnResizeCursorAction;
+import org.eclipse.nebula.widgets.nattable.resize.event.ColumnResizeEventMatcher;
+import org.eclipse.nebula.widgets.nattable.resize.mode.ColumnResizeDragMode;
 import org.eclipse.nebula.widgets.nattable.selection.config.DefaultSelectionStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.style.BorderStyle;
 import org.eclipse.nebula.widgets.nattable.style.BorderStyle.LineStyleEnum;
@@ -46,14 +58,21 @@ import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.VerticalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.editor.command.DisplayColumnStyleEditorCommandHandler;
+import org.eclipse.nebula.widgets.nattable.ui.action.ClearCursorAction;
+import org.eclipse.nebula.widgets.nattable.ui.action.NoOpMouseAction;
+import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
+import org.eclipse.nebula.widgets.nattable.ui.matcher.MouseEventMatcher;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
 
 /**
@@ -63,25 +82,52 @@ import org.eclipse.swt.widgets.Listener;
  */
 public class ComponentDataTable implements IComponent {
 
+    /**  TODO */
     private NatTable                table;
+    
+    /**  TODO */
     private DataTableContext        context;
+    
+    /**  TODO */
     private DataTableBodyLayerStack bodyLayer;
+    
+    /**  TODO */
     private DataTableGridLayer      gridLayer;
+    
+    /**  TODO */
+    private Font                    font;
+    
+    /**  TODO */
+    private Control                 parent;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param controller
      * @param parent
      */
     public ComponentDataTable(final Controller controller, final Composite parent) {
         
         this.context = new DataTableContext(controller);
+        this.context.setFont(parent.getFont());
         this.table = createControl(parent); 
         this.table.setVisible(false);
+        this.context.setTable(this.table);
+        this.font = parent.getFont();
+        this.parent = parent;
     }
 
     /**
-     * Adds a scroll bar listener
+     * Adds a mouse listener
+     * @param listener
+     */
+    public void addMouseListener(MouseListener listener) {
+        this.table.addMouseListener(listener);
+    }
+
+    /**
+     * Adds a scroll bar listener.
+     *
      * @param listener
      */
     public void addScrollBarListener(final Listener listener) {
@@ -90,7 +136,8 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Adds a select layer listener
+     * Adds a select layer listener.
+     *
      * @param listener
      */
     public void addSelectionLayerListener(ILayerListener listener){
@@ -98,7 +145,156 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Creates the control contents
+     * Disposes the control.
+     */
+    public void dispose() {
+        if (!table.isDisposed()) table.dispose();
+    }
+
+    /**
+     * Returns the displayed data.
+     *
+     * @return
+     */
+    public DataHandle getData() {
+        return this.context.getHandle();
+    }
+
+    /**
+     * Returns the list of header images.
+     *
+     * @return
+     */
+    public List<Image> getHeaderImages() {
+        return this.context.getImages();
+    }
+
+    /**
+     * Returns the viewport layer.
+     *
+     * @return
+     */
+    public ViewportLayer getViewportLayer() {
+        return this.gridLayer.getBodyLayer().getViewportLayer();
+    }
+
+    /**
+     * Redraws the component.
+     */
+    public void redraw() {
+        this.table.redraw();
+    }
+    
+    /**
+     * Resets the component.
+     */
+    public void reset() {
+        this.table.setRedraw(false);
+        this.context.getImages().clear();
+        this.context.reset();
+        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context, parent);
+        this.table.setLayer(gridLayer);
+        this.table.refresh();
+        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
+        this.table.getVerticalBar().setVisible(false);
+        this.table.getHorizontalBar().setVisible(false);
+        this.table.setRedraw(true);
+        this.table.redraw();
+        this.table.setVisible(false);
+        this.table.getVerticalBar().setVisible(true);
+        this.table.getHorizontalBar().setVisible(true);
+        this.table.setVisible(false);
+    }
+
+    /**
+     * Sets the displayed data.
+     *
+     * @param handle
+     */
+    public void setData(final DataHandle handle) {
+        this.table.setRedraw(false);
+        this.context.setHandle(handle);
+        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context, parent);
+        this.table.setLayer(gridLayer);
+        this.table.refresh();
+        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
+        ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnWidthByPosition(0, 18);
+        ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnPositionResizable(0, false);
+        this.table.getVerticalBar().setVisible(false);
+        this.table.getHorizontalBar().setVisible(false);
+        this.table.setRedraw(true);
+        this.table.redraw();
+        this.table.setVisible(true);
+        this.table.getVerticalBar().setVisible(true);
+        this.table.getHorizontalBar().setVisible(true);
+        this.table.setVisible(true);
+    }
+  
+    /**
+     * Enables/disables the component.
+     *
+     * @param val
+     */
+    public void setEnabled(final boolean val) {
+        if (table != null) {
+            table.setEnabled(val);
+        }
+    }
+
+    /**
+     * Sets information about equivalence classes.
+     *
+     * @param groups
+     */
+    public void setGroups(int[] groups) {
+        this.context.setGroups(groups);
+    }
+
+    /**
+     * Sets layout data.
+     *
+     * @param data
+     */
+    public void setLayoutData(final Object data) {
+        table.setLayoutData(data);
+    }
+    
+    /**
+     * Sets information about the research subset.
+     *
+     * @param researchSubset
+     */
+    public void setResearchSubset(RowSet researchSubset) {
+        this.context.setRows(researchSubset);
+    }
+    
+    /**
+     * Sets the selected attribute.
+     *
+     * @param attribute
+     */
+    public void setSelectedAttribute(String attribute) {
+        int index = -1;
+        if (context.getHandle()!=null) {
+            index = context.getHandle().getColumnIndexOf(attribute);
+        }
+        this.context.setSelectedIndex(index);
+        this.redraw();
+    }
+
+    /**
+     * Translates coordinates
+     * @param x
+     * @param y
+     * @return
+     */
+    public Point toDisplay(int x, int y) {
+        return table.toDisplay(x, y);
+    }
+
+    /**
+     * Creates the control contents.
+     *
      * @param parent
      * @return
      */
@@ -116,13 +312,14 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Creates the nattable
+     * Creates the nattable.
+     *
      * @param parent
      * @return
      */
     private NatTable createTable(final Composite parent) {
         final IDataProvider provider = new DataTableHandleDataProvider(context);
-        gridLayer = new DataTableGridLayerStack(provider, table, context);
+        gridLayer = new DataTableGridLayerStack(provider, table, context, parent);
         final NatTable natTable = new NatTable(parent, gridLayer, false);
         final DataLayer bodyDataLayer = (DataLayer) gridLayer.getBodyDataLayer();
 
@@ -183,7 +380,8 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Creates the table styling
+     * Creates the table styling.
+     *
      * @param natTable
      */
     private void createTableStyling(final NatTable natTable) {
@@ -193,7 +391,7 @@ public class ComponentDataTable implements IComponent {
         natTableConfiguration.fgColor = GUIHelper.getColor(0, 0, 0);
         natTableConfiguration.hAlign = HorizontalAlignmentEnum.LEFT;
         natTableConfiguration.vAlign = VerticalAlignmentEnum.TOP;
-        natTableConfiguration.font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+        natTableConfiguration.font = this.font;
 
         // A custom painter can be plugged in to paint the cells differently
         natTableConfiguration.cellPainter = new PaddingDecorator(new TextPainter(), 1);
@@ -205,14 +403,14 @@ public class ComponentDataTable implements IComponent {
 
         // Setup selection styling
         final DefaultSelectionStyleConfiguration selectionStyle = new DefaultSelectionStyleConfiguration();
-        selectionStyle.selectionFont = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+        selectionStyle.selectionFont = this.font;
         selectionStyle.selectionBgColor = GUIHelper.getColor(220, 220, 220);
         selectionStyle.selectionFgColor = GUIHelper.COLOR_BLACK;
         selectionStyle.anchorBorderStyle = new BorderStyle(1, GUIHelper.COLOR_DARK_GRAY, LineStyleEnum.SOLID);
         selectionStyle.anchorBgColor = GUIHelper.getColor(220, 220, 220);
         selectionStyle.anchorFgColor = GUIHelper.getColor(0, 0, 0);
         selectionStyle.selectedHeaderBgColor = GUIHelper.getColor(156, 209, 103);
-        selectionStyle.selectedHeaderFont = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+        selectionStyle.selectedHeaderFont = this.font;
 
         // Add all style configurations to NatTable
         natTable.addConfiguration(natTableConfiguration);
@@ -222,157 +420,34 @@ public class ComponentDataTable implements IComponent {
         // Column/Row header style and custom painters
         natTable.addConfiguration(new DataTableRowHeaderConfiguration(context));
         natTable.addConfiguration(new DataTableColumnHeaderConfiguration(context));
-    }
 
-    /**
-     * Disposes the control
-     */
-    public void dispose() {
-        table.dispose();
-    }
+        // Make corner resizable
+        natTable.addConfiguration(new AbstractUiBindingConfiguration() {
 
-    /**
-     * Returns the displayed data
-     * @return
-     */
-    public DataHandle getData() {
-        return this.context.getHandle();
-    }
+            @Override
+            public void configureUiBindings(UiBindingRegistry uiBindingRegistry) {
+                // Mouse move - Show resize cursor
+                uiBindingRegistry.registerFirstMouseMoveBinding(new ColumnResizeEventMatcher(SWT.NONE,
+                                                                                             GridRegion.CORNER,
+                                                                                             0),
+                                                                new ColumnResizeCursorAction());
+                uiBindingRegistry.registerMouseMoveBinding(new MouseEventMatcher(), new ClearCursorAction());
 
-    /**
-     * Returns the list of header images
-     * @return
-     */
-    public List<Image> getHeaderImages() {
-        return this.context.getImages();
-    }
-    
-    /**
-     * Returns the viewport layer
-     * @return
-     */
-    public ViewportLayer getViewportLayer() {
-        return this.gridLayer.getBodyLayer().getViewportLayer();
-    }
+                // Column resize
+                uiBindingRegistry.registerFirstMouseDragMode(new ColumnResizeEventMatcher(SWT.NONE,
+                                                                                          GridRegion.CORNER,
+                                                                                          1),
+                                                             new ColumnResizeDragMode());
 
-    /**
-     * Redraws the component
-     */
-    public void redraw() {
-        this.table.redraw();
-    }
-  
-    /**
-     * Resets the component
-     */
-    public void reset() {
-        this.table.setRedraw(false);
-        this.context.getImages().clear();
-        this.context.reset();
-        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context);
-        this.table.setLayer(gridLayer);
-        this.table.refresh();
-        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        this.table.getVerticalBar().setVisible(false);
-        this.table.getHorizontalBar().setVisible(false);
-        this.table.setRedraw(true);
-        this.table.redraw();
-        this.table.setVisible(false);
-        this.table.getVerticalBar().setVisible(true);
-        this.table.getHorizontalBar().setVisible(true);
-        this.table.setVisible(false);
-    }
-
-    /**
-     * Sets the selected attribute
-     * @param attribute
-     */
-    public void setSelectedAttribute(String attribute) {
-        int index = -1;
-        if (context.getHandle()!=null) {
-            index = context.getHandle().getColumnIndexOf(attribute);
-        }
-        this.context.setSelectedIndex(index);
-        this.redraw();
-    }
-
-    /**
-     * Sets the displayed data
-     * @param handle
-     */
-    public void setData(final DataHandle handle) {
-        this.table.setRedraw(false);
-        this.context.setHandle(handle);
-        this.context.setArray(null);
-        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context);
-        this.table.setLayer(gridLayer);
-        this.table.refresh();
-        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnWidthByPosition(0, 18);
-        ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnPositionResizable(0, false);
-        this.table.getVerticalBar().setVisible(false);
-        this.table.getHorizontalBar().setVisible(false);
-        this.table.setRedraw(true);
-        this.table.redraw();
-        this.table.setVisible(true);
-        this.table.getVerticalBar().setVisible(true);
-        this.table.getHorizontalBar().setVisible(true);
-        this.table.setVisible(true);
-    }
-    
-    /**
-     * Sets the displayed data
-     * @param data
-     */
-    public void setData(final String[][] data) {
-        this.table.setRedraw(false);
-        this.context.setHandle(null);
-        this.context.setArray(data);
-        this.gridLayer = new DataTableGridLayerStack(new DataTableArrayDataProvider(data, context), table, context);
-        this.table.setLayer(gridLayer);
-        this.table.refresh();
-        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        this.table.getVerticalBar().setVisible(false);
-        this.table.getHorizontalBar().setVisible(false);
-        this.table.setRedraw(true);
-        this.table.redraw();
-        this.table.setVisible(true);
-        this.table.getVerticalBar().setVisible(true);
-        this.table.getHorizontalBar().setVisible(true);
-        this.table.setVisible(true);
-    }
-    
-    /**
-     * Enables/disables the component
-     * @param val
-     */
-    public void setEnabled(final boolean val) {
-        if (table != null) {
-            table.setEnabled(val);
-        }
-    }
-    
-    /**
-     * Sets information about equivalence classes
-     * @param groups
-     */
-    public void setGroups(int[] groups) {
-        this.context.setGroups(groups);
-    }
-
-    /**
-     * Sets layout data
-     * @param data
-     */
-    public void setLayoutData(final Object data) {
-        table.setLayoutData(data);
-    }
-
-    /**
-     * Sets information about the research subset
-     * @param researchSubset
-     */
-    public void setResearchSubset(RowSet researchSubset) {
-        this.context.setRows(researchSubset);
+                uiBindingRegistry.registerDoubleClickBinding(new ColumnResizeEventMatcher(SWT.NONE,
+                                                                                          GridRegion.CORNER,
+                                                                                          1),
+                                                             new AutoResizeColumnAction());
+                uiBindingRegistry.registerSingleClickBinding(new ColumnResizeEventMatcher(SWT.NONE,
+                                                                                          GridRegion.CORNER,
+                                                                                          1), new NoOpMouseAction());
+            }
+        });
+        
     }
 }

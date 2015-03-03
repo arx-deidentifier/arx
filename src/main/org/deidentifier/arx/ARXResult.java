@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx;
@@ -29,57 +28,60 @@ import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * Encapsulates the results of an execution of the ARX algorithm
- * 
+ * Encapsulates the results of an execution of the ARX algorithm.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class ARXResult {
 
-    /** Lock the buffer */
+    /** Lock the buffer. */
     private DataHandle             bufferLockedByHandle = null;
 
-    /** Lock the buffer */
+    /** Lock the buffer. */
     private ARXNode                bufferLockedByNode   = null;
 
     /** The node checker. */
     private final INodeChecker     checker;
 
-    /** The config */
+    /** The config. */
     private final ARXConfiguration config;
 
-    /** The data definition */
+    /** The data definition. */
     private final DataDefinition   definition;
 
     /** Wall clock. */
     private final long             duration;
 
-    /** The lattice */
+    /** The lattice. */
     private final ARXLattice       lattice;
 
-    /** The data manager */
+    /** The data manager. */
     private final DataManager      manager;
 
     /** The global optimum. */
     private final ARXNode          optimalNode;
 
-    /** The registry */
+    /** The registry. */
     private final DataRegistry     registry;
 
-    /** Flag regarding the suppression of outliers */
-    private final boolean          removeOutliers;
-
-    /** The suppression string */
-    private final String           suppressionString;
-
     /**
-     * Internal constructor for deserialization
+     * Internal constructor for deserialization.
+     *
+     * @param handle
+     * @param definition
+     * @param lattice
+     * @param historySize
+     * @param snapshotSizeSnapshot
+     * @param snapshotSizeDataset
+     * @param metric
+     * @param config
+     * @param optimum
+     * @param time
      */
     public ARXResult(       final DataHandle handle,
                             final DataDefinition definition,
                             final ARXLattice lattice,
-                            final boolean removeOutliers,
-                            final String suppressionString,
                             final int historySize,
                             final double snapshotSizeSnapshot,
                             final double snapshotSizeDataset,
@@ -117,12 +119,12 @@ public class ARXResult {
         config.initialize(manager);
 
         // Initialize the metric
-        metric.initialize(manager.getDataQI(), manager.getHierarchies(), config);
+        metric.initialize(definition, manager.getDataQI(), manager.getHierarchies(), config);
 
         // Create a node checker
         final INodeChecker checker = new NodeChecker(manager,
                                                      metric,
-                                                     config,
+                                                     config.getInternalConfiguration(),
                                                      historySize,
                                                      snapshotSizeDataset,
                                                      snapshotSizeSnapshot);
@@ -136,23 +138,19 @@ public class ARXResult {
         this.lattice = lattice;
         this.optimalNode = lattice.getOptimum();
         this.duration = time;
-        this.suppressionString = suppressionString;
-        this.removeOutliers = removeOutliers;
     }
     
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param registry
      * @param manager
      * @param checker
      * @param definition
      * @param config
      * @param lattice
-     * @param optimalNode
      * @param duration
-     * @param suppressionString
-     * @param removeOutliers
      */
     protected ARXResult(DataRegistry registry,
                         DataManager manager,
@@ -160,9 +158,7 @@ public class ARXResult {
                         DataDefinition definition,
                         ARXConfiguration config,
                         ARXLattice lattice,
-                        long duration,
-                        String suppressionString,
-                        boolean removeOutliers) {
+                        long duration) {
 
         this.registry = registry;
         this.manager = manager;
@@ -172,13 +168,11 @@ public class ARXResult {
         this.lattice = lattice;
         this.optimalNode = lattice.getOptimum();
         this.duration = duration;
-        this.suppressionString = suppressionString;
-        this.removeOutliers = removeOutliers;
     }
 
     /**
-     * Returns the configuration used
-     * 
+     * Returns the configuration used.
+     *
      * @return
      */
     public ARXConfiguration getConfiguration() {
@@ -221,8 +215,8 @@ public class ARXResult {
     }
     
     /**
-     * Returns the lattice
-     * 
+     * Returns the lattice.
+     *
      * @return
      */
     public ARXLattice getLattice() {
@@ -286,29 +280,25 @@ public class ARXResult {
         DataHandle handle = registry.getOutputHandle(node);
         if (handle != null) return handle;
 
-        final Node tNode = new Node(0);
+        final Node transformation = new Node(0);
         int level = 0; for (int i : node.getTransformation()) level+= i;
-        tNode.setTransformation(node.getTransformation(), level);
+        transformation.setTransformation(node.getTransformation(), level);
  
         // Apply the transformation
-        TransformedData information = checker.getTransformedData(tNode);
+        TransformedData information = checker.applyAndSetProperties(transformation);
 
         // Store
-        if (!node.isChecked()) {
+        if (!node.isChecked() || node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
             
             node.access().setChecked(true);
-            
-            // TODO: Only in this case, due to the special case 
-            // with multiple sensitive attributes
-            if (definition.getSensitiveAttributes().size()<=1) {
-                if (tNode.isAnonymous()) {
-                    node.access().setAnonymous();
-                } else {
-                    node.access().setNotAnonymous();
-                }
+            if (transformation.hasProperty(Node.PROPERTY_ANONYMOUS)) {
+                node.access().setAnonymous();
+            } else {
+                node.access().setNotAnonymous();
             }
-            node.access().setMaximumInformationLoss(tNode.getInformationLoss());
-            node.access().setMinimumInformationLoss(tNode.getInformationLoss());
+            node.access().setMaximumInformationLoss(transformation.getInformationLoss());
+            node.access().setMinimumInformationLoss(transformation.getInformationLoss());
+            node.access().setLowerBound(transformation.getLowerBound());
             lattice.estimateInformationLoss();
         }
         
@@ -324,9 +314,7 @@ public class ARXResult {
                                                        information.buffer,
                                                        node,
                                                        new StatisticsEquivalenceClasses(information.statistics),
-                                                       suppressionString,
                                                        definition,
-                                                       removeOutliers,
                                                        config);
         
         // Lock
@@ -355,8 +343,8 @@ public class ARXResult {
     }
 
     /**
-     * Returns the execution time (wall clock)
-     * 
+     * Returns the execution time (wall clock).
+     *
      * @return
      */
     public long getTime() {
@@ -364,8 +352,8 @@ public class ARXResult {
     }
 
     /**
-     * Indicates if a result is available
-     * 
+     * Indicates if a result is available.
+     *
      * @return
      */
     public boolean isResultAvailable() {
@@ -373,7 +361,8 @@ public class ARXResult {
     }
 
     /**
-     * Releases the buffer
+     * Releases the buffer.
+     *
      * @param handle
      */
     protected void releaseBuffer(DataHandleOutput handle) {

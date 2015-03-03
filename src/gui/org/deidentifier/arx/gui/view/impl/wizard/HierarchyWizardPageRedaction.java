@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
@@ -21,40 +20,63 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
- * A page for configuring the redaction-based builder
- * @author Fabian Prasser
+ * A page for configuring the redaction-based builder.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<T> {
 
-    /** Var */
+    /** Var. */
     private final HierarchyWizardModelRedaction<T> model;
-    /** Var */
+    
+    /** Var. */
     private Button                                 buttonLeftAlign;
-    /** Var */
+    
+    /** Var. */
     private Button                                 buttonRightAlign;
-    /** Var */
+    
+    /** Var. */
     private Button                                 buttonLeftRedact;
-    /** Var */
+    
+    /** Var. */
     private Button                                 buttonRightRedact;
-    /** Var */
+    
+    /** Var. */
     private Combo                                  comboPaddingChar;
-    /** Var */
+    
+    /** Var. */
     private Combo                                  comboRedactionChar;
+    
+    /** Var. */
+    private Text                                   textDomainSize;
+    
+    /** Var. */
+    private Text                                   textAlphabetSize;
+    
+    /** Var. */
+    private Text                                   textMaximalLength;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param controller
      * @param wizard
      * @param model
@@ -71,6 +93,9 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         setPageComplete(true);
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     public void createControl(final Composite parent) {
         
@@ -107,10 +132,35 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         label2.setText("Redaction character");
         comboRedactionChar = new Combo(group3, SWT.READ_ONLY);
         comboRedactionChar.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        
+    
         createItems(comboPaddingChar, true);
         createItems(comboRedactionChar, false);
-    
+
+        Group group4 = new Group(composite, SWT.SHADOW_ETCHED_IN);
+        group4.setText("Domain properties");
+        GridLayout layout = SWTUtil.createGridLayout(6, false);
+        layout.horizontalSpacing = 10;
+        group4.setLayout(layout);
+        group4.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        Label label3 = new Label(group4, SWT.NONE);
+        
+        label3.setText("Domain size");
+        textDomainSize = new Text(group4, SWT.BORDER);
+        textDomainSize.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        decorate(textDomainSize);
+        
+        Label label4 = new Label(group4, SWT.NONE);
+        label4.setText("Alphabet size");
+        textAlphabetSize = new Text(group4, SWT.BORDER);
+        textAlphabetSize.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        decorate(textAlphabetSize);
+        
+        Label label5 = new Label(group4, SWT.NONE);
+        label5.setText("Max. characters");
+        textMaximalLength = new Text(group4, SWT.BORDER);
+        textMaximalLength.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        decorate(textMaximalLength);
+        
         buttonLeftAlign.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
                 if (buttonLeftAlign.getSelection()) {
@@ -162,9 +212,53 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         updatePage();
         setControl(composite);
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
+     */
+    @Override
+    public boolean isPageComplete() {
+        
+        String alphabet = textAlphabetSize.getText();
+        String domain = textDomainSize.getText();
+        String length = textMaximalLength.getText();
+        
+        if (alphabet.length() == 0 && domain.length() == 0 && length.length() == 0) {
+            return true;
+        }
+        
+        if (alphabet.length() != 0 && domain.length() != 0 && length.length() != 0) {
+            return isValidNumber(alphabet) && isValidNumber(domain) && isValidNumber(length);
+        }
+        
+        if (alphabet.length() != 0 && length.length() != 0) {
+            return isValidNumber(alphabet) && isValidNumber(length);
+        }
+        
+        if (domain.length() != 0 && length.length() != 0) {
+            return isValidNumber(domain) && isValidNumber(length);
+        }
+        
+        return false;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardPageBuilder#setVisible(boolean)
+     */
+    @Override
+    public void setVisible(boolean value){
+        super.setVisible(value);
+        model.setVisible(value);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardPageBuilder#updatePage()
+     */
     @Override
     public void updatePage() {
+        textMaximalLength.setText(model.getMaxValueLength() == null ? "" : String.valueOf(model.getMaxValueLength()));
+        textAlphabetSize.setText(model.getAlphabetSize() == null ? "" : String.valueOf(model.getAlphabetSize()));
+        textDomainSize.setText(model.getDomainSize() == null ? "" : String.valueOf(model.getDomainSize()));
         buttonLeftAlign.setSelection(model.getAlignmentOrder() == Order.LEFT_TO_RIGHT);
         buttonRightAlign.setSelection(model.getAlignmentOrder() == Order.RIGHT_TO_LEFT);
         buttonLeftRedact.setSelection(model.getAlignmentOrder() == Order.LEFT_TO_RIGHT);
@@ -174,7 +268,8 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
     }
     
     /**
-     * Creates combo items
+     * Creates combo items.
+     *
      * @param combo
      * @param padding
      */
@@ -187,7 +282,41 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
     }
 
     /**
-     * Returns the index of the item, or adds it to the combo
+     * Decorates a text field for domain properties.
+     *
+     * @param text
+     */
+    private void decorate(final Text text) {
+        final ControlDecoration decoration = new ControlDecoration(text, SWT.RIGHT);
+        text.addModifyListener(new ModifyListener(){
+            @Override
+            public void modifyText(ModifyEvent arg0) {
+                if (!isValidNumber(text.getText())) {
+                    decoration.setDescriptionText("Not a valid positive number");
+                    Image image = FieldDecorationRegistry.getDefault()
+                          .getFieldDecoration(FieldDecorationRegistry.DEC_ERROR)
+                          .getImage();
+                    decoration.setImage(image);
+                    decoration.show();
+                } else {
+                    decoration.hide();
+                    if (text == textAlphabetSize) {
+                        model.setAlphabetSize(text.getText().length() == 0 ? null : Integer.valueOf(text.getText()));
+                    } else if (text == textDomainSize) {
+                        model.setDomainSize(text.getText().length() == 0 ? null : Integer.valueOf(text.getText()));
+                    } else if (text == textMaximalLength) {
+                        model.setMaxValueLength(text.getText().length() == 0 ? null : Integer.valueOf(text.getText()));
+                    }
+                }
+                setPageComplete(isPageComplete());
+            }
+        });
+    }
+    
+
+    /**
+     * Returns the index of the item, or adds it to the combo.
+     *
      * @param combo
      * @param value
      * @return
@@ -202,10 +331,22 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         return combo.getItemCount()-1;
     }
     
-
-    @Override
-    public void setVisible(boolean value){
-        super.setVisible(value);
-        model.setVisible(value);
+    /**
+     * Returns whether a valid number has been entered.
+     *
+     * @param text
+     * @return
+     */
+    private boolean isValidNumber(String text) {
+        if (text.length() == 0) {
+            return true;
+        } else {
+            try {
+                int value = Integer.parseInt(text);
+                return value > 0d;
+            } catch (Exception e){
+                return false;
+            }
+        }
     }
 }

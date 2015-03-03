@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.framework.check.history;
@@ -22,11 +21,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.NodeAction;
 
 /**
  * The Class History.
@@ -35,61 +36,72 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Florian Kohlmayer
  */
 public class History {
+    
+    /** Store only non-anonymous transformations. */
+    public static final NodeAction STORAGE_TRIGGER_NON_ANONYMOUS = new NodeAction(){
+        @Override
+        public boolean appliesTo(Node node) {
+            return node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS);
+        }
+    };
 
-    public static enum PruningStrategy {
-        ANONYMOUS,
-        CHECKED,
-        K_ANONYMOUS
-    }
+    /** Store all transformations. */
+    public static final NodeAction STORAGE_TRIGGER_ALL = new NodeAction(){
+        @Override
+        public boolean appliesTo(Node node) {
+            return true;
+        }
+    };
 
     /** The actual buffer. */
-    private MRUCache<Node>           cache          = null;
+    private MRUCache<Node>                   cache                         = null;
 
-    /** Current config */
-    private final ARXConfiguration   config;
+    /** Current configuration. */
+    private final ARXConfigurationInternal config;
 
-    /** The dictionary for frequencies of the distributions */
-    private final IntArrayDictionary dictionarySensFreq;
+    /** The dictionary for frequencies of the distributions. */
+    private final IntArrayDictionary         dictionarySensFreq;
 
-    /** The dictionary for values of the distributions */
-    private final IntArrayDictionary dictionarySensValue;
+    /** The dictionary for values of the distributions. */
+    private final IntArrayDictionary         dictionarySensValue;
 
     /** Maximal number of entries. */
-    private int                      size;
+    private int                              size;
 
     /** A map from nodes to snapshots. */
-    private HashMap<Node, int[]>     nodeToSnapshot = null;
+    private HashMap<Node, int[]>             nodeToSnapshot                = null;
 
-    /** The current pruning strategy */
-    private PruningStrategy          pruningStrategy;
+    /** The current storage strategy. */
+    private NodeAction                       storageTrigger;
 
-    /** The current requirements */
-    private final int                requirements;
+    /** The current requirements. */
+    private final int                        requirements;
 
-    /** The node backing the last returned snapshot */
-    private Node                     resultNode;
+    /** The node backing the last returned snapshot. */
+    private Node                             resultNode;
 
     /** The snapshotSizeDataset for the size of entries. */
-    private final long               snapshotSizeDataset;
+    private final long                       snapshotSizeDataset;
 
-    /** The snapshotSizeDataset for the minimum required reduction of a snapshot */
-    private final double             snapshotSizeSnapshot;
+    /** The snapshotSizeDataset for the minimum required reduction of a snapshot. */
+    private final double                     snapshotSizeSnapshot;
 
     /**
      * Creates a new history.
-     * 
-     * @param rowCount
-     *            the row count
-     * @param size
-     *            the max size
-     * @param snapshotSizeDataset
-     *            the snapshotSizeDataset
+     *
+     * @param rowCount the row count
+     * @param size the max size
+     * @param snapshotSizeDataset the snapshotSizeDataset
+     * @param snapshotSizeSnapshot
+     * @param config
+     * @param dictionarySensValue
+     * @param dictionarySensFreq
      */
     public History(final int rowCount,
                    final int size,
                    final double snapshotSizeDataset,
                    final double snapshotSizeSnapshot,
-                   final ARXConfiguration config,
+                   final ARXConfigurationInternal config,
                    final IntArrayDictionary dictionarySensValue,
                    final IntArrayDictionary dictionarySensFreq) {
         
@@ -102,6 +114,7 @@ public class History {
         this.dictionarySensValue = dictionarySensValue;
         this.config = config;
         this.requirements = config.getRequirements();
+        this.storageTrigger = STORAGE_TRIGGER_NON_ANONYMOUS;
     }
 
     /**
@@ -117,7 +130,7 @@ public class History {
         Node rNode = null;
 
         // Iterate over nodes with snapshots
-        MRUCacheEntry<Node> entry = cache.getFirst();
+        MRUCacheEntry<Node> entry = cache.getHead();
         while (entry != null) {
             final Node cNode = entry.data;
 
@@ -150,31 +163,41 @@ public class History {
 
         return rData;
     }
-
+    
+    /**
+     * Method needed for benchmarking.
+     *
+     * @return
+     */
     public IntArrayDictionary getDictionarySensFreq() {
         return dictionarySensFreq;
     }
 
+    /**
+     * Method needed for benchmarking.
+     *
+     * @return
+     */
     public IntArrayDictionary getDictionarySensValue() {
         return dictionarySensValue;
     }
 
     /**
-     * Returns the node backing the last returned snapshot
-     * 
+     * Returns the node backing the last returned snapshot.
+     *
      * @return
      */
-    public Node getNode() {
+    public Node getTransformation() {
         return resultNode;
     }
-
+    
     /**
-     * Returns the current pruning strategy
-     * 
+     * Returns the current storage strategy.
+     *
      * @return
      */
-    public PruningStrategy getPruningStrategy() {
-        return pruningStrategy;
+    public NodeAction getStorageTrigger() {
+        return storageTrigger;
     }
 
     /**
@@ -187,101 +210,104 @@ public class History {
         this.dictionarySensValue.clear();
         this.resultNode = null;
     }
-
+    
     /**
-     * Set the pruning strategy
-     * 
-     * @param pruning
+     * Sets the size of this history.
+     *
+     * @param size
      */
-    public void setPruningStrategy(final PruningStrategy pruning) {
-        pruningStrategy = pruning;
+    public void setSize(int size) {
+        this.size = size;
+    }
+    
+    /**
+     * Set the storage strategy.
+     *
+     * @param trigger
+     */
+    public void setStorageTrigger(NodeAction trigger) {
+        storageTrigger = trigger;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int size() {
         return cache.size();
 
     }
 
     /**
-     * Stores a snapshot.
-     * 
-     * @param node
-     *            the node
-     * @param g
-     *            the g
+     * Stores a snapshot in the buffer.
+     *
+     * @param transformation The transformation
+     * @param groupify The groupify operator
+     * @param snapshot The snapshot that was previously used, if any
+     * @return
      */
-    public boolean store(final Node node, final IHashGroupify g, final int[] usedSnapshot) {
+    public boolean store(final Node transformation, final IHashGroupify groupify, final int[] snapshot) {
 
-        if ((node.isAnonymous() || (g.size() > snapshotSizeDataset) || canPrune(node))) { return false; }
-
-        // Store only if significantly smaller
-        if (usedSnapshot != null) {
-            final double percentSize = (g.size() / ((double) usedSnapshot.length / config.getSnapshotLength()));
-            if (percentSize > snapshotSizeSnapshot) { return false; }
+        // Early abort if too large, or no space
+        if (size == 0 || groupify.size() > snapshotSizeDataset) {
+            return false;
         }
 
-        // Create the snapshot
-        final int[] data = createSnapshot(g);
+        // Early abort if too large
+        if (snapshot != null) {
+            final double relativeSize = (groupify.size() / ((double) snapshot.length / config.getSnapshotLength()));
+            if (relativeSize > snapshotSizeSnapshot) { return false; }
+        }
+        
+        // Early abort if conditions are not triggered
+        if (!transformation.hasProperty(Node.PROPERTY_FORCE_SNAPSHOT) && 
+            (transformation.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED) || !storageTrigger.appliesTo(transformation))) {
+            return false;
+        }
+        
+        // Clear the cache
+        cleanUpHistory();
 
-        // if cache size is to large purge
+        // Perform LRU eviction, if still too large
         if (cache.size() >= size) {
-            purgeCache();
+            removeHistoryEntry(cache.removeHead());
         }
+        
+        // Create the snapshot
+        final int[] data = createSnapshot(groupify);
+
 
         // assign snapshot and keep reference for cache
-        nodeToSnapshot.put(node, data);
-        cache.append(node);
+        nodeToSnapshot.put(transformation, data);
+        cache.append(transformation);
 
         return true;
     }
 
     /**
-     * Can a node be pruned.
-     * 
-     * @param node
-     *            the node
-     * @return true, if successful
+     * Remove pruned entries from the cache.
      */
-    private final boolean canPrune(final Node node) {
-        boolean prune = true;
-        switch (pruningStrategy) {
-        case ANONYMOUS:
-            for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.isAnonymous()) {
-                    prune = false;
-                    break;
-                }
-            }
-            break;
-        case CHECKED:
-            for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.isChecked()) {
-                    prune = false;
-                    break;
-                }
-            }
-            break;
-        case K_ANONYMOUS:
-            for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.isKAnonymous()) {
-                    prune = false;
-                    break;
-                }
-            }
-            break;
-        }
-        return prune;
-    }
+    private final void cleanUpHistory() {
 
+        final Iterator<Node> it = cache.iterator();
+        while (it.hasNext()) {
+            final Node node = it.next();
+            if (node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
+                it.remove();
+                removeHistoryEntry(node);
+            }
+        }
+    }
+    
     /**
-     * Creates a generic snapshot for all criteria
-     * 
-     * @param g
-     *            the g
+     * Creates a generic snapshot for all criteria.
+     *
+     * @param g the g
      * @return the int[]
      */
     private final int[] createSnapshot(final IHashGroupify g) {
-        // Copy Groupify
+
         final int[] data = new int[g.size() * config.getSnapshotLength()];
         int index = 0;
         HashGroupifyEntry m = g.getFirstEntry();
@@ -299,18 +325,22 @@ public class History {
                 break;
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 data[index + 2] = m.pcount;
-                Distribution fSet = m.distribution;
-                fSet.pack();
-                data[index + 3] = dictionarySensValue.probe(fSet.getPackedElements());
-                data[index + 4] = dictionarySensFreq.probe(fSet.getPackedFrequency());
+                for (int i=0; i<m.distributions.length; i++) {
+                    Distribution distribution = m.distributions[i];
+                    distribution.pack();
+                    data[index + 3 + i * 2] = dictionarySensValue.probe(distribution.getPackedElements());
+                    data[index + 4 + i * 2] = dictionarySensFreq.probe(distribution.getPackedFrequency());
+                }
                 break;
             // TODO: If we only need a distribution, we should get rid of the primary counter
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                fSet = m.distribution;
-                fSet.pack();
-                data[index + 2] = dictionarySensValue.probe(fSet.getPackedElements());
-                data[index + 3] = dictionarySensFreq.probe(fSet.getPackedFrequency());
+                for (int i=0; i<m.distributions.length; i++) {
+                    Distribution distribution = m.distributions[i];
+                    distribution.pack();
+                    data[index + 2 + i * 2] = dictionarySensValue.probe(distribution.getPackedElements());
+                    data[index + 3 + i * 2] = dictionarySensFreq.probe(distribution.getPackedFrequency());
+                }
                 break;
             default:
                 throw new RuntimeException("Invalid requirements: " + requirements);
@@ -323,33 +353,8 @@ public class History {
     }
 
     /**
-     * Remove least recently used from cache and index.
-     */
-    private final void purgeCache() {
-        int purged = 0;
-
-        // Purge prunable nodes
-        final Iterator<Node> it = cache.iterator();
-        while (it.hasNext()) {
-            final Node node = it.next();
-            if (canPrune(node)) {
-                purged++;
-                it.remove();
-                removeHistoryEntry(node);
-
-            }
-        }
-
-        // Purge LRU
-        if (purged == 0) {
-            final Node node = cache.removeHead();
-            removeHistoryEntry(node);
-        }
-    }
-
-    /**
-     * Removes a snapshot
-     * 
+     * Removes a snapshot.
+     *
      * @param node
      */
     private final void removeHistoryEntry(final Node node) {
@@ -358,26 +363,22 @@ public class History {
         switch (requirements) {
         case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             for (int i = 0; i < snapshot.length; i += config.getSnapshotLength()) {
-                dictionarySensValue.decrementRefCount(snapshot[i + 3]);
-                dictionarySensFreq.decrementRefCount(snapshot[i + 4]);
+                for (int j = i + 3; j < i + config.getSnapshotLength() - 1; j += 2) {
+                    dictionarySensValue.decrementRefCount(snapshot[j]);
+                    dictionarySensFreq.decrementRefCount(snapshot[j+1]);
+                }
             }
             break;
         // TODO: If we only need a distribution, we should get rid of the primary counter
         case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
         case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             for (int i = 0; i < snapshot.length; i += config.getSnapshotLength()) {
-                dictionarySensValue.decrementRefCount(snapshot[i + 2]);
-                dictionarySensFreq.decrementRefCount(snapshot[i + 3]);
+                for (int j = i + 2; j < i + config.getSnapshotLength() - 1; j += 2) {
+                    dictionarySensValue.decrementRefCount(snapshot[j]);
+                    dictionarySensFreq.decrementRefCount(snapshot[j+1]);
+                }
             }
         }
 
-    }
-
-    /**
-     * Sets the size of this history
-     * @param size
-     */
-    public void setSize(int size) {
-        this.size = size;
     }
 }

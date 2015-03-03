@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
+ * ARX: Powerful Data Anonymization
+ * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.io;
@@ -21,40 +20,33 @@ package org.deidentifier.arx.io;
 import org.deidentifier.arx.DataType;
 
 /**
- * Superclass for column types that are only referred to by an index
- * 
- * @see {@link ImportColumnExcel}
- * @see {@link ImportColumnCSV}
- * 
+ * Superclass for column types that are only referred to by an index.
+ *
  * @author Karol Babioch
  * @author Fabian Prasser
+ * @see {@link ImportColumnExcel}
+ * @see {@link ImportColumnCSV}
  */
 abstract public class ImportColumnIndexed extends ImportColumn implements
         IImportColumnIndexed {
 
     /**
-     * Index this column refers to
-     * 
+     * Index this column refers to.
+     *
      * @note Counting starts usually at 0
      */
     private int index;
 
-    /**
-     * Column name
-     */
+    /** Column name. */
     private String name;
     
     /**
-     * Creates a new instance of this object with the given parameters
-     * 
-     * @param index
-     *            {@link #index}
-     * @param datatype
-     *            {@link #dataType}
-     * 
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param index {@link #index}
+     * @param datatype {@link #dataType}
      * @note This does not assign a name to the column explicitly. The name will
-     *       be assigned later on either from a header
-     *       {@link IImportConfigurationWithHeader} or by some automatic naming
+     *       be assigned later on either from a header {@link IImportConfigurationWithHeader} or by some automatic naming
      *       scheme.
      */
     public ImportColumnIndexed(int index, DataType<?> datatype) {
@@ -62,15 +54,11 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
     }
 
     /**
-     * Creates a new instance of this object with the given parameters
-     * 
-     * @param index
-     *            {@link #index}
-     * @param aliasName
-     *            {@link ImportColumn#setAliasName(String)}
-     * @param datatype
-     *            {@link #dataType}
-     * 
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param index {@link #index}
+     * @param aliasName {@link ImportColumn#setAliasName(String)}
+     * @param datatype {@link #dataType}
      * @note This does assign an alias name to the column explicitly.
      */
     public ImportColumnIndexed(int index, String aliasName, DataType<?> datatype) {
@@ -79,7 +67,8 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
     }
     
     /**
-     * Creates a new instance of this object with the given parameters
+     * Creates a new instance of this object with the given parameters.
+     *
      * @param name
      * @param datatype
      */
@@ -88,7 +77,11 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
     }
 
     /**
-     * Creates a new instance of this object with the given parameters
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param name
+     * @param aliasName
+     * @param datatype
      */
     public ImportColumnIndexed(String name, String aliasName, DataType<?> datatype) {
         super(aliasName, datatype);
@@ -104,15 +97,8 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
     }
 
     /**
-     * @param index
-     *            {@link #index}
-     */
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    /**
-     * Gets the name
+     * Gets the name.
+     *
      * @return
      */
     public String getName() {
@@ -120,18 +106,28 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
     }
 
     /**
-     * Sets the name
-     * @param name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    /**
-     * Returns whether an index was given
+     * Returns whether an index was given.
+     *
      * @return
      */
     public boolean isIndexSpecified() {
         return this.index != Integer.MIN_VALUE;
+    }
+
+    /**
+     * @param index
+     *            {@link #index}
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
+    
+    /**
+     * Sets the name.
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 }

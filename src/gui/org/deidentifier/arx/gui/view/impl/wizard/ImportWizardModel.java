@@ -1,20 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
- * Copyright (C) 2014 Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
@@ -41,20 +39,30 @@ import org.deidentifier.arx.io.ImportColumnJDBC;
  */
 public class ImportWizardModel {
 
+    /** Maximum number of lines to be loaded for preview purposes. */
+    public static final int PREVIEW_MAX_LINES = 25;
+
+    /** Maximum number of chars to be loaded for detecting separators. */
+    public static final int DETECT_MAX_CHARS  = 100000;
+    
     /**
-     * Possible sources for importing data from
-     * 
+     * Possible sources for importing data from.
+     *
      * @see {@link sourceType}
      */
     public enum SourceType {
+        
+        /**  TODO */
         CSV,
+        
+        /**  TODO */
         JDBC,
+        
+        /**  TODO */
         EXCEL
     };
 
-    /**
-     * Actual source data should be imported from
-     */
+    /** Actual source data should be imported from. */
     private SourceType                    sourceType;
 
     /**
@@ -69,15 +77,20 @@ public class ImportWizardModel {
      */
     private List<ImportWizardModelColumn> wizardColumns;
 
-    /**
-     * Location of file to import from
-     */
+    /** Location of file to import from. */
     private String                        fileLocation;
 
-    /**
-     * Separator for columns (in case of CSV import)
-     */
-    private char                          csvSeparator;
+    /** Line break characters (in case of CSV import). */
+    private char[]                        csvLinebreak;
+
+    /** Escape character (in case of CSV import). */
+    private char                          csvEscape;
+
+    /** Separator for columns (in case of CSV import). */
+    private char                          csvDelimiter;
+    
+    /** Character to enclose strings (in case of CSV import). */
+    private char                          csvQuote;
 
     /**
      * Indicates whether first row contains header
@@ -89,8 +102,8 @@ public class ImportWizardModel {
     private boolean                       firstRowContainsHeader = true;
 
     /**
-     * Index of sheet to import from (in case of Excel import)
-     * 
+     * Index of sheet to import from (in case of Excel import).
+     *
      * @see {@link SourceType#EXCEL}
      */
     private int                           excelSheetIndex;
@@ -103,36 +116,31 @@ public class ImportWizardModel {
      * {@link ImportWizardPagePreview} doesn't need to know anything about the
      * source type the data is coming from.
      * 
-     * It will contain up to {@link #previewDataMaxLines} lines of data.
+     * It will contain up to {@link #PREVIEW_MAX_LINES} lines of data.
      */
     private List<String[]>                previewData;
 
-    /**
-     * List of potential JDBC tables
-     */
+    /** List of potential JDBC tables. */
     private List<String>                  jdbcTables;
 
-    /**
-     * Name of table selected by user
-     */
+    /** Name of table selected by user. */
     private String                        selectedJdbcTable;
 
-    /**
-     * Jdbc connection potentially used throughout the wizard
-     */
+    /** Jdbc connection potentially used throughout the wizard. */
     private Connection                    jdbcConnection;
 
     /**
-     * Maximum number of lines to be loaded for preview purposes
+     * @return the csvDelimiter
      */
-    public static final int               previewDataMaxLines    = 25;
+    public char getCsvDelimiter() {
+        return csvDelimiter;
+    }
 
-    /**
-     * @return {@link #csvSeparator}
+   /**
+     * @return {@link #csvEscape}
      */
-    public char getCsvSeparator() {
-
-        return csvSeparator;
+    public char getCsvEscape() {
+        return csvEscape;
     }
 
     /**
@@ -262,14 +270,20 @@ public class ImportWizardModel {
     }
 
     /**
-     * @param csvSeparator
-     *            {@link #csvSeparator}
+     * @param csvDelimiter the csvDelimiter to set
      */
-    public void setCsvSeparator(char csvSeparator) {
-
-        this.csvSeparator = csvSeparator;
+    public void setCsvDelimiter(char csvDelimiter) {
+        this.csvDelimiter = csvDelimiter;
     }
 
+    /**
+     * 
+     * @param csvEscape
+     */
+    public void setCsvEscape(char csvEscape) {
+        this.csvEscape = csvEscape;
+    }
+    
     /**
      * @param excelSheetIndex
      *            {@link #excelSheetIndex}
@@ -298,8 +312,9 @@ public class ImportWizardModel {
     }
 
     /**
-     * @param connection
-     *            {@link #jdbcConnection}
+     * 
+     *
+     * @param jdbcConnection
      */
     public void setJdbcConnection(Connection jdbcConnection) {
 
@@ -316,8 +331,9 @@ public class ImportWizardModel {
     }
 
     /**
-     * @param wizardColumns
-     *            {@link #previewData}
+     * 
+     *
+     * @param previewData
      */
     public void setPreviewData(List<String[]> previewData) {
 
@@ -334,8 +350,9 @@ public class ImportWizardModel {
     }
 
     /**
-     * @param source
-     *            {@link #sourceType}
+     * 
+     *
+     * @param sourceType
      */
     public void setSourceType(SourceType sourceType) {
 
@@ -350,4 +367,23 @@ public class ImportWizardModel {
 
         this.wizardColumns = columns;
     }
+
+    public char[] getCsvLinebreak() {
+        return csvLinebreak;
+    }
+
+    public void setCsvLinebreak(char[] csvLinebreak) {
+        this.csvLinebreak = csvLinebreak;
+    }
+
+    public char getCsvQuote() {
+        return csvQuote;
+    }
+
+    public void setCsvQuote(char csvQuote) {
+        this.csvQuote = csvQuote;
+    }
+
+   
+
 }

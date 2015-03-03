@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
@@ -44,23 +43,35 @@ import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizard
 public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardModelAbstract<T>{
     
     /**
-     * This class represents a group
-     * @author Fabian Prasser
+     * This class represents a group.
      *
+     * @author Fabian Prasser
      * @param <U>
      */
     public static class HierarchyWizardGroupingGroup<U> {
         
-        /** Var */
+        /** Var. */
         public int size;
-        /** Var */
+        
+        /** Var. */
         public AggregateFunction<U> function;
         
+        /**
+         * 
+         *
+         * @param group
+         */
         public HierarchyWizardGroupingGroup(Group<U> group) {
             this.size = group.getSize();
             this.function = group.getFunction();
         }
 
+        /**
+         * 
+         *
+         * @param size
+         * @param function
+         */
         public HierarchyWizardGroupingGroup(int size, AggregateFunction<U> function) {
             this.size = size;
             this.function = function;
@@ -68,22 +79,40 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * This class represents an interval
-     * @author Fabian Prasser
+     * This class represents an interval.
      *
+     * @author Fabian Prasser
      * @param <U>
      */
     public static class HierarchyWizardGroupingInterval<U> {
+        
+        /**  TODO */
         public U min;
+        
+        /**  TODO */
         public U max;
+        
+        /**  TODO */
         public AggregateFunction<U> function;
         
+        /**
+         * 
+         *
+         * @param interval
+         */
         public HierarchyWizardGroupingInterval(Interval<U> interval) {
             this.min = interval.getMin();
             this.max = interval.getMax();
             this.function = interval.getFunction();
         }
 
+        /**
+         * 
+         *
+         * @param min
+         * @param max
+         * @param function
+         */
         public HierarchyWizardGroupingInterval(U min, U max, AggregateFunction<U> function) {
             this.min = min;
             this.max = max;
@@ -92,16 +121,28 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
     
     /**
-     * This class represents an adjustment
-     * @author Fabian Prasser
+     * This class represents an adjustment.
      *
+     * @author Fabian Prasser
      * @param <U>
      */
     public static class HierarchyWizardGroupingRange<U> {
+        
+        /**  TODO */
         public U repeat;
+        
+        /**  TODO */
         public U snap;
+        
+        /**  TODO */
         public U label;
         
+        /**
+         * 
+         *
+         * @param type
+         * @param lower
+         */
         @SuppressWarnings("unchecked")
         public HierarchyWizardGroupingRange(DataType<U> type, boolean lower){
             DataTypeWithRatioScale<U> dtype = (DataTypeWithRatioScale<U>)type;
@@ -116,12 +157,24 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
             }
         }
 
+        /**
+         * 
+         *
+         * @param range
+         */
         public HierarchyWizardGroupingRange(Range<U> range) {
             this.repeat = range.getRepeatBound();
             this.snap = range.getSnapBound();
             this.label = range.getLabelBound();
         }
         
+        /**
+         * 
+         *
+         * @param repeat
+         * @param snap
+         * @param label
+         */
         public HierarchyWizardGroupingRange(U repeat, U snap, U label) {
             this.repeat = repeat;
             this.snap = snap;
@@ -129,29 +182,40 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
         }
     }
 
-    /** Var */
+    /** Var. */
     private List<HierarchyWizardGroupingInterval<T>>    intervals     = new ArrayList<HierarchyWizardGroupingInterval<T>>();
-    /** Var */
+    
+    /** Var. */
     private List<List<HierarchyWizardGroupingGroup<T>>> groups        = new ArrayList<List<HierarchyWizardGroupingGroup<T>>>();
-    /** Var */
+    
+    /** Var. */
     private DataType<T>                                 type;
-    /** Var */
+    
+    /** Var. */
     private boolean                                     showIntervals = true;
-    /** Var */
+    
+    /** Var. */
     private AggregateFunction<T>                        function;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardGroupingRange<T>             lower         = null;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardGroupingRange<T>             upper         = null;
-    /** Var */
+    
+    /** Var. */
     private Object                                      selected      = null;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardEditorRenderer<T>            renderer      = new HierarchyWizardEditorRenderer<T>(this);
-    /** Var */
+    
+    /** Var. */
     private List<HierarchyWizardView>                   components    = new ArrayList<HierarchyWizardView>();
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
+     * @param data
      * @param type
      * @param intervals
      */
@@ -211,7 +275,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     
 
     /**
-     * Adds an element after the given one
+     * Adds an element after the given one.
+     *
      * @param selected
      */
     @SuppressWarnings("unchecked")
@@ -237,7 +302,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Adds an element before the given one
+     * Adds an element before the given one.
+     *
      * @param selected
      */
     @SuppressWarnings("unchecked")
@@ -261,22 +327,28 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
             }
         }
     }
+    
     /**
-     * Adds groups
+     * Adds groups.
+     *
+     * @param list
      */
     public void addGroups(List<HierarchyWizardGroupingGroup<T>> list) {
         groups.add(list);
     }
     
     /**
-     * Adds an interval
+     * Adds an interval.
+     *
+     * @param i
      */
     public void addInterval(HierarchyWizardGroupingInterval<T> i) {
         intervals.add(i);
     }
     
     /**
-     * Adds a column
+     * Adds a column.
+     *
      * @param selected
      */
     public void addRight(Object selected) {
@@ -303,7 +375,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
     
     /**
-     * Returns the default aggregate function
+     * Returns the default aggregate function.
+     *
      * @return
      */
     public AggregateFunction<T> getDefaultFunction(){
@@ -353,7 +426,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
     
     /**
-     * Is this the first interval
+     * Is this the first interval.
+     *
      * @param interval
      * @return
      */
@@ -362,7 +436,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Is this the last interval
+     * Is this the last interval.
+     *
      * @param interval
      * @return
      */
@@ -378,7 +453,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Merges the interval down
+     * Merges the interval down.
+     *
      * @param selected
      */
     public void mergeDown(Object selected) {
@@ -397,7 +473,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Merges the interval up
+     * Merges the interval up.
+     *
      * @param selected
      */
     public void mergeUp(Object selected) {
@@ -416,7 +493,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Parses an interval-based spec
+     * Parses an interval-based spec.
+     *
      * @param builder
      */
     public void parse(HierarchyBuilderIntervalBased<T> builder){
@@ -445,8 +523,10 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Parses an order-based spec
+     * Parses an order-based spec.
+     *
      * @param builder
+     * @throws IllegalArgumentException
      */
     public void parse(HierarchyBuilderOrderBased<T> builder) throws IllegalArgumentException{
         
@@ -474,7 +554,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Registers a part of the UI
+     * Registers a part of the UI.
+     *
      * @param component
      */
     public void register(HierarchyWizardView component){
@@ -482,7 +563,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Removes the given object
+     * Removes the given object.
+     *
      * @param selected
      */
     public void remove(Object selected) {
@@ -515,7 +597,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Sets the default aggregate function
+     * Sets the default aggregate function.
+     *
      * @param function
      */
     public void setDefaultFunction(AggregateFunction<T> function){
@@ -537,7 +620,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Updates the selected element
+     * Updates the selected element.
+     *
      * @param selected
      */
     public void setSelectedElement(Object selected) {
@@ -545,24 +629,31 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Update all UI components
+     * Update the model and all UI components.
      */
     @Override
     public void update(){
         super.update();
         renderer.update();
-        for (HierarchyWizardView c : components){
-            c.update();
-        }
+        updateUI(null);
     }
 
     /**
-     * Update all UI components, apart from the sender
+     * Update the model and all UI components, apart from the sender.
+     *
      * @param sender
      */
     public void update(HierarchyWizardView sender){
         super.update();
         renderer.update();
+        updateUI(sender);
+    }
+    
+    /**
+     * Update the UI components.
+     */
+    @Override
+    public void updateUI(HierarchyWizardView sender){
         for (HierarchyWizardView c : components){
             if (c != sender) {
                 c.update();
@@ -571,7 +662,8 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Simple comparison of data types
+     * Simple comparison of data types.
+     *
      * @param type
      * @param other
      * @return

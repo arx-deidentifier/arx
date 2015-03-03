@@ -1,125 +1,215 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.explore;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.metric.InformationLoss;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.mihalis.opal.dynamictablecolumns.DynamicTable;
+import org.mihalis.opal.dynamictablecolumns.DynamicTableColumn;
 
-import cern.colt.Arrays;
 
 /**
  * This class implements a list view on selected nodes.
- * TODO: Highlight optimum and currently selected node in list
  * 
- * @author prasser
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
-public class ViewList implements IView {
-
-    /** The controller */
-    private final Controller    controller;
-
-    /** The format */
-    private final NumberFormat  format = new DecimalFormat("##0.000"); //$NON-NLS-1$
-
-    /** The table */
-    private final Table         table;
-
-    /** The model */
-    private Model               model;
-
-    /** The list */
-    private final List<ARXNode> list   = new ArrayList<ARXNode>();
-
-    /** The listener */
-    private Listener            listener;
+public class ViewList extends ViewSolutionSpace {
+    
+    /** Are we on linux*/
+    private static final boolean IS_LINUX = isLinux();
 
     /**
-     * Init
-     * 
+     * Are we on linux?
+     * @return
+     */
+    private static final boolean isLinux() {
+        String os = System.getProperty("os.name").toLowerCase();
+        return !(os.indexOf("win") >= 0 || os.indexOf("mac") >= 0);
+    }
+
+    /** The table. */
+    private final DynamicTable  table;
+
+    /** The list. */
+    private final List<ARXNode> list       = new ArrayList<ARXNode>();
+
+    /** The listener. */
+    private Listener            listener;
+
+    /** Color */
+    private Color               background = null;
+
+    /** Map */
+    private Map<Color, Image>   symbols    = new HashMap<Color, Image>();
+
+    /**
+     * Contructor
+     *
      * @param parent
      * @param controller
      */
     public ViewList(final Composite parent, final Controller controller) {
+        
+        super(parent, controller);
 
-        // Listen
-        controller.addListener(ModelPart.SELECTED_NODE, this);
-        controller.addListener(ModelPart.FILTER, this);
-        controller.addListener(ModelPart.MODEL, this);
-        controller.addListener(ModelPart.RESULT, this);
-
-        this.controller = controller;
-
-        table = new Table(parent, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL);
+        table = new DynamicTable(super.getPrimaryComposite(), SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setLayoutData(SWTUtil.createFillGridData());
         table.setHeaderVisible(true);
         
-        final TableColumn column1 = new TableColumn(table, SWT.LEFT);
+        table.addSelectionListener(new SelectionAdapter(){
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                ARXNode node = list.get(table.getSelectionIndex());
+                ViewList.this.actionSelectNode(node);
+            }
+        });
+        
+        table.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseUp(MouseEvent arg0) {
+                if (arg0.button == 3) {
+                    if (getSelectedNode() != null) {
+                        Point display = table.toDisplay(arg0.x, arg0.y);
+                        getModel().setSelectedNode(getSelectedNode());
+                        controller.update(new ModelEvent(ViewList.this, 
+                                                         ModelPart.SELECTED_NODE, getSelectedNode()));
+                        actionShowMenu(display.x, display.y);
+                    }
+                }
+            }
+        });
+
+        final DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.LEFT);
         column1.setText(Resources.getMessage("ListView.1")); //$NON-NLS-1$
-        final TableColumn column4 = new TableColumn(table, SWT.LEFT);
+        column1.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        final DynamicTableColumn column0 = new DynamicTableColumn(table, SWT.LEFT);
+        column0.setText("     "); //$NON-NLS-1$
+        column0.setWidth("30px"); //$NON-NLS-1$
+        
+        final DynamicTableColumn column4 = new DynamicTableColumn(table, SWT.LEFT);
         column4.setText(Resources.getMessage("ListView.2")); //$NON-NLS-1$
-        final TableColumn column2 = new TableColumn(table, SWT.LEFT);
+        column4.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        
+
+        final DynamicTableColumn column5 = new DynamicTableColumn(table, SWT.LEFT);
+        column5.setText("     "); //$NON-NLS-1$
+        column5.setWidth("30px"); //$NON-NLS-1$
+        
+        final DynamicTableColumn column2 = new DynamicTableColumn(table, SWT.LEFT);
         column2.setText(Resources.getMessage("ListView.3")); //$NON-NLS-1$
-        final TableColumn column3 = new TableColumn(table, SWT.LEFT);
+        column2.setWidth("35%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        final DynamicTableColumn column3 = new DynamicTableColumn(table, SWT.LEFT);
         column3.setText(Resources.getMessage("ListView.4")); //$NON-NLS-1$
+        column3.setWidth("35%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         table.setItemCount(0);
         
+        column0.pack();
         column1.pack();
         column2.pack();
         column3.pack();
         column4.pack();
-    }
+        column5.pack();
 
+        // Create tooltip listener
+        // TODO: Does not work on Windows
+        Listener tableListener = new Listener() {
+
+            private TableItem previousHighlighted = null;
+
+            public void handleEvent(Event event) {
+                if (previousHighlighted != null) {
+                    if (!previousHighlighted.isDisposed()) {
+                        previousHighlighted.setBackground(background);
+                    }
+                }
+
+                TableItem item = table.getItem(new Point(event.x, event.y));
+                if (item != null) {
+                    item.setBackground(GUIHelper.COLOR_GRAY);
+                    previousHighlighted = item;
+                    ARXNode node = (ARXNode) item.getData();
+                    if (node != null) {
+                        table.redraw();
+                        table.setToolTipText(getTooltipDecorator().decorate(node));
+                    }
+                }
+            }
+        };
+        table.addListener(SWT.MouseMove, tableListener);
+        table.addListener(SWT.MouseExit, tableListener);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
-        controller.removeListener(this);
+        super.dispose();
+        for (Entry<Color, Image> entry : symbols.entrySet()) {
+            entry.getValue().dispose();
+        }
+        symbols.clear();
     }
-
+    
     /**
-     * Resets the view
+     * Resets the view.
      */
     @Override
     public void reset() {
+        super.reset();
         table.setRedraw(false);
         for (final TableItem i : table.getItems()) {
             i.dispose();
@@ -132,45 +222,9 @@ public class ViewList implements IView {
         SWTUtil.disable(table);
     }
 
-    @Override
-    public void update(final ModelEvent event) {
-
-        if (event.part == ModelPart.RESULT) {
-            if (model.getResult() == null) reset();
-        } else  if (event.part == ModelPart.SELECTED_NODE) {
-            // selectedNode = (ARXNode) event.data;
-        } else if (event.part == ModelPart.MODEL) {
-            reset();
-            model = (Model) event.data;
-            update(model.getResult(), model.getNodeFilter());
-        } else if (event.part == ModelPart.FILTER) {
-            if (model != null) {
-                update(model.getResult(), (ModelNodeFilter) event.data);
-            }
-        }
-    }
-
     /**
-     * Converts an information loss into a relative value in percent
-     * 
-     * @param infoLoss
-     * @return
-     */
-    private double asRelativeValue(final InformationLoss infoLoss) {
-        
-        if (model != null && model.getResult() != null && model.getResult().getLattice() != null && 
-            model.getResult().getLattice().getBottom() != null &&
-            model.getResult().getLattice().getTop() != null) {
-                double min = model.getResult().getLattice().getBottom().getMinimumInformationLoss().getValue();
-                double max = model.getResult().getLattice().getTop().getMaximumInformationLoss().getValue();
-                return ((infoLoss.getValue() - min) / (max-min)) * 100d;
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * Creates an item in the list
+     * Creates an item in the list.
+     *
      * @param item
      * @param index
      */
@@ -181,30 +235,96 @@ public class ViewList implements IView {
         final String transformation = Arrays.toString(node.getTransformation());
         item.setText(0, transformation);
 
-        final String anonymity = node.isAnonymous().toString();
-        item.setText(1, anonymity);
+        final String anonymity = node.getAnonymity().toString();
+        item.setText(2, anonymity);
 
         String min = null;
         if (node.getMinimumInformationLoss() != null) {
-            min = String.valueOf(node.getMinimumInformationLoss().getValue()) +
-                  " [" + format.format(asRelativeValue(node.getMinimumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
+            min = node.getMinimumInformationLoss().toString() +
+                  " [" + getFormat().format(asRelativeValue(node.getMinimumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             min = Resources.getMessage("ListView.7"); //$NON-NLS-1$
         }
-        item.setText(2, min);
-
+        item.setText(4, min);
         String max = null;
         if (node.getMaximumInformationLoss() != null) {
-            max = String.valueOf(node.getMaximumInformationLoss().getValue()) +
-                  " [" + format.format(asRelativeValue(node.getMaximumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
+            max = node.getMaximumInformationLoss().toString() +
+                  " [" + getFormat().format(asRelativeValue(node.getMaximumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             max = Resources.getMessage("ListView.10"); //$NON-NLS-1$
         }
-        item.setText(3, max);
+        item.setText(5, max);
+        item.setData(node);
+
+        item.setImage(1, getSymbol(super.getInnerColor(node)));
+        item.setImage(3, getSymbol(super.getUtilityColor(node)));
+        
+        this.background = this.background != null ? this.background : item.getBackground();
+    }
+    
+    /**
+     * Dynamically creates an image with the given color
+     * @param color
+     * @return
+     */
+    private Image getSymbol(Color color) {
+        
+        // Check cache
+        if (symbols.containsKey(color)) {
+            return symbols.get(color);
+        }
+        
+        // Define
+        final int WIDTH = 16;
+        final int HEIGHT = 16;
+
+        // "Fix" for Bug #50163
+        Image image = IS_LINUX ? getTransparentImage(table.getDisplay(), WIDTH, HEIGHT) : 
+                                 new Image(table.getDisplay(), WIDTH, HEIGHT);
+        
+        // Prepare
+        GC gc = new GC(image);
+        gc.setBackground(color);
+
+        // Render
+		if (!IS_LINUX) {
+			gc.fillRectangle(0, 0, WIDTH, HEIGHT);
+		} else {
+			gc.setAntialias(SWT.ON);
+			gc.fillOval(0, 0, WIDTH, HEIGHT);
+			gc.setAntialias(SWT.OFF);
+		}
+		
+		// Cleanup
+        gc.dispose();
+        
+        // Store in cache and return
+        symbols.put(color, image);
+        return image;
+    }
+    
+    /**
+     * Creates a transparent image
+     * @param display
+     * @param width
+     * @param height
+     * @return
+     */
+    private Image getTransparentImage(Display display, int width, int height) {
+        ImageData imData = new ImageData(width,
+                                         height,
+                                         24,
+                                         new PaletteData(0xff0000,
+                                                         0x00ff00,
+                                                         0x0000ff));
+        imData.setAlpha(0, 0, 0);
+        Arrays.fill(imData.alphaData, (byte) 0);
+        return new Image(display, imData);
     }
 
     /**
-     * Updates the list
+     * Updates the list.
+     *
      * @param result
      * @param filter
      */
@@ -213,12 +333,14 @@ public class ViewList implements IView {
         if (result == null || result.getLattice() == null) return;
         if (filter == null) return;
         
-        controller.getResources().getDisplay().asyncExec(new Runnable() {
+        getController().getResources().getDisplay().asyncExec(new Runnable() {
 
             @Override
             public void run() {
+                if (!table.isEnabled()) {
+                    SWTUtil.enable(table);
+                }
                 table.setRedraw(false);
-                SWTUtil.enable(table);
                 for (final TableItem i : table.getItems()) {
                     i.dispose();
                 }
@@ -227,7 +349,7 @@ public class ViewList implements IView {
                 final ARXLattice l = result.getLattice();
                 for (final ARXNode[] level : l.getLevels()) {
                     for (final ARXNode node : level) {
-                        if (filter.isAllowed(node)) {
+                        if (filter.isAllowed(result.getLattice(), node)) {
                             list.add(node);
                         }
                     }
@@ -243,10 +365,10 @@ public class ViewList implements IView {
                 });
 
                 // Check
-                if (list.size() > model.getMaxNodesInViewer()) {
+                if (list.size() > getModel().getMaxNodesInViewer()) {
                     list.clear();
                 }
-
+                
                 if (listener != null) {
                     table.removeListener(SWT.SetData, listener);
                 }
@@ -261,9 +383,41 @@ public class ViewList implements IView {
                 };
                 table.addListener(SWT.SetData, listener);
                 table.setItemCount(list.size());
-
                 table.setRedraw(true);
             }
         });
+    }
+
+    @Override
+    protected void actionRedraw() {
+        this.table.redraw();
+    }
+
+    @Override
+    protected void eventFilterChanged(ARXResult result, ModelNodeFilter filter) {
+        update(result, filter);
+    }
+
+    @Override
+    protected void eventModelChanged() {
+        update(getModel().getResult(), getModel().getNodeFilter());
+    }
+
+    @Override
+    protected void eventNodeSelected() {
+        int index = -1;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).equals(getSelectedNode())) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) return;
+        this.table.select(index);
+    }
+
+    @Override
+    protected void eventResultChanged(ARXResult result) {
+        if (result == null) reset();
     }
 }

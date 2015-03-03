@@ -1,19 +1,18 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.deidentifier.arx.gui.view.impl.common;
@@ -40,31 +39,55 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * A view on a <code>Data</code> object
+ * A view on a <code>Data</code> object.
+ *
  * @author Fabian Prasser
  */
 public abstract class ViewData implements IView {
     
+    /**  TODO */
     private final Image                IMAGE_ASCENDING;
+    
+    /**  TODO */
     private final Image                IMAGE_DESCENDING;
+    
+    /**  TODO */
     private final Image                IMAGE_INSENSITIVE;
+    
+    /**  TODO */
     private final Image                IMAGE_SENSITIVE;
+    
+    /**  TODO */
     private final Image                IMAGE_QUASI_IDENTIFYING;
+    
+    /**  TODO */
     private final Image                IMAGE_IDENTIFYING;
 
+    /**  TODO */
     private final ToolItem             groupsButton;
+    
+    /**  TODO */
     private final ToolItem             subsetButton;
+    
+    /**  TODO */
     private final ToolItem             ascendingButton;
+    
+    /**  TODO */
     private final ToolItem             descendingButton;
 
+    /**  TODO */
     protected final ComponentDataTable table;
+    
+    /**  TODO */
     protected final Controller         controller;
 
+    /**  TODO */
     protected Model                    model;
 
-    /** 
-     * Creates a new data view
+    /**
      * 
+     * Creates a new data view.
+     *
      * @param parent
      * @param controller
      * @param title
@@ -93,7 +116,7 @@ public abstract class ViewData implements IView {
         IMAGE_DESCENDING        = controller.getResources().getImage("sort_descending.png");//$NON-NLS-1$
 
         // Create title bar
-        ComponentTitleBar bar = new ComponentTitleBar("id-140");
+        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-140");
         bar.add(Resources.getMessage("DataView.1"), //$NON-NLS-1$ 
                 IMAGE_ASCENDING,
                 new Runnable() {
@@ -153,65 +176,28 @@ public abstract class ViewData implements IView {
         });
         
         // Build buttons
-        this.groupsButton = folder.getBarItem(Resources.getMessage("DataView.2")); //$NON-NLS-1$
+        this.groupsButton = folder.getButtonItem(Resources.getMessage("DataView.2")); //$NON-NLS-1$
         this.groupsButton.setEnabled(false);
-        this.subsetButton = folder.getBarItem(Resources.getMessage("DataView.3")); //$NON-NLS-1$
+        this.subsetButton = folder.getButtonItem(Resources.getMessage("DataView.3")); //$NON-NLS-1$
         this.subsetButton.setEnabled(false);
-        this.ascendingButton = folder.getBarItem(Resources.getMessage("DataView.1")); //$NON-NLS-1$
+        this.ascendingButton = folder.getButtonItem(Resources.getMessage("DataView.1")); //$NON-NLS-1$
         this.ascendingButton.setEnabled(false);
-        this.descendingButton = folder.getBarItem(Resources.getMessage("DataView.4")); //$NON-NLS-1$
+        this.descendingButton = folder.getButtonItem(Resources.getMessage("DataView.4")); //$NON-NLS-1$
         this.descendingButton.setEnabled(false);
     }
     
     /**
-     * Cell selection event
-     * @param arg1
-     */
-    protected void actionCellSelected(CellSelectionEvent arg1){
-        if (model != null) {
-            int column = arg1.getColumnPosition() - 1;
-            if (column>=0) actionColumnSelected(column);
-        }
-    }
-    
-    /**
-     * Column selection event
-     * @param arg1
-     */
-    protected void actionColumnSelected(ColumnSelectionEvent arg1) {
-        if (model != null) {
-            int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
-            if (column>=0) actionColumnSelected(column);
-        }
-    }
-    
-    /**
-     * Selects the given column
-     * @param index
-     */
-    private void actionColumnSelected(int index){
-    	DataHandle handle = getHandle();
-        if (handle != null){
-            final String attr = handle.getAttributeName(index);
-            model.setSelectedAttribute(attr);
-            table.setSelectedAttribute(attr);
-            controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attr));
-        }
-    }
-
-    /**
-     * Called when the sort button is pressed
-     */
-    protected abstract void actionSort();
-
-    /**
-     * Add a scrollbar listener to this view
+     * Add a scrollbar listener to this view.
+     *
      * @param listener
      */
     public void addScrollBarListener(final Listener listener) {
         table.addScrollBarListener(listener);
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -219,29 +205,23 @@ public abstract class ViewData implements IView {
         IMAGE_SENSITIVE.dispose();
         IMAGE_QUASI_IDENTIFYING.dispose();
         IMAGE_IDENTIFYING.dispose();
+        IMAGE_ASCENDING.dispose();
+        IMAGE_DESCENDING.dispose();
         table.dispose();
     }
-
-    /**
-     * Returns the data definition
-     * @return
-     */
-    protected abstract DataDefinition getDefinition();
     
     /**
-     * Returns the data definition
-     * @return
-     */
-    protected abstract DataHandle getHandle();
-    
-    /**
-     * Returns the NatTable viewport layer
+     * Returns the NatTable viewport layer.
+     *
      * @return
      */
     public ViewportLayer getViewportLayer() {
         return table.getViewportLayer();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         table.reset();
@@ -250,16 +230,10 @@ public abstract class ViewData implements IView {
         ascendingButton.setEnabled(false);
         descendingButton.setEnabled(false);
     }
-    
-    /**
-     * Enable sorting
-     */
-    protected void enableSorting(){
-        ascendingButton.setEnabled(true);
-        descendingButton.setEnabled(true);
-    }
-    
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
 
@@ -293,7 +267,75 @@ public abstract class ViewData implements IView {
     }
 
     /**
-     * Updates the header image in the table
+     * Selects the given column.
+     *
+     * @param index
+     */
+    private void actionColumnSelected(int index){
+    	DataHandle handle = getHandle();
+        if (handle != null && index < handle.getNumColumns()){
+            final String attr = handle.getAttributeName(index);
+            model.setSelectedAttribute(attr);
+            table.setSelectedAttribute(attr);
+            controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attr));
+        }
+    }
+
+    /**
+     * Cell selection event.
+     *
+     * @param arg1
+     */
+    protected void actionCellSelected(CellSelectionEvent arg1){
+        if (model != null) {
+            int column = arg1.getColumnPosition() - 1;
+            if (column>=0) actionColumnSelected(column);
+        }
+    }
+    
+    /**
+     * Column selection event.
+     *
+     * @param arg1
+     */
+    protected void actionColumnSelected(ColumnSelectionEvent arg1) {
+        if (model != null) {
+            int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
+            if (column>=0) actionColumnSelected(column);
+        }
+    }
+    
+    /**
+     * Called when the sort button is pressed.
+     */
+    protected abstract void actionSort();
+
+    /**
+     * Enable sorting.
+     */
+    protected void enableSorting(){
+        ascendingButton.setEnabled(true);
+        descendingButton.setEnabled(true);
+    }
+    
+    /**
+     * Returns the data definition.
+     *
+     * @return
+     */
+    protected abstract DataDefinition getDefinition();
+    
+
+    /**
+     * Returns the data definition.
+     *
+     * @return
+     */
+    protected abstract DataHandle getHandle();
+
+    /**
+     * Updates the header image in the table.
+     *
      * @param index
      * @param type
      */
