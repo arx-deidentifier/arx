@@ -23,10 +23,10 @@ import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
 import Jama.Matrix;
 
 /**
- * The class defines the required methods for the sub-classes using
- * Newton-Raphson algorithm
+ * The class defines the required methods for the sub-classes using Newton-Raphson algorithm
  * 
  * @author Fabian Prasser
+ * @author Florian Kohlmayer
  * @author Michael Schneider
  * @version 1.0
  */
@@ -51,9 +51,6 @@ abstract class AlgorithmNewtonRaphson {
     /** The vector of solutions. */
     private Matrix         solutionVector;
 
-    /** The iterated vector of solutions. */
-    private Matrix         updatedSolutionVector;
-
     /** Stop flag */
     private WrappedBoolean stop;
     
@@ -74,8 +71,7 @@ abstract class AlgorithmNewtonRaphson {
      * the first derivatives of the object functions evaluated at the iterated
      * solutions.
      * 
-     * @param iteratedSolution
-     *            the iterated vector of solutions.
+     * @param iteratedSolution The iterated vector of solutions.
      * @return the first derivatives of the object functions evaluated at the
      *         iterated solutions.
      */
@@ -85,8 +81,7 @@ abstract class AlgorithmNewtonRaphson {
     /**
      * Returns the vector of solutions obtained by the Newton-Raphson algorithm.
      * 
-     * @param initialValue
-     *            the vector of initial values.
+     * @param initialValue The vector of initial values.
      * @return the vector of solutions.
      * @exception IllegalArgumentException
      *                the first derivative matrix of the object functions is
@@ -96,40 +91,34 @@ abstract class AlgorithmNewtonRaphson {
     protected double[] getSolution(final double[] initialValue) {
 
         solutionVector = new Matrix(initialValue, initialValue.length);
-        updatedSolutionVector = new Matrix(initialValue, initialValue.length);
         differenceVector = new Matrix(initialValue.length, 1, 100);
-        firstDerivativeMatrix = new Matrix(initialValue.length,
-                                           initialValue.length);
-        int i = 0;
-        while ((differenceVector.normF() > accuracy) && (i++ < maxIterations)) {
-
+        firstDerivativeMatrix = new Matrix(initialValue.length, initialValue.length);
+        
+        // Solve
+        int iterations = 0;
+        while (true) {
+            
+            // Check
             checkInterrupt();
+            
+            // Iterate
             firstDerivativeMatrix = new Matrix(firstDerivativeMatrix(solutionVector.getColumnPackedCopy()));
+            double det = firstDerivativeMatrix.det();
+            if (!Double.isNaN(det) && det != 0d) {
+                differenceVector = firstDerivativeMatrix.inverse().times(new Matrix(objectFunctionVector(solutionVector.getColumnPackedCopy()), 
+                                                                                                         initialValue.length));
+                solutionVector = solutionVector.minus(differenceVector);
             
-            boolean error = false;
-            try {
-                // TODO: Weird. JAMA produces a RuntimeException complaining that the 
-                //       matrix is not singular, despite of this test.
-                //       As a work-around, we pack it into a try-catch-block
-                if (firstDerivativeMatrix.det() != 0.0) {
-                    differenceVector = firstDerivativeMatrix.inverse()
-                                       .times(new Matrix(objectFunctionVector(solutionVector.getColumnPackedCopy()), initialValue.length));
-                    updatedSolutionVector = solutionVector.minus(differenceVector);
-                } else {
-                    error = true;
-                }
-            } catch (RuntimeException e) {
-                error = true;
+                // Error
+            } else {
+                return new double[] { Double.NaN, Double.NaN };
             }
-            
-            if (error) {
-                final double[] result = solutionVector.getColumnPackedCopy();
-                for (int j = 0; j < result.length; j++) {
-                    result[j] = Double.NaN;
-                }
-                return result;
+
+            // Break, if conditions met
+            double normF = differenceVector.normF();
+            if (Double.isNaN(normF) || normF <= accuracy || iterations++ > maxIterations) {
+                break;
             }
-            solutionVector = updatedSolutionVector;
         }
         return solutionVector.getColumnPackedCopy();
     }
@@ -138,8 +127,7 @@ abstract class AlgorithmNewtonRaphson {
      * The abstract method (need to be implemented in sub-classes) for computing
      * the object functions evaluated at the iterated solutions.
      * 
-     * @param iteratedSolution
-     *            the iterated vector of solutions.
+     * @param iteratedSolution The iterated vector of solutions.
      * @return the object functions evaluated at the iterated solutions.
      */
 
