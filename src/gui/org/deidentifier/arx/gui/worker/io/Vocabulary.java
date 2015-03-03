@@ -328,6 +328,28 @@ public abstract class Vocabulary {
      * @return
      */
     public abstract String getSeparator();
+
+    /**
+     * 
+     *
+     * @return
+     */
+    public abstract String getEscape();
+
+    /**
+     * 
+     *
+     * @return
+     */
+    public abstract String getQuote();
+
+    /**
+     * 
+     *
+     * @return
+     */
+    public abstract String getLinebreak();
+    
     
     /**
      * 

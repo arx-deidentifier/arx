@@ -141,24 +141,38 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @param <T>
      */
     public static class Interval<T> extends AbstractGroup {
-        
-        /**  TODO */
-        private static final long serialVersionUID = 5985820929677249525L;
+
+        /** TODO */
+        private static final long                      serialVersionUID = 5985820929677249525L;
 
         /** The function. */
-        private final AggregateFunction<T> function;
-        
+        private final AggregateFunction<T>             function;
+
         /** Max is exclusive. */
-        private final T max;
-        
+        private final T                                max;
+
         /** Min is inclusive. */
-        private final T min;
-        
+        private final T                                min;
+
         /** The builder. */
         private final HierarchyBuilderGroupingBased<T> builder;
-        
+
         /** Null for normal intervals, true if <min, false if >max. */
-        private final Boolean lower;
+        private final Boolean                          lower;
+        
+        /**
+         * Constructor for creating label for null values
+         *
+         * @param builder
+         */
+        private Interval(HierarchyBuilderGroupingBased<T> builder) {
+            super(DataType.NULL_VALUE);
+            this.builder = builder;
+            this.min = null;
+            this.max = null;
+            this.function = null;
+            this.lower = null;
+        }
         
         /**
          * Constructor for creating out of bounds labels.
@@ -251,6 +265,33 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return result;
         }
 
+        /**
+         * Is this an interval for null values
+         * @return
+         */
+        public boolean isNullInterval() {
+            return this.lower == null && this.min == null && this.max == null;
+        }
+        
+        /**
+         * Is this an interval representing values that are out of bounds
+         * @return
+         */
+        public boolean isOutOfBound() {
+            return lower != null;
+        }
+        
+        /**
+         * Is this an interval representing values that are out of the lower bound
+         * @return
+         */
+        public boolean isOutOfLowerBound() {
+            if (this.lower == null) {
+                throw new IllegalStateException("You may only call this on intervals that represent values that are out of bounds");
+            }
+            return lower;
+        }
+        
         /* (non-Javadoc)
          * @see java.lang.Object#toString()
          */
@@ -263,7 +304,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     
     /**
      * For each direction, this class encapsulates three bounds. Intervals will be repeated until the
-     * repeat-bound is reached. The outmost intervals will than be exptended to the snap-bound. Values between
+     * repeat-bound is reached. The outmost intervals will than be extended to the snap-bound. Values between
      * the snap-bound and the label-bound will be replaced by an out-of-bounds-label. For values larger than
      * the label-bound exceptions will be raised.
      *
@@ -356,12 +397,6 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
     }
 
-    /** TODO: Is this parameter OK?. */
-    private static final int  INDEX_FANOUT     = 2;
-
-    /** SVUID. */
-    private static final long serialVersionUID = 3663874945543082808L;
-    
     /**
      * Creates a new instance. Snapping is disabled. Repetition is disabled. Bound is determined dynamically.
      *
@@ -372,7 +407,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     public static <T> HierarchyBuilderIntervalBased<T> create(DataType<T> type) {
         return new HierarchyBuilderIntervalBased<T>(type);
     }
-    
+
     /**
      * Creates a new instance. Data points that are out of range are handled according to the given settings.
      *
@@ -419,6 +454,12 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     public static <T> HierarchyBuilderIntervalBased<T> create(String file) throws IOException{
         return create(new File(file));
     }
+    
+    /** TODO: Is this parameter OK?. */
+    private static final int               INDEX_FANOUT     = 2;
+    
+    /** SVUID. */
+    private static final long              serialVersionUID = 3663874945543082808L;
 
     /** Adjustment. */
     private Range<T>          lowerRange;
@@ -889,18 +930,20 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         AbstractGroup[] first = new AbstractGroup[data.length];
         for (int i=0; i<data.length; i++){
             T value = type.parse(data[i]);
-            Interval<T> interval = getInterval(index, type, value);
+            Interval<T> interval;
             
-            if (type.compare(value, tempLower.labelBound) < 0) {
+            if (value == null) {
+                interval = new Interval<T>(this);
+            } else if (type.compare(value, tempLower.labelBound) < 0) {
                 throw new IllegalArgumentException(type.format(value)+ " is < lower label bound");
             } else if (type.compare(value, tempLower.snapBound) < 0) {
                 interval = new Interval<T>(this, true, tempLower.snapBound);
-            } 
-            
-            if (type.compare(value, tempUpper.labelBound) >= 0) {
+            } else if (type.compare(value, tempUpper.labelBound) >= 0) {
                 throw new IllegalArgumentException(type.format(value)+ " is >= upper label bound");
             } else if (type.compare(value, tempUpper.snapBound) >= 0) {
                 interval = new Interval<T>(this, false, tempUpper.snapBound);
+            } else {
+                interval = getInterval(index, type, value);    
             }
             
             if (interval.min != null && interval.max != null){

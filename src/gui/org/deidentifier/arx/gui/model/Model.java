@@ -42,6 +42,7 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricDescription;
 
@@ -137,8 +138,11 @@ public class Model implements Serializable {
     /** The project name. */
     private String                                name                            = null;
     
-    /** The project's separator. */
+    /** Left for backwards compatibility only! */
     private char                                  separator                       = ';';                                            //$NON-NLS-1$
+
+    /** The projects CSV syntax */
+    private CSVSyntax                             csvSyntax;
     
     /** Execution time of last anonymization. */
     private long                                  time;
@@ -446,6 +450,18 @@ public class Model implements Serializable {
     }
 
 	/**
+     * Gets the csv config model.
+     * @return
+     */
+    public CSVSyntax getCSVSyntax() {
+        if (csvSyntax == null) {
+            csvSyntax = new CSVSyntax();
+            csvSyntax.setDelimiter(separator);
+        }
+        return csvSyntax;
+    }
+
+	/**
      * Returns the project description.
      *
      * @return
@@ -537,7 +553,7 @@ public class Model implements Serializable {
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
 	}
-
+	
 	/**
      * Returns the l-diversity model.
      *
@@ -549,7 +565,7 @@ public class Model implements Serializable {
 	        }
 		return lDiversityModel;
 	}
-	
+
 	/**
      * Returns the project locale.
      *
@@ -719,7 +735,7 @@ public class Model implements Serializable {
 	public String getPath() {
 		return path;
 	}
-
+	
 	/**
      * @return the perspective
      */
@@ -738,7 +754,7 @@ public class Model implements Serializable {
 	public String getQuery() {
         return query;
     }
-    
+
 	/**
      * Returns the current result.
      *
@@ -777,7 +793,7 @@ public class Model implements Serializable {
         return riskModel;
     }
     
-	/**
+    /**
      * Returns the currently selected attribute.
      *
      * @return
@@ -785,7 +801,7 @@ public class Model implements Serializable {
 	public String getSelectedAttribute() {
 		return selectedAttribute;
 	}
-	
+
 	/**
      * Returns the selected transformation.
      *
@@ -846,7 +862,7 @@ public class Model implements Serializable {
 		return separator;
 	}
 
-	/**
+    /**
      * Returns the according parameter.
      *
      * @return
@@ -911,8 +927,8 @@ public class Model implements Serializable {
 	public boolean isDebugEnabled() {
 	    return debugEnabled;
 	}
-    
-    /**
+
+	/**
      * Returns whether this project is modified.
      *
      * @return
@@ -933,7 +949,7 @@ public class Model implements Serializable {
 		return modified;
 	}
 
-	/**
+    /**
      * Returns whether a quasi-identifier is selected.
      *
      * @return
@@ -941,7 +957,7 @@ public class Model implements Serializable {
 	public boolean isQuasiIdentifierSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
 	}
-	
+
 	/**
      * Returns whether a sensitive attribute is selected.
      *
@@ -950,7 +966,7 @@ public class Model implements Serializable {
 	public boolean isSensitiveAttributeSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
-
+	
 	/**
      * Returns whether visualization is enabled.
      *
@@ -989,8 +1005,8 @@ public class Model implements Serializable {
 		pair[0] = null;
 		pair[1] = null;
 	}
-
-	/**
+    
+    /**
      * Resets the configuration of the privacy criteria.
      */
 	public void resetCriteria() {
@@ -1296,15 +1312,6 @@ public class Model implements Serializable {
         this.selectedQuasiIdentifiers = set;
         this.setModified();
     }
-    
-    /**
-     * Sets the separator.
-     *
-     * @param separator
-     */
-	public void setSeparator(final char separator) {
-		this.separator = separator;
-	}
 
     /**
      * 

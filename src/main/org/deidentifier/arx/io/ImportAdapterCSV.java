@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.input.CountingInputStream;
+import org.deidentifier.arx.DataType;
 
 /**
  * Import adapter for CSV files
@@ -78,8 +79,7 @@ public class ImportAdapterCSV extends ImportAdapter {
     /**
      * Indicates whether the first row has already been returned
      * 
-     * The first row contains the name of the columns. Depending upon
-     * {@link #containsHeader} and whether the name of the column has been
+     * The first row contains the name of the columns. Depending upon {@link #containsHeader} and whether the name of the column has been
      * assigned explicitly, this is either the value of the file itself, the
      * value defined by the user, or a default value.
      */
@@ -101,7 +101,7 @@ public class ImportAdapterCSV extends ImportAdapter {
         cin = new CountingInputStream(new FileInputStream(new File(config.getFileLocation())));
 
         /* Get CSV iterator */
-        in = new CSVDataInput(cin, config.getDelimiter(), config.getQuote(), config.getEscape());
+        in = new CSVDataInput(cin, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
         it = in.iterator();
 
         /* Check whether there is actual data within the CSV file */
@@ -115,7 +115,7 @@ public class ImportAdapterCSV extends ImportAdapter {
         } else {
             throw new IOException("CSV file contains no data");
         }
-        
+
         // Create header
         header = createHeader();
     }
@@ -176,7 +176,11 @@ public class ImportAdapterCSV extends ImportAdapter {
         for (int i = 0; i < indexes.length; i++) {
             result[i] = row[indexes[i]];
             if (!dataTypes[i].isValid(result[i])) {
-                throw new IllegalArgumentException("Data value does not match data type");
+                if (config.columns.get(i).isCleansing()) {
+                    result[i] = DataType.NULL_VALUE;
+                } else {
+                    throw new IllegalArgumentException("Data value does not match data type");
+                }
             }
         }
 
@@ -212,7 +216,7 @@ public class ImportAdapterCSV extends ImportAdapter {
      * @return
      */
     private String[] createHeader() {
-        
+
         /* Preparation work */
         if (config.getContainsHeader()) this.config.prepare(row);
         this.indexes = getIndexesToImport();
@@ -230,7 +234,7 @@ public class ImportAdapterCSV extends ImportAdapter {
             /* Check whether there is a header, which is not empty */
             if (config.getContainsHeader() &&
                 !row[((ImportColumnCSV) column).getIndex()].equals("")) {
-                
+
                 /* Assign name of CSV file itself */
                 header[i] = row[((ImportColumnCSV) column).getIndex()];
             } else {

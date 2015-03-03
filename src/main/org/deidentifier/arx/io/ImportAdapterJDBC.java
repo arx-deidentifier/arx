@@ -24,6 +24,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.DataType;
+
 /**
  * Import adapter for JDBC
  * 
@@ -77,8 +79,8 @@ public class ImportAdapterJDBC extends ImportAdapter {
         this.config = config;
 
         /* Preparation work */
-        this.indexes = getIndexesToImport();
-        this.dataTypes = getColumnDatatypes();
+        indexes = getIndexesToImport();
+        dataTypes = getColumnDatatypes();
 
         try {
 
@@ -127,7 +129,7 @@ public class ImportAdapterJDBC extends ImportAdapter {
     public int getProgress() {
 
         try {
-            return (int) ((double) resultSet.getRow() / (double) totalRows * 100d);
+            return (int) (((double) resultSet.getRow() / (double) totalRows) * 100d);
         } catch (SQLException e) {
             return 0;
         }
@@ -145,7 +147,9 @@ public class ImportAdapterJDBC extends ImportAdapter {
         return hasNext;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.util.Iterator#next()
      */
     @Override
@@ -162,26 +166,30 @@ public class ImportAdapterJDBC extends ImportAdapter {
             /* Create regular row */
             String[] result = new String[indexes.length];
             for (int i = 0; i < indexes.length; i++) {
-                
+
                 result[i] = resultSet.getString(indexes[i]);
                 if (!dataTypes[i].isValid(result[i])) {
-                    throw new IllegalArgumentException("Data value does not match data type");
+                    if (config.columns.get(i).isCleansing()) {
+                        result[i] = DataType.NULL_VALUE;
+                    } else {
+                        throw new IllegalArgumentException("Data value does not match data type");
+                    }
                 }
             }
 
             /* Move cursor forward and assign result to {@link #hasNext} */
             hasNext = resultSet.next();
-            
+
             if (!hasNext) {
                 try {
                     if (!config.getConnection().isClosed()) {
                         config.getConnection().close();
                     }
-                } catch (Exception e){
-                    /* Die silently*/
+                } catch (Exception e) {
+                    /* Die silently */
                 }
             }
-            
+
             return result;
 
         } catch (SQLException e) {
@@ -219,7 +227,7 @@ public class ImportAdapterJDBC extends ImportAdapter {
             ImportColumn column = columns.get(i);
 
             /* Check whether name has been assigned explicitly or is nonempty */
-            if (column.getAliasName() != null &&
+            if ((column.getAliasName() != null) &&
                 !column.getAliasName().equals("")) {
 
                 header[i] = column.getAliasName();

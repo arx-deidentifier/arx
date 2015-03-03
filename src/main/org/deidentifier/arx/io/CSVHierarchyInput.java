@@ -35,12 +35,11 @@ public class CSVHierarchyInput {
     /** The data. */
     private String[][] data;
 
-
     /**
      * Instantiate.
      *
-     * @param file
-     * @throws IOException
+     * @param file the file
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVHierarchyInput(final File file) throws IOException {
         load(new CSVDataInput(file));
@@ -49,9 +48,9 @@ public class CSVHierarchyInput {
     /**
      * Instantiate.
      *
-     * @param file
-     * @param delimiter
-     * @throws IOException
+     * @param file the file
+     * @param delimiter the delimiter
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVHierarchyInput(final File file, final char delimiter) throws IOException {
         load(new CSVDataInput(file, delimiter));
@@ -60,10 +59,10 @@ public class CSVHierarchyInput {
     /**
      * Instantiate.
      *
-     * @param file
-     * @param delimiter
-     * @param quote
-     * @throws IOException
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVHierarchyInput(final File file, final char delimiter, final char quote) throws IOException {
         load(new CSVDataInput(file, delimiter, quote));
@@ -72,21 +71,46 @@ public class CSVHierarchyInput {
     /**
      * Instantiate.
      *
-     * @param file
-     * @param delimiter
-     * @param quote
-     * @param escape
-     * @throws IOException
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVHierarchyInput(final File file, final char delimiter, final char quote, final char escape) throws IOException {
         load(new CSVDataInput(file, delimiter, quote, escape));
     }
-    
+
     /**
      * Instantiate.
      *
-     * @param stream
-     * @throws IOException
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        load(new CSVDataInput(file, delimiter, quote, escape, linebreak));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param file the file
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final File file, final CSVSyntax config) throws IOException {
+        load(new CSVDataInput(file, config));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVHierarchyInput(final InputStream stream) throws IOException {
         load(new CSVDataInput(stream));
@@ -95,9 +119,9 @@ public class CSVHierarchyInput {
     /**
      * Instantiate.
      *
-     * @param stream
-     * @param delimiter
-     * @throws IOException
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVHierarchyInput(final InputStream stream, final char delimiter) throws IOException {
         load(new CSVDataInput(stream, delimiter));
@@ -106,10 +130,10 @@ public class CSVHierarchyInput {
     /**
      * Instantiate.
      *
-     * @param stream
-     * @param delimiter
-     * @param quote
-     * @throws IOException
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVHierarchyInput(final InputStream stream, final char delimiter, final char quote) throws IOException {
         load(new CSVDataInput(stream, delimiter, quote));
@@ -118,22 +142,46 @@ public class CSVHierarchyInput {
     /**
      * Instantiate.
      *
-     * @param stream
-     * @param delimiter
-     * @param quote
-     * @param escape
-     * @throws IOException
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVHierarchyInput(final InputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
         load(new CSVDataInput(stream, delimiter, quote, escape));
     }
 
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final InputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        load(new CSVDataInput(stream, delimiter, quote, escape, linebreak));
+    }
 
     /**
      * Instantiate.
      *
-     * @param filename
-     * @throws IOException
+     * @param stream the stream
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final InputStream stream, final CSVSyntax config) throws IOException {
+        load(new CSVDataInput(stream, config));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVHierarchyInput(final String filename) throws IOException {
         load(new CSVDataInput(filename));
@@ -142,9 +190,9 @@ public class CSVHierarchyInput {
     /**
      * Instantiate.
      *
-     * @param filename
-     * @param delimiter
-     * @throws IOException
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVHierarchyInput(final String filename, final char delimiter) throws IOException {
         load(new CSVDataInput(filename, delimiter));
@@ -153,10 +201,10 @@ public class CSVHierarchyInput {
     /**
      * Instantiate.
      *
-     * @param filename
-     * @param delimiter
-     * @param quote
-     * @throws IOException
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVHierarchyInput(final String filename, final char delimiter, final char quote) throws IOException {
         load(new CSVDataInput(filename, delimiter, quote));
@@ -165,20 +213,45 @@ public class CSVHierarchyInput {
     /**
      * Instantiate.
      *
-     * @param filename
-     * @param delimiter
-     * @param quote
-     * @param escape
-     * @throws IOException
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVHierarchyInput(final String filename, final char delimiter, final char quote, final char escape) throws IOException {
         load(new CSVDataInput(filename, delimiter, quote, escape));
     }
 
     /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final String filename, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        load(new CSVDataInput(filename, delimiter, quote, escape, linebreak));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param config the config
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVHierarchyInput(final String filename, final CSVSyntax config) throws IOException {
+        load(new CSVDataInput(filename, config));
+    }
+
+    /**
      * Returns the hierarchy.
      *
-     * @return
+     * @return the hierarchy
      */
     public String[][] getHierarchy() {
         return data;
@@ -187,8 +260,8 @@ public class CSVHierarchyInput {
     /**
      * Loads the data.
      *
-     * @param input
-     * @throws IOException
+     * @param input the input
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private void load(final CSVDataInput input) throws IOException {
 
