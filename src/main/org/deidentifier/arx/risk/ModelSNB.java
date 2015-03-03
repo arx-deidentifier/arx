@@ -89,19 +89,20 @@ class ModelSNB extends RiskModelPopulationBased {
                                                       double numClasses,
                                                       double numClassesOfSize1, 
                                                       double samplingFraction) {
+        
         double var1 = 0, var2 = 0, var3 = 0, var4 = 0;
-
+        double samplingFractionToThePowerOfTwo = samplingFraction * samplingFraction;
         for (int i = 0; i < classes.length; i+=2) {
-            int size = classes[i];
-            int count = classes[i + 1];
-            var1 += size * samplingFraction * samplingFraction * Math.pow((1 - (samplingFraction * samplingFraction)), size - 1) * count;
-            var2 += Math.pow((1 - samplingFraction), size) * (Math.pow((1 + samplingFraction), size) - 1) * count;
-            var3 += Math.pow((1 - samplingFraction), size) * count;
-            var4 += size * samplingFraction * Math.pow((1 - samplingFraction), (size - 1)) * count;
+            double size = classes[i];
+            double count = classes[i + 1];
+            double oneMinusSamplingFractionToThePowerOfSizeTimesCount = Math.pow(1 - samplingFraction, size) * count;
+            var1 += size * samplingFractionToThePowerOfTwo * Math.pow(1 - samplingFractionToThePowerOfTwo, size - 1) * count;
+            var2 += oneMinusSamplingFractionToThePowerOfSizeTimesCount * Math.pow(1 + samplingFraction, size) - 1;
+            var3 += oneMinusSamplingFractionToThePowerOfSizeTimesCount;
+            var4 += size * samplingFraction * Math.pow(1 - samplingFraction, size - 1) * count;
             checkInterrupt();
         }
 
-        final double K = numClasses + (numClassesOfSize1 * (var1 / var2) * ((var3 / var4) * (var3 / var4)));
-        return K;
+        return numClasses + numClassesOfSize1 * (var1 / var2) * (var3 / var4) * (var3 / var4);
     }
 }
