@@ -47,8 +47,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
-import org.mihalis.opal.dynamictablecolumns.DynamicTable;
-import org.mihalis.opal.dynamictablecolumns.DynamicTableColumn;
+import de.linearbits.swttable.DynamicTable;
+import de.linearbits.swttable.DynamicTableColumn;
 
 /**
  * A dialog for adding and configuring privacy criteria.
