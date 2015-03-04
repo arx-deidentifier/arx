@@ -211,11 +211,11 @@ public class RiskEstimateBuilder {
     
     /**
      * Returns a class providing access to population-based risk estimates about the attributes.
-     * Uses the decision rule by Dankar et al., excluding the SNB model
+     * Uses the decision rule by Dankar et al.
      * @return
      */
     public RiskModelAttributes getPopulationBasedAttributeRisks() {
-       return getAttributeRisks(null);
+       return getAttributeRisks(StatisticalModel.DANKAR);
     }
 
     /**
