@@ -22,12 +22,12 @@ import java.util.Comparator;
 import java.util.Set;
 
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.risk.Groupify.Group;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.ComputationInterruptedException;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
-import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
  * This class encapsulates information about equivalence classes in a data set
@@ -155,7 +155,9 @@ public class RiskModelEquivalenceClasses {
         Arrays.sort(indices);
 
         // Calculate equivalence classes
-        ObjectIntOpenHashMap<TupleWrapper> map = new ObjectIntOpenHashMap<TupleWrapper>();
+        int capacity = handle.getNumRows() / 10;
+        capacity = capacity > 10 ? capacity : 10;
+        Groupify<TupleWrapper> map = new Groupify<TupleWrapper>(capacity);
         int numRows = handle.getNumRows();
         for (int row = 0; row < numRows; row++) {
             
@@ -165,7 +167,7 @@ public class RiskModelEquivalenceClasses {
             }
             
             TupleWrapper tuple = new TupleWrapper(handle, indices, row);
-            map.putOrAdd(tuple, 1, 1);
+            map.add(tuple);
             if (stop.value) {
                 throw new ComputationInterruptedException();
             }
@@ -173,20 +175,22 @@ public class RiskModelEquivalenceClasses {
 
         // Group by size
         IntIntOpenHashMap grouped = new IntIntOpenHashMap();
-        final int[] values = map.values;
-        final boolean[] states = map.allocated;
-        for (int i = 0; i < states.length; i++) {
-            if (states[i]) {
-                int prog = (int)Math.round((80d + (double)i / (double)states.length * 20d) * factor);
-                if (prog != progress.value) {
-                    progress.value = prog;
-                }
-                grouped.putOrAdd(values[i], 1, 1);
+        
+        int i = 0;
+        int size = map.size();
+        Group<TupleWrapper> element = map.first();
+        while (element != null) {
+            int prog = (int)Math.round((80d + (double)i++ / (double)size * 20d) * factor);
+            if (prog != progress.value) {
+                progress.value = prog;
             }
+            grouped.putOrAdd(element.getCount(), 1, 1);
+            element = element.next();
             if (stop.value) {
                 throw new ComputationInterruptedException();
             }
         }
+        
         map = null;
         
         convertAndAnalyze(grouped, stop, progress);
