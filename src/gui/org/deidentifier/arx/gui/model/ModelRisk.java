@@ -52,9 +52,9 @@ public class ModelRisk implements Serializable {
     /** Model */
     private ARXPopulationModel         populationModel           = null;
     /** Model */
-    private int                        maxIterations             = 300;
+    private int                        maxIterations             = 1000;
     /** Model */
-    private double                     accuracy                  = 1.0e-9;
+    private double                     accuracy                  = 1.0e-6;
     /** Model */
     private int                        maxQiSize                 = 10;
     /** Model */

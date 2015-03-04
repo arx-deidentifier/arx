@@ -34,10 +34,10 @@ import Jama.Matrix;
 abstract class AlgorithmNewtonRaphson {
 
     /** Convergence threshold for the Newton-Raphson algorithm. */
-    public double          accuracy      = 1.0e-9;
+    public double          accuracy      = 1.0e-6;
 
     /** Maximum number of iterations. */
-    public int             maxIterations = 300;
+    public int             maxIterations = 1000;
 
     /** The solutions. */
     public double[]        solution;
