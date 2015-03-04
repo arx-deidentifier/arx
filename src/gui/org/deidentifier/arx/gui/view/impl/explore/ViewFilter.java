@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.mihalis.opal.rangeSlider.RangeSlider;
+import de.linearbits.swtrangeslider.RangeSlider;
 
 /**
  * This class displays a filter for the lattice.

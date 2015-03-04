@@ -42,8 +42,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
-import org.mihalis.opal.dynamictablecolumns.DynamicTable;
-import org.mihalis.opal.dynamictablecolumns.DynamicTableColumn;
+import de.linearbits.swttable.DynamicTable;
+import de.linearbits.swttable.DynamicTableColumn;
 
 /**
  * This class displays a list of all defined privacy criteria.
