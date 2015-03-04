@@ -116,8 +116,12 @@ abstract class AlgorithmNewtonRaphson {
 
             // Break, if conditions met
             double normF = differenceVector.normF();
-            if (Double.isNaN(normF) || normF <= accuracy || iterations++ > maxIterations) {
+            if (normF <= accuracy) {
                 break;
+            }
+            // Error or max iterations reached
+            if (Double.isNaN(normF) || iterations++ > maxIterations) {
+                return new double[] { Double.NaN, Double.NaN };
             }
         }
         return solutionVector.getColumnPackedCopy();
