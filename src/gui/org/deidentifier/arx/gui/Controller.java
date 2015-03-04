@@ -87,12 +87,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.mihalis.opal.opalDialog.ChoiceItem;
-import org.mihalis.opal.opalDialog.Dialog;
-import org.mihalis.opal.opalDialog.Dialog.CenterOption;
-import org.mihalis.opal.opalDialog.Dialog.OpalDialogType;
 
 import cern.colt.Swapper;
+import de.linearbits.swt.choicesdialog.ChoiceItem;
+import de.linearbits.swt.choicesdialog.ChoicesDialog;
 
 /**
  * The main controller for the whole tool.
@@ -700,16 +698,12 @@ public class Controller implements IView {
                                                Resources.getMessage("Controller.117")); //$NON-NLS-1$
         
         // Show dialog
-        final Dialog dialog = new Dialog(main.getShell());
+        ChoicesDialog dialog = new ChoicesDialog(main.getShell(), SWT.APPLICATION_MODAL);
         dialog.setTitle(Resources.getMessage("Controller.26")); //$NON-NLS-1$
-        dialog.getMessageArea().setTitle(""); //$NON-NLS-1$ 
-        dialog.getMessageArea().setText(Resources.getMessage("Controller.27"));//$NON-NLS-1$
-        dialog.getMessageArea().setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION));
-        dialog.getMessageArea().addChoice(items.length - 1, items);
-        dialog.setCenterPolicy(CenterOption.CENTER_ON_DIALOG);
-        dialog.setButtonType(OpalDialogType.NONE);
-        dialog.show();
-        int choice = dialog.getMessageArea().getChoice();
+        dialog.setMessage(Resources.getMessage("Controller.27"));//$NON-NLS-1$
+        dialog.setImage(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION));
+        dialog.setChoices(items);
+        int choice = dialog.open();
         
         // Cancel
         if (choice == -1 || choice == items.length-1) {
