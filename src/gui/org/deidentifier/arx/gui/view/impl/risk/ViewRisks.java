@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.risk;
 
 import java.util.Set;
 
+import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.Model.Perspective;
@@ -31,6 +32,7 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressPro
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.utility.AnalysisContextVisualization;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
+import org.deidentifier.arx.risk.RiskModelEquivalenceClasses;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -268,12 +270,31 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     /**
      * Creates a risk estimate builder
      * @param context
+     * @param model
+     * @param classes
+     * @return
+     */
+    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context, 
+                                                          ARXPopulationModel model, 
+                                                          RiskModelEquivalenceClasses classes) {
+
+        AnalysisContext analysisContext = context.context;
+        return context.handle.getRiskEstimator(model, 
+                                               classes, 
+                                               analysisContext.getModel().getRiskModel().getAccuracy(),
+                                               analysisContext.getModel().getRiskModel().getMaxIterations())
+                                               .getInterruptibleInstance();
+    }
+
+    
+    /**
+     * Creates a risk estimate builder
+     * @param context
      * @return
      */
     protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context) {
         
         AnalysisContext analysisContext = context.context;
-        
         return context.handle.getRiskEstimator(analysisContext.getModel().getRiskModel().getPopulationModel(),
                                                analysisContext.getData().definition.getQuasiIdentifyingAttributes(),
                                                analysisContext.getModel().getRiskModel().getAccuracy(),
@@ -291,7 +312,6 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
                                                           Set<String> identifiers) {
         
         AnalysisContext analysisContext = context.context;
-        
         return context.handle.getRiskEstimator(analysisContext.getPopulationModel(),
                                                identifiers,
                                                analysisContext.getModel().getRiskModel().getAccuracy(),

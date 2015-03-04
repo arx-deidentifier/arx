@@ -412,8 +412,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
                         throw new InterruptedException();
                     }
                     
-                    builder = context.handle.getRiskEstimator(ARXPopulationModel.create(POINTS[idx]),
-                                                              builder.getEquivalenceClassModel()).getInterruptibleInstance();
+                    builder = getBuilder(context, ARXPopulationModel.create(POINTS[idx]), builder.getEquivalenceClassModel());
                     
                     if (idx == 0 && builder.getSampleBasedUniquenessRisk().getFractionOfUniqueTuples() == 0.0d) {
                         Arrays.fill(dataDankar, 0.0d);
