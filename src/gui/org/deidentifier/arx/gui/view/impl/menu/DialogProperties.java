@@ -223,11 +223,11 @@ public class DialogProperties implements IDialog {
         window.addCategory(Resources.getMessage("PropertyDialog.40"), //$NON-NLS-1$
                            controller.getResources().getImage("settings-risk.png")); //$NON-NLS-1$
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.41"), 1, 100000, 300) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.41"), 1, 100000, 1000) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getMaxIterations(); }
             protected void setValue(Object t) { model.getRiskModel().setMaxIterations((Integer)t); }});
         
-        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.42"), 1.0e-10, 1d, 1.0e-9) { //$NON-NLS-1$
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.42"), 1.0e-10, 1d, 1.0e-6) { //$NON-NLS-1$
             protected Double getValue() { return model.getRiskModel().getAccuracy(); }
             protected void setValue(Object t) { model.getRiskModel().setAccuracy((Double)t); }});
 
