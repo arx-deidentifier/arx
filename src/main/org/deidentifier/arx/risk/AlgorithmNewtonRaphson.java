@@ -34,10 +34,10 @@ import Jama.Matrix;
 abstract class AlgorithmNewtonRaphson {
 
     /** Convergence threshold for the Newton-Raphson algorithm. */
-    public double          accuracy      = 1.0e-9;
+    public double          accuracy      = 1.0e-6;
 
     /** Maximum number of iterations. */
-    public int             maxIterations = 300;
+    public int             maxIterations = 1000;
 
     /** The solutions. */
     public double[]        solution;
@@ -116,8 +116,12 @@ abstract class AlgorithmNewtonRaphson {
 
             // Break, if conditions met
             double normF = differenceVector.normF();
-            if (Double.isNaN(normF) || normF <= accuracy || iterations++ > maxIterations) {
+            if (normF <= accuracy) {
                 break;
+            }
+            // Error or max iterations reached
+            if (Double.isNaN(normF) || iterations++ > maxIterations) {
+                return new double[] { Double.NaN, Double.NaN };
             }
         }
         return solutionVector.getColumnPackedCopy();

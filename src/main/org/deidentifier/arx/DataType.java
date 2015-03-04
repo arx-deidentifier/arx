@@ -166,15 +166,17 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public int compare(final String s1, final String s2) throws ParseException {
-            if (s1 == null && s2 == null) {
-                return 0;
-            } else if (s1 == null) {
-                return +1;
-            } else if (s2 == null) {
-                return -1;
-            }
             try {
-                return format.parse(s1).compareTo(format.parse(s2));
+                Date d1 = parse(s1);
+                Date d2 = parse(s2);
+                if (d1 == null && d2 == null) {
+                    return 0;
+                } else if (d1 == null) {
+                    return +1;
+                } else if (d2 == null) {
+                    return -1;
+                }
+                return d1.compareTo(d2);
             } catch (Exception e) {
                 throw new IllegalArgumentException("Invalid value", e);
             }
@@ -495,19 +497,20 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
-            if (s1 == null && s2 == null) {
-                return 0;
-            } else if (s1 == null) {
-                return +1;
-            } else if (s2 == null) {
-                return -1;
-            }
+            
             try {
-                double d1 = parse(s1);
-                double d2 = parse(s2);
-                d1 = d1 == -0.0d ? 0d : d1;
-                d2 = d2 == -0.0d ? 0d : d2;
-                return Double.valueOf(d1).compareTo(Double.valueOf(d2));
+                Double d1 = parse(s1);
+                Double d2 = parse(s2);
+                if (d1 == null && d2 == null) {
+                    return 0;
+                } else if (d1 == null) {
+                    return +1;
+                } else if (d2 == null) {
+                    return -1;
+                }
+                d1 = d1.doubleValue() == -0.0d ? 0d : d1;
+                d2 = d2.doubleValue() == -0.0d ? 0d : d2;
+                return d1.compareTo(d2);
             } catch (Exception e) {
                 throw new IllegalArgumentException("Invalid value: '"+s1+"' or '"+s2+"'", e);
             }
@@ -823,15 +826,19 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
-            if (s1 == null && s2 == null) {
-                return 0;
-            } else if (s1 == null) {
-                return +1;
-            } else if (s2 == null) {
-                return -1;
-            }
+            
             try {
-                return parse(s1).compareTo(parse(s2));
+                Long d1 = parse(s1);
+                Long d2 = parse(s2);
+                if (d1 == null && d2 == null) {
+                    return 0;
+                } else if (d1 == null) {
+                    return +1;
+                } else if (d2 == null) {
+                    return -1;
+                }
+                return d1.compareTo(d2);
+                
             } catch (Exception e) {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s1 +" or " + s2, e);
             }
@@ -1143,7 +1150,10 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @see org.deidentifier.arx.DataType#compare(java.lang.String, java.lang.String)
          */
         @Override
-        public int compare(final String s1, final String s2) {
+        public int compare(String s1, String s2) {
+            
+            s1 = parse(s1);
+            s2 = parse(s2);
             if (s1 == null && s2 == null) {
                 return 0;
             } else if (s1 == null) {
