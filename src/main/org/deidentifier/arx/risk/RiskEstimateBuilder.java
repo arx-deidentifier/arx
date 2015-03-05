@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalModel;
+import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
 
 /**
  * A builder for risk estimates
@@ -215,7 +215,7 @@ public class RiskEstimateBuilder {
      * @return
      */
     public RiskModelAttributes getPopulationBasedAttributeRisks() {
-       return getAttributeRisks(StatisticalModel.DANKAR);
+       return getAttributeRisks(StatisticalPopulationModel.DANKAR);
     }
 
     /**
@@ -223,7 +223,7 @@ public class RiskEstimateBuilder {
      * @param model Uses the given statistical model
      * @return
      */
-    public RiskModelAttributes getPopulationBasedAttributeRisks(StatisticalModel model) {
+    public RiskModelAttributes getPopulationBasedAttributeRisks(StatisticalPopulationModel model) {
        return getAttributeRisks(model);
     }
 
@@ -267,7 +267,7 @@ public class RiskEstimateBuilder {
      * @param model null for sample-based model
      * @return
      */
-    private RiskModelAttributes getAttributeRisks(final StatisticalModel model) {
+    private RiskModelAttributes getAttributeRisks(final StatisticalPopulationModel model) {
         progress.value = 0;
         return new RiskModelAttributes(this.identifiers, this.stop, progress) {
             @Override

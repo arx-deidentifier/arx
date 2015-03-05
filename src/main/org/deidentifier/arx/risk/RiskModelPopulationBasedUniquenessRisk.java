@@ -35,7 +35,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
      * 
      * @author Fabian Prasser
      */
-    public static enum StatisticalModel implements Serializable {
+    public static enum StatisticalPopulationModel implements Serializable {
         PITMAN,
         ZAYATZ,
         SNB,
@@ -51,7 +51,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
     /** Estimate */
     private double                      numUniquesDankar = -1d;
     /** Model */
-    private StatisticalModel            dankarModel      = null;
+    private StatisticalPopulationModel            dankarModel      = null;
     /** Parameter */
     private int                         numClassesOfSize1;
     /** Parameter */
@@ -125,7 +125,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
             numUniquesSNB = 0d;
             numUniquesPitman = 0d;
             numUniquesDankar = 0d;
-            dankarModel = StatisticalModel.DANKAR;
+            dankarModel = StatisticalPopulationModel.DANKAR;
             progress.value = 100;
             return;
         }
@@ -153,7 +153,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
     /**
      * Returns the statistical model, used by Dankar et al.'s decision rule for estimating population uniqueness
      */
-    public StatisticalModel getDankarModel() {
+    public StatisticalPopulationModel getDankarModel() {
         getNumUniqueTuplesDankar();
         return dankarModel;
     }
@@ -161,7 +161,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
     /**
      * Estimated number of unique tuples in the population according to the given model
      */
-    public double getFractionOfUniqueTuples(StatisticalModel model) {
+    public double getFractionOfUniqueTuples(StatisticalPopulationModel model) {
         return getNumUniqueTuples(model) / super.getPopulationSize();
     }
 
@@ -196,7 +196,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
     /**
      * Estimated number of unique tuples in the population according to the given model
      */
-    public double getNumUniqueTuples(StatisticalModel model) {
+    public double getNumUniqueTuples(StatisticalPopulationModel model) {
         switch (model) {
         case ZAYATZ:
             return getNumUniqueTuplesZayatz();
@@ -217,18 +217,18 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
         if (numUniquesDankar == -1) {
             if (this.numClassesOfSize1 == 0) {
                 numUniquesDankar = 0;
-                dankarModel = StatisticalModel.DANKAR;
+                dankarModel = StatisticalPopulationModel.DANKAR;
             } else {
                 // Decision rule by Dankar et al.
                 if (samplingFraction <= 0.1) {
                     getNumUniqueTuplesPitman();
                     if (isValid(numUniquesPitman)) {
                         numUniquesDankar = numUniquesPitman;
-                        dankarModel = StatisticalModel.PITMAN;
+                        dankarModel = StatisticalPopulationModel.PITMAN;
                     } else {
                         getNumUniqueTuplesZayatz();
                         numUniquesDankar = numUniquesZayatz;
-                        dankarModel = StatisticalModel.ZAYATZ;
+                        dankarModel = StatisticalPopulationModel.ZAYATZ;
                     }
                 } else {
                     getNumUniqueTuplesSNB();
@@ -236,14 +236,14 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
                     if (isValid(numUniquesSNB)) {
                         if (numUniquesZayatz < numUniquesSNB) {
                             numUniquesDankar = numUniquesZayatz;
-                            dankarModel = StatisticalModel.ZAYATZ;
+                            dankarModel = StatisticalPopulationModel.ZAYATZ;
                         } else {
                             numUniquesDankar = numUniquesSNB;
-                            dankarModel = StatisticalModel.SNB;
+                            dankarModel = StatisticalPopulationModel.SNB;
                         }
                     } else {
                         numUniquesDankar = numUniquesZayatz;
-                        dankarModel = StatisticalModel.ZAYATZ;
+                        dankarModel = StatisticalPopulationModel.ZAYATZ;
                     }
                 }
             }

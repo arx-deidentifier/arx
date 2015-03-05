@@ -18,7 +18,7 @@
 package org.deidentifier.arx.risk;
 
 import org.deidentifier.arx.risk.RiskEstimateBuilder.ComputationInterruptedException;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalModel;
+import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
 
 /**
  * A builder for risk estimates, interruptible
@@ -69,7 +69,7 @@ public class RiskEstimateBuilderInterruptible {
      * @param model Uses the given statistical model
      * @return
      */
-    public RiskModelAttributes getPopulationBasedAttributeRisks(StatisticalModel model) throws InterruptedException {
+    public RiskModelAttributes getPopulationBasedAttributeRisks(StatisticalPopulationModel model) throws InterruptedException {
         try {
             return parent.getPopulationBasedAttributeRisks(model);
         } catch (ComputationInterruptedException e) {

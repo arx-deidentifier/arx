@@ -21,7 +21,7 @@ import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RiskBasedThresholdAverageRisk;
 import org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques;
 import org.deidentifier.arx.criteria.RiskBasedThresholdSampleUniques;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalModel;
+import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
 
 /**
  * This class implements a model for risk-based criteria
@@ -80,13 +80,13 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
         case VARIANT_AVERAGE_RISK:
             return new RiskBasedThresholdAverageRisk(threshold);
         case VARIANT_POPULATION_UNIQUES_DANKAR:
-            return getPopulationBasedCriterion(StatisticalModel.DANKAR, model);
+            return getPopulationBasedCriterion(StatisticalPopulationModel.DANKAR, model);
         case VARIANT_POPULATION_UNIQUES_PITMAN:
-            return getPopulationBasedCriterion(StatisticalModel.PITMAN, model);
+            return getPopulationBasedCriterion(StatisticalPopulationModel.PITMAN, model);
         case VARIANT_POPULATION_UNIQUES_SNB:
-            return getPopulationBasedCriterion(StatisticalModel.SNB, model);
+            return getPopulationBasedCriterion(StatisticalPopulationModel.SNB, model);
         case VARIANT_POPULATION_UNIQUES_ZAYATZ:
-            return getPopulationBasedCriterion(StatisticalModel.ZAYATZ, model);
+            return getPopulationBasedCriterion(StatisticalPopulationModel.ZAYATZ, model);
         case VARIANT_SAMPLE_UNIQUES:
             return new RiskBasedThresholdSampleUniques(threshold);
         default:
@@ -170,7 +170,7 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 	 * @param model
 	 * @return
 	 */
-	private PrivacyCriterion getPopulationBasedCriterion(StatisticalModel statisticalModel, Model model) {
+	private PrivacyCriterion getPopulationBasedCriterion(StatisticalPopulationModel statisticalModel, Model model) {
 	    ModelRisk riskModel = model.getRiskModel();
 	    return new RiskBasedThresholdPopulationUniques(threshold, 
 	                                                   statisticalModel, 

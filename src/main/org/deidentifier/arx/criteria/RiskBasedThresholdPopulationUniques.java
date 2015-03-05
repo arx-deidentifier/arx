@@ -20,7 +20,7 @@ package org.deidentifier.arx.criteria;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
 import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalModel;
+import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
 
 /**
  * This criterion ensures that the fraction of population uniques falls below a given threshold.
@@ -39,7 +39,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
     private static final double DEFAULT_ACCURACY       = 10e-6;
 
     /** The statistical model */
-    private StatisticalModel    statisticalModel;
+    private StatisticalPopulationModel    statisticalModel;
 
     /** The population model */
     private ARXPopulationModel  populationModel;
@@ -53,7 +53,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      * @param populationModel
      */
     public RiskBasedThresholdPopulationUniques(double riskThreshold, ARXPopulationModel populationModel){
-        this(riskThreshold, StatisticalModel.DANKAR, populationModel);
+        this(riskThreshold, StatisticalPopulationModel.DANKAR, populationModel);
     }
 
     /**
@@ -70,7 +70,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
                                                ARXPopulationModel populationModel,
                                                double accuracy,
                                                int maxIterations) {
-        this(riskThreshold, StatisticalModel.DANKAR, populationModel, accuracy, maxIterations);
+        this(riskThreshold, StatisticalPopulationModel.DANKAR, populationModel, accuracy, maxIterations);
     }
 
     /**
@@ -83,7 +83,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      * @param populationModel
      */
     public RiskBasedThresholdPopulationUniques(double riskThreshold,
-                                               StatisticalModel statisticalModel, 
+                                               StatisticalPopulationModel statisticalModel, 
                                                ARXPopulationModel populationModel){
         this(riskThreshold, statisticalModel, populationModel, DEFAULT_ACCURACY, DEFAULT_MAX_ITERATIONS);
     }
@@ -99,7 +99,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      * @param maxIterations
      */
     public RiskBasedThresholdPopulationUniques(double riskThreshold,
-                                               StatisticalModel statisticalModel, 
+                                               StatisticalPopulationModel statisticalModel, 
                                                ARXPopulationModel populationModel,
                                                double accuracy,
                                                int maxIterations){
@@ -118,7 +118,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
     /**
      * @return the statisticalModel
      */
-    public StatisticalModel getStatisticalModel() {
+    public StatisticalPopulationModel getStatisticalModel() {
         return statisticalModel;
     }
 

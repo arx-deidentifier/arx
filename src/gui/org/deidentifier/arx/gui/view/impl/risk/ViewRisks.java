@@ -115,9 +115,6 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         this.reset();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -131,9 +128,6 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         return enabled;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
     @Override
     public void reset() {
         this.doReset();
@@ -152,9 +146,6 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(final ModelEvent event) {
 
@@ -189,7 +180,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
             return;
         }
     }
-
+    
     /**
      * Redraws the plot.
      */
@@ -225,7 +216,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
             status.setWorking();
         }
     }
-    
+
     /**
      * 
      * Implement this to create the widget.
@@ -247,7 +238,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * Implement this to reset.
      */
     protected abstract void doReset();
-
+    
     /**
      * Implement this to update.
      *
@@ -289,7 +280,6 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
                                                .getInterruptibleInstance();
     }
 
-    
     /**
      * Creates a risk estimate builder
      * @param context
@@ -305,6 +295,15 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
                                                analysisContext.getModel().getRiskModel().getAccuracy(),
                                                analysisContext.getModel().getRiskModel().getMaxIterations())
                                                .getInterruptibleInstance();
+    }
+
+    
+    /**
+     * Returns the model
+     * @return
+     */
+    protected Model getModel() {
+        return this.model;
     }
 
     /**

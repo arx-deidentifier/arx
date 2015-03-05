@@ -33,7 +33,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalModel;
+import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
 import org.deidentifier.arx.risk.RiskModelSampleBasedReidentificationRisk;
 import org.deidentifier.arx.risk.RiskModelSampleBasedUniquenessRisk;
 import org.eclipse.swt.SWT;
@@ -115,7 +115,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
      * @param label
      * @param value
      */
-    private void createItem(String label, StatisticalModel value) {
+    private void createItem(String label, StatisticalPopulationModel value) {
         TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, label);
         item.setText(1, value == null ? "N/A" : value.toString());
@@ -198,7 +198,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
             private double           fractionOfTuplesAffectedByHighestRisk;
             private double           fractionOfUniqueTuples;
             private double           fractionOfUniqueTuplesDankar;
-            private StatisticalModel dankarModel;
+            private StatisticalPopulationModel dankarModel;
 
             @Override
             public int getProgress() {

@@ -24,6 +24,7 @@ import java.util.Locale;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelRisk.RiskModelForAttributes;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IDialog;
 import org.deidentifier.arx.io.CSVSyntax;
@@ -158,10 +159,6 @@ public class DialogProperties implements IDialog {
             protected String getValue() { return model.getDescription(); }
             protected void setValue(Object t) { model.setDescription((String)t); }});
 
-//        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.9"), ';') { //$NON-NLS-1$
-//            protected String getValue() { return String.valueOf(model.getSeparator()); }
-//            protected void setValue(Object t) { model.setSeparator(((String)t).charAt(0)); }});
-
         window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.33"), getLocales()) { //$NON-NLS-1$
             protected String getValue() { return model.getLocale().getLanguage().toUpperCase(); }
             protected void setValue(Object t) { model.setLocale(((String)t).equals("Default") ? Locale.getDefault() : new Locale(((String)t).toLowerCase())); }}); //$NON-NLS-1$
@@ -187,6 +184,11 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.43"), 1, 10, 10) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getMaxQiSize(); }
             protected void setValue(Object t) { model.getRiskModel().setMaxQiSize((Integer)t); }});
+        
+        window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.43"), getRiskModelsForAnalyses()) {
+            protected String getValue() { return model.getRiskModel().getRiskModelForAttributes().name(); }
+            protected void setValue(Object arg0) { model.getRiskModel().setRiskModelForAttributes(RiskModelForAttributes.valueOf((String)arg0)); }
+        });
         
         window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.44")) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isHeuristicForSampleBasedCriteria(); }
@@ -251,5 +253,17 @@ public class DialogProperties implements IDialog {
             languages.add(lang.toUpperCase());
         }
         return languages.toArray(new String[]{});
+    }
+
+    /**
+     * Creates a list of models
+     * @return
+     */
+    private String[] getRiskModelsForAnalyses() {
+        List<String> result = new ArrayList<String>();
+        for (RiskModelForAttributes model : RiskModelForAttributes.values()) {
+            result.add(model.name());
+        }
+        return result.toArray(new String[result.size()]);
     }
 }

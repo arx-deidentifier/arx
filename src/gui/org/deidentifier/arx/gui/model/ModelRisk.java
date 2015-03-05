@@ -33,6 +33,18 @@ import org.deidentifier.arx.DataHandle;
 public class ModelRisk implements Serializable {
     
     /**
+     * A enum for statistical models underlying attribute analyses
+     * @author Fabian Prasser
+     */
+    public static enum RiskModelForAttributes {
+        SAMPLE_UNIQUENESS,
+        POPULATION_UNIQUENESS_PITMAN,
+        POPULATION_UNIQUENESS_ZAYATZ,
+        POPULATION_UNIQUENESS_DANKAR,
+        POPULATION_UNIQUENESS_SNB
+    }
+    
+    /**
      * A enum for views
      * @author Fabian Prasser
      */
@@ -63,6 +75,8 @@ public class ModelRisk implements Serializable {
     private Map<ViewRiskType, Boolean> viewEnabledForOutput      = new HashMap<ViewRiskType, Boolean>();
     /** Model */
     private boolean                    useOutputModelIfAvailable = true;
+    /** Model */
+    private RiskModelForAttributes     riskModelForAttributes    = RiskModelForAttributes.POPULATION_UNIQUENESS_DANKAR;
 
     /**
      * Creates a new instance
@@ -77,14 +91,14 @@ public class ModelRisk implements Serializable {
     public double getAccuracy() {
         return accuracy;
     }
-
+    
     /**
      * @return the maxIterations
      */
     public int getMaxIterations() {
         return maxIterations;
     }
-
+    
     /**
      * @return the maxQiSize
      */
@@ -99,7 +113,7 @@ public class ModelRisk implements Serializable {
     public ARXPopulationModel getPopulationModel() {
         return this.populationModel;
     }
-    
+
     /**
      * @param handle
      * @return
@@ -108,7 +122,7 @@ public class ModelRisk implements Serializable {
     public double getPopulationSize(DataHandle handle) {
         return populationModel.getPopulationSize(handle);
     }
-    
+
     /**
      * @param sampleSize
      * @return
@@ -125,7 +139,15 @@ public class ModelRisk implements Serializable {
     public Region getRegion() {
         return this.populationModel.getRegion();
     }
-
+    
+    /**
+     * Returns the risk model used for attribute analyses
+     * @return
+     */
+    public RiskModelForAttributes getRiskModelForAttributes() {
+        return this.riskModelForAttributes;
+    }
+    
     /**
      * Returns the sample fraction
      * @param handle
@@ -134,7 +156,7 @@ public class ModelRisk implements Serializable {
     public double getSampleFraction(DataHandle handle) {
         return this.populationModel.getSamplingFraction(handle);
     }
-    
+
     /**
      * @param sampleSize
      * @return
@@ -151,7 +173,7 @@ public class ModelRisk implements Serializable {
     public boolean isModified() {
         return modified;
     }
-
+    
     /**
      * Use the output or the input model?
      */
@@ -171,7 +193,7 @@ public class ModelRisk implements Serializable {
             return viewEnabledForInput.get(view);
         }
     }
-    
+
     /***
      * Returns whether a view is enabled
      * @param view
@@ -184,7 +206,7 @@ public class ModelRisk implements Serializable {
             return viewEnabledForOutput.get(view);
         }
     }
-
+    
     /**
      * @param accuracy the accuracy to set
      */
@@ -236,6 +258,14 @@ public class ModelRisk implements Serializable {
             this.populationModel = new ARXPopulationModel(region);
             this.modified = true;
         }
+    }
+
+    /**
+     * Sets the risk model used for attribute analyses
+     * @param model
+     */
+    public void setRiskModelForAttributes(RiskModelForAttributes model) {
+        this.riskModelForAttributes = model;
     }
 
     /**
