@@ -149,6 +149,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
      */
     private void createSeries(ISeriesSet seriesSet, double[] data, String label, PlotSymbolType symbol, Color color) {
         ILineSeries series = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, label); //$NON-NLS-1$
+        series.setAntialias(SWT.ON);
         series.getLabel().setVisible(false);
         series.getLabel().setFont(chart.getFont());
         series.setYSeries(data);
