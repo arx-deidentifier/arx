@@ -263,7 +263,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
                 // Perform work
                 switch (getModel().getRiskModel().getRiskModelForAttributes()) {
                 case SAMPLE_UNIQUENESS:
-                    risks = builder.getPopulationBasedAttributeRisks();
+                    risks = builder.getSampleBasedAttributeRisks();
                     break;
                 case POPULATION_UNIQUENESS_PITMAN:
                     risks = builder.getPopulationBasedAttributeRisks(StatisticalPopulationModel.PITMAN);
