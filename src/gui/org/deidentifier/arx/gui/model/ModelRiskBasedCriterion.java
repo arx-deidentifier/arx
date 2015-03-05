@@ -71,18 +71,33 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
         case VARIANT_AVERAGE_RISK:
             return new RiskBasedThresholdAverageRisk(threshold);
         case VARIANT_POPULATION_UNIQUES_DANKAR:
-            return new RiskBasedThresholdPopulationUniques(threshold, StatisticalModel.DANKAR, model.getRiskModel().getPopulationModel().clone());
+            return getPopulationBasedCriterion(StatisticalModel.DANKAR, model);
         case VARIANT_POPULATION_UNIQUES_PITMAN:
-            return new RiskBasedThresholdPopulationUniques(threshold, StatisticalModel.PITMAN, model.getRiskModel().getPopulationModel().clone());
+            return getPopulationBasedCriterion(StatisticalModel.PITMAN, model);
         case VARIANT_POPULATION_UNIQUES_SNB:
-            return new RiskBasedThresholdPopulationUniques(threshold, StatisticalModel.SNB, model.getRiskModel().getPopulationModel().clone());
+            return getPopulationBasedCriterion(StatisticalModel.SNB, model);
         case VARIANT_POPULATION_UNIQUES_ZAYATZ:
-            return new RiskBasedThresholdPopulationUniques(threshold, StatisticalModel.ZAYATZ, model.getRiskModel().getPopulationModel().clone());
+            return getPopulationBasedCriterion(StatisticalModel.ZAYATZ, model);
         case VARIANT_SAMPLE_UNIQUES:
             return new RiskBasedThresholdSampleUniques(threshold);
         default:
             throw new RuntimeException("Internal error: invalid variant of risk-based criterion");
         }
+	}
+	
+	/**
+	 * Returns a population-based criterion for the given models
+	 * @param statisticalModel
+	 * @param model
+	 * @return
+	 */
+	private PrivacyCriterion getPopulationBasedCriterion(StatisticalModel statisticalModel, Model model) {
+	    ModelRisk riskModel = model.getRiskModel();
+	    return new RiskBasedThresholdPopulationUniques(threshold, 
+	                                                   statisticalModel, 
+	                                                   riskModel.getPopulationModel().clone(),
+	                                                   riskModel.getAccuracy(),
+	                                                   riskModel.getMaxIterations());
 	}
 
 	/**
