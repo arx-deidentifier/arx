@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-import de.linearbits.tiles.DecoratorString;
+import de.linearbits.swt.tiles.DecoratorString;
 
 /**
  * This class provides an abstract base for views that display parts of the solution space

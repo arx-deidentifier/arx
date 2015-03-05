@@ -40,12 +40,12 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
 import cern.colt.Arrays;
-import de.linearbits.tiles.DecoratorColor;
-import de.linearbits.tiles.DecoratorInteger;
-import de.linearbits.tiles.DecoratorString;
-import de.linearbits.tiles.Filter;
-import de.linearbits.tiles.TileLayoutDynamic;
-import de.linearbits.tiles.Tiles;
+import de.linearbits.swt.tiles.DecoratorColor;
+import de.linearbits.swt.tiles.DecoratorInteger;
+import de.linearbits.swt.tiles.DecoratorString;
+import de.linearbits.swt.tiles.Filter;
+import de.linearbits.swt.tiles.TileLayoutDynamic;
+import de.linearbits.swt.tiles.Tiles;
 
 /**
  * This class implements a tiles view on selected nodes.
