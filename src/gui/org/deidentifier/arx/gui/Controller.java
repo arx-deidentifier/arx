@@ -507,7 +507,7 @@ public class Controller implements IView {
             return;
         }
 
-        actionResetOutput();
+        actionMenuEditReset();
 
         // Run the worker
         final WorkerAnonymize worker = new WorkerAnonymize(model);
@@ -644,6 +644,27 @@ public class Controller implements IView {
                 update(new ModelEvent(this, ModelPart.HIERARCHY, result.hierarchy));
             }
         }
+    }
+
+    /**
+     * Resets the current output
+     */
+    public void actionMenuEditReset() {
+        
+        // Reset output
+        model.getViewConfig().setMode(Mode.UNSORTED);
+        model.getViewConfig().setSubset(false);
+        model.setGroups(null);
+        model.setResult(null);
+        model.setOutputConfig(null);
+        model.setOutput(null, null);
+        model.setSelectedNode(null);
+
+        update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, null));
+        update(new ModelEvent(this, ModelPart.RESULT, null));
+        update(new ModelEvent(this, ModelPart.OUTPUT, null));
+        update(new ModelEvent(this, ModelPart.SELECTED_NODE, null));
+
     }
 
     /**
@@ -1459,7 +1480,7 @@ public class Controller implements IView {
             }
         }
     }
-
+    
     /**
      * Returns debug data.
      *
@@ -1468,7 +1489,7 @@ public class Controller implements IView {
     public String getDebugData() {
         return this.debug.getData(model);
     }
-    
+
     /**
      * Returns the current model
      * @return
@@ -1555,7 +1576,7 @@ public class Controller implements IView {
 
         final Data data = worker.getResult();
         if (model.getOutput() != null) {
-            this.actionResetOutput();
+            this.actionMenuEditReset();
         }
         model.reset();
 
@@ -1642,26 +1663,6 @@ public class Controller implements IView {
             }
         }
         return null;
-    }
-
-    /**
-     * Resets the output.
-     */
-    private void actionResetOutput() {
-
-        // Reset output
-        model.getViewConfig().setMode(Mode.UNSORTED);
-        model.getViewConfig().setSubset(false);
-        model.setGroups(null);
-        model.setResult(null);
-        model.setOutputConfig(null);
-        model.setOutput(null, null);
-        model.setSelectedNode(null);
-
-        update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, null));
-        update(new ModelEvent(this, ModelPart.RESULT, null));
-        update(new ModelEvent(this, ModelPart.OUTPUT, null));
-        update(new ModelEvent(this, ModelPart.SELECTED_NODE, null));
     }
 
     /**

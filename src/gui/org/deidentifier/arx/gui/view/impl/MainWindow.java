@@ -635,10 +635,19 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { controller.actionMenuEditAnonymize(); }
             public boolean isEnabled(Model model) { 
-                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+                return model != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
         });
 
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.39"), //$NON-NLS-1$
+                                   controller.getResources().getImage("cross.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuEditReset(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+        
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.23"), //$NON-NLS-1$
@@ -654,7 +663,7 @@ public class MainWindow implements IView {
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.30"), //$NON-NLS-1$
                                    controller.getResources().getImage("edit_find_replace.png"), //$NON-NLS-1$
-                                   true) {
+                                   false) {
             public void action(Controller controller) { controller.actionFindReplace(); }
             public boolean isEnabled(Model model) { 
                 return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
@@ -663,7 +672,7 @@ public class MainWindow implements IView {
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.31"), //$NON-NLS-1$
                                    controller.getResources().getImage("edit_audit_trail.png"), //$NON-NLS-1$
-                                   true) {
+                                   false) {
             public void action(Controller controller) { controller.actionShowAuditTrail(); }
             public boolean isEnabled(Model model) { 
                 return model != null;
