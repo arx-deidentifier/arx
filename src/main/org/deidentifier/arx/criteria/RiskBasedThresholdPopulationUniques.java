@@ -30,18 +30,24 @@ import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.Statisti
 public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriterion{
 
     /** SVUID */
-    private static final long  serialVersionUID = 618039085843721351L;
+    private static final long   serialVersionUID       = 618039085843721351L;
+
+    /** Constant */
+    private static final int    DEFAULT_MAX_ITERATIONS = 1000;
+    
+    /** Constant */
+    private static final double DEFAULT_ACCURACY       = 10e-6;
 
     /** The statistical model */
-    private StatisticalModel   statisticalModel;
+    private StatisticalModel    statisticalModel;
 
     /** The population model */
-    private ARXPopulationModel populationModel;
+    private ARXPopulationModel  populationModel;
 
     /**
      * Creates a new instance of this criterion. Uses Dankar's method for estimating population uniqueness.
      * This constructor will clone the population model, making further changes to it will not influence
-     * the results.
+     * the results. The default accuracy is 10e-6 and the default maximal number of iterations is 1000.
      *  
      * @param riskThreshold
      * @param populationModel
@@ -51,9 +57,26 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
     }
 
     /**
+     * Creates a new instance of this criterion. Uses Dankar's method for estimating population uniqueness.
+     * This constructor will clone the population model, making further changes to it will not influence
+     * the results. The default accuracy is 10e-6 and the default maximal number of iterations is 1000.
+     *  
+     * @param riskThreshold
+     * @param populationModel
+     * @param accuracy
+     * @param maxIterations
+     */
+    public RiskBasedThresholdPopulationUniques(double riskThreshold,
+                                               ARXPopulationModel populationModel,
+                                               double accuracy,
+                                               int maxIterations) {
+        this(riskThreshold, StatisticalModel.DANKAR, populationModel, accuracy, maxIterations);
+    }
+
+    /**
      * Creates a new instance of this criterion. Uses the specified method for estimating population uniqueness.
      * This constructor will clone the population model, making further changes to it will not influence
-     * the results.
+     * the results. The default accuracy is 10e-6 and the default maximal number of iterations is 1000.
      * 
      * @param riskThreshold
      * @param statisticalModel
@@ -62,6 +85,24 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
     public RiskBasedThresholdPopulationUniques(double riskThreshold,
                                                StatisticalModel statisticalModel, 
                                                ARXPopulationModel populationModel){
+        this(riskThreshold, statisticalModel, populationModel, DEFAULT_ACCURACY, DEFAULT_MAX_ITERATIONS);
+    }
+    /**
+     * Creates a new instance of this criterion. Uses the specified method for estimating population uniqueness.
+     * This constructor will clone the population model, making further changes to it will not influence
+     * the results. The default accuracy is 10e-6 and the default maximal number of iterations is 1000.
+     * 
+     * @param riskThreshold
+     * @param statisticalModel
+     * @param populationModel
+     * @param accuracy
+     * @param maxIterations
+     */
+    public RiskBasedThresholdPopulationUniques(double riskThreshold,
+                                               StatisticalModel statisticalModel, 
+                                               ARXPopulationModel populationModel,
+                                               double accuracy,
+                                               int maxIterations){
         super(false, riskThreshold);
         this.statisticalModel = statisticalModel;
         this.populationModel = populationModel.clone();
@@ -96,7 +137,6 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      */
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
 
-        // TODO: Now, there really is a case in which we should only evaluate the required model
         RiskModelPopulationBasedUniquenessRisk riskModel = new RiskModelPopulationBasedUniquenessRisk(this.populationModel, 
                                                                                                       distribution.getEquivalenceClasses(), 
                                                                                                       distribution.getNumberOfTuples());
