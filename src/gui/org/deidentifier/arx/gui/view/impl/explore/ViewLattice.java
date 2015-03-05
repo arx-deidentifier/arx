@@ -349,6 +349,10 @@ public class ViewLattice extends ViewSolutionSpace {
                 
         // Return, if nothing to show
         if (getModel() == null) {
+
+            // Draw border
+            g.setForeground(g.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+            g.drawRectangle(0, 0, screen.x-1, screen.y-1);
             return;
         }
 
