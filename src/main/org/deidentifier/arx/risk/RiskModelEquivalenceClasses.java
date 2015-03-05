@@ -43,13 +43,9 @@ public class RiskModelEquivalenceClasses {
     private static class TupleWrapper {
         
         /** Hash code*/
-        private final int        hashCode;
-        /** Row */
-        private final int        row;
+        private final int        hashcode;
         /** Indices */
-        private final int[]      indices;
-        /** Handle */
-        private final DataHandle handle;
+        private final String[]   values;
 
         /**
          * Constructor
@@ -57,31 +53,25 @@ public class RiskModelEquivalenceClasses {
          * @param row
          */
         private TupleWrapper(DataHandle handle, int[] indices, int row) {
-            this.handle = handle;
-            this.row = row;
-            this.indices = indices;
-            
-            int result = 1;
+            this.values = new String[indices.length];
+            int hashcode = 1;
+            int idx = 0;
             for (int index : indices) {
-                result = 31 * result + handle.getValue(row, index).hashCode();
+                String value = handle.getValue(row, index);
+                hashcode = 31 * hashcode + value.hashCode();
+                values[idx++] = value;
             }
-            this.hashCode = result;
+            this.hashcode = hashcode;
         }
 
         @Override
-        public boolean equals(Object obj) {
-            TupleWrapper other = (TupleWrapper)obj;
-            for (int i = 0; i < indices.length; i++) {
-                if (handle.getValue(this.row, i) != handle.getValue(other.row, i)) {
-                    return false;
-                }
-            }
-            return true;
+        public boolean equals(Object other) {
+            return Arrays.equals(((TupleWrapper)other).values, this.values);
         }
 
         @Override
         public int hashCode() {
-            return hashCode;
+            return hashcode;
         }
     }
 
