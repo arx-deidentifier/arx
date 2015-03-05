@@ -68,18 +68,18 @@ class AlgorithmNewtonSNB extends AlgorithmNewtonRaphson {
      * The method for computing the first derivatives of the object functions
      * evaluated at the iterated solutions.
      * 
-     * @param iteratedSolution The iterated vector of solutions.
+     * @param solution The iterated vector of solutions.
      * @return The first derivatives of the object functions evaluated at the
      *         iterated solutions.
      */
     @Override
-    protected double[][] firstDerivativeMatrix(final double[] iteratedSolution) {
+    protected double[][] firstDerivativeMatrix(final double[] solution) {
 
         // The derivation of the following formulas has been obtained using Matlab
-        final double a = iteratedSolution[0];
-        final double b = iteratedSolution[1];
+        final double a = solution[0];
+        final double b = solution[1];
 
-        final double[][] result = new double[iteratedSolution.length][iteratedSolution.length];
+        final double[][] result = new double[solution.length][solution.length];
         final double     val0 = (b - 1d) * (f - 1d);
         final double     val1 = val0 - 1d;
         final double     val2 = 1d - val0;
@@ -121,16 +121,16 @@ class AlgorithmNewtonSNB extends AlgorithmNewtonRaphson {
      * The method for computing the object functions evaluated at the iterated
      * solutions.
      * 
-     * @param iteratedSolution the iterated vector of solutions.
+     * @param solution the iterated vector of solutions.
      * @return the object functions evaluated at the iterated solutions.
      */
     @Override
-    protected double[] objectFunctionVector(final double[] iteratedSolution) {
+    protected double[] objectFunctionVector(final double[] solution) {
         
-        final double[] result = new double[iteratedSolution.length];
+        final double[] result = new double[solution.length];
         
-        final double a = iteratedSolution[0];
-        final double b = iteratedSolution[1];
+        final double a = solution[0];
+        final double b = solution[1];
         
         final double dividend = (1 - f) * (1 - b);
 

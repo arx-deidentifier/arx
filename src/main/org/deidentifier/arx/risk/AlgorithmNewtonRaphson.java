@@ -71,12 +71,12 @@ abstract class AlgorithmNewtonRaphson {
      * the first derivatives of the object functions evaluated at the iterated
      * solutions.
      * 
-     * @param iteratedSolution The iterated vector of solutions.
+     * @param solution The iterated vector of solutions.
      * @return the first derivatives of the object functions evaluated at the
      *         iterated solutions.
      */
 
-    protected abstract double[][] firstDerivativeMatrix(double[] iteratedSolution);
+    protected abstract double[][] firstDerivativeMatrix(double[] solution);
 
     /**
      * Returns the vector of solutions obtained by the Newton-Raphson algorithm.
@@ -131,11 +131,11 @@ abstract class AlgorithmNewtonRaphson {
      * The abstract method (need to be implemented in sub-classes) for computing
      * the object functions evaluated at the iterated solutions.
      * 
-     * @param iteratedSolution The iterated vector of solutions.
+     * @param solution The iterated vector of solutions.
      * @return the object functions evaluated at the iterated solutions.
      */
 
-    protected abstract double[] objectFunctionVector(double[] iteratedSolution);
+    protected abstract double[] objectFunctionVector(double[] solution);
 
     /** Checks for interrupts*/
     void checkInterrupt() {

@@ -85,24 +85,20 @@ class ModelSNB extends RiskModelPopulationBased {
      * @return Shlosser estimator for variable K, giving number of non zero
      *         classes in the population estimated according to Haas, 1998 and Shlosser
      */
-    private double estimateNonEmptyEquivalenceClasses(int[] classes, 
-                                                      double numClasses,
-                                                      double numClassesOfSize1, 
-                                                      double samplingFraction) {
+    private double estimateNonEmptyEquivalenceClasses(int[] classes,  double n, double n1, double f) {
         
         double var1 = 0, var2 = 0, var3 = 0, var4 = 0;
-        double samplingFractionToThePowerOfTwo = samplingFraction * samplingFraction;
+        double var5 = f * f;
         for (int i = 0; i < classes.length; i+=2) {
-            double size = classes[i];
-            double count = classes[i + 1];
-            double oneMinusSamplingFractionToThePowerOfSizeTimesCount = Math.pow(1 - samplingFraction, size) * count;
-            var1 += size * samplingFractionToThePowerOfTwo * Math.pow(1 - samplingFractionToThePowerOfTwo, size - 1) * count;
-            var2 += oneMinusSamplingFractionToThePowerOfSizeTimesCount * Math.pow(1 + samplingFraction, size) - 1;
-            var3 += oneMinusSamplingFractionToThePowerOfSizeTimesCount;
-            var4 += size * samplingFraction * Math.pow(1 - samplingFraction, size - 1) * count;
+            double val0 = classes[i];
+            double val1 = classes[i + 1];
+            double val2 = Math.pow(1 - f, val0) * val1;
+            var1 += val0 * var5 * Math.pow(1 - var5, val0 - 1) * val1;
+            var2 += val2 * Math.pow(1 + f, val0) - 1;
+            var3 += val2;
+            var4 += val0 * f * Math.pow(1 - f, val0 - 1) * val1;
             checkInterrupt();
         }
-
-        return numClasses + numClassesOfSize1 * (var1 / var2) * (var3 / var4) * (var3 / var4);
+        return n + n1 * (var1 / var2) * (var3 / var4) * (var3 / var4);
     }
 }

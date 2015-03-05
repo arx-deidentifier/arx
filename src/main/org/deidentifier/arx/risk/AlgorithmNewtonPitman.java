@@ -63,14 +63,14 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
 
     /**
      * Iterated version of the firstDerivativeMatrix function
-     * @param iteratedSolution
+     * @param solution
      * @return
      */
     @SuppressWarnings("unused")
-    private double[][] firstDerivativeMatrixIterative(final double[] iteratedSolution) {
+    private double[][] firstDerivativeMatrixIterative(final double[] solution) {
 
-        double t = iteratedSolution[0]; // Theta
-        double a = iteratedSolution[1]; // Alpha
+        double t = solution[0]; // Theta
+        double a = solution[1]; // Alpha
         double v = 0;
         double w = 0;
         double x = 0;
@@ -119,14 +119,14 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
 
     /**
      * Iterative version of the object function
-     * @param iteratedSolution
+     * @param solution
      * @return
      */
     @SuppressWarnings("unused")
-    private double[] objectFunctionVectorIterative(final double[] iteratedSolution) {
+    private double[] objectFunctionVectorIterative(final double[] solution) {
 
-        double t = iteratedSolution[0]; // Theta
-        double a = iteratedSolution[1]; // Alpha
+        double t = solution[0]; // Theta
+        double a = solution[1]; // Alpha
 
         double w = 0;
         double x = 0;
@@ -173,16 +173,16 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
      * The method for computing the first derivatives of the object functions
      * evaluated at the iterated solutions.
      * 
-     * @param iteratedSolution
+     * @param solution
      *            the iterated vector of solutions.
      * @return the first derivatives of the object functions evaluated at the
      *         iterated solutions.
      */
     @Override
-    protected double[][] firstDerivativeMatrix(final double[] iteratedSolution) {
+    protected double[][] firstDerivativeMatrix(final double[] solution) {
         
-        double t = iteratedSolution[0]; // Theta
-        double a = iteratedSolution[1]; // Alpha
+        double t = solution[0]; // Theta
+        double a = solution[1]; // Alpha
 
         // These closed forms have been verified with Matlab/Mupad and Mathematica!
         double n = numberOfEquivalenceClasses - 1d;
@@ -227,14 +227,14 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
      * The method for computing the object functions evaluated at the iterated
      * solutions.
      * 
-     * @param iteratedSolution
+     * @param solution
      *            the iterated vector of solutions.
      * @return the object functions evaluated at the iterated solutions.
      */
     @Override
-    protected double[] objectFunctionVector(final double[] iteratedSolution) {
-        double t = iteratedSolution[0]; // Theta
-        double a = iteratedSolution[1]; // Alpha
+    protected double[] objectFunctionVector(final double[] solution) {
+        double t = solution[0]; // Theta
+        double a = solution[1]; // Alpha
 
         // Compute z
         double z = 0;
