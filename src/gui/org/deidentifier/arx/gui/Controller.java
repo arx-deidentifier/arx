@@ -703,6 +703,7 @@ public class Controller implements IView {
         dialog.setMessage(Resources.getMessage("Controller.27"));//$NON-NLS-1$
         dialog.setImage(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION));
         dialog.setChoices(items);
+        dialog.setDefaultChoice(items[items.length-1]);
         int choice = dialog.open();
         
         // Cancel
