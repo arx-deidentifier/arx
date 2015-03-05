@@ -47,8 +47,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
-import de.linearbits.swttable.DynamicTable;
-import de.linearbits.swttable.DynamicTableColumn;
+
+import de.linearbits.swt.table.DynamicTable;
+import de.linearbits.swt.table.DynamicTableColumn;
 
 /**
  * A dialog for adding and configuring privacy criteria.
