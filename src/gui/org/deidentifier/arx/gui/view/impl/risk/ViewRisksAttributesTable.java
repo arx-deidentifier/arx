@@ -118,6 +118,10 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
         item.setText(1, format.format(risks.getFractionOfUniqueTuples() * 100d));
         item.setText(2, format.format(risks.getHighestReidentificationRisk() * 100d));
         item.setText(3, format.format(risks.getAverageReidentificationRisk() * 100d));
+        
+        // Color background = list.size() % 2 == 0 ? item.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW) 
+        //                                         : item.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+        // item.setBackground(background);
 
         items.add(item);
     }
