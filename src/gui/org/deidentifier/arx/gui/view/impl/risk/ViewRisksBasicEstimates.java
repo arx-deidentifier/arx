@@ -121,6 +121,18 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         item.setText(1, value == null ? "N/A" : value.toString());
         items.add(item);
     }
+    
+    /**
+     * Creates a table item
+     * @param label
+     * @param value
+     */
+    private void createItem(String label, String value) {
+        TableItem item = new TableItem(table, SWT.NONE);
+        item.setText(0, label);
+        item.setText(1, value);
+        items.add(item);
+    }
 
     @Override
     protected Control createControl(Composite parent) {
@@ -173,7 +185,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
     }
     
     @Override
-    protected void doUpdate(AnalysisContextRisk context) {
+    protected void doUpdate(final AnalysisContextRisk context) {
 
         // Enable/disable
         if (!this.isEnabled()) {
@@ -189,15 +201,15 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         
         // Create an analysis
         Analysis analysis = new Analysis(){
-            
-            private boolean          stopped = false;
-            private double           lowestRisk;
-            private double           fractionOfTuplesAffectedByLowestRisk;
-            private double           averageRisk;
-            private double           highestRisk;
-            private double           fractionOfTuplesAffectedByHighestRisk;
-            private double           fractionOfUniqueTuples;
-            private double           fractionOfUniqueTuplesDankar;
+
+            private boolean                    stopped = false;
+            private double                     lowestRisk;
+            private double                     fractionOfTuplesAffectedByLowestRisk;
+            private double                     averageRisk;
+            private double                     highestRisk;
+            private double                     fractionOfTuplesAffectedByHighestRisk;
+            private double                     fractionOfUniqueTuples;
+            private double                     fractionOfUniqueTuplesDankar;
             private StatisticalPopulationModel dankarModel;
 
             @Override
@@ -231,6 +243,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
                 createItem(Resources.getMessage("RiskAnalysis.11"), fractionOfUniqueTuples);
                 createItem(Resources.getMessage("RiskAnalysis.12"), fractionOfUniqueTuplesDankar);
                 createItem(Resources.getMessage("RiskAnalysis.18"), dankarModel);
+                createItem(Resources.getMessage("RiskAnalysis.25"), getQuasiIdentifiers(context));
 
                 table.setRedraw(true);
                 

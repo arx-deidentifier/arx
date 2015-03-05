@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.gui.view.impl.risk;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXPopulationModel;
@@ -261,6 +264,26 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
                                                .getInterruptibleInstance();
     }
 
+    /**
+     * Returns a string containing all quasi-identifiers
+     * @param context
+     * @return
+     */
+    protected String getQuasiIdentifiers(AnalysisContextRisk context) {
+        AnalysisContext analysisContext = context.context;
+        List<String> list = new ArrayList<String>();
+        list.addAll(analysisContext.getData().definition.getQuasiIdentifyingAttributes());
+        Collections.sort(list);
+        StringBuilder builder = new StringBuilder();
+        for (int i=0; i<list.size(); i++) {
+            builder.append(list.get(i));
+            if (i < list.size() - 1){
+                builder.append(", ");
+            }
+        }
+        return builder.toString();
+    }
+    
     /**
      * Creates a risk estimate builder
      * @param context
