@@ -52,7 +52,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import de.linearbits.swtrangeslider.RangeSlider;
+
+import de.linearbits.swt.rangeslider.RangeSlider;
 
 /**
  * This class displays a filter for the lattice.
