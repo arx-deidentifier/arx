@@ -59,7 +59,17 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
         super(attribute);
     }
     
-    /**
+    @Override
+    public ModelLDiversityCriterion clone() {
+        ModelLDiversityCriterion result = new ModelLDiversityCriterion(this.getAttribute());
+        result.l = this.l;
+        result.c = this.c;
+        result.variant = this.variant;
+        result.setEnabled(this.isEnabled());
+        return result;
+    }
+	
+	/**
      * Gets C.
      *
      * @return
@@ -87,6 +97,12 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 		return l;
 	}
 	
+	@Override
+    public String getLabel() {
+        // TODO: Move to messages.properties
+        return "l-Diversity";
+    }
+	
 	/**
      * Returns the variant.
      *
@@ -95,8 +111,20 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 	public int getVariant() {
 		return variant;
 	}
-	
+
 	@Override
+    public void parse(ModelCriterion criterion) {
+        if (!(criterion instanceof ModelLDiversityCriterion)) {
+            return;
+        }
+        ModelLDiversityCriterion other = (ModelLDiversityCriterion)criterion;
+        this.l = other.l;
+        this.c = other.c;
+        this.variant = other.variant;
+        this.setEnabled(other.isEnabled());
+    }
+	
+    @Override
     public void pull(ModelExplicitCriterion criterion) {
         if (!(criterion instanceof ModelLDiversityCriterion)) {
             throw new RuntimeException("Invalid type of criterion");
@@ -106,8 +134,8 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
         this.l = other.l;
         this.c = other.c;
     }
-	
-	/**
+    
+    /**
      * Sets C.
      *
      * @param c
@@ -116,7 +144,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 		this.c = c;
 	}
 
-	/**
+    /**
      * Sets L.
      *
      * @param l
@@ -124,7 +152,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 	public void setL(int l) {
 		this.l = l;
 	}
-	
+
     /**
      * Sets the variant.
      *
@@ -143,33 +171,5 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
             case VARIANT_RECURSIVE: return "Recursive-("+String.valueOf(c)+", "+l+")-diversity";
             default: throw new RuntimeException("Internal error: invalid variant of l-diversity");
         }
-    }
-
-    @Override
-    public String getLabel() {
-        // TODO: Move to messages.properties
-        return "l-Diversity";
-    }
-
-    @Override
-    public ModelLDiversityCriterion clone() {
-        ModelLDiversityCriterion result = new ModelLDiversityCriterion(this.getAttribute());
-        result.l = this.l;
-        result.c = this.c;
-        result.variant = this.variant;
-        result.setEnabled(this.isEnabled());
-        return result;
-    }
-    
-    @Override
-    public void parse(ModelCriterion criterion) {
-        if (!(criterion instanceof ModelLDiversityCriterion)) {
-            return;
-        }
-        ModelLDiversityCriterion other = (ModelLDiversityCriterion)criterion;
-        this.l = other.l;
-        this.c = other.c;
-        this.variant = other.variant;
-        this.setEnabled(other.isEnabled());
     }
 }

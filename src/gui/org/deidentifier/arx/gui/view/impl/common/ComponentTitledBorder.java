@@ -45,16 +45,6 @@ public class ComponentTitledBorder implements IComponent{
      * Creates a new instance.
      *
      * @param parent
-     * @param title
-     */
-    public ComponentTitledBorder(Composite parent, String title){
-        this(parent, null, title, null);
-    }
-
-    /**
-     * Creates a new instance.
-     *
-     * @param parent
      * @param controller
      * @param title
      * @param id
@@ -83,6 +73,16 @@ public class ComponentTitledBorder implements IComponent{
 
         folder.setSelection(tab);
     }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param parent
+     * @param title
+     */
+    public ComponentTitledBorder(Composite parent, String title){
+        this(parent, null, title, null);
+    }
     
     /**
      * Returns the underlying control.
@@ -94,20 +94,20 @@ public class ComponentTitledBorder implements IComponent{
     }
     
     /**
+     * Returns the tab
+     * @return
+     */
+    public CTabItem getTab() {
+        return this.tab;
+    }
+    
+    /**
      * Sets the child control.
      *
      * @param child
      */
     public void setChild(Control child){
         this.tab.setControl(child);
-    }
-    
-    /**
-     * Returns the tab
-     * @return
-     */
-    public CTabItem getTab() {
-        return this.tab;
     }
     
     /**

@@ -89,22 +89,6 @@ public class DataTableDecorator extends CellPainterWrapper {
         this.defaultBorderStyle = defaultBorderStyle;
     }
 
-    /**
-     * 
-     *
-     * @param cell
-     * @param configRegistry
-     * @return
-     */
-    private BorderStyle getBorderStyle(ILayerCell cell, IConfigRegistry configRegistry) {
-        IStyle cellStyle = CellStyleUtil.getCellStyle(cell, configRegistry);
-        BorderStyle borderStyle = cellStyle.getAttributeValue(CellStyleAttributes.BORDER_STYLE);
-        if (borderStyle == null) {
-            borderStyle = this.defaultBorderStyle;
-        }
-        return borderStyle;
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.nebula.widgets.nattable.painter.cell.CellPainterWrapper#getPreferredHeight(org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell, org.eclipse.swt.graphics.GC, org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
      */
@@ -240,6 +224,22 @@ public class DataTableDecorator extends CellPainterWrapper {
         gc.setForeground(originalForeground);
         gc.setLineWidth(originalLineWidth);
         gc.setLineStyle(originalLineStyle);
+    }
+
+    /**
+     * 
+     *
+     * @param cell
+     * @param configRegistry
+     * @return
+     */
+    private BorderStyle getBorderStyle(ILayerCell cell, IConfigRegistry configRegistry) {
+        IStyle cellStyle = CellStyleUtil.getCellStyle(cell, configRegistry);
+        BorderStyle borderStyle = cellStyle.getAttributeValue(CellStyleAttributes.BORDER_STYLE);
+        if (borderStyle == null) {
+            borderStyle = this.defaultBorderStyle;
+        }
+        return borderStyle;
     }
 
 }

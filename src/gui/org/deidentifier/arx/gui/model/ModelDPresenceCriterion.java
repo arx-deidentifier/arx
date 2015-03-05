@@ -38,6 +38,15 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 	private double dmax = 0.0d;
 	
 	@Override
+    public ModelDPresenceCriterion clone() {
+        ModelDPresenceCriterion result = new ModelDPresenceCriterion();
+        result.dmax = this.dmax;
+        result.dmin = this.dmin;
+        result.setEnabled(this.isEnabled());
+        return result;
+    }
+	
+	@Override
 	public PrivacyCriterion getCriterion(Model model) {
 	    DataSubset subset = DataSubset.create(model.getInputConfig().getInput(), model.getInputConfig().getResearchSubset());
 		return new DPresence(dmin, dmax, subset);
@@ -61,45 +70,12 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 		return dmin;
 	}
 	
-	/**
-     * Sets dmax.
-     *
-     * @param dmax
-     */
-	public void setDmax(double dmax) {
-		this.dmax = dmax;
-	}
-	
-	/**
-     * Sets dmin.
-     *
-     * @param dmin
-     */
-	public void setDmin(double dmin) {
-		this.dmin = dmin;
-	}
-
-    @Override
-    public String toString() {
-        // TODO: Move to messages.properties
-        return "("+String.valueOf(dmin)+", "+String.valueOf(dmax)+")-Presence";
-    }
-
-    @Override
+	@Override
     public String getLabel() {
         // TODO: Move to messages.properties
         return "(" + '\u03B4' + ")-Presence";
     }
 
-    @Override
-    public ModelDPresenceCriterion clone() {
-        ModelDPresenceCriterion result = new ModelDPresenceCriterion();
-        result.dmax = this.dmax;
-        result.dmin = this.dmin;
-        result.setEnabled(this.isEnabled());
-        return result;
-    }
-    
     @Override
     public void parse(ModelCriterion criterion) {
         if (!(criterion instanceof ModelDPresenceCriterion)) {
@@ -109,5 +85,29 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
         this.dmax = other.dmax;
         this.dmin = other.dmin;
         this.setEnabled(other.isEnabled());
+    }
+
+    /**
+     * Sets dmax.
+     *
+     * @param dmax
+     */
+	public void setDmax(double dmax) {
+		this.dmax = dmax;
+	}
+
+    /**
+     * Sets dmin.
+     *
+     * @param dmin
+     */
+	public void setDmin(double dmin) {
+		this.dmin = dmin;
+	}
+    
+    @Override
+    public String toString() {
+        // TODO: Move to messages.properties
+        return "("+String.valueOf(dmin)+", "+String.valueOf(dmax)+")-Presence";
     }
 }

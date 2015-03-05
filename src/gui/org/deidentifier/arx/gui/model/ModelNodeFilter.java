@@ -99,20 +99,13 @@ public class ModelNodeFilter implements Serializable {
     }
 
     /**
-     * Clones the ModelNodeFilter instance.
-     */
-    public ModelNodeFilter clone() {
-        return new ModelNodeFilter(anonymity, generalizations, maxNumNodesInitial, minInformationLoss, maxInformationLoss);
-    }
-
-
-    /**
      * Allows transformations with any information loss to pass the filter.
      */
     public void allowAllInformationLoss() {
         minInformationLoss = 0d;
         maxInformationLoss = 1d;
     }
+
 
     /**
      * Allows anonymous transformations to pass the filter.
@@ -159,6 +152,13 @@ public class ModelNodeFilter implements Serializable {
         anonymity.add(Anonymity.PROBABLY_NOT_ANONYMOUS);
         anonymity.add(Anonymity.PROBABLY_ANONYMOUS);
         anonymity.add(Anonymity.UNKNOWN);
+    }
+
+    /**
+     * Clones the ModelNodeFilter instance.
+     */
+    public ModelNodeFilter clone() {
+        return new ModelNodeFilter(anonymity, generalizations, maxNumNodesInitial, minInformationLoss, maxInformationLoss);
     }
 
     /**

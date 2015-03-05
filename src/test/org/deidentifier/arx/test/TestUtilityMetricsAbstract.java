@@ -121,18 +121,6 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
         }
     }
 
-    /** The test case. */
-    protected final ARXUtilityMetricsTestCase testcase;
-
-    /**
-     * Creates a new instance.
-     *
-     * @param testCase
-     */
-    public TestUtilityMetricsAbstract(final ARXUtilityMetricsTestCase testCase) {
-        this.testcase = testCase;
-    }
-
     /**
      * Returns the data object for the test case.
      *
@@ -180,6 +168,18 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
         }
 
         return data;
+    }
+
+    /** The test case. */
+    protected final ARXUtilityMetricsTestCase testcase;
+
+    /**
+     * Creates a new instance.
+     *
+     * @param testCase
+     */
+    public TestUtilityMetricsAbstract(final ARXUtilityMetricsTestCase testCase) {
+        this.testcase = testCase;
     }
 
     /* (non-Javadoc)

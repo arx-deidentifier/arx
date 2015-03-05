@@ -34,10 +34,18 @@ public class ModelKAnonymityCriterion extends ModelImplicitCriterion{
 	private int k = 2;
 	
 	@Override
+    public ModelKAnonymityCriterion clone() {
+        ModelKAnonymityCriterion result = new ModelKAnonymityCriterion();
+        result.k = this.k;
+        result.setEnabled(this.isEnabled());
+        return result;
+    }
+
+	@Override
 	public PrivacyCriterion getCriterion(Model model) {
 		return new KAnonymity(k);
 	}
-
+	
 	/**
      * Returns K.
      *
@@ -46,21 +54,6 @@ public class ModelKAnonymityCriterion extends ModelImplicitCriterion{
 	public int getK() {
 		return k;
 	}
-	
-	/**
-     * Sets K.
-     *
-     * @param k
-     */
-	public void setK(int k) {
-		this.k = k;
-	}
-
-    @Override
-    public String toString() {
-        // TODO: Move to messages.properties
-        return k+"-Anonymity";
-    }
 
     @Override
     public String getLabel() {
@@ -69,14 +62,6 @@ public class ModelKAnonymityCriterion extends ModelImplicitCriterion{
     }
 
     @Override
-    public ModelKAnonymityCriterion clone() {
-        ModelKAnonymityCriterion result = new ModelKAnonymityCriterion();
-        result.k = this.k;
-        result.setEnabled(this.isEnabled());
-        return result;
-    }
-    
-    @Override
     public void parse(ModelCriterion criterion) {
         if (!(criterion instanceof ModelKAnonymityCriterion)) {
             return;
@@ -84,5 +69,20 @@ public class ModelKAnonymityCriterion extends ModelImplicitCriterion{
         ModelKAnonymityCriterion other = (ModelKAnonymityCriterion)criterion;
         this.k = other.k;
         this.setEnabled(other.isEnabled());
+    }
+
+    /**
+     * Sets K.
+     *
+     * @param k
+     */
+	public void setK(int k) {
+		this.k = k;
+	}
+    
+    @Override
+    public String toString() {
+        // TODO: Move to messages.properties
+        return k+"-Anonymity";
     }
 }

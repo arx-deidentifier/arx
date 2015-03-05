@@ -41,6 +41,76 @@ public class DebugData {
     private List<String> eventBuffer = new ArrayList<String>();
     
     /**
+     * Adds an event to the buffer.
+     *
+     * @param event
+     */
+    public void addEvent(ModelEvent event) {
+        this.eventBuffer.add(event.toString());
+        if (this.eventBuffer.size() > MAX_BUFFER_SIZE) {
+            this.eventBuffer.remove(0);
+        }
+    }
+    
+    /**
+     * Clears the event log.
+     */
+    public void clearEventLog() {
+        this.eventBuffer.clear();
+    }
+
+    /**
+     * Returns a string representation of a definition.
+     *
+     * @param definition
+     * @return
+     */
+    private String getDebugData(DataDefinition definition){
+        
+        StringBuilder builder = new StringBuilder();
+        builder.append("DataDefinition@").append(definition.hashCode());
+        builder.append(definition.isLocked() ? " [Locked]\n" : "\n");
+        return builder.toString();
+    }
+    
+    /**
+     * Returns a string representation of a hierarchy.
+     *
+     * @param hierarchy
+     * @return
+     */
+    private String getDebugData(Hierarchy hierarchy){
+        
+        if (hierarchy==null || hierarchy.getHierarchy()==null || hierarchy.getHierarchy().length==0) return "empty";
+        else return "height="+hierarchy.getHierarchy()[0].length;
+    }
+
+    /**
+     * Returns a string representation of a handle.
+     *
+     * @param prefix
+     * @param handle
+     * @param view
+     * @return
+     */
+    private String getDebugData(String prefix, DataHandle handle, boolean view){
+        
+        StringBuilder builder = new StringBuilder();
+        builder.append("DataHandle@").append(handle.hashCode());
+        if (handle.isOrphaned()) {
+            builder.append(" [Orphaned]\n");
+        } else {
+            builder.append("\n");
+            builder.append(prefix).append("DataDefinition@").append(handle.getDefinition().hashCode());
+            builder.append(handle.getDefinition().isLocked() ? " [Locked]\n" : "\n");
+            if (!view) {
+                builder.append(prefix).append("View").append(getDebugData(prefix+"View", handle.getView(), true));
+            }
+        }  
+        return builder.toString();
+    }
+
+    /**
      * Returns some debug data.
      *
      * @param model
@@ -98,75 +168,5 @@ public class DebugData {
         }
         
         return builder.toString();
-    }
-    
-    /**
-     * Returns a string representation of a handle.
-     *
-     * @param prefix
-     * @param handle
-     * @param view
-     * @return
-     */
-    private String getDebugData(String prefix, DataHandle handle, boolean view){
-        
-        StringBuilder builder = new StringBuilder();
-        builder.append("DataHandle@").append(handle.hashCode());
-        if (handle.isOrphaned()) {
-            builder.append(" [Orphaned]\n");
-        } else {
-            builder.append("\n");
-            builder.append(prefix).append("DataDefinition@").append(handle.getDefinition().hashCode());
-            builder.append(handle.getDefinition().isLocked() ? " [Locked]\n" : "\n");
-            if (!view) {
-                builder.append(prefix).append("View").append(getDebugData(prefix+"View", handle.getView(), true));
-            }
-        }  
-        return builder.toString();
-    }
-
-    /**
-     * Returns a string representation of a definition.
-     *
-     * @param definition
-     * @return
-     */
-    private String getDebugData(DataDefinition definition){
-        
-        StringBuilder builder = new StringBuilder();
-        builder.append("DataDefinition@").append(definition.hashCode());
-        builder.append(definition.isLocked() ? " [Locked]\n" : "\n");
-        return builder.toString();
-    }
-    
-    /**
-     * Returns a string representation of a hierarchy.
-     *
-     * @param hierarchy
-     * @return
-     */
-    private String getDebugData(Hierarchy hierarchy){
-        
-        if (hierarchy==null || hierarchy.getHierarchy()==null || hierarchy.getHierarchy().length==0) return "empty";
-        else return "height="+hierarchy.getHierarchy()[0].length;
-    }
-
-    /**
-     * Adds an event to the buffer.
-     *
-     * @param event
-     */
-    public void addEvent(ModelEvent event) {
-        this.eventBuffer.add(event.toString());
-        if (this.eventBuffer.size() > MAX_BUFFER_SIZE) {
-            this.eventBuffer.remove(0);
-        }
-    }
-
-    /**
-     * Clears the event log.
-     */
-    public void clearEventLog() {
-        this.eventBuffer.clear();
     }    
 }

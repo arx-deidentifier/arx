@@ -60,6 +60,16 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
         IMAGE_COL_SELECT = context.getController().getResources().getImage("selected_column_header_bg.png"); //$NON-NLS-1$
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.layer.config.DefaultColumnHeaderStyleConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
+     */
+    @Override
+    public void configureRegistry(final IConfigRegistry configRegistry) {
+        super.configureRegistry(configRegistry);
+        addNormalModeStyling(configRegistry);
+        addSelectedModeStyling(configRegistry);
+    }
+
     /**
      * Add normal styling to the registry.
      *
@@ -107,15 +117,5 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
                                                selectedHeaderPainter,
                                                DisplayMode.SELECT,
                                                GridRegion.COLUMN_HEADER);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.config.DefaultColumnHeaderStyleConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
-     */
-    @Override
-    public void configureRegistry(final IConfigRegistry configRegistry) {
-        super.configureRegistry(configRegistry);
-        addNormalModeStyling(configRegistry);
-        addSelectedModeStyling(configRegistry);
     }
 }

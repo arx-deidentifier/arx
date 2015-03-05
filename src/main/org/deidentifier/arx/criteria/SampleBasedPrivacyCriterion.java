@@ -41,21 +41,6 @@ public abstract class SampleBasedPrivacyCriterion extends PrivacyCriterion {
     }
     
     /**
-     * Not supported by this type of criterion
-     *
-     * @param entry
-     * @return
-     */
-    public boolean isAnonymous(HashGroupifyEntry entry) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public boolean isSampleBased() {
-        return true;
-    }
-    
-    /**
      * This method enforces the criterion on the current hash table. 
      * Criteria can be enforced by suppressing classes in the distribution by passing a PrivacyCondition.
      * Criteria may abort early, if the threshold is reached (<code>distribution.getNumOfSuppressedTuples() > numMaxSuppressedOutliers</code>).
@@ -65,4 +50,19 @@ public abstract class SampleBasedPrivacyCriterion extends PrivacyCriterion {
      */
     public abstract void enforce(HashGroupifyDistribution distribution, 
                                  int numMaxSuppressedOutliers);
+
+    /**
+     * Not supported by this type of criterion
+     *
+     * @param entry
+     * @return
+     */
+    public boolean isAnonymous(HashGroupifyEntry entry) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+    
+    @Override
+    public boolean isSampleBased() {
+        return true;
+    }
 }

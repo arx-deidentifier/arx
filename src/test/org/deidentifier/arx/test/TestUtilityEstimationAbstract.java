@@ -67,6 +67,19 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     }
 
     /**
+     * Tests all estimates within a lattice.
+     *
+     * @param lattice
+     */
+    private void checkLattice(ARXLattice lattice) {
+        for (ARXNode[] level : lattice.getLevels()) {
+            for (ARXNode node : level) {
+                assertTrue("Min > max", compareWithTolerance(node.getMinimumInformationLoss(), node.getMaximumInformationLoss())<=0);
+            }
+        }
+    }
+
+    /**
      * Tests the result.
      *
      * @param testcase
@@ -113,18 +126,28 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     }
 
     /**
-     * Tests all estimates within a lattice.
+     * Compares double for "equality" with a tolerance of 1 ulp.
      *
-     * @param lattice
+     * @param d1
+     * @param d2
+     * @return
      */
-    private void checkLattice(ARXLattice lattice) {
-        for (ARXNode[] level : lattice.getLevels()) {
-            for (ARXNode node : level) {
-                assertTrue("Min > max", compareWithTolerance(node.getMinimumInformationLoss(), node.getMaximumInformationLoss())<=0);
-            }
-        }
+    private boolean closeEnough(double d1, double d2) {
+        return Math.abs(d2 - d1) <= Math.max(Math.ulp(d1), Math.ulp(d2));
     }
-
+    
+    /**
+     * Compares two doubles with tolerance.
+     *
+     * @param d1
+     * @param d2
+     * @return
+     */
+    private int compareWithTolerance(double d1, double d2) {
+        if (closeEnough(d1, d2)) return 0;
+        else return Double.compare(d1, d2);
+    }
+    
     /**
      * Compares two losses with tolerance.
      *
@@ -152,28 +175,5 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
      */
     private boolean isNumeric(String str) {
       return str.matches("-?\\d+(\\.\\d+)?");
-    }
-    
-    /**
-     * Compares two doubles with tolerance.
-     *
-     * @param d1
-     * @param d2
-     * @return
-     */
-    private int compareWithTolerance(double d1, double d2) {
-        if (closeEnough(d1, d2)) return 0;
-        else return Double.compare(d1, d2);
-    }
-    
-    /**
-     * Compares double for "equality" with a tolerance of 1 ulp.
-     *
-     * @param d1
-     * @param d2
-     * @return
-     */
-    private boolean closeEnough(double d1, double d2) {
-        return Math.abs(d2 - d1) <= Math.max(Math.ulp(d1), Math.ulp(d2));
     }
 }

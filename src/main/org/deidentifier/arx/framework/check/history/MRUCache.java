@@ -115,26 +115,6 @@ public class MRUCache<T> {
     /**
      * Append.
      * 
-     * @param entry
-     *            the entry
-     */
-    private void append(final MRUCacheEntry<T> entry) {
-        if (this.first == null) {
-            this.first = entry;
-            this.last = entry;
-            entry.prev = null;
-            entry.next = null;
-        } else {
-            this.last.next = entry;
-            entry.prev = this.last;
-            entry.next = null;
-            this.last = entry;
-        }
-    }
-
-    /**
-     * Append.
-     * 
      * @param node
      *            the node
      */
@@ -176,31 +156,6 @@ public class MRUCache<T> {
     }
 
     /**
-     * Removes the.
-     * 
-     * @param entry
-     *            the entry
-     */
-    private void remove(final MRUCacheEntry<T> entry) {
-        if (entry == this.first) {
-            this.first = entry.next;
-            if (this.first != null) {
-                this.first.prev = null;
-            }
-        } else if (entry == this.last) {
-            this.last = entry.prev;
-            this.last.next = null;
-        } else {
-            if (entry.prev != null) {
-                entry.prev.next = entry.next;
-            }
-            if (entry.next != null) {
-                entry.next.prev = entry.prev;
-            }
-        }
-    }
-
-    /**
      * Removes the head.
      * 
      * @return the t
@@ -232,5 +187,50 @@ public class MRUCache<T> {
         if (entry == this.last) { return; }
         this.remove(entry);
         this.append(entry);
+    }
+
+    /**
+     * Append.
+     * 
+     * @param entry
+     *            the entry
+     */
+    private void append(final MRUCacheEntry<T> entry) {
+        if (this.first == null) {
+            this.first = entry;
+            this.last = entry;
+            entry.prev = null;
+            entry.next = null;
+        } else {
+            this.last.next = entry;
+            entry.prev = this.last;
+            entry.next = null;
+            this.last = entry;
+        }
+    }
+
+    /**
+     * Removes the.
+     * 
+     * @param entry
+     *            the entry
+     */
+    private void remove(final MRUCacheEntry<T> entry) {
+        if (entry == this.first) {
+            this.first = entry.next;
+            if (this.first != null) {
+                this.first.prev = null;
+            }
+        } else if (entry == this.last) {
+            this.last = entry.prev;
+            this.last.next = null;
+        } else {
+            if (entry.prev != null) {
+                entry.prev.next = entry.next;
+            }
+            if (entry.next != null) {
+                entry.next.prev = entry.prev;
+            }
+        }
     }
 }

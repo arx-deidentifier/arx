@@ -294,6 +294,11 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
                 }
 
                 @Override
+                public void check() {
+                    // ignore
+                }
+
+                @Override
                 public void end(int start) {
                     StyleRange style = new StyleRange();
                     style.start = start;
@@ -341,11 +346,6 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
                     style.fontStyle = SWT.BOLD;
                     style.foreground = GUIHelper.COLOR_BLUE;
                     styles.add(style);
-                }
-
-                @Override
-                public void check() {
-                    // ignore
                 }
 
                 @Override

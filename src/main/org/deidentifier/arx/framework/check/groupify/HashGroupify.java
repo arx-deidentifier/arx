@@ -607,6 +607,38 @@ public class HashGroupify implements IHashGroupify {
     }
 
     /**
+     * Analyze sample-based criteria
+     * @param transformation
+     * @param earlyAbort May we perform an early abort, if we reach the threshold
+     * @return
+     */
+    private void analyzeSampleBasedCriteria(Node transformation, boolean earlyAbort) {
+        
+        // Nothing to do
+        if (this.sampleBasedCriteria.length == 0) {
+            return;
+        }
+        
+        // Build a distribution
+        HashGroupifyDistribution distribution = new HashGroupifyDistribution(heuristicForSampleBasedCriteria ? null : metric, 
+                                                                             transformation, 
+                                                                             this.firstEntry);
+        
+        // For each criterion
+        for (SampleBasedPrivacyCriterion criterion : this.sampleBasedCriteria) {
+            
+            // Enforce
+            criterion.enforce(distribution, earlyAbort ? this.absoluteMaxOutliers : Integer.MAX_VALUE);
+            
+            // Early abort
+            this.currentOutliers = distribution.getNumOfSuppressedTuples();
+            if (earlyAbort && currentOutliers > absoluteMaxOutliers) {
+                return;
+            }
+        }
+    }
+
+    /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
      */
@@ -671,38 +703,6 @@ public class HashGroupify implements IHashGroupify {
         
         this.analyzeSampleBasedCriteria(transformation, true);
         this.anonymous = (currentOutliers <= absoluteMaxOutliers);
-    }
-
-    /**
-     * Analyze sample-based criteria
-     * @param transformation
-     * @param earlyAbort May we perform an early abort, if we reach the threshold
-     * @return
-     */
-    private void analyzeSampleBasedCriteria(Node transformation, boolean earlyAbort) {
-        
-        // Nothing to do
-        if (this.sampleBasedCriteria.length == 0) {
-            return;
-        }
-        
-        // Build a distribution
-        HashGroupifyDistribution distribution = new HashGroupifyDistribution(heuristicForSampleBasedCriteria ? null : metric, 
-                                                                             transformation, 
-                                                                             this.firstEntry);
-        
-        // For each criterion
-        for (SampleBasedPrivacyCriterion criterion : this.sampleBasedCriteria) {
-            
-            // Enforce
-            criterion.enforce(distribution, earlyAbort ? this.absoluteMaxOutliers : Integer.MAX_VALUE);
-            
-            // Early abort
-            this.currentOutliers = distribution.getNumOfSuppressedTuples();
-            if (earlyAbort && currentOutliers > absoluteMaxOutliers) {
-                return;
-            }
-        }
     }
 
     /**

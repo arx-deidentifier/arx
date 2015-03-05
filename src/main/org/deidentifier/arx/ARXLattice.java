@@ -101,6 +101,16 @@ public class ARXLattice implements Serializable {
         /**
          * 
          *
+         * @param config
+         */
+        public void setMonotonicity(ARXConfiguration config) {
+            lattice.monotonicNonAnonymous = lattice.metric.isMonotonic() || !config.isSuppressionAlwaysEnabled();
+            lattice.monotonicAnonymous = lattice.metric.isMonotonic() || config.getAbsoluteMaxOutliers() == 0;
+        }
+
+        /**
+         * 
+         *
          * @param node
          */
         public void setOptimum(final ARXNode node) {
@@ -124,7 +134,7 @@ public class ARXLattice implements Serializable {
         public void setTop(final ARXNode top) {
             lattice.top = top;
         }
-
+        
         /**
          * 
          *
@@ -132,16 +142,6 @@ public class ARXLattice implements Serializable {
          */
         public void setUncertainty(final boolean uncertainty) {
             lattice.uncertainty = uncertainty;
-        }
-        
-        /**
-         * 
-         *
-         * @param config
-         */
-        public void setMonotonicity(ARXConfiguration config) {
-            lattice.monotonicNonAnonymous = lattice.metric.isMonotonic() || !config.isSuppressionAlwaysEnabled();
-            lattice.monotonicAnonymous = lattice.metric.isMonotonic() || config.getAbsoluteMaxOutliers() == 0;
         }
     }
 
@@ -580,6 +580,20 @@ public class ARXLattice implements Serializable {
     }
 
     /**
+     * Context for deserialization.
+     *
+     * @author kohlmayer
+     */
+    public static class LatticeDeserializationContext {
+        
+        /**  TODO */
+        public int minLevel = 0;
+        
+        /**  TODO */
+        public int maxLevel = 0;
+    }
+    
+    /**
      * 
      */
     class IntArrayWrapper {
@@ -637,22 +651,11 @@ public class ARXLattice implements Serializable {
 
     }
     
-    /**
-     * Context for deserialization.
-     *
-     * @author kohlmayer
-     */
-    public static class LatticeDeserializationContext {
-        
-        /**  TODO */
-        public int minLevel = 0;
-        
-        /**  TODO */
-        public int maxLevel = 0;
-    }
-    
     /** Deserialization context. */
     private static LatticeDeserializationContext deserializationContext = new LatticeDeserializationContext();
+
+    /**  TODO */
+    private static final long     serialVersionUID                  = -8790104959905019184L;
 
     /**
      * Returns the deserialization context.
@@ -662,9 +665,6 @@ public class ARXLattice implements Serializable {
     public static LatticeDeserializationContext getDeserializationContext() {
         return deserializationContext;
     }
-
-    /**  TODO */
-    private static final long     serialVersionUID                  = -8790104959905019184L;
 
     /** The accessor. */
     private final Access          access                            = new Access(this);

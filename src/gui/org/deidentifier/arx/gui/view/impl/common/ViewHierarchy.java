@@ -68,22 +68,6 @@ public class ViewHierarchy implements IView {
     private class HierarchyDataProvider implements IDataProvider {
 
         /* (non-Javadoc)
-         * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getDataValue(int, int)
-         */
-        @Override
-        public Object getDataValue(int columnIndex, int rowIndex) {
-            return hierarchy[rowIndex][columnIndex];
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#setDataValue(int, int, java.lang.Object)
-         */
-        @Override
-        public void setDataValue(int columnIndex, int rowIndex, Object newValue) {
-            // Ignore
-        }
-
-        /* (non-Javadoc)
          * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getColumnCount()
          */
         @Override
@@ -95,12 +79,28 @@ public class ViewHierarchy implements IView {
         }
 
         /* (non-Javadoc)
+         * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getDataValue(int, int)
+         */
+        @Override
+        public Object getDataValue(int columnIndex, int rowIndex) {
+            return hierarchy[rowIndex][columnIndex];
+        }
+
+        /* (non-Javadoc)
          * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getRowCount()
          */
         @Override
         public int getRowCount() {
             if (hierarchy == null) return 0;
             else return hierarchy.length;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#setDataValue(int, int, java.lang.Object)
+         */
+        @Override
+        public void setDataValue(int columnIndex, int rowIndex, Object newValue) {
+            // Ignore
         }
     }
 
@@ -602,42 +602,6 @@ public class ViewHierarchy implements IView {
     }
 
     /**
-     * Creates the control.
-     *
-     * @param parent
-     */
-    private void createTable(final Composite parent) {
-
-        // Create base composite
-        this.base = new Composite(parent, SWT.NONE);
-        GridData bottomLayoutData = SWTUtil.createFillGridData();
-        bottomLayoutData.grabExcessVerticalSpace = true;
-        GridLayout bottomLayout = new GridLayout();
-        bottomLayout.numColumns = 1;
-        this.base.setLayout(bottomLayout);
-        this.base.setLayoutData(bottomLayoutData);
-
-        // Configure table
-        CTConfiguration config = new CTConfiguration(parent, CTConfiguration.STYLE_TABLE);
-        config.setHorizontalAlignment(SWT.LEFT);
-        config.setCellSelectionEnabled(true);
-        config.setColumnSelectionEnabled(true);
-        config.setRowSelectionEnabled(false);
-        config.setColumnHeaderLayout(CTConfiguration.COLUMN_HEADER_LAYOUT_FILL);
-        config.setRowHeaderLayout(CTConfiguration.ROW_HEADER_LAYOUT_FILL);
-
-        // Create table
-        this.table = new ComponentTable(base, SWT.BORDER, config);
-        this.table.getControl().setLayoutData(SWTUtil.createFillGridData());
-        this.table.setData(new HierarchyDataProvider(), new HierarchyHeaderDataProvider());
-
-        // Create the menu and editing controls
-        if (editable) {
-            createMenu();
-        }
-    }
-    
-    /**
      * Creates all components required for making the table editable.
      */
     private void createMenu() {
@@ -807,6 +771,42 @@ public class ViewHierarchy implements IView {
             }
         });
 
+    }
+    
+    /**
+     * Creates the control.
+     *
+     * @param parent
+     */
+    private void createTable(final Composite parent) {
+
+        // Create base composite
+        this.base = new Composite(parent, SWT.NONE);
+        GridData bottomLayoutData = SWTUtil.createFillGridData();
+        bottomLayoutData.grabExcessVerticalSpace = true;
+        GridLayout bottomLayout = new GridLayout();
+        bottomLayout.numColumns = 1;
+        this.base.setLayout(bottomLayout);
+        this.base.setLayoutData(bottomLayoutData);
+
+        // Configure table
+        CTConfiguration config = new CTConfiguration(parent, CTConfiguration.STYLE_TABLE);
+        config.setHorizontalAlignment(SWT.LEFT);
+        config.setCellSelectionEnabled(true);
+        config.setColumnSelectionEnabled(true);
+        config.setRowSelectionEnabled(false);
+        config.setColumnHeaderLayout(CTConfiguration.COLUMN_HEADER_LAYOUT_FILL);
+        config.setRowHeaderLayout(CTConfiguration.ROW_HEADER_LAYOUT_FILL);
+
+        // Create table
+        this.table = new ComponentTable(base, SWT.BORDER, config);
+        this.table.getControl().setLayoutData(SWTUtil.createFillGridData());
+        this.table.setData(new HierarchyDataProvider(), new HierarchyHeaderDataProvider());
+
+        // Create the menu and editing controls
+        if (editable) {
+            createMenu();
+        }
     }
 
     /**

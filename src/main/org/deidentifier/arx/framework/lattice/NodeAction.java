@@ -31,6 +31,43 @@ public abstract class NodeAction {
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
+    public static abstract class NodeActionAND extends NodeAction {
+
+        /**  TODO */
+        private final NodeAction trigger;
+
+        /**
+         * 
+         *
+         * @param trigger
+         */
+        public NodeActionAND(NodeAction trigger) {
+            this.trigger = trigger;
+        }
+
+        /* (non-Javadoc)
+         * @see org.deidentifier.arx.framework.lattice.NodeAction#appliesTo(org.deidentifier.arx.framework.lattice.Node)
+         */
+        @Override
+        public boolean appliesTo(Node node) {
+            return trigger.appliesTo(node) && additionalConditionAppliesTo(node);
+        }
+        
+        /**
+         * The additional condition to implement.
+         *
+         * @param node
+         * @return
+         */
+        protected abstract boolean additionalConditionAppliesTo(Node node);
+    }
+
+    /**
+     * A trigger for nodes.
+     *
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     */
     public static class NodeActionConstant extends NodeAction {
 
         /**  TODO */
@@ -119,51 +156,6 @@ public abstract class NodeAction {
          */
         protected abstract boolean additionalConditionAppliesTo(Node node);
     }
-
-    /**
-     * A trigger for nodes.
-     *
-     * @author Fabian Prasser
-     * @author Florian Kohlmayer
-     */
-    public static abstract class NodeActionAND extends NodeAction {
-
-        /**  TODO */
-        private final NodeAction trigger;
-
-        /**
-         * 
-         *
-         * @param trigger
-         */
-        public NodeActionAND(NodeAction trigger) {
-            this.trigger = trigger;
-        }
-
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.lattice.NodeAction#appliesTo(org.deidentifier.arx.framework.lattice.Node)
-         */
-        @Override
-        public boolean appliesTo(Node node) {
-            return trigger.appliesTo(node) && additionalConditionAppliesTo(node);
-        }
-        
-        /**
-         * The additional condition to implement.
-         *
-         * @param node
-         * @return
-         */
-        protected abstract boolean additionalConditionAppliesTo(Node node);
-    }
-    
-    /**
-     * Determines whether the trigger action should be performed.
-     *
-     * @param node
-     * @return
-     */
-    public abstract boolean appliesTo(Node node);
     
     /**
      * Implements the action to be performed.
@@ -173,6 +165,14 @@ public abstract class NodeAction {
     public void action(Node node) {
         // Empty by design
     }
+    
+    /**
+     * Determines whether the trigger action should be performed.
+     *
+     * @param node
+     * @return
+     */
+    public abstract boolean appliesTo(Node node);
     
     /**
      * Applies the trigger to the given node.

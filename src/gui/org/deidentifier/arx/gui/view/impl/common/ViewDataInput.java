@@ -110,76 +110,6 @@ public class ViewDataInput extends ViewData {
     }
     
     /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#actionCellSelected(org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent)
-     */
-    @Override
-    protected void actionCellSelected(CellSelectionEvent arg1) {
-
-    	super.actionCellSelected(arg1);
-    	
-        if (model == null) return;
-        
-        int column = arg1.getColumnPosition();
-        int row = arg1.getRowPosition();
-        if (column == 0 && row >= 0) {
-
-            // Remap row index if showing the subset
-            if (table.getData() instanceof DataHandleSubset) {
-                int[] subset = ((DataHandleSubset) table.getData()).getSubset();
-                row = subset[row];
-            }
-
-            // Perform change
-            RowSet subset = model.getInputConfig().getResearchSubset();
-            if (subset.contains(row)) {
-                subset.remove(row);
-            } else {
-                subset.add(row);
-            }
-            
-            // Fire event
-            model.setSubsetManual();
-            controller.update(new ModelEvent(this,  ModelPart.RESEARCH_SUBSET, subset));
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#actionSort()
-     */
-    @Override
-    protected void actionSort(){
-        controller.actionDataSort(true);
-    }
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#getDefinition()
-     */
-    @Override
-    protected DataDefinition getDefinition() {
-        if (model == null) return null;
-        else return model.getInputDefinition();
-    }
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#getHandle()
-     */
-    @Override
-    protected DataHandle getHandle() {
-        if (model != null){
-            DataHandle handle = model.getInputConfig().getInput().getHandle();
-            
-            if (model.getViewConfig().isSubset() && 
-                model.getOutputConfig() != null &&
-                model.getOutputConfig().getConfig() != null) {
-                handle = handle.getView();
-            }
-            return handle;
-        } else {
-            return null;
-        }
-    }
-
-    /* (non-Javadoc)
      * @see org.deidentifier.arx.gui.view.impl.common.ViewData#update(org.deidentifier.arx.gui.model.ModelEvent)
      */
     @Override
@@ -276,6 +206,76 @@ public class ViewDataInput extends ViewData {
                     table.redraw();
                 }
             }
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#actionCellSelected(org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent)
+     */
+    @Override
+    protected void actionCellSelected(CellSelectionEvent arg1) {
+
+    	super.actionCellSelected(arg1);
+    	
+        if (model == null) return;
+        
+        int column = arg1.getColumnPosition();
+        int row = arg1.getRowPosition();
+        if (column == 0 && row >= 0) {
+
+            // Remap row index if showing the subset
+            if (table.getData() instanceof DataHandleSubset) {
+                int[] subset = ((DataHandleSubset) table.getData()).getSubset();
+                row = subset[row];
+            }
+
+            // Perform change
+            RowSet subset = model.getInputConfig().getResearchSubset();
+            if (subset.contains(row)) {
+                subset.remove(row);
+            } else {
+                subset.add(row);
+            }
+            
+            // Fire event
+            model.setSubsetManual();
+            controller.update(new ModelEvent(this,  ModelPart.RESEARCH_SUBSET, subset));
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#actionSort()
+     */
+    @Override
+    protected void actionSort(){
+        controller.actionDataSort(true);
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#getDefinition()
+     */
+    @Override
+    protected DataDefinition getDefinition() {
+        if (model == null) return null;
+        else return model.getInputDefinition();
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#getHandle()
+     */
+    @Override
+    protected DataHandle getHandle() {
+        if (model != null){
+            DataHandle handle = model.getInputConfig().getInput().getHandle();
+            
+            if (model.getViewConfig().isSubset() && 
+                model.getOutputConfig() != null &&
+                model.getOutputConfig().getConfig() != null) {
+                handle = handle.getView();
+            }
+            return handle;
+        } else {
+            return null;
         }
     }
 }

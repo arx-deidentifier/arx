@@ -219,20 +219,20 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     
     /**
      * 
-     *
-     * @param context
-     * @return
-     */
-    protected abstract T createViewConfig(AnalysisContext context);
-    
-    /**
-     * 
      * Implement this to create the widget.
      *
      * @param parent
      * @return
      */
     protected abstract Control createControl(Composite parent);
+    
+    /**
+     * 
+     *
+     * @param context
+     * @return
+     */
+    protected abstract T createViewConfig(AnalysisContext context);
 
     /**
      * Implement this to reset.

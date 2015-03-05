@@ -63,19 +63,24 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
     }
 
     /**
-     * @return the heights
-     */
-    protected int[] getHeights() {
-        return maxLevels;
-    }
-
-    /**
      * Returns the number of cells.
      *
      * @return
      */
     protected double getCells() {
         return 0d;
+    }
+
+    /**
+     * @return the heights
+     */
+    protected int[] getHeights() {
+        return maxLevels;
+    }
+
+    @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override
@@ -102,7 +107,7 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
                                                            IHashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
-
+    
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -115,10 +120,5 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         for (int j = 0; j < maxLevels.length; j++) {
             maxLevels[j] = hierarchies[j].getArray()[0].length - 1;
         }
-    }
-    
-    @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 }

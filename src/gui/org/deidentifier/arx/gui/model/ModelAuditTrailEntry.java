@@ -26,9 +26,6 @@ import java.io.Serializable;
  */
 public abstract class ModelAuditTrailEntry implements Serializable {
 
-    /** SVUID*/
-    private static final long serialVersionUID = -3945294611839543672L;
-
     /**
      * Find and replace entry
      * @author Fabian Prasser
@@ -67,19 +64,22 @@ public abstract class ModelAuditTrailEntry implements Serializable {
         }
 
         /**
-         * @return the searchString
-         */
-        public String getSearchString() {
-            return searchString;
-        }
-
-        /**
          * @return the replacementString
          */
         public String getReplacementString() {
             return replacementString;
         }
+
+        /**
+         * @return the searchString
+         */
+        public String getSearchString() {
+            return searchString;
+        }
     }
+
+    /** SVUID*/
+    private static final long serialVersionUID = -3945294611839543672L;
     
     /**
      * Returns an entry for the according action

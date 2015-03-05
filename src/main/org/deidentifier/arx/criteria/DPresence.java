@@ -74,12 +74,22 @@ public class DPresence extends ImplicitPrivacyCriterion{
         this.subset = subset;
     }
         
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#initialize(org.deidentifier.arx.framework.data.DataManager)
+    /**
+     * Returns dMax.
+     *
+     * @return
      */
-    @Override
-    public void initialize(DataManager manager) {
-        // Nothing to do
+    public double getDMax() {
+        return dMax;
+    }
+
+    /**
+     * Returns dMin.
+     *
+     * @return
+     */
+    public double getDMin() {
+        return dMin;
     }
 
     /* (non-Javadoc)
@@ -92,15 +102,6 @@ public class DPresence extends ImplicitPrivacyCriterion{
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-     */
-    @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
-        double delta = entry.count == 0 ? 0d : (double) entry.count / (double) entry.pcount;
-        return (delta >= dMin) && (delta <= dMax);
-    }
-
     /**
      * Returns the research subset.
      *
@@ -110,23 +111,22 @@ public class DPresence extends ImplicitPrivacyCriterion{
         return this.subset;
     }
 
-    /**
-     * Returns dMin.
-     *
-     * @return
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.PrivacyCriterion#initialize(org.deidentifier.arx.framework.data.DataManager)
      */
-    public double getDMin() {
-        return dMin;
+    @Override
+    public void initialize(DataManager manager) {
+        // Nothing to do
     }
     
 
-    /**
-     * Returns dMax.
-     *
-     * @return
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
      */
-    public double getDMax() {
-        return dMax;
+    @Override
+    public boolean isAnonymous(HashGroupifyEntry entry) {
+        double delta = entry.count == 0 ? 0d : (double) entry.count / (double) entry.pcount;
+        return (delta >= dMin) && (delta <= dMax);
     }
     
 	/* (non-Javadoc)

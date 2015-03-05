@@ -71,24 +71,6 @@ public class DataTableContext {
     }
     
     /**
-     * Sets the underlying table.
-     *
-     * @param table
-     */
-    public void setTable(NatTable table) {
-		this.table = table;
-	}
-
-	/**
-     * Returns the underlying table.
-     *
-     * @return
-     */
-    public NatTable getTable() {
-		return table;
-	}
-
-	/**
      * Returns the controller.
      *
      * @return
@@ -96,8 +78,17 @@ public class DataTableContext {
     public Controller getController() {
         return controller;
     }
-    
-    /**
+
+	/**
+     * Sets the font.
+     *
+     * @return
+     */
+    public Font getFont() {
+        return font;
+    }
+
+	/**
      * Returns information about the equivalence classes.
      *
      * @return
@@ -105,7 +96,7 @@ public class DataTableContext {
     public int[] getGroups() {
         return groups;
     }
-
+    
     /**
      * Returns the data handle, if any.
      *
@@ -152,6 +143,35 @@ public class DataTableContext {
     }
 
     /**
+     * Returns the underlying table.
+     *
+     * @return
+     */
+    public NatTable getTable() {
+		return table;
+	}
+
+    /**
+     * 
+     *
+     * @return
+     */
+	public boolean isColumnExpanded() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+    /**
+     * 
+     *
+     * @return
+     */
+	public boolean isRowExpanded() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+    /**
      * Resets the context.
      */
     public void reset() {
@@ -162,6 +182,15 @@ public class DataTableContext {
     }
 
     /**
+     * Gets the font.
+     *
+     * @param font
+     */
+    public void setFont(Font font) {
+        this.font = font;
+    }
+
+    /**
      * Sets the groups.
      *
      * @param groups
@@ -169,7 +198,7 @@ public class DataTableContext {
     public void setGroups(int[] groups) {
         this.groups = groups;
     }
-
+    
     /**
      * Sets a data handle.
      *
@@ -178,7 +207,7 @@ public class DataTableContext {
     public void setHandle(DataHandle handle) {
         this.handle = handle;
     }
-
+    
     /**
      * Sets the header images.
      *
@@ -196,7 +225,7 @@ public class DataTableContext {
     public void setListeners(List<ILayerListener> listeners) {
         this.listeners = listeners;
     }
-    
+
     /**
      * Sets the research subset.
      *
@@ -205,8 +234,8 @@ public class DataTableContext {
     public void setRows(RowSet rows) {
         this.rows = rows;
     }
-    
-    /**
+
+	/**
      * Sets the selected column index.
      *
      * @param index
@@ -215,41 +244,12 @@ public class DataTableContext {
         this.selectedIndex = index;
     }
 
-    /**
-     * Sets the font.
-     *
-     * @return
-     */
-    public Font getFont() {
-        return font;
-    }
-
-    /**
-     * Gets the font.
-     *
-     * @param font
-     */
-    public void setFont(Font font) {
-        this.font = font;
-    }
-
 	/**
-     * 
+     * Sets the underlying table.
      *
-     * @return
+     * @param table
      */
-	public boolean isRowExpanded() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-     * 
-     *
-     * @return
-     */
-	public boolean isColumnExpanded() {
-		// TODO Auto-generated method stub
-		return false;
+    public void setTable(NatTable table) {
+		this.table = table;
 	}
 }

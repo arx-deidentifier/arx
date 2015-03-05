@@ -183,21 +183,21 @@ public class History {
     }
 
     /**
-     * Returns the node backing the last returned snapshot.
-     *
-     * @return
-     */
-    public Node getTransformation() {
-        return resultNode;
-    }
-    
-    /**
      * Returns the current storage strategy.
      *
      * @return
      */
     public NodeAction getStorageTrigger() {
         return storageTrigger;
+    }
+    
+    /**
+     * Returns the node backing the last returned snapshot.
+     *
+     * @return
+     */
+    public Node getTransformation() {
+        return resultNode;
     }
 
     /**

@@ -87,6 +87,11 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        return new ILSingleDimensionalWithBound(entry.count);
+    }
+
+    @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
 
         // The total number of groups with suppression
@@ -115,7 +120,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     protected ILSingleDimensional getLowerBoundInternal(Node node) {
         return null;
     }
-
+    
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Node node,
                                                         IHashGroupify groupify) {
@@ -129,10 +134,5 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         
         // Compute AECS
         return new ILSingleDimensional(getNumTuples() / (double)groups);
-    }
-    
-    @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-        return new ILSingleDimensionalWithBound(entry.count);
     }
 }

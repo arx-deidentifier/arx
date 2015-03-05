@@ -52,6 +52,32 @@ public class AnalysisManager {
             this.analysis = analysis;
         }
         
+        /**
+         * Returns the progress, if any
+         * @return
+         */
+        public synchronized int getProgress() {
+            return this.analysis.getProgress();
+        }
+        
+        /**
+         * Returns the thread.
+         *
+         * @return
+         */
+        public Thread getThread(){
+            return this.thread;
+        }
+        
+        /**
+         * Is this analysis stopped.
+         *
+         * @return
+         */
+        public synchronized boolean isStopped(){
+            return this.stopped;
+        }
+        
         /* (non-Javadoc)
          * @see java.lang.Runnable#run()
          */
@@ -75,14 +101,21 @@ public class AnalysisManager {
         }
         
         /**
-         * Trigger.
+         * Starts this analysis.
          */
-        private void onInterrupt() {
-            display.asyncExec(new Runnable(){
-                public void run(){
-                    analysis.onInterrupt();
-                }
-            });
+        public void start(){
+            this.thread = new Thread(this);
+            this.thread.setName("StatisticsBuilder");
+            this.thread.setDaemon(true);
+            this.thread.start();
+        }
+        
+        /**
+         * Stops this analysis.
+         */
+        public synchronized void stop(){
+            this.stopped = true;
+            this.analysis.stop();
         }
         
         /**
@@ -108,47 +141,14 @@ public class AnalysisManager {
         }
         
         /**
-         * Returns the thread.
-         *
-         * @return
+         * Trigger.
          */
-        public Thread getThread(){
-            return this.thread;
-        }
-        
-        /**
-         * Starts this analysis.
-         */
-        public void start(){
-            this.thread = new Thread(this);
-            this.thread.setName("StatisticsBuilder");
-            this.thread.setDaemon(true);
-            this.thread.start();
-        }
-        
-        /**
-         * Stops this analysis.
-         */
-        public synchronized void stop(){
-            this.stopped = true;
-            this.analysis.stop();
-        }
-        
-        /**
-         * Is this analysis stopped.
-         *
-         * @return
-         */
-        public synchronized boolean isStopped(){
-            return this.stopped;
-        }
-        
-        /**
-         * Returns the progress, if any
-         * @return
-         */
-        public synchronized int getProgress() {
-            return this.analysis.getProgress();
+        private void onInterrupt() {
+            display.asyncExec(new Runnable(){
+                public void run(){
+                    analysis.onInterrupt();
+                }
+            });
         }
     }
     
@@ -165,6 +165,26 @@ public class AnalysisManager {
      */
     public AnalysisManager(Display display){
         this.display = display;
+    }
+    
+    /**
+     * Returns the progress, if any
+     * @return
+     */
+    public int getProgress() {
+        if (worker != null) {
+            return worker.getProgress();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Returns whether a process is running
+     * @return
+     */
+    public boolean isRunning() {
+        return worker != null;
     }
     
     /**
@@ -205,25 +225,5 @@ public class AnalysisManager {
             }
             worker = null;
         }
-    }
-    
-    /**
-     * Returns the progress, if any
-     * @return
-     */
-    public int getProgress() {
-        if (worker != null) {
-            return worker.getProgress();
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * Returns whether a process is running
-     * @return
-     */
-    public boolean isRunning() {
-        return worker != null;
     }
 }

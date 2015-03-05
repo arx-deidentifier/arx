@@ -69,6 +69,18 @@ public class Data implements Cloneable{
         this.map = map;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#clone()
+     */
+    @Override
+    public Data clone(){
+        int[][] newData = new int[data.length][];
+        for (int i=0; i < data.length; i++){
+            newData[i] = Arrays.copyOf(data[i], header.length);
+        }
+        return new Data(newData, header, map, dictionary);
+    }
+
     /**
      * Returns the data array.
      *
@@ -113,7 +125,7 @@ public class Data implements Cloneable{
     public String[] getHeader() {
         return header;
     }
-
+    
     /**
      * Returns the map.
      *
@@ -121,17 +133,5 @@ public class Data implements Cloneable{
      */
     public int[] getMap() {
         return map;
-    }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
-    @Override
-    public Data clone(){
-        int[][] newData = new int[data.length][];
-        for (int i=0; i < data.length; i++){
-            newData[i] = Arrays.copyOf(data[i], header.length);
-        }
-        return new Data(newData, header, map, dictionary);
     }
 }

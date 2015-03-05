@@ -115,6 +115,11 @@ public class MetricEntropy extends MetricDefault {
     }
 
     @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
+    }
+
+    @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
         if (node.getLowerBound() != null) { 
@@ -161,7 +166,7 @@ public class MetricEntropy extends MetricDefault {
                                                            IHashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
-
+    
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -224,10 +229,5 @@ public class MetricEntropy extends MetricDefault {
             cache[i] = new double[ahierarchies[i].getArray()[0].length];
             Arrays.fill(cache[i], NA);
         }
-    }
-    
-    @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 }

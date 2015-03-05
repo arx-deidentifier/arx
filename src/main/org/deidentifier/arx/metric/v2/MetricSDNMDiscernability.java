@@ -90,6 +90,11 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        return new ILSingleDimensionalWithBound(entry.count);
+    }
+    
+    @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         
         double rows = getNumTuples();
@@ -107,12 +112,12 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         }
         return new ILSingleDimensionalWithBound(dm, dmStar);
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Node node) {
         return null;
     }
-
+    
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Node node,
                                                         IHashGroupify groupify) {
@@ -123,11 +128,6 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
             m = m.nextOrdered;
         }
         return new ILSingleDimensional(lowerBound);
-    }
-    
-    @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-        return new ILSingleDimensionalWithBound(entry.count);
     }
 }
 

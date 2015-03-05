@@ -58,6 +58,15 @@ public abstract class AbstractTest extends TestCase {
     /**  TODO */
     protected DataProvider provider = null;
 
+    /* (non-Javadoc)
+     * @see junit.framework.TestCase#setUp()
+     */
+    @Override
+    @Before
+    public void setUp() {
+        provider = new DataProvider();
+    }
+
     /**
      * 
      *
@@ -145,14 +154,5 @@ public abstract class AbstractTest extends TestCase {
             list.add(transformed.next());
         }
         return list.toArray(new String[list.size()][]);
-    }
-
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#setUp()
-     */
-    @Override
-    @Before
-    public void setUp() {
-        provider = new DataProvider();
     }
 }

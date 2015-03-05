@@ -109,26 +109,26 @@ public abstract class MetricDescription implements Serializable {
     }
 
     /**
-     * @return the attributeWeightsSupported
-     */
-    public boolean isAttributeWeightsSupported() {
-        return attributeWeightsSupported;
-    }
-
-    /**
-     * @return the configurableCodingModelSupported
-     */
-    public boolean isConfigurableCodingModelSupported() {
-        return configurableCodingModelSupported;
-    }
-    
-    /**
      * Returns whether an aggregate function is supported by the metric.
      *
      * @return
      */
     public boolean isAggregateFunctionSupported() {
         return aggregateFunctionSupported;
+    }
+
+    /**
+     * @return the attributeWeightsSupported
+     */
+    public boolean isAttributeWeightsSupported() {
+        return attributeWeightsSupported;
+    }
+    
+    /**
+     * @return the configurableCodingModelSupported
+     */
+    public boolean isConfigurableCodingModelSupported() {
+        return configurableCodingModelSupported;
     }
     
     /**

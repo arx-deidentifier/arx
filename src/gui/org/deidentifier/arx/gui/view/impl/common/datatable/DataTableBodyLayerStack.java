@@ -60,6 +60,13 @@ public class DataTableBodyLayerStack extends AbstractLayerTransform {
     }
 
     /**
+	 * @return the rowHeaderLayer
+	 */
+	public ILayer getRowHeaderLayer() {
+		return rowHeaderLayer;
+	}
+
+    /**
      * Returns the selection layer.
      *
      * @return
@@ -85,19 +92,12 @@ public class DataTableBodyLayerStack extends AbstractLayerTransform {
         super.setClientAreaProvider(clientAreaProvider);
     }
 
-    /**
+	/**
      * Sets the row header layer.
      *
      * @param rowHeaderLayer
      */
 	public void setRowHeaderLayer(ILayer rowHeaderLayer) {
 		this.rowHeaderLayer = rowHeaderLayer;
-	}
-
-	/**
-	 * @return the rowHeaderLayer
-	 */
-	public ILayer getRowHeaderLayer() {
-		return rowHeaderLayer;
 	}
 }

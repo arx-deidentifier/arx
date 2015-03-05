@@ -225,28 +225,6 @@ public class HashGroupifyDistribution {
      * @param condition
      * @return the number of tuples that have been suppressed
      */
-    public int suppressWhileNotFulfilledLinear(PrivacyCondition condition) {
-
-        int initiallySuppressed = this.suppressed;
-
-        for (int i=0; i<entries.length; i++) {
-            State state = condition.isFulfilled(this);
-            if (state == State.NOT_FULFILLED) {
-                suppressEntry(entries[i]);
-            } else { 
-                // State.FULFILLED || State.ABORT
-                break;
-            }
-        }
-        
-        return this.suppressed - initiallySuppressed;
-    }
-
-    /**
-     * Suppresses entries until the condition is fulfilled
-     * @param condition
-     * @return the number of tuples that have been suppressed
-     */
     public int suppressWhileNotFulfilledBinary(PrivacyCondition condition) {
         
         // Nothing to suppress
@@ -302,6 +280,28 @@ public class HashGroupifyDistribution {
             }
         }
 
+        return this.suppressed - initiallySuppressed;
+    }
+
+    /**
+     * Suppresses entries until the condition is fulfilled
+     * @param condition
+     * @return the number of tuples that have been suppressed
+     */
+    public int suppressWhileNotFulfilledLinear(PrivacyCondition condition) {
+
+        int initiallySuppressed = this.suppressed;
+
+        for (int i=0; i<entries.length; i++) {
+            State state = condition.isFulfilled(this);
+            if (state == State.NOT_FULFILLED) {
+                suppressEntry(entries[i]);
+            } else { 
+                // State.FULFILLED || State.ABORT
+                break;
+            }
+        }
+        
         return this.suppressed - initiallySuppressed;
     }
 

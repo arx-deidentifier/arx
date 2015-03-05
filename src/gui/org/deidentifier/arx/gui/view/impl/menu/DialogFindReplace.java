@@ -105,6 +105,26 @@ public class DialogFindReplace extends TitleAreaDialog {
         return value;
     }
 
+    @Override
+    public void setErrorMessage(String message) {
+        
+        // Check
+        if (this.errorMessage.isDisposed()) return;
+        
+        // Set
+        if (message != null) {
+            this.errorMessage.setText(message);
+        } else {
+            this.errorMessage.setText("");
+        }
+
+        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
+        Control button = getButton(IDialogConstants.OK_ID);
+        if (button != null) {
+            button.setEnabled(message == null);
+        }
+    }
+
     /**
      * Checks if all input is valid
      */
@@ -124,26 +144,6 @@ public class DialogFindReplace extends TitleAreaDialog {
                     setErrorMessage(null);
                 }
             }
-        }
-    }
-
-    @Override
-    public void setErrorMessage(String message) {
-        
-        // Check
-        if (this.errorMessage.isDisposed()) return;
-        
-        // Set
-        if (message != null) {
-            this.errorMessage.setText(message);
-        } else {
-            this.errorMessage.setText("");
-        }
-
-        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
-        Control button = getButton(IDialogConstants.OK_ID);
-        if (button != null) {
-            button.setEnabled(message == null);
         }
     }
 

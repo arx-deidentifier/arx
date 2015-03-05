@@ -193,11 +193,6 @@ public abstract class ViewProperties implements IView {
     }
 
     /**
-     * Implement this to update the view.
-     */
-    protected abstract void update();
-
-    /**
      * Converts an information loss into a relative value in percent
      * TODO: Code duplicate from NodePropertiesView.
      *
@@ -209,7 +204,7 @@ public abstract class ViewProperties implements IView {
         return infoLoss.relativeTo(model.getResult().getLattice().getMinimumInformationLoss(), 
                                    model.getResult().getLattice().getMaximumInformationLoss()) * 100d;
     }
-    
+
     /**
      * Returns the context.
      *
@@ -218,4 +213,9 @@ public abstract class ViewProperties implements IView {
     protected AnalysisContext getContext(){
         return context;
     }
+    
+    /**
+     * Implement this to update the view.
+     */
+    protected abstract void update();
 }

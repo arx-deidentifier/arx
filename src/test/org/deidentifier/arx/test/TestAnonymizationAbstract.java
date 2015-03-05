@@ -214,18 +214,6 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         }
     }
 
-    /** The test case. */
-    protected final ARXAnonymizationTestCase testCase;
-
-    /**
-     * Creates a new instance.
-     *
-     * @param testCase
-     */
-    public TestAnonymizationAbstract(final ARXAnonymizationTestCase testCase) {
-        this.testCase = testCase;
-    }
-
     /**
      * Returns the data object for the test case.
      *
@@ -273,6 +261,18 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         }
 
         return data;
+    }
+
+    /** The test case. */
+    protected final ARXAnonymizationTestCase testCase;
+
+    /**
+     * Creates a new instance.
+     *
+     * @param testCase
+     */
+    public TestAnonymizationAbstract(final ARXAnonymizationTestCase testCase) {
+        this.testCase = testCase;
     }
 
     /* (non-Javadoc)

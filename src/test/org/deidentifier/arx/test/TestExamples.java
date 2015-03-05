@@ -66,112 +66,6 @@ public class TestExamples {
 
     /**
      * 
-     *
-     * @throws IOException
-     */
-    @Test
-    public void testExample2() throws IOException {
-        try {
-            Example2.main(null);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    /**
-     * 
-     */
-    @Test
-    public void testExample3() {
-        try {
-            Example3.main(null);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    /**
-     * 
-     */
-    @Test
-    public void testExample4() {
-        try {
-            Example4.main(null);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    /**
-     * 
-     */
-    @Test
-    public void testExample5() {
-        try {
-            Example5.main(null);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    /**
-     * 
-     */
-    @Test
-    public void testExample6() {
-        try {
-            Example6.main(null);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    /**
-     * 
-     */
-    @Test
-    public void testExample7() {
-        try {
-            Example7.main(null);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    /**
-     * 
-     */
-    @Test
-    public void testExample8() {
-        try {
-            Example8.main(null);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    /**
-     * 
-     */
-    @Test
-    public void testExample9() {
-        try {
-            Example9.main(null);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    /**
-     * 
      */
     @Test
     public void testExample10() {
@@ -276,6 +170,21 @@ public class TestExamples {
 
     /**
      * 
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testExample2() throws IOException {
+        try {
+            Example2.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * 
      */
     @Test
     public void testExample20() {
@@ -299,7 +208,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-    
+
     /**
      * 
      */
@@ -312,7 +221,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-    
+
     /**
      * 
      */
@@ -325,7 +234,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-    
+
     /**
      * 
      */
@@ -338,7 +247,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-    
+
     /**
      * 
      */
@@ -351,7 +260,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-    
+
     /**
      * 
      */
@@ -359,6 +268,97 @@ public class TestExamples {
     public void testExample26() {
         try {
             Example26.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void testExample3() {
+        try {
+            Example3.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void testExample4() {
+        try {
+            Example4.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testExample5() {
+        try {
+            Example5.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testExample6() {
+        try {
+            Example6.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testExample7() {
+        try {
+            Example7.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testExample8() {
+        try {
+            Example8.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testExample9() {
+        try {
+            Example9.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();

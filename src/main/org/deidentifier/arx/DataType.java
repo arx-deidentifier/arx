@@ -46,9 +46,6 @@ import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilde
  */
 public abstract class DataType<T> implements Serializable, Comparator<T> {
 
-    /** The string representing the NULL value */
-    public static final String NULL_VALUE = "NULL";
-
     /**
      * Base class for date/time types.
      *
@@ -893,6 +890,22 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
         
+        /* (non-Javadoc)
+         * @see org.deidentifier.arx.DataType#getDescription()
+         */
+        @Override
+        public DataTypeDescription<Long> getDescription(){
+            return description;
+        }
+
+        /* (non-Javadoc)
+         * @see org.deidentifier.arx.DataType.DataTypeWithFormat#getFormat()
+         */
+        @Override
+        public String getFormat() {
+            return string;
+        }
+        
         /**
          * Returns the locale of the format.
          *
@@ -904,22 +917,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             } else {
                 return locale;
             }
-        }
-
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#getDescription()
-         */
-        @Override
-        public DataTypeDescription<Long> getDescription(){
-            return description;
-        }
-        
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithFormat#getFormat()
-         */
-        @Override
-        public String getFormat() {
-            return string;
         }
 
         /* (non-Javadoc)
@@ -1045,7 +1042,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return "Integer";
         }
     }
-    
+
     /**
      * Base class for ordered string types.
      *
@@ -1206,15 +1203,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         	return s;
         }
         
-        /**
-         * Returns the locale of the format.
-         *
-         * @return
-         */
-        public Locale getLocale() {
-            return Locale.getDefault();
-        }
-        
         /* (non-Javadoc)
          * @see org.deidentifier.arx.DataType#getDescription()
          */
@@ -1222,7 +1210,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public DataTypeDescription<String> getDescription(){
             return description;
         }
-
+        
         /**
          * Returns all elements backing this datatype.
          *
@@ -1241,7 +1229,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             });
             return result;
         }
-        
+
         /* (non-Javadoc)
          * @see org.deidentifier.arx.DataType.DataTypeWithFormat#getFormat()
          */
@@ -1264,6 +1252,15 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 }
             }
             return b.toString();
+        }
+        
+        /**
+         * Returns the locale of the format.
+         *
+         * @return
+         */
+        public Locale getLocale() {
+            return Locale.getDefault();
         }
 
         /* (non-Javadoc)
@@ -1512,8 +1509,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         public abstract DataType<T> newInstance(String format, Locale locale);
     }
-
-	/**
+    
+    /**
      * An interface for data types with format.
      *
      * @author Fabian Prasser
@@ -1531,7 +1528,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract Locale getLocale();
     }
 
-    /**
+	/**
      * An interface for data types with a ratio scale.
      *
      * @author Fabian Prasser
@@ -1687,6 +1684,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         public abstract T subtract(T minuend, T subtrahend);
     }
+
+    /** The string representing the NULL value */
+    public static final String NULL_VALUE = "NULL";
     
     /**  SVUID */
     private static final long serialVersionUID = -4380267779210935078L;
@@ -1956,6 +1956,15 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public abstract int hashCode();
 
     /**
+     * Returns whether the given value represent null
+     * @param value
+     * @return
+     */
+    public boolean isNull(String value) {
+        return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
+    }
+    
+    /**
      * Checks whether the given string conforms to the data type's format.
      *
      * @param s
@@ -1970,13 +1979,4 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @return
      */
     public abstract T parse(String s);
-    
-    /**
-     * Returns whether the given value represent null
-     * @param value
-     * @return
-     */
-    public boolean isNull(String value) {
-        return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
-    }
 }

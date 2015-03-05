@@ -30,9 +30,19 @@ public abstract class Analysis {
     public abstract int getProgress();
     
     /**
-     * Called to stop the analysis.
+     * Perform error handling.
      */
-    public abstract void stop();
+    public abstract void onError();
+    
+    /**
+     * Perform finish.
+     */
+    public abstract void onFinish();
+    
+    /**
+     * Perform interrupt handling.
+     */
+    public abstract void onInterrupt();
     
     /**
      * Implement the analysis here.
@@ -42,17 +52,7 @@ public abstract class Analysis {
     public abstract void run() throws InterruptedException;
     
     /**
-     * Perform finish.
+     * Called to stop the analysis.
      */
-    public abstract void onFinish();
-    
-    /**
-     * Perform error handling.
-     */
-    public abstract void onError();
-    
-    /**
-     * Perform interrupt handling.
-     */
-    public abstract void onInterrupt();
+    public abstract void stop();
 }

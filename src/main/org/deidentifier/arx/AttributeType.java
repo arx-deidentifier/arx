@@ -228,6 +228,9 @@ public class AttributeType implements Serializable, Cloneable {
             }
         }
 
+        /** TODO. */
+        private static final long serialVersionUID = -4721439386792383385L;
+
         /**
          * Creates a new default hierarchy.
          *
@@ -289,18 +292,6 @@ public class AttributeType implements Serializable, Cloneable {
 
         /**
          * Creates a new hierarchy from a CSV file.
-         * 
-         * @param file
-         * @param config
-         * @return
-         * @throws IOException
-         */
-        public static Hierarchy create(final File file, final CSVSyntax config) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file, config).getHierarchy());
-        }
-
-        /**
-         * Creates a new hierarchy from a CSV file.
          *
          * @param file the file
          * @param delimiter the delimiter
@@ -312,6 +303,18 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static Hierarchy create(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
             return new ArrayHierarchy(new CSVHierarchyInput(file, delimiter, quote, escape, linebreak).getHierarchy());
+        }
+
+        /**
+         * Creates a new hierarchy from a CSV file.
+         * 
+         * @param file
+         * @param config
+         * @return
+         * @throws IOException
+         */
+        public static Hierarchy create(final File file, final CSVSyntax config) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, config).getHierarchy());
         }
 
         /**
@@ -335,17 +338,6 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static Hierarchy create(final InputStream stream, final char delimiter) throws IOException {
             return new ArrayHierarchy(new CSVHierarchyInput(stream, delimiter).getHierarchy());
-        }
-
-        /**
-         * Creates a new hierarchy from a CSV file.
-         * @param stream
-         * @param config
-         * @return
-         * @throws IOException
-         */
-        public static Hierarchy create(final InputStream stream, final CSVSyntax config) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream, config).getHierarchy());
         }
 
         /**
@@ -388,6 +380,17 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static Hierarchy create(final InputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
             return new ArrayHierarchy(new CSVHierarchyInput(stream, delimiter, quote, escape, linebreak).getHierarchy());
+        }
+
+        /**
+         * Creates a new hierarchy from a CSV file.
+         * @param stream
+         * @param config
+         * @return
+         * @throws IOException
+         */
+        public static Hierarchy create(final InputStream stream, final CSVSyntax config) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, config).getHierarchy());
         }
 
         /**
@@ -442,9 +445,6 @@ public class AttributeType implements Serializable, Cloneable {
         public static Hierarchy create(final String[][] array) {
             return new ArrayHierarchy(array);
         }
-
-        /** TODO. */
-        private static final long serialVersionUID = -4721439386792383385L;
 
         /**
          * Instantiates a new hierarchy.

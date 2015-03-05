@@ -53,18 +53,6 @@ public class StatisticsContingencyTable {
         }
         
         /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + value1;
-            result = prime * result + value2;
-            return result;
-        }
-        
-        /* (non-Javadoc)
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
@@ -76,6 +64,18 @@ public class StatisticsContingencyTable {
             if (value1 != other.value1) return false;
             if (value2 != other.value2) return false;
             return true;
+        }
+        
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + value1;
+            result = prime * result + value2;
+            return result;
         }
     }
 

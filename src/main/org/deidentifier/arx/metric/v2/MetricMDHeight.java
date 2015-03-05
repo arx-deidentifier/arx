@@ -88,11 +88,18 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
     }
     
     @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        double[] result = new double[getDimensions()];
+        Arrays.fill(result, entry.count);
+        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
+    }
+
+    @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         AbstractILMultiDimensional loss = getLowerBoundInternal(node);
         return new ILMultiDimensionalWithBound(loss, (AbstractILMultiDimensional)loss.clone());
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         double[] result = new double[getDimensions()];
@@ -102,7 +109,7 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         }
         return super.createInformationLoss(result);
     }
-    
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                        IHashGroupify groupify) {
@@ -128,12 +135,5 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         
         setMin(min);
         setMax(max);
-    }
-
-    @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-        double[] result = new double[getDimensions()];
-        Arrays.fill(result, entry.count);
-        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
 }

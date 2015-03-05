@@ -49,6 +49,30 @@ public abstract class XMLHandler extends DefaultHandler {
         sb.add(ch, start, length);
     }
 
+    /* (non-Javadoc)
+     * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Override
+    public void endElement(final String uri,
+                           final String localName,
+                           final String qName) throws SAXException {
+        payload =  new String(sb.buffer, 0, sb.size());
+        if (!end(uri, localName, qName)) { throw new SAXException(Resources.getMessage("WorkerLoad.0") + localName); } //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     */
+    @Override
+    public void
+            startElement(final String uri,
+                         final String localName,
+                         final String qName,
+                         final Attributes attributes) throws SAXException {
+        sb.clear();
+        if (!start(uri, localName, qName, attributes)) { throw new SAXException(Resources.getMessage("WorkerLoad.1") + localName); } //$NON-NLS-1$
+    }
+
     /**
      * 
      *
@@ -61,17 +85,6 @@ public abstract class XMLHandler extends DefaultHandler {
     protected abstract boolean end(String uri,
                                    String localName,
                                    String qName) throws SAXException;
-
-    /* (non-Javadoc)
-     * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-     */
-    @Override
-    public void endElement(final String uri,
-                           final String localName,
-                           final String qName) throws SAXException {
-        payload =  new String(sb.buffer, 0, sb.size());
-        if (!end(uri, localName, qName)) { throw new SAXException(Resources.getMessage("WorkerLoad.0") + localName); } //$NON-NLS-1$
-    }
 
     /**
      * 
@@ -88,17 +101,4 @@ public abstract class XMLHandler extends DefaultHandler {
                   String localName,
                   String qName,
                   Attributes attributes) throws SAXException;
-
-    /* (non-Javadoc)
-     * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-     */
-    @Override
-    public void
-            startElement(final String uri,
-                         final String localName,
-                         final String qName,
-                         final Attributes attributes) throws SAXException {
-        sb.clear();
-        if (!start(uri, localName, qName, attributes)) { throw new SAXException(Resources.getMessage("WorkerLoad.1") + localName); } //$NON-NLS-1$
-    }
 }

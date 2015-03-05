@@ -50,18 +50,6 @@ public class AnalysisData{
     }
     
     /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((config == null) ? 0 : config.hashCode());
-        result = prime * result + ((handle == null) ? 0 : handle.hashCode());
-        return result;
-    }
-    
-    /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -77,5 +65,17 @@ public class AnalysisData{
             if (other.handle != null) return false;
         } else if (!handle.equals(other.handle)) return false;
         return true;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((config == null) ? 0 : config.hashCode());
+        result = prime * result + ((handle == null) ? 0 : handle.hashCode());
+        return result;
     }
 }

@@ -47,6 +47,27 @@ public class Example26 extends Example {
     /**
      * 
      *
+     * @return
+     */
+    private static String[] getExampleData() {
+
+        String[] data = new String[]{
+                "40.764725",
+                "40.646866",
+                "40.786007",
+                "40.812",     
+                "40.644527",
+                "40.749702",
+                "40.764137",
+
+        };
+
+        return data;
+    }
+
+    /**
+     * 
+     *
      * @param interval
      */
     private static void intervalBased(double interval) {
@@ -96,26 +117,5 @@ public class Example26 extends Example {
         // Print resulting hierarchy
         printArray(builder.build().getHierarchy());
         System.out.println("");
-    }
-
-    /**
-     * 
-     *
-     * @return
-     */
-    private static String[] getExampleData() {
-
-        String[] data = new String[]{
-                "40.764725",
-                "40.646866",
-                "40.786007",
-                "40.812",     
-                "40.644527",
-                "40.749702",
-                "40.764137",
-
-        };
-
-        return data;
     }
 }

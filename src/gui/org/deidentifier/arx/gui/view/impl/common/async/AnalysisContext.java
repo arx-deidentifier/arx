@@ -125,6 +125,15 @@ public class AnalysisContext {
     }
 
     /**
+     * Returns the model.
+     *
+     * @return
+     */
+    public Model getModel() {
+        return model;
+    }
+
+    /**
      * Returns a population model for the given context
      *
      * @return
@@ -156,29 +165,20 @@ public class AnalysisContext {
     }
 
     /**
-     * Sets the target.
-     *
-     * @param target
-     */
-    public void setTarget(ModelPart target) {
-        this.target = target;
-    }
-
-    /**
-     * Returns the model.
-     *
-     * @return
-     */
-    public Model getModel() {
-        return model;
-    }
-
-    /**
      * Sets the model.
      *
      * @param model
      */
     public void setModel(Model model) {
         this.model = model;
+    }
+
+    /**
+     * Sets the target.
+     *
+     * @param target
+     */
+    public void setTarget(ModelPart target) {
+        this.target = target;
     }
 }

@@ -67,6 +67,14 @@ public interface INodeChecker {
     }
 
     /**
+     * Applies the given transformation and sets its properties.
+     *
+     * @param transformation
+     * @return
+     */
+    public TransformedData applyAndSetProperties(Node transformation);
+
+    /**
      * Checks the given node.
      *
      * @param node The node to check
@@ -104,13 +112,13 @@ public interface INodeChecker {
      */
     public abstract Data getData();
 
+
     /**
      * Returns the current hash groupify.
      *
      * @return
      */
     public abstract IHashGroupify getGroupify();
-
 
     /**
      * Returns the history, if there is any.
@@ -134,12 +142,4 @@ public interface INodeChecker {
      * @return
      */
     public abstract Metric<?> getMetric();
-
-    /**
-     * Applies the given transformation and sets its properties.
-     *
-     * @param transformation
-     * @return
-     */
-    public TransformedData applyAndSetProperties(Node transformation);
 }

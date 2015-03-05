@@ -397,6 +397,12 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
     }
 
+    /** TODO: Is this parameter OK?. */
+    private static final int               INDEX_FANOUT     = 2;
+
+    /** SVUID. */
+    private static final long              serialVersionUID = 3663874945543082808L;
+    
     /**
      * Creates a new instance. Snapping is disabled. Repetition is disabled. Bound is determined dynamically.
      *
@@ -407,7 +413,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     public static <T> HierarchyBuilderIntervalBased<T> create(DataType<T> type) {
         return new HierarchyBuilderIntervalBased<T>(type);
     }
-
+    
     /**
      * Creates a new instance. Data points that are out of range are handled according to the given settings.
      *
@@ -454,12 +460,6 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     public static <T> HierarchyBuilderIntervalBased<T> create(String file) throws IOException{
         return create(new File(file));
     }
-    
-    /** TODO: Is this parameter OK?. */
-    private static final int               INDEX_FANOUT     = 2;
-    
-    /** SVUID. */
-    private static final long              serialVersionUID = 3663874945543082808L;
 
     /** Adjustment. */
     private Range<T>          lowerRange;

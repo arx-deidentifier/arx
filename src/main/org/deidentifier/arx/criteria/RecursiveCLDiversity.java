@@ -51,6 +51,15 @@ public class RecursiveCLDiversity extends LDiversity{
         this.c = c;
     }
 
+    /**
+     * Returns the parameter c.
+     *
+     * @return
+     */
+    public double getC() {
+        return c;
+    }
+
     /* (non-Javadoc)
      * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
      */
@@ -84,15 +93,6 @@ public class RecursiveCLDiversity extends LDiversity{
 
         // Check
         return frequencyCopy[frequencyCopy.length - 1] < threshold;
-    }
-
-    /**
-     * Returns the parameter c.
-     *
-     * @return
-     */
-    public double getC() {
-        return c;
     }
     
 	/* (non-Javadoc)

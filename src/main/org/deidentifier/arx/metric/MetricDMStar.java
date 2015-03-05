@@ -74,6 +74,11 @@ public class MetricDMStar extends MetricDefault {
     }
 
     @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
+    }
+
+    @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
         if (node.getLowerBound() != null) {
@@ -91,12 +96,12 @@ public class MetricDMStar extends MetricDefault {
         }
         return new InformationLossDefaultWithBound(value, value);
     }
-
+    
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         return null;
     }
-    
+
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
@@ -111,7 +116,7 @@ public class MetricDMStar extends MetricDefault {
     protected double getRowCount() {
         return this.rowCount;
     }
-
+    
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input,
@@ -129,10 +134,5 @@ public class MetricDMStar extends MetricDefault {
         } else {
             rowCount = input.getDataLength();
         }
-    }
-    
-    @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 }

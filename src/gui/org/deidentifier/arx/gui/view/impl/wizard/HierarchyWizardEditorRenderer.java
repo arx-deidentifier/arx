@@ -153,18 +153,6 @@ public class HierarchyWizardEditorRenderer<T> {
         }
     }
 
-    /**
-     * Returns the font.
-     *
-     * @return
-     */
-    private static Font getFont(){
-
-        FontData fontdata = GUIHelper.DEFAULT_FONT.getFontData()[0];
-        fontdata.setHeight(9);
-        return GUIHelper.getFont(fontdata);
-    }
-    
     /** Constants. */
     public static final Font  FONT                   = getFont();
     
@@ -191,9 +179,21 @@ public class HierarchyWizardEditorRenderer<T> {
     
     /** Constants. */
     public static final Color NORMAL_BACKGROUND      = GUIHelper.getColor(230, 230, 230);
-
+    
     /** Constants. */
     public static final Color SELECTED_BACKGROUND    = GUIHelper.COLOR_YELLOW;
+
+    /**
+     * Returns the font.
+     *
+     * @return
+     */
+    private static Font getFont(){
+
+        FontData fontdata = GUIHelper.DEFAULT_FONT.getFontData()[0];
+        fontdata.setHeight(9);
+        return GUIHelper.getFont(fontdata);
+    }
 
     /** Var. */
     private final List<RenderedInterval<T>>        intervals         = new ArrayList<RenderedInterval<T>>();

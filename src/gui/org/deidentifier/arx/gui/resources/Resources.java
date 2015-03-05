@@ -42,6 +42,15 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class Resources {
 
+    /** Messages */
+    private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
+    
+    /** The splash. */
+    private static Image                splash          = null;
+    
+    /** The iconset. */
+    private static Image[]              iconset         = null;
+
     /**
      * Returns the logo.
      *
@@ -62,6 +71,37 @@ public class Resources {
 	}
     
     /**
+     * Reads the content from the file license.txt located in the package org.deidentifier.arx.gui.resources and
+     * returns the content as string.
+     * @return
+     */
+    public static String getLicencseText() {
+        InputStream stream = Resources.class.getResourceAsStream("license.txt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+        String content = "";
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            line = br.readLine();
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            content = sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return content;
+    }
+
+    /**
      * 
      * Returns the associated message
      * TODO: Make this method non-static.
@@ -76,7 +116,7 @@ public class Resources {
             return '!' + key + '!';
         }
     }
-    
+
     /**
      * Returns the splash image.
      *
@@ -98,7 +138,7 @@ public class Resources {
     public static String getVersion() {
         return Resources.getMessage("Resources.0"); //$NON-NLS-1$;
     }
-    
+
     /**
      * Loads an image. Adds a dispose listener that disposes the image when the display is disposed
      * @param display
@@ -117,18 +157,9 @@ public class Resources {
         return image;
     }
 
-    /** Messages */
-    private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
-
-    /** The splash. */
-    private static Image                splash          = null;
-
-    /** The iconset. */
-    private static Image[]              iconset         = null;
-
     /** Logger. */
     private final Logger                logger          = Logger.getRootLogger();
-
+    
     /** Shell. */
     private final Shell                 shell;
     
@@ -147,7 +178,7 @@ public class Resources {
         logger.addAppender(consoleAppender);
         logger.setLevel(Level.OFF);
     }
-    
+
     /**
      * Returns the display.
      *
@@ -204,36 +235,5 @@ public class Resources {
      */
     public InputStream getStream(final String name) {
         return this.getClass().getResourceAsStream(name);
-    }
-
-    /**
-     * Reads the content from the file license.txt located in the package org.deidentifier.arx.gui.resources and
-     * returns the content as string.
-     * @return
-     */
-    public static String getLicencseText() {
-        InputStream stream = Resources.class.getResourceAsStream("license.txt");
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-        String content = "";
-        try {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            line = br.readLine();
-            while (line != null) {
-                sb.append(line);
-                sb.append(System.lineSeparator());
-                line = br.readLine();
-            }
-            content = sb.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                br.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return content;
     }
 }

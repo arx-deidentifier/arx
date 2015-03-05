@@ -140,108 +140,6 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Converts a configuration to XML.
-     *
-     * @param config
-     * @return
-     * @throws IOException
-     */
-    private String toXML(final ModelConfiguration config) throws IOException {
-        
-    	XMLWriter writer = new XMLWriter(); 
-        writer.indent(vocabulary.getConfig());
-        writer.write(vocabulary.getSuppressionAlwaysEnabled(), config.isSuppressionAlwaysEnabled());
-        writer.write(vocabulary.getSuppressionString(), config.getSuppressionString());
-        
-        // Write suppressed attribute types
-        writer.indent(vocabulary.getSuppressedAttributeTypes());
-        for (AttributeType type : new AttributeType[]{AttributeType.QUASI_IDENTIFYING_ATTRIBUTE,
-                                                      AttributeType.SENSITIVE_ATTRIBUTE,
-                                                      AttributeType.INSENSITIVE_ATTRIBUTE}) {
-            if (config.isAttributeTypeSuppressed(type)) {
-                writer.write(vocabulary.getType(), type.toString());
-            }
-        }
-        writer.unindent();
-        
-        writer.write(vocabulary.getPracticalMonotonicity(), config.isPracticalMonotonicity());
-        writer.write(vocabulary.getProtectSensitiveAssociations(), config.isProtectSensitiveAssociations());
-        writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
-        writer.write(vocabulary.getMetric(), config.getMetric().toString());
-
-        // Write weights
-        writer.indent(vocabulary.getAttributeWeights());
-        for (Entry<String, Double> entry : config.getAttributeWeights().entrySet()) {
-            writer.indent(vocabulary.getAttributeWeight());
-            writer.write(vocabulary.getAttribute(), entry.getKey());
-            writer.write(vocabulary.getWeight(), entry.getValue());
-            writer.unindent();
-        }
-        writer.unindent();
-        
-        // Write criteria
-        writer.indent(vocabulary.getCriteria());
-        for (PrivacyCriterion c : config.getCriteria()) {
-        	if (c != null) {
-        		writer.write(vocabulary.getCriterion(), c.toString());
-        	}
-        }
-        writer.unindent();
-        writer.unindent();
-        return writer.toString();
-    }
-    
-    /**
-     * Returns an XML representation of the data definition.
-     *
-     * @param config
-     * @param handle
-     * @param definition
-     * @return
-     * @throws IOException
-     */
-    private String toXML(final ModelConfiguration config, 
-                         final DataHandle handle,
-                         final DataDefinition definition) throws IOException {
-        
-    	XMLWriter writer = new XMLWriter();
-    	writer.indent(vocabulary.getDefinition());
-        for (int i = 0; i < handle.getNumColumns(); i++) {
-            final String attr = handle.getAttributeName(i);
-            AttributeType t = definition.getAttributeType(attr);
-            DataType<?> dt = definition.getDataType(attr);
-            if (t == null) t = AttributeType.IDENTIFYING_ATTRIBUTE;
-            if (dt == null) dt = DataType.STRING;
-            
-            writer.indent(vocabulary.getAssigment());
-            writer.write(vocabulary.getName(), attr);
-            writer.write(vocabulary.getType(), t.toString());
-            writer.write(vocabulary.getDatatype(), dt.getDescription().getLabel());
-            if (dt.getDescription().hasFormat()){
-                String format = ((DataTypeWithFormat)dt).getFormat();
-                if (format != null){
-                    writer.write(vocabulary.getFormat(), format);
-                }
-            }
-            
-            if (t instanceof Hierarchy || 
-                (t == AttributeType.SENSITIVE_ATTRIBUTE && config.getHierarchy(attr)!=null)) {
-            	writer.write(vocabulary.getRef(), "hierarchies/" + toFileName(attr) + ".csv"); //$NON-NLS-1$ //$NON-NLS-2$
-                if (t instanceof Hierarchy){
-                    Integer min = config.getMinimumGeneralization(attr);
-                    Integer max = config.getMaximumGeneralization(attr);
-                	writer.write(vocabulary.getMin(), min==null ? "All" : String.valueOf(min));
-                	writer.write(vocabulary.getMax(), max==null ? "All" : String.valueOf(max));
-                }
-            }
-            writer.unindent();
-
-        }
-        writer.unindent();
-        return writer.toString();
-    }
-
-    /**
      * Returns an XML representation of the lattice.
      *
      * @param map
@@ -301,7 +199,7 @@ public class WorkerSave extends Worker<Model> {
         writer.unindent();
         b.flush();
     }
-
+    
     /**
      * Returns an XML representation of the clipboard.
      *
@@ -363,6 +261,108 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
+     * Converts a configuration to XML.
+     *
+     * @param config
+     * @return
+     * @throws IOException
+     */
+    private String toXML(final ModelConfiguration config) throws IOException {
+        
+    	XMLWriter writer = new XMLWriter(); 
+        writer.indent(vocabulary.getConfig());
+        writer.write(vocabulary.getSuppressionAlwaysEnabled(), config.isSuppressionAlwaysEnabled());
+        writer.write(vocabulary.getSuppressionString(), config.getSuppressionString());
+        
+        // Write suppressed attribute types
+        writer.indent(vocabulary.getSuppressedAttributeTypes());
+        for (AttributeType type : new AttributeType[]{AttributeType.QUASI_IDENTIFYING_ATTRIBUTE,
+                                                      AttributeType.SENSITIVE_ATTRIBUTE,
+                                                      AttributeType.INSENSITIVE_ATTRIBUTE}) {
+            if (config.isAttributeTypeSuppressed(type)) {
+                writer.write(vocabulary.getType(), type.toString());
+            }
+        }
+        writer.unindent();
+        
+        writer.write(vocabulary.getPracticalMonotonicity(), config.isPracticalMonotonicity());
+        writer.write(vocabulary.getProtectSensitiveAssociations(), config.isProtectSensitiveAssociations());
+        writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
+        writer.write(vocabulary.getMetric(), config.getMetric().toString());
+
+        // Write weights
+        writer.indent(vocabulary.getAttributeWeights());
+        for (Entry<String, Double> entry : config.getAttributeWeights().entrySet()) {
+            writer.indent(vocabulary.getAttributeWeight());
+            writer.write(vocabulary.getAttribute(), entry.getKey());
+            writer.write(vocabulary.getWeight(), entry.getValue());
+            writer.unindent();
+        }
+        writer.unindent();
+        
+        // Write criteria
+        writer.indent(vocabulary.getCriteria());
+        for (PrivacyCriterion c : config.getCriteria()) {
+        	if (c != null) {
+        		writer.write(vocabulary.getCriterion(), c.toString());
+        	}
+        }
+        writer.unindent();
+        writer.unindent();
+        return writer.toString();
+    }
+
+    /**
+     * Returns an XML representation of the data definition.
+     *
+     * @param config
+     * @param handle
+     * @param definition
+     * @return
+     * @throws IOException
+     */
+    private String toXML(final ModelConfiguration config, 
+                         final DataHandle handle,
+                         final DataDefinition definition) throws IOException {
+        
+    	XMLWriter writer = new XMLWriter();
+    	writer.indent(vocabulary.getDefinition());
+        for (int i = 0; i < handle.getNumColumns(); i++) {
+            final String attr = handle.getAttributeName(i);
+            AttributeType t = definition.getAttributeType(attr);
+            DataType<?> dt = definition.getDataType(attr);
+            if (t == null) t = AttributeType.IDENTIFYING_ATTRIBUTE;
+            if (dt == null) dt = DataType.STRING;
+            
+            writer.indent(vocabulary.getAssigment());
+            writer.write(vocabulary.getName(), attr);
+            writer.write(vocabulary.getType(), t.toString());
+            writer.write(vocabulary.getDatatype(), dt.getDescription().getLabel());
+            if (dt.getDescription().hasFormat()){
+                String format = ((DataTypeWithFormat)dt).getFormat();
+                if (format != null){
+                    writer.write(vocabulary.getFormat(), format);
+                }
+            }
+            
+            if (t instanceof Hierarchy || 
+                (t == AttributeType.SENSITIVE_ATTRIBUTE && config.getHierarchy(attr)!=null)) {
+            	writer.write(vocabulary.getRef(), "hierarchies/" + toFileName(attr) + ".csv"); //$NON-NLS-1$ //$NON-NLS-2$
+                if (t instanceof Hierarchy){
+                    Integer min = config.getMinimumGeneralization(attr);
+                    Integer max = config.getMaximumGeneralization(attr);
+                	writer.write(vocabulary.getMin(), min==null ? "All" : String.valueOf(min));
+                	writer.write(vocabulary.getMax(), max==null ? "All" : String.valueOf(max));
+                }
+            }
+            writer.unindent();
+
+        }
+        writer.unindent();
+        return writer.toString();
+    }
+
+    /**
      * Writes the clipboard to the file.
      *
      * @param model
@@ -381,6 +381,23 @@ public class WorkerSave extends Worker<Model> {
         w.write(toXML(map, model.getClipboard().getClipboardEntries()));
         w.flush();
 
+    }
+
+    /**
+     * Writes the configuration to the file.
+     *
+     * @param model
+     * @param zip
+     * @throws IOException
+     */
+    private void writeConfiguration(final Model model, final ZipOutputStream zip) throws IOException {
+
+        if (model.getInputConfig() != null) {
+            writeConfiguration(model.getInputConfig(), "input/", zip); //$NON-NLS-1$
+        }
+        if (model.getOutputConfig() != null) {
+            writeConfiguration(model.getOutputConfig(), "output/", zip); //$NON-NLS-1$
+        }
     }
 
     /**
@@ -407,23 +424,6 @@ public class WorkerSave extends Worker<Model> {
 
         writeDefinition(config, prefix, zip);
         writeHierarchies(config, prefix, zip);
-    }
-
-    /**
-     * Writes the configuration to the file.
-     *
-     * @param model
-     * @param zip
-     * @throws IOException
-     */
-    private void writeConfiguration(final Model model, final ZipOutputStream zip) throws IOException {
-
-        if (model.getInputConfig() != null) {
-            writeConfiguration(model.getInputConfig(), "input/", zip); //$NON-NLS-1$
-        }
-        if (model.getOutputConfig() != null) {
-            writeConfiguration(model.getOutputConfig(), "output/", zip); //$NON-NLS-1$
-        }
     }
 
     /**

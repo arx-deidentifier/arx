@@ -75,6 +75,11 @@ public class MetricHeight extends MetricDefault {
     }
 
     @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
+    }
+
+    @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
         int level = node.getLevel();
         return new InformationLossDefaultWithBound(level, level);
@@ -119,10 +124,5 @@ public class MetricHeight extends MetricDefault {
             minHeight += definition.getMinimumGeneralization(qi);
             maxHeight += definition.getMaximumGeneralization(qi);
         }
-    }
-
-    @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 }

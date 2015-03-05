@@ -30,9 +30,6 @@ import org.deidentifier.arx.DataType;
  */
 public abstract class AggregateFunction<T> implements Serializable{
     
-    /**  TODO */
-    private static final long serialVersionUID = 3803318906010996154L;
-
     /**
      * A builder for aggregate functions.
      *
@@ -145,7 +142,7 @@ public abstract class AggregateFunction<T> implements Serializable{
             return new GenericSetOfPrefixes<T>(type, length);
         }
     }
-    
+
     /**
      * An aggregate function that has a parameter.
      *
@@ -350,7 +347,7 @@ public abstract class AggregateFunction<T> implements Serializable{
             }
         }
     }
-
+    
     /**
      * An aggregate function that returns a constant value.
      *
@@ -498,8 +495,8 @@ public abstract class AggregateFunction<T> implements Serializable{
         public String toString(){
             return "Interval";
         }
-    };
-    
+    }
+
     /**
      * An aggregate function that returns a set of all data values.
      *
@@ -553,7 +550,7 @@ public abstract class AggregateFunction<T> implements Serializable{
             return "Set";
         }
     };
-
+    
     /**
      * An aggregate function that returns a set of the prefixes of the data values.
      *
@@ -638,7 +635,10 @@ public abstract class AggregateFunction<T> implements Serializable{
         public String toString(){
             return "SetOfPrefixes[length="+length+"]";
         }
-    }
+    };
+
+    /**  TODO */
+    private static final long serialVersionUID = 3803318906010996154L;
     
     /**
      * Returns a builder for the given data type.

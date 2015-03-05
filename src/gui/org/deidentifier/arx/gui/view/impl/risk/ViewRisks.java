@@ -227,18 +227,6 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     }
     
     /**
-     * Is there still some data to show
-     * @return
-     */
-    protected boolean isValid() {
-        if (this.target == ModelPart.INPUT) {
-            return this.model != null && this.model.getInputConfig() != null && this.model.getInputConfig().getInput() != null;
-        } else {
-            return this.model != null && this.model.getOutput() != null;
-        }
-    }
-    
-    /**
      * 
      * Implement this to create the widget.
      *
@@ -254,7 +242,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @return
      */
     protected abstract T createViewConfig(AnalysisContext context);
-
+    
     /**
      * Implement this to reset.
      */
@@ -266,6 +254,21 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @param context
      */
     protected abstract void doUpdate(T context);
+
+    /**
+     * Creates a risk estimate builder
+     * @param context
+     * @return
+     */
+    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context) {
+        
+        AnalysisContext analysisContext = context.context;
+        return context.handle.getRiskEstimator(analysisContext.getModel().getRiskModel().getPopulationModel(),
+                                               analysisContext.getData().definition.getQuasiIdentifyingAttributes(),
+                                               analysisContext.getModel().getRiskModel().getAccuracy(),
+                                               analysisContext.getModel().getRiskModel().getMaxIterations())
+                                               .getInterruptibleInstance();
+    }
 
     /**
      * Creates a risk estimate builder
@@ -290,21 +293,6 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     /**
      * Creates a risk estimate builder
      * @param context
-     * @return
-     */
-    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context) {
-        
-        AnalysisContext analysisContext = context.context;
-        return context.handle.getRiskEstimator(analysisContext.getModel().getRiskModel().getPopulationModel(),
-                                               analysisContext.getData().definition.getQuasiIdentifyingAttributes(),
-                                               analysisContext.getModel().getRiskModel().getAccuracy(),
-                                               analysisContext.getModel().getRiskModel().getMaxIterations())
-                                               .getInterruptibleInstance();
-    }
-
-    /**
-     * Creates a risk estimate builder
-     * @param context
      * @param identifiers
      * @return
      */
@@ -324,18 +312,30 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @return
      */
     protected abstract ComponentStatusLabelProgressProvider getProgressProvider();
-    
+
     /**
      * Returns the according type of view
      * @return
      */
     protected abstract ViewRiskType getViewType();
-
+    
     /**
      * Is a job running
      * @return
      */
     protected abstract boolean isRunning();
+
+    /**
+     * Is there still some data to show
+     * @return
+     */
+    protected boolean isValid() {
+        if (this.target == ModelPart.INPUT) {
+            return this.model != null && this.model.getInputConfig() != null && this.model.getInputConfig().getInput() != null;
+        } else {
+            return this.model != null && this.model.getOutput() != null;
+        }
+    }
     
     /**
      * Status update.

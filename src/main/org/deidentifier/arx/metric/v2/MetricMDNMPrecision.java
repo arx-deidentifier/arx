@@ -99,6 +99,13 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        double[] result = new double[getDimensions()];
+        Arrays.fill(result, entry.count);
+        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
+    }
+
+    @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         
         int suppressedTuples = 0;
@@ -123,7 +130,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         return new ILMultiDimensionalWithBound(createInformationLoss(result), 
                                                (AbstractILMultiDimensional)getLowerBoundInternal(node).clone());
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         double[] result = new double[getDimensions()];
@@ -134,7 +141,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         }
         return createInformationLoss(result);
     }
-    
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
@@ -161,7 +168,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         setMin(min);
         setMax(max);
     }
-
+    
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -191,12 +198,5 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         for (int j = 0; j < heights.length; j++) {
             heights[j] = hierarchies[j].getArray()[0].length - 1;
         }
-    }
-    
-    @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-        double[] result = new double[getDimensions()];
-        Arrays.fill(result, entry.count);
-        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
 }

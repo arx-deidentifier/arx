@@ -49,6 +49,15 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
         this.k = k;
     }
 
+    /**
+     * Returns the parameter k.
+     *
+     * @return
+     */
+    public int getK() {
+        return k;
+    }
+
     @Override
     public int getRequirements(){
         // Requires only one counter
@@ -58,15 +67,6 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         throw new RuntimeException("This should never be called!");
-    }
-
-    /**
-     * Returns the parameter k.
-     *
-     * @return
-     */
-    public int getK() {
-        return k;
     }
     
 	@Override

@@ -397,6 +397,29 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     /**
      * <p>Sets properties about the attribute's domain. Currently, this information is only used for
      * evaluating information loss with the generalized loss metric for attributes with functional
+     * redaction-based hierarchies.</p>
+     * 
+     * @param data
+     */
+    public void setDomainMetadata(String[] data) {
+        
+        CharOpenHashSet characterSet = new CharOpenHashSet();
+        this.maxValueLength = 0d;
+        for (int i = 0; i < data.length; i++) {
+            String value = data[i];
+            this.maxValueLength = Math.max(this.maxValueLength, value.length());
+            char[] charArray = value.toCharArray();
+            for (int j = 0; j < charArray.length; j++) {
+                characterSet.add(charArray[j]);
+            }
+        }
+        this.domainSize = (double)data.length;
+        this.alphabetSize = (double)characterSet.size();
+    }
+
+    /**
+     * <p>Sets properties about the attribute's domain. Currently, this information is only used for
+     * evaluating information loss with the generalized loss metric for attributes with functional
      * redaction-based hierarchies. Required properties are:</p>
      * <ul>
      * <li>Size of the domain: the number of elements in the domain of the attribute</li>
@@ -416,29 +439,6 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         this.domainSize = Double.valueOf(domainSize);
         this.maxValueLength = Double.valueOf(maxValueLength);
         this.alphabetSize = Math.pow(domainSize, 1.0d / (double)maxValueLength);
-    }
-
-    /**
-     * <p>Sets properties about the attribute's domain. Currently, this information is only used for
-     * evaluating information loss with the generalized loss metric for attributes with functional
-     * redaction-based hierarchies.</p>
-     * 
-     * @param data
-     */
-    public void setDomainMetadata(String[] data) {
-        
-        CharOpenHashSet characterSet = new CharOpenHashSet();
-        this.maxValueLength = 0d;
-        for (int i = 0; i < data.length; i++) {
-            String value = data[i];
-            this.maxValueLength = Math.max(this.maxValueLength, value.length());
-            char[] charArray = value.toCharArray();
-            for (int j = 0; j < charArray.length; j++) {
-                characterSet.add(charArray[j]);
-            }
-        }
-        this.domainSize = (double)data.length;
-        this.alphabetSize = (double)characterSet.size();
     }
 
     

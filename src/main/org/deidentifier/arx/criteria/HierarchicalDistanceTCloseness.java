@@ -59,6 +59,15 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
         this.hierarchy = h;
     }
 
+    /**
+     * Returns the hierarchy backing the EMD calculations.
+     *
+     * @return
+     */
+    public Hierarchy getHierarchy() {
+        return hierarchy;
+    }
+
     /* (non-Javadoc)
      * @see org.deidentifier.arx.criteria.ExplicitPrivacyCriterion#initialize(org.deidentifier.arx.framework.data.DataManager)
      */
@@ -158,15 +167,6 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
 
         // check
         return cost <= t;
-    }
-
-    /**
-     * Returns the hierarchy backing the EMD calculations.
-     *
-     * @return
-     */
-    public Hierarchy getHierarchy() {
-        return hierarchy;
     }
     
 	/* (non-Javadoc)

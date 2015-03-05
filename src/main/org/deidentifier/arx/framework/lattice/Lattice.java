@@ -144,6 +144,15 @@ public class Lattice {
     }
 
     /**
+     * Attaches a listener.
+     *
+     * @param listener
+     */
+    public void setListener(final ARXListener listener) {
+        this.listener = listener;
+    }
+
+    /**
      * Sets the lower bound.
      *
      * @param node
@@ -151,15 +160,6 @@ public class Lattice {
      */
     public void setLowerBound(Node node, InformationLoss<?> lowerBound) {
         node.setLowerBound(lowerBound);
-    }
-
-    /**
-     * Attaches a listener.
-     *
-     * @param listener
-     */
-    public void setListener(final ARXListener listener) {
-        this.listener = listener;
     }
 
     /**

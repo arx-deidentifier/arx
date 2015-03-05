@@ -74,21 +74,21 @@ public class LayerBody extends CTLayer {
     }
 
     /**
-     * Returns the selection layer.
-     *
-     * @return
-     */
-    public SelectionLayer getSelectionLayer() {
-        return selectionLayer;
-    }
-    
-    /**
      * Returns the data layer.
      *
      * @return
      */
     public DataLayer getDataLayer() {
         return dataLayer;
+    }
+    
+    /**
+     * Returns the selection layer.
+     *
+     * @return
+     */
+    public SelectionLayer getSelectionLayer() {
+        return selectionLayer;
     }
     
     /**

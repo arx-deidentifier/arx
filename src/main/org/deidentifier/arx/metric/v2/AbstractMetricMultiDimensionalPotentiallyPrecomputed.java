@@ -129,6 +129,15 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         return this.defaultMetric;
     }
 
+    @Override
+    protected InformationLossWithBound<AbstractILMultiDimensional> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        if (precomputed) {
+            return precomputedMetric.getInformationLoss(node, entry);
+        } else {
+            return defaultMetric.getInformationLoss(node, entry);
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
      */
@@ -147,7 +156,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         return precomputed ? precomputedMetric.getLowerBound(node) : 
                              defaultMetric.getLowerBound(node);
     }
-
+    
     /* (non-Javadoc)
      * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
      */
@@ -165,7 +174,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     protected AbstractMetricMultiDimensional getPrecomputedMetric(){
         return this.precomputedMetric;
     }
-    
+
     /**
      * Returns the threshold.
      *
@@ -174,7 +183,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     protected double getThreshold() {
         return this.threshold;
     }
-
+    
     /* (non-Javadoc)
      * @see org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
      */
@@ -208,14 +217,5 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
      */
     protected boolean isPrecomputed() {
         return this.precomputed;
-    }
-    
-    @Override
-    protected InformationLossWithBound<AbstractILMultiDimensional> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-        if (precomputed) {
-            return precomputedMetric.getInformationLoss(node, entry);
-        } else {
-            return defaultMetric.getInformationLoss(node, entry);
-        }
     }
 }

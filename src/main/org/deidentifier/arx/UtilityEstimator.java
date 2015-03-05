@@ -151,44 +151,6 @@ class UtilityEstimator {
     }
 
     /**
-     * Returns the max of both, handles null values.
-     *
-     * @param first
-     * @param second
-     * @return
-     */
-    private InformationLoss<?> max(InformationLoss<?> first, InformationLoss<?> second) {
-        if (first == null) {
-            return second;
-        } else if (second == null) {
-            return first;
-        } else if (first.compareTo(second) < 0) {
-            return second;
-        } else {
-            return first;
-        }
-    }
-
-    /**
-     * Returns the min of both, handles null values.
-     *
-     * @param first
-     * @param second
-     * @return
-     */
-    private InformationLoss<?> min(InformationLoss<?> first, InformationLoss<?> second) {
-        if (first == null) {
-            return second;
-        } else if (second == null) {
-            return first;
-        } else if (first.compareTo(second) < 0) {
-            return first;
-        } else {
-            return second;
-        }
-    }
-
-    /**
      * Returns the value if != null, the default otherwise.
      * @param value
      * @param _default
@@ -245,6 +207,44 @@ class UtilityEstimator {
         } else {
             maximumAnonymous[id] = metricMax;
             maximumNonAnonymous[id] = metricMax;
+        }
+    }
+
+    /**
+     * Returns the max of both, handles null values.
+     *
+     * @param first
+     * @param second
+     * @return
+     */
+    private InformationLoss<?> max(InformationLoss<?> first, InformationLoss<?> second) {
+        if (first == null) {
+            return second;
+        } else if (second == null) {
+            return first;
+        } else if (first.compareTo(second) < 0) {
+            return second;
+        } else {
+            return first;
+        }
+    }
+
+    /**
+     * Returns the min of both, handles null values.
+     *
+     * @param first
+     * @param second
+     * @return
+     */
+    private InformationLoss<?> min(InformationLoss<?> first, InformationLoss<?> second) {
+        if (first == null) {
+            return second;
+        } else if (second == null) {
+            return first;
+        } else if (first.compareTo(second) < 0) {
+            return first;
+        } else {
+            return second;
         }
     }
 

@@ -53,6 +53,15 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
     }
     
     @Override
+    public ModelTClosenessCriterion clone() {
+        ModelTClosenessCriterion result = new ModelTClosenessCriterion(this.getAttribute());
+        result.t = this.t;
+        result.variant = this.variant;
+        result.setEnabled(this.isEnabled());
+        return result;
+    }
+	
+	@Override
 	public PrivacyCriterion getCriterion(Model model) {
 	    switch (variant) {
             case VARIANT_EQUAL: return new EqualDistanceTCloseness(getAttribute(), t);
@@ -62,6 +71,12 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
 	    }
 	}
 	
+	@Override
+    public String getLabel() {
+        // TODO: Move to messages.properties
+        return "t-Closeness";
+    }
+	
 	/**
      * Returns T.
      *
@@ -70,7 +85,7 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
 	public double getT() {
 		return t;
 	}
-	
+
 	/**
      * Returns the variant.
      *
@@ -79,8 +94,19 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
 	public int getVariant() {
 		return variant;
 	}
-	
-	/* (non-Javadoc)
+
+    @Override
+    public void parse(ModelCriterion criterion) {
+        if (!(criterion instanceof ModelTClosenessCriterion)) {
+            return;
+        }
+        ModelTClosenessCriterion other = (ModelTClosenessCriterion)criterion;
+        this.t = other.t;
+        this.variant = other.variant;
+        this.setEnabled(other.isEnabled());
+    }
+    
+    /* (non-Javadoc)
 	 * @see org.deidentifier.arx.gui.model.ModelExplicitCriterion#pull(org.deidentifier.arx.gui.model.ModelExplicitCriterion)
 	 */
 	@Override
@@ -93,7 +119,7 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
         this.t = other.t;
     }
 
-	/**
+    /**
      * Sets T.
      *
      * @param t
@@ -119,31 +145,5 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
             case VARIANT_HIERARCHICAL: return String.valueOf(t)+"-Closeness (hierarchical ground-distance)";
             default: throw new RuntimeException("Internal error: invalid variant of t-closeness");
         }
-    }
-
-    @Override
-    public String getLabel() {
-        // TODO: Move to messages.properties
-        return "t-Closeness";
-    }
-
-    @Override
-    public ModelTClosenessCriterion clone() {
-        ModelTClosenessCriterion result = new ModelTClosenessCriterion(this.getAttribute());
-        result.t = this.t;
-        result.variant = this.variant;
-        result.setEnabled(this.isEnabled());
-        return result;
-    }
-    
-    @Override
-    public void parse(ModelCriterion criterion) {
-        if (!(criterion instanceof ModelTClosenessCriterion)) {
-            return;
-        }
-        ModelTClosenessCriterion other = (ModelTClosenessCriterion)criterion;
-        this.t = other.t;
-        this.variant = other.variant;
-        this.setEnabled(other.isEnabled());
     }
 }

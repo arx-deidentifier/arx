@@ -181,13 +181,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         /**
-         * Do we guarantee optimality for sample-based criteria?
-         */
-        public boolean isUseHeuristicForSampleBasedCriteria() {
-            return config.isUseHeuristicSearchForSampleBasedCriteria();
-        }
-
-        /**
          * Is practical monotonicity assumed.
          *
          * @return
@@ -205,6 +198,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
          */
         public boolean isSuppressionAlwaysEnabled() {
             return config.isSuppressionAlwaysEnabled();
+        }
+
+        /**
+         * Do we guarantee optimality for sample-based criteria?
+         */
+        public boolean isUseHeuristicForSampleBasedCriteria() {
+            return config.isUseHeuristicSearchForSampleBasedCriteria();
         }
 
         /**
@@ -575,13 +575,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Do we guarantee optimality for sample-based criteria?
-     */
-    public boolean isUseHeuristicSearchForSampleBasedCriteria() {
-        return heuristicSearchForSampleBasedCriteria;
-    }
-
-    /**
      * Is practical monotonicity assumed.
      *
      * @return
@@ -611,6 +604,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.suppressionAlwaysEnabled = true;
         }
         return this.suppressionAlwaysEnabled;
+    }
+
+    /**
+     * Do we guarantee optimality for sample-based criteria?
+     */
+    public boolean isUseHeuristicSearchForSampleBasedCriteria() {
+        return heuristicSearchForSampleBasedCriteria;
     }
 
     /**
@@ -692,13 +692,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Do we guarantee optimality for sample-based criteria?
-     */
-    public void setUseHeuristicSearchForSampleBasedCriteria(boolean value) {
-        this.heuristicSearchForSampleBasedCriteria = value;
-    }
-
-    /**
      * Set, if practical monotonicity assumed.
      *
      * @param assumeMonotonicity
@@ -715,7 +708,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setProtectSensitiveAssociations(boolean protect) {
         this.protectSensitiveAssociations = protect;
     }
-    
+
     /**
      * Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
@@ -725,7 +718,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setSuppressionAlwaysEnabled(boolean enabled){
     	this.suppressionAlwaysEnabled = enabled;
     }
-
+    
     /**
      * Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.
      * @param suppressionString
@@ -733,6 +726,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setSuppressionString(String suppressionString){
     	checkArgument(suppressionString);
         this.suppressionString = suppressionString;    	
+    }
+
+    /**
+     * Do we guarantee optimality for sample-based criteria?
+     */
+    public void setUseHeuristicSearchForSampleBasedCriteria(boolean value) {
+        this.heuristicSearchForSampleBasedCriteria = value;
     }
 
     /**

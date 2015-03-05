@@ -65,17 +65,6 @@ public class XMLWriter {
 	}
 	
 	/**
-     * Append stuff to the backing builder.
-     *
-     * @param value
-     * @throws IOException
-     */
-	private void append(String value) throws IOException{
-		if (fBuilder != null) fBuilder.append(value);
-		else sBuilder.append(value);
-	}
-
-	/**
      * Intend the document.
      *
      * @param element
@@ -133,6 +122,16 @@ public class XMLWriter {
 		this.append("</");
 		this.append(element);
 		this.append(">\n");
+	}
+
+	/**
+     * Appends the string.
+     *
+     * @param string
+     * @throws IOException
+     */
+	public void write(String string) throws IOException {
+		this.append(string);
 	}
 	
 	/**
@@ -239,12 +238,13 @@ public class XMLWriter {
 	}
 
 	/**
-     * Appends the string.
+     * Append stuff to the backing builder.
      *
-     * @param string
+     * @param value
      * @throws IOException
      */
-	public void write(String string) throws IOException {
-		this.append(string);
+	private void append(String value) throws IOException{
+		if (fBuilder != null) fBuilder.append(value);
+		else sBuilder.append(value);
 	}
 }

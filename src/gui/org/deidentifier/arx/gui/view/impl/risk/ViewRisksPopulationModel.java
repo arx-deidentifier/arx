@@ -141,19 +141,6 @@ public class ViewRisksPopulationModel implements IView {
     }
     
     /**
-     * Is an output model available
-     * @return
-     */
-    private boolean isOutputPopulationModelAvailable() {
-        if (model == null || model.getOutputConfig() == null) { return false; }
-        for (RiskBasedThresholdPopulationUniques t : model.getOutputConfig()
-                                                          .getCriteria(RiskBasedThresholdPopulationUniques.class)) {
-            if (t.getPopulationModel() != null) { return true; }
-        }
-        return false;
-    }
-
-    /**
      * Creates the required controls.
      * 
      * @param parent
@@ -219,6 +206,19 @@ public class ViewRisksPopulationModel implements IView {
                 }
             }
         });
+    }
+
+    /**
+     * Is an output model available
+     * @return
+     */
+    private boolean isOutputPopulationModelAvailable() {
+        if (model == null || model.getOutputConfig() == null) { return false; }
+        for (RiskBasedThresholdPopulationUniques t : model.getOutputConfig()
+                                                          .getCriteria(RiskBasedThresholdPopulationUniques.class)) {
+            if (t.getPopulationModel() != null) { return true; }
+        }
+        return false;
     }
 
     /**

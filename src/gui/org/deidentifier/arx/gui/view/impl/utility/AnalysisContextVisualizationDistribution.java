@@ -66,6 +66,12 @@ public class AnalysisContextVisualizationDistribution implements AnalysisContext
         this.attributeType = handle.getDefinition().getAttributeType(attribute); 
     }
     
+    @Override
+    public boolean isAttributeSelected(String attribute) {
+        if (attribute==null) return false;
+        else return attribute.equals(this.attribute);
+    }
+
     /**
      * Is this a valid context.
      *
@@ -78,11 +84,5 @@ public class AnalysisContextVisualizationDistribution implements AnalysisContext
         else if (this.dataType == null) return false;
         else if (this.attributeType == null) return false;
         else return true;
-    }
-
-    @Override
-    public boolean isAttributeSelected(String attribute) {
-        if (attribute==null) return false;
-        else return attribute.equals(this.attribute);
     }
 }

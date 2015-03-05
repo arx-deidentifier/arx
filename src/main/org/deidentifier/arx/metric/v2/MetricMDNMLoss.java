@@ -150,6 +150,25 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+
+        // Init
+        double[] result = new double[getDimensions()];
+        int dimensions = getDimensions();
+        int[] transformation = node.getTransformation();
+
+        // Compute
+        for (int dimension = 0; dimension < dimensions; dimension++) {
+            int value = entry.key[dimension];
+            int level = transformation[dimension];
+            result[dimension] = (double) entry.count / shares[dimension].getShare(value, level);
+        }
+        
+        // Return
+        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
+    }
+
+    @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, IHashGroupify g) {
         
         // Prepare
@@ -190,7 +209,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         return null;
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                                IHashGroupify g) {
@@ -231,7 +250,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     protected DomainShare[] getShares(){
         return this.shares;
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     protected void initializeInternal(final DataDefinition definition,
@@ -288,6 +307,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         super.setMin(min);
         super.setMax(max);
     }
+    
 
     /**
      * Normalizes the aggregate.
@@ -303,25 +323,5 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double result = (aggregate - min) / (max - min);
         result = result >= 0d ? result : 0d;
         return round(result);
-    }
-    
-
-    @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-
-        // Init
-        double[] result = new double[getDimensions()];
-        int dimensions = getDimensions();
-        int[] transformation = node.getTransformation();
-
-        // Compute
-        for (int dimension = 0; dimension < dimensions; dimension++) {
-            int value = entry.key[dimension];
-            int level = transformation[dimension];
-            result[dimension] = (double) entry.count / shares[dimension].getShare(value, level);
-        }
-        
-        // Return
-        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
 }

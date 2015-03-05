@@ -53,11 +53,11 @@ public abstract class MainMenuItem {
     public abstract void action(Controller controller);
     
     /**
-     * Override this to return whether the item is enabled 
-     * @param model
-     * @return
+     * @return the image
      */
-    public abstract boolean isEnabled(Model model);
+    public Image getImage() {
+        return image;
+    }
 
     /**
      * @return the label
@@ -67,16 +67,16 @@ public abstract class MainMenuItem {
     }
 
     /**
-     * @return the image
-     */
-    public Image getImage() {
-        return image;
-    }
-
-    /**
      * @return the isButton
      */
     public boolean isButton() {
         return isButton;
     }
+
+    /**
+     * Override this to return whether the item is enabled 
+     * @param model
+     * @return
+     */
+    public abstract boolean isEnabled(Model model);
 }

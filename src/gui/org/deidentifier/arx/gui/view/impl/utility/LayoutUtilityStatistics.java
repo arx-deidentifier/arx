@@ -137,43 +137,6 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         folder.addSelectionListener(listener);
     }
 
-    /**
-     * Returns the selection index.
-     *
-     * @return
-     */
-    public int getSelectionIndex() {
-        return folder.getSelectionIndex();
-    }
-
-    /**
-     * Sets the selection index.
-     *
-     * @param index
-     */
-    public void setSelectionIdex(final int index) {
-        folder.setSelection(index);
-    }
-    
-    /**
-     * Toggle visualization enabled.
-     */
-    private void toggleEnabled() {
-        this.model.setVisualizationEnabled(this.enable.getSelection());
-        this.controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, enable.getSelection()));
-    }
-    
-    /**
-     * Toggle image.
-     */
-    private void toggleImage(){
-        if (enable.getSelection()) {
-            enable.setImage(enabled);
-        } else {
-            enable.setImage(disabled);
-        }
-    }
-
     /* (non-Javadoc)
      * @see org.deidentifier.arx.gui.view.def.IView#dispose()
      */
@@ -183,6 +146,15 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         this.disabled.dispose();
     }
 
+    /**
+     * Returns the selection index.
+     *
+     * @return
+     */
+    public int getSelectionIndex() {
+        return folder.getSelectionIndex();
+    }
+    
     /* (non-Javadoc)
      * @see org.deidentifier.arx.gui.view.def.IView#reset()
      */
@@ -192,6 +164,15 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         enable.setSelection(true);
         enable.setImage(enabled);
         enable.setEnabled(false);
+    }
+    
+    /**
+     * Sets the selection index.
+     *
+     * @param index
+     */
+    public void setSelectionIdex(final int index) {
+        folder.setSelection(index);
     }
 
     /* (non-Javadoc)
@@ -208,6 +189,25 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         } else if (event.part == ModelPart.SELECTED_UTILITY_VISUALIZATION) {
             this.enable.setSelection(model.isVisualizationEnabled());
             this.toggleImage();
+        }
+    }
+
+    /**
+     * Toggle visualization enabled.
+     */
+    private void toggleEnabled() {
+        this.model.setVisualizationEnabled(this.enable.getSelection());
+        this.controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, enable.getSelection()));
+    }
+
+    /**
+     * Toggle image.
+     */
+    private void toggleImage(){
+        if (enable.getSelection()) {
+            enable.setImage(enabled);
+        } else {
+            enable.setImage(disabled);
         }
     }
 }

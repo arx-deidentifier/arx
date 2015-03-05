@@ -46,6 +46,13 @@ public abstract class PrivacyCriterion implements Serializable{
     }
     
     /**
+     * Returns the criterion's requirements.
+     *
+     * @return
+     */
+    public abstract int getRequirements();
+
+    /**
      * Override this to initialize the criterion.
      *
      * @param manager
@@ -53,13 +60,6 @@ public abstract class PrivacyCriterion implements Serializable{
     public void initialize(DataManager manager){
         // Empty by design
     }
-
-    /**
-     * Returns the criterion's requirements.
-     *
-     * @return
-     */
-    public abstract int getRequirements();
     
     /**
      * Implement this, to enforce the criterion.
@@ -70,20 +70,20 @@ public abstract class PrivacyCriterion implements Serializable{
     public abstract boolean isAnonymous(HashGroupifyEntry entry);
 
     /**
-     * Is this criterion based on the overall sample
-     * @return
-     */
-    public boolean isSampleBased() {
-        return false;
-    }
-    
-    /**
      * Returns whether the criterion is monotonic with tuple suppression.
      *
      * @return
      */
     public boolean isMonotonic() {
         return this.monotonic;
+    }
+    
+    /**
+     * Is this criterion based on the overall sample
+     * @return
+     */
+    public boolean isSampleBased() {
+        return false;
     }
     
     /**

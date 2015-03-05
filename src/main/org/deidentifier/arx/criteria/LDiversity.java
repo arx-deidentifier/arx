@@ -54,16 +54,6 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
         this.minSize = (int) Math.ceil(l);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#getRequirements()
-     */
-    @Override
-    public int getRequirements() {
-
-        // Requires a distribution, but nothing else
-        return ARXConfiguration.REQUIREMENT_DISTRIBUTION;
-    }
-
     /**
      * Returns the parameter l.
      *
@@ -72,7 +62,7 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
     public double getL() {
         return l;
     }
-    
+
     /**
      * Returns the minimal group size required to fulfill this criterion.
      *
@@ -80,5 +70,15 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
      */
     public int getMinimalGroupSize(){
         return minSize;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.PrivacyCriterion#getRequirements()
+     */
+    @Override
+    public int getRequirements() {
+
+        // Requires a distribution, but nothing else
+        return ARXConfiguration.REQUIREMENT_DISTRIBUTION;
     }
 }

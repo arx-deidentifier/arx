@@ -76,6 +76,19 @@ public class AnalysisContextVisualizationContingency implements AnalysisContextV
     }
     
     /**
+     * Is the provided attribute selected according to the config?.
+     *
+     * @param attribute
+     * @return
+     */
+    public boolean isAttributeSelected(String attribute){
+        if (attribute == null) return false;
+        if (attribute.equals(attribute1)) return true;
+        if (attribute.equals(attribute2)) return true;
+        return false;
+    }
+    
+    /**
      * Is this a valid context.
      *
      * @return
@@ -90,18 +103,5 @@ public class AnalysisContextVisualizationContingency implements AnalysisContextV
         else if (this.attributeType1 == null) return false;
         else if (this.attributeType2 == null) return false;
         else return true;
-    }
-    
-    /**
-     * Is the provided attribute selected according to the config?.
-     *
-     * @param attribute
-     * @return
-     */
-    public boolean isAttributeSelected(String attribute){
-        if (attribute == null) return false;
-        if (attribute.equals(attribute1)) return true;
-        if (attribute.equals(attribute2)) return true;
-        return false;
     }
 }

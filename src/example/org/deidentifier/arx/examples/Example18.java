@@ -60,54 +60,20 @@ public class Example18 extends Example {
     }
 
     /**
-     * Shows how to load and store hierarchy specifications.
-     */
-    private static void loadStore() {
-        try {
-            HierarchyBuilderRedactionBased<?> builder = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
-                                                                                              Order.RIGHT_TO_LEFT,
-                                                                                              ' ', '*');
-            builder.save("test.ahs");
-            
-            HierarchyBuilder<?> loaded = HierarchyBuilder.create("test.ahs");
-            if (loaded.getType() == Type.REDACTION_BASED) {
-                
-                builder = (HierarchyBuilderRedactionBased<?>)loaded;
-                
-                System.out.println("-------------------------");
-                System.out.println("REDACTION-BASED HIERARCHY");
-                System.out.println("-------------------------");
-                System.out.println("");
-                System.out.println("SPECIFICATION");
-                
-                // Print info about resulting groups
-                System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
-                
-                System.out.println("");
-                System.out.println("RESULT");
-                
-                // Print resulting hierarchy
-                printArray(builder.build().getHierarchy());
-                System.out.println("");
-            } else {
-                System.out.println("Incompatible type of builder");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Exemplifies the use of the order-based builder.
      */
-    private static void orderBased() {
+    private static void dates() {
 
+    	String stringDateFormat = "yyyy-MM-dd HH:mm";
+    	
+    	DataType<Date> dateType = DataType.createDate(stringDateFormat);
+    	
         // Create the builder
-        HierarchyBuilderOrderBased<Long> builder = HierarchyBuilderOrderBased.create(DataType.INTEGER, false);
+        HierarchyBuilderOrderBased<Date> builder = HierarchyBuilderOrderBased.create(dateType, false);
 
         // Define grouping fanouts
-        builder.getLevel(0).addGroup(10, DataType.INTEGER.createAggregate().createIntervalFunction());
-        builder.getLevel(1).addGroup(2, DataType.INTEGER.createAggregate().createIntervalFunction());
+        builder.getLevel(0).addGroup(10, dateType.createAggregate().createIntervalFunction());
+        builder.getLevel(1).addGroup(2, dateType.createAggregate().createIntervalFunction());
 
         // Alternatively
         // builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
@@ -115,18 +81,18 @@ public class Example18 extends Example {
         // builder.getLevel(1).addFanout(2);
         
         System.out.println("---------------------");
-        System.out.println("ORDER-BASED HIERARCHY");
+        System.out.println("ORDER-BASED DATE HIERARCHY");
         System.out.println("---------------------");
         System.out.println("");
         System.out.println("SPECIFICATION");
         
         // Print specification
-        for (Level<Long> level : builder.getLevels()) {
+        for (Level<Date> level : builder.getLevels()) {
             System.out.println(level);
         }
         
         // Print info about resulting groups
-        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleDateData(stringDateFormat))));
         
         System.out.println("");
         System.out.println("RESULT");
@@ -136,6 +102,55 @@ public class Example18 extends Example {
         System.out.println("");
     }
 
+    /**
+     * Returns example data.
+     *
+     * @return
+     */
+    private static String[] getExampleData(){
+
+        String[] result = new String[100];
+        for (int i=0; i< result.length; i++){
+            result[i] = String.valueOf(i);
+        }
+        return result;
+    }
+
+    /**
+     * Returns example date data.
+     *
+     * @param stringFormat
+     * @return
+     */
+    private static String[] getExampleDateData(String stringFormat){
+
+    	SimpleDateFormat format = new SimpleDateFormat(stringFormat);
+    	
+        String[] result = new String[100];
+        for (int i=0; i< result.length; i++){
+        	
+        	Calendar date = GregorianCalendar.getInstance();
+        	date.add(Calendar.HOUR, i);
+        	
+            result[i] = format.format(date.getTime());
+        }
+        return result;
+    }
+
+    /**
+     * Returns example data.
+     *
+     * @return
+     */
+    private static String[] getExampleLDLData() {
+
+        String[] result = new String[100];
+        for (int i=0; i< result.length; i++){
+            result[i] = String.valueOf(Math.random() * 9.9d);
+        }
+        return result;
+    }
+    
     /**
      * Exemplifies the use of the interval-based builder.
      */
@@ -186,33 +201,6 @@ public class Example18 extends Example {
     }
 
     /**
-     * Exemplifies the use of the redaction-based builder.
-     */
-    private static void redactionBased() {
-
-        // Create the builder
-        HierarchyBuilderRedactionBased<?> builder = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
-                                                                                    Order.RIGHT_TO_LEFT,
-                                                                                    ' ', '*');
-
-        System.out.println("-------------------------");
-        System.out.println("REDACTION-BASED HIERARCHY");
-        System.out.println("-------------------------");
-        System.out.println("");
-        System.out.println("SPECIFICATION");
-        
-        // Print info about resulting groups
-        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
-        
-        System.out.println("");
-        System.out.println("RESULT");
-        
-        // Print resulting hierarchy
-        printArray(builder.build().getHierarchy());
-        System.out.println("");
-    }
-    
-    /**
      * Exemplifies the use of the interval-based builder for LDL cholesterol
      * in mmol/l.
      */
@@ -260,22 +248,56 @@ public class Example18 extends Example {
         printArray(builder.build().getHierarchy());
         System.out.println("");
     }
-
+    
+    /**
+     * Shows how to load and store hierarchy specifications.
+     */
+    private static void loadStore() {
+        try {
+            HierarchyBuilderRedactionBased<?> builder = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
+                                                                                              Order.RIGHT_TO_LEFT,
+                                                                                              ' ', '*');
+            builder.save("test.ahs");
+            
+            HierarchyBuilder<?> loaded = HierarchyBuilder.create("test.ahs");
+            if (loaded.getType() == Type.REDACTION_BASED) {
+                
+                builder = (HierarchyBuilderRedactionBased<?>)loaded;
+                
+                System.out.println("-------------------------");
+                System.out.println("REDACTION-BASED HIERARCHY");
+                System.out.println("-------------------------");
+                System.out.println("");
+                System.out.println("SPECIFICATION");
+                
+                // Print info about resulting groups
+                System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
+                
+                System.out.println("");
+                System.out.println("RESULT");
+                
+                // Print resulting hierarchy
+                printArray(builder.build().getHierarchy());
+                System.out.println("");
+            } else {
+                System.out.println("Incompatible type of builder");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     /**
      * Exemplifies the use of the order-based builder.
      */
-    private static void dates() {
+    private static void orderBased() {
 
-    	String stringDateFormat = "yyyy-MM-dd HH:mm";
-    	
-    	DataType<Date> dateType = DataType.createDate(stringDateFormat);
-    	
         // Create the builder
-        HierarchyBuilderOrderBased<Date> builder = HierarchyBuilderOrderBased.create(dateType, false);
+        HierarchyBuilderOrderBased<Long> builder = HierarchyBuilderOrderBased.create(DataType.INTEGER, false);
 
         // Define grouping fanouts
-        builder.getLevel(0).addGroup(10, dateType.createAggregate().createIntervalFunction());
-        builder.getLevel(1).addGroup(2, dateType.createAggregate().createIntervalFunction());
+        builder.getLevel(0).addGroup(10, DataType.INTEGER.createAggregate().createIntervalFunction());
+        builder.getLevel(1).addGroup(2, DataType.INTEGER.createAggregate().createIntervalFunction());
 
         // Alternatively
         // builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
@@ -283,18 +305,18 @@ public class Example18 extends Example {
         // builder.getLevel(1).addFanout(2);
         
         System.out.println("---------------------");
-        System.out.println("ORDER-BASED DATE HIERARCHY");
+        System.out.println("ORDER-BASED HIERARCHY");
         System.out.println("---------------------");
         System.out.println("");
         System.out.println("SPECIFICATION");
         
         // Print specification
-        for (Level<Date> level : builder.getLevels()) {
+        for (Level<Long> level : builder.getLevels()) {
             System.out.println(level);
         }
         
         // Print info about resulting groups
-        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleDateData(stringDateFormat))));
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
         
         System.out.println("");
         System.out.println("RESULT");
@@ -305,51 +327,29 @@ public class Example18 extends Example {
     }
     
     /**
-     * Returns example data.
-     *
-     * @return
+     * Exemplifies the use of the redaction-based builder.
      */
-    private static String[] getExampleData(){
+    private static void redactionBased() {
 
-        String[] result = new String[100];
-        for (int i=0; i< result.length; i++){
-            result[i] = String.valueOf(i);
-        }
-        return result;
-    }
-    
-    /**
-     * Returns example date data.
-     *
-     * @param stringFormat
-     * @return
-     */
-    private static String[] getExampleDateData(String stringFormat){
+        // Create the builder
+        HierarchyBuilderRedactionBased<?> builder = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
+                                                                                    Order.RIGHT_TO_LEFT,
+                                                                                    ' ', '*');
 
-    	SimpleDateFormat format = new SimpleDateFormat(stringFormat);
-    	
-        String[] result = new String[100];
-        for (int i=0; i< result.length; i++){
-        	
-        	Calendar date = GregorianCalendar.getInstance();
-        	date.add(Calendar.HOUR, i);
-        	
-            result[i] = format.format(date.getTime());
-        }
-        return result;
-    }
-    
-    /**
-     * Returns example data.
-     *
-     * @return
-     */
-    private static String[] getExampleLDLData() {
-
-        String[] result = new String[100];
-        for (int i=0; i< result.length; i++){
-            result[i] = String.valueOf(Math.random() * 9.9d);
-        }
-        return result;
+        System.out.println("-------------------------");
+        System.out.println("REDACTION-BASED HIERARCHY");
+        System.out.println("-------------------------");
+        System.out.println("");
+        System.out.println("SPECIFICATION");
+        
+        // Print info about resulting groups
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
+        
+        System.out.println("");
+        System.out.println("RESULT");
+        
+        // Print resulting hierarchy
+        printArray(builder.build().getHierarchy());
+        System.out.println("");
     }
 }

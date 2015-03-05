@@ -52,38 +52,53 @@ public abstract class Vocabulary {
 	/**
      * 
      *
-     * @return
+     * @param version
+     * @throws SAXException
      */
-	public abstract String getHeader();
+    public abstract void checkVersion(String version) throws SAXException;
     
     /**
      * 
      *
      * @return
      */
-    public abstract String getVocabularyVersion();
+	public abstract String getAnonymity();
 
 	/**
      * 
      *
      * @return
      */
-	public abstract String getMetadata();
+	public abstract String getAssigment();
 	
 	/**
      * 
      *
      * @return
      */
-	public abstract String getVersion();
+	public abstract String getAttribute();
 	
 	/**
      * 
      *
      * @return
      */
-	public abstract String getVocabulary();
+    public abstract String getAttributeWeight();
 	
+	/**
+     * 
+     *
+     * @return
+     */
+    public abstract String getAttributeWeights();
+	
+	/**
+     * 
+     *
+     * @return
+     */
+	public abstract String getChecked();
+
 	/**
      * 
      *
@@ -96,49 +111,7 @@ public abstract class Vocabulary {
      *
      * @return
      */
-	public abstract String getNode();
-
-	/**
-     * 
-     *
-     * @return
-     */
 	public abstract String getConfig();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getRemoveOutliers();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getPracticalMonotonicity();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getProtectSensitiveAssociations();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getRelativeMaxOutliers();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getMetric();
 	
 	/**
      * 
@@ -159,6 +132,13 @@ public abstract class Vocabulary {
      *
      * @return
      */
+	public abstract String getDatatype();
+	
+	/**
+     * 
+     *
+     * @return
+     */
 	public abstract String getDefinition();
 	
 	/**
@@ -166,28 +146,21 @@ public abstract class Vocabulary {
      *
      * @return
      */
-	public abstract String getAssigment();
+	public abstract String getDepth();
 	
 	/**
      * 
      *
      * @return
      */
-	public abstract String getName();
+    public abstract String getDescription();
 	
 	/**
      * 
      *
      * @return
      */
-	public abstract String getType();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getDatatype();
+    public abstract String getEscape();
 	
 	/**
      * 
@@ -201,21 +174,42 @@ public abstract class Vocabulary {
      *
      * @return
      */
-	public abstract String getRef();
+	public abstract String getHeader();
 	
 	/**
      * 
      *
      * @return
      */
-	public abstract String getMin();
+    public abstract String getHistorySize();
 	
 	/**
      * 
      *
      * @return
      */
-	public abstract String getMax();
+	public abstract String getId();
+	
+	/**
+     * 
+     *
+     * @return
+     */
+	public abstract String getInfoloss();
+	
+	/**
+     * 
+     *
+     * @return
+     */
+    public abstract String getInitialNodesInViewer();
+	
+	/**
+     * 
+     *
+     * @return
+     */
+    public abstract String getInputBytes();
 	
 	/**
      * 
@@ -236,70 +230,21 @@ public abstract class Vocabulary {
      *
      * @return
      */
-	public abstract String getNode2();
+    public abstract String getLinebreak();
 	
 	/**
      * 
      *
      * @return
      */
-	public abstract String getDepth();
+    public abstract String getLocale();
 	
 	/**
      * 
      *
      * @return
      */
-	public abstract String getId();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getTransformation();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getAnonymity();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getChecked();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getPredecessors();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getSuccessors();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getInfoloss();
-	
-	/**
-     * 
-     *
-     * @return
-     */
-	public abstract String getMin2();
+	public abstract String getMax();
 	
 	/**
      * 
@@ -313,28 +258,91 @@ public abstract class Vocabulary {
      *
      * @return
      */
-	public abstract String getAttribute();
+    public abstract String getMaxNodesInLattice();
 	
 	/**
      * 
      *
      * @return
      */
-	public abstract String getProject();
+    public abstract String getMaxNodesInViewer();
+	
+	/**
+     * 
+     *
+     * @return
+     */
+	public abstract String getMetadata();
+	
+	/**
+     * 
+     *
+     * @return
+     */
+	public abstract String getMetric();
+	
+	/**
+     * 
+     *
+     * @return
+     */
+	public abstract String getMin();
+	
+	/**
+     * 
+     *
+     * @return
+     */
+	public abstract String getMin2();
+	
+	/**
+     * 
+     *
+     * @return
+     */
+	public abstract String getName();
+	
+	/**
+     * 
+     *
+     * @return
+     */
+	public abstract String getNode();
+	
+	/**
+     * 
+     *
+     * @return
+     */
+	public abstract String getNode2();
+	
+	/**
+     * 
+     *
+     * @return
+     */
+	public abstract String getPracticalMonotonicity();
     
     /**
      * 
      *
      * @return
      */
-    public abstract String getSeparator();
+	public abstract String getPredecessors();
 
     /**
      * 
      *
      * @return
      */
-    public abstract String getEscape();
+	public abstract String getProject();
+
+    /**
+     * 
+     *
+     * @return
+     */
+	public abstract String getProtectSensitiveAssociations();
 
     /**
      * 
@@ -342,13 +350,6 @@ public abstract class Vocabulary {
      * @return
      */
     public abstract String getQuote();
-
-    /**
-     * 
-     *
-     * @return
-     */
-    public abstract String getLinebreak();
     
     
     /**
@@ -356,21 +357,35 @@ public abstract class Vocabulary {
      *
      * @return
      */
-    public abstract String getDescription();
+	public abstract String getRef();
     
     /**
      * 
      *
      * @return
      */
-    public abstract String getSuppressionString();
+	public abstract String getRelativeMaxOutliers();
     
     /**
      * 
      *
      * @return
      */
-    public abstract String getHistorySize();
+	public abstract String getRemoveOutliers();
+    
+    /**
+     * 
+     *
+     * @return
+     */
+    public abstract String getSelectedAttribute();
+    
+    /**
+     * 
+     *
+     * @return
+     */
+    public abstract String getSeparator();
     
     /**
      * 
@@ -391,63 +406,7 @@ public abstract class Vocabulary {
      *
      * @return
      */
-    public abstract String getInitialNodesInViewer();
-    
-    /**
-     * 
-     *
-     * @return
-     */
-    public abstract String getMaxNodesInLattice();
-    
-    /**
-     * 
-     *
-     * @return
-     */
-    public abstract String getMaxNodesInViewer();
-    
-    /**
-     * 
-     *
-     * @return
-     */
-    public abstract String getSelectedAttribute();
-    
-    /**
-     * 
-     *
-     * @return
-     */
-    public abstract String getInputBytes();
-
-    /**
-     * 
-     *
-     * @return
-     */
-    public abstract String getAttributeWeights();
-    
-    /**
-     * 
-     *
-     * @return
-     */
-    public abstract String getAttributeWeight();
-    
-    /**
-     * 
-     *
-     * @return
-     */
-    public abstract String getWeight();
-    
-    /**
-     * 
-     *
-     * @return
-     */
-    public abstract String getSuppressionAlwaysEnabled();
+	public abstract String getSuccessors();
     
     /**
      * 
@@ -455,21 +414,62 @@ public abstract class Vocabulary {
      * @return
      */
     public abstract String getSuppressedAttributeTypes();
+    
+    /**
+     * 
+     *
+     * @return
+     */
+    public abstract String getSuppressionAlwaysEnabled();
 
     /**
      * 
      *
      * @return
      */
-    public abstract String getLocale();
+    public abstract String getSuppressionString();
+    
+    /**
+     * 
+     *
+     * @return
+     */
+	public abstract String getTransformation();
+    
+    /**
+     * 
+     *
+     * @return
+     */
+	public abstract String getType();
+    
+    /**
+     * 
+     *
+     * @return
+     */
+	public abstract String getVersion();
+    
+    /**
+     * 
+     *
+     * @return
+     */
+	public abstract String getVocabulary();
+
+    /**
+     * 
+     *
+     * @return
+     */
+    public abstract String getVocabularyVersion();
     
 	/**
      * 
      *
-     * @param value
      * @return
      */
-	public boolean isMetadata(String value){ return value.equals(getMetadata()); }
+    public abstract String getWeight();
 	
 	/**
      * 
@@ -477,7 +477,7 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-	public boolean isVersion(String value){return value.equals(getVersion());}
+	public boolean isAnonymity(String value){return value.equals(getAnonymity());}
 	
 	/**
      * 
@@ -485,7 +485,39 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-	public boolean isVocabulary(String value) { return value.equals(getVocabulary()); }
+	public boolean isAssigment(String value){return value.equals(getAssigment());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isAttribute(String value){return value.equals(getAttribute());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+    public boolean isAttributeWeight(String value) {return value.equals(getAttributeWeight());}
+
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+    public boolean isAttributeWeights(String value) {return value.equals(getAttributeWeights());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isChecked(String value){return value.equals(getChecked());}
 	
 	/**
      * 
@@ -501,55 +533,7 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-	public boolean isNode(String value){return value.equals(getNode());}
-
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
 	public boolean isConfig(String value){ return value.equals(getConfig()); }
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isRemoveOutliers(String value){return value.equals(getRemoveOutliers());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isPracticalMonotonicity(String value){return value.equals(getPracticalMonotonicity());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isProtectSensitiveAssociations(String value){return value.equals(getProtectSensitiveAssociations());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isRelativeMaxOutliers(String value){return value.equals(getRelativeMaxOutliers());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isMetric(String value){return value.equals(getMetric());}
 	
 	/**
      * 
@@ -573,6 +557,14 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
+	public boolean isDatatype(String value){return value.equals(getDatatype());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
 	public boolean isDefinition(String value){return value.equals(getDefinition());}
 	
 	/**
@@ -581,31 +573,7 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-	public boolean isAssigment(String value){return value.equals(getAssigment());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isName(String value){return value.equals(getName());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isType(String value){return value.equals(getType());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isDatatype(String value){return value.equals(getDatatype());}
+	public boolean isDepth(String value){return value.equals(getDepth());}
 	
 	/**
      * 
@@ -621,7 +589,7 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-	public boolean isRef(String value){return value.equals(getRef());}
+	public boolean isId(String value){return value.equals(getId());}
 	
 	/**
      * 
@@ -629,15 +597,7 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-	public boolean isMin(String value){return value.equals(getMin());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isMax(String value){return value.equals(getMax());}
+	public boolean isInfoloss(String value){return value.equals(getInfoloss());}
 	
 	/**
      * 
@@ -661,7 +621,7 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-	public boolean isNode2(String value){return value.equals(getNode2());}
+    public boolean isLocale(String value) {return value.equals(getLocale());}
 	
 	/**
      * 
@@ -669,71 +629,7 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-	public boolean isDepth(String value){return value.equals(getDepth());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isId(String value){return value.equals(getId());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isTransformation(String value){return value.equals(getTransformation());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isAnonymity(String value){return value.equals(getAnonymity());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isChecked(String value){return value.equals(getChecked());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isPredecessors(String value){return value.equals(getPredecessors());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isSuccessors(String value){return value.equals(getSuccessors());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isInfoloss(String value){return value.equals(getInfoloss());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isMin2(String value){return value.equals(getMin2());}
+	public boolean isMax(String value){return value.equals(getMax());}
 	
 	/**
      * 
@@ -749,40 +645,112 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-	public boolean isAttribute(String value){return value.equals(getAttribute());}
+	public boolean isMetadata(String value){ return value.equals(getMetadata()); }
 	
-    /**
+	/**
      * 
      *
      * @param value
      * @return
      */
-    public boolean isAttributeWeight(String value) {return value.equals(getAttributeWeight());}
-    
-    /**
+	public boolean isMetric(String value){return value.equals(getMetric());}
+	
+	/**
      * 
      *
      * @param value
      * @return
      */
-    public boolean isAttributeWeights(String value) {return value.equals(getAttributeWeights());}
-    
-    /**
+	public boolean isMin(String value){return value.equals(getMin());}
+	
+	/**
      * 
      *
      * @param value
      * @return
      */
-    public boolean isWeight(String value) {return value.equals(getWeight());}
-
-    /**
+	public boolean isMin2(String value){return value.equals(getMin2());}
+	
+	/**
      * 
      *
      * @param value
      * @return
      */
-    public boolean isSuppressionAlwaysEnabled(String value) {return value.equals(getSuppressionAlwaysEnabled());}
-    
+	public boolean isName(String value){return value.equals(getName());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isNode(String value){return value.equals(getNode());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isNode2(String value){return value.equals(getNode2());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isPracticalMonotonicity(String value){return value.equals(getPracticalMonotonicity());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isPredecessors(String value){return value.equals(getPredecessors());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isProtectSensitiveAssociations(String value){return value.equals(getProtectSensitiveAssociations());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isRef(String value){return value.equals(getRef());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isRelativeMaxOutliers(String value){return value.equals(getRelativeMaxOutliers());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isRemoveOutliers(String value){return value.equals(getRemoveOutliers());}
+	
+	/**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isSuccessors(String value){return value.equals(getSuccessors());}
+	
     /**
      * 
      *
@@ -797,13 +765,45 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-    public boolean isLocale(String value) {return value.equals(getLocale());}
+    public boolean isSuppressionAlwaysEnabled(String value) {return value.equals(getSuppressionAlwaysEnabled());}
     
     /**
      * 
      *
-     * @param version
-     * @throws SAXException
+     * @param value
+     * @return
      */
-    public abstract void checkVersion(String version) throws SAXException;    
+	public boolean isTransformation(String value){return value.equals(getTransformation());}
+
+    /**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isType(String value){return value.equals(getType());}
+    
+    /**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isVersion(String value){return value.equals(getVersion());}
+    
+    /**
+     * 
+     *
+     * @param value
+     * @return
+     */
+	public boolean isVocabulary(String value) { return value.equals(getVocabulary()); }
+    
+    /**
+     * 
+     *
+     * @param value
+     * @return
+     */
+    public boolean isWeight(String value) {return value.equals(getWeight());}    
 }

@@ -428,6 +428,20 @@ public class ComponentTable implements IComponent {
     }
 
     /**
+     * Updates the selection.
+     *
+     * @param row
+     * @param column
+     */
+    public void setSelection(int row, int column) {
+        this.table.doCommand(new SelectCellCommand(bodyLayer.getSelectionLayer(), 
+                                                   column, 
+                                                   row, 
+                                                   false,
+                                                   false));
+    }
+
+    /**
      * To display coordinates.
      *
      * @param x
@@ -535,7 +549,7 @@ public class ComponentTable implements IComponent {
         });
 
     }
-
+    
     /**
      * 
      *
@@ -562,7 +576,7 @@ public class ComponentTable implements IComponent {
             }
         });
     }
-    
+
     /**
      * 
      *
@@ -658,7 +672,7 @@ public class ComponentTable implements IComponent {
             }
         };
     }
-
+    
     /**
      * 
      *
@@ -690,7 +704,7 @@ public class ComponentTable implements IComponent {
             }
         };
     }
-    
+
     /**
      * Fires a new event.
      */
@@ -703,19 +717,5 @@ public class ComponentTable implements IComponent {
         for (SelectionListener listener : selectionListeners) {
             listener.widgetSelected(sEvent);
         }
-    }
-
-    /**
-     * Updates the selection.
-     *
-     * @param row
-     * @param column
-     */
-    public void setSelection(int row, int column) {
-        this.table.doCommand(new SelectCellCommand(bodyLayer.getSelectionLayer(), 
-                                                   column, 
-                                                   row, 
-                                                   false,
-                                                   false));
     }
 }

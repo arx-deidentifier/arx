@@ -47,20 +47,6 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
     }
 
     /**
-     * Parse
-     * 
-     * @param model
-     */
-    protected abstract void parse(T model);
-
-    /**
-     * Build the composite
-     * 
-     * @param parent
-     */
-    protected abstract Composite build(Composite parent);
-
-    /**
      * Disposes the editor
      */
     public void dispose() {
@@ -75,4 +61,18 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
     public T getModel() {
         return this.model;
     }
+
+    /**
+     * Build the composite
+     * 
+     * @param parent
+     */
+    protected abstract Composite build(Composite parent);
+
+    /**
+     * Parse
+     * 
+     * @param model
+     */
+    protected abstract void parse(T model);
 }

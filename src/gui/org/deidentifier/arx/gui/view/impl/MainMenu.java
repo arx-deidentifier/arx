@@ -63,6 +63,14 @@ public class MainMenu extends AbstractMenu {
         this.update(new ModelEvent(this, ModelPart.MODEL, null));
     }
 
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (!menu.isDisposed()) {
+            menu.dispose();
+        }
+    }
+
     /**
      * Creates all according entries
      * @param menu
@@ -111,20 +119,7 @@ public class MainMenu extends AbstractMenu {
             }
         }
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        if (!menu.isDisposed()) {
-            menu.dispose();
-        }
-    }
     
-    @Override
-    protected void update(Model model) {
-        update(menu, model);
-    }
-
     /**
      * Updates the menu
      * @param menu
@@ -151,5 +146,10 @@ public class MainMenu extends AbstractMenu {
                 item.setEnabled(mItem == null || mItem.isEnabled(model));
             }
         }        
+    }
+
+    @Override
+    protected void update(Model model) {
+        update(menu, model);
     }
 }

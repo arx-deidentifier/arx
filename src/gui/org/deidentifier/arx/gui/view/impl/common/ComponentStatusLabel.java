@@ -533,6 +533,14 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
+     * Sets a progress provider, if any
+     * @param provider
+     */
+    public void setProgressProvider(ComponentStatusLabelProgressProvider provider) {
+        this.progressProvider = provider;
+    }
+
+    /**
      * 
      *
      * @param rightMargin
@@ -1037,13 +1045,5 @@ public class ComponentStatusLabel extends Canvas {
         int nextOffset = layout.getNextOffset(offset, SWT.MOVEMENT_CLUSTER);
         if (nextOffset != offset) return layout.getPreviousOffset(nextOffset, SWT.MOVEMENT_CLUSTER);
         return offset;
-    }
-
-    /**
-     * Sets a progress provider, if any
-     * @param provider
-     */
-    public void setProgressProvider(ComponentStatusLabelProgressProvider provider) {
-        this.progressProvider = provider;
     }
 }

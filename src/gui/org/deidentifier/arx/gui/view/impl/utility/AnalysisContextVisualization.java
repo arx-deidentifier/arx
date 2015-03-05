@@ -25,17 +25,17 @@ package org.deidentifier.arx.gui.view.impl.utility;
 public interface AnalysisContextVisualization {
     
     /**
-     * Is this a valid context.
-     *
-     * @return
-     */
-    public boolean isValid();
-    
-    /**
      * Is the provided attribute selected according to the config?.
      *
      * @param attribute
      * @return
      */
     public boolean isAttributeSelected(String attribute);
+    
+    /**
+     * Is this a valid context.
+     *
+     * @return
+     */
+    public boolean isValid();
 }

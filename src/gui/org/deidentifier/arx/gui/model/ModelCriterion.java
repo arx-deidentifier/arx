@@ -35,13 +35,25 @@ public abstract class ModelCriterion implements Serializable {
 	private boolean enabled = false;
 
 	/**
+     * Clone
+     */
+    public abstract ModelCriterion clone();
+	
+	/**
      * Implement this to return the criterion.
      *
      * @param model
      * @return
      */
 	public abstract PrivacyCriterion getCriterion(Model model);
-	
+
+	/**
+     * Implement this to return a string representation.
+     *
+     * @return
+     */
+    public abstract String getLabel();
+
 	/**
      * Is this criterion active.
      *
@@ -51,7 +63,13 @@ public abstract class ModelCriterion implements Serializable {
 		return enabled;
 	}
 
-	/**
+    /**
+     * Parse
+     * @param other
+     */
+    public abstract void parse(ModelCriterion other);
+    
+    /**
      * Sets the criterion active/inactive.
      *
      * @param active
@@ -60,28 +78,10 @@ public abstract class ModelCriterion implements Serializable {
 		this.enabled = enabled;
 	}
 
-	/**
+    /**
      * Implement this to return a string representation.
      *
      * @return
      */
     public abstract String toString();
-
-    /**
-     * Implement this to return a string representation.
-     *
-     * @return
-     */
-    public abstract String getLabel();
-    
-    /**
-     * Clone
-     */
-    public abstract ModelCriterion clone();
-
-    /**
-     * Parse
-     * @param other
-     */
-    public abstract void parse(ModelCriterion other);
 }

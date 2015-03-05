@@ -37,58 +37,6 @@ import de.linearbits.jhc.JHCHeatmap.Point;
 public class DensityData extends JHCData{
     
     /**
-     * A point implementation for density data.
-     *
-     * @author Fabian Prasser
-     */
-    private class DensityPoint implements Point {
-        
-        /** x. */
-        private int x;
-        
-        /** y. */
-        private int y;
-        
-        /** value. */
-        private double value;
-
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap.Point#getValue()
-         */
-        @Override
-        public double getValue() {
-            return value;
-        }
-
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap.Point#getX()
-         */
-        @Override
-        public int getX() {
-            return x;
-        }
-
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap.Point#getY()
-         */
-        @Override
-        public int getY() {
-            return y;
-        }
-        
-        /**
-         * Parses the given contingency table entry.
-         *
-         * @param entry
-         */
-        private void parse(Entry entry){
-            x = entry.value1;
-            y = entry.value2;
-            value = entry.frequency;
-        }
-    };
-    
-    /**
      * A heatmap implementation for density data.
      *
      * @author Fabian Prasser
@@ -182,6 +130,58 @@ public class DensityData extends JHCData{
                 }
                 
             };
+        }
+    };
+    
+    /**
+     * A point implementation for density data.
+     *
+     * @author Fabian Prasser
+     */
+    private class DensityPoint implements Point {
+        
+        /** x. */
+        private int x;
+        
+        /** y. */
+        private int y;
+        
+        /** value. */
+        private double value;
+
+        /* (non-Javadoc)
+         * @see de.linearbits.jhc.JHCHeatmap.Point#getValue()
+         */
+        @Override
+        public double getValue() {
+            return value;
+        }
+
+        /* (non-Javadoc)
+         * @see de.linearbits.jhc.JHCHeatmap.Point#getX()
+         */
+        @Override
+        public int getX() {
+            return x;
+        }
+
+        /* (non-Javadoc)
+         * @see de.linearbits.jhc.JHCHeatmap.Point#getY()
+         */
+        @Override
+        public int getY() {
+            return y;
+        }
+        
+        /**
+         * Parses the given contingency table entry.
+         *
+         * @param entry
+         */
+        private void parse(Entry entry){
+            x = entry.value1;
+            y = entry.value2;
+            value = entry.frequency;
         }
     }
 

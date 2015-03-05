@@ -513,44 +513,6 @@ public class ImportWizardPageCSV extends WizardPage {
     }
     
     /**
-     * Tries to detect the line break.
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    private void detectLinebreak() throws IOException {
-        BufferedReader r = null;
-        final char[] buffer = new char[ImportWizardModel.DETECT_MAX_CHARS];
-        int read = 0;
-
-        try {
-            r = new BufferedReader(new FileReader(new File(comboLocation.getText())));
-            read = r.read(buffer);
-        } finally {
-            if (r != null) {
-                r.close();
-            }
-        }
-
-        if (read > 0) {
-            for (int i = 0; i < read; i++) {
-                char current = buffer[i];
-                if (current == '\r') {
-                    if (i < buffer.length - 1 && buffer[i + 1] == '\n') { // Windows
-                        selectedLinebreak = 1;
-                    } else { // Mac OS
-                        selectedLinebreak = 2;
-                    }
-                    return;
-                }
-                if (current == '\n') { // Unix
-                    selectedLinebreak = 0;
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
      * Tries to detect the separator used within this file
      *
      * This goes through up to {@link ImportWizardModel#PREVIEW_MAX_LINES} lines
@@ -604,6 +566,44 @@ public class ImportWizardPageCSV extends WizardPage {
             if (allocated[i] && values[i] > max) {
                 max = values[i];
                 selectedDelimiter = keys[i];
+            }
+        }
+    }
+
+    /**
+     * Tries to detect the line break.
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    private void detectLinebreak() throws IOException {
+        BufferedReader r = null;
+        final char[] buffer = new char[ImportWizardModel.DETECT_MAX_CHARS];
+        int read = 0;
+
+        try {
+            r = new BufferedReader(new FileReader(new File(comboLocation.getText())));
+            read = r.read(buffer);
+        } finally {
+            if (r != null) {
+                r.close();
+            }
+        }
+
+        if (read > 0) {
+            for (int i = 0; i < read; i++) {
+                char current = buffer[i];
+                if (current == '\r') {
+                    if (i < buffer.length - 1 && buffer[i + 1] == '\n') { // Windows
+                        selectedLinebreak = 1;
+                    } else { // Mac OS
+                        selectedLinebreak = 2;
+                    }
+                    return;
+                }
+                if (current == '\n') { // Unix
+                    selectedLinebreak = 0;
+                    return;
+                }
             }
         }
     }

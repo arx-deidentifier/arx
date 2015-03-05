@@ -121,6 +121,13 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
 
     @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        double[] result = new double[getDimensions()];
+        Arrays.fill(result, entry.count);
+        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
+    }
+    
+    @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         
         double[] result = getInformationLossInternalRaw(node, g);
@@ -134,7 +141,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result),
                                                super.createInformationLoss(result));
     }
-    
+
     /**
      * 
      *
@@ -213,7 +220,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super.setMax(max);
         super.setMin(min);
     }
-
+    
     @Override
     protected void initializeInternal(DataDefinition definition,
                                       Data input,
@@ -258,12 +265,5 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         
         super.setMax(max);
         super.setMin(min);
-    }
-    
-    @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-        double[] result = new double[getDimensions()];
-        Arrays.fill(result, entry.count);
-        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
 }

@@ -67,23 +67,6 @@ public class CSVSyntax implements Serializable{
     }
 
     /**
-     * Returns a linebreak for a label
-     * @param label
-     * @return
-     */
-    public static char[] getLinebreakForLabel(String label) {
-        int idx = 0;
-        for (String c : linebreaklabels) {
-            if (c.equals(label)) {
-                return linebreaks[idx];
-            } else {
-                idx++;
-            }
-        }
-        return linebreaks[0];
-    }
-
-    /**
      * Returns a label for a linebreak
      * @param linebreak
      * @return
@@ -98,6 +81,23 @@ public class CSVSyntax implements Serializable{
             }
         }
         return linebreaklabels[0];
+    }
+
+    /**
+     * Returns a linebreak for a label
+     * @param label
+     * @return
+     */
+    public static char[] getLinebreakForLabel(String label) {
+        int idx = 0;
+        for (String c : linebreaklabels) {
+            if (c.equals(label)) {
+                return linebreaks[idx];
+            } else {
+                idx++;
+            }
+        }
+        return linebreaks[0];
     }
 
     /**

@@ -43,29 +43,6 @@ import org.deidentifier.arx.metric.Metric;
 public class Example22 extends Example {
 
     /**
-     * Entry point.
-     *
-     * @param args the arguments
-     * @throws IOException
-     */
-    public static void main(final String[] args) throws IOException {
-        
-        Data data = createData("adult");
-        data.getDefinition().setAttributeType("occupation", AttributeType.SENSITIVE_ATTRIBUTE);
-        
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new EntropyLDiversity("occupation", 5));
-        config.setMaxOutliers(0.04d);
-        config.setProtectSensitiveAssociations(false);
-        config.setMetric(Metric.createEntropyMetric());
-        
-        // Anonymize
-        ARXResult result = anonymizer.anonymize(data, config);
-        printResult(result, data);
-    }
-
-    /**
      * 
      *
      * @param dataset
@@ -103,5 +80,28 @@ public class Example22 extends Example {
         }
 
         return data;
+    }
+
+    /**
+     * Entry point.
+     *
+     * @param args the arguments
+     * @throws IOException
+     */
+    public static void main(final String[] args) throws IOException {
+        
+        Data data = createData("adult");
+        data.getDefinition().setAttributeType("occupation", AttributeType.SENSITIVE_ATTRIBUTE);
+        
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
+        config.addCriterion(new EntropyLDiversity("occupation", 5));
+        config.setMaxOutliers(0.04d);
+        config.setProtectSensitiveAssociations(false);
+        config.setMetric(Metric.createEntropyMetric());
+        
+        // Anonymize
+        ARXResult result = anonymizer.anonymize(data, config);
+        printResult(result, data);
     }
 }

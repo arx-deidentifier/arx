@@ -302,20 +302,20 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#isUseHeuristicSearchForSampleBasedCriteria()
+     */
+    public boolean isHeuristicForSampleBasedCriteria() {
+        return config.isUseHeuristicSearchForSampleBasedCriteria();
+    }
+
+    /**
      * Has the config been modified.
      *
      * @return
      */
     public boolean isModified() {
         return modified;
-    }
-
-    /**
-     * @return
-     * @see org.deidentifier.arx.ARXConfiguration#isUseHeuristicSearchForSampleBasedCriteria()
-     */
-    public boolean isHeuristicForSampleBasedCriteria() {
-        return config.isUseHeuristicSearchForSampleBasedCriteria();
     }
 
     /**
@@ -406,6 +406,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 	
 	/**
+     * @param value
+     * @see org.deidentifier.arx.ARXConfiguration#setUseHeuristicSearchForSampleBasedCriteria(boolean)
+     */
+    public void setHeuristicForSampleBasedCriteria(boolean value) {
+        config.setUseHeuristicSearchForSampleBasedCriteria(value);
+    }
+
+    /**
      * Assigns a hierarchy.
      *
      * @param attribute
@@ -415,7 +423,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.hierarchies.put(attribute, hierarchy);
         this.setModified();
     }
-
+    
     /**
      * Sets the given hierarchy builder.
      *
@@ -438,7 +446,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         input = data;
         setModified();
     }
-    
+
     /**
      * Maximum generalization.
      *
@@ -452,7 +460,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         this.max.put(attribute, max);
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -475,14 +483,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         setModified();
         this.min.put(attribute, min);
-    }
-    
-    /**
-     * @param value
-     * @see org.deidentifier.arx.ARXConfiguration#setUseHeuristicSearchForSampleBasedCriteria(boolean)
-     */
-    public void setHeuristicForSampleBasedCriteria(boolean value) {
-        config.setUseHeuristicSearchForSampleBasedCriteria(value);
     }
 
     /**

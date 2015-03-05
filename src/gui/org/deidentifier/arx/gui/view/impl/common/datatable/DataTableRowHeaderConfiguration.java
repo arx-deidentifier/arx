@@ -55,6 +55,15 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
         cellPainter = bgImagePainter;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.layer.config.DefaultRowHeaderStyleConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
+     */
+    @Override
+    public void configureRegistry(final IConfigRegistry configRegistry) {
+        super.configureRegistry(configRegistry);
+        addSelectedModeStyling(configRegistry);
+    }
+
     /**
      * Add selected style.
      *
@@ -71,14 +80,5 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
                                                selectedCellPainter,
                                                DisplayMode.SELECT,
                                                GridRegion.ROW_HEADER);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.config.DefaultRowHeaderStyleConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
-     */
-    @Override
-    public void configureRegistry(final IConfigRegistry configRegistry) {
-        super.configureRegistry(configRegistry);
-        addSelectedModeStyling(configRegistry);
     }
 }

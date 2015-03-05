@@ -112,67 +112,6 @@ public class StateMachine {
     }
 
     /**
-     * Returns the projection. All bits are set for the columns that don't need
-     * to be checked
-     * 
-     * @param currentNode
-     *            the current node
-     * @return the projection
-     */
-    private long getProjection(final Node currentNode) {
-        long projection = 0L;
-        for (int i = 0; i < currentNode.getTransformation().length; i++) {
-            if (currentNode.getTransformation()[i] == lastNode.getTransformation()[i]) {
-                projection |= 1L << i;
-            }
-        }
-        return projection;
-    }
-
-    /**
-     * Is a rollup optimization possible.
-     * 
-     * @param currentNode
-     *            the current node
-     * @return true, if is possible rollup
-     */
-    private boolean isPossibleRollup(final Node currentNode) {
-        for (int i = 0; i < lastNode.getTransformation().length; i++) {
-            if (currentNode.getTransformation()[i] < lastNode.getTransformation()[i]) { return false; }
-        }
-        return true;
-
-    }
-
-    /**
-     * Is a snapshot optimization possible.
-     * 
-     * @param currentNode
-     *            the current node
-     * @return true, if is possible snapshot
-     */
-    private boolean isPossibleSnapshot(final Node currentNode) {
-        snapshot = history.get(currentNode);
-        snapshotNode = history.getTransformation();
-        if (snapshot != null) { return true; }
-        return false;
-    }
-
-    /**
-     * Is node2 a predecessor of or equal to node1?.
-     *
-     * @param node1
-     * @param node2
-     * @return
-     */
-    private boolean isPredecessor(final Node node1, final Node node2) {
-        for (int i = 0; i < node2.getTransformation().length; i++) {
-            if (node1.getTransformation()[i] < node2.getTransformation()[i]) { return false; }
-        }
-        return true;
-    }
-
-    /**
      * Resets the state machine.
      */
     public void reset() {
@@ -237,5 +176,66 @@ public class StateMachine {
 
         // Return
         return result;
+    }
+
+    /**
+     * Returns the projection. All bits are set for the columns that don't need
+     * to be checked
+     * 
+     * @param currentNode
+     *            the current node
+     * @return the projection
+     */
+    private long getProjection(final Node currentNode) {
+        long projection = 0L;
+        for (int i = 0; i < currentNode.getTransformation().length; i++) {
+            if (currentNode.getTransformation()[i] == lastNode.getTransformation()[i]) {
+                projection |= 1L << i;
+            }
+        }
+        return projection;
+    }
+
+    /**
+     * Is a rollup optimization possible.
+     * 
+     * @param currentNode
+     *            the current node
+     * @return true, if is possible rollup
+     */
+    private boolean isPossibleRollup(final Node currentNode) {
+        for (int i = 0; i < lastNode.getTransformation().length; i++) {
+            if (currentNode.getTransformation()[i] < lastNode.getTransformation()[i]) { return false; }
+        }
+        return true;
+
+    }
+
+    /**
+     * Is a snapshot optimization possible.
+     * 
+     * @param currentNode
+     *            the current node
+     * @return true, if is possible snapshot
+     */
+    private boolean isPossibleSnapshot(final Node currentNode) {
+        snapshot = history.get(currentNode);
+        snapshotNode = history.getTransformation();
+        if (snapshot != null) { return true; }
+        return false;
+    }
+
+    /**
+     * Is node2 a predecessor of or equal to node1?.
+     *
+     * @param node1
+     * @param node2
+     * @return
+     */
+    private boolean isPredecessor(final Node node1, final Node node2) {
+        for (int i = 0; i < node2.getTransformation().length; i++) {
+            if (node1.getTransformation()[i] < node2.getTransformation()[i]) { return false; }
+        }
+        return true;
     }
 }

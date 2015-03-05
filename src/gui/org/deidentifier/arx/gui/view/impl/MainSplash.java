@@ -71,19 +71,21 @@ public class MainSplash {
     }
 
     /**
-     * Paint.
-     *
-     * @param gc
+     * Disposes the shell.
      */
-    private void paint(GC gc) {
-    	Point size = shell.getSize();
-        Point offsets = gc.textExtent(version);
-        gc.setAdvanced(true);
-        gc.setAntialias(SWT.ON);
-        gc.setInterpolation(SWT.ON);
-        gc.drawImage(splash, 0,  0, splash.getBounds().width, splash.getBounds().height, 0, 0, size.x,  size.y);
-        gc.setForeground(GUIHelper.COLOR_BLACK);
-        gc.drawString(version, size.x - (int)offsets.x - 10, size.y - (int)offsets.y - 10, true);
+    public void hide() {
+        if (shell != null && !shell.isDisposed()) {
+            shell.dispose();
+        }
+    }
+
+    /**
+     * Is this shell disposed.
+     *
+     * @return
+     */
+    public boolean isDisposed() {
+        return this.shell == null || this.shell.isDisposed();
     }
 
     /**
@@ -108,29 +110,27 @@ public class MainSplash {
     }
 
     /**
-     * Is this shell disposed.
-     *
-     * @return
-     */
-    public boolean isDisposed() {
-        return this.shell == null || this.shell.isDisposed();
-    }
-
-    /**
-     * Disposes the shell.
-     */
-    public void hide() {
-        if (shell != null && !shell.isDisposed()) {
-            shell.dispose();
-        }
-    }
-
-    /**
      * Detect os x.
      *
      * @return
      */
     private boolean isMac() {
         return (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0);
+    }
+
+    /**
+     * Paint.
+     *
+     * @param gc
+     */
+    private void paint(GC gc) {
+    	Point size = shell.getSize();
+        Point offsets = gc.textExtent(version);
+        gc.setAdvanced(true);
+        gc.setAntialias(SWT.ON);
+        gc.setInterpolation(SWT.ON);
+        gc.drawImage(splash, 0,  0, splash.getBounds().width, splash.getBounds().height, 0, 0, size.x,  size.y);
+        gc.setForeground(GUIHelper.COLOR_BLACK);
+        gc.drawString(version, size.x - (int)offsets.x - 10, size.y - (int)offsets.y - 10, true);
     }
 }

@@ -100,13 +100,21 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
 
 
     /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createViewConfig(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext)
+     */
+    @Override
+    protected AnalysisContextVisualizationContingency createViewConfig(AnalysisContext context) {
+        return new AnalysisContextVisualizationContingency(context);
+    }
+
+
+    /* (non-Javadoc)
      * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doReset()
      */
     @Override
     protected void doReset() {
         jhc.setData(null, new JHCConfiguration("", "", MAX_SIZE, MAX_SIZE, gradient, layout));
     }
-
 
     /* (non-Javadoc)
      * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doUpdate(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContextVisualization)
@@ -122,13 +130,5 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
                                                                                             gradient,
                                                                                             layout));
 
-    }
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createViewConfig(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext)
-     */
-    @Override
-    protected AnalysisContextVisualizationContingency createViewConfig(AnalysisContext context) {
-        return new AnalysisContextVisualizationContingency(context);
     }
 }

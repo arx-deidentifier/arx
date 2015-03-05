@@ -145,6 +145,13 @@ public class LayoutRisksAbstract implements ILayout, IView {
     }
 
     /**
+     * Returns the selected type of view
+     */
+    public ViewRiskType getSelectedViewType() {
+        return this.getViewForSelectionIndex(getSelectionIndex()).getViewType();
+    }
+
+    /**
      * Returns the selection index.
      *
      * @return
@@ -161,7 +168,7 @@ public class LayoutRisksAbstract implements ILayout, IView {
     public ViewRisks<?> getViewForSelectionIndex(final int index) {
         return this.views.get(index);
     }
-
+    
     @Override
     public void reset() {
         if (buttonSubset != null) {
@@ -169,7 +176,7 @@ public class LayoutRisksAbstract implements ILayout, IView {
         }
         buttonEnable.setEnabled(false);
     }
-    
+
     /**
      * Sets the selection index.
      *
@@ -179,7 +186,7 @@ public class LayoutRisksAbstract implements ILayout, IView {
         folder.setSelection(index);
         pullEnableState();
     }
-
+    
     @Override
     public void update(ModelEvent event) {
         
@@ -195,13 +202,6 @@ public class LayoutRisksAbstract implements ILayout, IView {
         if (this.isTop) {
             updateButtonSubset(event);
         }
-    }
-    
-    /**
-     * Returns the selected type of view
-     */
-    public ViewRiskType getSelectedViewType() {
-        return this.getViewForSelectionIndex(getSelectionIndex()).getViewType();
     }
 
     /**

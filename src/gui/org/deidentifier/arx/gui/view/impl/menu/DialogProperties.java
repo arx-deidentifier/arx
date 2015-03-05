@@ -171,6 +171,32 @@ public class DialogProperties implements IDialog {
      * Create a tab
      * @param window
      */
+    private void createTabRisk(PreferencesDialog window) {
+
+        window.addCategory(Resources.getMessage("PropertyDialog.40"), //$NON-NLS-1$
+                           controller.getResources().getImage("settings-risk.png")); //$NON-NLS-1$
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.41"), 1, 100000, 1000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getRiskModel().getMaxIterations(); }
+            protected void setValue(Object t) { model.getRiskModel().setMaxIterations((Integer)t); }});
+        
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.42"), 1.0e-10, 1d, 1.0e-6) { //$NON-NLS-1$
+            protected Double getValue() { return model.getRiskModel().getAccuracy(); }
+            protected void setValue(Object t) { model.getRiskModel().setAccuracy((Double)t); }});
+
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.43"), 1, 10, 10) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getRiskModel().getMaxQiSize(); }
+            protected void setValue(Object t) { model.getRiskModel().setMaxQiSize((Integer)t); }});
+        
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.44")) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getInputConfig().isHeuristicForSampleBasedCriteria(); }
+            protected void setValue(Object t) { model.getInputConfig().setHeuristicForSampleBasedCriteria((Boolean)t); }});
+    }
+    
+    /**
+     * Create a tab
+     * @param window
+     */
     private void createTabTransformation(PreferencesDialog window) {
        
         window.addCategory(Resources.getMessage("PropertyDialog.10"), //$NON-NLS-1$
@@ -196,7 +222,7 @@ public class DialogProperties implements IDialog {
             protected Integer getValue() { return model.getMaxNodesInLattice(); }
             protected void setValue(Object t) { model.setMaxNodesInLattice((Integer)t); }});
     }
-    
+
     /**
      * Create a tab
      * @param window
@@ -212,32 +238,6 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.25"), 0, 10000, 700) { //$NON-NLS-1$
             protected Integer getValue() { return model.getMaxNodesInViewer(); }
             protected void setValue(Object t) { model.setMaxNodesInViewer((Integer)t); }});
-    }
-
-    /**
-     * Create a tab
-     * @param window
-     */
-    private void createTabRisk(PreferencesDialog window) {
-
-        window.addCategory(Resources.getMessage("PropertyDialog.40"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-risk.png")); //$NON-NLS-1$
-        
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.41"), 1, 100000, 1000) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getRiskModel().getMaxIterations(); }
-            protected void setValue(Object t) { model.getRiskModel().setMaxIterations((Integer)t); }});
-        
-        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.42"), 1.0e-10, 1d, 1.0e-6) { //$NON-NLS-1$
-            protected Double getValue() { return model.getRiskModel().getAccuracy(); }
-            protected void setValue(Object t) { model.getRiskModel().setAccuracy((Double)t); }});
-
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.43"), 1, 10, 10) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getRiskModel().getMaxQiSize(); }
-            protected void setValue(Object t) { model.getRiskModel().setMaxQiSize((Integer)t); }});
-        
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.44")) { //$NON-NLS-1$
-            protected Boolean getValue() { return model.getInputConfig().isHeuristicForSampleBasedCriteria(); }
-            protected void setValue(Object t) { model.getInputConfig().setHeuristicForSampleBasedCriteria((Boolean)t); }});
     }
 
     /**

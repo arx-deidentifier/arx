@@ -434,43 +434,6 @@ public class ImportWizardPageColumns extends WizardPage {
     }
     
     /**
-     * Checks whether the current selection of columns is suited for import
-     */
-    private void check(){
-
-        // Check selection
-        boolean selected = false;
-        for (ImportWizardModelColumn column : wizardImport.getData()
-                                                          .getWizardColumns()) {
-            selected |= column.isEnabled();
-        }
-        
-        if (!selected) {
-            setErrorMessage("You need to select at least one column");
-            setPageComplete(false);
-            return;
-        }
-
-        // Check names
-        for (ImportWizardModelColumn c1 : wizardImport.getData().getWizardColumns()) {
-            if (c1.isEnabled()) {
-                String name1 = c1.getColumn().getAliasName();
-                for (ImportWizardModelColumn c2 : wizardImport.getData().getWizardColumns()) {
-                    if (c2.isEnabled() && c1 != c2 && name1.equals(c2.getColumn().getAliasName())) {
-                        setErrorMessage("Column names need to be unique: " + name1);
-                        setPageComplete(false);
-                        return;
-                    }
-                }
-            }
-        }
-        
-        // Everything is fine
-        setErrorMessage(null);
-        setPageComplete(true);
-    }
-
-    /**
      * Creates the design of this page along with the appropriate listeners.
      *
      * @param parent
@@ -751,5 +714,42 @@ public class ImportWizardPageColumns extends WizardPage {
                                                      .getWizardColumns());
             check();
         }
+    }
+
+    /**
+     * Checks whether the current selection of columns is suited for import
+     */
+    private void check(){
+
+        // Check selection
+        boolean selected = false;
+        for (ImportWizardModelColumn column : wizardImport.getData()
+                                                          .getWizardColumns()) {
+            selected |= column.isEnabled();
+        }
+        
+        if (!selected) {
+            setErrorMessage("You need to select at least one column");
+            setPageComplete(false);
+            return;
+        }
+
+        // Check names
+        for (ImportWizardModelColumn c1 : wizardImport.getData().getWizardColumns()) {
+            if (c1.isEnabled()) {
+                String name1 = c1.getColumn().getAliasName();
+                for (ImportWizardModelColumn c2 : wizardImport.getData().getWizardColumns()) {
+                    if (c2.isEnabled() && c1 != c2 && name1.equals(c2.getColumn().getAliasName())) {
+                        setErrorMessage("Column names need to be unique: " + name1);
+                        setPageComplete(false);
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // Everything is fine
+        setErrorMessage(null);
+        setPageComplete(true);
     }
 }

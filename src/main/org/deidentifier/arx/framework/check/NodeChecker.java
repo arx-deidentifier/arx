@@ -119,6 +119,39 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
+    public TransformedData applyAndSetProperties(final Node transformation) {
+
+        // Apply transition and groupify
+        currentGroupify = transformer.apply(0L, transformation.getTransformation(), currentGroupify);
+        currentGroupify.analyze(transformation, true);
+        if (!currentGroupify.isAnonymous() && !config.isSuppressionAlwaysEnabled()) {
+            currentGroupify.resetSuppression();
+        }
+
+        // Determine information loss
+        // TODO: This may already be known
+        InformationLoss<?> loss = transformation.getInformationLoss();
+        if (loss == null) {
+            loss = metric.getInformationLoss(transformation, currentGroupify).getInformationLoss();
+        }
+        
+        // Find outliers
+        if (config.getAbsoluteMaxOutliers() != 0 || !currentGroupify.isAnonymous()) {
+            currentGroupify.markOutliers(transformer.getBuffer());
+        }
+        
+        // Set properties
+        Lattice lattice = new Lattice(new Node[][]{{transformation}}, 0);
+        lattice.setChecked(transformation, new Result(currentGroupify.isAnonymous(), 
+                                                      currentGroupify.isKAnonymous(),
+                                                      loss,
+                                                      null));
+        
+        // Return the buffer
+        return new TransformedData(getBuffer(), currentGroupify.getGroupStatistics());
+    }
+
+    @Override
     public INodeChecker.Result check(final Node node) {
         return check(node, false);
     }
@@ -214,38 +247,5 @@ public class NodeChecker implements INodeChecker {
     @Override
     public Metric<?> getMetric() {
         return metric;
-    }
-
-    @Override
-    public TransformedData applyAndSetProperties(final Node transformation) {
-
-        // Apply transition and groupify
-        currentGroupify = transformer.apply(0L, transformation.getTransformation(), currentGroupify);
-        currentGroupify.analyze(transformation, true);
-        if (!currentGroupify.isAnonymous() && !config.isSuppressionAlwaysEnabled()) {
-            currentGroupify.resetSuppression();
-        }
-
-        // Determine information loss
-        // TODO: This may already be known
-        InformationLoss<?> loss = transformation.getInformationLoss();
-        if (loss == null) {
-            loss = metric.getInformationLoss(transformation, currentGroupify).getInformationLoss();
-        }
-        
-        // Find outliers
-        if (config.getAbsoluteMaxOutliers() != 0 || !currentGroupify.isAnonymous()) {
-            currentGroupify.markOutliers(transformer.getBuffer());
-        }
-        
-        // Set properties
-        Lattice lattice = new Lattice(new Node[][]{{transformation}}, 0);
-        lattice.setChecked(transformation, new Result(currentGroupify.isAnonymous(), 
-                                                      currentGroupify.isKAnonymous(),
-                                                      loss,
-                                                      null));
-        
-        // Return the buffer
-        return new TransformedData(getBuffer(), currentGroupify.getGroupStatistics());
     }
 }

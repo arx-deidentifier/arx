@@ -99,6 +99,45 @@ public class Example13 extends Example {
      *
      * @return
      */
+    private static Data getData() {
+        DefaultData data = Data.create();
+        data.add("zipcode", "disease1", "age", "disease2");
+        data.add("47677", "gastric ulcer", "29", "gastric ulcer");
+        data.add("47602", "gastritis", "22", "gastritis");
+        data.add("47678", "stomach cancer", "27", "stomach cancer");
+        data.add("47905", "gastritis", "43", "gastritis");
+        data.add("47909", "flu", "52", "flu");
+        data.add("47906", "bronchitis", "47", "bronchitis");
+        data.add("47605", "bronchitis", "30", "bronchitis");
+        data.add("47673", "pneumonia", "36", "pneumonia");
+        data.add("47607", "stomach cancer", "32", "stomach cancer");
+        return data;
+    }
+
+    /**
+     * 
+     *
+     * @return
+     */
+    private static Hierarchy getHierarchyAge() {
+        final DefaultHierarchy age = Hierarchy.create();
+        age.add("29", "<=40", "*");
+        age.add("22", "<=40", "*");
+        age.add("27", "<=40", "*");
+        age.add("43", ">40", "*");
+        age.add("52", ">40", "*");
+        age.add("47", ">40", "*");
+        age.add("30", "<=40", "*");
+        age.add("36", "<=40", "*");
+        age.add("32", "<=40", "*");
+        return age;
+    }
+
+    /**
+     * 
+     *
+     * @return
+     */
     private static Hierarchy getHierarchyDisease() {
         final DefaultHierarchy disease = Hierarchy.create();
         disease.add("flu",
@@ -161,44 +200,5 @@ public class Example13 extends Example {
         zipcode.add("47673", "4767*", "476**", "47***", "4****", "*****");
         zipcode.add("47607", "4760*", "476**", "47***", "4****", "*****");
         return zipcode;
-    }
-
-    /**
-     * 
-     *
-     * @return
-     */
-    private static Hierarchy getHierarchyAge() {
-        final DefaultHierarchy age = Hierarchy.create();
-        age.add("29", "<=40", "*");
-        age.add("22", "<=40", "*");
-        age.add("27", "<=40", "*");
-        age.add("43", ">40", "*");
-        age.add("52", ">40", "*");
-        age.add("47", ">40", "*");
-        age.add("30", "<=40", "*");
-        age.add("36", "<=40", "*");
-        age.add("32", "<=40", "*");
-        return age;
-    }
-
-    /**
-     * 
-     *
-     * @return
-     */
-    private static Data getData() {
-        DefaultData data = Data.create();
-        data.add("zipcode", "disease1", "age", "disease2");
-        data.add("47677", "gastric ulcer", "29", "gastric ulcer");
-        data.add("47602", "gastritis", "22", "gastritis");
-        data.add("47678", "stomach cancer", "27", "stomach cancer");
-        data.add("47905", "gastritis", "43", "gastritis");
-        data.add("47909", "flu", "52", "flu");
-        data.add("47906", "bronchitis", "47", "bronchitis");
-        data.add("47605", "bronchitis", "30", "bronchitis");
-        data.add("47673", "pneumonia", "36", "pneumonia");
-        data.add("47607", "stomach cancer", "32", "stomach cancer");
-        return data;
     }
 }

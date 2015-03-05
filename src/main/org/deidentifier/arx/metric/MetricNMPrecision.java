@@ -76,13 +76,6 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
     }
 
     /**
-     * @return the heights
-     */
-    protected int[] getHeights() {
-        return height;
-    }
-    
-    /**
      * Returns the number of cells.
      *
      * @return
@@ -90,7 +83,19 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
     protected double getCells() {
         return cells;
     }
+    
+    /**
+     * @return the heights
+     */
+    protected int[] getHeights() {
+        return height;
+    }
 
+    @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
+    }
+    
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
         
@@ -118,7 +123,7 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         // Return
         return new InformationLossDefaultWithBound(precision, getLowerBound(node).getValue());
     }
-    
+
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         double result = 0;
@@ -139,7 +144,7 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
                                                            IHashGroupify groupify) {
        return getLowerBoundInternal(node);
     }
-
+    
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -164,10 +169,5 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
             rowCount = input.getDataLength();
         }
         this.cells = (double)rowCount * (double)input.getHeader().length;
-    }
-    
-    @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 }

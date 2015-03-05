@@ -146,6 +146,16 @@ public class ViewCriteriaList implements IView {
     }
     
     /**
+     * Configure
+     */
+    public void actionConfigure() {
+        ModelCriterion criterion = this.getSelectedCriterion();
+        if (criterion != null) {
+            controller.actionCriterionConfigure(criterion);
+        }
+    }
+    
+    /**
      * Pull
      */
     public void actionPull() {
@@ -164,7 +174,7 @@ public class ViewCriteriaList implements IView {
             controller.actionCriterionPush(criterion);
         }
     }
-    
+
     /**
      * Remove
      */
@@ -172,16 +182,6 @@ public class ViewCriteriaList implements IView {
         ModelCriterion criterion = this.getSelectedCriterion();
         if (criterion != null) {
             controller.actionCriterionEnable(criterion);
-        }
-    }
-
-    /**
-     * Configure
-     */
-    public void actionConfigure() {
-        ModelCriterion criterion = this.getSelectedCriterion();
-        if (criterion != null) {
-            controller.actionCriterionConfigure(criterion);
         }
     }
     

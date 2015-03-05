@@ -68,17 +68,10 @@ public class MetricConfiguration implements Serializable {
     }
 
     /**
-     * @return the monotonic
+     * @return the aggregateFunction
      */
-    public boolean isMonotonic() {
-        return monotonic;
-    }
-    
-    /**
-     * @param monotonic the monotonic to set
-     */
-    public void setMonotonic(boolean monotonic) {
-        this.monotonic = monotonic;
+    public AggregateFunction getAggregateFunction() {
+        return aggregateFunction;
     }
     
     /**
@@ -89,10 +82,17 @@ public class MetricConfiguration implements Serializable {
     }
     
     /**
-     * @param gsFactor the gsFactor to set
+     * @return the precomputationThreshold
      */
-    public void setGsFactor(double gsFactor) {
-        this.gsFactor = gsFactor;
+    public double getPrecomputationThreshold() {
+        return precomputationThreshold;
+    }
+    
+    /**
+     * @return the monotonic
+     */
+    public boolean isMonotonic() {
+        return monotonic;
     }
     
     /**
@@ -103,17 +103,24 @@ public class MetricConfiguration implements Serializable {
     }
     
     /**
-     * @param precomputed the precomputed to set
+     * @param aggregateFunction the aggregateFunction to set
      */
-    public void setPrecomputed(boolean precomputed) {
-        this.precomputed = precomputed;
+    public void setAggregateFunction(AggregateFunction aggregateFunction) {
+        this.aggregateFunction = aggregateFunction;
     }
     
     /**
-     * @return the precomputationThreshold
+     * @param gsFactor the gsFactor to set
      */
-    public double getPrecomputationThreshold() {
-        return precomputationThreshold;
+    public void setGsFactor(double gsFactor) {
+        this.gsFactor = gsFactor;
+    }
+    
+    /**
+     * @param monotonic the monotonic to set
+     */
+    public void setMonotonic(boolean monotonic) {
+        this.monotonic = monotonic;
     }
     
     /**
@@ -124,16 +131,9 @@ public class MetricConfiguration implements Serializable {
     }
     
     /**
-     * @return the aggregateFunction
+     * @param precomputed the precomputed to set
      */
-    public AggregateFunction getAggregateFunction() {
-        return aggregateFunction;
-    }
-    
-    /**
-     * @param aggregateFunction the aggregateFunction to set
-     */
-    public void setAggregateFunction(AggregateFunction aggregateFunction) {
-        this.aggregateFunction = aggregateFunction;
+    public void setPrecomputed(boolean precomputed) {
+        this.precomputed = precomputed;
     }
 }

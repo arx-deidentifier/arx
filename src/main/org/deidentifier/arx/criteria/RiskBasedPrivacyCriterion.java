@@ -70,13 +70,6 @@ public abstract class RiskBasedPrivacyCriterion extends SampleBasedPrivacyCriter
     }
 
     /**
-     * To be implemented by risk-based criteria
-     * @param distribution
-     * @return
-     */
-    protected abstract boolean isFulfilled(HashGroupifyDistribution distribution);
-
-    /**
      * Returns the risk threshold
      *
      * @return
@@ -84,4 +77,11 @@ public abstract class RiskBasedPrivacyCriterion extends SampleBasedPrivacyCriter
     public double getRiskThreshold() {
         return threshold;
     }
+
+    /**
+     * To be implemented by risk-based criteria
+     * @param distribution
+     * @return
+     */
+    protected abstract boolean isFulfilled(HashGroupifyDistribution distribution);
 }

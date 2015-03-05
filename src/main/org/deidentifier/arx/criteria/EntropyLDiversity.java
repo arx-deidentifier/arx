@@ -81,7 +81,15 @@ public class EntropyLDiversity extends LDiversity {
         return val >= logL;
     }
 
-    /**
+    /* (non-Javadoc)
+	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
+	 */
+	@Override
+	public String toString() {
+		return "entropy-"+l+"-diversity for attribute '"+attribute+"'";
+	}
+    
+	/**
      * Computes log 2.
      *
      * @param num
@@ -90,12 +98,4 @@ public class EntropyLDiversity extends LDiversity {
     private final double log2(final double num) {
         return Math.log(num) / log2;
     }
-    
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
-	 */
-	@Override
-	public String toString() {
-		return "entropy-"+l+"-diversity for attribute '"+attribute+"'";
-	}
 }

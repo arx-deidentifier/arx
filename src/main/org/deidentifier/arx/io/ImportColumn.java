@@ -110,19 +110,19 @@ abstract public class ImportColumn {
     }
 
     /**
+     * Should we perform cleansing
+     * @param cleansing
+     */
+    public void setCleansing(boolean cleansing) {
+        this.cleansing = cleansing;
+    }
+
+    /**
      * Sets the data type.
      *
      * @param dataType {@link #dataType}
      */
     public void setDataType(DataType<?> dataType) {
         this.dataType = dataType;
-    }
-
-    /**
-     * Should we perform cleansing
-     * @param cleansing
-     */
-    public void setCleansing(boolean cleansing) {
-        this.cleansing = cleansing;
     }
 }

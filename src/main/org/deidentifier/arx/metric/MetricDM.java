@@ -73,6 +73,11 @@ public class MetricDM extends MetricDefault {
     }
 
     @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
+    }
+
+    @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
         double value = 0;
@@ -139,10 +144,5 @@ public class MetricDM extends MetricDefault {
         } else {
             rowCount = input.getDataLength();
         }
-    }
-
-    @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 }

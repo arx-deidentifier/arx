@@ -138,6 +138,38 @@ public class SWTUtil {
     }
 
     /**
+     * Creates a generic tooltip for the table
+     * @param table
+     */
+    public static void createGenericTooltip(final Table table) {
+        table.addMouseMoveListener(new MouseMoveListener() {
+            private TableItem current = null;
+
+            @Override
+            public void mouseMove(MouseEvent arg0) {
+                TableItem item = table.getItem(new Point(arg0.x, arg0.y));
+                if (item != null && item != current) {
+                    current = item;
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("(");
+                    int columns = item.getParent().getColumnCount();
+                    for (int i = 0; i < columns; i++) {
+                        String value = item.getText(i);
+                        if (value != null && !value.equals("")) {
+                            builder.append(value);
+                            if (i < columns - 1) {
+                                builder.append(", ");
+                            }
+                        }
+                    }
+                    builder.append(")");
+                    table.setToolTipText(builder.toString());
+                }
+            }
+        });
+    }
+
+    /**
      * Creates grid data.
      *
      * @return
@@ -236,6 +268,7 @@ public class SWTUtil {
         return d;
     }
 
+
     /**
      * Creates grid data.
      *
@@ -249,7 +282,6 @@ public class SWTUtil {
         d.horizontalSpan = i;
         return d;
     }
-
 
     /**
      * Disables the composite and its children.
@@ -368,37 +400,5 @@ public class SWTUtil {
                 c.setEnabled(val);
             }
         }
-    }
-
-    /**
-     * Creates a generic tooltip for the table
-     * @param table
-     */
-    public static void createGenericTooltip(final Table table) {
-        table.addMouseMoveListener(new MouseMoveListener() {
-            private TableItem current = null;
-
-            @Override
-            public void mouseMove(MouseEvent arg0) {
-                TableItem item = table.getItem(new Point(arg0.x, arg0.y));
-                if (item != null && item != current) {
-                    current = item;
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("(");
-                    int columns = item.getParent().getColumnCount();
-                    for (int i = 0; i < columns; i++) {
-                        String value = item.getText(i);
-                        if (value != null && !value.equals("")) {
-                            builder.append(value);
-                            if (i < columns - 1) {
-                                builder.append(", ");
-                            }
-                        }
-                    }
-                    builder.append(")");
-                    table.setToolTipText(builder.toString());
-                }
-            }
-        });
     }
 }

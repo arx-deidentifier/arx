@@ -44,14 +44,6 @@ public class Inclusion extends DPresence {
     }
         
     /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.DPresence#initialize(org.deidentifier.arx.framework.data.DataManager)
-     */
-    @Override
-    public void initialize(DataManager manager) {
-        // Nothing to do
-    }
-
-    /* (non-Javadoc)
      * @see org.deidentifier.arx.criteria.DPresence#getRequirements()
      */
     @Override
@@ -59,6 +51,14 @@ public class Inclusion extends DPresence {
         // Requires two counters
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
+    }
+
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.DPresence#initialize(org.deidentifier.arx.framework.data.DataManager)
+     */
+    @Override
+    public void initialize(DataManager manager) {
+        // Nothing to do
     }
 
     /* (non-Javadoc)
