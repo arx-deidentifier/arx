@@ -185,7 +185,7 @@ public class DialogProperties implements IDialog {
             protected Integer getValue() { return model.getRiskModel().getMaxQiSize(); }
             protected void setValue(Object t) { model.getRiskModel().setMaxQiSize((Integer)t); }});
         
-        window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.43"), getRiskModelsForAnalyses()) {
+        window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.45"), getRiskModelsForAnalyses()) {
             protected String getValue() { return model.getRiskModel().getRiskModelForAttributes().name(); }
             protected void setValue(Object arg0) { model.getRiskModel().setRiskModelForAttributes(RiskModelForAttributes.valueOf((String)arg0)); }
         });
