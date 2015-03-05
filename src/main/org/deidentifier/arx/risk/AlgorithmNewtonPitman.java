@@ -181,6 +181,10 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
     @Override
     protected double[][] firstDerivativeMatrix(final double[] solution) {
         
+        if (true) {
+            return firstDerivativeMatrixIterative(solution);
+        }
+        
         double t = solution[0]; // Theta
         double a = solution[1]; // Alpha
 
@@ -233,6 +237,11 @@ class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
      */
     @Override
     protected double[] objectFunctionVector(final double[] solution) {
+        
+        if (true) {
+            return objectFunctionVectorIterative(solution);
+        }
+        
         double t = solution[0]; // Theta
         double a = solution[1]; // Alpha
 
