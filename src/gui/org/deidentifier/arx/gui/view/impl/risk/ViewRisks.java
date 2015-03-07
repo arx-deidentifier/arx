@@ -257,6 +257,9 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context) {
         
         AnalysisContext analysisContext = context.context;
+        if (analysisContext.getData() == null || analysisContext.getData().definition == null) {
+            return null;
+        }
         return context.handle.getRiskEstimator(analysisContext.getModel().getRiskModel().getPopulationModel(),
                                                analysisContext.getData().definition.getQuasiIdentifyingAttributes(),
                                                analysisContext.getModel().getRiskModel().getAccuracy(),

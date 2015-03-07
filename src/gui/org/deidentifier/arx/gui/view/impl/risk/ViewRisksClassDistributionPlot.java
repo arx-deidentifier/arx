@@ -239,19 +239,17 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
     protected void doUpdate(final AnalysisContextRisk context) {
 
         // Enable/disable
-        if (!this.isEnabled()) {
+        final RiskEstimateBuilderInterruptible builder = getBuilder(context);
+        if (!this.isEnabled() || builder == null) {
             if (manager != null) {
                 manager.stop();
             }
             this.setStatusEmpty();
             return;
         }
-
+        
         // Create an analysis
         Analysis analysis = new Analysis() {
-
-            // The statistics builder
-            RiskEstimateBuilderInterruptible builder = getBuilder(context);
             
             private boolean  stopped = false;
             private double[] frequencies;
@@ -340,7 +338,7 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
 
             @Override
             public void stop() {
-                builder.interrupt();
+                if (builder != null) builder.interrupt();
                 this.stopped = true;
             }
         };

@@ -191,19 +191,19 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
     protected void doUpdate(final AnalysisContextRisk context) {
         
         // Enable/disable
-        if (!this.isEnabled()) {
+        final RiskEstimateBuilderInterruptible builder = getBuilder(context, context.context.getModel().getSelectedQuasiIdentifiers());
+        if (!this.isEnabled() || builder == null) {
             if (manager != null) {
                 manager.stop();
             }
             this.setStatusEmpty();
             return;
         }
-
+        
         // Create an analysis
         Analysis analysis = new Analysis() {
 
             // The statistics builder
-            RiskEstimateBuilderInterruptible builder = getBuilder(context, context.context.getModel().getSelectedQuasiIdentifiers());
             private boolean                  stopped = false;
             private RiskModelAttributes      risks;
             
@@ -293,7 +293,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
 
             @Override
             public void stop() {
-                builder.interrupt();
+                if (builder != null) builder.interrupt();
                 this.stopped = true;
             }
         };

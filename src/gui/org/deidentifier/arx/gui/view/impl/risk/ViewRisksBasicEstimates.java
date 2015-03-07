@@ -188,7 +188,8 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
     protected void doUpdate(final AnalysisContextRisk context) {
 
         // Enable/disable
-        if (!this.isEnabled()) {
+        final RiskEstimateBuilderInterruptible builder = getBuilder(context);
+        if (!this.isEnabled() || builder == null) {
             if (manager != null) {
                 manager.stop();
             }
@@ -196,9 +197,6 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
             return;
         }
 
-        // The statistics builder
-        final RiskEstimateBuilderInterruptible builder = getBuilder(context);
-        
         // Create an analysis
         Analysis analysis = new Analysis(){
 
@@ -288,7 +286,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
 
             @Override
             public void stop() {
-                builder.interrupt();
+                if (builder != null) builder.interrupt();
                 this.stopped = true;
             }
         };

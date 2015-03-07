@@ -313,21 +313,23 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
 
+
+        // The statistics builder
+        final RiskEstimateBuilderInterruptible baseBuilder = getBuilder(context);
+        
         // Enable/disable
-        if (!this.isEnabled()) {
+        if (!this.isEnabled() || baseBuilder == null) {
             if (manager != null) {
                 manager.stop();
             }
             this.setStatusEmpty();
             return;
         }
-
+        
         // Create an analysis
         Analysis analysis = new Analysis() {
-
-            // The statistics builder
-            RiskEstimateBuilderInterruptible builder = getBuilder(context);
             
+            private RiskEstimateBuilderInterruptible builder = baseBuilder;
             private boolean  stopped = false;
             private double[] dataPitman;
             private double[] dataZayatz;
@@ -337,7 +339,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
 
             @Override
             public int getProgress() {
-                return (int)Math.round(idx * 100d + (double)builder.getProgress()) / POINTS.length; 
+                return (int)Math.round(idx * 100d + (double)baseBuilder.getProgress()) / POINTS.length; 
             }
             
             @Override
@@ -441,7 +443,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
 
             @Override
             public void stop() {
-                builder.interrupt();
+                if (baseBuilder != null) baseBuilder.interrupt();
                 this.stopped = true;
             }
         };

@@ -151,7 +151,8 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
     protected void doUpdate(final AnalysisContextRisk context) {
 
         // Enable/disable
-        if (!this.isEnabled()) {
+        final RiskEstimateBuilderInterruptible builder = getBuilder(context);
+        if (!this.isEnabled() || builder == null) {
             if (manager != null) {
                 manager.stop();
             }
@@ -161,9 +162,6 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
 
         // Create an analysis
         Analysis analysis = new Analysis() {
-
-            // The statistics builder
-            RiskEstimateBuilderInterruptible builder = getBuilder(context);
 
             private boolean                  stopped = false;
             private int[]                    distribution;
@@ -233,7 +231,7 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
 
             @Override
             public void stop() {
-                builder.interrupt();
+                if (builder != null) builder.interrupt();
                 this.stopped = true;
             }
         };
