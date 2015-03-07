@@ -24,6 +24,57 @@ package org.deidentifier.arx.risk;
  */
 public class Gamma {
     
+    /** The Constant B10. */
+    private final static double B10            = 5.0 / 66.0;
+
+    /** The Constant B2. */
+    private final static double B2             = 1.0 / 6.0;
+    
+    /** The Constant B4. */
+    private final static double B4             = -1.0 / 30.0;
+    
+    /** The Constant B6. */
+    private final static double B6             = 1.0 / 42.0;
+    
+    /** The Constant B8. */
+    private final static double B8             = -1.0 / 30.0;
+    
+    /** The Constant DIGAMMA_1. */
+    private final static double DIGAMMA_1      = -0.57721566490153286060651209008240243104215933593992d;  // -digamma(1) = Eulerï¿½Mascheroni constant
+    
+    /** The Constant LARGE_DIGAMMA. */
+    private final static double LARGE_DIGAMMA  = 12.0;
+                                                                                                           
+    /** The Constant LARGE_TRIGAMMA. */
+    private final static double LARGE_TRIGAMMA = 8.0;
+                                                                                                           
+    /** The Constant S3. */
+    private final static double S3             = 1.0 / 12.0;
+                                                                                                           
+    /** The Constant S4. */
+    private final static double S4             = 1.0 / 120.0;
+    
+    /** The Constant S5. */
+    private final static double S5             = 1.0 / 252.0;
+    
+    /** The Constant S6. */
+    private final static double S6             = 1.0 / 240.0;
+    
+    /** The Constant S7. */
+    private final static double S7             = 1.0 / 132.0;
+    
+    /** The Constant SMALL_DIGAMMA. */
+    private final static double SMALL_DIGAMMA  = 1e-6;
+    
+    /** The Constant SMALL_TRIGAMMA. */
+    private final static double SMALL_TRIGAMMA = 1e-4;
+    
+    /** The Constant TETRAGAMMA_1. */
+    private final static double TETRAGAMMA_1   = -2.0d * 1.202056903159594285399738161511449990764986292d; // -2 * Zeta(3) = -2 * Apï¿½ry's constant
+    
+    /** The Constant TRIGAMMA_1. */
+    private final static double TRIGAMMA_1     = (StrictMath.PI * StrictMath.PI) / 6.0;                    // trigamma(1) = pi^2/6 = Zeta(2)
+    
     /**
      * Approximates the digamma function.
      * Java port of the "The Lightspeed Matlab toolbox" version 2.7 by Tom Minka
@@ -86,6 +137,24 @@ public class Gamma {
     }
     
     /**
+     * TODO: Implement
+     * @param x
+     * @return
+     */
+    public static double gamma(double x) {
+        return org.apache.commons.math3.special.Gamma.gamma(x);
+    }
+    
+    /**
+     * TODO: Implement
+     * @param x
+     * @return
+     */
+    public static double logGamma(double x) {
+        return org.apache.commons.math3.special.Gamma.logGamma(x);
+    }
+    
+    /**
      * Approximates the trigamma function.
      * Java port of the "The Lightspeed Matlab toolbox" version 2.7 by Tom Minka
      * see: http://research.microsoft.com/en-us/um/people/minka/software/lightspeed/
@@ -133,56 +202,5 @@ public class Gamma {
         }
         return result;
     }
-    
-    /** The Constant LARGE_DIGAMMA. */
-    private final static double LARGE_DIGAMMA  = 12.0;
-    
-    /** The Constant LARGE_TRIGAMMA. */
-    private final static double LARGE_TRIGAMMA = 8.0;
-    
-    /** The Constant DIGAMMA_1. */
-    private final static double DIGAMMA_1      = -0.57721566490153286060651209008240243104215933593992d;  // -digamma(1) = Euler–Mascheroni constant
-                                                                                                           
-    /** The Constant TRIGAMMA_1. */
-    private final static double TRIGAMMA_1     = (StrictMath.PI * StrictMath.PI) / 6.0;                   // trigamma(1) = pi^2/6 = Zeta(2)
-                                                                                                           
-    /** The Constant TETRAGAMMA_1. */
-    private final static double TETRAGAMMA_1   = -2.0d * 1.202056903159594285399738161511449990764986292d; // -2 * Zeta(3) = -2 * Apéry's constant
-                                                                                                           
-    /** The Constant SMALL_DIGAMMA. */
-    private final static double SMALL_DIGAMMA  = 1e-6;
-    
-    /** The Constant SMALL_TRIGAMMA. */
-    private final static double SMALL_TRIGAMMA = 1e-4;
-    
-    /** The Constant S3. */
-    private final static double S3             = 1.0 / 12.0;
-    
-    /** The Constant S4. */
-    private final static double S4             = 1.0 / 120.0;
-    
-    /** The Constant S5. */
-    private final static double S5             = 1.0 / 252.0;
-    
-    /** The Constant S6. */
-    private final static double S6             = 1.0 / 240.0;
-    
-    /** The Constant S7. */
-    private final static double S7             = 1.0 / 132.0;
-    
-    /** The Constant B2. */
-    private final static double B2             = 1.0 / 6.0;
-    
-    /** The Constant B4. */
-    private final static double B4             = -1.0 / 30.0;
-    
-    /** The Constant B6. */
-    private final static double B6             = 1.0 / 42.0;
-    
-    /** The Constant B8. */
-    private final static double B8             = -1.0 / 30.0;
-    
-    /** The Constant B10. */
-    private final static double B10            = 5.0 / 66.0;
     
 }

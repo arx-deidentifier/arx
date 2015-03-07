@@ -260,6 +260,9 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
                 numUniquesPitman = 0;
             } else {
                 numUniquesPitman = new ModelPitman(model, classes, sampleSize, accuracy, maxIterations, stop).getNumUniques();
+//                numUniquesPitman = new ModelPitman2(model, classes, sampleSize, stop).getNumUniques();
+//                System.out.print(new ModelPitman(model, classes, sampleSize, accuracy, maxIterations, stop).getNumUniques());
+//                System.out.println("/"+numUniquesPitman);
             }
         }
         return isValid(numUniquesPitman) ? numUniquesPitman : 0d;
