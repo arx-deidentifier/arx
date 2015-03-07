@@ -17,10 +17,15 @@
 
 package org.deidentifier.arx.risk;
 
-import org.apache.commons.math3.special.Gamma;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
+
+import de.linearbits.newtonraphson.Function;
+import de.linearbits.newtonraphson.NewtonRaphson2D;
+import de.linearbits.newtonraphson.Pair;
+import de.linearbits.newtonraphson.SquareMatrix2D;
+import de.linearbits.newtonraphson.Vector2D;
 
 /**
  * This class implements the PitmanModel, for details see Hoshino, 2001
@@ -31,53 +36,77 @@ import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
  */
 class ModelPitman extends RiskModelPopulationBased {
 
+    /** Constant */
+    private static final boolean ITERATIVE = false;
+
     /** The result */
-    private final double numUniques;
+    private final double         numUniques;
 
     /**
      * Creates a new instance
      * @param model
      * @param classes
      * @param sampleSize
-     * @param accuracy
-     * @param maxIterations
      * @param stop
      */
     ModelPitman(final ARXPopulationModel model, 
                 final RiskModelEquivalenceClasses classes, 
                 final int sampleSize,
-                final double accuracy,
-                final int maxIterations,
                 final WrappedBoolean stop) {
+        
         super(classes, model, sampleSize, stop, new WrappedInteger());
 
-        int c1 = (int) super.getNumClassesOfSize(1);
-        int c2 = (int) super.getNumClassesOfSize(2);
-        if (c2 == 0) c2 = 1; // Overestimate
-        int numClasses = (int) super.getNumClasses();
-        double populationSize = super.getPopulationSize();
+        // Init
+        double c1 = getNumClassesOfSize(1);
+        double c2 = getNumClassesOfSize(2);
+        double u = getNumClasses();
+        double p = getPopulationSize();
+        double n = sampleSize;
 
         // Initial guess
-        final double c = (c1 * (c1 - 1)) / c2;
-        final double thetaGuess = ((sampleSize * numClasses * c) - (c1 * (sampleSize - 1) * ((2 * numClasses) + c))) /
-                                  (((2 * c1 * numClasses) + (c1 * c)) - (sampleSize * c));
-        final double alphaGuess = ((thetaGuess * (c1 - sampleSize)) + ((sampleSize - 1) * c1)) / (sampleSize * numClasses);
+        c2 = c2 != 0 ? c2 : 1; // Overestimate
+        double c = (c1 * (c1 - 1)) / c2;
+        double t = ((n * u * c) - (c1 * (n - 1) * ((2 * u) + c))) / (((2 * c1 * u) + (c1 * c)) - (n * c));
+        double a = ((t * (c1 - n)) + ((n - 1) * c1)) / (n * u);
 
-        // Apply Newton-Rhapson algorithm to solve the Maximum Likelihood Estimates
-        final AlgorithmNewtonPitman pitmanNewton = new AlgorithmNewtonPitman(numClasses, sampleSize, classes.getEquivalenceClasses(), maxIterations, accuracy, stop);
-        final double[] initialGuess = { thetaGuess, alphaGuess };
-        final double[] output = pitmanNewton.getSolution(initialGuess);
+        // Solve the Maximum Likelihood Estimates
+        Vector2D result = new NewtonRaphson2D(getFunctions(classes.getEquivalenceClasses(), u, n))
+                                              .accuracy(1e-6)
+                                              .iterationsPerTry(1000)
+                                              .iterationsTotal(1000)
+                                              .timePerTry(10000)
+                                              .timeTotal(10000)
+                                              .solve(new Vector2D(t, a));
 
-        final double theta = output[0];
-        final double alpha = output[1];
-        double result;
-        if (alpha != 0) {
-            result = Math.exp(Gamma.logGamma(theta + 1) - Gamma.logGamma(theta + alpha)) * Math.pow(populationSize, alpha);
-        } else {
-            result = Double.NaN;
+        // Compile the result
+        this.numUniques = getResult(result, p);
+    }
+
+    /**
+     * Compiles the result of the Newton-Rhapson-Algorithm
+     * @return
+     */
+    private double getResult(Vector2D result, double p) {
+        double t = result.x;
+        double a = result.y;
+        if (Double.isNaN(a) && Double.isNaN(t) && a == 0) {
+            return Double.NaN;
         }
-
-        this.numUniques = result;
+        double val1 = Double.NaN;
+        try {val1 = Math.exp(Gamma.logGamma(t + 1) - Gamma.logGamma(t + a)) * Math.pow(p, a);} catch (Exception e) {}
+        val1 = val1 >= 0d && val1 <= p ? val1 : Double.NaN;
+        double val2 = Double.NaN;
+        try {val2 = (Gamma.gamma(t + 1) / Gamma.gamma(t + a)) * Math.pow(p, a);} catch (Exception e){}
+        val2 = val2 >= 0d && val2 <= p ? val2 : Double.NaN;
+        if (Double.isNaN(val1) && Double.isNaN(val2)) {
+            return Double.NaN;
+        } else if (!Double.isNaN(val1) && !Double.isNaN(val2)) {
+            return Math.max(val1, val2);
+        } else if (Double.isNaN(val1)) {
+            return val2;
+        } else {
+            return val1;
+        }
     }
 
     /**
@@ -86,5 +115,173 @@ class ModelPitman extends RiskModelPopulationBased {
      */
     public double getNumUniques() {
         return this.numUniques;
+    }
+
+    /**
+     * Returns the master function including the object function and the derivative functions
+     * @return
+     */
+    private Function<Vector2D, Pair<Vector2D, SquareMatrix2D>> getFunctions(final int[] classes,
+                                                                            final double u,
+                                                                            final double n) {
+        if (ITERATIVE) {
+            return getFunctionsIterative(classes, u, n);
+        } else {
+            return getFunctionsClosed(classes, u, n);
+        }
+    }
+
+    /**
+     * Returns the master function including the object function and the derivative functions
+     * @return
+     */
+    private Function<Vector2D, Pair<Vector2D, SquareMatrix2D>> getFunctionsIterative(final int[] classes,
+                                                                                     final double u,
+                                                                                     final double n) {
+
+        return new Function<Vector2D, Pair<Vector2D, SquareMatrix2D>>() {
+            public Pair<Vector2D, SquareMatrix2D> evaluate(Vector2D input) {
+
+                // Init
+                Vector2D object = new Vector2D();
+                SquareMatrix2D derivatives = new SquareMatrix2D();
+                
+                // Prepare
+                double t = input.x; // Theta
+                double a = input.y; // Alpha
+
+                // Init
+                double d1 = 0;
+                double d2 = 0;
+                double d3 = 0;
+                double d4 = 0;
+                double d5 = 0;
+                double o1 = 0;
+                double o2 = 0;
+                double o3 = 0;
+                double o4 = 0;
+
+                // For each...
+                for (int i = 1; i < u; i++) {
+                    
+                    double val0 = (t + (i * a));
+                    double val1 = 1d / val0;
+                    double val2 = i * val1;
+                    double val3 = 1d / (val0 * val0);
+                    double val4 = i * val3;
+                    double val5 = i * val4;
+                    d1 += val3; // Compute d^2L/(dtheta)^2
+                    d5 += val4; // Compute d^2L/(d theta d alpha)
+                    d3 += val5; // Compute d^2L/(d alpha)^2
+                    o1 += val1;
+                    o3 += val2;
+
+                }
+                checkInterrupt();
+
+                // For each class...
+                for (int i = 0; i < classes.length; i += 2) {
+                    int key = classes[i];
+                    int value = classes[i + 1];
+                    double val0 = t + key;
+                    d2 += 1d / (val0 * val0);
+
+                    if (key != 1) {
+                        double val1 = 0;
+                        double val2 = 0;
+                        for (int j = 1; j < key; j++) {
+                            double val3 = j - a;
+                            val1 += 1d / (val3 * val3);
+                            val2 += 1d / val3;
+                        }
+                        d4 += value * val1;
+                        o4 += value * val2;
+                    }
+                    checkInterrupt();
+                }
+
+                checkInterrupt();
+
+                for (int i = 1; i < n; i++) {
+                    o2 += 1d / (t + i);
+                }
+
+                // Store
+                object.x = o1 - o2;
+                object.y = o3 - o4;
+                derivatives.x1 = d2 - d1;
+                derivatives.x2 = 0 - d5;
+                derivatives.y1 = 0 - d5;
+                derivatives.y2 = 0 - d3 - d4;
+                
+                // Return
+                return new Pair<Vector2D, SquareMatrix2D>(object, derivatives);
+            }
+        };
+    }
+
+    /**
+     * Returns the master function including the object function and the derivative functions
+     * @return
+     */
+    private Function<Vector2D, Pair<Vector2D, SquareMatrix2D>> getFunctionsClosed(final int[] classes,
+                                                                                  final double u,
+                                                                                  final double n) {
+        
+        return new Function<Vector2D, Pair<Vector2D, SquareMatrix2D>>() {
+            public Pair<Vector2D, SquareMatrix2D> evaluate(Vector2D input) {
+
+                // Init
+                Vector2D object = new Vector2D();
+                SquareMatrix2D derivatives = new SquareMatrix2D();
+                
+                // Prepare
+                double t = input.x; // Theta
+                double a = input.y; // Alpha
+
+                // These closed forms have been verified with Matlab and Mathematica
+                double val0 = u - 1d;
+                double val1 = Gamma.digamma(val0 + (t / a) + 1d);
+                double val2 = Gamma.trigamma((a + t + (a * val0)) / a);
+                double val3 = Gamma.trigamma((t / a) + 1d);
+                double val4 = Gamma.digamma((t / a) + 1);
+                double val5 = a * a;
+
+                double d1 = (val3 - val2) / (val5);
+                double d2 = (((a * val1) + (t * val2)) - (a * val4) - (t * val3)) / (val5 * a);
+                double d3 = (((((val5 * val0) - (t * t * val2)) + (t * t * val3)) - (2 * a * t * val1)) + (2 * a * t * val4)) / (val5 * val5);
+                double o2 = (val1 - val4) / a;
+                double o3 = ((-t * val1) + (a * val0) + (t * val4)) / (a * a);
+                double o4 = Gamma.digamma(n + t) - Gamma.digamma(t + 1d);
+                checkInterrupt();
+
+                // For each class...
+                double d4 = 0;
+                double d5 = 0;
+                double o1 = 0;
+                double val6 = Gamma.digamma(1d - a);
+                double val7 = Gamma.trigamma(1d - a);
+                for (int i = 0; i < classes.length; i += 2) {
+                    int key = classes[i];
+                    int value = classes[i + 1];
+                    double val8 = t + key;
+                    d4 += 1d / (val8 * val8);
+                    d5 += key != 1 ? value * (val7 - Gamma.trigamma(key - a)) : 0;
+                    o1 += key == 1 ? 0 : value * (Gamma.digamma(key - a) - val6);
+                    checkInterrupt();
+                }
+
+                // Store
+                derivatives.x1 = d4 - d1;
+                derivatives.x2 = 0 - d2;
+                derivatives.y1 = 0 - d2;
+                derivatives.y2 = 0 - d3 - d5;
+                object.x = o2 - o4;
+                object.y = o3 - o1;
+
+                // Return
+                return new Pair<Vector2D, SquareMatrix2D>(object, derivatives);
+            }
+        };
     }
 }
