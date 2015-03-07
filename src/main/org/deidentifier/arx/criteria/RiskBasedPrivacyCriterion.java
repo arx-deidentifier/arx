@@ -49,7 +49,7 @@ public abstract class RiskBasedPrivacyCriterion extends SampleBasedPrivacyCriter
     
     @Override
     public void enforce(final HashGroupifyDistribution distribution,
-                       final int numMaxSuppressedOutliers) {
+                        final int numMaxSuppressedOutliers) {
        
         distribution.suppressWhileNotFulfilledBinary(new PrivacyCondition(){
             public State isFulfilled(HashGroupifyDistribution distribution) {

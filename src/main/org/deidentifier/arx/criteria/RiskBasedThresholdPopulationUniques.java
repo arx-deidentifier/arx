@@ -142,7 +142,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
                                                                                                       distribution.getNumberOfTuples());
         
         double populationUniques = riskModel.getFractionOfUniqueTuples(this.statisticalModel);
-        if (populationUniques > 0d && populationUniques < getRiskThreshold()) {
+        if (populationUniques > 0d && populationUniques <= getRiskThreshold()) {
             return true;
         } else if (populationUniques == 0d && distribution.getFractionOfTuplesInClassesOfSize(1) == 0d) {
             return true;
