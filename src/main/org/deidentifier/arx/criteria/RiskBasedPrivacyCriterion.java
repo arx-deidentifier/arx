@@ -50,12 +50,22 @@ public abstract class RiskBasedPrivacyCriterion extends SampleBasedPrivacyCriter
     @Override
     public void enforce(final HashGroupifyDistribution distribution,
                         final int numMaxSuppressedOutliers) {
+        
+        // Early abort
+        if (RiskBasedPrivacyCriterion.this.isFulfilled(distribution)) {
+            return;
+        }
        
+        // Binary search
         distribution.suppressWhileNotFulfilledBinary(new PrivacyCondition(){
             public State isFulfilled(HashGroupifyDistribution distribution) {
                 boolean fulfilled = RiskBasedPrivacyCriterion.this.isFulfilled(distribution);
+                
+                // Early abort
                 if (!fulfilled && distribution.getNumOfSuppressedTuples() > numMaxSuppressedOutliers) {
                     return State.ABORT;
+                    
+                // Go on
                 } else {
                     return fulfilled ? State.FULFILLED : State.NOT_FULFILLED;
                 }
