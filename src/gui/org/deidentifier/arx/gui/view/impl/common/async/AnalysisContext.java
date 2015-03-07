@@ -65,13 +65,9 @@ public class AnalysisContext {
                 model.getOutputConfig().getInput() != null && 
                 model.getOutput() != null){
                 
-                System.out.println("INPUT IS OUTPUT");
-                
                 config = model.getOutputConfig();
                 definition = model.getOutputDefinition();
             } else {
-                
-                System.out.println("INPUT IS INPUT");
                 
                 config = model.getInputConfig();
                 definition = model.getInputDefinition();
