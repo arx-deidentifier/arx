@@ -23,6 +23,7 @@ import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
 
 import de.linearbits.newtonraphson.Function;
 import de.linearbits.newtonraphson.NewtonRaphson2D;
+import de.linearbits.newtonraphson.NewtonRaphsonConfiguration;
 import de.linearbits.newtonraphson.SquareMatrix2D;
 import de.linearbits.newtonraphson.Vector2D;
 
@@ -43,15 +44,13 @@ class ModelSNB extends RiskModelPopulationBased {
      * @param model
      * @param classesModel
      * @param sampleSize
-     * @param accuracy
-     * @param maxIterations
+     * @param config
      * @param stop
      */
     ModelSNB(final ARXPopulationModel model, 
              final RiskModelEquivalenceClasses classesModel,
              final int sampleSize,
-             final double accuracy,
-             final int maxIterations,
+             final NewtonRaphsonConfiguration<?> config,
              final WrappedBoolean stop) {
         
         super(classesModel, model, sampleSize, stop, new WrappedInteger());
@@ -66,11 +65,7 @@ class ModelSNB extends RiskModelPopulationBased {
         // Solve the Maximum Likelihood Estimates
         Vector2D result = new NewtonRaphson2D(getObjectFunction(k, f, c1, c2),
                                               getDerivatives(k, f, c1, c2))
-                                              .accuracy(1e-6)
-                                              .iterationsPerTry(1000)
-                                              .iterationsTotal(100000)
-                                              .timePerTry(1000)
-                                              .timeTotal(10000)
+                                              .configure(config)
                                               .solve();
 
         // Compile and store

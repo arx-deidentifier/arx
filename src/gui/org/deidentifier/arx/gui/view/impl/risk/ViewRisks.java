@@ -262,8 +262,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         }
         return context.handle.getRiskEstimator(analysisContext.getModel().getRiskModel().getPopulationModel(),
                                                analysisContext.getData().definition.getQuasiIdentifyingAttributes(),
-                                               analysisContext.getModel().getRiskModel().getAccuracy(),
-                                               analysisContext.getModel().getRiskModel().getMaxIterations())
+                                               analysisContext.getModel().getRiskModel().getSolverConfiguration())
                                                .getInterruptibleInstance();
     }
 
@@ -301,8 +300,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         AnalysisContext analysisContext = context.context;
         return context.handle.getRiskEstimator(model, 
                                                classes, 
-                                               analysisContext.getModel().getRiskModel().getAccuracy(),
-                                               analysisContext.getModel().getRiskModel().getMaxIterations())
+                                               analysisContext.getModel().getRiskModel().getSolverConfiguration())
                                                .getInterruptibleInstance();
     }
 
@@ -318,8 +316,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         AnalysisContext analysisContext = context.context;
         return context.handle.getRiskEstimator(analysisContext.getPopulationModel(),
                                                identifiers,
-                                               analysisContext.getModel().getRiskModel().getAccuracy(),
-                                               analysisContext.getModel().getRiskModel().getMaxIterations())
+                                               analysisContext.getModel().getRiskModel().getSolverConfiguration())
                                                .getInterruptibleInstance();
     }
 

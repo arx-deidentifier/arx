@@ -173,13 +173,26 @@ public class DialogProperties implements IDialog {
         window.addCategory(Resources.getMessage("PropertyDialog.40"), //$NON-NLS-1$
                            controller.getResources().getImage("settings-risk.png")); //$NON-NLS-1$
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.41"), 1, 100000, 1000) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getRiskModel().getMaxIterations(); }
-            protected void setValue(Object t) { model.getRiskModel().setMaxIterations((Integer)t); }});
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.50"), 1.0e-12, 1d, 1.0e-6) { //$NON-NLS-1$
+            protected Double getValue() { return model.getRiskModel().getSolverConfiguration().getAccuracy(); }
+            protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().accuracy((Double)t); }});
+
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.51"), 1, 100000, 1000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getIterationsPerTry(); }
+            protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().iterationsPerTry((Integer)t); }});
         
-        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.42"), 1.0e-10, 1d, 1.0e-6) { //$NON-NLS-1$
-            protected Double getValue() { return model.getRiskModel().getAccuracy(); }
-            protected void setValue(Object t) { model.getRiskModel().setAccuracy((Double)t); }});
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.52"), 1, 1000000, 10000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getIterationsTotal(); }
+            protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().iterationsTotal((Integer)t); }});
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.53"), 1, 100000, 100) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getTimePerTry(); }
+            protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().timePerTry((Integer)t); }});
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.54"), 1, 1000000, 1000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getTimeTotal(); }
+            protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().timeTotal((Integer)t); }});
+        
 
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.43"), 1, 10, 10) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getMaxQiSize(); }

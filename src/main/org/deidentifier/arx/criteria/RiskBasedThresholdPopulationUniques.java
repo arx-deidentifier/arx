@@ -18,6 +18,7 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
 import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk;
 import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
@@ -30,20 +31,17 @@ import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.Statisti
 public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriterion{
 
     /** SVUID */
-    private static final long   serialVersionUID       = 618039085843721351L;
-
-    /** Constant */
-    private static final int    DEFAULT_MAX_ITERATIONS = 1000;
-    
-    /** Constant */
-    private static final double DEFAULT_ACCURACY       = 10e-6;
+    private static final long          serialVersionUID = 618039085843721351L;
 
     /** The statistical model */
-    private StatisticalPopulationModel    statisticalModel;
+    private StatisticalPopulationModel statisticalModel;
 
     /** The population model */
-    private ARXPopulationModel  populationModel;
+    private ARXPopulationModel         populationModel;
 
+    /** The solver config*/
+    private ARXSolverConfiguration     solverConfig;
+    
     /**
      * Creates a new instance of this criterion. Uses Dankar's method for estimating population uniqueness.
      * This constructor will clone the population model, making further changes to it will not influence
@@ -59,24 +57,22 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
     /**
      * Creates a new instance of this criterion. Uses Dankar's method for estimating population uniqueness.
      * This constructor will clone the population model, making further changes to it will not influence
-     * the results. The default accuracy is 10e-6 and the default maximal number of iterations is 1000.
+     * the results.
      *  
      * @param riskThreshold
      * @param populationModel
-     * @param accuracy
-     * @param maxIterations
+     * @param config
      */
     public RiskBasedThresholdPopulationUniques(double riskThreshold,
                                                ARXPopulationModel populationModel,
-                                               double accuracy,
-                                               int maxIterations) {
-        this(riskThreshold, StatisticalPopulationModel.DANKAR, populationModel, accuracy, maxIterations);
+                                               ARXSolverConfiguration config) {
+        this(riskThreshold, StatisticalPopulationModel.DANKAR, populationModel, config);
     }
 
     /**
      * Creates a new instance of this criterion. Uses the specified method for estimating population uniqueness.
      * This constructor will clone the population model, making further changes to it will not influence
-     * the results. The default accuracy is 10e-6 and the default maximal number of iterations is 1000.
+     * the results.
      * 
      * @param riskThreshold
      * @param statisticalModel
@@ -85,7 +81,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
     public RiskBasedThresholdPopulationUniques(double riskThreshold,
                                                StatisticalPopulationModel statisticalModel, 
                                                ARXPopulationModel populationModel){
-        this(riskThreshold, statisticalModel, populationModel, DEFAULT_ACCURACY, DEFAULT_MAX_ITERATIONS);
+        this(riskThreshold, statisticalModel, populationModel, ARXSolverConfiguration.create());
     }
     /**
      * Creates a new instance of this criterion. Uses the specified method for estimating population uniqueness.
@@ -95,17 +91,16 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      * @param riskThreshold
      * @param statisticalModel
      * @param populationModel
-     * @param accuracy
-     * @param maxIterations
+     * @param config
      */
     public RiskBasedThresholdPopulationUniques(double riskThreshold,
                                                StatisticalPopulationModel statisticalModel, 
                                                ARXPopulationModel populationModel,
-                                               double accuracy,
-                                               int maxIterations){
+                                               ARXSolverConfiguration config){
         super(false, riskThreshold);
         this.statisticalModel = statisticalModel;
         this.populationModel = populationModel.clone();
+        this.solverConfig = config;
     }
 
     /**
@@ -139,7 +134,8 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
 
         RiskModelPopulationBasedUniquenessRisk riskModel = new RiskModelPopulationBasedUniquenessRisk(this.populationModel, 
                                                                                                       distribution.getEquivalenceClasses(), 
-                                                                                                      distribution.getNumberOfTuples());
+                                                                                                      distribution.getNumberOfTuples(),
+                                                                                                      solverConfig);
         
         double populationUniques = riskModel.getFractionOfUniqueTuples(this.statisticalModel);
         if (populationUniques > 0d && populationUniques <= getRiskThreshold()) {

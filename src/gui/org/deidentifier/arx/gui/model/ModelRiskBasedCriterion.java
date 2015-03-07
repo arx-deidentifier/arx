@@ -175,7 +175,6 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 	    return new RiskBasedThresholdPopulationUniques(threshold, 
 	                                                   statisticalModel, 
 	                                                   riskModel.getPopulationModel().clone(),
-	                                                   riskModel.getAccuracy(),
-	                                                   riskModel.getMaxIterations());
+	                                                   riskModel.getSolverConfiguration());
 	}
 }

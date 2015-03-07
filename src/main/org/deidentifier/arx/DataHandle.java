@@ -467,12 +467,11 @@ public abstract class DataHandle {
     /**
      * Returns a risk estimator
      * @param model
-     * @param accuracy
-     * @param maxIterations
+     * @param config
      * @return
      */
-    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, double accuracy, int maxIterations) {
-        return getRiskEstimator(model, getDefinition().getQuasiIdentifyingAttributes(), accuracy, maxIterations);
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, ARXSolverConfiguration config) {
+        return getRiskEstimator(model, getDefinition().getQuasiIdentifyingAttributes(), config);
     }
 
     /**
@@ -489,12 +488,11 @@ public abstract class DataHandle {
      * Returns a risk estimator for the given set of equivalence classes. Saves resources by re-using existing classes
      * @param model
      * @param classes
-     * @param accuracy
-     * @param maxIterations
+     * @param config
      * @return
      */
-    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, RiskModelEquivalenceClasses classes, double accuracy, int maxIterations) {
-        return new RiskEstimateBuilder(model, this, classes, accuracy, maxIterations);
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, RiskModelEquivalenceClasses classes, ARXSolverConfiguration config) {
+        return new RiskEstimateBuilder(model, this, classes, config);
     }
 
     /**
@@ -511,12 +509,11 @@ public abstract class DataHandle {
      * Returns a risk estimator for the given set of quasi-identifiers
      * @param model
      * @param qis
-     * @param accuracy
-     * @param maxIterations
+     * @param config
      * @return
      */
-    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, Set<String> qis, double accuracy, int maxIterations) {
-        return new RiskEstimateBuilder(model, this, qis, accuracy, maxIterations);
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, Set<String> qis, ARXSolverConfiguration config) {
+        return new RiskEstimateBuilder(model, this, qis, config);
     }
 
     /**

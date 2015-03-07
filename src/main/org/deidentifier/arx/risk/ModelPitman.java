@@ -23,6 +23,7 @@ import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
 
 import de.linearbits.newtonraphson.Function;
 import de.linearbits.newtonraphson.NewtonRaphson2D;
+import de.linearbits.newtonraphson.NewtonRaphsonConfiguration;
 import de.linearbits.newtonraphson.Pair;
 import de.linearbits.newtonraphson.SquareMatrix2D;
 import de.linearbits.newtonraphson.Vector2D;
@@ -47,11 +48,13 @@ class ModelPitman extends RiskModelPopulationBased {
      * @param model
      * @param classes
      * @param sampleSize
+     * @param config
      * @param stop
      */
     ModelPitman(final ARXPopulationModel model, 
                 final RiskModelEquivalenceClasses classes, 
                 final int sampleSize,
+                final NewtonRaphsonConfiguration<?> config,
                 final WrappedBoolean stop) {
         
         super(classes, model, sampleSize, stop, new WrappedInteger());
@@ -71,11 +74,7 @@ class ModelPitman extends RiskModelPopulationBased {
 
         // Solve the Maximum Likelihood Estimates
         Vector2D result = new NewtonRaphson2D(getFunctions(classes.getEquivalenceClasses(), u, n))
-                                              .accuracy(1e-6)
-                                              .iterationsPerTry(1000)
-                                              .iterationsTotal(1000)
-                                              .timePerTry(10000)
-                                              .timeTotal(10000)
+                                              .configure(config)
                                               .solve(new Vector2D(t, a));
 
         // Compile the result

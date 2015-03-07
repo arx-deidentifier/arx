@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.DataHandle;
 
@@ -64,9 +65,7 @@ public class ModelRisk implements Serializable {
     /** Model */
     private ARXPopulationModel         populationModel           = null;
     /** Model */
-    private int                        maxIterations             = 1000;
-    /** Model */
-    private double                     accuracy                  = 1.0e-6;
+    private ARXSolverConfiguration     config                    = ARXSolverConfiguration.create();
     /** Model */
     private int                        maxQiSize                 = 10;
     /** Model */
@@ -86,17 +85,10 @@ public class ModelRisk implements Serializable {
     }
     
     /**
-     * @return the accuracy
+     * Returns the solver configuration
      */
-    public double getAccuracy() {
-        return accuracy;
-    }
-    
-    /**
-     * @return the maxIterations
-     */
-    public int getMaxIterations() {
-        return maxIterations;
+    public ARXSolverConfiguration getSolverConfiguration() {
+        return config;
     }
     
     /**
@@ -171,7 +163,7 @@ public class ModelRisk implements Serializable {
      * @return
      */
     public boolean isModified() {
-        return modified;
+        return modified || config.isModified();
     }
     
     /**
@@ -205,26 +197,6 @@ public class ModelRisk implements Serializable {
         } else {
             return viewEnabledForOutput.get(view);
         }
-    }
-    
-    /**
-     * @param accuracy the accuracy to set
-     */
-    public void setAccuracy(double accuracy) {
-        if (accuracy != this.accuracy) {
-            this.modified = true;
-        }
-        this.accuracy = accuracy;
-    }
-
-    /**
-     * @param maxIterations the maxIterations to set
-     */
-    public void setMaxIterations(int maxIterations) {
-        if (maxIterations != this.maxIterations) {
-            this.modified = true;
-        }
-        this.maxIterations = maxIterations;
     }
 
     /**
@@ -282,6 +254,7 @@ public class ModelRisk implements Serializable {
      */
     public void setUnmodified() {
         this.modified = false;
+        this.config.setUnmodified();
     }
 
     /**

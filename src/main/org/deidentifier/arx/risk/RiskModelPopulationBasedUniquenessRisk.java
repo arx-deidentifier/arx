@@ -20,6 +20,7 @@ package org.deidentifier.arx.risk;
 import java.io.Serializable;
 
 import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
 
@@ -51,7 +52,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
     /** Estimate */
     private double                      numUniquesDankar = -1d;
     /** Model */
-    private StatisticalPopulationModel            dankarModel      = null;
+    private StatisticalPopulationModel  dankarModel      = null;
     /** Parameter */
     private int                         numClassesOfSize1;
     /** Parameter */
@@ -61,11 +62,9 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
     /** Parameter */
     private RiskModelEquivalenceClasses classes;
     /** Parameter */
+    private ARXSolverConfiguration      config;
+    /** Parameter */
     private int                         sampleSize;
-    /** Parameter */
-    private double                      accuracy;
-    /** Parameter */
-    private int                         maxIterations;
     /** Parameter */
     private WrappedBoolean              stop;
 
@@ -74,17 +73,18 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
      * @param model
      * @param classes
      * @param sampleSize
+     * @param config
      */
     public RiskModelPopulationBasedUniquenessRisk(ARXPopulationModel model,
                                                   RiskModelEquivalenceClasses classes,
-                                                  int sampleSize) {
+                                                  int sampleSize,
+                                                  ARXSolverConfiguration config) {
         this(model,
              classes,
              sampleSize,
              new WrappedBoolean(),
              new WrappedInteger(),
-             RiskEstimateBuilder.DEFAULT_ACCURACY,
-             RiskEstimateBuilder.DEFAULT_MAX_ITERATIONS,
+             config,
              false);
     }
 
@@ -95,8 +95,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
      * @param sampleSize
      * @param stop
      * @param progress
-     * @param accuracy
-     * @param maxIterations
+     * @param config
      * @param precompute
      */
     RiskModelPopulationBasedUniquenessRisk(ARXPopulationModel model,
@@ -104,8 +103,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
                                            int sampleSize,
                                            WrappedBoolean stop,
                                            WrappedInteger progress,
-                                           double accuracy,
-                                           int maxIterations,
+                                           ARXSolverConfiguration config,
                                            boolean precompute) {
         super(classes, model, sampleSize, stop, progress);
 
@@ -115,8 +113,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
         this.model = model;
         this.classes = classes;
         this.sampleSize = sampleSize;
-        this.accuracy = accuracy;
-        this.maxIterations = maxIterations;
+        this.config = config;
         this.stop = stop;
 
         // Handle cases where there are no sample uniques
@@ -259,7 +256,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
             if (this.numClassesOfSize1 == 0) {
                 numUniquesPitman = 0;
             } else {
-                numUniquesPitman = new ModelPitman(model, classes, sampleSize, stop).getNumUniques();
+                numUniquesPitman = new ModelPitman(model, classes, sampleSize, config, stop).getNumUniques();
             }
         }
         return isValid(numUniquesPitman) ? numUniquesPitman : 0d;
@@ -273,7 +270,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
             if (this.numClassesOfSize1 == 0) {
                 numUniquesSNB = 0;
             } else {
-                numUniquesSNB = new ModelSNB(model, classes, sampleSize, accuracy, maxIterations, stop).getNumUniques();
+                numUniquesSNB = new ModelSNB(model, classes, sampleSize, config, stop).getNumUniques();
             }
         }
         return isValid(numUniquesSNB) ? numUniquesSNB : 0d;
