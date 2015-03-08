@@ -144,7 +144,13 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#previewDataMaxLines">previewDataMaxLines</a></strong></code>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#DETECT_MAX_CHARS">DETECT_MAX_CHARS</a></strong></code>
+<div class="block">Maximum number of chars to be loaded for detecting separators.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#PREVIEW_MAX_LINES">PREVIEW_MAX_LINES</a></strong></code>
 <div class="block">Maximum number of lines to be loaded for preview purposes.</div>
 </td>
 </tr>
@@ -163,7 +169,9 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#ImportWizardModel()">ImportWizardModel</a></strong>()</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#ImportWizardModel(org.deidentifier.arx.gui.model.Model)">ImportWizardModel</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</code>
+<div class="block">Creates a new instance</div>
+</td>
 </tr>
 </table>
 </li>
@@ -186,7 +194,19 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>char</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getCsvSeparator()">getCsvSeparator</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getCsvEscape()">getCsvEscape</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>char[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getCsvLinebreak()">getCsvLinebreak</a></strong>()</code>
+<div class="block">Getter</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>char</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getCsvQuote()">getCsvQuote</a></strong>()</code>
+<div class="block">Getter</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../../org/deidentifier/arx/io/ImportColumn.html" title="class in org.deidentifier.arx.io">ImportColumn</a>&gt;</code></td>
@@ -218,10 +238,16 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getJdbcTables()">getJdbcTables</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getMatchingDataTypes(org.deidentifier.arx.gui.view.impl.wizard.ImportWizardModelColumn)">getMatchingDataTypes</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModelColumn.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">ImportWizardModelColumn</a>&nbsp;column)</code>
+<div class="block">Returns a list of matching data types</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String[]&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getPreviewData()">getPreviewData</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getPreviewData(org.deidentifier.arx.gui.view.impl.wizard.ImportWizardModelColumn)">getPreviewData</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModelColumn.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">ImportWizardModelColumn</a>&nbsp;column)</code>
 <div class="block">Returns a list of strings containing the data for the given column
@@ -230,17 +256,21 @@ extends java.lang.Object</pre>
  rather than all of the preview data.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getSelectedJdbcTable()">getSelectedJdbcTable</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.SourceType.html" title="enum in org.deidentifier.arx.gui.view.impl.wizard">ImportWizardModel.SourceType</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getSourceType()">getSourceType</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModelColumn.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">ImportWizardModelColumn</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getWizardColumns()">getWizardColumns</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#isPerformCleansing()">isPerformCleansing</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -248,7 +278,19 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setCsvSeparator(char)">setCsvSeparator</a></strong>(char&nbsp;csvSeparator)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setCsvEscape(char)">setCsvEscape</a></strong>(char&nbsp;csvEscape)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setCsvLinebreak(char[])">setCsvLinebreak</a></strong>(char[]&nbsp;csvLinebreak)</code>
+<div class="block">Setter</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setCsvQuote(char)">setCsvQuote</a></strong>(char&nbsp;csvQuote)</code>
+<div class="block">Setter</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -272,17 +314,23 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setPreviewData(java.util.List)">setPreviewData</a></strong>(java.util.List&lt;java.lang.String[]&gt;&nbsp;previewData)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setPerformCleansing(boolean)">setPerformCleansing</a></strong>(boolean&nbsp;performCleansing)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setSelectedJdbcTable(java.lang.String)">setSelectedJdbcTable</a></strong>(java.lang.String&nbsp;selectedJdbcTable)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setPreviewData(java.util.List)">setPreviewData</a></strong>(java.util.List&lt;java.lang.String[]&gt;&nbsp;previewData)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setSourceType(org.deidentifier.arx.gui.view.impl.wizard.ImportWizardModel.SourceType)">setSourceType</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.SourceType.html" title="enum in org.deidentifier.arx.gui.view.impl.wizard">ImportWizardModel.SourceType</a>&nbsp;sourceType)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setSelectedJdbcTable(java.lang.String)">setSelectedJdbcTable</a></strong>(java.lang.String&nbsp;selectedJdbcTable)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setSourceType(org.deidentifier.arx.gui.view.impl.wizard.ImportWizardModel.SourceType)">setSourceType</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.SourceType.html" title="enum in org.deidentifier.arx.gui.view.impl.wizard">ImportWizardModel.SourceType</a>&nbsp;sourceType)</code>
+<div class="block">Setter</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setWizardColumns(java.util.List)">setWizardColumns</a></strong>(java.util.List&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModelColumn.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">ImportWizardModelColumn</a>&gt;&nbsp;columns)</code>&nbsp;</td>
 </tr>
@@ -308,15 +356,26 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="previewDataMaxLines">
+<a name="PREVIEW_MAX_LINES">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>PREVIEW_MAX_LINES</h4>
+<pre>public static final&nbsp;int PREVIEW_MAX_LINES</pre>
+<div class="block">Maximum number of lines to be loaded for preview purposes.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../../../constant-values.html#org.deidentifier.arx.gui.view.impl.wizard.ImportWizardModel.PREVIEW_MAX_LINES">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="DETECT_MAX_CHARS">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>previewDataMaxLines</h4>
-<pre>public static final&nbsp;int previewDataMaxLines</pre>
-<div class="block">Maximum number of lines to be loaded for preview purposes.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../../../constant-values.html#org.deidentifier.arx.gui.view.impl.wizard.ImportWizardModel.previewDataMaxLines">Constant Field Values</a></dd></dl>
+<h4>DETECT_MAX_CHARS</h4>
+<pre>public static final&nbsp;int DETECT_MAX_CHARS</pre>
+<div class="block">Maximum number of chars to be loaded for detecting separators.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../../../constant-values.html#org.deidentifier.arx.gui.view.impl.wizard.ImportWizardModel.DETECT_MAX_CHARS">Constant Field Values</a></dd></dl>
 </li>
 </ul>
 </li>
@@ -327,13 +386,15 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ImportWizardModel()">
+<a name="ImportWizardModel(org.deidentifier.arx.gui.model.Model)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ImportWizardModel</h4>
-<pre>public&nbsp;ImportWizardModel()</pre>
+<pre>public&nbsp;ImportWizardModel(<a href="../../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</pre>
+<div class="block">Creates a new instance</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -354,14 +415,36 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the csvDelimiter</dd></dl>
 </li>
 </ul>
-<a name="getCsvSeparator()">
+<a name="getCsvEscape()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getCsvSeparator</h4>
-<pre>public&nbsp;char&nbsp;getCsvSeparator()</pre>
-<dl><dt><span class="strong">Returns:</span></dt><dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#csvSeparator"><code>csvSeparator</code></a></dd></dl>
+<h4>getCsvEscape</h4>
+<pre>public&nbsp;char&nbsp;getCsvEscape()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#csvEscape"><code>csvEscape</code></a></dd></dl>
+</li>
+</ul>
+<a name="getCsvLinebreak()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCsvLinebreak</h4>
+<pre>public&nbsp;char[]&nbsp;getCsvLinebreak()</pre>
+<div class="block">Getter</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getCsvQuote()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCsvQuote</h4>
+<pre>public&nbsp;char&nbsp;getCsvQuote()</pre>
+<div class="block">Getter</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getEnabledColumns()">
@@ -429,6 +512,17 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#jdbcTables"><code>jdbcTables</code></a></dd></dl>
 </li>
 </ul>
+<a name="getMatchingDataTypes(org.deidentifier.arx.gui.view.impl.wizard.ImportWizardModelColumn)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMatchingDataTypes</h4>
+<pre>public&nbsp;java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;&nbsp;getMatchingDataTypes(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModelColumn.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">ImportWizardModelColumn</a>&nbsp;column)</pre>
+<div class="block">Returns a list of matching data types</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - </dd></dl>
+</li>
+</ul>
 <a name="getPreviewData()">
 <!--   -->
 </a>
@@ -484,6 +578,16 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#wizardColumns"><code>wizardColumns</code></a></dd></dl>
 </li>
 </ul>
+<a name="isPerformCleansing()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isPerformCleansing</h4>
+<pre>public&nbsp;boolean&nbsp;isPerformCleansing()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the performCleansing</dd></dl>
+</li>
+</ul>
 <a name="setCsvDelimiter(char)">
 <!--   -->
 </a>
@@ -494,14 +598,36 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>csvDelimiter</code> - the csvDelimiter to set</dd></dl>
 </li>
 </ul>
-<a name="setCsvSeparator(char)">
+<a name="setCsvEscape(char)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setCsvSeparator</h4>
-<pre>public&nbsp;void&nbsp;setCsvSeparator(char&nbsp;csvSeparator)</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>csvSeparator</code> - <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#csvSeparator"><code>csvSeparator</code></a></dd></dl>
+<h4>setCsvEscape</h4>
+<pre>public&nbsp;void&nbsp;setCsvEscape(char&nbsp;csvEscape)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>csvEscape</code> - </dd></dl>
+</li>
+</ul>
+<a name="setCsvLinebreak(char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setCsvLinebreak</h4>
+<pre>public&nbsp;void&nbsp;setCsvLinebreak(char[]&nbsp;csvLinebreak)</pre>
+<div class="block">Setter</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>csvLinebreak</code> - </dd></dl>
+</li>
+</ul>
+<a name="setCsvQuote(char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setCsvQuote</h4>
+<pre>public&nbsp;void&nbsp;setCsvQuote(char&nbsp;csvQuote)</pre>
+<div class="block">Setter</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>csvQuote</code> - </dd></dl>
 </li>
 </ul>
 <a name="setExcelSheetIndex(int)">
@@ -554,6 +680,16 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>jdbcTables</code> - <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#jdbcTables"><code>jdbcTables</code></a></dd></dl>
 </li>
 </ul>
+<a name="setPerformCleansing(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setPerformCleansing</h4>
+<pre>public&nbsp;void&nbsp;setPerformCleansing(boolean&nbsp;performCleansing)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>performCleansing</code> - the performCleansing to set</dd></dl>
+</li>
+</ul>
 <a name="setPreviewData(java.util.List)">
 <!--   -->
 </a>
@@ -581,6 +717,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>setSourceType</h4>
 <pre>public&nbsp;void&nbsp;setSourceType(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.SourceType.html" title="enum in org.deidentifier.arx.gui.view.impl.wizard">ImportWizardModel.SourceType</a>&nbsp;sourceType)</pre>
+<div class="block">Setter</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>sourceType</code> - </dd></dl>
 </li>
 </ul>

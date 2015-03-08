@@ -277,22 +277,6 @@ extends org.xml.sax.helpers.DefaultHandler</pre>
 <dd><code>org.xml.sax.SAXException</code></dd></dl>
 </li>
 </ul>
-<a name="end(java.lang.String, java.lang.String, java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>end</h4>
-<pre>protected abstract&nbsp;boolean&nbsp;end(java.lang.String&nbsp;uri,
-          java.lang.String&nbsp;localName,
-          java.lang.String&nbsp;qName)
-                        throws org.xml.sax.SAXException</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>uri</code> - </dd><dd><code>localName</code> - </dd><dd><code>qName</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>org.xml.sax.SAXException</code></dd></dl>
-</li>
-</ul>
 <a name="endElement(java.lang.String, java.lang.String, java.lang.String)">
 <!--   -->
 </a>
@@ -312,27 +296,10 @@ extends org.xml.sax.helpers.DefaultHandler</pre>
 <dd><code>org.xml.sax.SAXException</code></dd></dl>
 </li>
 </ul>
-<a name="start(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>start</h4>
-<pre>protected abstract&nbsp;boolean&nbsp;start(java.lang.String&nbsp;uri,
-            java.lang.String&nbsp;localName,
-            java.lang.String&nbsp;qName,
-            org.xml.sax.Attributes&nbsp;attributes)
-                          throws org.xml.sax.SAXException</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>uri</code> - </dd><dd><code>localName</code> - </dd><dd><code>qName</code> - </dd><dd><code>attributes</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>org.xml.sax.SAXException</code></dd></dl>
-</li>
-</ul>
 <a name="startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>startElement</h4>
 <pre>public&nbsp;void&nbsp;startElement(java.lang.String&nbsp;uri,
@@ -345,6 +312,39 @@ extends org.xml.sax.helpers.DefaultHandler</pre>
 <dd><code>startElement</code>&nbsp;in interface&nbsp;<code>org.xml.sax.ContentHandler</code></dd>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>startElement</code>&nbsp;in class&nbsp;<code>org.xml.sax.helpers.DefaultHandler</code></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>org.xml.sax.SAXException</code></dd></dl>
+</li>
+</ul>
+<a name="end(java.lang.String, java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>end</h4>
+<pre>protected abstract&nbsp;boolean&nbsp;end(java.lang.String&nbsp;uri,
+          java.lang.String&nbsp;localName,
+          java.lang.String&nbsp;qName)
+                        throws org.xml.sax.SAXException</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>uri</code> - </dd><dd><code>localName</code> - </dd><dd><code>qName</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>org.xml.sax.SAXException</code></dd></dl>
+</li>
+</ul>
+<a name="start(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>start</h4>
+<pre>protected abstract&nbsp;boolean&nbsp;start(java.lang.String&nbsp;uri,
+            java.lang.String&nbsp;localName,
+            java.lang.String&nbsp;qName,
+            org.xml.sax.Attributes&nbsp;attributes)
+                          throws org.xml.sax.SAXException</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>uri</code> - </dd><dd><code>localName</code> - </dd><dd><code>qName</code> - </dd><dd><code>attributes</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>org.xml.sax.SAXException</code></dd></dl>
 </li>

@@ -217,16 +217,14 @@ extends java.lang.Object</pre>
 <div class="block">Override this to perform the action</div>
 </li>
 </ul>
-<a name="isEnabled(org.deidentifier.arx.gui.model.Model)">
+<a name="getImage()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>isEnabled</h4>
-<pre>public abstract&nbsp;boolean&nbsp;isEnabled(<a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</pre>
-<div class="block">Override this to return whether the item is enabled</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<h4>getImage</h4>
+<pre>public&nbsp;org.eclipse.swt.graphics.Image&nbsp;getImage()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the image</dd></dl>
 </li>
 </ul>
 <a name="getLabel()">
@@ -239,24 +237,26 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the label</dd></dl>
 </li>
 </ul>
-<a name="getImage()">
+<a name="isButton()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getImage</h4>
-<pre>public&nbsp;org.eclipse.swt.graphics.Image&nbsp;getImage()</pre>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the image</dd></dl>
+<h4>isButton</h4>
+<pre>public&nbsp;boolean&nbsp;isButton()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the isButton</dd></dl>
 </li>
 </ul>
-<a name="isButton()">
+<a name="isEnabled(org.deidentifier.arx.gui.model.Model)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>isButton</h4>
-<pre>public&nbsp;boolean&nbsp;isButton()</pre>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the isButton</dd></dl>
+<h4>isEnabled</h4>
+<pre>public abstract&nbsp;boolean&nbsp;isEnabled(<a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</pre>
+<div class="block">Override this to return whether the item is enabled</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

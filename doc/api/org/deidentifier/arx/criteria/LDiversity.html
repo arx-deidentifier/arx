@@ -190,7 +190,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriter
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.criteria.<a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></h3>
-<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonic()">isMonotonic</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonic()">isMonotonic</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -234,21 +234,6 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriter
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getRequirements()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getRequirements</h4>
-<pre>public&nbsp;int&nbsp;getRequirements()</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRequirements()">PrivacyCriterion</a></code></strong></div>
-<div class="block">Returns the criterion's requirements.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRequirements()">getRequirements</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="getL()">
 <!--   -->
 </a>
@@ -263,12 +248,27 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriter
 <a name="getMinimalGroupSize()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getMinimalGroupSize</h4>
 <pre>public&nbsp;int&nbsp;getMinimalGroupSize()</pre>
 <div class="block">Returns the minimal group size required to fulfill this criterion.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getRequirements()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getRequirements</h4>
+<pre>public&nbsp;int&nbsp;getRequirements()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRequirements()">PrivacyCriterion</a></code></strong></div>
+<div class="block">Returns the criterion's requirements.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRequirements()">getRequirements</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

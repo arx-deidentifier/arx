@@ -243,6 +243,22 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="createInformationLoss(org.deidentifier.arx.metric.InformationLoss, org.deidentifier.arx.metric.Metric, int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createInformationLoss</h4>
+<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;createInformationLoss(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;loss,
+                                       <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric,
+                                       int&nbsp;minLevel,
+                                       int&nbsp;maxLevel)</pre>
+<div class="block">Converter method, converting information loss from version 1 to information loss from version 2,
+ if necessary.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>loss</code> - </dd><dd><code>metric</code> - </dd><dd><code>minLevel</code> - </dd><dd><code>maxLevel</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="clone()">
 <!--   -->
 </a>
@@ -346,7 +362,7 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <a name="toString()">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>toString</h4>
 <pre>public abstract&nbsp;java.lang.String&nbsp;toString()</pre>
@@ -354,22 +370,6 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="createInformationLoss(org.deidentifier.arx.metric.InformationLoss, org.deidentifier.arx.metric.Metric, int, int)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>createInformationLoss</h4>
-<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;createInformationLoss(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;loss,
-                                       <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric,
-                                       int&nbsp;minLevel,
-                                       int&nbsp;maxLevel)</pre>
-<div class="block">Converter method, converting information loss from version 1 to information loss from version 2,
- if necessary.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>loss</code> - </dd><dd><code>metric</code> - </dd><dd><code>minLevel</code> - </dd><dd><code>maxLevel</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

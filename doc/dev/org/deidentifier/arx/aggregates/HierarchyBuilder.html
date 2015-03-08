@@ -259,21 +259,6 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="create(java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>create</h4>
-<pre>public static&nbsp;&lt;T&gt;&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;T&gt;&nbsp;create(java.lang.String&nbsp;file)
-                                  throws java.io.IOException</pre>
-<div class="block">Loads a builder from a file.</div>
-<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
 <a name="create(java.io.File)">
 <!--   -->
 </a>
@@ -289,16 +274,19 @@ implements java.io.Serializable</pre>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="build(java.lang.String[])">
+<a name="create(java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>build</h4>
-<pre>public abstract&nbsp;<a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;build(java.lang.String[]&nbsp;data)</pre>
-<div class="block">Creates a new hierarchy, based on the predefined specification.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<h4>create</h4>
+<pre>public static&nbsp;&lt;T&gt;&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;T&gt;&nbsp;create(java.lang.String&nbsp;file)
+                                  throws java.io.IOException</pre>
+<div class="block">Loads a builder from a file.</div>
+<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 <a name="build()">
@@ -312,6 +300,29 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="build(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>build</h4>
+<pre>public abstract&nbsp;<a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;build(java.lang.String[]&nbsp;data)</pre>
+<div class="block">Creates a new hierarchy, based on the predefined specification.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getType()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getType</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.Type.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilder.Type</a>&nbsp;getType()</pre>
+<div class="block">Returns the type of builder.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="prepare(java.lang.String[])">
 <!--   -->
 </a>
@@ -322,20 +333,6 @@ implements java.io.Serializable</pre>
 <div class="block">Prepares the builder. Returns a list of the number of equivalence classes per level</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="save(java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>save</h4>
-<pre>public&nbsp;void&nbsp;save(java.lang.String&nbsp;file)
-          throws java.io.IOException</pre>
-<div class="block">Saves the specification of this builder to the given file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 <a name="save(java.io.File)">
@@ -352,15 +349,18 @@ implements java.io.Serializable</pre>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="getType()">
+<a name="save(java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>getType</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.Type.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilder.Type</a>&nbsp;getType()</pre>
-<div class="block">Returns the type of builder.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<h4>save</h4>
+<pre>public&nbsp;void&nbsp;save(java.lang.String&nbsp;file)
+          throws java.io.IOException</pre>
+<div class="block">Saves the specification of this builder to the given file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 </li>

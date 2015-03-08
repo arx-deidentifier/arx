@@ -152,15 +152,15 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>java.util.Set&lt;<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getCriteria()">getCriteria</a></strong>()</code>
-<div class="block">Returns all criteria.</div>
+<td class="colFirst"><code><a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getClassBasedCriteriaAsArray()">getClassBasedCriteriaAsArray</a></strong>()</code>
+<div class="block">Returns all class-based criteria (except k-anonymity) as an array.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getCriteriaAsArray()">getCriteriaAsArray</a></strong>()</code>
-<div class="block">Returns all criteria (except k-anonymity) as an array.</div>
+<td class="colFirst"><code>java.util.Set&lt;<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getCriteria()">getCriteria</a></strong>()</code>
+<div class="block">Returns all criteria.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -192,34 +192,46 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../org/deidentifier/arx/criteria/SampleBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedPrivacyCriterion</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getSampleBasedCriteriaAsArray()">getSampleBasedCriteriaAsArray</a></strong>()</code>
+<div class="block">Returns all sample-based criteria as an array.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getSnapshotLength()">getSnapshotLength</a></strong>()</code>
 <div class="block">Returns the specific length of each entry in a snapshot.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getSuppressedAttributeTypes()">getSuppressedAttributeTypes</a></strong>()</code>
 <div class="block">Returns an integer representing all attribute types that must be suppressed.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#isCriterionMonotonic()">isCriterionMonotonic</a></strong>()</code>
 <div class="block">Determines whether the anonymity criterion is montonic.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#isPracticalMonotonicity()">isPracticalMonotonicity</a></strong>()</code>
 <div class="block">Is practical monotonicity assumed.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#isSuppressionAlwaysEnabled()">isSuppressionAlwaysEnabled</a></strong>()</code>
 <div class="block">Returns whether suppression is applied to the output of anonymous as 
  well as non-anonymous transformations.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#isUseHeuristicForSampleBasedCriteria()">isUseHeuristicForSampleBasedCriteria</a></strong>()</code>
+<div class="block">Do we guarantee optimality for sample-based criteria?</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -269,6 +281,17 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="containsCriterion(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>containsCriterion</h4>
+<pre>public&nbsp;boolean&nbsp;containsCriterion(java.lang.Class&lt;? extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;clazz)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/deidentifier/arx/ARXConfiguration.html#containsCriterion(java.lang.Class)"><code>ARXConfiguration.containsCriterion(java.lang.Class)</code></a></dd></dl>
+</li>
+</ul>
 <a name="getAbsoluteMaxOutliers()">
 <!--   -->
 </a>
@@ -280,15 +303,60 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getCriteriaAsArray()">
+<a name="getClassBasedCriteriaAsArray()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getCriteriaAsArray</h4>
-<pre>public&nbsp;<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>[]&nbsp;getCriteriaAsArray()</pre>
-<div class="block">Returns all criteria (except k-anonymity) as an array. Only used internally. If k-anonymity is included the minimal
+<h4>getClassBasedCriteriaAsArray</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>[]&nbsp;getClassBasedCriteriaAsArray()</pre>
+<div class="block">Returns all class-based criteria (except k-anonymity) as an array. 
+ Only used internally. If k-anonymity is included the minimal
  group size should be obtained and enforced</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getCriteria()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCriteria</h4>
+<pre>public&nbsp;java.util.Set&lt;<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;getCriteria()</pre>
+<div class="block">Returns all criteria.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getCriterion(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCriterion</h4>
+<pre>public&nbsp;&lt;T extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;T&nbsp;getCriterion(java.lang.Class&lt;T&gt;&nbsp;clazz)</pre>
+<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getCriterion(java.lang.Class)"><code>ARXConfiguration.getCriterion(java.lang.Class)</code></a></dd></dl>
+</li>
+</ul>
+<a name="getMaxOutliers()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMaxOutliers</h4>
+<pre>public&nbsp;double&nbsp;getMaxOutliers()</pre>
+<div class="block">Returns the max relative number of outliers.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getMetric()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMetric</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;getMetric()</pre>
+<div class="block">Returns the metric used for measuring information loss.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -315,6 +383,17 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getSampleBasedCriteriaAsArray()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSampleBasedCriteriaAsArray</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/criteria/SampleBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedPrivacyCriterion</a>[]&nbsp;getSampleBasedCriteriaAsArray()</pre>
+<div class="block">Returns all sample-based criteria as an array.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getSnapshotLength()">
 <!--   -->
 </a>
@@ -337,26 +416,14 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="requires(int)">
+<a name="isCriterionMonotonic()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>requires</h4>
-<pre>public&nbsp;boolean&nbsp;requires(int&nbsp;requirement)</pre>
-<div class="block">Convenience method for checking the requirements.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>requirement</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getMaxOutliers()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getMaxOutliers</h4>
-<pre>public&nbsp;double&nbsp;getMaxOutliers()</pre>
-<div class="block">Returns the max relative number of outliers.</div>
+<h4>isCriterionMonotonic</h4>
+<pre>public&nbsp;boolean&nbsp;isCriterionMonotonic()</pre>
+<div class="block">Determines whether the anonymity criterion is montonic.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -369,39 +436,6 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;boolean&nbsp;isPracticalMonotonicity()</pre>
 <div class="block">Is practical monotonicity assumed.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getCriteria()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getCriteria</h4>
-<pre>public&nbsp;java.util.Set&lt;<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;getCriteria()</pre>
-<div class="block">Returns all criteria.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="containsCriterion(java.lang.Class)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>containsCriterion</h4>
-<pre>public&nbsp;boolean&nbsp;containsCriterion(java.lang.Class&lt;? extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;clazz)</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/deidentifier/arx/ARXConfiguration.html#containsCriterion(java.lang.Class)"><code>ARXConfiguration.containsCriterion(java.lang.Class)</code></a></dd></dl>
-</li>
-</ul>
-<a name="getCriterion(java.lang.Class)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getCriterion</h4>
-<pre>public&nbsp;&lt;T extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;T&nbsp;getCriterion(java.lang.Class&lt;T&gt;&nbsp;clazz)</pre>
-<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getCriterion(java.lang.Class)"><code>ARXConfiguration.getCriterion(java.lang.Class)</code></a></dd></dl>
 </li>
 </ul>
 <a name="isSuppressionAlwaysEnabled()">
@@ -418,26 +452,26 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getMetric()">
+<a name="isUseHeuristicForSampleBasedCriteria()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getMetric</h4>
-<pre>public&nbsp;<a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;getMetric()</pre>
-<div class="block">Returns the metric used for measuring information loss.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<h4>isUseHeuristicForSampleBasedCriteria</h4>
+<pre>public&nbsp;boolean&nbsp;isUseHeuristicForSampleBasedCriteria()</pre>
+<div class="block">Do we guarantee optimality for sample-based criteria?</div>
 </li>
 </ul>
-<a name="isCriterionMonotonic()">
+<a name="requires(int)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>isCriterionMonotonic</h4>
-<pre>public&nbsp;boolean&nbsp;isCriterionMonotonic()</pre>
-<div class="block">Determines whether the anonymity criterion is montonic.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<h4>requires</h4>
+<pre>public&nbsp;boolean&nbsp;requires(int&nbsp;requirement)</pre>
+<div class="block">Convenience method for checking the requirements.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>requirement</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

@@ -271,12 +271,6 @@ implements <a href="../../../../../org/deidentifier/arx/framework/check/INodeChe
 <div class="block">Returns the metric used by this checker.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#getNumberOfGroups()">getNumberOfGroups</a></strong>()</code>
-<div class="block">Returns the number of groups from the previous check.</div>
-</td>
-</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -391,6 +385,21 @@ implements <a href="../../../../../org/deidentifier/arx/framework/check/INodeChe
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="applyAndSetProperties(org.deidentifier.arx.framework.lattice.Node)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>applyAndSetProperties</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html" title="class in org.deidentifier.arx.framework.check">TransformedData</a>&nbsp;applyAndSetProperties(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation)</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.html#applyAndSetProperties(org.deidentifier.arx.framework.lattice.Node)">INodeChecker</a></code></strong></div>
+<div class="block">Applies the given transformation and sets its properties.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.html#applyAndSetProperties(org.deidentifier.arx.framework.lattice.Node)">applyAndSetProperties</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.html" title="interface in org.deidentifier.arx.framework.check">INodeChecker</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="check(org.deidentifier.arx.framework.lattice.Node)">
 <!--   -->
 </a>
@@ -516,7 +525,7 @@ public&nbsp;double&nbsp;getInformationLoss(<a href="../../../../../org/deidentif
 <a name="getMetric()">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>getMetric</h4>
 <pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;getMetric()</pre>
@@ -525,36 +534,6 @@ public&nbsp;double&nbsp;getInformationLoss(<a href="../../../../../org/deidentif
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.html#getMetric()">getMetric</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.html" title="interface in org.deidentifier.arx.framework.check">INodeChecker</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getNumberOfGroups()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getNumberOfGroups</h4>
-<pre>public&nbsp;int&nbsp;getNumberOfGroups()</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.html#getNumberOfGroups()">INodeChecker</a></code></strong></div>
-<div class="block">Returns the number of groups from the previous check.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.html#getNumberOfGroups()">getNumberOfGroups</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.html" title="interface in org.deidentifier.arx.framework.check">INodeChecker</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="applyAndSetProperties(org.deidentifier.arx.framework.lattice.Node)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>applyAndSetProperties</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html" title="class in org.deidentifier.arx.framework.check">TransformedData</a>&nbsp;applyAndSetProperties(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation)</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.html#applyAndSetProperties(org.deidentifier.arx.framework.lattice.Node)">INodeChecker</a></code></strong></div>
-<div class="block">Applies the given transformation and sets its properties.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.html#applyAndSetProperties(org.deidentifier.arx.framework.lattice.Node)">applyAndSetProperties</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.html" title="interface in org.deidentifier.arx.framework.check">INodeChecker</a></code></dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

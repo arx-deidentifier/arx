@@ -300,67 +300,79 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isUseHeuristicSearchForSampleBasedCriteria()">isUseHeuristicSearchForSampleBasedCriteria</a></strong>()</code>
+<div class="block">Do we guarantee optimality for sample-based criteria?</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#removeCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">removeCriterion</a></strong>(<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;arg)</code>
 <div class="block">Removes the given criterion.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeTypeSuppressed(org.deidentifier.arx.AttributeType,%20boolean)">setAttributeTypeSuppressed</a></strong>(<a href="../../../org/deidentifier/arx/AttributeType.html" title="class in org.deidentifier.arx">AttributeType</a>&nbsp;type,
                           boolean&nbsp;enabled)</code>
 <div class="block">Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeWeight(java.lang.String,%20double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
                   double&nbsp;weight)</code>
 <div class="block">Sets the weight for the given attribute.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeWeight(java.lang.String,%20java.lang.Double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
                   java.lang.Double&nbsp;weight)</code>
 <div class="block">Sets the weight for the given attribute.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setMaxOutliers(double)">setMaxOutliers</a></strong>(double&nbsp;supp)</code>
 <div class="block">Allows for a certain percentage of outliers and thus
  triggers tuple suppression.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setMetric(org.deidentifier.arx.metric.Metric)">setMetric</a></strong>(<a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</code>
 <div class="block">Sets the utility metric for measuring information loss .</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setPracticalMonotonicity(boolean)">setPracticalMonotonicity</a></strong>(boolean&nbsp;assumeMonotonicity)</code>
 <div class="block">Set, if practical monotonicity assumed.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setProtectSensitiveAssociations(boolean)">setProtectSensitiveAssociations</a></strong>(boolean&nbsp;protect)</code>
 <div class="block">Set, whether the anonymizer should take associations between sensitive attributes into account.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setSuppressionAlwaysEnabled(boolean)">setSuppressionAlwaysEnabled</a></strong>(boolean&nbsp;enabled)</code>
 <div class="block">Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setSuppressionString(java.lang.String)">setSuppressionString</a></strong>(java.lang.String&nbsp;suppressionString)</code>
 <div class="block">Sets the string with which suppressed values are to be replaced.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setUseHeuristicSearchForSampleBasedCriteria(boolean)">setUseHeuristicSearchForSampleBasedCriteria</a></strong>(boolean&nbsp;value)</code>
+<div class="block">Do we guarantee optimality for sample-based criteria?</div>
 </td>
 </tr>
 </table>
@@ -666,6 +678,16 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="isUseHeuristicSearchForSampleBasedCriteria()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isUseHeuristicSearchForSampleBasedCriteria</h4>
+<pre>public&nbsp;boolean&nbsp;isUseHeuristicSearchForSampleBasedCriteria()</pre>
+<div class="block">Do we guarantee optimality for sample-based criteria?</div>
+</li>
+</ul>
 <a name="removeCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">
 <!--   -->
 </a>
@@ -776,12 +798,22 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <a name="setSuppressionString(java.lang.String)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setSuppressionString</h4>
 <pre>public&nbsp;void&nbsp;setSuppressionString(java.lang.String&nbsp;suppressionString)</pre>
 <div class="block">Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>suppressionString</code> - </dd></dl>
+</li>
+</ul>
+<a name="setUseHeuristicSearchForSampleBasedCriteria(boolean)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setUseHeuristicSearchForSampleBasedCriteria</h4>
+<pre>public&nbsp;void&nbsp;setUseHeuristicSearchForSampleBasedCriteria(boolean&nbsp;value)</pre>
+<div class="block">Do we guarantee optimality for sample-based criteria?</div>
 </li>
 </ul>
 </li>

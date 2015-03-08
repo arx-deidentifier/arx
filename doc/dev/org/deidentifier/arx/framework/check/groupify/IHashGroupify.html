@@ -91,6 +91,7 @@
 <hr>
 <br>
 <pre>public interface <span class="strong">IHashGroupify</span></pre>
+<div class="block">Interface for hash groupify operators</div>
 </li>
 </ul>
 </div>
@@ -142,7 +143,8 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#analyze(boolean)">analyze</a></strong>(boolean&nbsp;force)</code>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#analyze(org.deidentifier.arx.framework.lattice.Node,%20boolean)">analyze</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation,
+       boolean&nbsp;force)</code>
 <div class="block">Computes the anonymity properties and suppressed tuples etc.</div>
 </td>
 </tr>
@@ -255,20 +257,21 @@
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>outtuple</code> - </dd><dd><code>representant</code> - </dd><dd><code>count</code> - </dd><dd><code>elements</code> - </dd><dd><code>frequencies</code> - </dd><dd><code>pcount</code> - </dd></dl>
 </li>
 </ul>
-<a name="analyze(boolean)">
+<a name="analyze(org.deidentifier.arx.framework.lattice.Node, boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>analyze</h4>
-<pre>void&nbsp;analyze(boolean&nbsp;force)</pre>
+<pre>void&nbsp;analyze(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation,
+           boolean&nbsp;force)</pre>
 <div class="block">Computes the anonymity properties and suppressed tuples etc. Must be called
  when all tuples have been passed to the operator. When the flag is set to true
  the method will make sure that all equivalence classes that do not fulfill all
- privacy criteria are marked as being suppressed. If the flag is set to false,
- the operator may perform an early abort, which may lead to inconsistent classification
+ privacy criteria are marked for suppression. If the flag is set to false,
+ the operator may perform an early abort, which may lead to an inconsistent classification
  of equivalence classes.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>force</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd><dd><code>force</code> - </dd></dl>
 </li>
 </ul>
 <a name="clear()">

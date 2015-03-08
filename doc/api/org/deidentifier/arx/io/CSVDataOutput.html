@@ -115,21 +115,135 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.File,%20char)">CSVDataOutput</a></strong>(java.io.File&nbsp;file,
-             char&nbsp;separator)</code>
-<div class="block">New instance.</div>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.File)">CSVDataOutput</a></strong>(java.io.File&nbsp;file)</code>
+<div class="block">Instantiate.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.OutputStream,%20char)">CSVDataOutput</a></strong>(java.io.OutputStream&nbsp;out,
-             char&nbsp;separator)</code>
-<div class="block">New instance.</div>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.File,%20char)">CSVDataOutput</a></strong>(java.io.File&nbsp;file,
+             char&nbsp;delimiter)</code>
+<div class="block">Instantiate.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.lang.String,%20char)">CSVDataOutput</a></strong>(java.lang.String&nbsp;output,
-             char&nbsp;separator)</code>
-<div class="block">New instance.</div>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.File,%20char,%20char)">CSVDataOutput</a></strong>(java.io.File&nbsp;file,
+             char&nbsp;delimiter,
+             char&nbsp;quote)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.File,%20char,%20char,%20char)">CSVDataOutput</a></strong>(java.io.File&nbsp;file,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.File,%20char,%20char,%20char,%20char[])">CSVDataOutput</a></strong>(java.io.File&nbsp;file,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape,
+             char[]&nbsp;linebreak)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.File,%20org.deidentifier.arx.io.CSVSyntax)">CSVDataOutput</a></strong>(java.io.File&nbsp;file,
+             <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.OutputStream)">CSVDataOutput</a></strong>(java.io.OutputStream&nbsp;stream)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.OutputStream,%20char)">CSVDataOutput</a></strong>(java.io.OutputStream&nbsp;stream,
+             char&nbsp;delimiter)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.OutputStream,%20char,%20char)">CSVDataOutput</a></strong>(java.io.OutputStream&nbsp;stream,
+             char&nbsp;delimiter,
+             char&nbsp;quote)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.OutputStream,%20char,%20char,%20char)">CSVDataOutput</a></strong>(java.io.OutputStream&nbsp;stream,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.OutputStream,%20char,%20char,%20char,%20char[])">CSVDataOutput</a></strong>(java.io.OutputStream&nbsp;stream,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape,
+             char[]&nbsp;linebreak)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.OutputStream,%20org.deidentifier.arx.io.CSVSyntax)">CSVDataOutput</a></strong>(java.io.OutputStream&nbsp;stream,
+             <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.lang.String)">CSVDataOutput</a></strong>(java.lang.String&nbsp;filename)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.lang.String,%20char)">CSVDataOutput</a></strong>(java.lang.String&nbsp;filename,
+             char&nbsp;delimiter)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.lang.String,%20char,%20char)">CSVDataOutput</a></strong>(java.lang.String&nbsp;filename,
+             char&nbsp;delimiter,
+             char&nbsp;quote)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.lang.String,%20char,%20char,%20char)">CSVDataOutput</a></strong>(java.lang.String&nbsp;filename,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.lang.String,%20char,%20char,%20char,%20char[])">CSVDataOutput</a></strong>(java.lang.String&nbsp;filename,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape,
+             char[]&nbsp;linebreak)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax)">CSVDataOutput</a></strong>(java.lang.String&nbsp;filename,
+             <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#CSVDataOutput(java.io.Writer,%20char,%20char,%20char,%20char[])">CSVDataOutput</a></strong>(java.io.Writer&nbsp;writer,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape,
+             char[]&nbsp;linebreak)</code>
+<div class="block">Instantiates a new CSV data output.</div>
 </td>
 </tr>
 </table>
@@ -155,14 +269,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#write(java.util.Iterator,%20int)">write</a></strong>(java.util.Iterator&lt;java.lang.String[]&gt;&nbsp;iterator,
-     int&nbsp;numColumns)</code>
-<div class="block">Write the given number of columns from the results.</div>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#write(java.lang.String[][])">write</a></strong>(java.lang.String[][]&nbsp;hierarchy)</code>
+<div class="block">Write.</div>
 </td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html#write(java.lang.String[][])">write</a></strong>(java.lang.String[][]&nbsp;hierarchy)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -186,6 +295,20 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
+<a name="CSVDataOutput(java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.io.File&nbsp;file)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
 <a name="CSVDataOutput(java.io.File, char)">
 <!--   -->
 </a>
@@ -193,12 +316,92 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>CSVDataOutput</h4>
 <pre>public&nbsp;CSVDataOutput(java.io.File&nbsp;file,
-             char&nbsp;separator)
-              throws java.io.FileNotFoundException</pre>
-<div class="block">New instance.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd><dd><code>separator</code> - </dd>
+             char&nbsp;delimiter)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.FileNotFoundException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.io.File, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.io.File&nbsp;file,
+             char&nbsp;delimiter,
+             char&nbsp;quote)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.io.File, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.io.File&nbsp;file,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.io.File, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.io.File&nbsp;file,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape,
+             char[]&nbsp;linebreak)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.io.File, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.io.File&nbsp;file,
+             <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.io.OutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.io.OutputStream&nbsp;stream)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="CSVDataOutput(java.io.OutputStream, char)">
@@ -207,25 +410,192 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>CSVDataOutput</h4>
-<pre>public&nbsp;CSVDataOutput(java.io.OutputStream&nbsp;out,
-             char&nbsp;separator)</pre>
-<div class="block">New instance.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>out</code> - </dd><dd><code>separator</code> - </dd></dl>
+<pre>public&nbsp;CSVDataOutput(java.io.OutputStream&nbsp;stream,
+             char&nbsp;delimiter)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.io.OutputStream, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.io.OutputStream&nbsp;stream,
+             char&nbsp;delimiter,
+             char&nbsp;quote)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.io.OutputStream, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.io.OutputStream&nbsp;stream,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.io.OutputStream, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.io.OutputStream&nbsp;stream,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape,
+             char[]&nbsp;linebreak)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.io.OutputStream, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.io.OutputStream&nbsp;stream,
+             <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.lang.String&nbsp;filename)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="CSVDataOutput(java.lang.String, char)">
 <!--   -->
 </a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.lang.String&nbsp;filename,
+             char&nbsp;delimiter)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>delimiter</code> - the delimiter</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.lang.String, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.lang.String&nbsp;filename,
+             char&nbsp;delimiter,
+             char&nbsp;quote)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.lang.String, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.lang.String&nbsp;filename,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.lang.String, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.lang.String&nbsp;filename,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape,
+             char[]&nbsp;linebreak)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.lang.String, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataOutput</h4>
+<pre>public&nbsp;CSVDataOutput(java.lang.String&nbsp;filename,
+             <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+              throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataOutput(java.io.Writer, char, char, char, char[])">
+<!--   -->
+</a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>CSVDataOutput</h4>
-<pre>public&nbsp;CSVDataOutput(java.lang.String&nbsp;output,
-             char&nbsp;separator)
-              throws java.io.FileNotFoundException</pre>
-<div class="block">New instance.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>output</code> - </dd><dd><code>separator</code> - </dd>
+<pre>public&nbsp;CSVDataOutput(java.io.Writer&nbsp;writer,
+             char&nbsp;delimiter,
+             char&nbsp;quote,
+             char&nbsp;escape,
+             char[]&nbsp;linebreak)
+              throws java.io.IOException</pre>
+<div class="block">Instantiates a new CSV data output.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>writer</code> - the writer</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.FileNotFoundException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 </li>
@@ -245,24 +615,9 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;write(java.util.Iterator&lt;java.lang.String[]&gt;&nbsp;iterator)
            throws java.io.IOException</pre>
 <div class="block">Write the results.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>iterator</code> - </dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>iterator</code> - the iterator</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
-<a name="write(java.util.Iterator, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>write</h4>
-<pre>public&nbsp;void&nbsp;write(java.util.Iterator&lt;java.lang.String[]&gt;&nbsp;iterator,
-         int&nbsp;numColumns)
-           throws java.io.IOException</pre>
-<div class="block">Write the given number of columns from the results.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>iterator</code> - </dd><dd><code>numColumns</code> - </dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="write(java.lang.String[][])">
@@ -273,9 +628,10 @@ extends java.lang.Object</pre>
 <h4>write</h4>
 <pre>public&nbsp;void&nbsp;write(java.lang.String[][]&nbsp;hierarchy)
            throws java.io.IOException</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>hierarchy</code> - </dd>
+<div class="block">Write.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>hierarchy</code> - the hierarchy</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 </li>

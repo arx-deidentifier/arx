@@ -79,6 +79,10 @@
 <div class="block">This package provides the public API for the ARX anonymization framework.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="#org.deidentifier.arx.risk">org.deidentifier.arx.risk</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
 </tbody>
 </table>
 </li>
@@ -177,6 +181,27 @@
 </tr>
 </tbody>
 </table>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../org/deidentifier/arx/package-summary.html">org.deidentifier.arx</a> with parameters of type <a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><span class="strong">ARXPopulationModel.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXPopulationModel.html#getPopulationSize(org.deidentifier.arx.DataHandle)">getPopulationSize</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle)</code>
+<div class="block">Returns the population size</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><span class="strong">ARXPopulationModel.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXPopulationModel.html#getSamplingFraction(org.deidentifier.arx.DataHandle)">getSamplingFraction</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle)</code>
+<div class="block">Returns the sampling fraction</div>
+</td>
+</tr>
+</tbody>
+</table>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing constructors, and an explanation">
 <caption><span>Constructors in <a href="../../../../org/deidentifier/arx/package-summary.html">org.deidentifier.arx</a> with parameters of type <a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
@@ -184,6 +209,12 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXPopulationModel.html#ARXPopulationModel(org.deidentifier.arx.DataHandle,%20double)">ARXPopulationModel</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                  double&nbsp;populationSize)</code>
+<div class="block">Creates a new instance</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.ARXLattice,%20int,%20double,%20double,%20org.deidentifier.arx.metric.Metric,%20org.deidentifier.arx.ARXConfiguration,%20org.deidentifier.arx.ARXLattice.ARXNode,%20long)">ARXResult</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
          <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
          <a href="../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
@@ -197,11 +228,65 @@
 <div class="block">Internal constructor for deserialization.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/DataHandleSubset.html#DataHandleSubset(org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.DataSubset,%20org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses)">DataHandleSubset</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;source,
                 <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset,
                 <a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a>&nbsp;eqStatistics)</code>
 <div class="block">Creates a new handle that represents the research subset.</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.risk">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a> in <a href="../../../../org/deidentifier/arx/risk/package-summary.html">org.deidentifier.arx.risk</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing constructors, and an explanation">
+<caption><span>Constructors in <a href="../../../../org/deidentifier/arx/risk/package-summary.html">org.deidentifier.arx.risk</a> with parameters of type <a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.risk.RiskModelEquivalenceClasses)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
+                   <a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                   <a href="../../../../org/deidentifier/arx/risk/RiskModelEquivalenceClasses.html" title="class in org.deidentifier.arx.risk">RiskModelEquivalenceClasses</a>&nbsp;classes)</code>
+<div class="block">Creates a new instance</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.risk.RiskModelEquivalenceClasses,%20org.deidentifier.arx.ARXSolverConfiguration)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
+                   <a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                   <a href="../../../../org/deidentifier/arx/risk/RiskModelEquivalenceClasses.html" title="class in org.deidentifier.arx.risk">RiskModelEquivalenceClasses</a>&nbsp;classes,
+                   <a href="../../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&nbsp;config)</code>
+<div class="block">Creates a new instance</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.DataHandle,%20java.util.Set)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
+                   <a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                   java.util.Set&lt;java.lang.String&gt;&nbsp;identifiers)</code>
+<div class="block">Creates a new instance</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.DataHandle,%20java.util.Set,%20org.deidentifier.arx.ARXSolverConfiguration)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
+                   <a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                   java.util.Set&lt;java.lang.String&gt;&nbsp;identifiers,
+                   <a href="../../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&nbsp;config)</code>
+<div class="block">Creates a new instance</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelEquivalenceClasses.html#RiskModelEquivalenceClasses(org.deidentifier.arx.DataHandle)">RiskModelEquivalenceClasses</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle)</code>
+<div class="block">Creates a new instance</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelEquivalenceClasses.html#RiskModelEquivalenceClasses(org.deidentifier.arx.DataHandle,%20java.util.Set)">RiskModelEquivalenceClasses</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                           java.util.Set&lt;java.lang.String&gt;&nbsp;qis)</code>
+<div class="block">Creates a new instance</div>
 </td>
 </tr>
 </tbody>

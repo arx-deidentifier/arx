@@ -177,7 +177,9 @@ implements java.io.Serializable</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#AttributeType.Hierarchy()">AttributeType.Hierarchy</a></strong>()</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#AttributeType.Hierarchy()">AttributeType.Hierarchy</a></strong>()</code>
+<div class="block">Instantiates a new hierarchy.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -206,15 +208,95 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.io.File)">create</a></strong>(java.io.File&nbsp;file)</code>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.io.File,%20char)">create</a></strong>(java.io.File&nbsp;file,
-      char&nbsp;separator)</code>
+      char&nbsp;delimiter)</code>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.io.File,%20char,%20char)">create</a></strong>(java.io.File&nbsp;file,
+      char&nbsp;delimiter,
+      char&nbsp;quote)</code>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.io.File,%20char,%20char,%20char)">create</a></strong>(java.io.File&nbsp;file,
+      char&nbsp;delimiter,
+      char&nbsp;quote,
+      char&nbsp;escape)</code>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.io.File,%20char,%20char,%20char,%20char[])">create</a></strong>(java.io.File&nbsp;file,
+      char&nbsp;delimiter,
+      char&nbsp;quote,
+      char&nbsp;escape,
+      char[]&nbsp;linebreak)</code>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.io.File,%20org.deidentifier.arx.io.CSVSyntax)">create</a></strong>(java.io.File&nbsp;file,
+      <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.io.InputStream)">create</a></strong>(java.io.InputStream&nbsp;stream)</code>
 <div class="block">Creates a new hierarchy from a CSV file.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.io.InputStream,%20char)">create</a></strong>(java.io.InputStream&nbsp;stream,
-      char&nbsp;separator)</code>
+      char&nbsp;delimiter)</code>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.io.InputStream,%20char,%20char)">create</a></strong>(java.io.InputStream&nbsp;stream,
+      char&nbsp;delimiter,
+      char&nbsp;quote)</code>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.io.InputStream,%20char,%20char,%20char)">create</a></strong>(java.io.InputStream&nbsp;stream,
+      char&nbsp;delimiter,
+      char&nbsp;quote,
+      char&nbsp;escape)</code>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.io.InputStream,%20char,%20char,%20char,%20char[])">create</a></strong>(java.io.InputStream&nbsp;stream,
+      char&nbsp;delimiter,
+      char&nbsp;quote,
+      char&nbsp;escape,
+      char[]&nbsp;linebreak)</code>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.io.InputStream,%20org.deidentifier.arx.io.CSVSyntax)">create</a></strong>(java.io.InputStream&nbsp;stream,
+      <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
 <div class="block">Creates a new hierarchy from a CSV file.</div>
 </td>
 </tr>
@@ -244,29 +326,75 @@ implements java.io.Serializable</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#create(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax)">create</a></strong>(java.lang.String&nbsp;path,
+      <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>abstract java.lang.String[][]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#getHierarchy()">getHierarchy</a></strong>()</code>
 <div class="block">Returns the hierarchy as a two-dimensional string array.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#save(java.io.File)">save</a></strong>(java.io.File&nbsp;file)</code>
+<div class="block">Writes the hierarchy to a CSV file.</div>
+</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#save(java.io.File,%20char)">save</a></strong>(java.io.File&nbsp;file,
-    char&nbsp;separator)</code>
+    char&nbsp;delimiter)</code>
+<div class="block">Writes the hierarchy to a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#save(java.io.File,%20org.deidentifier.arx.io.CSVSyntax)">save</a></strong>(java.io.File&nbsp;file,
+    <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Writes the hierarchy to a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#save(java.io.OutputStream)">save</a></strong>(java.io.OutputStream&nbsp;out)</code>
 <div class="block">Writes the hierarchy to a CSV file.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#save(java.io.OutputStream,%20char)">save</a></strong>(java.io.OutputStream&nbsp;out,
-    char&nbsp;separator)</code>
+    char&nbsp;delimiter)</code>
+<div class="block">Writes the hierarchy to a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#save(java.io.OutputStream,%20org.deidentifier.arx.io.CSVSyntax)">save</a></strong>(java.io.OutputStream&nbsp;out,
+    <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Writes the hierarchy to a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#save(java.lang.String)">save</a></strong>(java.lang.String&nbsp;path)</code>
 <div class="block">Writes the hierarchy to a CSV file.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#save(java.lang.String,%20char)">save</a></strong>(java.lang.String&nbsp;path,
-    char&nbsp;separator)</code>
+    char&nbsp;delimiter)</code>
+<div class="block">Writes the hierarchy to a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html#save(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax)">save</a></strong>(java.lang.String&nbsp;path,
+    <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
 <div class="block">Writes the hierarchy to a CSV file.</div>
 </td>
 </tr>
@@ -306,6 +434,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>AttributeType.Hierarchy</h4>
 <pre>public&nbsp;AttributeType.Hierarchy()</pre>
+<div class="block">Instantiates a new hierarchy.</div>
 </li>
 </ul>
 </li>
@@ -327,6 +456,21 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>A Hierarchy</dd></dl>
 </li>
 </ul>
+<a name="create(java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.io.File&nbsp;file)
+                                      throws java.io.IOException</pre>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the hierarchy</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
 <a name="create(java.io.File, char)">
 <!--   -->
 </a>
@@ -334,13 +478,98 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.io.File&nbsp;file,
-                             char&nbsp;separator)
+                             char&nbsp;delimiter)
                                       throws java.io.IOException</pre>
 <div class="block">Creates a new hierarchy from a CSV file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - A file</dd><dd><code>separator</code> - The utilized separator character</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - A file</dd><dd><code>delimiter</code> - The utilized separator character</dd>
 <dt><span class="strong">Returns:</span></dt><dd>A Hierarchy</dd>
 <dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.File, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.io.File&nbsp;file,
+                             char&nbsp;delimiter,
+                             char&nbsp;quote)
+                                      throws java.io.IOException</pre>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the hierarchy</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.File, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.io.File&nbsp;file,
+                             char&nbsp;delimiter,
+                             char&nbsp;quote,
+                             char&nbsp;escape)
+                                      throws java.io.IOException</pre>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the hierarchy</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.File, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.io.File&nbsp;file,
+                             char&nbsp;delimiter,
+                             char&nbsp;quote,
+                             char&nbsp;escape,
+                             char[]&nbsp;linebreak)
+                                      throws java.io.IOException</pre>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the hierarchy</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.File, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.io.File&nbsp;file,
+                             <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+                                      throws java.io.IOException</pre>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd><dd><code>config</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd>
+<dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="create(java.io.InputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.io.InputStream&nbsp;stream)
+                                      throws java.io.IOException</pre>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the hierarchy</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="create(java.io.InputStream, char)">
@@ -350,11 +579,81 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.io.InputStream&nbsp;stream,
-                             char&nbsp;separator)
+                             char&nbsp;delimiter)
                                       throws java.io.IOException</pre>
 <div class="block">Creates a new hierarchy from a CSV file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - An input stream</dd><dd><code>separator</code> - The utilized separator character</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - An input stream</dd><dd><code>delimiter</code> - The utilized separator character</dd>
 <dt><span class="strong">Returns:</span></dt><dd>A Hierarchy</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.InputStream, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.io.InputStream&nbsp;stream,
+                             char&nbsp;delimiter,
+                             char&nbsp;quote)
+                                      throws java.io.IOException</pre>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the hierarchy</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.InputStream, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.io.InputStream&nbsp;stream,
+                             char&nbsp;delimiter,
+                             char&nbsp;quote,
+                             char&nbsp;escape)
+                                      throws java.io.IOException</pre>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the hierarchy</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.InputStream, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.io.InputStream&nbsp;stream,
+                             char&nbsp;delimiter,
+                             char&nbsp;quote,
+                             char&nbsp;escape,
+                             char[]&nbsp;linebreak)
+                                      throws java.io.IOException</pre>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the hierarchy</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.InputStream, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.io.InputStream&nbsp;stream,
+                             <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+                                      throws java.io.IOException</pre>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - </dd><dd><code>config</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
@@ -396,6 +695,22 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - A path to the file</dd><dd><code>separator</code> - The utilized separator character</dd>
 <dt><span class="strong">Returns:</span></dt><dd>A Hierarchy</dd>
 <dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.lang.String, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;create(java.lang.String&nbsp;path,
+                             <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+                                      throws java.io.IOException</pre>
+<div class="block">Creates a new hierarchy from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - </dd><dd><code>config</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd>
+<dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
@@ -432,7 +747,21 @@ implements java.io.Serializable</pre>
 <h4>getHierarchy</h4>
 <pre>public abstract&nbsp;java.lang.String[][]&nbsp;getHierarchy()</pre>
 <div class="block">Returns the hierarchy as a two-dimensional string array.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the hierarchy</dd></dl>
+</li>
+</ul>
+<a name="save(java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>save</h4>
+<pre>public&nbsp;void&nbsp;save(java.io.File&nbsp;file)
+          throws java.io.IOException</pre>
+<div class="block">Writes the hierarchy to a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="save(java.io.File, char)">
@@ -442,12 +771,41 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>save</h4>
 <pre>public&nbsp;void&nbsp;save(java.io.File&nbsp;file,
-        char&nbsp;separator)
+        char&nbsp;delimiter)
           throws java.io.IOException</pre>
 <div class="block">Writes the hierarchy to a CSV file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - A file</dd><dd><code>separator</code> - The utilized separator character</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - A file</dd><dd><code>delimiter</code> - The utilized separator character</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="save(java.io.File, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>save</h4>
+<pre>public&nbsp;void&nbsp;save(java.io.File&nbsp;file,
+        <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+          throws java.io.IOException</pre>
+<div class="block">Writes the hierarchy to a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="save(java.io.OutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>save</h4>
+<pre>public&nbsp;void&nbsp;save(java.io.OutputStream&nbsp;out)
+          throws java.io.IOException</pre>
+<div class="block">Writes the hierarchy to a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>out</code> - the out</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="save(java.io.OutputStream, char)">
@@ -457,27 +815,71 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>save</h4>
 <pre>public&nbsp;void&nbsp;save(java.io.OutputStream&nbsp;out,
-        char&nbsp;separator)
+        char&nbsp;delimiter)
           throws java.io.IOException</pre>
 <div class="block">Writes the hierarchy to a CSV file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>out</code> - A output stream</dd><dd><code>separator</code> - The utilized separator character</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>out</code> - A output stream</dd><dd><code>delimiter</code> - The utilized separator character</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="save(java.io.OutputStream, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>save</h4>
+<pre>public&nbsp;void&nbsp;save(java.io.OutputStream&nbsp;out,
+        <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+          throws java.io.IOException</pre>
+<div class="block">Writes the hierarchy to a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>out</code> - the out</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="save(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>save</h4>
+<pre>public&nbsp;void&nbsp;save(java.lang.String&nbsp;path)
+          throws java.io.IOException</pre>
+<div class="block">Writes the hierarchy to a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - the path</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="save(java.lang.String, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>save</h4>
+<pre>public&nbsp;void&nbsp;save(java.lang.String&nbsp;path,
+        char&nbsp;delimiter)
+          throws java.io.IOException</pre>
+<div class="block">Writes the hierarchy to a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - A path</dd><dd><code>delimiter</code> - The utilized separator character</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="save(java.lang.String, org.deidentifier.arx.io.CSVSyntax)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>save</h4>
 <pre>public&nbsp;void&nbsp;save(java.lang.String&nbsp;path,
-        char&nbsp;separator)
+        <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
           throws java.io.IOException</pre>
 <div class="block">Writes the hierarchy to a CSV file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - A path</dd><dd><code>separator</code> - The utilized separator character</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - the path</dd><dd><code>config</code> - the config</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 </li>

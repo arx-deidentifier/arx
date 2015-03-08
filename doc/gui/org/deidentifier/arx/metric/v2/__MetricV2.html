@@ -389,6 +389,17 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="createAECSMetric()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createAECSMetric</h4>
+<pre>public static&nbsp;<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a>&gt;&nbsp;createAECSMetric()</pre>
+<div class="block">Creates a new instance of the AECS metric.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="createAECSMetric(double)">
 <!--   -->
 </a>
@@ -399,17 +410,6 @@ extends java.lang.Object</pre>
 <div class="block">Creates a new instance of the AECS metric.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>rowCount</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="createAECSMetric()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createAECSMetric</h4>
-<pre>public static&nbsp;<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a>&gt;&nbsp;createAECSMetric()</pre>
-<div class="block">Creates a new instance of the AECS metric.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createDiscernabilityMetric()">
@@ -519,6 +519,19 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="createHeightMetric(org.deidentifier.arx.metric.Metric.AggregateFunction)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createHeightMetric</h4>
+<pre>public static&nbsp;<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createHeightMetric(<a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
+<div class="block">Creates an instance of the height metric.
+ This metric will respect attribute weights defined in the configuration.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>function</code> - The aggregate function to use for comparing results</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="createHeightMetric(int, int)">
 <!--   -->
 </a>
@@ -531,19 +544,6 @@ extends java.lang.Object</pre>
  will be used for comparing results.
  This metric will respect attribute weights defined in the configuration.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>minHeight</code> - </dd><dd><code>maxHeight</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="createHeightMetric(org.deidentifier.arx.metric.Metric.AggregateFunction)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createHeightMetric</h4>
-<pre>public static&nbsp;<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createHeightMetric(<a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
-<div class="block">Creates an instance of the height metric.
- This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>function</code> - The aggregate function to use for comparing results</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -687,6 +687,20 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="createPrecisionMetric(boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createPrecisionMetric</h4>
+<pre>public static&nbsp;<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createPrecisionMetric(boolean&nbsp;monotonic,
+                                                       <a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
+<div class="block">Creates an instance of the precision metric.
+ This metric will respect attribute weights defined in the configuration.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - If set to true, the monotonic variant of the metric will be created</dd><dd><code>function</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="createPrecisionMetric(boolean, int[], double)">
 <!--   -->
 </a>
@@ -700,20 +714,6 @@ extends java.lang.Object</pre>
  The default aggregate function, which is the arithmetic mean, will be used.
  This metric will respect attribute weights defined in the configuration.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - If set to true, the monotonic variant of the metric will be created</dd><dd><code>heights</code> - </dd><dd><code>cells</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="createPrecisionMetric(boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createPrecisionMetric</h4>
-<pre>public static&nbsp;<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createPrecisionMetric(boolean&nbsp;monotonic,
-                                                       <a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
-<div class="block">Creates an instance of the precision metric.
- This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - If set to true, the monotonic variant of the metric will be created</dd><dd><code>function</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

@@ -4,3 +4,4 @@ org.deidentifier.arx.criteria
 org.deidentifier.arx.io
 org.deidentifier.arx.metric
 org.deidentifier.arx.metric.v2
+org.deidentifier.arx.risk

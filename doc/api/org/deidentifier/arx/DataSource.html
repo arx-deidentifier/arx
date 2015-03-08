@@ -131,16 +131,33 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSource.html#addColumn(int,%20java.lang.String)">addColumn</a></strong>(int&nbsp;index,
-         java.lang.String&nbsp;alias)</code>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSource.html#addColumn(int,%20org.deidentifier.arx.DataType,%20boolean)">addColumn</a></strong>(int&nbsp;index,
+         <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+         boolean&nbsp;cleansing)</code>
 <div class="block">Adds a new column.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSource.html#addColumn(int,%20java.lang.String)">addColumn</a></strong>(int&nbsp;index,
+         java.lang.String&nbsp;alias)</code>
+<div class="block">Adds a new column.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSource.html#addColumn(int,%20java.lang.String,%20org.deidentifier.arx.DataType)">addColumn</a></strong>(int&nbsp;index,
          java.lang.String&nbsp;alias,
          <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
+<div class="block">Adds a new column.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSource.html#addColumn(int,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">addColumn</a></strong>(int&nbsp;index,
+         java.lang.String&nbsp;alias,
+         <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+         boolean&nbsp;cleansing)</code>
 <div class="block">Adds a new column.</div>
 </td>
 </tr>
@@ -159,16 +176,33 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String,%20java.lang.String)">addColumn</a></strong>(java.lang.String&nbsp;name,
-         java.lang.String&nbsp;alias)</code>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">addColumn</a></strong>(java.lang.String&nbsp;name,
+         <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+         boolean&nbsp;cleansing)</code>
 <div class="block">Adds a new column.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String,%20java.lang.String)">addColumn</a></strong>(java.lang.String&nbsp;name,
+         java.lang.String&nbsp;alias)</code>
+<div class="block">Adds a new column.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType)">addColumn</a></strong>(java.lang.String&nbsp;name,
          java.lang.String&nbsp;alias,
          <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
+<div class="block">Adds a new column.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">addColumn</a></strong>(java.lang.String&nbsp;name,
+         java.lang.String&nbsp;alias,
+         <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+         boolean&nbsp;cleansing)</code>
 <div class="block">Adds a new column.</div>
 </td>
 </tr>
@@ -355,6 +389,19 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - </dd><dd><code>datatype</code> - </dd></dl>
 </li>
 </ul>
+<a name="addColumn(int, org.deidentifier.arx.DataType, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addColumn</h4>
+<pre>public&nbsp;void&nbsp;addColumn(int&nbsp;index,
+             <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+             boolean&nbsp;cleansing)</pre>
+<div class="block">Adds a new column.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - </dd><dd><code>datatype</code> - </dd></dl>
+</li>
+</ul>
 <a name="addColumn(int, java.lang.String)">
 <!--   -->
 </a>
@@ -380,6 +427,20 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - </dd><dd><code>alias</code> - </dd><dd><code>datatype</code> - </dd></dl>
 </li>
 </ul>
+<a name="addColumn(int, java.lang.String, org.deidentifier.arx.DataType, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addColumn</h4>
+<pre>public&nbsp;void&nbsp;addColumn(int&nbsp;index,
+             java.lang.String&nbsp;alias,
+             <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+             boolean&nbsp;cleansing)</pre>
+<div class="block">Adds a new column.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - </dd><dd><code>alias</code> - </dd><dd><code>datatype</code> - </dd><dd><code>cleansing</code> - </dd></dl>
+</li>
+</ul>
 <a name="addColumn(java.lang.String)">
 <!--   -->
 </a>
@@ -403,6 +464,19 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - </dd><dd><code>datatype</code> - </dd></dl>
 </li>
 </ul>
+<a name="addColumn(java.lang.String, org.deidentifier.arx.DataType, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addColumn</h4>
+<pre>public&nbsp;void&nbsp;addColumn(java.lang.String&nbsp;name,
+             <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+             boolean&nbsp;cleansing)</pre>
+<div class="block">Adds a new column.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - </dd><dd><code>datatype</code> - </dd><dd><code>cleansing</code> - </dd></dl>
+</li>
+</ul>
 <a name="addColumn(java.lang.String, java.lang.String)">
 <!--   -->
 </a>
@@ -418,7 +492,7 @@ extends java.lang.Object</pre>
 <a name="addColumn(java.lang.String, java.lang.String, org.deidentifier.arx.DataType)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>addColumn</h4>
 <pre>public&nbsp;void&nbsp;addColumn(java.lang.String&nbsp;name,
@@ -426,6 +500,20 @@ extends java.lang.Object</pre>
              <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</pre>
 <div class="block">Adds a new column.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - </dd><dd><code>alias</code> - </dd><dd><code>datatype</code> - </dd></dl>
+</li>
+</ul>
+<a name="addColumn(java.lang.String, java.lang.String, org.deidentifier.arx.DataType, boolean)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>addColumn</h4>
+<pre>public&nbsp;void&nbsp;addColumn(java.lang.String&nbsp;name,
+             java.lang.String&nbsp;alias,
+             <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+             boolean&nbsp;cleansing)</pre>
+<div class="block">Adds a new column.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - </dd><dd><code>alias</code> - </dd><dd><code>datatype</code> - </dd><dd><code>cleansing</code> - </dd></dl>
 </li>
 </ul>
 </li>

@@ -143,36 +143,42 @@ implements java.io.Serializable</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>abstract <a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#clone()">clone</a></strong>()</code>
+<div class="block">Clone</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#getCriterion(org.deidentifier.arx.gui.model.Model)">getCriterion</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</code>
 <div class="block">Implement this to return the criterion.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>abstract java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#getLabel()">getLabel</a></strong>()</code>
+<div class="block">Implement this to return a string representation.</div>
+</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#isActive()">isActive</a></strong>()</code>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#isEnabled()">isEnabled</a></strong>()</code>
 <div class="block">Is this criterion active.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#isEnabled()">isEnabled</a></strong>()</code>
-<div class="block">Is this criterion enabled.</div>
+<td class="colFirst"><code>abstract void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion)">parse</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;other)</code>
+<div class="block">Parse</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#setActive(boolean)">setActive</a></strong>(boolean&nbsp;active)</code>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#setEnabled(boolean)">setEnabled</a></strong>(boolean&nbsp;enabled)</code>
 <div class="block">Sets the criterion active/inactive.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#setEnabled(boolean)">setEnabled</a></strong>(boolean&nbsp;enabled)</code>
-<div class="block">Sets the criterion enabled/disabled.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#toString()">toString</a></strong>()</code>
 <div class="block">Implement this to return a string representation.</div>
@@ -184,7 +190,7 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
+<code>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -217,6 +223,20 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="clone()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clone</h4>
+<pre>public abstract&nbsp;<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;clone()</pre>
+<div class="block">Clone</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>clone</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
 <a name="getCriterion(org.deidentifier.arx.gui.model.Model)">
 <!--   -->
 </a>
@@ -229,14 +249,14 @@ implements java.io.Serializable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="isActive()">
+<a name="getLabel()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>isActive</h4>
-<pre>public&nbsp;boolean&nbsp;isActive()</pre>
-<div class="block">Is this criterion active.</div>
+<h4>getLabel</h4>
+<pre>public abstract&nbsp;java.lang.String&nbsp;getLabel()</pre>
+<div class="block">Implement this to return a string representation.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -247,19 +267,19 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>isEnabled</h4>
 <pre>public&nbsp;boolean&nbsp;isEnabled()</pre>
-<div class="block">Is this criterion enabled.</div>
+<div class="block">Is this criterion active.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="setActive(boolean)">
+<a name="parse(org.deidentifier.arx.gui.model.ModelCriterion)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setActive</h4>
-<pre>public&nbsp;void&nbsp;setActive(boolean&nbsp;active)</pre>
-<div class="block">Sets the criterion active/inactive.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>active</code> - </dd></dl>
+<h4>parse</h4>
+<pre>public abstract&nbsp;void&nbsp;parse(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;other)</pre>
+<div class="block">Parse</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>other</code> - </dd></dl>
 </li>
 </ul>
 <a name="setEnabled(boolean)">
@@ -269,8 +289,8 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>setEnabled</h4>
 <pre>public&nbsp;void&nbsp;setEnabled(boolean&nbsp;enabled)</pre>
-<div class="block">Sets the criterion enabled/disabled.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>enabled</code> - </dd></dl>
+<div class="block">Sets the criterion active/inactive.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>active</code> - </dd></dl>
 </li>
 </ul>
 <a name="toString()">

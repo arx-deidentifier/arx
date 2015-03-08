@@ -192,12 +192,6 @@
 <div class="block">Returns the metric used by this checker.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.html#getNumberOfGroups()">getNumberOfGroups</a></strong>()</code>
-<div class="block">Returns the number of groups from the previous check.</div>
-</td>
-</tr>
 </table>
 </li>
 </ul>
@@ -213,6 +207,18 @@
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="applyAndSetProperties(org.deidentifier.arx.framework.lattice.Node)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>applyAndSetProperties</h4>
+<pre><a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html" title="class in org.deidentifier.arx.framework.check">TransformedData</a>&nbsp;applyAndSetProperties(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation)</pre>
+<div class="block">Applies the given transformation and sets its properties.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="check(org.deidentifier.arx.framework.lattice.Node)">
 <!--   -->
 </a>
@@ -309,35 +315,12 @@ double&nbsp;getInformationLoss(<a href="../../../../../org/deidentifier/arx/fram
 <a name="getMetric()">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>getMetric</h4>
 <pre><a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;getMetric()</pre>
 <div class="block">Returns the metric used by this checker.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getNumberOfGroups()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getNumberOfGroups</h4>
-<pre>int&nbsp;getNumberOfGroups()</pre>
-<div class="block">Returns the number of groups from the previous check.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="applyAndSetProperties(org.deidentifier.arx.framework.lattice.Node)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>applyAndSetProperties</h4>
-<pre><a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html" title="class in org.deidentifier.arx.framework.check">TransformedData</a>&nbsp;applyAndSetProperties(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation)</pre>
-<div class="block">Applies the given transformation and sets its properties.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

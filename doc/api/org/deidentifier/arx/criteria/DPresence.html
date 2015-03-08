@@ -208,7 +208,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.criteria.<a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></h3>
-<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonic()">isMonotonic</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonic()">isMonotonic</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -255,19 +255,26 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="initialize(org.deidentifier.arx.framework.data.DataManager)">
+<a name="getDMax()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>initialize</h4>
-<pre>public&nbsp;void&nbsp;initialize(org.deidentifier.arx.framework.data.DataManager&nbsp;manager)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">PrivacyCriterion</a></code></strong></div>
-<div class="block">Override this to initialize the criterion.</div>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
-</dl>
+<h4>getDMax</h4>
+<pre>public&nbsp;double&nbsp;getDMax()</pre>
+<div class="block">Returns dMax.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getDMin()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDMin</h4>
+<pre>public&nbsp;double&nbsp;getDMin()</pre>
+<div class="block">Returns dMin.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getRequirements()">
@@ -285,6 +292,32 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getSubset()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSubset</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;getSubset()</pre>
+<div class="block">Returns the research subset.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="initialize(org.deidentifier.arx.framework.data.DataManager)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>initialize</h4>
+<pre>public&nbsp;void&nbsp;initialize(org.deidentifier.arx.framework.data.DataManager&nbsp;manager)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">PrivacyCriterion</a></code></strong></div>
+<div class="block">Override this to initialize the criterion.</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">
 <!--   -->
 </a>
@@ -298,39 +331,6 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getSubset()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSubset</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;getSubset()</pre>
-<div class="block">Returns the research subset.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getDMin()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getDMin</h4>
-<pre>public&nbsp;double&nbsp;getDMin()</pre>
-<div class="block">Returns dMin.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getDMax()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getDMax</h4>
-<pre>public&nbsp;double&nbsp;getDMax()</pre>
-<div class="block">Returns dMax.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="toString()">

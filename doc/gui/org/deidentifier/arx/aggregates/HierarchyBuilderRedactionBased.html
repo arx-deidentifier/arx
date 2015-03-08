@@ -573,10 +573,23 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>domainSize</code> - </dd><dd><code>alphabetSize</code> - </dd><dd><code>maxValueLength</code> - </dd></dl>
 </li>
 </ul>
-<a name="setDomainSize(int, int)">
+<a name="setDomainMetadata(java.lang.String[])">
 <!--   -->
 </a>
 <ul class="blockList">
+<li class="blockList">
+<h4>setDomainMetadata</h4>
+<pre>public&nbsp;void&nbsp;setDomainMetadata(java.lang.String[]&nbsp;data)</pre>
+<div class="block"><p>Sets properties about the attribute's domain. Currently, this information is only used for
+ evaluating information loss with the generalized loss metric for attributes with functional
+ redaction-based hierarchies.</p></div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd></dl>
+</li>
+</ul>
+<a name="setDomainSize(int, int)">
+<!--   -->
+</a>
+<ul class="blockListLast">
 <li class="blockList">
 <h4>setDomainSize</h4>
 <pre>public&nbsp;void&nbsp;setDomainSize(int&nbsp;domainSize,
@@ -594,19 +607,6 @@ implements java.io.Serializable</pre>
  <p>This method will estimate the size of the alphabet as 
  alphabetSize = pow(domainSize, 1.0d / maxValueLength)</p></div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>domainSize</code> - </dd><dd><code>maxValueLength</code> - </dd></dl>
-</li>
-</ul>
-<a name="setDomainMetadata(java.lang.String[])">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>setDomainMetadata</h4>
-<pre>public&nbsp;void&nbsp;setDomainMetadata(java.lang.String[]&nbsp;data)</pre>
-<div class="block"><p>Sets properties about the attribute's domain. Currently, this information is only used for
- evaluating information loss with the generalized loss metric for attributes with functional
- redaction-based hierarchies.</p></div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd></dl>
 </li>
 </ul>
 </li>

@@ -195,7 +195,8 @@ implements <a href="../../../../../../org/deidentifier/arx/framework/check/group
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#analyze(boolean)">analyze</a></strong>(boolean&nbsp;force)</code>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#analyze(org.deidentifier.arx.framework.lattice.Node,%20boolean)">analyze</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation,
+       boolean&nbsp;force)</code>
 <div class="block">Computes the anonymity properties and suppressed tuples etc.</div>
 </td>
 </tr>
@@ -347,23 +348,24 @@ implements <a href="../../../../../../org/deidentifier/arx/framework/check/group
 </dl>
 </li>
 </ul>
-<a name="analyze(boolean)">
+<a name="analyze(org.deidentifier.arx.framework.lattice.Node, boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>analyze</h4>
-<pre>public&nbsp;void&nbsp;analyze(boolean&nbsp;force)</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#analyze(boolean)">IHashGroupify</a></code></strong></div>
+<pre>public&nbsp;void&nbsp;analyze(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation,
+           boolean&nbsp;force)</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#analyze(org.deidentifier.arx.framework.lattice.Node,%20boolean)">IHashGroupify</a></code></strong></div>
 <div class="block">Computes the anonymity properties and suppressed tuples etc. Must be called
  when all tuples have been passed to the operator. When the flag is set to true
  the method will make sure that all equivalence classes that do not fulfill all
- privacy criteria are marked as being suppressed. If the flag is set to false,
- the operator may perform an early abort, which may lead to inconsistent classification
+ privacy criteria are marked for suppression. If the flag is set to false,
+ the operator may perform an early abort, which may lead to an inconsistent classification
  of equivalence classes.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#analyze(boolean)">analyze</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
+<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#analyze(org.deidentifier.arx.framework.lattice.Node,%20boolean)">analyze</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
 </dl>
 </li>
 </ul>

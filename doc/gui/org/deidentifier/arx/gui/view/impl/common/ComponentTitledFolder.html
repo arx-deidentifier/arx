@@ -153,18 +153,23 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#addListener(int,%20org.eclipse.swt.widgets.Listener)">addListener</a></strong>(int&nbsp;arg0,
+           org.eclipse.swt.widgets.Listener&nbsp;arg1)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#addSelectionListener(org.eclipse.swt.events.SelectionListener)">addSelectionListener</a></strong>(org.eclipse.swt.events.SelectionListener&nbsp;listener)</code>
 <div class="block">Adds a selection listener.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>org.eclipse.swt.widgets.Composite</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#createItem(java.lang.String,%20org.eclipse.swt.graphics.Image)">createItem</a></strong>(java.lang.String&nbsp;title,
           org.eclipse.swt.graphics.Image&nbsp;image)</code>
 <div class="block">Creates a new entry in the folder.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>org.eclipse.swt.widgets.Composite</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#createItem(java.lang.String,%20org.eclipse.swt.graphics.Image,%20int)">createItem</a></strong>(java.lang.String&nbsp;title,
           org.eclipse.swt.graphics.Image&nbsp;image,
@@ -172,29 +177,33 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <div class="block">Creates a new entry in the folder.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#disposeItem(java.lang.String)">disposeItem</a></strong>(java.lang.String&nbsp;text)</code>
 <div class="block">Disposes the given item.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>org.eclipse.swt.widgets.ToolItem</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#getButtonItem(java.lang.String)">getButtonItem</a></strong>(java.lang.String&nbsp;text)</code>
 <div class="block">Returns the button item for the given text.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#getItemCount()">getItemCount</a></strong>()</code>
 <div class="block">Returns the number of items in the folder.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#getSelectionIndex()">getSelectionIndex</a></strong>()</code>
 <div class="block">Returns the currently selected index.</div>
 </td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>org.eclipse.swt.graphics.Point</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#getSize()">getSize</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>org.eclipse.swt.custom.CTabItem</code></td>
@@ -219,6 +228,11 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#setSelection(int)">setSelection</a></strong>(int&nbsp;index)</code>
 <div class="block">Sets the current selection.</div>
 </td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#setSize(int,%20int)">setSize</a></strong>(int&nbsp;arg0,
+       int&nbsp;arg1)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -279,6 +293,17 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="addListener(int, org.eclipse.swt.widgets.Listener)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addListener</h4>
+<pre>public&nbsp;void&nbsp;addListener(int&nbsp;arg0,
+               org.eclipse.swt.widgets.Listener&nbsp;arg1)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>arg0</code> - </dd><dd><code>arg1</code> - </dd><dt><span class="strong">See Also:</span></dt><dd><code>Widget.addListener(int, org.eclipse.swt.widgets.Listener)</code></dd></dl>
+</li>
+</ul>
 <a name="addSelectionListener(org.eclipse.swt.events.SelectionListener)">
 <!--   -->
 </a>
@@ -288,6 +313,19 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <pre>public&nbsp;void&nbsp;addSelectionListener(org.eclipse.swt.events.SelectionListener&nbsp;listener)</pre>
 <div class="block">Adds a selection listener.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>listener</code> - </dd></dl>
+</li>
+</ul>
+<a name="createItem(java.lang.String, org.eclipse.swt.graphics.Image)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createItem</h4>
+<pre>public&nbsp;org.eclipse.swt.widgets.Composite&nbsp;createItem(java.lang.String&nbsp;title,
+                                           org.eclipse.swt.graphics.Image&nbsp;image)</pre>
+<div class="block">Creates a new entry in the folder.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>title</code> - </dd><dd><code>image</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createItem(java.lang.String, org.eclipse.swt.graphics.Image, int)">
@@ -301,19 +339,6 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
                                            int&nbsp;index)</pre>
 <div class="block">Creates a new entry in the folder.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>title</code> - </dd><dd><code>image</code> - </dd><dd><code>index</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="createItem(java.lang.String, org.eclipse.swt.graphics.Image)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createItem</h4>
-<pre>public&nbsp;org.eclipse.swt.widgets.Composite&nbsp;createItem(java.lang.String&nbsp;title,
-                                           org.eclipse.swt.graphics.Image&nbsp;image)</pre>
-<div class="block">Creates a new entry in the folder.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>title</code> - </dd><dd><code>image</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -362,6 +387,16 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getSize()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSize</h4>
+<pre>public&nbsp;org.eclipse.swt.graphics.Point&nbsp;getSize()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd><dt><span class="strong">See Also:</span></dt><dd><code>Control.getSize()</code></dd></dl>
+</li>
+</ul>
 <a name="getTabItem(java.lang.String)">
 <!--   -->
 </a>
@@ -399,12 +434,23 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <a name="setSelection(int)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setSelection</h4>
 <pre>public&nbsp;void&nbsp;setSelection(int&nbsp;index)</pre>
 <div class="block">Sets the current selection.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - </dd></dl>
+</li>
+</ul>
+<a name="setSize(int, int)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setSize</h4>
+<pre>public&nbsp;void&nbsp;setSize(int&nbsp;arg0,
+           int&nbsp;arg1)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>arg0</code> - </dd><dd><code>arg1</code> - </dd><dt><span class="strong">See Also:</span></dt><dd><code>Control.setSize(int, int)</code></dd></dl>
 </li>
 </ul>
 </li>

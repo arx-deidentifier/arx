@@ -93,6 +93,11 @@
 <div class="block">Criteria.</div>
 </li>
 <li class="blockList">
+<h4>bCriteria</h4>
+<pre><a href="org/deidentifier/arx/criteria/SampleBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedPrivacyCriterion</a>[] bCriteria</pre>
+<div class="block">Criteria.</div>
+</li>
+<li class="blockList">
 <h4>attributeWeights</h4>
 <pre>java.util.Map&lt;K,V&gt; attributeWeights</pre>
 <div class="block">A map of weights per attribute.</div>
@@ -115,7 +120,8 @@
 <li class="blockList">
 <h4>protectSensitiveAssociations</h4>
 <pre>boolean protectSensitiveAssociations</pre>
-<div class="block">Make sure that no information can be derived from associations between sensitive attributes.</div>
+<div class="block">Make sure that no information can be derived from associations between
+ sensitive attributes.</div>
 </li>
 <li class="blockList">
 <h4>relMaxOutliers</h4>
@@ -135,17 +141,24 @@
 <li class="blockList">
 <h4>suppressedAttributeTypes</h4>
 <pre>java.lang.Integer suppressedAttributeTypes</pre>
-<div class="block">Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.</div>
+<div class="block">Defines values of which attribute type are to be replaced by the
+ suppression string in suppressed tuples.</div>
 </li>
 <li class="blockList">
 <h4>suppressionString</h4>
 <pre>java.lang.String suppressionString</pre>
 <div class="block">The string with which suppressed values are to be replaced.</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>suppressionAlwaysEnabled</h4>
 <pre>java.lang.Boolean suppressionAlwaysEnabled</pre>
-<div class="block">Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations.</div>
+<div class="block">Determines whether suppression is applied to the output of anonymous as
+ well as non-anonymous transformations.</div>
+</li>
+<li class="blockListLast">
+<h4>heuristicSearchForSampleBasedCriteria</h4>
+<pre>boolean heuristicSearchForSampleBasedCriteria</pre>
+<div class="block">Are we performing optimal anonymization for sample-based criteria?</div>
 </li>
 </ul>
 </li>
@@ -246,6 +259,57 @@
 <h4>lattice</h4>
 <pre><a href="org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a> lattice</pre>
 <div class="block">TODO</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.ARXPopulationModel">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">org.deidentifier.arx.ARXPopulationModel</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>6331644478717881214L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>region</h4>
+<pre><a href="org/deidentifier/arx/ARXPopulationModel.Region.html" title="enum in org.deidentifier.arx">ARXPopulationModel.Region</a> region</pre>
+<div class="block">The region</div>
+</li>
+<li class="blockListLast">
+<h4>sampleFraction</h4>
+<pre>double sampleFraction</pre>
+<div class="block">The sample fraction</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.ARXSolverConfiguration">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">org.deidentifier.arx.ARXSolverConfiguration</a> extends de.linearbits.newtonraphson.NewtonRaphsonConfiguration&lt;<a href="org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&gt; implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-7122709349147064168L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>modified</h4>
+<pre>boolean modified</pre>
+<div class="block">Modified</div>
 </li>
 </ul>
 </li>
@@ -464,7 +528,7 @@
 <li class="blockListLast">
 <h4>order</h4>
 <pre>java.util.Map&lt;K,V&gt; order</pre>
-<div class="block">TODO</div>
+<div class="block">The defined order</div>
 </li>
 </ul>
 </li>
@@ -1215,12 +1279,12 @@
 <li class="blockList">
 <h4>attribute</h4>
 <pre>java.lang.String attribute</pre>
-<div class="block">TODO</div>
+<div class="block">Attribute</div>
 </li>
 <li class="blockListLast">
 <h4>index</h4>
 <pre>int index</pre>
-<div class="block">TODO</div>
+<div class="block">Attribute index</div>
 </li>
 </ul>
 </li>
@@ -1327,7 +1391,7 @@
 <li class="blockListLast">
 <h4>minSize</h4>
 <pre>int minSize</pre>
-<div class="block">TODO</div>
+<div class="block">The derived minimal size of a class</div>
 </li>
 </ul>
 </li>
@@ -1378,6 +1442,89 @@
 </ul>
 </li>
 </ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.RiskBasedPrivacyCriterion">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/RiskBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.RiskBasedPrivacyCriterion</a> extends <a href="org/deidentifier/arx/criteria/SampleBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-2711630526630937284L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>threshold</h4>
+<pre>double threshold</pre>
+<div class="block">The threshold</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.RiskBasedThresholdAverageRisk">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/RiskBasedThresholdAverageRisk.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.RiskBasedThresholdAverageRisk</a> extends <a href="org/deidentifier/arx/criteria/RiskBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">RiskBasedPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-2953252206954936045L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/RiskBasedThresholdPopulationUniques.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques</a> extends <a href="org/deidentifier/arx/criteria/RiskBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">RiskBasedPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>618039085843721351L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>statisticalModel</h4>
+<pre><a href="org/deidentifier/arx/risk/RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel.html" title="enum in org.deidentifier.arx.risk">RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel</a> statisticalModel</pre>
+<div class="block">The statistical model</div>
+</li>
+<li class="blockList">
+<h4>populationModel</h4>
+<pre><a href="org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a> populationModel</pre>
+<div class="block">The population model</div>
+</li>
+<li class="blockListLast">
+<h4>solverConfig</h4>
+<pre><a href="org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a> solverConfig</pre>
+<div class="block">The solver config</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.RiskBasedThresholdSampleUniques">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/RiskBasedThresholdSampleUniques.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.RiskBasedThresholdSampleUniques</a> extends <a href="org/deidentifier/arx/criteria/RiskBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">RiskBasedPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-4528395062333281525L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.SampleBasedPrivacyCriterion">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/SampleBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.SampleBasedPrivacyCriterion</a> extends <a href="org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>5687067920181297803L</dd>
+</dl>
 </li>
 <li class="blockList"><a name="org.deidentifier.arx.criteria.TCloseness">
 <!--   -->
@@ -1479,7 +1626,12 @@
 <li class="blockList">
 <h4>separator</h4>
 <pre>char separator</pre>
-<div class="block">The project's separator.</div>
+<div class="block">Left for backwards compatibility only!</div>
+</li>
+<li class="blockList">
+<h4>csvSyntax</h4>
+<pre><a href="org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a> csvSyntax</pre>
+<div class="block">The projects CSV syntax</div>
 </li>
 <li class="blockList">
 <h4>time</h4>
@@ -1562,6 +1714,11 @@
 <div class="block">The current output configuration.</div>
 </li>
 <li class="blockList">
+<h4>riskModel</h4>
+<pre><a href="org/deidentifier/arx/gui/model/ModelRisk.html" title="class in org.deidentifier.arx.gui.model">ModelRisk</a> riskModel</pre>
+<div class="block">The current risk model.</div>
+</li>
+<li class="blockList">
 <h4>dPresenceModel</h4>
 <pre><a href="org/deidentifier/arx/gui/model/ModelDPresenceCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelDPresenceCriterion</a> dPresenceModel</pre>
 <div class="block">Model for a specific privacy criterion.</div>
@@ -1582,14 +1739,23 @@
 <div class="block">Model for a specific privacy criterion.</div>
 </li>
 <li class="blockList">
+<h4>riskBasedModel</h4>
+<pre>java.util.Set&lt;E&gt; riskBasedModel</pre>
+<div class="block">Model for a specific privacy criterion.</div>
+</li>
+<li class="blockList">
 <h4>metricConfig</h4>
 <pre><a href="org/deidentifier/arx/metric/MetricConfiguration.html" title="class in org.deidentifier.arx.metric">MetricConfiguration</a> metricConfig</pre>
 <div class="block">Configuration.</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>metricDescription</h4>
 <pre><a href="org/deidentifier/arx/metric/MetricDescription.html" title="class in org.deidentifier.arx.metric">MetricDescription</a> metricDescription</pre>
 <div class="block">Description.</div>
+</li>
+<li class="blockListLast">
+<h4>selectedQuasiIdentifiers</h4>
+<pre>java.util.Set&lt;E&gt; selectedQuasiIdentifiers</pre>
 </li>
 </ul>
 </li>
@@ -1709,15 +1875,10 @@
 </a>
 <h3>Serialized Fields</h3>
 <ul class="blockList">
-<li class="blockList">
+<li class="blockListLast">
 <h4>enabled</h4>
 <pre>boolean enabled</pre>
 <div class="block">Is this criterion enabled.</div>
-</li>
-<li class="blockListLast">
-<h4>active</h4>
-<pre>boolean active</pre>
-<div class="block">Is this criterion active.</div>
 </li>
 </ul>
 </li>
@@ -1900,6 +2061,92 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="org.deidentifier.arx.gui.model.ModelRisk">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/gui/model/ModelRisk.html" title="class in org.deidentifier.arx.gui.model">org.deidentifier.arx.gui.model.ModelRisk</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>5405871228130041796L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>modified</h4>
+<pre>boolean modified</pre>
+<div class="block">Modified</div>
+</li>
+<li class="blockList">
+<h4>populationModel</h4>
+<pre><a href="org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a> populationModel</pre>
+<div class="block">Model</div>
+</li>
+<li class="blockList">
+<h4>config</h4>
+<pre><a href="org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a> config</pre>
+<div class="block">Model</div>
+</li>
+<li class="blockList">
+<h4>maxQiSize</h4>
+<pre>int maxQiSize</pre>
+<div class="block">Model</div>
+</li>
+<li class="blockList">
+<h4>viewEnabledForInput</h4>
+<pre>java.util.Map&lt;K,V&gt; viewEnabledForInput</pre>
+<div class="block">Model</div>
+</li>
+<li class="blockList">
+<h4>viewEnabledForOutput</h4>
+<pre>java.util.Map&lt;K,V&gt; viewEnabledForOutput</pre>
+<div class="block">Model</div>
+</li>
+<li class="blockList">
+<h4>useOutputModelIfAvailable</h4>
+<pre>boolean useOutputModelIfAvailable</pre>
+<div class="block">Model</div>
+</li>
+<li class="blockListLast">
+<h4>riskModelForAttributes</h4>
+<pre><a href="org/deidentifier/arx/gui/model/ModelRisk.RiskModelForAttributes.html" title="enum in org.deidentifier.arx.gui.model">ModelRisk.RiskModelForAttributes</a> riskModelForAttributes</pre>
+<div class="block">Model</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.gui.model.ModelRiskBasedCriterion">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html" title="class in org.deidentifier.arx.gui.model">org.deidentifier.arx.gui.model.ModelRiskBasedCriterion</a> extends <a href="org/deidentifier/arx/gui/model/ModelImplicitCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelImplicitCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-3653781193588952725L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>threshold</h4>
+<pre>double threshold</pre>
+<div class="block">Threshold</div>
+</li>
+<li class="blockListLast">
+<h4>variant</h4>
+<pre>int variant</pre>
+<div class="block">The variant to use.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="org.deidentifier.arx.gui.model.ModelTClosenessCriterion">
 <!--   -->
 </a>
@@ -1966,6 +2213,49 @@
 <h4>changed</h4>
 <pre>boolean changed</pre>
 <div class="block">Changed flag.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList">
+<h2 title="Package">Package&nbsp;org.deidentifier.arx.io</h2>
+<ul class="blockList">
+<li class="blockList"><a name="org.deidentifier.arx.io.CSVSyntax">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">org.deidentifier.arx.io.CSVSyntax</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-3978502790060734961L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>delimiter</h4>
+<pre>char delimiter</pre>
+<div class="block">The delimiter.</div>
+</li>
+<li class="blockList">
+<h4>quote</h4>
+<pre>char quote</pre>
+<div class="block">The quote.</div>
+</li>
+<li class="blockList">
+<h4>escape</h4>
+<pre>char escape</pre>
+<div class="block">The escape.</div>
+</li>
+<li class="blockListLast">
+<h4>linebreak</h4>
+<pre>char[] linebreak</pre>
+<div class="block">The linebreak.</div>
 </li>
 </ul>
 </li>

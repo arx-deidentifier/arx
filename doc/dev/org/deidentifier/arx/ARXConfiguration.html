@@ -293,58 +293,70 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/criteria/SampleBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedPrivacyCriterion</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSampleBasedCriteriaAsArray()">getSampleBasedCriteriaAsArray</a></strong>()</code>
+<div class="block">Returns all sample-based criteria as an array.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSnapshotLength()">getSnapshotLength</a></strong>()</code>
 <div class="block">Returns the specific length of each entry in a snapshot.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSuppressedAttributeTypes()">getSuppressedAttributeTypes</a></strong>()</code>
 <div class="block">Returns an integer representing all attribute types that must be suppressed.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSuppressionString()">getSuppressionString</a></strong>()</code>
 <div class="block">Sets the string with which suppressed values are to be replaced.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>
 <div class="block">Initializes the configuration.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isAttributeTypeSuppressed(org.deidentifier.arx.AttributeType)">isAttributeTypeSuppressed</a></strong>(<a href="../../../org/deidentifier/arx/AttributeType.html" title="class in org.deidentifier.arx">AttributeType</a>&nbsp;type)</code>
 <div class="block">Returns whether values of the given attribute type will be replaced by the suppression 
  string in suppressed tuples.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isCriterionMonotonic()">isCriterionMonotonic</a></strong>()</code>
 <div class="block">Determines whether the anonymity criterion is montonic.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isPracticalMonotonicity()">isPracticalMonotonicity</a></strong>()</code>
 <div class="block">Is practical monotonicity assumed.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isProtectSensitiveAssociations()">isProtectSensitiveAssociations</a></strong>()</code>
 <div class="block">Returns, whether the anonymizer should take associations between sensitive attributes into account.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isSuppressionAlwaysEnabled()">isSuppressionAlwaysEnabled</a></strong>()</code>
 <div class="block">Returns whether suppression is applied to the output of anonymous as well as non-anonymous transformations.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isUseHeuristicSearchForSampleBasedCriteria()">isUseHeuristicSearchForSampleBasedCriteria</a></strong>()</code>
+<div class="block">Do we guarantee optimality for sample-based criteria?</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -415,6 +427,12 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setSuppressionString(java.lang.String)">setSuppressionString</a></strong>(java.lang.String&nbsp;suppressionString)</code>
 <div class="block">Sets the string with which suppressed values are to be replaced.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setUseHeuristicSearchForSampleBasedCriteria(boolean)">setUseHeuristicSearchForSampleBasedCriteria</a></strong>(boolean&nbsp;value)</code>
+<div class="block">Do we guarantee optimality for sample-based criteria?</div>
 </td>
 </tr>
 </table>
@@ -720,6 +738,16 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="isUseHeuristicSearchForSampleBasedCriteria()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isUseHeuristicSearchForSampleBasedCriteria</h4>
+<pre>public&nbsp;boolean&nbsp;isUseHeuristicSearchForSampleBasedCriteria()</pre>
+<div class="block">Do we guarantee optimality for sample-based criteria?</div>
+</li>
+</ul>
 <a name="removeCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">
 <!--   -->
 </a>
@@ -838,6 +866,16 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>suppressionString</code> - </dd></dl>
 </li>
 </ul>
+<a name="setUseHeuristicSearchForSampleBasedCriteria(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setUseHeuristicSearchForSampleBasedCriteria</h4>
+<pre>public&nbsp;void&nbsp;setUseHeuristicSearchForSampleBasedCriteria(boolean&nbsp;value)</pre>
+<div class="block">Do we guarantee optimality for sample-based criteria?</div>
+</li>
+</ul>
 <a name="getAbsoluteMaxOutliers()">
 <!--   -->
 </a>
@@ -846,17 +884,6 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>getAbsoluteMaxOutliers</h4>
 <pre>protected final&nbsp;int&nbsp;getAbsoluteMaxOutliers()</pre>
 <div class="block">Returns the maximum number of allowed outliers.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getInternalConfiguration()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getInternalConfiguration</h4>
-<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;getInternalConfiguration()</pre>
-<div class="block">TODO: This is a hack and should be removed in future releases.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -869,6 +896,17 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <pre>protected&nbsp;<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>[]&nbsp;getCriteriaAsArray()</pre>
 <div class="block">Returns all criteria (except k-anonymity) as an array. Only used internally. If k-anonymity is included the minimal
  group size should be obtained and enforced</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getInternalConfiguration()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInternalConfiguration</h4>
+<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;getInternalConfiguration()</pre>
+<div class="block">TODO: This is a hack and should be removed in future releases.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -892,6 +930,17 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>getRequirements</h4>
 <pre>protected&nbsp;int&nbsp;getRequirements()</pre>
 <div class="block">Returns the criteria's requirements.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getSampleBasedCriteriaAsArray()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSampleBasedCriteriaAsArray</h4>
+<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/criteria/SampleBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedPrivacyCriterion</a>[]&nbsp;getSampleBasedCriteriaAsArray()</pre>
+<div class="block">Returns all sample-based criteria as an array. Only used internally.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

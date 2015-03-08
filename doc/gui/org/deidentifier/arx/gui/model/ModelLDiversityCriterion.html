@@ -183,21 +183,33 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelLDiversityCriterion</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#clone()">clone</a></strong>()</code>
+<div class="block">Clone</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#getC()">getC</a></strong>()</code>
 <div class="block">Gets C.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#getCriterion(org.deidentifier.arx.gui.model.Model)">getCriterion</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</code>
 <div class="block">Implement this to return the criterion.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#getL()">getL</a></strong>()</code>
 <div class="block">Returns L.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#getLabel()">getLabel</a></strong>()</code>
+<div class="block">Implement this to return a string representation.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -208,29 +220,35 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion)">parse</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion)</code>
+<div class="block">Parse</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#pull(org.deidentifier.arx.gui.model.ModelExplicitCriterion)">pull</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelExplicitCriterion</a>&nbsp;criterion)</code>
 <div class="block">Implement this, to update data.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#setC(double)">setC</a></strong>(double&nbsp;c)</code>
 <div class="block">Sets C.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#setL(int)">setL</a></strong>(int&nbsp;l)</code>
 <div class="block">Sets L.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#setVariant(int)">setVariant</a></strong>(int&nbsp;variant)</code>
 <div class="block">Sets the variant.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#toString()">toString</a></strong>()</code>
 <div class="block">Implement this to return a string representation.</div>
@@ -249,14 +267,14 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.gui.model.<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></h3>
-<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#isActive()">isActive</a>, <a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#isEnabled()">isEnabled</a>, <a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#setActive(boolean)">setActive</a>, <a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#setEnabled(boolean)">setEnabled</a></code></li>
+<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#isEnabled()">isEnabled</a>, <a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#setEnabled(boolean)">setEnabled</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
+<code>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -332,6 +350,21 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="clone()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clone</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelLDiversityCriterion</a>&nbsp;clone()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#clone()">ModelCriterion</a></code></strong></div>
+<div class="block">Clone</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#clone()">clone</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="getC()">
 <!--   -->
 </a>
@@ -369,6 +402,21 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getLabel()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLabel</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getLabel()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#getLabel()">ModelCriterion</a></code></strong></div>
+<div class="block">Implement this to return a string representation.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#getLabel()">getLabel</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getVariant()">
 <!--   -->
 </a>
@@ -378,6 +426,21 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 <pre>public&nbsp;int&nbsp;getVariant()</pre>
 <div class="block">Returns the variant.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="parse(org.deidentifier.arx.gui.model.ModelCriterion)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parse</h4>
+<pre>public&nbsp;void&nbsp;parse(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion)">ModelCriterion</a></code></strong></div>
+<div class="block">Parse</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
+</dl>
 </li>
 </ul>
 <a name="pull(org.deidentifier.arx.gui.model.ModelExplicitCriterion)">

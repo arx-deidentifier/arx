@@ -165,7 +165,9 @@ extends <a href="../../../org/deidentifier/arx/Data.html" title="class in org.de
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected java.util.Iterator&lt;java.lang.String[]&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.DefaultData.html#iterator()">iterator</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.DefaultData.html#iterator()">iterator</a></strong>()</code>
+<div class="block">Iterator.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -173,7 +175,7 @@ extends <a href="../../../org/deidentifier/arx/Data.html" title="class in org.de
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></h3>
-<code><a href="../../../org/deidentifier/arx/Data.html#create()">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(org.deidentifier.arx.DataSource)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20char,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20char,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.util.Iterator)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.util.List)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String[][])">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20char,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#getDefinition()">getDefinition</a>, <a href="../../../org/deidentifier/arx/Data.html#getHandle()">getHandle</a></code></li>
+<code><a href="../../../org/deidentifier/arx/Data.html#create()">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(org.deidentifier.arx.DataSource)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.File)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20char,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20char,%20char,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20char,%20char,%20char,%20char[])">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20org.deidentifier.arx.io.CSVSyntax)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20char,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20char,%20char,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20char,%20char,%20char,%20char[])">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20org.deidentifier.arx.io.CSVSyntax)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.util.Iterator)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.util.List)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String[][])">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20char,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20char,%20char,%20char)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20char,%20char,%20char,%20char[])">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax)">create</a>, <a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">create</a>, <a href="../../../org/deidentifier/arx/Data.html#getDefinition()">getDefinition</a>, <a href="../../../org/deidentifier/arx/Data.html#getHandle()">getHandle</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -221,7 +223,7 @@ extends <a href="../../../org/deidentifier/arx/Data.html" title="class in org.de
 <h4>add</h4>
 <pre>public&nbsp;void&nbsp;add(java.lang.String...&nbsp;row)</pre>
 <div class="block">Adds a row to this data object.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - the row</dd></dl>
 </li>
 </ul>
 <a name="iterator()">
@@ -231,10 +233,12 @@ extends <a href="../../../org/deidentifier/arx/Data.html" title="class in org.de
 <li class="blockList">
 <h4>iterator</h4>
 <pre>protected&nbsp;java.util.Iterator&lt;java.lang.String[]&gt;&nbsp;iterator()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/Data.html#iterator()">Data</a></code></strong></div>
+<div class="block">Iterator.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/Data.html#iterator()">iterator</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<dt><span class="strong">Returns:</span></dt><dd>the iterator</dd></dl>
 </li>
 </ul>
 </li>

@@ -171,31 +171,111 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20char)">create</a></strong>(java.io.File&nbsp;file,
-      char&nbsp;separator)</code>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.File)">create</a></strong>(java.io.File&nbsp;file)</code>
 <div class="block">Creates a new data object from a CSV file.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20char,%20char)">create</a></strong>(java.io.File&nbsp;file,
-      char&nbsp;separator,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20char)">create</a></strong>(java.io.File&nbsp;file,
       char&nbsp;delimiter)</code>
 <div class="block">Creates a new data object from a CSV file.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20char,%20char)">create</a></strong>(java.io.File&nbsp;file,
+      char&nbsp;delimiter,
+      char&nbsp;quote)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20char,%20char,%20char)">create</a></strong>(java.io.File&nbsp;file,
+      char&nbsp;delimiter,
+      char&nbsp;quote,
+      char&nbsp;escape)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20char,%20char,%20char,%20char[])">create</a></strong>(java.io.File&nbsp;file,
+      char&nbsp;delimiter,
+      char&nbsp;quote,
+      char&nbsp;escape,
+      char[]&nbsp;linebreak)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20org.deidentifier.arx.io.CSVSyntax)">create</a></strong>(java.io.File&nbsp;file,
+      <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.File,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">create</a></strong>(java.io.File&nbsp;file,
+      <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
+      <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream)">create</a></strong>(java.io.InputStream&nbsp;stream)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20char)">create</a></strong>(java.io.InputStream&nbsp;stream,
-      char&nbsp;separator)</code>
+      char&nbsp;delimiter)</code>
 <div class="block">Creates a new data object from a CSV file.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20char,%20char)">create</a></strong>(java.io.InputStream&nbsp;stream,
-      char&nbsp;separator,
-      char&nbsp;delimiter)</code>
+      char&nbsp;delimiter,
+      char&nbsp;quote)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20char,%20char,%20char)">create</a></strong>(java.io.InputStream&nbsp;stream,
+      char&nbsp;delimiter,
+      char&nbsp;quote,
+      char&nbsp;escape)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20char,%20char,%20char,%20char[])">create</a></strong>(java.io.InputStream&nbsp;stream,
+      char&nbsp;delimiter,
+      char&nbsp;quote,
+      char&nbsp;escape,
+      char[]&nbsp;linebreak)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20org.deidentifier.arx.io.CSVSyntax)">create</a></strong>(java.io.InputStream&nbsp;stream,
+      <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">create</a></strong>(java.io.InputStream&nbsp;stream,
+      <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
+      <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)</code>
 <div class="block">Creates a new data object from a CSV file.</div>
 </td>
 </tr>
@@ -213,40 +293,82 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String[][])">create</a></strong>(java.lang.String[][]&nbsp;array)</code>
-<div class="block">Creates a new data object from a two-dimensional string array.</div>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String)">create</a></strong>(java.lang.String&nbsp;path)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20char)">create</a></strong>(java.lang.String&nbsp;path,
-      char&nbsp;separator)</code>
-<div class="block">Creates a new data object from a CSV file.</div>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String[][])">create</a></strong>(java.lang.String[][]&nbsp;array)</code>
+<div class="block">Creates a new data object from a two-dimensional string array.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20char,%20char)">create</a></strong>(java.lang.String&nbsp;path,
-      char&nbsp;separator,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20char)">create</a></strong>(java.lang.String&nbsp;path,
       char&nbsp;delimiter)</code>
 <div class="block">Creates a new data object from a CSV file.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20char,%20char)">create</a></strong>(java.lang.String&nbsp;path,
+      char&nbsp;delimiter,
+      char&nbsp;quote)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20char,%20char,%20char)">create</a></strong>(java.lang.String&nbsp;path,
+      char&nbsp;delimiter,
+      char&nbsp;quote,
+      char&nbsp;escape)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20char,%20char,%20char,%20char[])">create</a></strong>(java.lang.String&nbsp;path,
+      char&nbsp;delimiter,
+      char&nbsp;quote,
+      char&nbsp;escape,
+      char[]&nbsp;linebreak)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax)">create</a></strong>(java.lang.String&nbsp;path,
+      <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">create</a></strong>(java.lang.String&nbsp;path,
+      <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
+      <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)</code>
+<div class="block">Creates a new data object from a CSV file.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#getDefinition()">getDefinition</a></strong>()</code>
 <div class="block">Returns the data definition.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#getHandle()">getHandle</a></strong>()</code>
 <div class="block">Returns a data handle.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected abstract java.util.Iterator&lt;java.lang.String[]&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#iterator()">iterator</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/Data.html#iterator()">iterator</a></strong>()</code>
+<div class="block">Iterator.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -310,7 +432,22 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>source</code> - The source that should be used to import data</dd>
 <dt><span class="strong">Returns:</span></dt><dd>Data object as described by the data source</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.File&nbsp;file)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="create(java.io.File, char)">
@@ -320,13 +457,13 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.File&nbsp;file,
-          char&nbsp;separator)
+          char&nbsp;delimiter)
                    throws java.io.IOException</pre>
 <div class="block">Creates a new data object from a CSV file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - A file</dd><dd><code>separator</code> - The utilized separator character</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - A file</dd><dd><code>delimiter</code> - The utilized separator character</dd>
 <dt><span class="strong">Returns:</span></dt><dd>A Data object</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="create(java.io.File, char, char)">
@@ -336,14 +473,99 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.File&nbsp;file,
-          char&nbsp;separator,
-          char&nbsp;delimiter)
+          char&nbsp;delimiter,
+          char&nbsp;quote)
                    throws java.io.IOException</pre>
 <div class="block">Creates a new data object from a CSV file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - A file</dd><dd><code>separator</code> - The utilized separator character</dd><dd><code>delimiter</code> - The delimiter for strings</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - A file</dd><dd><code>delimiter</code> - The utilized separator character</dd><dd><code>quote</code> - The delimiter for strings</dd>
 <dt><span class="strong">Returns:</span></dt><dd>A Data object</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.File, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.File&nbsp;file,
+          char&nbsp;delimiter,
+          char&nbsp;quote,
+          char&nbsp;escape)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.File, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.File&nbsp;file,
+          char&nbsp;delimiter,
+          char&nbsp;quote,
+          char&nbsp;escape,
+          char[]&nbsp;linebreak)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.File, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.File&nbsp;file,
+          <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.File, org.deidentifier.arx.io.CSVSyntax, org.deidentifier.arx.DataType[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.File&nbsp;file,
+          <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
+          <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>config</code> - the config</dd><dd><code>datatypes</code> - the datatypes</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.InputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.InputStream&nbsp;stream)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="create(java.io.InputStream, char)">
@@ -353,13 +575,13 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.InputStream&nbsp;stream,
-          char&nbsp;separator)
+          char&nbsp;delimiter)
                    throws java.io.IOException</pre>
 <div class="block">Creates a new data object from a CSV file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - An input stream</dd><dd><code>separator</code> - The utilized separator character</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - An input stream</dd><dd><code>delimiter</code> - The utilized separator character</dd>
 <dt><span class="strong">Returns:</span></dt><dd>A Data object</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="create(java.io.InputStream, char, char)">
@@ -369,14 +591,84 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.InputStream&nbsp;stream,
-          char&nbsp;separator,
-          char&nbsp;delimiter)
+          char&nbsp;delimiter,
+          char&nbsp;quote)
                    throws java.io.IOException</pre>
 <div class="block">Creates a new data object from a CSV file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - An input stream</dd><dd><code>separator</code> - The utilized separator character</dd><dd><code>delimiter</code> - The delimiter for strings</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - An input stream</dd><dd><code>delimiter</code> - The utilized separator character</dd><dd><code>quote</code> - The delimiter for strings</dd>
 <dt><span class="strong">Returns:</span></dt><dd>A Data object</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.InputStream, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.InputStream&nbsp;stream,
+          char&nbsp;delimiter,
+          char&nbsp;quote,
+          char&nbsp;escape)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.InputStream, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.InputStream&nbsp;stream,
+          char&nbsp;delimiter,
+          char&nbsp;quote,
+          char&nbsp;escape,
+          char[]&nbsp;linebreak)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.InputStream, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.InputStream&nbsp;stream,
+          <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.io.InputStream, org.deidentifier.arx.io.CSVSyntax, org.deidentifier.arx.DataType[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.io.InputStream&nbsp;stream,
+          <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
+          <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>config</code> - the config</dd><dd><code>datatypes</code> - the datatypes</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="create(java.util.Iterator)">
@@ -403,6 +695,21 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd>A Data object</dd></dl>
 </li>
 </ul>
+<a name="create(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.lang.String&nbsp;path)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - the path</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
 <a name="create(java.lang.String, char)">
 <!--   -->
 </a>
@@ -410,13 +717,13 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.lang.String&nbsp;path,
-          char&nbsp;separator)
+          char&nbsp;delimiter)
                    throws java.io.IOException</pre>
 <div class="block">Creates a new data object from a CSV file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - A path to the file</dd><dd><code>separator</code> - The utilized separator character</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - A path to the file</dd><dd><code>delimiter</code> - The utilized separator character</dd>
 <dt><span class="strong">Returns:</span></dt><dd>A Data object</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="create(java.lang.String, char, char)">
@@ -426,14 +733,84 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.lang.String&nbsp;path,
-          char&nbsp;separator,
-          char&nbsp;delimiter)
+          char&nbsp;delimiter,
+          char&nbsp;quote)
                    throws java.io.IOException</pre>
 <div class="block">Creates a new data object from a CSV file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - A path to the file</dd><dd><code>separator</code> - The utilized separator character</dd><dd><code>delimiter</code> - The delimiter for strings</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - A path to the file</dd><dd><code>delimiter</code> - The utilized separator character</dd><dd><code>quote</code> - The delimiter for strings</dd>
 <dt><span class="strong">Returns:</span></dt><dd>A Data object</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.lang.String, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.lang.String&nbsp;path,
+          char&nbsp;delimiter,
+          char&nbsp;quote,
+          char&nbsp;escape)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - the path</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.lang.String, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.lang.String&nbsp;path,
+          char&nbsp;delimiter,
+          char&nbsp;quote,
+          char&nbsp;escape,
+          char[]&nbsp;linebreak)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - the path</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.lang.String, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.lang.String&nbsp;path,
+          <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - the path</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="create(java.lang.String, org.deidentifier.arx.io.CSVSyntax, org.deidentifier.arx.DataType[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;create(java.lang.String&nbsp;path,
+          <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
+          <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)
+                   throws java.io.IOException</pre>
+<div class="block">Creates a new data object from a CSV file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>path</code> - the path</dd><dd><code>config</code> - the config</dd><dd><code>datatypes</code> - the datatypes</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="create(java.lang.String[][])">
@@ -456,7 +833,7 @@ extends java.lang.Object</pre>
 <h4>getDefinition</h4>
 <pre>public&nbsp;<a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;getDefinition()</pre>
 <div class="block">Returns the data definition.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the definition</dd></dl>
 </li>
 </ul>
 <a name="getHandle()">
@@ -467,7 +844,7 @@ extends java.lang.Object</pre>
 <h4>getHandle</h4>
 <pre>public&nbsp;<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;getHandle()</pre>
 <div class="block">Returns a data handle.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the handle</dd></dl>
 </li>
 </ul>
 <a name="iterator()">
@@ -477,7 +854,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>iterator</h4>
 <pre>protected abstract&nbsp;java.util.Iterator&lt;java.lang.String[]&gt;&nbsp;iterator()</pre>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<div class="block">Iterator.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the iterator</dd></dl>
 </li>
 </ul>
 </li>

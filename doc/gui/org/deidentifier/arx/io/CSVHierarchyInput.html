@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html" title="class in org.deidentifier.arx.io"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../org/deidentifier/arx/io/IImportColumnIndexed.html" title="interface in org.deidentifier.arx.io"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?org/deidentifier/arx/io/CSVHierarchyInput.html" target="_top">Frames</a></li>
@@ -115,42 +115,126 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.File)">CSVHierarchyInput</a></strong>(java.io.File&nbsp;file)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.File,%20char)">CSVHierarchyInput</a></strong>(java.io.File&nbsp;file,
-                 char&nbsp;separator)</code>
-<div class="block">Create from file.</div>
+                 char&nbsp;delimiter)</code>
+<div class="block">Instantiate.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.File,%20char,%20char)">CSVHierarchyInput</a></strong>(java.io.File&nbsp;file,
-                 char&nbsp;separator,
-                 char&nbsp;stringdelimiter)</code>
-<div class="block">Create from file.</div>
+                 char&nbsp;delimiter,
+                 char&nbsp;quote)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.File,%20char,%20char,%20char)">CSVHierarchyInput</a></strong>(java.io.File&nbsp;file,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote,
+                 char&nbsp;escape)</code>
+<div class="block">Instantiate.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.File,%20char,%20char,%20char,%20char[])">CSVHierarchyInput</a></strong>(java.io.File&nbsp;file,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote,
+                 char&nbsp;escape,
+                 char[]&nbsp;linebreak)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.File,%20org.deidentifier.arx.io.CSVSyntax)">CSVHierarchyInput</a></strong>(java.io.File&nbsp;file,
+                 <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.InputStream)">CSVHierarchyInput</a></strong>(java.io.InputStream&nbsp;stream)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.InputStream,%20char)">CSVHierarchyInput</a></strong>(java.io.InputStream&nbsp;stream,
-                 char&nbsp;separator)</code>
-<div class="block">Create from stream.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.InputStream,%20char,%20char)">CSVHierarchyInput</a></strong>(java.io.InputStream&nbsp;stream,
-                 char&nbsp;separator,
-                 char&nbsp;stringdelimiter)</code>
-<div class="block">Create from stream.</div>
+                 char&nbsp;delimiter)</code>
+<div class="block">Instantiate.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.lang.String,%20char)">CSVHierarchyInput</a></strong>(java.lang.String&nbsp;file,
-                 char&nbsp;separator)</code>
-<div class="block">Create from path.</div>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.InputStream,%20char,%20char)">CSVHierarchyInput</a></strong>(java.io.InputStream&nbsp;stream,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote)</code>
+<div class="block">Instantiate.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.lang.String,%20char,%20char)">CSVHierarchyInput</a></strong>(java.lang.String&nbsp;file,
-                 char&nbsp;separator,
-                 char&nbsp;stringdelimiter)</code>
-<div class="block">Create from path.</div>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.InputStream,%20char,%20char,%20char)">CSVHierarchyInput</a></strong>(java.io.InputStream&nbsp;stream,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote,
+                 char&nbsp;escape)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.InputStream,%20char,%20char,%20char,%20char[])">CSVHierarchyInput</a></strong>(java.io.InputStream&nbsp;stream,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote,
+                 char&nbsp;escape,
+                 char[]&nbsp;linebreak)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.io.InputStream,%20org.deidentifier.arx.io.CSVSyntax)">CSVHierarchyInput</a></strong>(java.io.InputStream&nbsp;stream,
+                 <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.lang.String)">CSVHierarchyInput</a></strong>(java.lang.String&nbsp;filename)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.lang.String,%20char)">CSVHierarchyInput</a></strong>(java.lang.String&nbsp;filename,
+                 char&nbsp;delimiter)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.lang.String,%20char,%20char)">CSVHierarchyInput</a></strong>(java.lang.String&nbsp;filename,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.lang.String,%20char,%20char,%20char)">CSVHierarchyInput</a></strong>(java.lang.String&nbsp;filename,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote,
+                 char&nbsp;escape)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.lang.String,%20char,%20char,%20char,%20char[])">CSVHierarchyInput</a></strong>(java.lang.String&nbsp;filename,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote,
+                 char&nbsp;escape,
+                 char[]&nbsp;linebreak)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVHierarchyInput.html#CSVHierarchyInput(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax)">CSVHierarchyInput</a></strong>(java.lang.String&nbsp;filename,
+                 <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Instantiate.</div>
 </td>
 </tr>
 </table>
@@ -196,6 +280,20 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
+<a name="CSVHierarchyInput(java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVHierarchyInput</h4>
+<pre>public&nbsp;CSVHierarchyInput(java.io.File&nbsp;file)
+                  throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
 <a name="CSVHierarchyInput(java.io.File, char)">
 <!--   -->
 </a>
@@ -203,12 +301,12 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>CSVHierarchyInput</h4>
 <pre>public&nbsp;CSVHierarchyInput(java.io.File&nbsp;file,
-                 char&nbsp;separator)
+                 char&nbsp;delimiter)
                   throws java.io.IOException</pre>
-<div class="block">Create from file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd><dd><code>separator</code> - </dd>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="CSVHierarchyInput(java.io.File, char, char)">
@@ -218,13 +316,77 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>CSVHierarchyInput</h4>
 <pre>public&nbsp;CSVHierarchyInput(java.io.File&nbsp;file,
-                 char&nbsp;separator,
-                 char&nbsp;stringdelimiter)
+                 char&nbsp;delimiter,
+                 char&nbsp;quote)
                   throws java.io.IOException</pre>
-<div class="block">Create from file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd><dd><code>separator</code> - </dd><dd><code>stringdelimiter</code> - </dd>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVHierarchyInput(java.io.File, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVHierarchyInput</h4>
+<pre>public&nbsp;CSVHierarchyInput(java.io.File&nbsp;file,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote,
+                 char&nbsp;escape)
+                  throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVHierarchyInput(java.io.File, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVHierarchyInput</h4>
+<pre>public&nbsp;CSVHierarchyInput(java.io.File&nbsp;file,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote,
+                 char&nbsp;escape,
+                 char[]&nbsp;linebreak)
+                  throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVHierarchyInput(java.io.File, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVHierarchyInput</h4>
+<pre>public&nbsp;CSVHierarchyInput(java.io.File&nbsp;file,
+                 <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+                  throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVHierarchyInput(java.io.InputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVHierarchyInput</h4>
+<pre>public&nbsp;CSVHierarchyInput(java.io.InputStream&nbsp;stream)
+                  throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="CSVHierarchyInput(java.io.InputStream, char)">
@@ -234,12 +396,12 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>CSVHierarchyInput</h4>
 <pre>public&nbsp;CSVHierarchyInput(java.io.InputStream&nbsp;stream,
-                 char&nbsp;separator)
+                 char&nbsp;delimiter)
                   throws java.io.IOException</pre>
-<div class="block">Create from stream.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - </dd><dd><code>separator</code> - </dd>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="CSVHierarchyInput(java.io.InputStream, char, char)">
@@ -249,13 +411,77 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>CSVHierarchyInput</h4>
 <pre>public&nbsp;CSVHierarchyInput(java.io.InputStream&nbsp;stream,
-                 char&nbsp;separator,
-                 char&nbsp;stringdelimiter)
+                 char&nbsp;delimiter,
+                 char&nbsp;quote)
                   throws java.io.IOException</pre>
-<div class="block">Create from stream.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - </dd><dd><code>separator</code> - </dd><dd><code>stringdelimiter</code> - </dd>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVHierarchyInput(java.io.InputStream, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVHierarchyInput</h4>
+<pre>public&nbsp;CSVHierarchyInput(java.io.InputStream&nbsp;stream,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote,
+                 char&nbsp;escape)
+                  throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVHierarchyInput(java.io.InputStream, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVHierarchyInput</h4>
+<pre>public&nbsp;CSVHierarchyInput(java.io.InputStream&nbsp;stream,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote,
+                 char&nbsp;escape,
+                 char[]&nbsp;linebreak)
+                  throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVHierarchyInput(java.io.InputStream, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVHierarchyInput</h4>
+<pre>public&nbsp;CSVHierarchyInput(java.io.InputStream&nbsp;stream,
+                 <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+                  throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVHierarchyInput(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVHierarchyInput</h4>
+<pre>public&nbsp;CSVHierarchyInput(java.lang.String&nbsp;filename)
+                  throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="CSVHierarchyInput(java.lang.String, char)">
@@ -264,29 +490,79 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>CSVHierarchyInput</h4>
-<pre>public&nbsp;CSVHierarchyInput(java.lang.String&nbsp;file,
-                 char&nbsp;separator)
+<pre>public&nbsp;CSVHierarchyInput(java.lang.String&nbsp;filename,
+                 char&nbsp;delimiter)
                   throws java.io.IOException</pre>
-<div class="block">Create from path.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd><dd><code>separator</code> - </dd>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>delimiter</code> - the delimiter</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="CSVHierarchyInput(java.lang.String, char, char)">
 <!--   -->
 </a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVHierarchyInput</h4>
+<pre>public&nbsp;CSVHierarchyInput(java.lang.String&nbsp;filename,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote)
+                  throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVHierarchyInput(java.lang.String, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVHierarchyInput</h4>
+<pre>public&nbsp;CSVHierarchyInput(java.lang.String&nbsp;filename,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote,
+                 char&nbsp;escape)
+                  throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVHierarchyInput(java.lang.String, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVHierarchyInput</h4>
+<pre>public&nbsp;CSVHierarchyInput(java.lang.String&nbsp;filename,
+                 char&nbsp;delimiter,
+                 char&nbsp;quote,
+                 char&nbsp;escape,
+                 char[]&nbsp;linebreak)
+                  throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVHierarchyInput(java.lang.String, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>CSVHierarchyInput</h4>
-<pre>public&nbsp;CSVHierarchyInput(java.lang.String&nbsp;file,
-                 char&nbsp;separator,
-                 char&nbsp;stringdelimiter)
+<pre>public&nbsp;CSVHierarchyInput(java.lang.String&nbsp;filename,
+                 <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
                   throws java.io.IOException</pre>
-<div class="block">Create from path.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd><dd><code>separator</code> - </dd><dd><code>stringdelimiter</code> - </dd>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>config</code> - the config</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 </li>
@@ -305,7 +581,7 @@ extends java.lang.Object</pre>
 <h4>getHierarchy</h4>
 <pre>public&nbsp;java.lang.String[][]&nbsp;getHierarchy()</pre>
 <div class="block">Returns the hierarchy.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the hierarchy</dd></dl>
 </li>
 </ul>
 </li>
@@ -335,7 +611,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html" title="class in org.deidentifier.arx.io"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../org/deidentifier/arx/io/IImportColumnIndexed.html" title="interface in org.deidentifier.arx.io"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?org/deidentifier/arx/io/CSVHierarchyInput.html" target="_top">Frames</a></li>

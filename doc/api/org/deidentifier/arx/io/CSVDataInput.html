@@ -34,7 +34,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" title="class in org.deidentifier.arx.io"><span class="strong">Prev Class</span></a></li>
+<li>Prev Class</li>
 <li><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html" title="class in org.deidentifier.arx.io"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -85,12 +85,7 @@
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" title="class in org.deidentifier.arx.io">org.deidentifier.arx.io.CSVAbstractInput</a></li>
-<li>
-<ul class="inheritance">
 <li>org.deidentifier.arx.io.CSVDataInput</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -100,7 +95,7 @@
 <hr>
 <br>
 <pre>public class <span class="strong">CSVDataInput</span>
-extends <a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" title="class in org.deidentifier.arx.io">CSVAbstractInput</a></pre>
+extends java.lang.Object</pre>
 <div class="block">This class implements a reader for CSV encoded information.</div>
 </li>
 </ul>
@@ -120,41 +115,156 @@ extends <a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" titl
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.File,%20char)">CSVDataInput</a></strong>(java.io.File&nbsp;file,
-            char&nbsp;separator)</code>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.File)">CSVDataInput</a></strong>(java.io.File&nbsp;file)</code>
 <div class="block">Instantiate.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.File,%20char)">CSVDataInput</a></strong>(java.io.File&nbsp;file,
+            char&nbsp;delimiter)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.File,%20char,%20char)">CSVDataInput</a></strong>(java.io.File&nbsp;file,
-            char&nbsp;separator,
-            char&nbsp;stringdelimiter)</code>
+            char&nbsp;delimiter,
+            char&nbsp;quote)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.File,%20char,%20char,%20char)">CSVDataInput</a></strong>(java.io.File&nbsp;file,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.File,%20char,%20char,%20char,%20char[])">CSVDataInput</a></strong>(java.io.File&nbsp;file,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape,
+            char[]&nbsp;linebreak)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.File,%20org.deidentifier.arx.io.CSVSyntax)">CSVDataInput</a></strong>(java.io.File&nbsp;file,
+            <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.File,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">CSVDataInput</a></strong>(java.io.File&nbsp;file,
+            <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
+            <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatype)</code>
+<div class="block">Instatiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.InputStream)">CSVDataInput</a></strong>(java.io.InputStream&nbsp;stream)</code>
 <div class="block">Instantiate.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.InputStream,%20char)">CSVDataInput</a></strong>(java.io.InputStream&nbsp;stream,
-            char&nbsp;separator)</code>
+            char&nbsp;delimiter)</code>
 <div class="block">Instantiate.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.InputStream,%20char,%20char)">CSVDataInput</a></strong>(java.io.InputStream&nbsp;stream,
-            char&nbsp;separator,
-            char&nbsp;stringdelimiter)</code>
+            char&nbsp;delimiter,
+            char&nbsp;quote)</code>
 <div class="block">Instantiate.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.lang.String,%20char)">CSVDataInput</a></strong>(java.lang.String&nbsp;file,
-            char&nbsp;separator)</code>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.InputStream,%20char,%20char,%20char)">CSVDataInput</a></strong>(java.io.InputStream&nbsp;stream,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape)</code>
 <div class="block">Instantiate.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.lang.String,%20char,%20char)">CSVDataInput</a></strong>(java.lang.String&nbsp;file,
-            char&nbsp;separator,
-            char&nbsp;stringdelimiter)</code>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.InputStream,%20char,%20char,%20char,%20char[])">CSVDataInput</a></strong>(java.io.InputStream&nbsp;stream,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape,
+            char[]&nbsp;linebreak)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.InputStream,%20org.deidentifier.arx.io.CSVSyntax)">CSVDataInput</a></strong>(java.io.InputStream&nbsp;stream,
+            <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.InputStream,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">CSVDataInput</a></strong>(java.io.InputStream&nbsp;stream,
+            <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
+            <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.Reader,%20char,%20char,%20char,%20char[],%20org.deidentifier.arx.DataType[])">CSVDataInput</a></strong>(java.io.Reader&nbsp;reader,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape,
+            char[]&nbsp;linebreak,
+            <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.lang.String)">CSVDataInput</a></strong>(java.lang.String&nbsp;filename)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.lang.String,%20char)">CSVDataInput</a></strong>(java.lang.String&nbsp;filename,
+            char&nbsp;delimiter)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.lang.String,%20char,%20char)">CSVDataInput</a></strong>(java.lang.String&nbsp;filename,
+            char&nbsp;delimiter,
+            char&nbsp;quote)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.lang.String,%20char,%20char,%20char)">CSVDataInput</a></strong>(java.lang.String&nbsp;filename,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.lang.String,%20char,%20char,%20char,%20char[])">CSVDataInput</a></strong>(java.lang.String&nbsp;filename,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape,
+            char[]&nbsp;linebreak)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax)">CSVDataInput</a></strong>(java.lang.String&nbsp;filename,
+            <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
+<div class="block">Instantiate.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">CSVDataInput</a></strong>(java.lang.String&nbsp;filename,
+            <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
+            <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)</code>
 <div class="block">Instantiate.</div>
 </td>
 </tr>
@@ -176,17 +286,16 @@ extends <a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" titl
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#close()">close</a></strong>()</code>
-<div class="block">Closes the input.</div>
+<div class="block">Closes the reader.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.util.Iterator&lt;java.lang.String[]&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#iterator()">iterator</a></strong>()</code>
+<div class="block">Returns an iterator.</div>
 </td>
 </tr>
 </table>
-<ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_org.deidentifier.arx.io.CSVAbstractInput">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;org.deidentifier.arx.io.<a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" title="class in org.deidentifier.arx.io">CSVAbstractInput</a></h3>
-<code><a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html#iterator()">iterator</a></code></li>
-</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
 <!--   -->
@@ -208,6 +317,20 @@ extends <a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" titl
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
+<a name="CSVDataInput(java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.io.File&nbsp;file)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
 <a name="CSVDataInput(java.io.File, char)">
 <!--   -->
 </a>
@@ -215,12 +338,12 @@ extends <a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" titl
 <li class="blockList">
 <h4>CSVDataInput</h4>
 <pre>public&nbsp;CSVDataInput(java.io.File&nbsp;file,
-            char&nbsp;separator)
+            char&nbsp;delimiter)
              throws java.io.IOException</pre>
 <div class="block">Instantiate.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd><dd><code>separator</code> - </dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="CSVDataInput(java.io.File, char, char)">
@@ -230,13 +353,93 @@ extends <a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" titl
 <li class="blockList">
 <h4>CSVDataInput</h4>
 <pre>public&nbsp;CSVDataInput(java.io.File&nbsp;file,
-            char&nbsp;separator,
-            char&nbsp;stringdelimiter)
+            char&nbsp;delimiter,
+            char&nbsp;quote)
              throws java.io.IOException</pre>
 <div class="block">Instantiate.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd><dd><code>separator</code> - </dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.io.File, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.io.File&nbsp;file,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.io.File, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.io.File&nbsp;file,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape,
+            char[]&nbsp;linebreak)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.io.File, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.io.File&nbsp;file,
+            <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the file</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.io.File, org.deidentifier.arx.io.CSVSyntax, org.deidentifier.arx.DataType[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.io.File&nbsp;file,
+            <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
+            <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatype)
+             throws java.io.IOException</pre>
+<div class="block">Instatiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd><dd><code>config</code> - </dd><dd><code>datatype</code> - </dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.io.InputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.io.InputStream&nbsp;stream)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="CSVDataInput(java.io.InputStream, char)">
@@ -246,12 +449,12 @@ extends <a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" titl
 <li class="blockList">
 <h4>CSVDataInput</h4>
 <pre>public&nbsp;CSVDataInput(java.io.InputStream&nbsp;stream,
-            char&nbsp;separator)
+            char&nbsp;delimiter)
              throws java.io.IOException</pre>
 <div class="block">Instantiate.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - </dd><dd><code>separator</code> - </dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="CSVDataInput(java.io.InputStream, char, char)">
@@ -261,13 +464,112 @@ extends <a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" titl
 <li class="blockList">
 <h4>CSVDataInput</h4>
 <pre>public&nbsp;CSVDataInput(java.io.InputStream&nbsp;stream,
-            char&nbsp;separator,
-            char&nbsp;stringdelimiter)
+            char&nbsp;delimiter,
+            char&nbsp;quote)
              throws java.io.IOException</pre>
 <div class="block">Instantiate.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - </dd><dd><code>separator</code> - </dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.io.InputStream, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.io.InputStream&nbsp;stream,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.io.InputStream, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.io.InputStream&nbsp;stream,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape,
+            char[]&nbsp;linebreak)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.io.InputStream, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.io.InputStream&nbsp;stream,
+            <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - the stream</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.io.InputStream, org.deidentifier.arx.io.CSVSyntax, org.deidentifier.arx.DataType[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.io.InputStream&nbsp;stream,
+            <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
+            <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stream</code> - </dd><dd><code>config</code> - </dd><dd><code>datatypes</code> - </dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.io.Reader, char, char, char, char[], org.deidentifier.arx.DataType[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.io.Reader&nbsp;reader,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape,
+            char[]&nbsp;linebreak,
+            <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>reader</code> - the reader</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.lang.String&nbsp;filename)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="CSVDataInput(java.lang.String, char)">
@@ -276,27 +578,93 @@ extends <a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" titl
 <ul class="blockList">
 <li class="blockList">
 <h4>CSVDataInput</h4>
-<pre>public&nbsp;CSVDataInput(java.lang.String&nbsp;file,
-            char&nbsp;separator)
+<pre>public&nbsp;CSVDataInput(java.lang.String&nbsp;filename,
+            char&nbsp;delimiter)
              throws java.io.IOException</pre>
 <div class="block">Instantiate.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd><dd><code>separator</code> - </dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>delimiter</code> - the delimiter</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
 </li>
 </ul>
 <a name="CSVDataInput(java.lang.String, char, char)">
 <!--   -->
 </a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.lang.String&nbsp;filename,
+            char&nbsp;delimiter,
+            char&nbsp;quote)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.lang.String, char, char, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.lang.String&nbsp;filename,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.lang.String, char, char, char, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.lang.String&nbsp;filename,
+            char&nbsp;delimiter,
+            char&nbsp;quote,
+            char&nbsp;escape,
+            char[]&nbsp;linebreak)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>delimiter</code> - the delimiter</dd><dd><code>quote</code> - the quote</dd><dd><code>escape</code> - the escape</dd><dd><code>linebreak</code> - the linebreak</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.lang.String, org.deidentifier.arx.io.CSVSyntax)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CSVDataInput</h4>
+<pre>public&nbsp;CSVDataInput(java.lang.String&nbsp;filename,
+            <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)
+             throws java.io.IOException</pre>
+<div class="block">Instantiate.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - the filename</dd><dd><code>config</code> - the config</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="CSVDataInput(java.lang.String, org.deidentifier.arx.io.CSVSyntax, org.deidentifier.arx.DataType[])">
+<!--   -->
+</a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>CSVDataInput</h4>
-<pre>public&nbsp;CSVDataInput(java.lang.String&nbsp;file,
-            char&nbsp;separator,
-            char&nbsp;stringdelimiter)
+<pre>public&nbsp;CSVDataInput(java.lang.String&nbsp;filename,
+            <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
+            <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)
              throws java.io.IOException</pre>
 <div class="block">Instantiate.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - </dd><dd><code>separator</code> - </dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>filename</code> - </dd><dd><code>config</code> - </dd><dd><code>datatypes</code> - </dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
@@ -312,18 +680,25 @@ extends <a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" titl
 <a name="close()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>close</h4>
 <pre>public&nbsp;void&nbsp;close()
            throws java.io.IOException</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html#close()">CSVAbstractInput</a></code></strong></div>
-<div class="block">Closes the input.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html#close()">close</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" title="class in org.deidentifier.arx.io">CSVAbstractInput</a></code></dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<div class="block">Closes the reader.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - Signals that an I/O exception has occurred.</dd></dl>
+</li>
+</ul>
+<a name="iterator()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>iterator</h4>
+<pre>public&nbsp;java.util.Iterator&lt;java.lang.String[]&gt;&nbsp;iterator()</pre>
+<div class="block">Returns an iterator.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the iterator</dd></dl>
 </li>
 </ul>
 </li>
@@ -352,7 +727,7 @@ extends <a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" titl
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../org/deidentifier/arx/io/CSVAbstractInput.html" title="class in org.deidentifier.arx.io"><span class="strong">Prev Class</span></a></li>
+<li>Prev Class</li>
 <li><a href="../../../../org/deidentifier/arx/io/CSVDataOutput.html" title="class in org.deidentifier.arx.io"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">

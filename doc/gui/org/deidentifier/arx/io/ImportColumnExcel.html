@@ -137,9 +137,24 @@ extends <a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html" t
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(int,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnExcel</a></strong>(int&nbsp;index,
+                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+                 boolean&nbsp;cleansing)</code>
+<div class="block">Creates a new instance of this object with the given parameters.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(int,%20java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnExcel</a></strong>(int&nbsp;index,
                  java.lang.String&nbsp;aliasName,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
+<div class="block">Creates a new instance of this object with the given parameters.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(int,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnExcel</a></strong>(int&nbsp;index,
+                 java.lang.String&nbsp;aliasName,
+                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+                 boolean&nbsp;cleansing)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
@@ -150,9 +165,24 @@ extends <a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html" t
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnExcel</a></strong>(java.lang.String&nbsp;name,
+                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+                 boolean&nbsp;cleansing)</code>
+<div class="block">Creates a new instance of this object with the given parameters.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnExcel</a></strong>(java.lang.String&nbsp;name,
                  java.lang.String&nbsp;alias,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
+<div class="block">Creates a new instance of this object with the given parameters.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnExcel</a></strong>(java.lang.String&nbsp;name,
+                 java.lang.String&nbsp;alias,
+                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+                 boolean&nbsp;cleansing)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
@@ -177,7 +207,7 @@ extends <a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html" t
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.io.<a href="../../../../org/deidentifier/arx/io/ImportColumn.html" title="class in org.deidentifier.arx.io">ImportColumn</a></h3>
-<code><a href="../../../../org/deidentifier/arx/io/ImportColumn.html#getAliasName()">getAliasName</a>, <a href="../../../../org/deidentifier/arx/io/ImportColumn.html#getDataType()">getDataType</a>, <a href="../../../../org/deidentifier/arx/io/ImportColumn.html#setAliasName(java.lang.String)">setAliasName</a>, <a href="../../../../org/deidentifier/arx/io/ImportColumn.html#setDataType(org.deidentifier.arx.DataType)">setDataType</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/io/ImportColumn.html#getAliasName()">getAliasName</a>, <a href="../../../../org/deidentifier/arx/io/ImportColumn.html#getDataType()">getDataType</a>, <a href="../../../../org/deidentifier/arx/io/ImportColumn.html#isCleansing()">isCleansing</a>, <a href="../../../../org/deidentifier/arx/io/ImportColumn.html#setAliasName(java.lang.String)">setAliasName</a>, <a href="../../../../org/deidentifier/arx/io/ImportColumn.html#setCleansing(boolean)">setCleansing</a>, <a href="../../../../org/deidentifier/arx/io/ImportColumn.html#setDataType(org.deidentifier.arx.DataType)">setDataType</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -209,7 +239,20 @@ extends <a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html" t
 <pre>public&nbsp;ImportColumnExcel(int&nbsp;index,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</pre>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - </dd><dd><code>datatype</code> - </dd><dt><span class="strong">See Also:</span></dt><dd><code>ImportColumnIndexed}</code></dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - the index</dd><dd><code>datatype</code> - the datatype</dd><dt><span class="strong">See Also:</span></dt><dd><code>ImportColumnIndexed}</code></dd></dl>
+</li>
+</ul>
+<a name="ImportColumnExcel(int, org.deidentifier.arx.DataType, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ImportColumnExcel</h4>
+<pre>public&nbsp;ImportColumnExcel(int&nbsp;index,
+                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+                 boolean&nbsp;cleansing)</pre>
+<div class="block">Creates a new instance of this object with the given parameters.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - the index</dd><dd><code>datatype</code> - the datatype</dd><dd><code>cleansing</code> - the cleansing</dd></dl>
 </li>
 </ul>
 <a name="ImportColumnExcel(int, java.lang.String, org.deidentifier.arx.DataType)">
@@ -222,7 +265,21 @@ extends <a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html" t
                  java.lang.String&nbsp;aliasName,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</pre>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - </dd><dd><code>aliasName</code> - </dd><dd><code>datatype</code> - </dd><dt><span class="strong">See Also:</span></dt><dd><code>ImportColumnIndexed}</code></dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - the index</dd><dd><code>aliasName</code> - the alias name</dd><dd><code>datatype</code> - the datatype</dd><dt><span class="strong">See Also:</span></dt><dd><code>ImportColumnIndexed}</code></dd></dl>
+</li>
+</ul>
+<a name="ImportColumnExcel(int, java.lang.String, org.deidentifier.arx.DataType, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ImportColumnExcel</h4>
+<pre>public&nbsp;ImportColumnExcel(int&nbsp;index,
+                 java.lang.String&nbsp;aliasName,
+                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+                 boolean&nbsp;cleansing)</pre>
+<div class="block">Creates a new instance of this object with the given parameters.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - the index</dd><dd><code>aliasName</code> - the alias name</dd><dd><code>datatype</code> - the datatype</dd><dd><code>cleansing</code> - the cleansing</dd></dl>
 </li>
 </ul>
 <a name="ImportColumnExcel(java.lang.String, org.deidentifier.arx.DataType)">
@@ -234,10 +291,36 @@ extends <a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html" t
 <pre>public&nbsp;ImportColumnExcel(java.lang.String&nbsp;name,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</pre>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - </dd><dd><code>datatype</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - the name</dd><dd><code>datatype</code> - the datatype</dd></dl>
+</li>
+</ul>
+<a name="ImportColumnExcel(java.lang.String, org.deidentifier.arx.DataType, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ImportColumnExcel</h4>
+<pre>public&nbsp;ImportColumnExcel(java.lang.String&nbsp;name,
+                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+                 boolean&nbsp;cleansing)</pre>
+<div class="block">Creates a new instance of this object with the given parameters.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - the name</dd><dd><code>datatype</code> - the datatype</dd><dd><code>cleansing</code> - the cleansing</dd></dl>
 </li>
 </ul>
 <a name="ImportColumnExcel(java.lang.String, java.lang.String, org.deidentifier.arx.DataType)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ImportColumnExcel</h4>
+<pre>public&nbsp;ImportColumnExcel(java.lang.String&nbsp;name,
+                 java.lang.String&nbsp;alias,
+                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</pre>
+<div class="block">Creates a new instance of this object with the given parameters.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - the name</dd><dd><code>alias</code> - the alias</dd><dd><code>datatype</code> - the datatype</dd></dl>
+</li>
+</ul>
+<a name="ImportColumnExcel(java.lang.String, java.lang.String, org.deidentifier.arx.DataType, boolean)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -245,9 +328,10 @@ extends <a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html" t
 <h4>ImportColumnExcel</h4>
 <pre>public&nbsp;ImportColumnExcel(java.lang.String&nbsp;name,
                  java.lang.String&nbsp;alias,
-                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</pre>
+                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+                 boolean&nbsp;cleansing)</pre>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - </dd><dd><code>alias</code> - </dd><dd><code>datatype</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - the name</dd><dd><code>alias</code> - the alias</dd><dd><code>datatype</code> - the datatype</dd><dd><code>cleansing</code> - the cleansing</dd></dl>
 </li>
 </ul>
 </li>

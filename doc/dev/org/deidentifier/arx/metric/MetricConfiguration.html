@@ -229,24 +229,14 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="isMonotonic()">
+<a name="getAggregateFunction()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>isMonotonic</h4>
-<pre>public&nbsp;boolean&nbsp;isMonotonic()</pre>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the monotonic</dd></dl>
-</li>
-</ul>
-<a name="setMonotonic(boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setMonotonic</h4>
-<pre>public&nbsp;void&nbsp;setMonotonic(boolean&nbsp;monotonic)</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - the monotonic to set</dd></dl>
+<h4>getAggregateFunction</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;getAggregateFunction()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the aggregateFunction</dd></dl>
 </li>
 </ul>
 <a name="getGsFactor()">
@@ -259,14 +249,24 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the gsFactor</dd></dl>
 </li>
 </ul>
-<a name="setGsFactor(double)">
+<a name="getPrecomputationThreshold()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setGsFactor</h4>
-<pre>public&nbsp;void&nbsp;setGsFactor(double&nbsp;gsFactor)</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - the gsFactor to set</dd></dl>
+<h4>getPrecomputationThreshold</h4>
+<pre>public&nbsp;double&nbsp;getPrecomputationThreshold()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the precomputationThreshold</dd></dl>
+</li>
+</ul>
+<a name="isMonotonic()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isMonotonic</h4>
+<pre>public&nbsp;boolean&nbsp;isMonotonic()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the monotonic</dd></dl>
 </li>
 </ul>
 <a name="isPrecomputed()">
@@ -279,24 +279,34 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the precomputed</dd></dl>
 </li>
 </ul>
-<a name="setPrecomputed(boolean)">
+<a name="setAggregateFunction(org.deidentifier.arx.metric.Metric.AggregateFunction)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setPrecomputed</h4>
-<pre>public&nbsp;void&nbsp;setPrecomputed(boolean&nbsp;precomputed)</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>precomputed</code> - the precomputed to set</dd></dl>
+<h4>setAggregateFunction</h4>
+<pre>public&nbsp;void&nbsp;setAggregateFunction(<a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;aggregateFunction)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>aggregateFunction</code> - the aggregateFunction to set</dd></dl>
 </li>
 </ul>
-<a name="getPrecomputationThreshold()">
+<a name="setGsFactor(double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getPrecomputationThreshold</h4>
-<pre>public&nbsp;double&nbsp;getPrecomputationThreshold()</pre>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the precomputationThreshold</dd></dl>
+<h4>setGsFactor</h4>
+<pre>public&nbsp;void&nbsp;setGsFactor(double&nbsp;gsFactor)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - the gsFactor to set</dd></dl>
+</li>
+</ul>
+<a name="setMonotonic(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setMonotonic</h4>
+<pre>public&nbsp;void&nbsp;setMonotonic(boolean&nbsp;monotonic)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - the monotonic to set</dd></dl>
 </li>
 </ul>
 <a name="setPrecomputationThreshold(double)">
@@ -309,24 +319,14 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>precomputationThreshold</code> - the precomputationThreshold to set</dd></dl>
 </li>
 </ul>
-<a name="getAggregateFunction()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAggregateFunction</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;getAggregateFunction()</pre>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the aggregateFunction</dd></dl>
-</li>
-</ul>
-<a name="setAggregateFunction(org.deidentifier.arx.metric.Metric.AggregateFunction)">
+<a name="setPrecomputed(boolean)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>setAggregateFunction</h4>
-<pre>public&nbsp;void&nbsp;setAggregateFunction(<a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;aggregateFunction)</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>aggregateFunction</code> - the aggregateFunction to set</dd></dl>
+<h4>setPrecomputed</h4>
+<pre>public&nbsp;void&nbsp;setPrecomputed(boolean&nbsp;precomputed)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>precomputed</code> - the precomputed to set</dd></dl>
 </li>
 </ul>
 </li>

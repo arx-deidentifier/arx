@@ -276,23 +276,10 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="GeneralizationHierarchy(java.lang.String, int[][], int[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>GeneralizationHierarchy</h4>
-<pre>protected&nbsp;GeneralizationHierarchy(java.lang.String&nbsp;name,
-                       int[][]&nbsp;map,
-                       int[]&nbsp;distinctValues)</pre>
-<div class="block">Can be used to create a copy of the generalization hierarchy.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - </dd><dd><code>map</code> - </dd><dd><code>distinctValues</code> - </dd></dl>
-</li>
-</ul>
 <a name="GeneralizationHierarchy(java.lang.String, java.lang.String[][], int, org.deidentifier.arx.framework.data.Dictionary)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>GeneralizationHierarchy</h4>
 <pre>public&nbsp;GeneralizationHierarchy(java.lang.String&nbsp;name,
@@ -303,6 +290,19 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - </dd><dd><code>hierarchy</code> - </dd><dd><code>dimension</code> - </dd><dd><code>dictionary</code> - </dd></dl>
 </li>
 </ul>
+<a name="GeneralizationHierarchy(java.lang.String, int[][], int[])">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>GeneralizationHierarchy</h4>
+<pre>protected&nbsp;GeneralizationHierarchy(java.lang.String&nbsp;name,
+                       int[][]&nbsp;map,
+                       int[]&nbsp;distinctValues)</pre>
+<div class="block">Can be used to create a copy of the generalization hierarchy.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - </dd><dd><code>map</code> - </dd><dd><code>distinctValues</code> - </dd></dl>
+</li>
+</ul>
 </li>
 </ul>
 <!-- ============ METHOD DETAIL ========== -->
@@ -311,6 +311,19 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="checkMonotonicity(org.deidentifier.arx.framework.data.DataManager)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkMonotonicity</h4>
+<pre>public&nbsp;void&nbsp;checkMonotonicity(<a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</pre>
+<div class="block">Throws an exception, if the hierarchy is not monotonic.
+ 
+ TODO: This is a potentially expensive check that should be done when loading the hierarchy</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>manager</code> - </dd></dl>
+</li>
+</ul>
 <a name="getArray()">
 <!--   -->
 </a>
@@ -359,25 +372,12 @@ extends java.lang.Object</pre>
 <a name="getName()">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>getName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
 <div class="block">Returns the name.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="checkMonotonicity(org.deidentifier.arx.framework.data.DataManager)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>checkMonotonicity</h4>
-<pre>public&nbsp;void&nbsp;checkMonotonicity(<a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</pre>
-<div class="block">Throws an exception, if the hierarchy is not monotonic.
- 
- TODO: This is a potentially expensive check that should be done when loading the hierarchy</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>manager</code> - </dd></dl>
 </li>
 </ul>
 </li>
