@@ -69,20 +69,20 @@ public class DialogProperties implements IDialog {
         
         // Create dialog
         this.dialog = new PreferencesDialog(parent, "Settings", "Project-specific preferences");
-        createTabProject(this.dialog);
-        createTabIOSettings(this.dialog);
-        createTabTransformation(this.dialog);
-        createTabInternals(this.dialog);
-        createTabVisualization(this.dialog);
-        createTabRisk(this.dialog);
-        createTabSolver(this.dialog);
+        this.createTabProject(this.dialog);
+        this.createTabIOSettings(this.dialog);
+        this.createTabTransformation(this.dialog);
+        this.createTabInternals(this.dialog);
+        this.createTabVisualization(this.dialog);
+        this.createTabRisk(this.dialog);
+        this.createTabSolver(this.dialog);
     }
 
     /**
      * Opens the dialog
      */
     public void open() {
-        dialog.open();
+        this.dialog.open();
     }
     
     /**
