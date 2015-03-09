@@ -32,13 +32,13 @@ public class DialogHelpConfig {
      */
     public static class Entry {
         
-        /**  TODO */
+        /**  ID */
         public final String id;
         
-        /**  TODO */
+        /**  Title */
         public final String title;
         
-        /**  TODO */
+        /**  URL */
         public final String url;
         
         /**
@@ -55,7 +55,7 @@ public class DialogHelpConfig {
         }
     }
     
-    /**  TODO */
+    /**  Entries */
     private List<Entry> entries = new ArrayList<Entry>();
     
     /**
