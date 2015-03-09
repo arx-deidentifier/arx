@@ -84,12 +84,11 @@ public class DialogHelpConfig {
                               "http://arx.deidentifier.org/?page_id=3638&content-only=1&css=1"));
         
         entries.add(new Entry("id-80",
-                              "2.3. Defining privacy criteria",
+                              "2.3. Privacy criteria and population model",
                               "http://arx.deidentifier.org/?page_id=1059&content-only=1&css=1"));
         
         entries.add(new Entry("id-60",
-                              // TODO: Change title
-                              "2.4. Defining general properties",
+                              "2.4. Transformations and utility",
                               "http://arx.deidentifier.org/?page_id=1061&content-only=1&css=1"));
 
         entries.add(new Entry("id-40",
@@ -123,6 +122,18 @@ public class DialogHelpConfig {
         entries.add(new Entry("id-50",
                               "4.1. Visualizations and properties",
                               "http://arx.deidentifier.org/?page_id=1071&content-only=1&css=1"));
+
+        entries.add(new Entry("id-3000",
+                              "5. Analyzing re-identification risks",
+                              "http://arx.deidentifier.org/?page_id=3797&content-only=1&css=1"));
+
+        entries.add(new Entry("id-3001",
+                              "5.1. Equivalence classes and attributes",
+                              "http://arx.deidentifier.org/?page_id=3799&content-only=1&css=1"));
+
+        entries.add(new Entry("id-3002",
+                              "5.2. Risk estimates and settings",
+                              "http://arx.deidentifier.org/?page_id=3801&content-only=1&css=1"));
     }
     
     /**
