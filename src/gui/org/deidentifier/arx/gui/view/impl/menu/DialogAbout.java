@@ -60,7 +60,8 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
     /**  TODO */
     private static final String CONTRIBUTORS = "Karol Babioch (data import wizard)\n" +
                                                "Ledian Xhani (hierarchy editor)\n" +
-                                               "Ljubomir Dshevlekov (hierarchy editor)";
+                                               "Ljubomir Dshevlekov (hierarchy editor)\n" + 
+                                               "Michael Schneider (risk analysis)";
     
     /**  TODO */
     private Image image;
