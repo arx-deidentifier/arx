@@ -22,7 +22,7 @@ package org.deidentifier.arx.risk;
  * @author Florian Kohlmayer
  * @author Fabian Prasser
  */
-public class Gamma {
+class Gamma {
     
     /** The Constant B10. */
     private final static double B10            = 5.0 / 66.0;
@@ -82,7 +82,7 @@ public class Gamma {
      * @param x input value
      * @return approximation of digamma for x
      */
-    public static double digamma(double x) {
+    static double digamma(double x) {
         
         /* Illegal arguments */
         if (Double.isInfinite(x) || Double.isNaN(x)) {
@@ -141,7 +141,7 @@ public class Gamma {
      * @param x
      * @return
      */
-    public static double gamma(double x) {
+    static double gamma(double x) {
         return org.apache.commons.math3.special.Gamma.gamma(x);
     }
     
@@ -150,7 +150,7 @@ public class Gamma {
      * @param x
      * @return
      */
-    public static double logGamma(double x) {
+    static double logGamma(double x) {
         return org.apache.commons.math3.special.Gamma.logGamma(x);
     }
     
@@ -161,7 +161,7 @@ public class Gamma {
      * @param x input value
      * @return approximation of trigamma for x
      */
-    public static double trigamma(double x) {
+    static double trigamma(double x) {
         /* Illegal arguments */
         if (Double.isInfinite(x) || Double.isNaN(x)) {
             return Double.NaN;
