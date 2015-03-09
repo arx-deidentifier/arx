@@ -33,6 +33,7 @@ import de.linearbits.newtonraphson.Vector2D;
  * 
  * @author Fabian Prasser
  * @author Michael Schneider
+ * @author Florian Kohlmayer
  * @version 1.0
  */
 class ModelPitman extends RiskModelPopulationBased {
@@ -140,7 +141,7 @@ class ModelPitman extends RiskModelPopulationBased {
 
         return new Function<Vector2D, Pair<Vector2D, SquareMatrix2D>>() {
             public Pair<Vector2D, SquareMatrix2D> evaluate(Vector2D input) {
-
+                
                 // Init
                 Vector2D object = new Vector2D();
                 SquareMatrix2D derivatives = new SquareMatrix2D();
@@ -148,7 +149,7 @@ class ModelPitman extends RiskModelPopulationBased {
                 // Prepare
                 double t = input.x; // Theta
                 double a = input.y; // Alpha
-
+                
                 // Init
                 double d1 = 0;
                 double d2 = 0;
@@ -159,7 +160,7 @@ class ModelPitman extends RiskModelPopulationBased {
                 double o2 = 0;
                 double o3 = 0;
                 double o4 = 0;
-
+                
                 // For each...
                 for (int i = 1; i < u; i++) {
                     
@@ -174,17 +175,15 @@ class ModelPitman extends RiskModelPopulationBased {
                     d3 += val5; // Compute d^2L/(d alpha)^2
                     o1 += val1;
                     o3 += val2;
-
+                    
                 }
                 checkInterrupt();
-
+                
                 // For each class...
                 for (int i = 0; i < classes.length; i += 2) {
                     int key = classes[i];
                     int value = classes[i + 1];
-                    double val0 = t + key;
-                    d2 += 1d / (val0 * val0);
-
+                    
                     if (key != 1) {
                         double val1 = 0;
                         double val2 = 0;
@@ -198,20 +197,22 @@ class ModelPitman extends RiskModelPopulationBased {
                     }
                     checkInterrupt();
                 }
-
+                
                 checkInterrupt();
-
+                
                 for (int i = 1; i < n; i++) {
-                    o2 += 1d / (t + i);
+                    double val0 = (t + i);
+                    d2 += 1d / (val0 * val0);
+                    o2 += 1d / val0;
                 }
-
+                
                 // Store
                 object.x = o1 - o2;
                 object.y = o3 - o4;
                 derivatives.x1 = d2 - d1;
-                derivatives.x2 = 0 - d5;
-                derivatives.y1 = 0 - d5;
-                derivatives.y2 = 0 - d3 - d4;
+                derivatives.x2 = 0d - d5;
+                derivatives.y1 = 0d - d5;
+                derivatives.y2 = 0d - d3 - d4;
                 
                 // Return
                 return new Pair<Vector2D, SquareMatrix2D>(object, derivatives);
@@ -229,7 +230,7 @@ class ModelPitman extends RiskModelPopulationBased {
         
         return new Function<Vector2D, Pair<Vector2D, SquareMatrix2D>>() {
             public Pair<Vector2D, SquareMatrix2D> evaluate(Vector2D input) {
-
+                
                 // Init
                 Vector2D object = new Vector2D();
                 SquareMatrix2D derivatives = new SquareMatrix2D();
@@ -237,47 +238,49 @@ class ModelPitman extends RiskModelPopulationBased {
                 // Prepare
                 double t = input.x; // Theta
                 double a = input.y; // Alpha
-
+                
                 // These closed forms have been verified with Matlab and Mathematica
                 double val0 = u - 1d;
                 double val1 = Gamma.digamma(val0 + (t / a) + 1d);
                 double val2 = Gamma.trigamma((a + t + (a * val0)) / a);
                 double val3 = Gamma.trigamma((t / a) + 1d);
-                double val4 = Gamma.digamma((t / a) + 1);
+                double val4 = Gamma.digamma((t / a) + 1d);
                 double val5 = a * a;
-
+                
                 double d1 = (val3 - val2) / (val5);
-                double d2 = (((a * val1) + (t * val2)) - (a * val4) - (t * val3)) / (val5 * a);
-                double d3 = (((((val5 * val0) - (t * t * val2)) + (t * t * val3)) - (2 * a * t * val1)) + (2 * a * t * val4)) / (val5 * val5);
-                double o2 = (val1 - val4) / a;
+                double d5 = (((a * val1) + (t * val2)) - (a * val4) - (t * val3)) / (val5 * a);
+                double d3 = (((((val5 * val0) - (t * t * val2)) + (t * t * val3)) - (2d * a * t * val1)) + (2d * a * t * val4)) / (val5 * val5);
+                double o1 = (val1 - val4) / a;
                 double o3 = ((-t * val1) + (a * val0) + (t * val4)) / (a * a);
-                double o4 = Gamma.digamma(n + t) - Gamma.digamma(t + 1d);
+                double o2 = Gamma.digamma(n + t) - Gamma.digamma(t + 1d);
                 checkInterrupt();
-
+                
+                double d2 = Gamma.trigamma(t + 1d) - Gamma.trigamma(n + t);
+                
                 // For each class...
                 double d4 = 0;
-                double d5 = 0;
-                double o1 = 0;
+                double o4 = 0;
                 double val6 = Gamma.digamma(1d - a);
                 double val7 = Gamma.trigamma(1d - a);
                 for (int i = 0; i < classes.length; i += 2) {
                     int key = classes[i];
                     int value = classes[i + 1];
-                    double val8 = t + key;
-                    d4 += 1d / (val8 * val8);
-                    d5 += key != 1 ? value * (val7 - Gamma.trigamma(key - a)) : 0;
-                    o1 += key == 1 ? 0 : value * (Gamma.digamma(key - a) - val6);
+                    
+                    if (key != 1) {
+                        d4 += value * (val7 - Gamma.trigamma(key - a));
+                        o4 += value * (Gamma.digamma(key - a) - val6);
+                    }
                     checkInterrupt();
                 }
-
+                
                 // Store
-                derivatives.x1 = d4 - d1;
-                derivatives.x2 = 0 - d2;
-                derivatives.y1 = 0 - d2;
-                derivatives.y2 = 0 - d3 - d5;
-                object.x = o2 - o4;
-                object.y = o3 - o1;
-
+                derivatives.x1 = d2 - d1;
+                derivatives.x2 = 0d - d5;
+                derivatives.y1 = 0d - d5;
+                derivatives.y2 = 0d - d3 - d4;
+                object.x = o1 - o2;
+                object.y = o3 - o4;
+                
                 // Return
                 return new Pair<Vector2D, SquareMatrix2D>(object, derivatives);
             }
