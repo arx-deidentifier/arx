@@ -89,7 +89,7 @@ class ModelPitman extends RiskModelPopulationBased {
     private double getResult(Vector2D result, double p) {
         double t = result.x;
         double a = result.y;
-        if (Double.isNaN(a) && Double.isNaN(t) && a == 0) {
+        if (Double.isNaN(a) || Double.isNaN(t) || a == 0) {
             return Double.NaN;
         }
         double val1 = Double.NaN;
