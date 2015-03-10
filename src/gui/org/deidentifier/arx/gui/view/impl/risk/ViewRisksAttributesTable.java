@@ -35,7 +35,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelAttributes;
 import org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisk;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -270,16 +270,16 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
                     risks = builder.getSampleBasedAttributeRisks();
                     break;
                 case POPULATION_UNIQUENESS_PITMAN:
-                    risks = builder.getPopulationBasedAttributeRisks(StatisticalPopulationModel.PITMAN);
+                    risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.PITMAN);
                     break;
                 case POPULATION_UNIQUENESS_ZAYATZ:
-                    risks = builder.getPopulationBasedAttributeRisks(StatisticalPopulationModel.ZAYATZ);
+                    risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.ZAYATZ);
                     break;
                 case POPULATION_UNIQUENESS_SNB:
-                    risks = builder.getPopulationBasedAttributeRisks(StatisticalPopulationModel.SNB);
+                    risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.SNB);
                     break;
                 case POPULATION_UNIQUENESS_DANKAR:
-                    risks = builder.getPopulationBasedAttributeRisks(StatisticalPopulationModel.DANKAR);
+                    risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.DANKAR);
                     break;
                 default:
                     throw new RuntimeException("Invalid risk model");

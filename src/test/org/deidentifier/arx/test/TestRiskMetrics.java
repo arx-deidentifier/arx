@@ -34,8 +34,8 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 import org.junit.Test;
 
 /**
@@ -131,7 +131,7 @@ public class TestRiskMetrics extends TestCase {
         provider.createDataDefinition();
         DataHandle handle = provider.getData().getHandle();
         
-        RiskModelPopulationBasedUniquenessRisk model = handle.getRiskEstimator(ARXPopulationModel.create(0.2d)).getPopulationBasedUniquenessRisk();
+        RiskModelPopulationUniqueness model = handle.getRiskEstimator(ARXPopulationModel.create(0.2d)).getPopulationBasedUniquenessRisk();
         double populationUniqueness = model.getFractionOfUniqueTuplesDankar();
         double sampleUniqueness = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedUniquenessRisk().getFractionOfUniqueTuples();
         
@@ -167,13 +167,13 @@ public class TestRiskMetrics extends TestCase {
         Data data = getDataObject("../arx-data/data-junit/adult.csv");
         DataHandle handle = data.getHandle();
 
-        RiskModelPopulationBasedUniquenessRisk model = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk();
+        RiskModelPopulationUniqueness model = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk();
         double sampleUniqueness = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedUniquenessRisk().getFractionOfUniqueTuples();
         double populationUniqueness = model.getFractionOfUniqueTuplesDankar();
         
-        if (model.getDankarModel() == StatisticalPopulationModel.PITMAN) {
+        if (model.getPopulationUniquenessModel() == PopulationUniquenessModel.PITMAN) {
             assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, 0.27684993883653597) == 0);
-        } else if (model.getDankarModel() == StatisticalPopulationModel.ZAYATZ) {
+        } else if (model.getPopulationUniquenessModel() == PopulationUniquenessModel.ZAYATZ) {
             assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, 0.3207402393466189) == 0);
         } else {
             fail("Unexpected convergence of SNB");

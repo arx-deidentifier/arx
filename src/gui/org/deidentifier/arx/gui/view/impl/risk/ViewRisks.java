@@ -35,7 +35,7 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressPro
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.utility.AnalysisContextVisualization;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
-import org.deidentifier.arx.risk.RiskModelEquivalenceClasses;
+import org.deidentifier.arx.risk.RiskModelHistogram;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -295,7 +295,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      */
     protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context, 
                                                           ARXPopulationModel model, 
-                                                          RiskModelEquivalenceClasses classes) {
+                                                          RiskModelHistogram classes) {
 
         AnalysisContext analysisContext = context.context;
         return context.handle.getRiskEstimator(model, 

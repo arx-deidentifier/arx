@@ -44,7 +44,7 @@ import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
-import org.deidentifier.arx.risk.RiskModelEquivalenceClasses;
+import org.deidentifier.arx.risk.RiskModelHistogram;
 import org.deidentifier.arx.io.CSVSyntax;
 
 import cern.colt.Swapper;
@@ -480,7 +480,7 @@ public abstract class DataHandle {
      * @param classes
      * @return
      */
-    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, RiskModelEquivalenceClasses classes) {
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, RiskModelHistogram classes) {
         return new RiskEstimateBuilder(model, this, classes);
     }
 
@@ -491,7 +491,7 @@ public abstract class DataHandle {
      * @param config
      * @return
      */
-    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, RiskModelEquivalenceClasses classes, ARXSolverConfiguration config) {
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, RiskModelHistogram classes, ARXSolverConfiguration config) {
         return new RiskEstimateBuilder(model, this, classes, config);
     }
 

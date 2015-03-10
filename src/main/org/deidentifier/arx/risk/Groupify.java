@@ -17,7 +17,6 @@
 
 package org.deidentifier.arx.risk;
 
-
 /**
  * A hash groupify operator. It implements a hash table with chaining and keeps
  * track of additional properties per equivalence class
@@ -28,29 +27,31 @@ package org.deidentifier.arx.risk;
  * @param <T>
  */
 public class Groupify<T> {
-    
+
     /**
      * Entry
+     * 
      * @author Fabian Prasser
      * @author Florian Kohlmayer
-     *
+     * 
      * @param <U>
      */
     public static class Group<U> {
 
         /** Var */
-        private final int            hashcode;
+        private final int hashcode;
         /** Var */
-        private final U              element;
+        private final U   element;
         /** Var */
-        private int                  count       = 0;
+        private int       count       = 0;
         /** Var */
-        private Group<U> next        = null;
+        private Group<U>  next        = null;
         /** Var */
-        private Group<U> nextInOrder = null;
+        private Group<U>  nextInOrder = null;
 
         /**
          * Creates a new instance
+         * 
          * @param element
          * @param hashCode
          */
@@ -75,14 +76,16 @@ public class Groupify<T> {
 
         /**
          * Returns whether a next entry exists
+         * 
          * @return
          */
         public boolean hasNext() {
             return nextInOrder != null;
         }
-        
+
         /**
          * Returns the next entry, null if this is the last entry
+         * 
          * @return
          */
         public Group<U> next() {
@@ -105,13 +108,17 @@ public class Groupify<T> {
     /** Load factor. */
     private final float loadFactor = 0.75f;
 
-    /** Maximum number of elements that can be put in this map before having to rehash. */
-    private int                    threshold;
+    /**
+     * Maximum number of elements that can be put in this map before having to
+     * rehash.
+     */
+    private int         threshold;
 
     /**
      * Constructs a new hash groupify operator.
-     *
-     * @param capacity The capacity
+     * 
+     * @param capacity
+     *            The capacity
      */
     @SuppressWarnings("unchecked")
     public Groupify(int capacity) {
@@ -125,6 +132,7 @@ public class Groupify<T> {
 
     /**
      * Adds a new element
+     * 
      * @param element
      */
     public void add(T element) {
@@ -142,21 +150,23 @@ public class Groupify<T> {
             }
             entry = createEntry(element, index, hash);
         }
-        
+
         // Track size
-        entry.count ++;
+        entry.count++;
     }
 
     /**
      * Returns the first entry for iterations
+     * 
      * @return
      */
     public Group<T> first() {
         return first;
     }
-    
+
     /**
      * Returns the current number of entries
+     * 
      * @return
      */
     public int size() {
@@ -184,7 +194,7 @@ public class Groupify<T> {
 
     /**
      * Computes the threshold for rehashing.
-     *
+     * 
      * @param buckets
      * @param loadFactor
      * @return
@@ -195,12 +205,15 @@ public class Groupify<T> {
 
     /**
      * Creates a new entry
+     * 
      * @param element
      * @param index
      * @param hashcode
      * @return
      */
-    private Group<T> createEntry(final T element, final int index, final int hashcode) {
+    private Group<T> createEntry(final T element,
+                                 final int index,
+                                 final int hashcode) {
         final Group<T> entry = new Group<T>(element, hashcode);
         entry.next = buckets[index];
         buckets[index] = entry;
@@ -216,14 +229,18 @@ public class Groupify<T> {
 
     /**
      * Returns the according entry, null if there is none
+     * 
      * @param element
      * @param index
      * @param hashcode
      * @return
      */
-    private final Group<T> findEntry(final T element, final int index, final int hashcode) {
+    private final Group<T> findEntry(final T element,
+                                     final int index,
+                                     final int hashcode) {
         Group<T> m = buckets[index];
-        while ((m != null) && ((m.hashcode != hashcode) || !element.equals(m.element))) {
+        while ((m != null) &&
+               ((m.hashcode != hashcode) || !element.equals(m.element))) {
             m = m.next;
         }
         return m;
@@ -234,7 +251,8 @@ public class Groupify<T> {
      */
     private void rehash() {
 
-        int length = calculateCapacity((buckets.length == 0 ? 1 : buckets.length << 1));
+        int length = calculateCapacity((buckets.length == 0 ? 1
+                : buckets.length << 1));
         @SuppressWarnings("unchecked")
         Group<T>[] newbuckets = new Group[length];
         Group<T> entry = first;

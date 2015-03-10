@@ -23,91 +23,93 @@ import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
 
 /**
- * Abstract base class for population-based models
+ * Abstract base class for population-based uniqueness models
+ * 
  * @author Fabian Prasser
  */
-public abstract class RiskModelPopulationBased {
+abstract class RiskModelPopulation {
 
-    /** The classes*/
-    private final RiskModelEquivalenceClasses classes;
-    /** The population model*/
-    private final ARXPopulationModel          populationModel;
+    /** The classes */
+    private final RiskModelHistogram histogram;
+    /** The population model */
+    private final ARXPopulationModel populationModel;
     /** Stop flag */
-    private final WrappedBoolean              stop;
-    /** Progress*/
-    private final WrappedInteger              progress;
+    private final WrappedBoolean     stop;
+    /** Progress */
+    private final WrappedInteger     progress;
     /** The sample size */
-    private final int                         sampleSize;
+    private final int                sampleSize;
 
     /**
      * Creates a new instance
-     * @param classes
-     * @param progress 
+     * 
+     * @param histogram
+     * @param progress
      */
-    RiskModelPopulationBased(RiskModelEquivalenceClasses classes,
-                             ARXPopulationModel populationModel,
-                             int sampleSize,
-                             WrappedBoolean stop, 
-                             WrappedInteger progress) {
-        this.classes = classes;
+    RiskModelPopulation(RiskModelHistogram histogram,
+                        ARXPopulationModel populationModel,
+                        int sampleSize,
+                        WrappedBoolean stop,
+                        WrappedInteger progress) {
+        this.histogram = histogram;
         this.populationModel = populationModel;
         this.stop = stop;
         this.progress = progress;
         this.sampleSize = sampleSize;
     }
-    
+
     /**
      * Checks for interrupts
      */
     protected void checkInterrupt() {
-        if (stop.value) {
-            throw new ComputationInterruptedException();
-        }
+        if (stop.value) { throw new ComputationInterruptedException(); }
     }
-    
+
     /**
      * @return the classes
      */
-    protected RiskModelEquivalenceClasses getClasses() {
-        return classes;
+    protected RiskModelHistogram getHistogram() {
+        return histogram;
     }
-    
+
     /**
      * Returns the number of classes
+     * 
      * @return
      */
     protected double getNumClasses() {
-        return this.classes.getNumClasses();
+        return this.histogram.getNumClasses();
     }
-    
+
     /**
-     * Returns the number of classes of the given size. This method is only efficient for
-     * smaller class sizes.
+     * Returns the number of classes of the given size. This method is only
+     * efficient for smaller class sizes.
      * 
      * @param size
      * @return
      */
     protected double getNumClassesOfSize(int size) {
-        int[] classes = this.classes.getEquivalenceClasses();
+        int[] classes = this.histogram.getHistogram();
         for (int i = 0; i < classes.length; i += 2) {
             if (classes[i] == size) {
-                return classes[i+1];
+                return classes[i + 1];
             } else if (classes[i] > size) {
                 break;
             }
         }
         return 0;
     }
-    
+
     /**
      * @return the populationModel
      */
     protected ARXPopulationModel getPopulationModel() {
         return populationModel;
     }
-    
+
     /**
      * Returns the population size
+     * 
      * @return
      */
     protected double getPopulationSize() {
@@ -116,6 +118,7 @@ public abstract class RiskModelPopulationBased {
 
     /**
      * Returns the sample size
+     * 
      * @return
      */
     protected double getSampleSize() {
@@ -124,6 +127,7 @@ public abstract class RiskModelPopulationBased {
 
     /**
      * Returns the sample fraction
+     * 
      * @return
      */
     protected double getSamplingFraction() {
@@ -132,6 +136,7 @@ public abstract class RiskModelPopulationBased {
 
     /**
      * Sets the progress
+     * 
      * @param progress
      */
     protected void setProgress(int progress) {

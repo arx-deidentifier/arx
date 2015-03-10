@@ -33,11 +33,11 @@ import org.deidentifier.arx.criteria.RiskBasedThresholdAverageRisk;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelAttributes;
 import org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisk;
-import org.deidentifier.arx.risk.RiskModelEquivalenceClasses;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
-import org.deidentifier.arx.risk.RiskModelSampleBasedReidentificationRisk;
-import org.deidentifier.arx.risk.RiskModelSampleBasedUniquenessRisk;
+import org.deidentifier.arx.risk.RiskModelHistogram;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
+import org.deidentifier.arx.risk.RiskModelSampleRisks;
+import org.deidentifier.arx.risk.RiskModelSampleUniqueness;
 
 /**
  * This class implements an example of how to perform risk analyses with the API
@@ -140,12 +140,12 @@ public class Example29 extends Example {
         
         ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
         RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
-        RiskModelEquivalenceClasses classes = builder.getEquivalenceClassModel();
-        RiskModelSampleBasedReidentificationRisk sampleReidentifiationRisk = builder.getSampleBasedReidentificationRisk();
-        RiskModelSampleBasedUniquenessRisk sampleUniqueness = builder.getSampleBasedUniquenessRisk();
-        RiskModelPopulationBasedUniquenessRisk populationUniqueness = builder.getPopulationBasedUniquenessRisk();
+        RiskModelHistogram classes = builder.getEquivalenceClassModel();
+        RiskModelSampleRisks sampleReidentifiationRisk = builder.getSampleBasedReidentificationRisk();
+        RiskModelSampleUniqueness sampleUniqueness = builder.getSampleBasedUniquenessRisk();
+        RiskModelPopulationUniqueness populationUniqueness = builder.getPopulationBasedUniquenessRisk();
         
-        int[] histogram = classes.getEquivalenceClasses();
+        int[] histogram = classes.getHistogram();
         
         System.out.println("   * Equivalence classes:");
         System.out.println("     - Average size: " + classes.getAvgClassSize());
@@ -163,6 +163,6 @@ public class Example29 extends Example {
         System.out.println("       + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfTuplesAffectedByHighestRisk());
         System.out.println("       + Sample uniqueness: " + sampleUniqueness.getFractionOfUniqueTuples());
         System.out.println("     - Population-based measures");
-        System.out.println("       + Population unqiueness (Zayatz): " + populationUniqueness.getFractionOfUniqueTuples(StatisticalPopulationModel.ZAYATZ));
+        System.out.println("       + Population unqiueness (Zayatz): " + populationUniqueness.getFractionOfUniqueTuples(PopulationUniquenessModel.ZAYATZ));
     }
 }

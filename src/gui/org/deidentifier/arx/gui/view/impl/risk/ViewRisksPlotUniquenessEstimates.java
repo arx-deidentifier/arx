@@ -29,7 +29,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
@@ -426,7 +426,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
                         }
                         break;
                     }
-                    RiskModelPopulationBasedUniquenessRisk populationBasedModel = builder.getPopulationBasedUniquenessRisk();
+                    RiskModelPopulationUniqueness populationBasedModel = builder.getPopulationBasedUniquenessRisk();
                     dataDankar[idx] = populationBasedModel.getFractionOfUniqueTuplesDankar();
                     if (showAllModels) {
                         dataPitman[idx] = populationBasedModel.getFractionOfUniqueTuplesPitman();

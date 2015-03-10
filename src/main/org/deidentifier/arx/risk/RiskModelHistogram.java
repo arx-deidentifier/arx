@@ -34,21 +34,23 @@ import com.carrotsearch.hppc.IntIntOpenHashMap;
  * 
  * @author Fabian Prasser
  */
-public class RiskModelEquivalenceClasses {
-    
+public class RiskModelHistogram {
+
     /**
      * For hash tables
+     * 
      * @author Fabian Prasser
      */
     private static class TupleWrapper {
-        
-        /** Hash code*/
-        private final int        hashcode;
+
+        /** Hash code */
+        private final int      hashcode;
         /** Indices */
-        private final String[]   values;
+        private final String[] values;
 
         /**
          * Constructor
+         * 
          * @param handle
          * @param row
          */
@@ -66,7 +68,7 @@ public class RiskModelEquivalenceClasses {
 
         @Override
         public boolean equals(Object other) {
-            return Arrays.equals(((TupleWrapper)other).values, this.values);
+            return Arrays.equals(((TupleWrapper) other).values, this.values);
         }
 
         @Override
@@ -76,67 +78,69 @@ public class RiskModelEquivalenceClasses {
     }
 
     /** The equivalence classes */
-    private int[]       equivalenceClasses;
+    private int[]  equivalenceClasses;
     /** Summary */
-    private double      avgClassSize;
+    private double avgClassSize;
     /** Summary */
-    private double      numTuples;
+    private double numTuples;
     /** Summary */
-    private double      numClasses;
-    
+    private double numClasses;
+
     /**
      * Creates a new instance
+     * 
      * @param handle
      */
-    public RiskModelEquivalenceClasses(final DataHandle handle) {
+    public RiskModelHistogram(final DataHandle handle) {
         this(handle, handle.getDefinition().getQuasiIdentifyingAttributes());
     }
 
     /**
      * Creates a new instance
+     * 
      * @param handle
      * @param qis
      */
-    public RiskModelEquivalenceClasses(final DataHandle handle, final Set<String> qis) {
+    public RiskModelHistogram(final DataHandle handle, final Set<String> qis) {
         this(handle, qis, new WrappedBoolean(), new WrappedInteger(), 1.0d);
     }
 
     /**
      * Creates a new instance
+     * 
      * @param distribution
      */
-    public RiskModelEquivalenceClasses(final IntIntOpenHashMap distribution) {
-        this.convertAndAnalyze(distribution, new WrappedBoolean(), new WrappedInteger());
+    public RiskModelHistogram(final IntIntOpenHashMap distribution) {
+        this.convertAndAnalyze(distribution,
+                               new WrappedBoolean(),
+                               new WrappedInteger());
     }
+
     /**
      * Creates a new instance
+     * 
      * @param handle
      * @param qis
      */
-    RiskModelEquivalenceClasses(final DataHandle handle,
-                                final Set<String> qis,
-                                final WrappedBoolean stop,
-                                final WrappedInteger progress,
-                                double factor) {
-        
+    RiskModelHistogram(final DataHandle handle,
+                       final Set<String> qis,
+                       final WrappedBoolean stop,
+                       final WrappedInteger progress,
+                       double factor) {
+
         /* ********************************
-         *  Check
-         * ********************************/
-        if (handle == null) {
-            throw new NullPointerException("Handle is null");
-        }
-        if (qis == null) {
-            throw new NullPointerException("Quasi identifiers must not be null");
-        }        
+         * Check *******************************
+         */
+        if (handle == null) { throw new NullPointerException("Handle is null"); }
+        if (qis == null) { throw new NullPointerException("Quasi identifiers must not be null"); }
         for (String q : qis) {
-            if (handle.getColumnIndexOf(q) == -1) {
-                throw new IllegalArgumentException(q + " is not an attribute");
-            }
+            if (handle.getColumnIndexOf(q) == -1) { throw new IllegalArgumentException(q +
+                                                                                       " is not an attribute"); }
         }
 
         /* ********************************
-         *  Build equivalence classes
-         * ********************************/
+         * Build equivalence classes *******************************
+         */
         final int[] indices = new int[qis.size()];
         int index = 0;
         for (final String attribute : qis) {
@@ -150,44 +154,44 @@ public class RiskModelEquivalenceClasses {
         Groupify<TupleWrapper> map = new Groupify<TupleWrapper>(capacity);
         int numRows = handle.getNumRows();
         for (int row = 0; row < numRows; row++) {
-            
-            int prog = (int)Math.round((double)row / (double)numRows * factor * 80d);
+
+            int prog = (int) Math.round((double) row / (double) numRows *
+                                        factor * 80d);
             if (prog != progress.value) {
                 progress.value = prog;
             }
-            
+
             TupleWrapper tuple = new TupleWrapper(handle, indices, row);
             map.add(tuple);
-            if (stop.value) {
-                throw new ComputationInterruptedException();
-            }
+            if (stop.value) { throw new ComputationInterruptedException(); }
         }
 
         // Group by size
         IntIntOpenHashMap grouped = new IntIntOpenHashMap();
-        
+
         int i = 0;
         int size = map.size();
         Group<TupleWrapper> element = map.first();
         while (element != null) {
-            int prog = (int)Math.round((80d + (double)i++ / (double)size * 20d) * factor);
+            int prog = (int) Math.round((80d + (double) i++ / (double) size *
+                                               20d) *
+                                        factor);
             if (prog != progress.value) {
                 progress.value = prog;
             }
             grouped.putOrAdd(element.getCount(), 1, 1);
             element = element.next();
-            if (stop.value) {
-                throw new ComputationInterruptedException();
-            }
+            if (stop.value) { throw new ComputationInterruptedException(); }
         }
-        
+
         map = null;
-        
+
         convertAndAnalyze(grouped, stop, progress);
     }
 
     /**
      * Returns a property of the class distribution
+     * 
      * @return the avgClassSize
      */
     public double getAvgClassSize() {
@@ -195,16 +199,18 @@ public class RiskModelEquivalenceClasses {
     }
 
     /**
-     * Returns class-size[idx], class-count[idx+1],... ordered ascending by class size
+     * Returns class-size[idx], class-count[idx+1],... ordered ascending by
+     * class size
      * 
-     * @return the equivalenceClasses
+     * @return the histogram
      */
-    public int[] getEquivalenceClasses() {
+    public int[] getHistogram() {
         return equivalenceClasses;
     }
 
     /**
      * Returns a property of the class distribution
+     * 
      * @return the numClasses
      */
     public double getNumClasses() {
@@ -213,6 +219,7 @@ public class RiskModelEquivalenceClasses {
 
     /**
      * Returns a property of the class distribution
+     * 
      * @return the numTuples
      */
     public double getNumTuples() {
@@ -221,15 +228,15 @@ public class RiskModelEquivalenceClasses {
 
     /**
      * Convert and analyze
+     * 
      * @param grouped
      * @param stop
      * @param progress
      */
-    private void convertAndAnalyze(IntIntOpenHashMap grouped, 
-                                   final WrappedBoolean stop, 
+    private void convertAndAnalyze(IntIntOpenHashMap grouped,
+                                   final WrappedBoolean stop,
                                    final WrappedInteger progress) {
 
-        
         // Convert
         int[][] temp = new int[grouped.size()][2];
         int idx = 0;
@@ -238,24 +245,20 @@ public class RiskModelEquivalenceClasses {
         final boolean[] states2 = grouped.allocated;
         for (int i = 0; i < states2.length; i++) {
             if (states2[i]) {
-                temp[idx++] = new int[]{keys2[i], values2[i]};
+                temp[idx++] = new int[] { keys2[i], values2[i] };
             }
-            if (stop.value) {
-                throw new ComputationInterruptedException();
-            }
+            if (stop.value) { throw new ComputationInterruptedException(); }
         }
         grouped = null;
-        
+
         // Sort ascending by size
-        Arrays.sort(temp, new Comparator<int[]>(){
+        Arrays.sort(temp, new Comparator<int[]>() {
             public int compare(int[] o1, int[] o2) {
-                if (stop.value) {
-                    throw new ComputationInterruptedException();
-                }
+                if (stop.value) { throw new ComputationInterruptedException(); }
                 return Integer.compare(o1[0], o2[0]);
-            } 
+            }
         });
-        
+
         // Convert and analyze
         int numClasses = 0;
         int numTuples = 0;
@@ -266,9 +269,7 @@ public class RiskModelEquivalenceClasses {
             this.equivalenceClasses[idx++] = entry[1];
             numClasses += entry[1];
             numTuples += entry[0] * entry[1];
-            if (stop.value) {
-                throw new ComputationInterruptedException();
-            }
+            if (stop.value) { throw new ComputationInterruptedException(); }
         }
         this.numTuples = numTuples;
         this.numClasses = numClasses;

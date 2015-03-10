@@ -18,58 +18,69 @@
 package org.deidentifier.arx.risk;
 
 import org.deidentifier.arx.risk.RiskEstimateBuilder.ComputationInterruptedException;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**
  * A builder for risk estimates, interruptible
+ * 
  * @author Fabian Prasser
- *
+ * 
  */
 public class RiskEstimateBuilderInterruptible {
-    
-    /** The wrapped instance*/
+
+    /** The wrapped instance */
     private final RiskEstimateBuilder parent;
-    
+
     /**
      * Creates a new instance
+     * 
      * @param builder
      */
     RiskEstimateBuilderInterruptible(RiskEstimateBuilder parent) {
         this.parent = parent;
     }
-    
+
     /**
      * Returns a model of the equivalence classes in this data set
+     * 
      * @return
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
-    public RiskModelEquivalenceClasses getEquivalenceClassModel() throws InterruptedException {
+    public RiskModelHistogram
+            getEquivalenceClassModel() throws InterruptedException {
         try {
             return parent.getEquivalenceClassModel();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
     }
-    
+
     /**
-     * Returns a class providing access to population-based risk estimates about the attributes.
-     * Uses the decision rule by Dankar et al., excluding the SNB model
+     * Returns a class providing access to population-based risk estimates about
+     * the attributes. Uses the decision rule by Dankar et al., excluding the
+     * SNB model
+     * 
      * @return
      */
-    public RiskModelAttributes getPopulationBasedAttributeRisks() throws InterruptedException {
+    public RiskModelAttributes
+            getPopulationBasedAttributeRisks() throws InterruptedException {
         try {
             return parent.getPopulationBasedAttributeRisks();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
     }
-    
+
     /**
-     * Returns a class providing access to population-based risk estimates about the attributes.
-     * @param model Uses the given statistical model
+     * Returns a class providing access to population-based risk estimates about
+     * the attributes.
+     * 
+     * @param model
+     *            Uses the given statistical model
      * @return
      */
-    public RiskModelAttributes getPopulationBasedAttributeRisks(StatisticalPopulationModel model) throws InterruptedException {
+    public RiskModelAttributes
+            getPopulationBasedAttributeRisks(PopulationUniquenessModel model) throws InterruptedException {
         try {
             return parent.getPopulationBasedAttributeRisks(model);
         } catch (ComputationInterruptedException e) {
@@ -79,18 +90,22 @@ public class RiskEstimateBuilderInterruptible {
 
     /**
      * Returns a class providing population-based uniqueness estimates
+     * 
      * @return
      */
-    public RiskModelPopulationBasedUniquenessRisk getPopulationBasedUniquenessRisk() throws InterruptedException {
+    public RiskModelPopulationUniqueness
+            getPopulationBasedUniquenessRisk() throws InterruptedException {
         try {
             return parent.getPopulationBasedUniquenessRiskInterruptible();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
     }
+
     /**
-     * If supported by the according builder, this method will report a progress value in [0,100]. Otherwise,
-     * it will always return 0
+     * If supported by the according builder, this method will report a progress
+     * value in [0,100]. Otherwise, it will always return 0
+     * 
      * @return
      */
     public int getProgress() {
@@ -98,22 +113,27 @@ public class RiskEstimateBuilderInterruptible {
     }
 
     /**
-     * Returns a class providing access to sample-based risk estimates about the attributes
+     * Returns a class providing access to sample-based risk estimates about the
+     * attributes
+     * 
      * @return
      */
-    public RiskModelAttributes getSampleBasedAttributeRisks() throws InterruptedException {
+    public RiskModelAttributes
+            getSampleBasedAttributeRisks() throws InterruptedException {
         try {
             return parent.getSampleBasedAttributeRisks();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
     }
-    
+
     /**
      * Returns a class providing sample-based re-identification risk estimates
+     * 
      * @return
      */
-    public RiskModelSampleBasedReidentificationRisk getSampleBasedReidentificationRisk() throws InterruptedException {
+    public RiskModelSampleRisks
+            getSampleBasedReidentificationRisk() throws InterruptedException {
         try {
             return parent.getSampleBasedReidentificationRisk();
         } catch (ComputationInterruptedException e) {
@@ -123,16 +143,18 @@ public class RiskEstimateBuilderInterruptible {
 
     /**
      * Returns a class providing sample-based uniqueness estimates
+     * 
      * @return
      */
-    public RiskModelSampleBasedUniquenessRisk getSampleBasedUniquenessRisk() throws InterruptedException {
+    public RiskModelSampleUniqueness
+            getSampleBasedUniquenessRisk() throws InterruptedException {
         try {
             return parent.getSampleBasedUniquenessRisk();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
     }
-    
+
     /**
      * Interrupts all computations. Raises an InterruptedException.
      */

@@ -26,7 +26,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
-import org.deidentifier.arx.risk.RiskModelEquivalenceClasses;
+import org.deidentifier.arx.risk.RiskModelHistogram;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -318,8 +318,8 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
                 long time = System.currentTimeMillis();
                 
                 // Perform work
-                RiskModelEquivalenceClasses model = builder.getEquivalenceClassModel();
-                int[] distribution = model.getEquivalenceClasses();
+                RiskModelHistogram model = builder.getEquivalenceClassModel();
+                int[] distribution = model.getHistogram();
 
                 // Create array
                 frequencies = new double[distribution.length/2];

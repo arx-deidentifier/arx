@@ -18,26 +18,39 @@
 package org.deidentifier.arx.risk;
 
 /**
- * Abstract base class for sample-based models
+ * Class for risks based on sample uniqueness
+ * 
  * @author Fabian Prasser
  */
-public abstract class RiskModelSampleBased {
-
-    /** The classes*/
-    private final RiskModelEquivalenceClasses classes;
+public class RiskModelSampleUniqueness extends RiskModelSample {
 
     /**
      * Creates a new instance
-     * @param classes
+     * 
+     * @param histogram
      */
-    RiskModelSampleBased(RiskModelEquivalenceClasses classes) {
-        this.classes = classes;
+    public RiskModelSampleUniqueness(RiskModelHistogram histogram) {
+        super(histogram);
     }
 
     /**
-     * @return the classes
+     * Returns the fraction of tuples affected by the highest re-identification
+     * risk
+     * 
+     * @return
      */
-    protected RiskModelEquivalenceClasses getClasses() {
-        return classes;
+    public double getFractionOfUniqueTuples() {
+        return getNumUniqueTuples() / getHistogram().getNumTuples();
+    }
+
+    /**
+     * Returns the number of tuples affected by the lowest re-identification
+     * risk
+     * 
+     * @return
+     */
+    public double getNumUniqueTuples() {
+        int[] classes = getHistogram().getHistogram();
+        return classes[0] == 1 ? classes[1] : 0;
     }
 }

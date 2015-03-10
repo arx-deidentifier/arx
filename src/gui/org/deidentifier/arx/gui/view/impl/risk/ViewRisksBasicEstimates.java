@@ -32,10 +32,10 @@ import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
-import org.deidentifier.arx.risk.RiskModelSampleBasedReidentificationRisk;
-import org.deidentifier.arx.risk.RiskModelSampleBasedUniquenessRisk;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
+import org.deidentifier.arx.risk.RiskModelSampleRisks;
+import org.deidentifier.arx.risk.RiskModelSampleUniqueness;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -115,7 +115,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
      * @param label
      * @param value
      */
-    private void createItem(String label, StatisticalPopulationModel value) {
+    private void createItem(String label, PopulationUniquenessModel value) {
         TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, label);
         item.setText(1, value == null ? "N/A" : value.toString());
@@ -208,7 +208,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
             private double                     fractionOfTuplesAffectedByHighestRisk;
             private double                     fractionOfUniqueTuples;
             private double                     fractionOfUniqueTuplesDankar;
-            private StatisticalPopulationModel dankarModel;
+            private PopulationUniquenessModel dankarModel;
 
             @Override
             public int getProgress() {
@@ -265,9 +265,9 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
                 
                 // Perform work
                 // TODO: This can be made more efficient
-                RiskModelSampleBasedReidentificationRisk samReidModel = builder.getSampleBasedReidentificationRisk();
-                RiskModelSampleBasedUniquenessRisk samUniqueModel = builder.getSampleBasedUniquenessRisk();
-                RiskModelPopulationBasedUniquenessRisk popUniqueModel = builder.getPopulationBasedUniquenessRisk();
+                RiskModelSampleRisks samReidModel = builder.getSampleBasedReidentificationRisk();
+                RiskModelSampleUniqueness samUniqueModel = builder.getSampleBasedUniquenessRisk();
+                RiskModelPopulationUniqueness popUniqueModel = builder.getPopulationBasedUniquenessRisk();
                 
                 lowestRisk = samReidModel.getLowestRisk();
                 fractionOfTuplesAffectedByLowestRisk = samReidModel.getFractionOfTuplesAffectedByLowestRisk();
@@ -276,7 +276,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
                 fractionOfTuplesAffectedByHighestRisk = samReidModel.getFractionOfTuplesAffectedByHighestRisk();
                 fractionOfUniqueTuples = samUniqueModel.getFractionOfUniqueTuples();
                 fractionOfUniqueTuplesDankar = popUniqueModel.getFractionOfUniqueTuplesDankar();
-                dankarModel = popUniqueModel.getDankarModel();
+                dankarModel = popUniqueModel.getPopulationUniquenessModel();
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){

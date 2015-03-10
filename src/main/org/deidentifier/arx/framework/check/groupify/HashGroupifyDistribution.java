@@ -41,7 +41,7 @@ import org.deidentifier.arx.metric.v2.MetricMDStatic;
 import org.deidentifier.arx.metric.v2.MetricSDAECS;
 import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
 import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
-import org.deidentifier.arx.risk.RiskModelEquivalenceClasses;
+import org.deidentifier.arx.risk.RiskModelHistogram;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 
@@ -190,8 +190,8 @@ public class HashGroupifyDistribution {
     /**
      * Returns a set of classes as an input for the risk model
      */
-    public RiskModelEquivalenceClasses getEquivalenceClasses() {
-        return new RiskModelEquivalenceClasses(this.distribution);
+    public RiskModelHistogram getEquivalenceClasses() {
+        return new RiskModelHistogram(this.distribution);
     }
 
     /**

@@ -32,7 +32,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
-import org.deidentifier.arx.risk.RiskModelEquivalenceClasses;
+import org.deidentifier.arx.risk.RiskModelHistogram;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -219,8 +219,8 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
                 long time = System.currentTimeMillis();
 
                 // Perform work
-                RiskModelEquivalenceClasses model = builder.getEquivalenceClassModel();
-                distribution = model.getEquivalenceClasses();
+                RiskModelHistogram model = builder.getEquivalenceClassModel();
+                distribution = model.getHistogram();
                 numClasses = model.getNumClasses();
 
                 // Our users are patient

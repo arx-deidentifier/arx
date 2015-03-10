@@ -20,8 +20,8 @@ package org.deidentifier.arx.criteria;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk;
-import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**
  * This criterion ensures that the fraction of population uniques falls below a given threshold.
@@ -34,7 +34,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
     private static final long          serialVersionUID = 618039085843721351L;
 
     /** The statistical model */
-    private StatisticalPopulationModel statisticalModel;
+    private PopulationUniquenessModel statisticalModel;
 
     /** The population model */
     private ARXPopulationModel         populationModel;
@@ -51,7 +51,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      * @param populationModel
      */
     public RiskBasedThresholdPopulationUniques(double riskThreshold, ARXPopulationModel populationModel){
-        this(riskThreshold, StatisticalPopulationModel.DANKAR, populationModel);
+        this(riskThreshold, PopulationUniquenessModel.DANKAR, populationModel);
     }
 
     /**
@@ -66,7 +66,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
     public RiskBasedThresholdPopulationUniques(double riskThreshold,
                                                ARXPopulationModel populationModel,
                                                ARXSolverConfiguration config) {
-        this(riskThreshold, StatisticalPopulationModel.DANKAR, populationModel, config);
+        this(riskThreshold, PopulationUniquenessModel.DANKAR, populationModel, config);
     }
 
     /**
@@ -79,7 +79,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      * @param populationModel
      */
     public RiskBasedThresholdPopulationUniques(double riskThreshold,
-                                               StatisticalPopulationModel statisticalModel, 
+                                               PopulationUniquenessModel statisticalModel, 
                                                ARXPopulationModel populationModel){
         this(riskThreshold, statisticalModel, populationModel, ARXSolverConfiguration.create());
     }
@@ -94,7 +94,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      * @param config
      */
     public RiskBasedThresholdPopulationUniques(double riskThreshold,
-                                               StatisticalPopulationModel statisticalModel, 
+                                               PopulationUniquenessModel statisticalModel, 
                                                ARXPopulationModel populationModel,
                                                ARXSolverConfiguration config){
         super(false, riskThreshold);
@@ -113,7 +113,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
     /**
      * @return the statisticalModel
      */
-    public StatisticalPopulationModel getStatisticalModel() {
+    public PopulationUniquenessModel getStatisticalModel() {
         return statisticalModel;
     }
 
@@ -132,7 +132,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      */
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
 
-        RiskModelPopulationBasedUniquenessRisk riskModel = new RiskModelPopulationBasedUniquenessRisk(this.populationModel, 
+        RiskModelPopulationUniqueness riskModel = new RiskModelPopulationUniqueness(this.populationModel, 
                                                                                                       distribution.getEquivalenceClasses(), 
                                                                                                       distribution.getNumberOfTuples(),
                                                                                                       solverConfig);
