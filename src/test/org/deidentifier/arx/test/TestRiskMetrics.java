@@ -34,6 +34,7 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
+import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk;
 import org.junit.Test;
 
 /**
@@ -128,18 +129,20 @@ public class TestRiskMetrics extends TestCase {
         DataProvider provider = new DataProvider();
         provider.createDataDefinition();
         DataHandle handle = provider.getData().getHandle();
-
-        double risk = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
-
+        
+        RiskModelPopulationBasedUniquenessRisk model = handle.getRiskEstimator(ARXPopulationModel.create(0.2d)).getPopulationBasedUniquenessRisk();
+        double populationUniqueness = model.getFractionOfUniqueTuplesDankar();
+        double sampleUniqueness = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedUniquenessRisk().getFractionOfUniqueTuples();
+        
         // Risk before anonymization
-        assertTrue("Is: "+risk, risk == 1.0d);
-        assertTrue("Is: "+risk, risk <= handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedUniquenessRisk().getFractionOfUniqueTuples());
-
+        assertTrue(sampleUniqueness + " / " + populationUniqueness, compareUniqueness(populationUniqueness, 1.0d) == 0);
+        assertTrue(sampleUniqueness + " / " + populationUniqueness, compareUniqueness(populationUniqueness, sampleUniqueness) <= 0);
+        
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
-
+        
         ARXResult result = null;
         try {
             result = anonymizer.anonymize(provider.getData(), config);
@@ -147,9 +150,9 @@ public class TestRiskMetrics extends TestCase {
             e.printStackTrace();
         }
         final DataHandle outHandle = result.getOutput(false);
-
-        risk = outHandle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
-        assertTrue("Is: "+risk, risk == 0);
+        
+        populationUniqueness = outHandle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
+        assertTrue("Is: " + populationUniqueness, compareUniqueness(populationUniqueness, 0) == 0);
     }
 
     /**
@@ -163,24 +166,36 @@ public class TestRiskMetrics extends TestCase {
         Data data = getDataObject("../arx-data/data-junit/adult.csv");
         DataHandle handle = data.getHandle();
 
-        double sampleRisk = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedUniquenessRisk().getFractionOfUniqueTuples();
-        double populationRisk = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
-        assertTrue(populationRisk+"/"+sampleRisk, populationRisk == 0.2768499388373113);
-        assertTrue(populationRisk+"/"+sampleRisk, populationRisk <= sampleRisk);
-
-        populationRisk = handle.getRiskEstimator(ARXPopulationModel.create(0.2d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
-        assertTrue(populationRisk+"/"+sampleRisk, populationRisk == 0.3577099234829125d);
-        assertTrue(populationRisk+"/"+sampleRisk, populationRisk <= sampleRisk);
-
-        populationRisk = handle.getRiskEstimator(ARXPopulationModel.create(0.01d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
-        assertTrue(populationRisk+"/"+sampleRisk, populationRisk == 0.14460835311692927);
-        assertTrue(populationRisk+"/"+sampleRisk, populationRisk <= sampleRisk);
+        RiskModelPopulationBasedUniquenessRisk model = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk();
+        double sampleUniqueness = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedUniquenessRisk().getFractionOfUniqueTuples();
+        double populationUniqueness = model.getFractionOfUniqueTuplesDankar();
+        assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, 0.27684993883653597) == 0);
+        assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, sampleUniqueness) <= 0);
         
-        populationRisk = handle.getRiskEstimator(ARXPopulationModel.create(1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
-        assertTrue(populationRisk+"/"+sampleRisk, populationRisk == 0.5142895033485844d);
-        assertTrue(populationRisk+"/"+sampleRisk, populationRisk == sampleRisk);
+        model = handle.getRiskEstimator(ARXPopulationModel.create(0.2d)).getPopulationBasedUniquenessRisk();
+        populationUniqueness = model.getFractionOfUniqueTuplesDankar();
+        assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, 0.3577099234829125d) == 0);
+        assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, sampleUniqueness) <= 0);
         
-        // TODO: Include SNB model
+        model = handle.getRiskEstimator(ARXPopulationModel.create(0.01d)).getPopulationBasedUniquenessRisk();
+        populationUniqueness = model.getFractionOfUniqueTuplesDankar();
+        assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, 0.1446083531167384) == 0);
+        assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, sampleUniqueness) <= 0);
+        
+        model = handle.getRiskEstimator(ARXPopulationModel.create(1d)).getPopulationBasedUniquenessRisk();
+        populationUniqueness = model.getFractionOfUniqueTuplesDankar();
+        assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, 0.5142895033485844) == 0);
+        assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, sampleUniqueness) == 0);
+    }
+    
+    /**
+     * Compares two uniqueness measures with four significant digits
+     * @param val1
+     * @param val2
+     * @return
+     */
+    private int compareUniqueness(double val1, double val2) {
+        return Integer.compare((int)(val1 * 10000d), (int)(val2 * 10000d));
     }
 
     /**
