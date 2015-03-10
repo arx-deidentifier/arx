@@ -289,7 +289,47 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
         }
         return isValid(numUniquesZayatz) ? numUniquesZayatz : 0d;
     }
+    
+    /**
+     * Returns whether the according estimate is available
+     * @return
+     */
+    public boolean isAvailableEstimate(StatisticalPopulationModel model) {
+        return getNumUniqueTuples(model) != 0d || numClassesOfSize1 == 0;
+    }
 
+    /**
+     * Returns whether the according estimate is available
+     * @return
+     */
+    public boolean isAvailableEstimateDankar() {
+        return getNumUniqueTuplesDankar() != 0d || numClassesOfSize1 == 0;
+    }
+
+    /**
+     * Returns whether the according estimate is available
+     * @return
+     */
+    public boolean isAvailableEstimatePitman() {
+        return getNumUniqueTuplesPitman() != 0d || numClassesOfSize1 == 0;
+    }
+    
+    /**
+     * Returns whether the according estimate is available
+     * @return
+     */
+    public boolean isAvailableEstimateSNB() {
+        return getNumUniqueTuplesSNB() != 0d || numClassesOfSize1 == 0;
+    }
+    
+    /**
+     * Returns whether the according estimate is available
+     * @return
+     */
+    public boolean isAvailableEstimateZayatz() {
+        return getNumUniqueTuplesZayatz() != 0d || numClassesOfSize1 == 0;
+    }
+    
     /**
      * Is an estimate valid?
      * @param value
