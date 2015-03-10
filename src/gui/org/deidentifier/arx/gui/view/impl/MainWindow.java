@@ -455,12 +455,7 @@ public class MainWindow implements IView {
             dialog.create();
             dialog.open();	
     	} catch (Exception e) {
-    		if (e.getMessage().contains("Mozilla")) {
-    			this.showErrorDialog("Your installation of Mozilla Firefox cannot be launched", 
-    					"See http://www.eclipse.org/swt/faq.php#browserlinuxrcp for information on how to fix this issue.");
-    		} else {
-    		    this.showErrorDialog("Your browser cannot be launched", e);
-    		}
+    		this.showErrorDialog("Browser cannot be launched", e);
     	}
     }
 
