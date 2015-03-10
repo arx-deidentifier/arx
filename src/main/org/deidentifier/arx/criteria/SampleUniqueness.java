@@ -20,11 +20,11 @@ package org.deidentifier.arx.criteria;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
 
 /**
- * This criterion ensures that the fraction of sample uniques falls below a given threshold.
+ * This criterion ensures that the sample uniqueness falls below a given threshold.
  * 
  * @author Fabian Prasser
  */
-public class RiskBasedThresholdSampleUniques extends RiskBasedPrivacyCriterion{
+public class SampleUniqueness extends RiskBasedCriterion{
 
 
     /** SVUID*/
@@ -35,7 +35,7 @@ public class RiskBasedThresholdSampleUniques extends RiskBasedPrivacyCriterion{
      *  
      * @param riskThreshold
      */
-    public RiskBasedThresholdSampleUniques(double riskThreshold){
+    public SampleUniqueness(double riskThreshold){
         super(true, riskThreshold);
     }
 

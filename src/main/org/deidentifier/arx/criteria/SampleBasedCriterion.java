@@ -26,7 +26,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class SampleBasedPrivacyCriterion extends PrivacyCriterion {
+public abstract class SampleBasedCriterion extends PrivacyCriterion {
 
     /** SVUID*/
     private static final long serialVersionUID = 5687067920181297803L;
@@ -36,14 +36,15 @@ public abstract class SampleBasedPrivacyCriterion extends PrivacyCriterion {
      *
      * @param monotonic
      */
-    public SampleBasedPrivacyCriterion(boolean monotonic){
+    public SampleBasedCriterion(boolean monotonic){
         super(monotonic);
     }
     
     /**
      * This method enforces the criterion on the current hash table. 
-     * Criteria can be enforced by suppressing classes in the distribution by passing a PrivacyCondition.
-     * Criteria may abort early, if the threshold is reached (<code>distribution.getNumOfSuppressedTuples() > numMaxSuppressedOutliers</code>).
+     * Criteria can be enforced by suppressing classes in the distribution by passing a 
+     * PrivacyCondition. Criteria may abort early, if the threshold is reached 
+     * (<code>distribution.getNumOfSuppressedTuples() > numMaxSuppressedOutliers</code>).
      * 
      * @param distribution
      * @param numMaxSuppressedOutliers

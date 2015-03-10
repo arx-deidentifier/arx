@@ -25,7 +25,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
  * 
  * @author Fabian Prasser
  */
-public class RiskBasedThresholdAverageRisk extends RiskBasedPrivacyCriterion{
+public class AverageReidentificationRisk extends RiskBasedCriterion{
 
     /** SVUID*/
     private static final long serialVersionUID = -2953252206954936045L;
@@ -35,7 +35,7 @@ public class RiskBasedThresholdAverageRisk extends RiskBasedPrivacyCriterion{
      *  
      * @param riskThreshold
      */
-    public RiskBasedThresholdAverageRisk(double riskThreshold){
+    public AverageReidentificationRisk(double riskThreshold){
         super(true, riskThreshold);
     }
 

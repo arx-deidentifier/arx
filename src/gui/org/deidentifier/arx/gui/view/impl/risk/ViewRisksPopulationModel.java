@@ -23,7 +23,7 @@ import java.text.DecimalFormat;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques;
+import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -214,8 +214,8 @@ public class ViewRisksPopulationModel implements IView {
      */
     private boolean isOutputPopulationModelAvailable() {
         if (model == null || model.getOutputConfig() == null) { return false; }
-        for (RiskBasedThresholdPopulationUniques t : model.getOutputConfig()
-                                                          .getCriteria(RiskBasedThresholdPopulationUniques.class)) {
+        for (PopulationUniqueness t : model.getOutputConfig()
+                                                          .getCriteria(PopulationUniqueness.class)) {
             if (t.getPopulationModel() != null) { return true; }
         }
         return false;

@@ -17,9 +17,15 @@
  */
 
 /**
- * This package implements different variants of k-anonymity, l-diversity, t-closeness and d-presence.
- * k-anonymity and d-presence are implicit privacy criteria, i.e., they are implicitly bound to the
- * quasi-identifiers, while the other criteria are explicitly bound to a specific sensitive attribute.
+ * This package implements different variants of class-based privacy criteria,
+ * such as k-anonymity, l-diversity, t-closeness and d-presence. <br>
+ * <br> 
+ * Moreover, this package implements sample-based criteria, such as thresholds on
+ * the average re-identification risk, population uniqueness and sample uniqueness. <br>
+ * <br>
+ * k-anonymity and d-presence and the sample-based criteria are implicit privacy criteria, i.e., they 
+ * are implicitly bound to the quasi-identifiers, while the other criteria are explicitly bound to a 
+ * specific sensitive attribute. <br>
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer

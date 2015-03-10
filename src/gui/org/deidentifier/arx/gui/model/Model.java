@@ -41,7 +41,7 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques;
+import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricDescription;
@@ -719,7 +719,7 @@ public class Model implements Serializable {
     public ARXPopulationModel getOutputPopulationModel() {
         ModelConfiguration config = getOutputConfig();
         if (config != null) {
-            Set<RiskBasedThresholdPopulationUniques> set = config.getCriteria(RiskBasedThresholdPopulationUniques.class);
+            Set<PopulationUniqueness> set = config.getCriteria(PopulationUniqueness.class);
             if (set != null && !set.isEmpty()) {
                 return set.iterator().next().getPopulationModel();
             }

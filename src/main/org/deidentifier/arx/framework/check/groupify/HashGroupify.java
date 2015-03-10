@@ -22,7 +22,7 @@ import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.criteria.SampleBasedPrivacyCriterion;
+import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -232,7 +232,7 @@ public class HashGroupify implements IHashGroupify {
     private final PrivacyCriterion[]            classBasedCriteria;
 
     /** Criteria. */
-    private final SampleBasedPrivacyCriterion[] sampleBasedCriteria;
+    private final SampleBasedCriterion[]        sampleBasedCriteria;
 
     /** Metric */
     private final Metric<?>                     metric;
@@ -625,7 +625,7 @@ public class HashGroupify implements IHashGroupify {
                                                                              this.firstEntry);
         
         // For each criterion
-        for (SampleBasedPrivacyCriterion criterion : this.sampleBasedCriteria) {
+        for (SampleBasedCriterion criterion : this.sampleBasedCriteria) {
             
             // Enforce
             criterion.enforce(distribution, earlyAbort ? this.absoluteMaxOutliers : Integer.MAX_VALUE);

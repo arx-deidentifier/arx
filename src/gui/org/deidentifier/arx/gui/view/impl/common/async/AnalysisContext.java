@@ -23,7 +23,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
-import org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques;
+import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -146,8 +146,8 @@ public class AnalysisContext {
         // First, try to return a model associated with an output criterion
         if (model.getRiskModel().isUseOutputPopulationModelIfAvailable() &&
             model.getOutputConfig() != null) {
-            for (RiskBasedThresholdPopulationUniques t : model.getOutputConfig()
-                                                              .getCriteria(RiskBasedThresholdPopulationUniques.class)) {
+            for (PopulationUniqueness t : model.getOutputConfig()
+                                                              .getCriteria(PopulationUniqueness.class)) {
                 if (t.getPopulationModel() != null) { 
                     return t.getPopulationModel(); 
                 }

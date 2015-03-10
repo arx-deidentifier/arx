@@ -26,7 +26,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution.Pr
  * 
  * @author Fabian Prasser
  */
-public abstract class RiskBasedPrivacyCriterion extends SampleBasedPrivacyCriterion{
+public abstract class RiskBasedCriterion extends SampleBasedCriterion{
 
     /** SVUID */
     private static final long serialVersionUID = -2711630526630937284L;
@@ -39,7 +39,7 @@ public abstract class RiskBasedPrivacyCriterion extends SampleBasedPrivacyCriter
      * @param monotonic
      * @param riskThreshold
      */
-    public RiskBasedPrivacyCriterion(boolean monotonic, double riskThreshold){
+    public RiskBasedCriterion(boolean monotonic, double riskThreshold){
         super(monotonic);
         this.threshold = riskThreshold;
         if (this.threshold < 0d || this.threshold >= 1d) {
@@ -52,14 +52,14 @@ public abstract class RiskBasedPrivacyCriterion extends SampleBasedPrivacyCriter
                         final int numMaxSuppressedOutliers) {
         
         // Early abort
-        if (RiskBasedPrivacyCriterion.this.isFulfilled(distribution)) {
+        if (RiskBasedCriterion.this.isFulfilled(distribution)) {
             return;
         }
        
         // Binary search
         distribution.suppressWhileNotFulfilledBinary(new PrivacyCondition(){
             public State isFulfilled(HashGroupifyDistribution distribution) {
-                boolean fulfilled = RiskBasedPrivacyCriterion.this.isFulfilled(distribution);
+                boolean fulfilled = RiskBasedCriterion.this.isFulfilled(distribution);
                 
                 // Early abort
                 if (!fulfilled && distribution.getNumOfSuppressedTuples() > numMaxSuppressedOutliers) {

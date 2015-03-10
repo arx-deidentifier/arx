@@ -32,10 +32,10 @@ import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
-import org.deidentifier.arx.criteria.RiskBasedPrivacyCriterion;
-import org.deidentifier.arx.criteria.RiskBasedThresholdAverageRisk;
-import org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques;
-import org.deidentifier.arx.criteria.RiskBasedThresholdSampleUniques;
+import org.deidentifier.arx.criteria.RiskBasedCriterion;
+import org.deidentifier.arx.criteria.AverageReidentificationRisk;
+import org.deidentifier.arx.criteria.PopulationUniqueness;
+import org.deidentifier.arx.criteria.SampleUniqueness;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -334,24 +334,24 @@ public class ViewPropertiesOutput extends ViewProperties {
             }
 
             // Print info about risk-based criteria
-            Set<RiskBasedPrivacyCriterion> criteria = context.config.getCriteria(RiskBasedPrivacyCriterion.class);
-            for (RiskBasedPrivacyCriterion criterion : criteria) {
+            Set<RiskBasedCriterion> criteria = context.config.getCriteria(RiskBasedCriterion.class);
+            for (RiskBasedCriterion criterion : criteria) {
                 
                 String type = "";
-                if (criterion instanceof RiskBasedThresholdAverageRisk) {
+                if (criterion instanceof AverageReidentificationRisk) {
                     type = Resources.getMessage("PropertiesView.123");
-                } else if (criterion instanceof RiskBasedThresholdPopulationUniques) {
+                } else if (criterion instanceof PopulationUniqueness) {
                     type = Resources.getMessage("PropertiesView.125");
-                } else if (criterion instanceof RiskBasedThresholdSampleUniques) {
+                } else if (criterion instanceof SampleUniqueness) {
                     type = Resources.getMessage("PropertiesView.124");
                 }
                         
                 Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { type }); //$NON-NLS-1$ //$NON-NLS-2$
                 new Property(n, Resources.getMessage("PropertiesView.120"), new String[] { String.valueOf(criterion.getRiskThreshold())}); //$NON-NLS-1$
                 
-                if (criterion instanceof RiskBasedThresholdPopulationUniques) {
-                    new Property(n, Resources.getMessage("PropertiesView.121"), new String[] { String.valueOf(((RiskBasedThresholdPopulationUniques)criterion).getPopulationModel().getSamplingFraction(context.handle))}); //$NON-NLS-1$
-                    new Property(n, Resources.getMessage("PropertiesView.122"), new String[] { ((RiskBasedThresholdPopulationUniques)criterion).getStatisticalModel().toString()}); //$NON-NLS-1$
+                if (criterion instanceof PopulationUniqueness) {
+                    new Property(n, Resources.getMessage("PropertiesView.121"), new String[] { String.valueOf(((PopulationUniqueness)criterion).getPopulationModel().getSamplingFraction(context.handle))}); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.122"), new String[] { ((PopulationUniqueness)criterion).getStatisticalModel().toString()}); //$NON-NLS-1$
                 }
             }
         } else {

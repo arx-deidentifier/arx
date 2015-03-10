@@ -18,9 +18,9 @@
 package org.deidentifier.arx.gui.model;
 
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.criteria.RiskBasedThresholdAverageRisk;
-import org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques;
-import org.deidentifier.arx.criteria.RiskBasedThresholdSampleUniques;
+import org.deidentifier.arx.criteria.AverageReidentificationRisk;
+import org.deidentifier.arx.criteria.PopulationUniqueness;
+import org.deidentifier.arx.criteria.SampleUniqueness;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**
@@ -78,7 +78,7 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 	public PrivacyCriterion getCriterion(Model model) {
         switch (variant) {
         case VARIANT_AVERAGE_RISK:
-            return new RiskBasedThresholdAverageRisk(threshold);
+            return new AverageReidentificationRisk(threshold);
         case VARIANT_POPULATION_UNIQUES_DANKAR:
             return getPopulationBasedCriterion(PopulationUniquenessModel.DANKAR, model);
         case VARIANT_POPULATION_UNIQUES_PITMAN:
@@ -88,7 +88,7 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
         case VARIANT_POPULATION_UNIQUES_ZAYATZ:
             return getPopulationBasedCriterion(PopulationUniquenessModel.ZAYATZ, model);
         case VARIANT_SAMPLE_UNIQUES:
-            return new RiskBasedThresholdSampleUniques(threshold);
+            return new SampleUniqueness(threshold);
         default:
             throw new RuntimeException("Internal error: invalid variant of risk-based criterion");
         }
@@ -172,7 +172,7 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 	 */
 	private PrivacyCriterion getPopulationBasedCriterion(PopulationUniquenessModel statisticalModel, Model model) {
 	    ModelRisk riskModel = model.getRiskModel();
-	    return new RiskBasedThresholdPopulationUniques(threshold, 
+	    return new PopulationUniqueness(threshold, 
 	                                                   statisticalModel, 
 	                                                   riskModel.getPopulationModel().clone(),
 	                                                   riskModel.getSolverConfiguration());

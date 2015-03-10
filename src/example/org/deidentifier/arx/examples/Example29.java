@@ -29,7 +29,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.criteria.RiskBasedThresholdAverageRisk;
+import org.deidentifier.arx.criteria.AverageReidentificationRisk;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelAttributes;
 import org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisk;
@@ -99,7 +99,7 @@ public class Example29 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new RiskBasedThresholdAverageRisk(0.5d));
+        config.addCriterion(new AverageReidentificationRisk(0.5d));
         config.setMaxOutliers(1d);
         try {
             

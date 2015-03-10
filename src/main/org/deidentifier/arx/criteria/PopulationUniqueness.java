@@ -24,11 +24,11 @@ import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**
- * This criterion ensures that the fraction of population uniques falls below a given threshold.
+ * This criterion ensures that the population uniqueness falls below a given threshold.
  * 
  * @author Fabian Prasser
  */
-public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriterion{
+public class PopulationUniqueness extends RiskBasedCriterion{
 
     /** SVUID */
     private static final long          serialVersionUID = 618039085843721351L;
@@ -50,7 +50,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      * @param riskThreshold
      * @param populationModel
      */
-    public RiskBasedThresholdPopulationUniques(double riskThreshold, ARXPopulationModel populationModel){
+    public PopulationUniqueness(double riskThreshold, ARXPopulationModel populationModel){
         this(riskThreshold, PopulationUniquenessModel.DANKAR, populationModel);
     }
 
@@ -63,7 +63,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      * @param populationModel
      * @param config
      */
-    public RiskBasedThresholdPopulationUniques(double riskThreshold,
+    public PopulationUniqueness(double riskThreshold,
                                                ARXPopulationModel populationModel,
                                                ARXSolverConfiguration config) {
         this(riskThreshold, PopulationUniquenessModel.DANKAR, populationModel, config);
@@ -78,7 +78,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      * @param statisticalModel
      * @param populationModel
      */
-    public RiskBasedThresholdPopulationUniques(double riskThreshold,
+    public PopulationUniqueness(double riskThreshold,
                                                PopulationUniquenessModel statisticalModel, 
                                                ARXPopulationModel populationModel){
         this(riskThreshold, statisticalModel, populationModel, ARXSolverConfiguration.create());
@@ -93,7 +93,7 @@ public class RiskBasedThresholdPopulationUniques extends RiskBasedPrivacyCriteri
      * @param populationModel
      * @param config
      */
-    public RiskBasedThresholdPopulationUniques(double riskThreshold,
+    public PopulationUniqueness(double riskThreshold,
                                                PopulationUniquenessModel statisticalModel, 
                                                ARXPopulationModel populationModel,
                                                ARXSolverConfiguration config){

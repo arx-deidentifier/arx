@@ -29,7 +29,7 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.criteria.SampleBasedPrivacyCriterion;
+import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.metric.Metric;
@@ -149,7 +149,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
          * Returns all sample-based criteria as an array.
          * @return
          */
-        public SampleBasedPrivacyCriterion[] getSampleBasedCriteriaAsArray() {
+        public SampleBasedCriterion[] getSampleBasedCriteriaAsArray() {
             return config.getSampleBasedCriteriaAsArray();
         }
 
@@ -279,7 +279,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private PrivacyCriterion[]                 aCriteria                             = new PrivacyCriterion[0];
 
     /** Criteria. */
-    private SampleBasedPrivacyCriterion[]      bCriteria                             = new SampleBasedPrivacyCriterion[0];
+    private SampleBasedCriterion[]             bCriteria                             = new SampleBasedCriterion[0];
 
     /** A map of weights per attribute. */
     private Map<String, Double>                attributeWeights                      = null;
@@ -813,7 +813,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * Returns all sample-based criteria as an array. Only used internally.
      * @return
      */
-    protected SampleBasedPrivacyCriterion[] getSampleBasedCriteriaAsArray() {
+    protected SampleBasedCriterion[] getSampleBasedCriteriaAsArray() {
         return this.bCriteria;
     }
 
@@ -891,9 +891,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
         this.aCriteria = list.toArray(new PrivacyCriterion[0]);
         
         // Compute array of sample-based criteria
-        this.bCriteria = new SampleBasedPrivacyCriterion[0];
-        if (this.containsCriterion(SampleBasedPrivacyCriterion.class)) {
-            this.bCriteria = this.getCriteria(SampleBasedPrivacyCriterion.class).toArray(new SampleBasedPrivacyCriterion[0]);
+        this.bCriteria = new SampleBasedCriterion[0];
+        if (this.containsCriterion(SampleBasedCriterion.class)) {
+            this.bCriteria = this.getCriteria(SampleBasedCriterion.class).toArray(new SampleBasedCriterion[0]);
         }
 
         // Compute snapshot length
