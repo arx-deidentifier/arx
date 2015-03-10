@@ -17,20 +17,20 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import java.io.IOException;
+
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDialog;
+import org.deidentifier.arx.gui.view.impl.common.ComponentBrowser;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelpConfig.Entry;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTError;
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.LocationAdapter;
-import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -55,19 +55,19 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 public class DialogHelp extends TitleAreaDialog implements IDialog {
 
-    /**  TODO */
+    /** View */
     private String           id;
-    
-    /**  TODO */
-    private Browser          browser;
-    
-    /**  TODO */
+
+    /** View */
+    private ComponentBrowser browser;
+
+    /** View */
     private List             list;
-    
-    /**  TODO */
+
+    /** View */
     private Image            image;
-    
-    /**  TODO */
+
+    /** Model */
     private DialogHelpConfig config = new DialogHelpConfig();
 
     /**
@@ -83,9 +83,6 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#close()
-     */
     @Override
     public boolean close() {
         if (image != null)
@@ -93,28 +90,12 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         return super.close();
     }
 
-    /**
-     * Returns the index of a url.
-     *
-     * @param location
-     * @return
-     */
-    private int getIndexOf(String location) {
-        return config.getIndexForUrl(location);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -132,9 +113,6 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         });
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Control createContents(Composite parent) {
     	Control contents = super.createContents(parent);
@@ -144,9 +122,6 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         return contents;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Control createDialogArea(final Composite parent) {
         
@@ -165,56 +140,68 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         Composite comp = new Composite(parent, SWT.NONE);
         comp.setLayoutData(SWTUtil.createFillGridData());
         comp.setLayout(new FillLayout());
-        
+
         final SashForm form = new SashForm(comp, SWT.HORIZONTAL);
         form.setLayout(new FillLayout());
 
-        list = new List(form, SWT.SINGLE);
-        try {
-            browser = new Browser(form, SWT.BORDER);
-        } catch (SWTError e) {
-            throw new RuntimeException(e);
-        }
-        
+        // List
+        ScrolledComposite scroller = new ScrolledComposite(form, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+        scroller.setLayout(new FillLayout());
+        scroller.setExpandHorizontal(true);
+        scroller.setExpandVertical(true);
+        list = new List(scroller, SWT.SINGLE);
+        scroller.setContent(list);
         for (Entry entry : config.getEntries()) {
             list.add(entry.title);
         }
+        scroller.setBackground(list.getBackground());
+        scroller.setMinSize(list.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         
+        // Browser
+        browser = new ComponentBrowser(form);
+        
+        // Weights
         form.setWeights(new int[]{25,75});
         
+        // Buttons
         back.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
                 browser.back();
+                back.setEnabled(browser.isBackEnabled());
+                forward.setEnabled(browser.isForwardEnabled());
             }
         });
         forward.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
                 browser.forward();
-            }
-        });
-        browser.addLocationListener(new LocationAdapter() {
-            public void changed(LocationEvent event) {
-                Browser browser = (Browser) event.widget;
                 back.setEnabled(browser.isBackEnabled());
                 forward.setEnabled(browser.isForwardEnabled());
-                list.select(getIndexOf(event.location));
             }
         });
         list.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
-                browser.setUrl(getUrlOf(list.getSelectionIndex()));
+                try {
+                    browser.setUrl(getUrlOf(list.getSelectionIndex()));
+                    back.setEnabled(browser.isBackEnabled());
+                    forward.setEnabled(browser.isForwardEnabled());
+                } catch (IOException e) {
+                    // TODO: Handle in some way
+                }
             }
         });
         
         int index = id == null ? 0 : config.getIndexForId(id);
         list.select(index);
-        browser.setUrl(getUrlOf(index));
+        try {
+            browser.setUrl(getUrlOf(index));
+            back.setEnabled(browser.isBackEnabled());
+            forward.setEnabled(browser.isForwardEnabled());
+        } catch (IOException e) {
+            // TODO: Handle in some way
+        }
         return parent;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.TitleAreaDialog#getInitialSize()
-     */
     @Override
     protected Point getInitialSize() {
         return new Point(900,600);
@@ -230,9 +217,6 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         return config.getUrlForIndex(index);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-     */
     @Override
     protected boolean isResizable() {
         return true;
