@@ -31,6 +31,8 @@ import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.RiskBasedThresholdAverageRisk;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
+import org.deidentifier.arx.risk.RiskModelAttributes;
+import org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisk;
 import org.deidentifier.arx.risk.RiskModelEquivalenceClasses;
 import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk;
 import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
@@ -87,10 +89,12 @@ public class Example29 extends Example {
         data.getDefinition().setAttributeType("zipcode", zipcode);
         
         // Perform risk analysis
-        System.out.println(" - Input data");
+        System.out.println("\n - Input data");
         print(data.getHandle());
-        System.out.println(" - Risk anylsis:");
-        analyze(data.getHandle());
+        System.out.println("\n - Quasi-identifiers sorted by risk:");
+        analyzeAttributes(data.getHandle());
+        System.out.println("\n - Risk analysis:");
+        analyzeData(data.getHandle());
         
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -103,10 +107,10 @@ public class Example29 extends Example {
             ARXResult result = anonymizer.anonymize(data, config);
             
             // Perform risk analysis
-            System.out.println(" - Input data");
+            System.out.println("\n - Output data");
             print(result.getOutput());
-            System.out.println(" - Risk anylsis:");
-            analyze(result.getOutput());
+            System.out.println("\n - Risk analysis:");
+            analyzeData(result.getOutput());
             
         } catch (final IllegalArgumentException e) {
             throw new RuntimeException(e);
@@ -119,10 +123,23 @@ public class Example29 extends Example {
      * Perform risk analysis
      * @param handle
      */
-    private static void analyze(DataHandle handle) {
+    private static void analyzeAttributes(DataHandle handle) {
+        ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
+        RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
+        RiskModelAttributes riskmodel = builder.getSampleBasedAttributeRisks();
+        for (QuasiIdentifierRisk risk : riskmodel.getAttributeRisks()) {
+            System.out.println("   * Score: " + risk.getFractionOfUniqueTuples() + ", Identifier: " + risk.getIdentifier());
+        }
+    }
         
-        ARXPopulationModel model = ARXPopulationModel.create(Region.USA);
-        RiskEstimateBuilder builder = handle.getRiskEstimator(model);
+    /**
+     * Perform risk analysis
+     * @param handle
+     */
+    private static void analyzeData(DataHandle handle) {
+        
+        ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
+        RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
         RiskModelEquivalenceClasses classes = builder.getEquivalenceClassModel();
         RiskModelSampleBasedReidentificationRisk sampleReidentifiationRisk = builder.getSampleBasedReidentificationRisk();
         RiskModelSampleBasedUniquenessRisk sampleUniqueness = builder.getSampleBasedUniquenessRisk();
