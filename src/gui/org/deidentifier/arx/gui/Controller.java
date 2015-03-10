@@ -1101,9 +1101,7 @@ public class Controller implements IView {
         if (tempSelectedNode != null) {
             model.setSelectedNode(tempSelectedNode);
             update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
-            final DataHandle handle = model.getResult().getOutput(tempSelectedNode, false);
-            model.setOutput(handle, tempSelectedNode);
-            update(new ModelEvent(this, ModelPart.OUTPUT, handle));
+            this.actionApplySelectedTransformation();
         }
 
         // Update subsets of the model
