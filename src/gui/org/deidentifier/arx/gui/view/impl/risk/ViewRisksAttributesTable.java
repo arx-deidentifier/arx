@@ -34,7 +34,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelAttributes;
-import org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisks;
+import org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisk;
 import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -102,7 +102,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
      * Creates a table item
      * @param risks
      */
-    private void createItem(QuasiIdentifierRisks risks) {
+    private void createItem(QuasiIdentifierRisk risks) {
         final TableItem item = new TableItem(table, SWT.NONE);
         List<String> list = new ArrayList<String>();
         list.addAll(risks.getIdentifier());
@@ -231,7 +231,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
                 items.clear();
 
                 // For all sizes
-                for (QuasiIdentifierRisks item : risks.getAttributeRisks()) {
+                for (QuasiIdentifierRisk item : risks.getAttributeRisks()) {
                     createItem(item);
                 }
 

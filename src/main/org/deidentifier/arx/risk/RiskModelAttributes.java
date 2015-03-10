@@ -24,7 +24,7 @@ public abstract class RiskModelAttributes {
      * Risks associated to a certain quasi-identifier
      * @author Fabian Prasser
      */
-    public final class QuasiIdentifierRisks implements Comparable<QuasiIdentifierRisks> {
+    public final class QuasiIdentifierRisk implements Comparable<QuasiIdentifierRisk> {
 
         /** Field */
         private final Set<String> identifier;
@@ -39,7 +39,7 @@ public abstract class RiskModelAttributes {
          * Creates a new instance
          * @param identifier
          */
-        private QuasiIdentifierRisks(Set<String> identifier) {
+        private QuasiIdentifierRisk(Set<String> identifier) {
             RiskProvider provider = getRiskProvider(identifier, stop);
             this.identifier = identifier;
             this.highestReidentificationRisk = provider.getHighestRisk();
@@ -48,7 +48,7 @@ public abstract class RiskModelAttributes {
         }
 
         @Override
-        public int compareTo(QuasiIdentifierRisks other) {
+        public int compareTo(QuasiIdentifierRisk other) {
             int cmp = Integer.compare(this.identifier.size(), other.identifier.size());
             if (cmp != 0) {
                 return cmp;
@@ -106,7 +106,7 @@ public abstract class RiskModelAttributes {
     /** Stop*/
     private final WrappedBoolean stop;
     /** Result*/
-    private final QuasiIdentifierRisks[] risks;
+    private final QuasiIdentifierRisk[] risks;
     /** Result*/
     private final int numIdentifiers;
     
@@ -121,20 +121,20 @@ public abstract class RiskModelAttributes {
         
         // Compute risk estimates for all elements in the power set
         Set<Set<String>> powerset = getPowerSet(identifiers);
-        Map<Set<String>, QuasiIdentifierRisks> scores = new HashMap<Set<String>, QuasiIdentifierRisks>();
+        Map<Set<String>, QuasiIdentifierRisk> scores = new HashMap<Set<String>, QuasiIdentifierRisk>();
         int done = 0;
         for (Set<String> set : powerset) {
             checkInterrupt();
             if (!set.isEmpty()) {
-                scores.put(set, new QuasiIdentifierRisks(set));
+                scores.put(set, new QuasiIdentifierRisk(set));
                 percentageDone.value = (int)Math.round((double)done++ / (double)(powerset.size() - 1) * 100d);
             }
         }
         
         // Now compute the average of all sets
-        for (Entry<Set<String>, QuasiIdentifierRisks> entry : scores.entrySet()) {
+        for (Entry<Set<String>, QuasiIdentifierRisk> entry : scores.entrySet()) {
             int count = 1;
-            for (Entry<Set<String>, QuasiIdentifierRisks> entry2 : scores.entrySet()) {
+            for (Entry<Set<String>, QuasiIdentifierRisk> entry2 : scores.entrySet()) {
                 checkInterrupt();
                 if (!entry.getKey().equals(entry2.getKey()) && entry2.getKey().containsAll(entry.getKey())) {
                     entry.getValue().averageReidentificationRisk += entry2.getValue().averageReidentificationRisk;
@@ -149,9 +149,9 @@ public abstract class RiskModelAttributes {
         }
 
         // Now create sorted array
-        risks = new QuasiIdentifierRisks[scores.size()];
+        risks = new QuasiIdentifierRisk[scores.size()];
         int idx = 0;
-        for (QuasiIdentifierRisks value : scores.values()) {
+        for (QuasiIdentifierRisk value : scores.values()) {
             risks[idx++] = value;
         }
         Arrays.sort(risks);
@@ -161,7 +161,7 @@ public abstract class RiskModelAttributes {
      * Returns the quasi-identifiers, sorted by risk
      * @return
      */
-    public QuasiIdentifierRisks[] getAttributeRisks() {
+    public QuasiIdentifierRisk[] getAttributeRisks() {
         return this.risks;
     }
 
