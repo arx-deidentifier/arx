@@ -21,6 +21,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.MainSplash;
@@ -53,6 +55,16 @@ public class Main {
      */
     public static void main(final String[] args) {
 
+        try {
+            // Make fall-back toolkit look like the native UI
+            if (!isUnix()) { // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=341799
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        } catch (ClassNotFoundException | InstantiationException | 
+                 IllegalAccessException | UnsupportedLookAndFeelException e) {
+            // Ignore
+        }
+        
         try {
             
             // Display
@@ -147,5 +159,14 @@ public class Main {
             if (splash != null) splash.hide();
             main.getController().actionOpenProject(path);
         }
+    }
+    
+    /**
+     * Determine os
+     * @return
+     */
+    private static boolean isUnix() {
+        String os = System.getProperty("os.name").toLowerCase();
+        return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0 );
     }
 }
