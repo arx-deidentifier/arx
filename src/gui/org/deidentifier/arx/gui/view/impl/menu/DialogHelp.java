@@ -126,12 +126,12 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         Composite compTools = new Composite(parent, SWT.NONE);
         compTools.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         compTools.setLayout(new GridLayout(1, false));
-        ToolBar navBar = new ToolBar(compTools, SWT.NONE);
-        navBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
-        final ToolItem back = new ToolItem(navBar, SWT.PUSH);
+        ToolBar toolbar = new ToolBar(compTools, SWT.NONE);
+        toolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
+        final ToolItem back = new ToolItem(toolbar, SWT.PUSH);
         back.setText("Back");
         back.setEnabled(false);
-        final ToolItem forward = new ToolItem(navBar, SWT.PUSH);
+        final ToolItem forward = new ToolItem(toolbar, SWT.PUSH);
         forward.setText("Forward");
         forward.setEnabled(false);
         
