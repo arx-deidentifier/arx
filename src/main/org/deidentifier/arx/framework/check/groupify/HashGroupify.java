@@ -538,7 +538,23 @@ public class HashGroupify implements IHashGroupify {
             // This is a tuple from the research subset, but the class is not represented by a tuple from the subset.
             // Or this is a tuple from the subset with a representant that is smaller than the current representant of the tuple (which is also from the subset)
             // Reset its representative, which is necessary for rollup / history, because
-            // otherwise subset.contains(tupleID) could potentially return false
+            // otherwise subset.contains(tupleID) could potentially return false.
+            // Moreover, we *must* always represent classes by its minimal representant to ensure that roll-ups and snapshots can be
+            // utilized correctly. This is guaranteed, if there is no research subset, and needs to be enforced explicitly, if there is one.
+            //
+            // Consider the following scenario
+            //
+            // 1. Tuple from G1 (Not in subset)
+            // 2. Tuple from G2 (Not in subset)
+            // 3. Tuple from G2 <-Representant
+            // 4. Tuple from G1 <-Representant
+            //
+            // We assume that G1 and G2 collapse in the next grouping operation.
+            //
+            // If we iterate over the whole dataset and always choose the last element, the group is represented by tuple 4
+            // If we iterate over a snapshot, G1 will be iterated over before G2 (although it has the larger representant), resetting the representative index 3
+            //
+            // To prevent this, we always choose the smallest index:
             entry.representant = (count > 0 && (entry.count == count || entry.representant < representant)) ? representant : entry.representant;
         }
 
