@@ -28,13 +28,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.LocationAdapter;
 import org.eclipse.swt.browser.LocationEvent;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -140,29 +137,18 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         
         Composite comp = new Composite(parent, SWT.NONE);
         comp.setLayoutData(SWTUtil.createFillGridData());
-        comp.setLayout(new FillLayout());
-
-        final SashForm form = new SashForm(comp, SWT.HORIZONTAL);
-        form.setLayout(new FillLayout());
+        comp.setLayout(SWTUtil.createGridLayout(2));
 
         // List
-        ScrolledComposite scroller = new ScrolledComposite(form, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-        scroller.setLayout(new FillLayout());
-        scroller.setExpandHorizontal(true);
-        scroller.setExpandVertical(true);
-        list = new List(scroller, SWT.SINGLE);
-        scroller.setContent(list);
+        list = new List(comp, SWT.SINGLE | SWT.V_SCROLL);
         for (Entry entry : config.getEntries()) {
             list.add(entry.title);
         }
-        scroller.setBackground(list.getBackground());
-        scroller.setMinSize(list.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        list.setLayoutData(SWTUtil.createFillVerticallyGridData());
         
         // Browser
-        browser = new HTMLBrowser(form, SWT.BORDER);
-        
-        // Weights
-        form.setWeights(new int[]{25,75});
+        browser = new HTMLBrowser(comp, SWT.BORDER);
+        browser.setLayoutData(SWTUtil.createFillGridData());
 
         back.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
