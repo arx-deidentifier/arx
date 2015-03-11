@@ -512,11 +512,6 @@ public class HashGroupify implements IHashGroupify {
      */
     private final HashGroupifyEntry addInternal(final int[] key, final int hash, final int representant, int count, final int pcount) {
 
-        // If we enforce d-presence and the tuple is not contained in the research subset: set count to zero
-        if (subset != null && !subset.contains(representant)) {
-            count = 0;
-        }
-
         // Find or create entry
         int index = hash & (buckets.length - 1);
         HashGroupifyEntry entry = findEntry(key, index, hash);
@@ -527,22 +522,28 @@ public class HashGroupify implements IHashGroupify {
             }
             entry = createEntry(key, index, hash, representant);
         }
-        
-        // Track size
+
+        // If we enforce d-presence and the tuple is not contained in the research subset: set its count to zero
+        count = (subset != null && !subset.contains(representant)) ? 0 : count;
+
+        // Track size: private table for d-presence, overall table, else
         entry.count += count;
 
         // Indirectly check if we enforce d-presence
         if (subset != null) {
+            
+            // Increase size of tuples from public table
             entry.pcount += pcount;
-            if (count > 0 && entry.count == count) {
-                // This is a tuple from the research subset, but the class is not represented by a tuple from the subset.
-                // Reset its representative, which is necessary for rollup / history, because
-                // otherwise subset.contains(tupleID) could potentially return false
-                entry.representant = representant;
-            }
+            
+            // This is a tuple from the research subset, but the class is not represented by a tuple from the subset.
+            // Or this is a tuple from the subset with a representant that is smaller than the current representant of the tuple (which is also from the subset)
+            // Reset its representative, which is necessary for rollup / history, because
+            // otherwise subset.contains(tupleID) could potentially return false
+            entry.representant = (count > 0 && (entry.count == count || entry.representant < representant)) ? representant : entry.representant;
         }
 
         // Compute current total number of outliers, if k-anonymity is contained in the set of criteria
+        // TODO: Replace with conditional moves
         if (entry.count >= k) {
             if (!entry.isNotOutlier) {
                 entry.isNotOutlier = true;
@@ -552,12 +553,6 @@ public class HashGroupify implements IHashGroupify {
             currentOutliers += count;
         }
         
-        // Make sure that we represent classes with the minimal representative index
-        // to ensure consistent suppression in different transformations for class-based criteria
-        if (subset == null || count > 0) {
-            entry.representant = entry.representant < representant ? entry.representant : representant;
-        }
-
         // Return
         return entry;
     }
