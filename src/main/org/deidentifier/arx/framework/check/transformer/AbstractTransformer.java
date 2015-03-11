@@ -260,154 +260,152 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
          */
         public abstract void callSnapshot(final int[] outtuple, final int[] snapshot, final int i);
     }
-
+    
     /** The hash groupify. */
-    private IHashGroupify                      groupify;
-
+    private IHashGroupify                     groupify;
+    
     /** The bucket. */
-    protected int                              bucket;
-
+    protected int                             bucket;
+    
     /** The buffer. */
-    protected int[][]                          buffer;
-
+    protected int[][]                         buffer;
+    
     /** The column index array. */
-    protected final int[]                      columnIndexArray;
-
+    protected final int[]                     columnIndexArray;
+    
     /** The column map array. */
-    protected final int[][][]                  columnMapArray;
-
+    protected final int[][][]                 columnMapArray;
+    
     /** The mode of operation *. */
-    protected final ARXConfigurationInternal config;
-
+    protected final ARXConfigurationInternal  config;
+    
     /** The data. */
-    protected final int[][]                    data;
-
+    protected final int[][]                   data;
+    
     /** The delegate. */
-    protected final IGroupify                  delegate;
-
+    protected final IGroupify                 delegate;
+    
     /** The dictionary for the snapshot compression *. */
-    protected final IntArrayDictionary         dictionarySensFreq;
-
+    protected final IntArrayDictionary        dictionarySensFreq;
+    
     /** The dictionary for the snapshot compression *. */
-    protected final IntArrayDictionary         dictionarySensValue;
-
+    protected final IntArrayDictionary        dictionarySensValue;
+    
     /** The dimensions. */
-    protected final int                        dimensions;
-
+    protected final int                       dimensions;
+    
     /** The element. */
-    protected HashGroupifyEntry                element;
+    protected HashGroupifyEntry               element;
     /** The groupify array. */
-    protected HashGroupifyEntry[]              groupifyArray;
+    protected HashGroupifyEntry[]             groupifyArray;
     /** The hierarchies. */
-    protected final GeneralizationHierarchy[]  hierarchies;
+    protected final GeneralizationHierarchy[] hierarchies;
     /** The idindex14. */
-    protected int[][]                         idindex0, idindex1, idindex2, idindex3, idindex4, idindex5, 
+    protected int[][]                         idindex0, idindex1, idindex2, idindex3, idindex4, idindex5,
                                               idindex6, idindex7, idindex8, idindex9, idindex10, idindex11, idindex12, idindex13, idindex14;
     /** The index14. */
-    protected int                             index0, index1, index2, index3, index4, index5, index6, index7, 
+    protected int                             index0, index1, index2, index3, index4, index5, index6, index7,
                                               index8, index9, index10, index11, index12, index13, index14;
     /** The intuple. */
-    protected int[]                            intuple;
+    protected int[]                           intuple;
     
     /** The generalization hierarchies. */
-    protected int[][][]                        map;
-    /** The num elements. */
-    protected int                              numElements;
+    protected int[][][]                       map;
     /** The outindices. */
-    protected int                              outindex0;
+    protected int                             outindex0;
     /** The outindices. */
-    protected int                              outindex1;
+    protected int                             outindex1;
     /** The outindices. */
-    protected int                              outindex10;
+    protected int                             outindex10;
     /** The outindices. */
-    protected int                              outindex11;
+    protected int                             outindex11;
     /** The outindices. */
-    protected int                              outindex12;
+    protected int                             outindex12;
     /** The outindices. */
-    protected int                              outindex13;
+    protected int                             outindex13;
     /** The outindices. */
-    protected int                              outindex14;
+    protected int                             outindex14;
     /** The outindices. */
-    protected int                              outindex2;
+    protected int                             outindex2;
     /** The outindices. */
-    protected int                              outindex3;
+    protected int                             outindex3;
     /** The outindices. */
-    protected int                              outindex4;
+    protected int                             outindex4;
     /** The outindices. */
-    protected int                              outindex5;
+    protected int                             outindex5;
     /** The outindices. */
-    protected int                              outindex6;
+    protected int                             outindex6;
     /** The outindices. */
-    protected int                              outindex7;
+    protected int                             outindex7;
     /** The outindices. */
-    protected int                              outindex8;
+    protected int                             outindex8;
     /** The outindices. */
-    protected int                              outindex9;
+    protected int                             outindex9;
     /** The outtuple. */
-    protected int[]                            outtuple;
+    protected int[]                           outtuple;
     /** The sesitive values. */
-    protected final int[][]                    sensitiveValues;
+    protected final int[][]                   sensitiveValues;
     /** The snapshot. */
-    protected int[]                            snapshot;
+    protected int[]                           snapshot;
     
     /** The size of one snapshopt entry *. */
-    protected final int                        ssStepWidth;
+    protected final int                       ssStepWidth;
     /** The start index. */
-    protected int                              startIndex;
+    protected int                             startIndex;
     
     /** The stateindices. */
-    protected int                              generalizationindex0;
+    protected int                             generalizationindex0;
     
     /** The stateindices. */
-    protected int                              generalizationindex1;
+    protected int                             generalizationindex1;
     
     /** The stateindices. */
-    protected int                              generalizationindex10;
+    protected int                             generalizationindex10;
     
     /** The stateindices. */
-    protected int                              generalizationindex11;
+    protected int                             generalizationindex11;
     
     /** The stateindices. */
-    protected int                              generalizationindex12;
+    protected int                             generalizationindex12;
     
     /** The stateindices. */
-    protected int                              generalizationindex13;
+    protected int                             generalizationindex13;
     
     /** The stateindices. */
-    protected int                              generalizationindex14;
+    protected int                             generalizationindex14;
     
     /** The stateindices. */
-    protected int                              generalizationindex2;
+    protected int                             generalizationindex2;
     
     /** The stateindices. */
-    protected int                              generalizationindex3;
+    protected int                             generalizationindex3;
     
     /** The stateindices. */
-    protected int                              generalizationindex4;
+    protected int                             generalizationindex4;
     
     /** The stateindices. */
-    protected int                              generalizationindex5;
+    protected int                             generalizationindex5;
     
     /** The stateindices. */
-    protected int                              generalizationindex6;
+    protected int                             generalizationindex6;
     
     /** The stateindices. */
-    protected int                              generalizationindex7;
+    protected int                             generalizationindex7;
     
     /** The stateindices. */
-    protected int                              generalizationindex8;
+    protected int                             generalizationindex8;
     
     /** The stateindices. */
-    protected int                              generalizationindex9;
+    protected int                             generalizationindex9;
     /** The state index array. */
-    protected final int[]                      generalizationIndexArray;
-
+    protected final int[]                     generalizationIndexArray;
+    
     /** The states. */
-    protected int[]                            generalization;
+    protected int[]                           generalization;
     /** The stop index. */
-    protected int                              stopIndex;
+    protected int                             stopIndex;
     /** The transition. */
-    protected TransitionType                   transition;
+    protected TransitionType                  transition;
 
     /**
      * Instantiates a new abstract transformer.
@@ -541,9 +539,8 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
         this.stopIndex = stopIndex;
         this.element = element;
         this.bucket = bucket;
-        numElements = stopIndex - startIndex;
 
-        generalization = state;
+        this.generalization = state;
         this.transition = transition;
 
         int index = 0;
