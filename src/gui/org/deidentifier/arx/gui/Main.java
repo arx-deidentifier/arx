@@ -92,6 +92,8 @@ public class Main {
             // Show window
             main.show();
             
+            new Update(main.getShell());
+            
             // Main event loop
             while (!main.isDisposed()) {
                 try {
