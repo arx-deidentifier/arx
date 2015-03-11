@@ -17,18 +17,17 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
-import java.io.IOException;
-
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDialog;
-import org.deidentifier.arx.gui.view.impl.common.ComponentBrowser;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelpConfig.Entry;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.LocationAdapter;
+import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -48,6 +47,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+import de.linearbits.swt.simplebrowser.HTMLBrowser;
+
 /**
  * A help dialog.
  *
@@ -59,7 +60,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
     private String           id;
 
     /** View */
-    private ComponentBrowser browser;
+    private HTMLBrowser      browser;
 
     /** View */
     private List             list;
@@ -158,48 +159,48 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         scroller.setMinSize(list.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         
         // Browser
-        browser = new ComponentBrowser(form);
+        browser = new HTMLBrowser(form, SWT.BORDER);
         
         // Weights
         form.setWeights(new int[]{25,75});
-        
-        // Buttons
+
         back.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                browser.back();
-                back.setEnabled(browser.isBackEnabled());
-                forward.setEnabled(browser.isForwardEnabled());
+                try {browser.back();} catch (Exception e){}
             }
         });
         forward.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                browser.forward();
+                try {browser.forward();} catch (Exception e){}
+            }
+        });
+        browser.addLocationListener(new LocationAdapter() {
+            public void changed(LocationEvent event) {
                 back.setEnabled(browser.isBackEnabled());
                 forward.setEnabled(browser.isForwardEnabled());
+                try{list.select(getIndexOf(event.location));} catch (Exception e){}
             }
         });
         list.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
-                try {
-                    browser.setUrl(getUrlOf(list.getSelectionIndex()));
-                    back.setEnabled(browser.isBackEnabled());
-                    forward.setEnabled(browser.isForwardEnabled());
-                } catch (IOException e) {
-                    // TODO: Handle in some way
-                }
+                try{browser.setUrl(getUrlOf(list.getSelectionIndex()));} catch (Exception e){}
             }
         });
         
         int index = id == null ? 0 : config.getIndexForId(id);
         list.select(index);
-        try {
-            browser.setUrl(getUrlOf(index));
-            back.setEnabled(browser.isBackEnabled());
-            forward.setEnabled(browser.isForwardEnabled());
-        } catch (IOException e) {
-            // TODO: Handle in some way
-        }
+        try{browser.setUrl(getUrlOf(index));} catch (Exception e){}
         return parent;
+    }
+
+    /**
+     * Returns the index of a url.
+     *
+     * @param location
+     * @return
+     */
+    private int getIndexOf(String location) {
+        return config.getIndexForUrl(location);
     }
     
     @Override

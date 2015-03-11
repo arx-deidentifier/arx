@@ -52,6 +52,7 @@
             <filename name="**/swtrangeslider-0.0.1.jar" />
             <filename name="**/swttiles-0.0.1.jar" />
             <filename name="**/swtpreferences-0.0.1.jar" />
+        	<filename name="**/swtsimplebrowser-0.0.1.jar" />
         </or>
     </fileset>
 
