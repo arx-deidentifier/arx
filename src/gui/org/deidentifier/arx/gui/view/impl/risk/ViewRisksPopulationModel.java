@@ -59,10 +59,8 @@ public class ViewRisksPopulationModel implements IView {
     
     /** View */
     private final Composite  root;
-    
     /** View */
     private DynamicTable     table;
-    
     /** View */
     private Text             textSampleFraction;
     /** View */
