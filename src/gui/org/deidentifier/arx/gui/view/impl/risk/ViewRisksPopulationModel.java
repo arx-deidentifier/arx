@@ -38,9 +38,14 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
+import de.linearbits.swt.table.DynamicTable;
+import de.linearbits.swt.table.DynamicTableColumn;
 
 /**
  * This view displays the population settings
@@ -51,11 +56,13 @@ public class ViewRisksPopulationModel implements IView {
 
     /** Controller */
     private final Controller controller;
-
+    
     /** View */
     private final Composite  root;
+    
     /** View */
-    private List             list;
+    private DynamicTable     table;
+    
     /** View */
     private Text             textSampleFraction;
     /** View */
@@ -64,7 +71,7 @@ public class ViewRisksPopulationModel implements IView {
     private DecimalFormat    format = new DecimalFormat("0.########################################");
     /** View */
     private Button           buttonUse;
-
+    
     /** Model */
     private Model            model;
     /** Model */
@@ -114,7 +121,7 @@ public class ViewRisksPopulationModel implements IView {
      */
     @Override
     public void reset() {
-        list.select(0);
+        table.select(0);
         textSampleFraction.setText("");
         textPopulationSize.setText("");
         SWTUtil.disable(root);
@@ -161,13 +168,20 @@ public class ViewRisksPopulationModel implements IView {
         Label lbl1 = new Label(parent, SWT.NONE);
         lbl1.setText("Region:");
         lbl1.setLayoutData(GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.TOP).create());
+        table = new DynamicTable(root, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.READ_ONLY);
+        table.setHeaderVisible(false);
+        table.setLinesVisible(true);
+        table.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth("100%"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(""); //$NON-NLS-1$
+        c.setResizable(false);
         
-        list = new List(parent, SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         for (Region region : Region.values()) {
-            list.add(region.getName());
+            final TableItem item = new TableItem(table, SWT.NONE);
+            item.setText(region.getName());
         }
-        list.setLayoutData(new GridData(GridData.FILL_BOTH));
-        list.setEnabled(false);
         
         Label lbl2 = new Label(parent, SWT.NONE);
         lbl2.setText("Sampling fraction:");
@@ -185,24 +199,19 @@ public class ViewRisksPopulationModel implements IView {
         textPopulationSize.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         textPopulationSize.setEditable(false);
         
-        list.addSelectionListener(new SelectionAdapter(){
-            public void widgetSelected(SelectionEvent arg0) {
-                
-                if (model == null || model.getInputConfig() == null ||
-                    model.getInputConfig().getInput() == null) {
-                    return;
-                }
-                
-                ARXPopulationModel popmodel = model.getInputPopulationModel();
-                if (output && isOutputPopulationModelAvailable()) {
-                    popmodel = model.getOutputPopulationModel();
-                }
-
-                for (int i=0; i<list.getItemCount(); i++) {
-                    if (list.getItem(i).equals(popmodel.getRegion().getName())) {
-                        list.setSelection(i);
-                        break;
-                    }
+        table.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                event.detail = SWT.NONE;
+                event.type = SWT.None;
+                event.doit = false;
+                try
+                {
+                    table.setRedraw(false);
+                    table.deselectAll();
+                } finally {
+                    table.setRedraw(true);
+                    table.getParent().setFocus();
                 }
             }
         });
@@ -250,12 +259,15 @@ public class ViewRisksPopulationModel implements IView {
                 popmodel = model.getOutputPopulationModel();
             }
             
-            for (int i=0; i<list.getItemCount(); i++) {
-                if (list.getItem(i).equals(popmodel.getRegion().getName())) {
-                    list.setSelection(i);
-                    break;
+            table.deselectAll();
+            for (TableItem item : table.getItems()) {
+                if (item.getText().equals(popmodel.getRegion().getName())) {
+                    item.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+                } else {
+                    item.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
                 }
             }
+            table.getParent().setFocus();
             DataHandle handle = model.getInputConfig().getInput().getHandle();
             textSampleFraction.setText(format.format(popmodel.getSamplingFraction(handle)));
             textSampleFraction.setEnabled(true);
