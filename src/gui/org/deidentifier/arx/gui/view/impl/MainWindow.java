@@ -451,9 +451,8 @@ public class MainWindow implements IView {
      */
     public void showHelpDialog(String id) {
     	try {
-    		final DialogHelp dialog = new DialogHelp(shell, controller, id);
-            dialog.create();
-            dialog.open();	
+    	    DialogHelp dialog = new DialogHelp(shell, controller, id);
+    	    dialog.open();
     	} catch (Exception e) {
     		this.showErrorDialog("Browser cannot be launched", e);
     	}
