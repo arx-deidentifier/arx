@@ -105,7 +105,7 @@ public class ViewCriteriaList implements IView {
         this.symbolR = controller.getResources().getImage("symbol_r.png"); //$NON-NLS-1$
         
         this.root = parent;
-        this.table = SWTUtil.createDynamicTable(root, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        this.table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
         this.table.setHeaderVisible(true);
         this.table.setLinesVisible(true);
         GridData gd = SWTUtil.createFillHorizontallyGridData();

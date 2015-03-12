@@ -120,7 +120,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
 
-        table = SWTUtil.createDynamicTable(root, SWT.SINGLE | SWT.BORDER |
+        table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.BORDER |
                                        SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);

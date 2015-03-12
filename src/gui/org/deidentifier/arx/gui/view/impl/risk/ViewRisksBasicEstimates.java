@@ -131,7 +131,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         
         format  = new DecimalFormat("##0.00000");
         
-        table = SWTUtil.createDynamicTable(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());

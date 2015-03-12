@@ -239,7 +239,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
 
         parent.setLayout(SWTUtil.createGridLayout(1));
 
-        final DynamicTable table = SWTUtil.createDynamicTable(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        final DynamicTable table = SWTUtil.createTableDynamic(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         final GridData d = SWTUtil.createFillGridData();
         d.heightHint = 100;

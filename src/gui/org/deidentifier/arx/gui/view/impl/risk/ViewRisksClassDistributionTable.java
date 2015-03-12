@@ -93,7 +93,7 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
         
-        table = SWTUtil.createDynamicTable(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());

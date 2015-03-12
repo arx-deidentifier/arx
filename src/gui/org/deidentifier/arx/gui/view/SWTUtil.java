@@ -94,16 +94,6 @@ public class SWTUtil {
     }
     
     /**
-     * Returns a dynamic table. Implements hacks for fixing OSX bugs.
-     * @param parent
-     * @param style
-     * @return
-     */
-    public static DynamicTable createDynamicTable(Composite parent, int style) {
-        return new DynamicTable(parent, getTableStyle(style));
-    }
-
-    /**
      * Creates grid data.
      *
      * @return
@@ -268,7 +258,6 @@ public class SWTUtil {
         return d;
     }
 
-
     /**
      * Creates grid data.
      *
@@ -282,6 +271,7 @@ public class SWTUtil {
         d.horizontalSpan = i;
         return d;
     }
+
 
     /**
      * Creates grid data.
@@ -305,6 +295,16 @@ public class SWTUtil {
      */
     public static Table createTable(Composite parent, int style) {
         return new Table(parent, getTableStyle(style));
+    }
+
+    /**
+     * Returns a dynamic table. Implements hacks for fixing OSX bugs.
+     * @param parent
+     * @param style
+     * @return
+     */
+    public static DynamicTable createTableDynamic(Composite parent, int style) {
+        return new DynamicTable(parent, getTableStyle(style));
     }
 
     /**

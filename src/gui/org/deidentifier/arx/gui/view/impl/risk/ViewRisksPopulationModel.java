@@ -166,7 +166,7 @@ public class ViewRisksPopulationModel implements IView {
         Label lbl1 = new Label(parent, SWT.NONE);
         lbl1.setText("Region:");
         lbl1.setLayoutData(GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.TOP).create());
-        table = SWTUtil.createDynamicTable(root, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.READ_ONLY);
+        table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.READ_ONLY);
         table.setHeaderVisible(false);
         table.setLinesVisible(true);
         table.setLayoutData(new GridData(GridData.FILL_BOTH));
