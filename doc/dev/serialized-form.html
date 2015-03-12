@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>Serialized Form (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="stylesheet.css" title="Style">
@@ -94,7 +94,7 @@
 </li>
 <li class="blockList">
 <h4>bCriteria</h4>
-<pre><a href="org/deidentifier/arx/criteria/SampleBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedPrivacyCriterion</a>[] bCriteria</pre>
+<pre><a href="org/deidentifier/arx/criteria/SampleBasedCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedCriterion</a>[] bCriteria</pre>
 <div class="block">Criteria.</div>
 </li>
 <li class="blockList">
@@ -1174,6 +1174,15 @@
 <li class="blockList">
 <h2 title="Package">Package&nbsp;org.deidentifier.arx.criteria</h2>
 <ul class="blockList">
+<li class="blockList"><a name="org.deidentifier.arx.criteria.AverageReidentificationRisk">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/AverageReidentificationRisk.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.AverageReidentificationRisk</a> extends <a href="org/deidentifier/arx/criteria/RiskBasedCriterion.html" title="class in org.deidentifier.arx.criteria">RiskBasedCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-2953252206954936045L</dd>
+</dl>
+</li>
 <li class="blockList"><a name="org.deidentifier.arx.criteria.DistinctLDiversity">
 <!--   -->
 </a>
@@ -1397,6 +1406,39 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.PopulationUniqueness">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/PopulationUniqueness.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.PopulationUniqueness</a> extends <a href="org/deidentifier/arx/criteria/RiskBasedCriterion.html" title="class in org.deidentifier.arx.criteria">RiskBasedCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>618039085843721351L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>statisticalModel</h4>
+<pre><a href="org/deidentifier/arx/risk/RiskModelPopulationUniqueness.PopulationUniquenessModel.html" title="enum in org.deidentifier.arx.risk">RiskModelPopulationUniqueness.PopulationUniquenessModel</a> statisticalModel</pre>
+<div class="block">The statistical model</div>
+</li>
+<li class="blockList">
+<h4>populationModel</h4>
+<pre><a href="org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a> populationModel</pre>
+<div class="block">The population model</div>
+</li>
+<li class="blockListLast">
+<h4>solverConfig</h4>
+<pre><a href="org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a> solverConfig</pre>
+<div class="block">The solver config</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="org.deidentifier.arx.criteria.PrivacyCriterion">
 <!--   -->
 </a>
@@ -1443,10 +1485,10 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="org.deidentifier.arx.criteria.RiskBasedPrivacyCriterion">
+<li class="blockList"><a name="org.deidentifier.arx.criteria.RiskBasedCriterion">
 <!--   -->
 </a>
-<h3>Class <a href="org/deidentifier/arx/criteria/RiskBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.RiskBasedPrivacyCriterion</a> extends <a href="org/deidentifier/arx/criteria/SampleBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedPrivacyCriterion</a> implements Serializable</h3>
+<h3>Class <a href="org/deidentifier/arx/criteria/RiskBasedCriterion.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.RiskBasedCriterion</a> extends <a href="org/deidentifier/arx/criteria/SampleBasedCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedCriterion</a> implements Serializable</h3>
 <dl class="nameValue">
 <dt>serialVersionUID:</dt>
 <dd>-2711630526630937284L</dd>
@@ -1466,64 +1508,22 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="org.deidentifier.arx.criteria.RiskBasedThresholdAverageRisk">
+<li class="blockList"><a name="org.deidentifier.arx.criteria.SampleBasedCriterion">
 <!--   -->
 </a>
-<h3>Class <a href="org/deidentifier/arx/criteria/RiskBasedThresholdAverageRisk.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.RiskBasedThresholdAverageRisk</a> extends <a href="org/deidentifier/arx/criteria/RiskBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">RiskBasedPrivacyCriterion</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-2953252206954936045L</dd>
-</dl>
-</li>
-<li class="blockList"><a name="org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques">
-<!--   -->
-</a>
-<h3>Class <a href="org/deidentifier/arx/criteria/RiskBasedThresholdPopulationUniques.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.RiskBasedThresholdPopulationUniques</a> extends <a href="org/deidentifier/arx/criteria/RiskBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">RiskBasedPrivacyCriterion</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>618039085843721351L</dd>
-</dl>
-<ul class="blockList">
-<li class="blockList"><a name="serializedForm">
-<!--   -->
-</a>
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>statisticalModel</h4>
-<pre><a href="org/deidentifier/arx/risk/RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel.html" title="enum in org.deidentifier.arx.risk">RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel</a> statisticalModel</pre>
-<div class="block">The statistical model</div>
-</li>
-<li class="blockList">
-<h4>populationModel</h4>
-<pre><a href="org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a> populationModel</pre>
-<div class="block">The population model</div>
-</li>
-<li class="blockListLast">
-<h4>solverConfig</h4>
-<pre><a href="org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a> solverConfig</pre>
-<div class="block">The solver config</div>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="org.deidentifier.arx.criteria.RiskBasedThresholdSampleUniques">
-<!--   -->
-</a>
-<h3>Class <a href="org/deidentifier/arx/criteria/RiskBasedThresholdSampleUniques.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.RiskBasedThresholdSampleUniques</a> extends <a href="org/deidentifier/arx/criteria/RiskBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">RiskBasedPrivacyCriterion</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-4528395062333281525L</dd>
-</dl>
-</li>
-<li class="blockList"><a name="org.deidentifier.arx.criteria.SampleBasedPrivacyCriterion">
-<!--   -->
-</a>
-<h3>Class <a href="org/deidentifier/arx/criteria/SampleBasedPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.SampleBasedPrivacyCriterion</a> extends <a href="org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a> implements Serializable</h3>
+<h3>Class <a href="org/deidentifier/arx/criteria/SampleBasedCriterion.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.SampleBasedCriterion</a> extends <a href="org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a> implements Serializable</h3>
 <dl class="nameValue">
 <dt>serialVersionUID:</dt>
 <dd>5687067920181297803L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.SampleUniqueness">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/SampleUniqueness.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.SampleUniqueness</a> extends <a href="org/deidentifier/arx/criteria/RiskBasedCriterion.html" title="class in org.deidentifier.arx.criteria">RiskBasedCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-4528395062333281525L</dd>
 </dl>
 </li>
 <li class="blockList"><a name="org.deidentifier.arx.criteria.TCloseness">

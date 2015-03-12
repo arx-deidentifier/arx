@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>Uses of Class org.deidentifier.arx.framework.data.DataManager (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
@@ -82,7 +82,8 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="#org.deidentifier.arx.criteria">org.deidentifier.arx.criteria</a></td>
 <td class="colLast">
-<div class="block">This package implements different variants of k-anonymity, l-diversity, t-closeness and d-presence.</div>
+<div class="block">This package implements different variants of class-based privacy criteria,
+ such as k-anonymity, l-diversity, t-closeness and d-presence.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -167,7 +168,17 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">EqualDistanceTCloseness.</span><code><strong><a href="../../../../../../org/deidentifier/arx/criteria/EqualDistanceTCloseness.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">PrivacyCriterion.</span><code><strong><a href="../../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>
+<div class="block">Override this to initialize the criterion.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">Inclusion.</span><code><strong><a href="../../../../../../org/deidentifier/arx/criteria/Inclusion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">HierarchicalDistanceTCloseness.</span><code><strong><a href="../../../../../../org/deidentifier/arx/criteria/HierarchicalDistanceTCloseness.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -175,17 +186,7 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">Inclusion.</span><code><strong><a href="../../../../../../org/deidentifier/arx/criteria/Inclusion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">HierarchicalDistanceTCloseness.</span><code><strong><a href="../../../../../../org/deidentifier/arx/criteria/HierarchicalDistanceTCloseness.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">PrivacyCriterion.</span><code><strong><a href="../../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>
-<div class="block">Override this to initialize the criterion.</div>
-</td>
+<td class="colLast"><span class="strong">EqualDistanceTCloseness.</span><code><strong><a href="../../../../../../org/deidentifier/arx/criteria/EqualDistanceTCloseness.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>

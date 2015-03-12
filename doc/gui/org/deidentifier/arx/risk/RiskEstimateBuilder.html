@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>RiskEstimateBuilder (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -115,16 +115,16 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.risk.RiskModelEquivalenceClasses)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.risk.RiskModelHistogram)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
                    <a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
-                   <a href="../../../../org/deidentifier/arx/risk/RiskModelEquivalenceClasses.html" title="class in org.deidentifier.arx.risk">RiskModelEquivalenceClasses</a>&nbsp;classes)</code>
+                   <a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;classes)</code>
 <div class="block">Creates a new instance</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.risk.RiskModelEquivalenceClasses,%20org.deidentifier.arx.ARXSolverConfiguration)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.risk.RiskModelHistogram,%20org.deidentifier.arx.ARXSolverConfiguration)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
                    <a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
-                   <a href="../../../../org/deidentifier/arx/risk/RiskModelEquivalenceClasses.html" title="class in org.deidentifier.arx.risk">RiskModelEquivalenceClasses</a>&nbsp;classes,
+                   <a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;classes,
                    <a href="../../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&nbsp;config)</code>
 <div class="block">Creates a new instance</div>
 </td>
@@ -160,7 +160,7 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelEquivalenceClasses.html" title="class in org.deidentifier.arx.risk">RiskModelEquivalenceClasses</a></code></td>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getEquivalenceClassModel()">getEquivalenceClassModel</a></strong>()</code>
 <div class="block">Returns a model of the equivalence classes in this data set</div>
 </td>
@@ -174,23 +174,25 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getPopulationBasedAttributeRisks()">getPopulationBasedAttributeRisks</a></strong>()</code>
-<div class="block">Returns a class providing access to population-based risk estimates about the attributes.</div>
+<div class="block">Returns a class providing access to population-based risk estimates about
+ the attributes.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getPopulationBasedAttributeRisks(org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel)">getPopulationBasedAttributeRisks</a></strong>(<a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel.html" title="enum in org.deidentifier.arx.risk">RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel</a>&nbsp;model)</code>
-<div class="block">Returns a class providing access to population-based risk estimates about the attributes.</div>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getPopulationBasedAttributeRisks(org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel)">getPopulationBasedAttributeRisks</a></strong>(<a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.PopulationUniquenessModel.html" title="enum in org.deidentifier.arx.risk">RiskModelPopulationUniqueness.PopulationUniquenessModel</a>&nbsp;model)</code>
+<div class="block">Returns a class providing access to population-based risk estimates about
+ the attributes.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationBasedUniquenessRisk.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationBasedUniquenessRisk</a></code></td>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationUniqueness</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getPopulationBasedUniquenessRisk()">getPopulationBasedUniquenessRisk</a></strong>()</code>
 <div class="block">Returns a class providing population-based uniqueness estimates</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationBasedUniquenessRisk.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationBasedUniquenessRisk</a></code></td>
+<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationUniqueness</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getPopulationBasedUniquenessRiskInterruptible()">getPopulationBasedUniquenessRiskInterruptible</a></strong>()</code>
 <div class="block">Returns a class providing population-based uniqueness estimates</div>
 </td>
@@ -198,17 +200,18 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getSampleBasedAttributeRisks()">getSampleBasedAttributeRisks</a></strong>()</code>
-<div class="block">Returns a class providing access to sample-based risk estimates about the attributes</div>
+<div class="block">Returns a class providing access to sample-based risk estimates about the
+ attributes</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleBasedReidentificationRisk.html" title="class in org.deidentifier.arx.risk">RiskModelSampleBasedReidentificationRisk</a></code></td>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html" title="class in org.deidentifier.arx.risk">RiskModelSampleRisks</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getSampleBasedReidentificationRisk()">getSampleBasedReidentificationRisk</a></strong>()</code>
 <div class="block">Returns a class providing sample-based re-identification risk estimates</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleBasedUniquenessRisk.html" title="class in org.deidentifier.arx.risk">RiskModelSampleBasedUniquenessRisk</a></code></td>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelSampleUniqueness</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getSampleBasedUniquenessRisk()">getSampleBasedUniquenessRisk</a></strong>()</code>
 <div class="block">Returns a class providing sample-based uniqueness estimates</div>
 </td>
@@ -235,7 +238,7 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel, org.deidentifier.arx.DataHandle, org.deidentifier.arx.risk.RiskModelEquivalenceClasses)">
+<a name="RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel, org.deidentifier.arx.DataHandle, org.deidentifier.arx.risk.RiskModelHistogram)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -243,12 +246,12 @@ extends java.lang.Object</pre>
 <h4>RiskEstimateBuilder</h4>
 <pre>public&nbsp;RiskEstimateBuilder(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
                    <a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
-                   <a href="../../../../org/deidentifier/arx/risk/RiskModelEquivalenceClasses.html" title="class in org.deidentifier.arx.risk">RiskModelEquivalenceClasses</a>&nbsp;classes)</pre>
+                   <a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;classes)</pre>
 <div class="block">Creates a new instance</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>population</code> - </dd><dd><code>handle</code> - </dd><dd><code>classes</code> - </dd></dl>
 </li>
 </ul>
-<a name="RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel, org.deidentifier.arx.DataHandle, org.deidentifier.arx.risk.RiskModelEquivalenceClasses, org.deidentifier.arx.ARXSolverConfiguration)">
+<a name="RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel, org.deidentifier.arx.DataHandle, org.deidentifier.arx.risk.RiskModelHistogram, org.deidentifier.arx.ARXSolverConfiguration)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -256,7 +259,7 @@ extends java.lang.Object</pre>
 <h4>RiskEstimateBuilder</h4>
 <pre>public&nbsp;RiskEstimateBuilder(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
                    <a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
-                   <a href="../../../../org/deidentifier/arx/risk/RiskModelEquivalenceClasses.html" title="class in org.deidentifier.arx.risk">RiskModelEquivalenceClasses</a>&nbsp;classes,
+                   <a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;classes,
                    <a href="../../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&nbsp;config)</pre>
 <div class="block">Creates a new instance</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>population</code> - </dd><dd><code>handle</code> - </dd><dd><code>classes</code> - </dd><dd><code>config</code> - </dd></dl>
@@ -303,7 +306,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getEquivalenceClassModel</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelEquivalenceClasses.html" title="class in org.deidentifier.arx.risk">RiskModelEquivalenceClasses</a>&nbsp;getEquivalenceClassModel()</pre>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;getEquivalenceClassModel()</pre>
 <div class="block">Returns a model of the equivalence classes in this data set</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -326,19 +329,20 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getPopulationBasedAttributeRisks</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes</a>&nbsp;getPopulationBasedAttributeRisks()</pre>
-<div class="block">Returns a class providing access to population-based risk estimates about the attributes.
- Uses the decision rule by Dankar et al.</div>
+<div class="block">Returns a class providing access to population-based risk estimates about
+ the attributes. Uses the decision rule by Dankar et al.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getPopulationBasedAttributeRisks(org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel)">
+<a name="getPopulationBasedAttributeRisks(org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getPopulationBasedAttributeRisks</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes</a>&nbsp;getPopulationBasedAttributeRisks(<a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel.html" title="enum in org.deidentifier.arx.risk">RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel</a>&nbsp;model)</pre>
-<div class="block">Returns a class providing access to population-based risk estimates about the attributes.</div>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes</a>&nbsp;getPopulationBasedAttributeRisks(<a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.PopulationUniquenessModel.html" title="enum in org.deidentifier.arx.risk">RiskModelPopulationUniqueness.PopulationUniquenessModel</a>&nbsp;model)</pre>
+<div class="block">Returns a class providing access to population-based risk estimates about
+ the attributes.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - Uses the given statistical model</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -349,7 +353,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getPopulationBasedUniquenessRisk</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationBasedUniquenessRisk.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationBasedUniquenessRisk</a>&nbsp;getPopulationBasedUniquenessRisk()</pre>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationUniqueness</a>&nbsp;getPopulationBasedUniquenessRisk()</pre>
 <div class="block">Returns a class providing population-based uniqueness estimates</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -361,7 +365,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getSampleBasedAttributeRisks</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes</a>&nbsp;getSampleBasedAttributeRisks()</pre>
-<div class="block">Returns a class providing access to sample-based risk estimates about the attributes</div>
+<div class="block">Returns a class providing access to sample-based risk estimates about the
+ attributes</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -371,7 +376,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSampleBasedReidentificationRisk</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelSampleBasedReidentificationRisk.html" title="class in org.deidentifier.arx.risk">RiskModelSampleBasedReidentificationRisk</a>&nbsp;getSampleBasedReidentificationRisk()</pre>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html" title="class in org.deidentifier.arx.risk">RiskModelSampleRisks</a>&nbsp;getSampleBasedReidentificationRisk()</pre>
 <div class="block">Returns a class providing sample-based re-identification risk estimates</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -382,7 +387,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSampleBasedUniquenessRisk</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelSampleBasedUniquenessRisk.html" title="class in org.deidentifier.arx.risk">RiskModelSampleBasedUniquenessRisk</a>&nbsp;getSampleBasedUniquenessRisk()</pre>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelSampleUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelSampleUniqueness</a>&nbsp;getSampleBasedUniquenessRisk()</pre>
 <div class="block">Returns a class providing sample-based uniqueness estimates</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -393,7 +398,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>getPopulationBasedUniquenessRiskInterruptible</h4>
-<pre>protected&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationBasedUniquenessRisk.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationBasedUniquenessRisk</a>&nbsp;getPopulationBasedUniquenessRiskInterruptible()</pre>
+<pre>protected&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationUniqueness</a>&nbsp;getPopulationBasedUniquenessRiskInterruptible()</pre>
 <div class="block">Returns a class providing population-based uniqueness estimates</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>

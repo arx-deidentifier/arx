@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>Uses of Package org.deidentifier.arx.risk (ARX API Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -82,12 +82,15 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="#org.deidentifier.arx.criteria">org.deidentifier.arx.criteria</a></td>
 <td class="colLast">
-<div class="block">This package implements different variants of k-anonymity, l-diversity, t-closeness and d-presence.</div>
+<div class="block">This package implements different variants of class-based privacy criteria,
+ such as k-anonymity, l-diversity, t-closeness and d-presence.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="#org.deidentifier.arx.risk">org.deidentifier.arx.risk</a></td>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">This package provides methods for risk analyses</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -107,7 +110,7 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelEquivalenceClasses.html#org.deidentifier.arx">RiskModelEquivalenceClasses</a>
+<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelHistogram.html#org.deidentifier.arx">RiskModelHistogram</a>
 <div class="block">This class encapsulates information about equivalence classes in a data set</div>
 </td>
 </tr>
@@ -124,7 +127,7 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel.html#org.deidentifier.arx.criteria">RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel</a>
+<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelPopulationUniqueness.PopulationUniquenessModel.html#org.deidentifier.arx.criteria">RiskModelPopulationUniqueness.PopulationUniquenessModel</a>
 <div class="block">The statistical model used for computing Dankar's estimate.</div>
 </td>
 </tr>
@@ -156,43 +159,33 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelAttributes.QuasiIdentifierRisks.html#org.deidentifier.arx.risk">RiskModelAttributes.QuasiIdentifierRisks</a>
+<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelAttributes.QuasiIdentifierRisk.html#org.deidentifier.arx.risk">RiskModelAttributes.QuasiIdentifierRisk</a>
 <div class="block">Risks associated to a certain quasi-identifier</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelEquivalenceClasses.html#org.deidentifier.arx.risk">RiskModelEquivalenceClasses</a>
+<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelHistogram.html#org.deidentifier.arx.risk">RiskModelHistogram</a>
 <div class="block">This class encapsulates information about equivalence classes in a data set</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelPopulationBased.html#org.deidentifier.arx.risk">RiskModelPopulationBased</a>
-<div class="block">Abstract base class for population-based models</div>
+<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelPopulationUniqueness.html#org.deidentifier.arx.risk">RiskModelPopulationUniqueness</a>
+<div class="block">Class for risks based on population uniqueness.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelPopulationBasedUniquenessRisk.html#org.deidentifier.arx.risk">RiskModelPopulationBasedUniquenessRisk</a>
-<div class="block">Class for risks based on uniqueness.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel.html#org.deidentifier.arx.risk">RiskModelPopulationBasedUniquenessRisk.StatisticalPopulationModel</a>
+<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelPopulationUniqueness.PopulationUniquenessModel.html#org.deidentifier.arx.risk">RiskModelPopulationUniqueness.PopulationUniquenessModel</a>
 <div class="block">The statistical model used for computing Dankar's estimate.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelSampleBased.html#org.deidentifier.arx.risk">RiskModelSampleBased</a>
-<div class="block">Abstract base class for sample-based models</div>
-</td>
-</tr>
 <tr class="rowColor">
-<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelSampleBasedReidentificationRisk.html#org.deidentifier.arx.risk">RiskModelSampleBasedReidentificationRisk</a>
-<div class="block">Class for re-identification risks</div>
+<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelSampleRisks.html#org.deidentifier.arx.risk">RiskModelSampleRisks</a>
+<div class="block">Class for analyzing re-identification risks of the current sample</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelSampleBasedUniquenessRisk.html#org.deidentifier.arx.risk">RiskModelSampleBasedUniquenessRisk</a>
-<div class="block">Class for risks based on uniqueness</div>
+<td class="colOne"><a href="../../../../org/deidentifier/arx/risk/class-use/RiskModelSampleUniqueness.html#org.deidentifier.arx.risk">RiskModelSampleUniqueness</a>
+<div class="block">Class for risks based on sample uniqueness</div>
 </td>
 </tr>
 </tbody>

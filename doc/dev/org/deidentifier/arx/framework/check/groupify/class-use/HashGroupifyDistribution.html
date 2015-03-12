@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>Uses of Class org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
@@ -76,7 +76,8 @@
 <tr class="altColor">
 <td class="colFirst"><a href="#org.deidentifier.arx.criteria">org.deidentifier.arx.criteria</a></td>
 <td class="colLast">
-<div class="block">This package implements different variants of k-anonymity, l-diversity, t-closeness and d-presence.</div>
+<div class="block">This package implements different variants of class-based privacy criteria,
+ such as k-anonymity, l-diversity, t-closeness and d-presence.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -102,36 +103,36 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">RiskBasedPrivacyCriterion.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/RiskBasedPrivacyCriterion.html#enforce(org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution,%20int)">enforce</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a>&nbsp;distribution,
-       int&nbsp;numMaxSuppressedOutliers)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
-<td class="colLast"><span class="strong">SampleBasedPrivacyCriterion.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/SampleBasedPrivacyCriterion.html#enforce(org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution,%20int)">enforce</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a>&nbsp;distribution,
+<td class="colLast"><span class="strong">SampleBasedCriterion.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/SampleBasedCriterion.html#enforce(org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution,%20int)">enforce</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a>&nbsp;distribution,
        int&nbsp;numMaxSuppressedOutliers)</code>
 <div class="block">This method enforces the criterion on the current hash table.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><span class="strong">RiskBasedThresholdSampleUniques.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/RiskBasedThresholdSampleUniques.html#isFulfilled(org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution)">isFulfilled</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a>&nbsp;distribution)</code>&nbsp;</td>
-</tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><span class="strong">RiskBasedThresholdPopulationUniques.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/RiskBasedThresholdPopulationUniques.html#isFulfilled(org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution)">isFulfilled</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a>&nbsp;distribution)</code>
-<div class="block">We currently assume that at any time, at least one statistical model converges.</div>
-</td>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">RiskBasedCriterion.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/RiskBasedCriterion.html#enforce(org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution,%20int)">enforce</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a>&nbsp;distribution,
+       int&nbsp;numMaxSuppressedOutliers)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><span class="strong">RiskBasedThresholdAverageRisk.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/RiskBasedThresholdAverageRisk.html#isFulfilled(org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution)">isFulfilled</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a>&nbsp;distribution)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">SampleUniqueness.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/SampleUniqueness.html#isFulfilled(org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution)">isFulfilled</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a>&nbsp;distribution)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected abstract boolean</code></td>
-<td class="colLast"><span class="strong">RiskBasedPrivacyCriterion.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/RiskBasedPrivacyCriterion.html#isFulfilled(org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution)">isFulfilled</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a>&nbsp;distribution)</code>
+<td class="colLast"><span class="strong">RiskBasedCriterion.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/RiskBasedCriterion.html#isFulfilled(org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution)">isFulfilled</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a>&nbsp;distribution)</code>
 <div class="block">To be implemented by risk-based criteria</div>
 </td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><span class="strong">PopulationUniqueness.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/PopulationUniqueness.html#isFulfilled(org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution)">isFulfilled</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a>&nbsp;distribution)</code>
+<div class="block">We currently assume that at any time, at least one statistical model converges.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><span class="strong">AverageReidentificationRisk.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/AverageReidentificationRisk.html#isFulfilled(org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution)">isFulfilled</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a>&nbsp;distribution)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
