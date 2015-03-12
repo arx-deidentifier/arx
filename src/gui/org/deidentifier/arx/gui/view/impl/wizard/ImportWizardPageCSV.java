@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.io.ImportAdapter;
@@ -496,7 +497,7 @@ public class ImportWizardPageCSV extends WizardPage {
         new Label(container, SWT.NONE);
 
         /* Preview table viewer */
-        tableViewerPreview = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewerPreview = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
         tableViewerPreview.setContentProvider(new ArrayContentProvider());
 
         /* Actual table for {@link #tableViewerPreview} */
@@ -509,7 +510,6 @@ public class ImportWizardPageCSV extends WizardPage {
 
         /* Set page to incomplete by default */
         setPageComplete(false);
-
     }
     
     /**

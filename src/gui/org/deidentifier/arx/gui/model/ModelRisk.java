@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.deidentifier.arx.ARXPopulationModel;
-import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.ARXPopulationModel.Region;
+import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.DataHandle;
 
 /**

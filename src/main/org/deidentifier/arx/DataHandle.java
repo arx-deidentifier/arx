@@ -43,9 +43,9 @@ import org.deidentifier.arx.DataType.ARXInteger;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.io.CSVDataOutput;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelHistogram;
-import org.deidentifier.arx.io.CSVSyntax;
 
 import cern.colt.Swapper;
 

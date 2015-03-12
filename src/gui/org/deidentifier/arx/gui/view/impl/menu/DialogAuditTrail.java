@@ -96,7 +96,7 @@ public class DialogAuditTrail extends TitleAreaDialog {
 
         Composite composite = (Composite) super.createDialogArea(parent);        
 
-        final DynamicTable table = new DynamicTable(composite, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        final DynamicTable table = SWTUtil.createDynamicTable(composite, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setLayoutData(SWTUtil.createFillGridData());
         table.setHeaderVisible(true);
         

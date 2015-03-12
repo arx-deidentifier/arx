@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
+import org.deidentifier.arx.io.CSVSyntax;
 
 /**
  * Represents an attribute type.

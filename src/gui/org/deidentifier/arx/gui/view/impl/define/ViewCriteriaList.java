@@ -60,27 +60,27 @@ public class ViewCriteriaList implements IView {
     private Model              model = null;
 
     /** View */
-    private DynamicTable       table;
+    private final DynamicTable       table;
     /** View */
-    private DynamicTableColumn column1;
+    private final DynamicTableColumn column1;
     /** View */
-    private DynamicTableColumn column2;
+    private final DynamicTableColumn column2;
     /** View */
-    private DynamicTableColumn column3;
+    private final DynamicTableColumn column3;
     /** View */
-    private Composite          root;
+    private final Composite          root;
     /** View */
-    private Image              symbolL;
+    private final Image              symbolL;
     /** View */
-    private Image              symbolT;
+    private final Image              symbolT;
     /** View */
-    private Image              symbolK;
+    private final Image              symbolK;
     /** View */
-    private Image              symbolD;
+    private final Image              symbolD;
     /** View */
-    private Image              symbolR;
+    private final Image              symbolR;
     /** View */
-    private LayoutCriteria     layout;
+    private final LayoutCriteria     layout;
 
     /**
      * Creates a new instance.
@@ -105,36 +105,36 @@ public class ViewCriteriaList implements IView {
         this.symbolR = controller.getResources().getImage("symbol_r.png"); //$NON-NLS-1$
         
         this.root = parent;
-        table = new DynamicTable(root, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
+        this.table = SWTUtil.createDynamicTable(root, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        this.table.setHeaderVisible(true);
+        this.table.setLinesVisible(true);
         GridData gd = SWTUtil.createFillHorizontallyGridData();
         gd.heightHint = 100;
-        table.setLayoutData(gd);
+        this.table.setLayoutData(gd);
         SWTUtil.createGenericTooltip(table);
         
-        table.setMenu(new ClipboardHandlerTable(table).getMenu());
-        table.addSelectionListener(new SelectionAdapter(){
+        this.table.setMenu(new ClipboardHandlerTable(table).getMenu());
+        this.table.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
                 layout.updateButtons();
             }
         });
 
-        column1 = new DynamicTableColumn(table, SWT.NONE);
-        column1.setText("Type");
-        column1.setWidth("10%", "30px");
-        column2 = new DynamicTableColumn(table, SWT.NONE);
-        column2.setText(Resources.getMessage("CriterionSelectionDialog.2")); //$NON-NLS-1$
-        column2.setWidth("45%", "100px");
-        column3 = new DynamicTableColumn(table, SWT.NONE);
-        column3.setText(Resources.getMessage("CriterionSelectionDialog.3")); //$NON-NLS-1$
-        column3.setWidth("45%", "100px");
+        this.column1 = new DynamicTableColumn(table, SWT.NONE);
+        this.column1.setText("Type");
+        this.column1.setWidth("10%", "30px");
+        this.column2 = new DynamicTableColumn(table, SWT.NONE);
+        this.column2.setText(Resources.getMessage("CriterionSelectionDialog.2")); //$NON-NLS-1$
+        this.column2.setWidth("45%", "100px");
+        this.column3 = new DynamicTableColumn(table, SWT.NONE);
+        this.column3.setText(Resources.getMessage("CriterionSelectionDialog.3")); //$NON-NLS-1$
+        this.column3.setWidth("45%", "100px");
         
-        column1.pack();
-        column2.pack();
-        column3.pack();
+        this.column1.pack();
+        this.column2.pack();
+        this.column3.pack();
         
-        layout.updateButtons();
+        this.layout.updateButtons();
         reset();
     }
     

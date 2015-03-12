@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.io.ImportColumnJDBC;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -118,8 +119,7 @@ public class ImportWizardPageTable extends WizardPage {
         container.setLayout(new GridLayout(1, false));
 
         /* TableViewer for the detected tables */
-        tableViewer = new TableViewer(container, SWT.BORDER |
-                                                 SWT.FULL_SELECTION);
+        tableViewer = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
         tableViewer.setContentProvider(new ArrayContentProvider());
         ColumnViewerToolTipSupport.enableFor(tableViewer, ToolTip.NO_RECREATE);
         tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {

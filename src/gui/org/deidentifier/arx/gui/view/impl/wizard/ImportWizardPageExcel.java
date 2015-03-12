@@ -29,6 +29,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportColumn;
 import org.deidentifier.arx.io.ImportColumnExcel;
@@ -304,7 +306,7 @@ public class ImportWizardPageExcel extends WizardPage {
         new Label(container, SWT.NONE);
 
         /* Preview table viewer */
-        tableViewerPreview = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewerPreview = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
         tableViewerPreview.setContentProvider(new ArrayContentProvider());
 
         /* Actual table for {@link #tableViewerPreview} */

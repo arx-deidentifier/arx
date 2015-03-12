@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.io.ImportColumn;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -295,9 +296,6 @@ public class ImportWizardPageColumns extends WizardPage {
             setActivationStyle(DROP_DOWN_ON_MOUSE_ACTIVATION);
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ComboBoxViewerCellEditor#createControl(org.eclipse.swt.widgets.Composite)
-         */
         @Override
         protected Control createControl(Composite parent) {
             final Control control = super.createControl(parent);
@@ -446,8 +444,7 @@ public class ImportWizardPageColumns extends WizardPage {
         container.setLayout(new GridLayout(2, false));
 
         /* TableViewer for the columns with a checkbox in each row */
-        checkboxTableViewer = CheckboxTableViewer.newCheckList(container,
-                                                               SWT.BORDER | SWT.FULL_SELECTION);
+        checkboxTableViewer = SWTUtil.createTableViewerCheckbox(container, SWT.BORDER | SWT.FULL_SELECTION);
         checkboxTableViewer.setContentProvider(new ArrayContentProvider());
         checkboxTableViewer.setCheckStateProvider(new ICheckStateProvider() {
 

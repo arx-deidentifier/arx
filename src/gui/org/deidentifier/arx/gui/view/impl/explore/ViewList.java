@@ -102,7 +102,7 @@ public class ViewList extends ViewSolutionSpace {
         
         super(parent, controller);
 
-        table = new DynamicTable(super.getPrimaryComposite(), SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        table = SWTUtil.createDynamicTable(super.getPrimaryComposite(), SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setLayoutData(SWTUtil.createFillGridData());
         table.setHeaderVisible(true);
         

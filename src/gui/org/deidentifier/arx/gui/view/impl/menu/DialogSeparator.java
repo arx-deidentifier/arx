@@ -57,28 +57,21 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class DialogSeparator extends TitleAreaDialog implements IDialog {
 
-    /**  TODO */
+    /**  Constant */
     private static final int        LINES      = 5;
     
-    /**  TODO */
-    private int                     selection;
-    
-    /**  TODO */
+    /**  View */
     private Table                   table;
     
-    /**  TODO */
-    private final List<TableColumn> columns    = new ArrayList<TableColumn>();
-    
-    /**  TODO */
-    private final char[]            separators = { ';', ',', '|', '\t' };
-    
-    /**  TODO */
+    /**  Model */
+    private int                     selection;
+    /**  Model */
+    private final char[]            separators = { ';', ',', '|', '\t' };    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    /**  Model */
     private final String[]          labels     = { ";", ",", "|", "Tab" };    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-    
-    /**  TODO */
+    /**  Model */
     private final String            file;
-    
-    /**  TODO */
+    /**  Model */
     private final boolean           data;
 
     /**
@@ -207,17 +200,15 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         // Add to table
         table.setRedraw(false);
         table.removeAll();
-        for (final TableColumn c : columns) {
+        for (final TableColumn c : table.getColumns()) {
             c.dispose();
         }
-        columns.clear();
 
         if (data.size() == 0) { return; }
 
         for (final String s : data.get(0)) {
             final TableColumn c = new TableColumn(table, SWT.NONE);
             c.setText(s);
-            columns.add(c);
             c.pack();
         }
         for (int i = 1; i < data.size(); i++) {
@@ -283,7 +274,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         parent.setLayout(l);
 
         // Build components
-        table = new Table(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        table = SWTUtil.createTable(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         GridData d = SWTUtil.createFillGridData();
         d.horizontalSpan = 2;
         d.grabExcessHorizontalSpace = true;

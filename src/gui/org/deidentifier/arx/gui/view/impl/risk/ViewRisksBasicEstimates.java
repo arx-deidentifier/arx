@@ -17,8 +17,6 @@
 package org.deidentifier.arx.gui.view.impl.risk;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -58,12 +56,6 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
 
     /** View */
     private DynamicTable      table;
-
-    /** View */
-    private List<TableItem>   items;
-
-    /** View */
-    private List<TableColumn> columns;
 
     /** View */
     private DecimalFormat     format;
@@ -107,7 +99,6 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, label);
         item.setText(1, format.format(value * 100d));
-        items.add(item);
     }
 
     /**
@@ -119,7 +110,6 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, label);
         item.setText(1, value == null ? "N/A" : value.toString());
-        items.add(item);
     }
     
     /**
@@ -131,7 +121,6 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, label);
         item.setText(1, value);
-        items.add(item);
     }
 
     @Override
@@ -140,11 +129,9 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
         
-        items   = new ArrayList<TableItem>();
-        columns = new ArrayList<TableColumn>();
         format  = new DecimalFormat("##0.00000");
         
-        table = new DynamicTable(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        table = SWTUtil.createDynamicTable(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
@@ -152,12 +139,10 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("50%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.6")); //$NON-NLS-1$
-        columns.add(c);
         c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("50%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.7")); //$NON-NLS-1$
-        columns.add(c);
-        for (final TableColumn col : columns) {
+        for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
         SWTUtil.createGenericTooltip(table);
@@ -176,10 +161,9 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
             this.manager.stop();
         }
         table.setRedraw(false);
-        for (final TableItem i : items) {
+        for (final TableItem i : table.getItems()) {
             i.dispose();
         }
-        items.clear();
         table.setRedraw(true);
         setStatusEmpty();
     }
@@ -228,10 +212,9 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
                 }
 
                 table.setRedraw(false);
-                for (final TableItem i : items) {
+                for (final TableItem i : table.getItems()) {
                     i.dispose();
                 }
-                items.clear();
                 
                 createItem(Resources.getMessage("RiskAnalysis.14"), lowestRisk);
                 createItem(Resources.getMessage("RiskAnalysis.17"), fractionOfTuplesAffectedByLowestRisk);

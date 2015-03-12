@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.io.IImportColumnIndexed;
 import org.deidentifier.arx.io.ImportColumn;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -150,8 +151,7 @@ public class ImportWizardPagePreview extends WizardPage {
         setControl(container);
         container.setLayout(new GridLayout(1, false));
 
-        tableViewer = new TableViewer(container, SWT.BORDER |
-                                                 SWT.FULL_SELECTION);
+        tableViewer = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
         tableViewer.setContentProvider(new ArrayContentProvider());
 
         table = tableViewer.getTable();

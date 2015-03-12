@@ -62,12 +62,6 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
     /** View */
     private DynamicTable      table;
 
-    /** View */
-    private List<TableItem>   items;
-
-    /** View */
-    private List<TableColumn> columns;
-
     /** Internal stuff. */
     private AnalysisManager   manager;
 
@@ -118,12 +112,6 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
         item.setText(1, format.format(risks.getFractionOfUniqueTuples() * 100d));
         item.setText(2, format.format(risks.getHighestReidentificationRisk() * 100d));
         item.setText(3, format.format(risks.getAverageReidentificationRisk() * 100d));
-        
-        // Color background = list.size() % 2 == 0 ? item.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW) 
-        //                                         : item.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-        // item.setBackground(background);
-
-        items.add(item);
     }
 
     @Override
@@ -131,11 +119,8 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
 
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
-        
-        this.items = new ArrayList<TableItem>();
-        this.columns = new ArrayList<TableColumn>();
 
-        table = new DynamicTable(root, SWT.SINGLE | SWT.BORDER |
+        table = SWTUtil.createDynamicTable(root, SWT.SINGLE | SWT.BORDER |
                                        SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
@@ -145,23 +130,19 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
         c.setWidth("70%"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.19")); //$NON-NLS-1$
         c.setResizable(true);
-        columns.add(c);
         c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.20")); //$NON-NLS-1$
         c.setResizable(true);
-        columns.add(c);
         c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.21")); //$NON-NLS-1$
         c.setResizable(true);
-        columns.add(c);
         c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.22")); //$NON-NLS-1$
         c.setResizable(true);
-        columns.add(c);
-        for (final TableColumn col : columns) {
+        for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
         SWTUtil.createGenericTooltip(table);
@@ -179,11 +160,10 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
             this.manager.stop();
         }
         table.setRedraw(false);
-        for (final TableItem i : items) {
+        for (final TableItem i : table.getItems()) {
             i.dispose();
         }
         table.setRedraw(true);
-        items.clear();
         setStatusEmpty();
     }
 
@@ -225,17 +205,16 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
                 }
 
                 // Update chart
-                for (final TableItem i : items) {
+                for (final TableItem i : table.getItems()) {
                     i.dispose();
                 }
-                items.clear();
 
                 // For all sizes
                 for (QuasiIdentifierRisk item : risks.getAttributeRisks()) {
                     createItem(item);
                 }
 
-                for (final TableColumn col : columns) {
+                for (final TableColumn col : table.getColumns()) {
                     col.pack();
                 }
 

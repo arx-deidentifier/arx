@@ -17,8 +17,6 @@
 package org.deidentifier.arx.gui.view.impl.risk;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -37,6 +35,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import de.linearbits.swt.table.DynamicTable;
@@ -54,12 +53,6 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
 
     /** View */
     private DynamicTable             table;
-
-    /** View */
-    private List<TableItem>          items;
-
-    /** View */
-    private List<DynamicTableColumn> columns;
 
     /** View */
     private DecimalFormat            format;
@@ -96,14 +89,11 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
     @Override
     protected Control createControl(Composite parent) {
 
-        this.items = new ArrayList<TableItem>();
-        this.columns = new ArrayList<DynamicTableColumn>();
         this.format = new DecimalFormat("##0.00000");
-
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
         
-        table = new DynamicTable(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        table = SWTUtil.createDynamicTable(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
@@ -111,16 +101,13 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("33%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.1")); //$NON-NLS-1$
-        columns.add(c);
         c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("33%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.2")); //$NON-NLS-1$
-        columns.add(c);
         c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("33%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.3")); //$NON-NLS-1$
-        columns.add(c);
-        for (final DynamicTableColumn col : columns) {
+        for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
         SWTUtil.createGenericTooltip(table);
@@ -138,10 +125,9 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
             this.manager.stop();
         }
         table.setRedraw(false);
-        for (final TableItem i : items) {
+        for (final TableItem i : table.getItems()) {
             i.dispose();
         }
-        items.clear();
         table.setRedraw(true);
         setStatusEmpty();
     }
@@ -185,10 +171,9 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
                 }
 
                 // Update chart
-                for (final TableItem i : items) {
+                for (final TableItem i : table.getItems()) {
                     i.dispose();
                 }
-                items.clear();
 
                 // Create entries
                 for (int i = 0; i < distribution.length; i += 2) {
@@ -196,7 +181,6 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
                     item.setText(0, String.valueOf(distribution[i]));
                     item.setText(1, String.valueOf(distribution[i + 1]));
                     item.setText(2, format.format((double) distribution[i + 1] / numClasses * 100d));
-                    items.add(item);
                 }
 
                 root.layout();

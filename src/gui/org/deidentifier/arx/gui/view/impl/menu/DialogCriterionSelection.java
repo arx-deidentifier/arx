@@ -151,7 +151,7 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
 
         parent.setLayout(new GridLayout());
 
-        final Table table = new Table(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
+        final Table table = SWTUtil.createTable(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
         table.setHeaderVisible(true);
         final GridData d = SWTUtil.createFillGridData();
         d.heightHint = 100;

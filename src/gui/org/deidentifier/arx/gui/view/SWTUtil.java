@@ -19,6 +19,8 @@ package org.deidentifier.arx.gui.view;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.MouseEvent;
@@ -38,6 +40,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
+import de.linearbits.swt.table.DynamicTable;
 
 /**
  * This class provides some utility methods for working with SWT.
@@ -89,6 +93,16 @@ public class SWTUtil {
         item.setDisabledImage(new Image(item.getDisplay(), item.getImage(), SWT.IMAGE_GRAY));
     }
     
+    /**
+     * Returns a dynamic table. Implements hacks for fixing OSX bugs.
+     * @param parent
+     * @param style
+     * @return
+     */
+    public static DynamicTable createDynamicTable(Composite parent, int style) {
+        return new DynamicTable(parent, getTableStyle(style));
+    }
+
     /**
      * Creates grid data.
      *
@@ -254,6 +268,7 @@ public class SWTUtil {
         return d;
     }
 
+
     /**
      * Creates grid data.
      *
@@ -268,7 +283,6 @@ public class SWTUtil {
         return d;
     }
 
-
     /**
      * Creates grid data.
      *
@@ -281,6 +295,36 @@ public class SWTUtil {
         d.grabExcessVerticalSpace = false;
         d.horizontalSpan = i;
         return d;
+    }
+
+    /**
+     * Returns a table. Implements hacks for fixing OSX bugs.
+     * @param parent
+     * @param style
+     * @return
+     */
+    public static Table createTable(Composite parent, int style) {
+        return new Table(parent, getTableStyle(style));
+    }
+
+    /**
+     * Returns a table viewer. Implements hacks for fixing OSX bugs.
+     * @param parent
+     * @param style
+     * @return
+     */
+    public static TableViewer createTableViewer(Composite container, int style) {
+        return new TableViewer(container, getTableStyle(style));
+    }
+
+    /**
+     * Returns a checkbox table viewer. Implements hacks for fixing OSX bugs.
+     * @param parent
+     * @param style
+     * @return
+     */
+    public static CheckboxTableViewer createTableViewerCheckbox(Composite container, int style) {
+        return CheckboxTableViewer.newCheckList(container, getTableStyle(style));
     }
 
     /**
@@ -385,6 +429,27 @@ public class SWTUtil {
         return (int)Math.round(sliderToDouble(min, max, value));
     }
 
+    /**
+     * Removes SWT.BORDER on OSX to prevent rendering bugs
+     * @param style
+     * @return
+     */
+    private static int getTableStyle(int style) {
+        if (!isMac()) {
+            return style;
+        } else {
+            return style & ~SWT.BORDER;
+        }
+    }
+
+    /**
+     * Are we running on an OSX system
+     * @return
+     */
+    private static boolean isMac() {
+        return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
+    }
+    
     /**
      * En-/disables the composite and its children.
      *

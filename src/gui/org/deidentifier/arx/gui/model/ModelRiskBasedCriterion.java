@@ -17,9 +17,9 @@
 
 package org.deidentifier.arx.gui.model;
 
-import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
 import org.deidentifier.arx.criteria.PopulationUniqueness;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleUniqueness;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 

@@ -53,12 +53,12 @@ public class ViewRisksQuasiIdentifiers implements IView {
     /** View */
     private final Composite  root;
     /** View */
-    private Table            table;
+    private final Table      table;
     /** View */
-    private Label            label;
+    private final Label      label;
+
     /** Model */
     private Model            model;
-
 
     /**
      * Creates a new instance.
@@ -78,61 +78,17 @@ public class ViewRisksQuasiIdentifiers implements IView {
         // Create group
         root = parent;
         root.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
-        create(root);
-        reset();
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
-    @Override
-    public void reset() {
-        label.setText("");
-        for (TableItem item : table.getItems()) {
-            item.dispose();
-        }
-        SWTUtil.disable(root);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui
-     * .model.ModelEvent)
-     */
-    @Override
-    public void update(final ModelEvent event) {
-        if (event.part == ModelPart.MODEL) {
-           this.model = (Model) event.data;
-           update();
-        } else if (event.part == ModelPart.INPUT || event.part == ModelPart.SELECTED_QUASI_IDENTIFIERS) {
-           update();
-        }
-    }
-
-    /**
-     * Creates the required controls.
-     * 
-     * @param parent
-     */
-    private void create(final Composite parent) {
-
-        table = new Table(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        // Create table
+        table = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         table.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(2, 1).create());
+        table.addSelectionListener(new SelectionAdapter(){
+            public void widgetSelected(SelectionEvent arg0) {
+                fireEvent();
+            }   
+        });
         
+        // Create button
         Button button = new Button(parent, SWT.PUSH);
         button.setLayoutData(SWTUtil.createGridData());
         button.setText("Clear");
@@ -145,15 +101,37 @@ public class ViewRisksQuasiIdentifiers implements IView {
             }
         });
         
+        // Create label
         label = new Label(parent, SWT.RIGHT);
         label.setText("");
         label.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
-        table.addSelectionListener(new SelectionAdapter(){
-            public void widgetSelected(SelectionEvent arg0) {
-                fireEvent();
-            }   
-        });
+        // Reset view
+        reset();
+    }
+
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
+    @Override
+    public void reset() {
+        label.setText("");
+        for (TableItem item : table.getItems()) {
+            item.dispose();
+        }
+        SWTUtil.disable(root);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+        if (event.part == ModelPart.MODEL) {
+           this.model = (Model) event.data;
+           update();
+        } else if (event.part == ModelPart.INPUT || event.part == ModelPart.SELECTED_QUASI_IDENTIFIERS) {
+           update();
+        }
     }
 
     /**
