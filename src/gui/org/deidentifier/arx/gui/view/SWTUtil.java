@@ -294,7 +294,24 @@ public class SWTUtil {
      * @return
      */
     public static Table createTable(Composite parent, int style) {
-        return new Table(parent, getTableStyle(style));
+        Table table = new Table(parent, style);
+        fixOSXTableBug(table);
+        return table;
+    }
+
+    /**
+     * Fixes bugs on OSX when scrolling in tables
+     * @param table
+     */
+    private static void fixOSXTableBug(final Table table) {
+        if (isMac()) {
+            table.addSelectionListener(new SelectionAdapter(){
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    table.redraw();
+                }
+            });
+        }
     }
 
     /**
@@ -304,7 +321,9 @@ public class SWTUtil {
      * @return
      */
     public static DynamicTable createTableDynamic(Composite parent, int style) {
-        return new DynamicTable(parent, getTableStyle(style));
+        DynamicTable table = new DynamicTable(parent, style);
+        fixOSXTableBug(table);
+        return table;
     }
 
     /**
@@ -314,7 +333,9 @@ public class SWTUtil {
      * @return
      */
     public static TableViewer createTableViewer(Composite container, int style) {
-        return new TableViewer(container, getTableStyle(style));
+        TableViewer viewer = new TableViewer(container, style);
+        fixOSXTableBug(viewer.getTable());
+        return viewer;
     }
 
     /**
@@ -324,7 +345,9 @@ public class SWTUtil {
      * @return
      */
     public static CheckboxTableViewer createTableViewerCheckbox(Composite container, int style) {
-        return CheckboxTableViewer.newCheckList(container, getTableStyle(style));
+        CheckboxTableViewer viewer = CheckboxTableViewer.newCheckList(container, style);
+        fixOSXTableBug(viewer.getTable());
+        return viewer;
     }
 
     /**
@@ -427,19 +450,6 @@ public class SWTUtil {
      */
     public static int sliderToInt(final int min, final int max, final int value) {
         return (int)Math.round(sliderToDouble(min, max, value));
-    }
-
-    /**
-     * Removes SWT.BORDER on OSX to prevent rendering bugs
-     * @param style
-     * @return
-     */
-    private static int getTableStyle(int style) {
-        if (!isMac()) {
-            return style;
-        } else {
-            return style & ~SWT.BORDER;
-        }
     }
 
     /**
