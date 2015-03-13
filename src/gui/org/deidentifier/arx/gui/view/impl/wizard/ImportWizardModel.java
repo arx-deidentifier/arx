@@ -250,7 +250,14 @@ public char getCsvQuote() {
         }
 
         Data data = Data.create(getPreviewData());
-        int columnIndex = ((ImportColumnIndexed) column.getColumn()).getIndex();
+        int columnIndex = -1;
+        ImportColumn c = column.getColumn();
+        if (c instanceof ImportColumnIndexed) {
+            columnIndex =  ((ImportColumnIndexed) column.getColumn()).getIndex();
+        } else if (column.getColumn() instanceof ImportColumnJDBC){
+            columnIndex = ((ImportColumnJDBC) column.getColumn()).getIndex();
+        }
+        
         return data.getHandle().getMatchingDataTypes(columnIndex, locale, Math.ulp(0d));
     }
     
