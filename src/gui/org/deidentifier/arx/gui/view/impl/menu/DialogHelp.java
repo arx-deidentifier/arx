@@ -66,7 +66,7 @@ public class DialogHelp implements IDialog {
     public DialogHelp(final Shell parent, final Controller controller, final String id) {
         
         // Shell
-        shell = new Shell(parent, SWT.TITLE | SWT.CLOSE | SWT.BORDER | SWT.RESIZE | SWT.MAX);
+        shell = new Shell(parent, SWT.TITLE | SWT.CLOSE | SWT.BORDER | SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
         shell.setImages(Resources.getIconSet(shell.getDisplay()));
         shell.setText(Resources.getMessage("DialogHelp.1")); //$NON-NLS-1$
         GridLayout layout = SWTUtil.createGridLayout(1);
