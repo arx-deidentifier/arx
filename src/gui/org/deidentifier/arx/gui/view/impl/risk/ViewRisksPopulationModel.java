@@ -36,7 +36,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -168,24 +167,10 @@ public class ViewRisksPopulationModel implements IView {
         lbl1.setText("Region:");
         lbl1.setLayoutData(GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.TOP).create());
         
-        if (SWTUtil.isMac()) {
-            Composite border = new Composite(root, SWT.NONE);
-            border.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BORDER));
-            GridLayout layout = SWTUtil.createGridLayout(1);
-            layout.marginBottom = 1; layout.marginTop = 1;
-            layout.marginLeft = 1; layout.marginRight = 1;
-            border.setLayout(layout);
-            border.setLayoutData(new GridData(GridData.FILL_BOTH));
-            table = SWTUtil.createTableDynamic(border, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.READ_ONLY);
-            table.setLayoutData(new GridData(GridData.FILL_BOTH));
-        } else {
-            table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.READ_ONLY);
-            table.setLayoutData(new GridData(GridData.FILL_BOTH));
-        }
-        
+        table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.READ_ONLY);
+        table.setLayoutData(new GridData(GridData.FILL_BOTH));
         table.setHeaderVisible(false);
         table.setLinesVisible(true);
-        
 
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("100%"); //$NON-NLS-1$ //$NON-NLS-2$
