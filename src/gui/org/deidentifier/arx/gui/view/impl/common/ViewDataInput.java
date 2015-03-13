@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.common;
 
+import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataHandleSubset;
@@ -266,7 +267,12 @@ public class ViewDataInput extends ViewData {
     @Override
     protected DataHandle getHandle() {
         if (model != null){
-            DataHandle handle = model.getInputConfig().getInput().getHandle();
+            
+            Data data = model.getInputConfig().getInput();
+            if (data == null) {
+                return null;
+            }
+            DataHandle handle = data.getHandle();
             
             if (model.getViewConfig().isSubset() && 
                 model.getOutputConfig() != null &&
