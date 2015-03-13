@@ -27,6 +27,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -305,12 +306,20 @@ public class SWTUtil {
      */
     private static void fixOSXTableBug(final Table table) {
         if (isMac()) {
-            table.addSelectionListener(new SelectionAdapter(){
+            SelectionListener bugFixer = new SelectionListener(){
+                
                 @Override
                 public void widgetSelected(SelectionEvent arg0) {
                     table.redraw();
                 }
-            });
+
+                @Override
+                public void widgetDefaultSelected(SelectionEvent arg0) {
+                    widgetSelected(arg0);
+                }
+            };
+            table.getVerticalBar().addSelectionListener(bugFixer);
+            table.getHorizontalBar().addSelectionListener(bugFixer);
         }
     }
 
