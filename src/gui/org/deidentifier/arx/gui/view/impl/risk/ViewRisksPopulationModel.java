@@ -258,12 +258,17 @@ public class ViewRisksPopulationModel implements IView {
             }
             
             table.deselectAll();
+            TableItem selected = null;
             for (TableItem item : table.getItems()) {
                 if (item.getText().equals(popmodel.getRegion().getName())) {
                     item.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+                    selected = item;
                 } else {
                     item.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
                 }
+            }
+            if (selected != null) {
+                table.showItem(selected);
             }
             table.getParent().setFocus();
             DataHandle handle = model.getInputConfig().getInput().getHandle();
