@@ -446,7 +446,7 @@ public class SWTUtil {
      * Are we running on an OSX system
      * @return
      */
-    private static boolean isMac() {
+    public static boolean isMac() {
         return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
     }
     
