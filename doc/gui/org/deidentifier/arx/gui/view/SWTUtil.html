@@ -243,6 +243,34 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static org.eclipse.swt.widgets.Table</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#createTable(org.eclipse.swt.widgets.Composite,%20int)">createTable</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+           int&nbsp;style)</code>
+<div class="block">Returns a table.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static de.linearbits.swt.table.DynamicTable</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#createTableDynamic(org.eclipse.swt.widgets.Composite,%20int)">createTableDynamic</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                  int&nbsp;style)</code>
+<div class="block">Returns a dynamic table.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static org.eclipse.jface.viewers.TableViewer</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#createTableViewer(org.eclipse.swt.widgets.Composite,%20int)">createTableViewer</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;container,
+                 int&nbsp;style)</code>
+<div class="block">Returns a table viewer.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static org.eclipse.jface.viewers.CheckboxTableViewer</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#createTableViewerCheckbox(org.eclipse.swt.widgets.Composite,%20int)">createTableViewerCheckbox</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;container,
+                         int&nbsp;style)</code>
+<div class="block">Returns a checkbox table viewer.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#disable(org.eclipse.swt.widgets.Composite)">disable</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;elem)</code>
 <div class="block">Disables the composite and its children.</div>
@@ -283,6 +311,12 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#isMac()">isMac</a></strong>()</code>
+<div class="block">Are we running on an OSX system</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#sliderToDouble(double,%20double,%20int)">sliderToDouble</a></strong>(double&nbsp;min,
               double&nbsp;max,
@@ -290,7 +324,7 @@ extends java.lang.Object</pre>
 <div class="block">Converts the slider value to a double.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#sliderToInt(int,%20int,%20int)">sliderToInt</a></strong>(int&nbsp;min,
            int&nbsp;max,
@@ -520,6 +554,58 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="createTable(org.eclipse.swt.widgets.Composite, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createTable</h4>
+<pre>public static&nbsp;org.eclipse.swt.widgets.Table&nbsp;createTable(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                                        int&nbsp;style)</pre>
+<div class="block">Returns a table. Implements hacks for fixing OSX bugs.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>style</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="createTableDynamic(org.eclipse.swt.widgets.Composite, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createTableDynamic</h4>
+<pre>public static&nbsp;de.linearbits.swt.table.DynamicTable&nbsp;createTableDynamic(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                                                      int&nbsp;style)</pre>
+<div class="block">Returns a dynamic table. Implements hacks for fixing OSX bugs.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>style</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="createTableViewer(org.eclipse.swt.widgets.Composite, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createTableViewer</h4>
+<pre>public static&nbsp;org.eclipse.jface.viewers.TableViewer&nbsp;createTableViewer(org.eclipse.swt.widgets.Composite&nbsp;container,
+                                                      int&nbsp;style)</pre>
+<div class="block">Returns a table viewer. Implements hacks for fixing OSX bugs.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>style</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="createTableViewerCheckbox(org.eclipse.swt.widgets.Composite, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createTableViewerCheckbox</h4>
+<pre>public static&nbsp;org.eclipse.jface.viewers.CheckboxTableViewer&nbsp;createTableViewerCheckbox(org.eclipse.swt.widgets.Composite&nbsp;container,
+                                                                      int&nbsp;style)</pre>
+<div class="block">Returns a checkbox table viewer. Implements hacks for fixing OSX bugs.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>style</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="disable(org.eclipse.swt.widgets.Composite)">
 <!--   -->
 </a>
@@ -609,7 +695,7 @@ extends java.lang.Object</pre>
 <a name="sliderToInt(int, int, int)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>sliderToInt</h4>
 <pre>public static&nbsp;int&nbsp;sliderToInt(int&nbsp;min,
@@ -618,6 +704,17 @@ extends java.lang.Object</pre>
 <div class="block">Converts the slider value to an integer.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - </dd><dd><code>max</code> - </dd><dd><code>value</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isMac()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isMac</h4>
+<pre>public static&nbsp;boolean&nbsp;isMac()</pre>
+<div class="block">Are we running on an OSX system</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>
