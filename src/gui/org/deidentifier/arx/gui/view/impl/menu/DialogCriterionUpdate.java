@@ -306,7 +306,9 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
 
         Group border = new Group(parent, SWT.SHADOW_ETCHED_IN);
         border.setText("Configuration");
-        border.setLayoutData(SWTUtil.createFillGridData());
+        GridData data = SWTUtil.createFillGridData();
+        data.grabExcessVerticalSpace = false;
+        border.setLayoutData(data);
         border.setLayout(new FillLayout());
         
         this.root = new Composite(border, SWT.NONE);
