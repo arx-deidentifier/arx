@@ -60,6 +60,8 @@ public class ModelRisk implements Serializable {
 
     /** SVUID */
     private static final long          serialVersionUID          = 5405871228130041796L;
+    /** The default sample size*/
+    private static final double        DEFAULT_SMAPLE_SIZE       = 0.01d;
     /** Modified */
     private boolean                    modified                  = false;
     /** Model */
@@ -81,7 +83,7 @@ public class ModelRisk implements Serializable {
      * Creates a new instance
      */
     public ModelRisk() {
-        this.populationModel = new ARXPopulationModel(0.1d);
+        this.populationModel = new ARXPopulationModel(DEFAULT_SMAPLE_SIZE);
     }
     
     /**

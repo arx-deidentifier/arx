@@ -102,7 +102,7 @@ public class ARXPopulationModel implements Serializable {
     private Region            region           = Region.NONE;
     
     /** The sample fraction */
-    private double            sampleFraction   = 0.1;
+    private double            sampleFraction   = 0.01d;
     
 
     /**
