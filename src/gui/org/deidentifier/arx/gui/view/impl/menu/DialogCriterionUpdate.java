@@ -110,6 +110,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
                                    List<ModelCriterion> elements,
                                    boolean edit) {
         super(parent);
+        super.setShellStyle(super.getShellStyle() | SWT.RESIZE | SWT.MAX); 
         this.elements = elements;
         this.controller = controller;
         this.edit = edit;
@@ -242,7 +243,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
         final DynamicTable table = SWTUtil.createTableDynamic(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         final GridData d = SWTUtil.createFillGridData();
-        d.heightHint = 100;
+        d.heightHint = 200;
         table.setLayoutData(d);
 
         DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.NONE);
