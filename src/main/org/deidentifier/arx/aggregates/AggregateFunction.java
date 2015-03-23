@@ -19,8 +19,12 @@ package org.deidentifier.arx.aggregates;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.ARXDate;
+import org.deidentifier.arx.DataType.ARXDecimal;
+import org.deidentifier.arx.DataType.ARXInteger;
 
 /**
  * This abstract class represents an aggregate function.
@@ -38,7 +42,7 @@ public abstract class AggregateFunction<T> implements Serializable{
      */
     public static class AggregateFunctionBuilder<T> {
 
-        /**  TODO */
+        /**  SVUID */
         private DataType<T> type;
         
         /**
@@ -48,6 +52,15 @@ public abstract class AggregateFunction<T> implements Serializable{
          */
         private AggregateFunctionBuilder(DataType<T> type){
             this.type = type;
+        }
+
+        /**
+         * An aggregate function that returns a the arithmetic mean, if it can be computed, NULL otherwise.
+         *
+         * @return
+         */
+        public final AggregateFunction<T> createArithmeticMeanFunction() {
+            return new GenericArithmeticMean<T>(type);
         }
         
 
@@ -69,6 +82,15 @@ public abstract class AggregateFunction<T> implements Serializable{
          */
         public final AggregateFunction<T> createConstantFunction(String value) {
             return new GenericConstant<T>(type, value);
+        }
+        
+        /**
+         * An aggregate function that returns a the geometric mean, if it can be computed, NULL otherwise.
+         *
+         * @return
+         */
+        public final AggregateFunction<T> createGeometricMeanFunction() {
+            return new GenericGeometricMean<T>(type);
         }
 
         /**
@@ -151,7 +173,7 @@ public abstract class AggregateFunction<T> implements Serializable{
      */
     public static abstract class AggregateFunctionWithParameter<T> extends AggregateFunction<T>{
         
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = 1L;
         
         /**
@@ -185,6 +207,84 @@ public abstract class AggregateFunction<T> implements Serializable{
         public abstract AggregateFunctionWithParameter<T> newInstance(String parameter);
     }
     
+
+    /**
+     * An aggregate function that returns the arithmetic mean, if it may be computed, "NULL"
+     * otherwise.
+     *
+     * @author Fabian Prasser
+     * @param <T>
+     */
+    public static class GenericArithmeticMean<T> extends AggregateFunction<T> {
+
+        /** SVUID*/
+        private static final long serialVersionUID = -901667129625212217L;
+
+        /**
+         * Creates a new instance.
+         *
+         * @param type
+         */
+        private GenericArithmeticMean(DataType<T> type) {
+            super(type);
+        }
+
+        @Override
+        public String aggregate(String[] values) {
+            
+            // Count the number of non-null values
+            double count = 0;
+            for (String value : values) {
+                count += !value.equals(DataType.NULL_VALUE) ? 1 : 0;
+            }
+            
+            // Data-type specific implementation
+            if (super.type.getDescription().getWrappedClass() == Date.class) {
+                
+                double result = 0d;
+                for (String value : values) {
+                    Date date = ((ARXDate)type).parse(value);
+                    result += date != null ? (double)date.getTime() / count : 0d;
+                }
+                return ((ARXDate)type).format(new Date((long)result));
+
+            // Data-type specific implementation
+            } else if (super.type.getDescription().getWrappedClass() == Long.class) {
+
+                double result = 0d;
+                for (String value : values) {
+                    Long longValue = ((ARXInteger)type).parse(value);
+                    result += longValue != null ? (double)longValue / count : 0d;
+                }
+                return ((ARXInteger)type).format((long)result);
+
+            // Data-type specific implementation
+            } else if (super.type.getDescription().getWrappedClass() == Double.class) {
+
+                double result = 0d;
+                for (String value : values) {
+                    Double doubleValue = ((ARXDecimal)type).parse(value);
+                    result += doubleValue != null ? doubleValue / count : 0d;
+                }
+                return ((ARXDecimal)type).format(result);
+                
+            // Data-type specific implementation
+            } else {
+                return DataType.NULL_VALUE;
+            }
+        }
+        
+        @Override
+        public String toLabel() {
+            return "Arithmetic mean";
+        }
+
+        @Override
+        public String toString(){
+            return "ArithmeticMean";
+        }
+    }
+
     /**
      * An aggregate function that returns an interval consisting of the
      * first and the last element following the predefined order .
@@ -194,7 +294,7 @@ public abstract class AggregateFunction<T> implements Serializable{
      */
     public static class GenericBounds<T> extends AggregateFunction<T> {
 
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = -8884657842545379206L;
 
         /**
@@ -206,9 +306,6 @@ public abstract class AggregateFunction<T> implements Serializable{
             super(type);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#aggregate(java.lang.String[])
-         */
         @Override
         public String aggregate(String[] values) {
             return new StringBuilder().append("[")
@@ -219,17 +316,11 @@ public abstract class AggregateFunction<T> implements Serializable{
                     .toString();
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#toLabel()
-         */
         @Override
         public String toLabel() {
             return "Bounding values";
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#toString()
-         */
         @Override
         public String toString(){
             return "Bounds";
@@ -244,10 +335,10 @@ public abstract class AggregateFunction<T> implements Serializable{
      */
     public static class GenericCommonPrefix<T> extends AggregateFunctionWithParameter<T> {
         
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = 526809670467390820L;
         
-        /**  TODO */
+        /**  SVUID */
         private Character redaction;
 
         /**
@@ -261,17 +352,11 @@ public abstract class AggregateFunction<T> implements Serializable{
             this.redaction = redaction;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionWithParameter#acceptsParameter(java.lang.String)
-         */
         @Override
         public boolean acceptsParameter(String parameter) {
             return parameter == null || parameter.length()<=1;
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#aggregate(java.lang.String[])
-         */
         @Override
         public String aggregate(String[] values) {
 
@@ -309,35 +394,23 @@ public abstract class AggregateFunction<T> implements Serializable{
             return new String(result);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionWithParameter#getParameter()
-         */
         @Override
         public String getParameter() {
             if (redaction == null) return null;
             else return String.valueOf(redaction);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionWithParameter#newInstance(java.lang.String)
-         */
         @Override
         public AggregateFunctionWithParameter<T> newInstance(String parameter) {
             if (parameter == null || parameter.length()==0) return new GenericCommonPrefix<T>(this.type, null);
             else return new GenericCommonPrefix<T>(this.type, parameter.toCharArray()[0]);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#toLabel()
-         */
         @Override
         public String toLabel() {
             return "Common prefix";
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#toString()
-         */
         @Override
         public String toString(){
             if (redaction == null){
@@ -356,10 +429,10 @@ public abstract class AggregateFunction<T> implements Serializable{
      */
     public static class GenericConstant<T> extends AggregateFunctionWithParameter<T> {
 
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = -8995068916108125096L;
         
-        /**  TODO */
+        /**  SVUID */
         private String value;
         
         /**
@@ -373,52 +446,111 @@ public abstract class AggregateFunction<T> implements Serializable{
             this.value = value;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionWithParameter#acceptsParameter(java.lang.String)
-         */
         @Override
         public boolean acceptsParameter(String parameter) {
             return parameter != null;
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#aggregate(java.lang.String[])
-         */
         @Override
         public String aggregate(String[] values) {
             return value;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionWithParameter#getParameter()
-         */
         @Override
         public String getParameter() {
             return value;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionWithParameter#newInstance(java.lang.String)
-         */
         @Override
         public AggregateFunctionWithParameter<T> newInstance(String parameter) {
             return new GenericConstant<T>(this.type, parameter);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#toLabel()
-         */
         @Override
         public String toLabel() {
             return "Constant value";
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#toString()
-         */
         @Override
         public String toString(){
             return "Constant[value="+value+"]";
+        }
+    }
+    
+    /**
+     * An aggregate function that returns the geometric mean, if it may be computed, "NULL"
+     * otherwise.
+     *
+     * @author Fabian Prasser
+     * @param <T>
+     */
+    public static class GenericGeometricMean<T> extends AggregateFunction<T> {
+
+        /** SVUID*/
+        private static final long serialVersionUID = -1756610766270481335L;
+
+        /**
+         * Creates a new instance.
+         *
+         * @param type
+         */
+        private GenericGeometricMean(DataType<T> type) {
+            super(type);
+        }
+
+        @Override
+        public String aggregate(String[] values) {
+            
+            // Count the number of non-null values
+            double count = 0;
+            for (String value : values) {
+                count += !value.equals(DataType.NULL_VALUE) ? 1 : 0;
+            }
+            
+            // Data-type specific implementation
+            if (super.type.getDescription().getWrappedClass() == Date.class) {
+                
+                double result = 0d;
+                for (String value : values) {
+                    Date date = ((ARXDate)type).parse(value);
+                    result += date != null ? Math.log10((double)date.getTime()) / count : 0d;
+                }
+                return ((ARXDate)type).format(new Date((long)Math.pow(10d, result)));
+               
+            // Data-type specific implementation
+            } else if (super.type.getDescription().getWrappedClass() == Long.class) {
+
+                double result = 0d;
+                for (String value : values) {
+                    Long longValue = ((ARXInteger)type).parse(value);
+                    result += longValue != null ? Math.log10((double)longValue) / count : 0d;
+                }
+                return ((ARXInteger)type).format((long)Math.pow(10d, result));
+                
+            // Data-type specific implementation
+            } else if (super.type.getDescription().getWrappedClass() == Double.class) {
+
+                double result = 0d;
+                for (String value : values) {
+                    Double doubleValue = ((ARXDecimal)type).parse(value);
+                    result += doubleValue != null ? Math.log10(doubleValue) / count : 0d;
+                }
+                return ((ARXDecimal)type).format(Math.pow(10d, result));
+                
+            // Data-type specific implementation
+            } else {
+                return DataType.NULL_VALUE;
+            }
+        }
+        
+        @Override
+        public String toLabel() {
+            return "Arithmetic mean";
+        }
+
+        @Override
+        public String toString(){
+            return "ArithmeticMean";
         }
     }
 
@@ -430,13 +562,13 @@ public abstract class AggregateFunction<T> implements Serializable{
      */
     public static class GenericInterval<T> extends AggregateFunction<T> {
         
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = -5182521036467379023L;
         
-        /**  TODO */
+        /**  SVUID */
         private final boolean lowerIncluded;
         
-        /**  TODO */
+        /**  SVUID */
         private final boolean upperIncluded;
         
         /**
@@ -452,9 +584,6 @@ public abstract class AggregateFunction<T> implements Serializable{
             this.upperIncluded = upperIncluded;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#aggregate(java.lang.String[])
-         */
         @Override
         public String aggregate(String[] values) {
 
@@ -480,17 +609,11 @@ public abstract class AggregateFunction<T> implements Serializable{
                                     .toString();
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#toLabel()
-         */
         @Override
         public String toLabel() {
             return "Interval";
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#toString()
-         */
         @Override
         public String toString(){
             return "Interval";
@@ -505,7 +628,7 @@ public abstract class AggregateFunction<T> implements Serializable{
      */
     public static class GenericSet<T> extends AggregateFunction<T> {
 
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = -4029191421720743653L;
 
         /**
@@ -517,9 +640,6 @@ public abstract class AggregateFunction<T> implements Serializable{
             super(type);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#aggregate(java.lang.String[])
-         */
         @Override
         public String aggregate(String[] values) {
             StringBuilder b = new StringBuilder();
@@ -534,17 +654,11 @@ public abstract class AggregateFunction<T> implements Serializable{
             return b.toString();
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#toLabel()
-         */
         @Override
         public String toLabel() {
             return "Set of values";
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#toString()
-         */
         @Override
         public String toString(){
             return "Set";
@@ -559,10 +673,10 @@ public abstract class AggregateFunction<T> implements Serializable{
      */
     public static class GenericSetOfPrefixes<T> extends AggregateFunctionWithParameter<T> {
 
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = -4164142474804296433L;
         
-        /**  TODO */
+        /**  SVUID */
         private int length;
 
         /**
@@ -576,9 +690,6 @@ public abstract class AggregateFunction<T> implements Serializable{
             this.length = length;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionWithParameter#acceptsParameter(java.lang.String)
-         */
         @Override
         public boolean acceptsParameter(String parameter) {
             try {
@@ -588,9 +699,6 @@ public abstract class AggregateFunction<T> implements Serializable{
             }
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#aggregate(java.lang.String[])
-         */
         @Override
         public String aggregate(String[] values) {
             StringBuilder b = new StringBuilder();
@@ -604,40 +712,28 @@ public abstract class AggregateFunction<T> implements Serializable{
             return b.toString();
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionWithParameter#getParameter()
-         */
         @Override
         public String getParameter() {
             return String.valueOf(length);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionWithParameter#newInstance(java.lang.String)
-         */
         @Override
         public AggregateFunctionWithParameter<T> newInstance(String parameter) {
             return new GenericSetOfPrefixes<T>(this.type, Integer.parseInt(parameter));
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#toLabel()
-         */
         @Override
         public String toLabel() {
             return "Set of prefixes";
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.aggregates.AggregateFunction#toString()
-         */
         @Override
         public String toString(){
             return "SetOfPrefixes[length="+length+"]";
         }
     };
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = 3803318906010996154L;
     
     /**
@@ -689,9 +785,6 @@ public abstract class AggregateFunction<T> implements Serializable{
      */
     public abstract String toLabel();
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public abstract String toString ();
 }
