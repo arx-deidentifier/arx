@@ -101,6 +101,14 @@ public class DataHandleStatistics {
      * Stupid method
      * @return
      */
+    public int getNumColumns() {
+        return handle.getNumColumns();
+    }
+
+    /**
+     * Stupid method
+     * @return
+     */
     public int getNumRows() {   
         return handle.getNumRows();
     }

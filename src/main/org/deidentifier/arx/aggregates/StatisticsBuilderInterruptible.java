@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.aggregates;
 
+import java.util.Map;
+
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandleStatistics;
 import org.deidentifier.arx.aggregates.StatisticsBuilder.ComputationInterruptedException;
@@ -417,6 +419,25 @@ public class StatisticsBuilderInterruptible {
             } else {
                 throw new InterruptedException("Interrupted by exception: " +
                                                e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Returns summary statistics for all attributes. 
+     * 
+     * @param listwiseDeletion A flag enabling list-wise deletion
+     * @return
+     * @throws InterruptedException
+     */
+    public Map<String, StatisticsSummary> getSummaryStatistics(boolean listwiseDeletion) throws InterruptedException {
+        try {
+            return builder.getSummaryStatistics(listwiseDeletion);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
             }
         }
     }

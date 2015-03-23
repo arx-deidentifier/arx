@@ -19,6 +19,7 @@ package org.deidentifier.arx.aggregates;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,13 +27,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandleStatistics;
 import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.ARXOrderedString;
 import org.deidentifier.arx.DataType.ARXString;
 import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
+import org.deidentifier.arx.aggregates.StatisticsSummary.ScaleOfMeasure;
+import org.deidentifier.arx.aggregates.StatisticsSummary.SummaryStatisticsOrdinal;
 
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
@@ -74,11 +79,11 @@ public class StatisticsBuilder {
         }
     }
     
-    /** The handle. */
-    private DataHandleStatistics handle;
-    
     /** The equivalence class statistics. */
     private StatisticsEquivalenceClasses ecStatistics;
+    
+    /** The handle. */
+    private DataHandleStatistics handle;
     
     /** The stop flag. */
     private volatile boolean interrupt;
@@ -168,8 +173,8 @@ public class StatisticsBuilder {
         final Iterator<Entry> internal = entries.keySet().iterator();
         final Iterator<Entry> iterator = new Iterator<Entry>(){
 
-            private Iterator<Entry> _internal = internal;
             private Map<Entry, Integer> _entries = entries;
+            private Iterator<Entry> _internal = internal;
             
             @Override
             public boolean hasNext() {
@@ -325,8 +330,8 @@ public class StatisticsBuilder {
         final Iterator<Entry> internal = entries.keySet().iterator();
         final Iterator<Entry> iterator = new Iterator<Entry>(){
 
-            private Iterator<Entry> _internal = internal;
             private Map<Entry, Double> _entries = entries;
+            private Iterator<Entry> _internal = internal;
             
             @Override
             public boolean hasNext() {
@@ -577,6 +582,145 @@ public class StatisticsBuilder {
     }
     
     /**
+     * Returns summary statistics for all attributes. 
+     * 
+     * @param listwiseDeletion A flag enabling list-wise deletion
+     * @return
+     */
+    public Map<String, StatisticsSummary> getSummaryStatistics(boolean listwiseDeletion) {
+
+        Map<String, DescriptiveStatistics> statistics = new HashMap<String, DescriptiveStatistics>();
+        Map<String, SummaryStatisticsOrdinal> ordinal = new HashMap<String, SummaryStatisticsOrdinal>();
+        Map<String, ScaleOfMeasure> scales = new HashMap<String, ScaleOfMeasure>();
+        
+        // Detect scales
+        for (int col = 0; col < handle.getNumColumns(); col++) {
+            
+            // Meta
+            String attribute = handle.getAttributeName(col);
+            DataType<?> type = handle.getDataType(attribute);
+            Class<?> clazz = type.getDescription().getWrappedClass();
+            
+            // Scale
+            ScaleOfMeasure scale = ScaleOfMeasure.NOMINAL;
+            if (clazz == Long.class || clazz == Double.class) {
+                scale = ScaleOfMeasure.RATIO;
+            } else if (clazz == Date.class) {
+                scale = ScaleOfMeasure.INTERVAL;
+            } else if (type instanceof ARXOrderedString) {
+                scale = ScaleOfMeasure.ORDINAL;
+            }
+            
+            // Store
+            scales.put(attribute, scale);
+            statistics.put(attribute, new DescriptiveStatistics());
+            ordinal.put(attribute, new SummaryStatisticsOrdinal(type));
+        }
+        
+        // Compute summary statistics
+        for (int row = 0; row < handle.getNumRows(); row++) {
+            
+            // Check, if we should include this row
+            boolean include = true;
+            if (listwiseDeletion) {
+                for (int col = 0; col < handle.getNumColumns(); col++) {
+                    if (DataType.isNull(handle.getValue(row, col))) {
+                        include = false;
+                        break;
+                    }
+                }
+            }
+            
+            // Check
+            checkInterrupt();
+            
+            // If yes, add
+            if (include) {
+                // Detect scales
+                for (int col = 0; col < handle.getNumColumns(); col++) {
+                    
+                    // Meta
+                    String value = handle.getValue(row, col);
+                    String attribute = handle.getAttributeName(col);
+                    DataType<?> type = handle.getDataType(attribute);
+                    Class<?> clazz = type.getDescription().getWrappedClass();
+                    
+                    // Analyze
+                    if (value != null && !DataType.isNull(value)) {
+                        if (clazz == Long.class || clazz == Double.class) {
+                            statistics.get(attribute).addValue((Double)type.parse(value));
+                            ordinal.get(attribute).addValue(value);
+                        } else if (clazz == Date.class) {
+                            statistics.get(attribute).addValue(((Date)type.parse(value)).getTime());
+                            ordinal.get(attribute).addValue(value);
+                        } else {
+                            ordinal.get(attribute).addValue(value);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Convert
+        Map<String, StatisticsSummary> result = new HashMap<String, StatisticsSummary>();
+        for (int col = 0; col < handle.getNumColumns(); col++) {
+            
+            // Check
+            checkInterrupt();
+            
+            // Depending on scale
+            String attribute = handle.getAttributeName(col);
+            ScaleOfMeasure scale = scales.get(attribute);
+            DataType<?> type = handle.getDataType(attribute);
+            if (scale == ScaleOfMeasure.NOMINAL) {
+                SummaryStatisticsOrdinal stats = ordinal.get(attribute);
+                result.put(attribute, new StatisticsSummary(ScaleOfMeasure.NOMINAL, 
+                                                            stats.getNumberOfMeasures(), 
+                                                            stats.getMode()));
+            } else if (scale == ScaleOfMeasure.ORDINAL) {
+                SummaryStatisticsOrdinal stats = ordinal.get(attribute);
+                result.put(attribute, new StatisticsSummary(ScaleOfMeasure.ORDINAL, 
+                                                            stats.getNumberOfMeasures(), 
+                                                            stats.getMode(),
+                                                            stats.getMedian(),
+                                                            stats.getMin(),
+                                                            stats.getMax()));
+            } else if (scale == ScaleOfMeasure.INTERVAL) {
+                SummaryStatisticsOrdinal stats = ordinal.get(attribute);
+                DescriptiveStatistics stats2 = statistics.get(attribute);
+                result.put(attribute, new StatisticsSummary(ScaleOfMeasure.INTERVAL, 
+                                                            stats.getNumberOfMeasures(), 
+                                                            stats.getMode(),
+                                                            stats.getMedian(),
+                                                            stats.getMin(),
+                                                            stats.getMax(),
+                                                            toString(type, stats2.getMean()),
+                                                            toString(type, stats2.getVariance()),
+                                                            toString(type, stats2.getPopulationVariance()),
+                                                            toString(type, stats2.getMax() - stats2.getMin()),
+                                                            toString(type, stats2.getKurtosis())));
+            } else if (scale == ScaleOfMeasure.RATIO) {
+                SummaryStatisticsOrdinal stats = ordinal.get(attribute);
+                DescriptiveStatistics stats2 = statistics.get(attribute);
+                result.put(attribute, new StatisticsSummary(ScaleOfMeasure.RATIO, 
+                                                            stats.getNumberOfMeasures(), 
+                                                            stats.getMode(),
+                                                            stats.getMedian(),
+                                                            stats.getMin(),
+                                                            stats.getMax(),
+                                                            toString(type, stats2.getMean()),
+                                                            toString(type, stats2.getVariance()),
+                                                            toString(type, stats2.getPopulationVariance()),
+                                                            toString(type, stats2.getMax() - stats2.getMin()),
+                                                            toString(type, stats2.getKurtosis()),
+                                                            toString(type, stats2.getGeometricMean())));
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
      * Checks whether an interruption happened.
      */
     private void checkInterrupt(){
@@ -609,7 +753,6 @@ public class StatisticsBuilder {
         
         return hierarchy;
     }
-    
 
     /**
      * Scales the given string array.
@@ -647,6 +790,7 @@ public class StatisticsBuilder {
         return result;
     }
     
+
     /**
      * Orders the given array by data type.
      *
@@ -708,6 +852,24 @@ public class StatisticsBuilder {
                 array[arg1] = temp;
             }
         });
+    }
+    
+    /**
+     * Used for building summary statistics 
+     * @param type
+     * @param value
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private String toString(DataType<?> type, double value) {
+        Class<?> clazz = type.getDescription().getWrappedClass();
+        if (clazz == Long.class || clazz == Double.class) {
+            return String.valueOf(value);
+        } else if (clazz == Date.class) {
+            return ((DataType<Date>) type).format(new Date((long) value));
+        } else {
+            return String.valueOf(value);
+        }
     }
     
     /**
