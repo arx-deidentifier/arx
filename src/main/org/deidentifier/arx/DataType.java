@@ -1805,6 +1805,15 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     }
     
     /**
+     * Returns whether the value represents null
+     * @param value
+     * @return
+     */
+    public static final boolean isNull(String value) {
+        return (value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE));
+    }
+    
+    /**
      * Lists all available data types.
      *
      * @return
@@ -1954,15 +1963,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     @Override
     public abstract int hashCode();
-
-    /**
-     * Returns whether the given value represent null
-     * @param value
-     * @return
-     */
-    public boolean isNull(String value) {
-        return value != null && value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE);
-    }
     
     /**
      * Checks whether the given string conforms to the data type's format.

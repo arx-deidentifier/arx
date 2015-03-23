@@ -250,7 +250,7 @@ public abstract class AggregateFunction<T> implements Serializable{
             // Count the number of non-null values
             double count = 0;
             for (String value : values) {
-                count += value != null && !value.equals(DataType.NULL_VALUE) ? 1 : 0;
+                count += value != null && !DataType.isNull(value) ? 1 : 0;
             }
             
             // Data-type specific implementation
@@ -329,10 +329,10 @@ public abstract class AggregateFunction<T> implements Serializable{
             String max = null;
             for (String value : values) {
                 try {
-                    if (value != null && (min == null || type.compare(min, value) > 0)){
+                    if (value != null && !DataType.isNull(value) && (min == null || type.compare(min, value) > 0)){
                         min = value;
                     }
-                    if (value != null && (max == null || type.compare(max, value) < 0)){
+                    if (value != null && !DataType.isNull(value) && (max == null || type.compare(max, value) < 0)){
                         max = value;
                     }
                 } catch (Exception e) {
@@ -577,7 +577,7 @@ public abstract class AggregateFunction<T> implements Serializable{
             // Count the number of non-null values
             double count = 0;
             for (String value : values) {
-                count += value != null && !value.equals(DataType.NULL_VALUE) ? 1 : 0;
+                count += value != null && !DataType.isNull(value) ? 1 : 0;
             }
             
             // Data-type specific implementation
@@ -656,10 +656,10 @@ public abstract class AggregateFunction<T> implements Serializable{
             String max = null;
             for (String value : values) {
                 try {
-                    if (value != null && (min == null || type.compare(min, value) > 0)){
+                    if (value != null && !DataType.isNull(value) && (min == null || type.compare(min, value) > 0)){
                         min = value;
                     }
-                    if (value != null && (max == null || type.compare(max, value) < 0)){
+                    if (value != null && !DataType.isNull(value) && (max == null || type.compare(max, value) < 0)){
                         max = value;
                     }
                 } catch (Exception e) {
