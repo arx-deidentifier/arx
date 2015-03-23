@@ -276,12 +276,12 @@ public abstract class AggregateFunction<T> implements Serializable{
         
         @Override
         public String toLabel() {
-            return "Arithmetic mean";
+            return "Geometric mean";
         }
 
         @Override
         public String toString(){
-            return "ArithmeticMean";
+            return "GeometricMean";
         }
     }
 
