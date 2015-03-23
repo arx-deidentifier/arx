@@ -49,8 +49,8 @@ public class HierarchyWizardEditorFunction<T> {
     public static interface IHierarchyFunctionEditorParent<T> {
         
         /**
+         * Sets the function
          * 
-         *
          * @param function
          */
         public void setFunction(AggregateFunction<T> function);
@@ -116,7 +116,9 @@ public class HierarchyWizardEditorFunction<T> {
         this.createEntry(AggregateFunction.forType(type).createSetFunction());
         this.createEntry(AggregateFunction.forType(type).createSetOfPrefixesFunction(1));
         this.createEntry(AggregateFunction.forType(type).createArithmeticMeanFunction());
+        this.createEntry(AggregateFunction.forType(type).createArithmeticMeanOfBoundsFunction());
         this.createEntry(AggregateFunction.forType(type).createGeometricMeanFunction());
+        this.createEntry(AggregateFunction.forType(type).createGeometricMeanOfBoundsFunction());
         
 
         createLabel(composite, "Aggregate function:");

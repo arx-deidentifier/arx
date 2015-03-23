@@ -62,8 +62,16 @@ public abstract class AggregateFunction<T> implements Serializable{
         public final AggregateFunction<T> createArithmeticMeanFunction() {
             return new GenericArithmeticMean<T>(type);
         }
-        
 
+        /**
+         * An aggregate function that returns a the arithmetic mean of min & max, if it can be computed, NULL otherwise.
+         *
+         * @return
+         */
+        public final AggregateFunction<T> createArithmeticMeanOfBoundsFunction() {
+            return new GenericArithmeticMeanOfBounds<T>(type);
+        }
+        
         /**
          * An aggregate function that returns an interval consisting of the
          * first and the last element following the predefined order.
@@ -93,6 +101,14 @@ public abstract class AggregateFunction<T> implements Serializable{
             return new GenericGeometricMean<T>(type);
         }
 
+        /**
+         * An aggregate function that returns a the geometric mean of min & max, if it can be computed, NULL otherwise.
+         *
+         * @return
+         */
+        public final AggregateFunction<T> createGeometricMeanOfBoundsFunction() {
+            return new GenericGeometricMeanOfBounds<T>(type);
+        }
         /**
          * An aggregate function that returns an interval [min, max].
          *
@@ -206,7 +222,6 @@ public abstract class AggregateFunction<T> implements Serializable{
          */
         public abstract AggregateFunctionWithParameter<T> newInstance(String parameter);
     }
-    
 
     /**
      * An aggregate function that returns the arithmetic mean, if it may be computed, "NULL"
@@ -235,7 +250,7 @@ public abstract class AggregateFunction<T> implements Serializable{
             // Count the number of non-null values
             double count = 0;
             for (String value : values) {
-                count += !value.equals(DataType.NULL_VALUE) ? 1 : 0;
+                count += value != null && !value.equals(DataType.NULL_VALUE) ? 1 : 0;
             }
             
             // Data-type specific implementation
@@ -286,6 +301,64 @@ public abstract class AggregateFunction<T> implements Serializable{
     }
 
     /**
+     * An aggregate function that returns the arithmetic mean of min & max, if it may be computed, "NULL"
+     * otherwise.
+     *
+     * @author Fabian Prasser
+     * @param <T>
+     */
+    public static class GenericArithmeticMeanOfBounds<T> extends AggregateFunction<T> {
+
+        /** SVUID*/
+        private static final long serialVersionUID = 5067728720270473715L;
+
+        /**
+         * Creates a new instance.
+         *
+         * @param type
+         */
+        private GenericArithmeticMeanOfBounds(DataType<T> type) {
+            super(type);
+        }
+
+        @Override
+        public String aggregate(String[] values) {
+            
+
+            String min = null;
+            String max = null;
+            for (String value : values) {
+                try {
+                    if (value != null && (min == null || type.compare(min, value) > 0)){
+                        min = value;
+                    }
+                    if (value != null && (max == null || type.compare(max, value) < 0)){
+                        max = value;
+                    }
+                } catch (Exception e) {
+                    return DataType.NULL_VALUE;
+                }
+            }
+            
+            if (min == null || max == null) {
+                return DataType.NULL_VALUE;
+            } else {
+                return new GenericArithmeticMean<T>(this.type).aggregate(new String[]{min, max});
+            }
+        }
+        
+        @Override
+        public String toLabel() {
+            return "Arithmetic mean of bounds";
+        }
+
+        @Override
+        public String toString(){
+            return "ArithmeticMeanOfBounds";
+        }
+    }
+
+    /**
      * An aggregate function that returns an interval consisting of the
      * first and the last element following the predefined order .
      *
@@ -326,7 +399,7 @@ public abstract class AggregateFunction<T> implements Serializable{
             return "Bounds";
         }
     }
-    
+
     /**
      * An aggregate function that returns a common prefix.
      *
@@ -504,7 +577,7 @@ public abstract class AggregateFunction<T> implements Serializable{
             // Count the number of non-null values
             double count = 0;
             for (String value : values) {
-                count += !value.equals(DataType.NULL_VALUE) ? 1 : 0;
+                count += value != null && !value.equals(DataType.NULL_VALUE) ? 1 : 0;
             }
             
             // Data-type specific implementation
@@ -551,6 +624,64 @@ public abstract class AggregateFunction<T> implements Serializable{
         @Override
         public String toString(){
             return "GeometricMean";
+        }
+    }
+    
+    /**
+     * An aggregate function that returns the geometric mean of min & max, if it may be computed, "NULL"
+     * otherwise.
+     *
+     * @author Fabian Prasser
+     * @param <T>
+     */
+    public static class GenericGeometricMeanOfBounds<T> extends AggregateFunction<T> {
+
+        /** SVUID*/
+        private static final long serialVersionUID = 8155390779775522723L;
+
+        /**
+         * Creates a new instance.
+         *
+         * @param type
+         */
+        private GenericGeometricMeanOfBounds(DataType<T> type) {
+            super(type);
+        }
+
+        @Override
+        public String aggregate(String[] values) {
+            
+
+            String min = null;
+            String max = null;
+            for (String value : values) {
+                try {
+                    if (value != null && (min == null || type.compare(min, value) > 0)){
+                        min = value;
+                    }
+                    if (value != null && (max == null || type.compare(max, value) < 0)){
+                        max = value;
+                    }
+                } catch (Exception e) {
+                    return DataType.NULL_VALUE;
+                }
+            }
+            
+            if (min == null || max == null) {
+                return DataType.NULL_VALUE;
+            } else {
+                return new GenericGeometricMean<T>(this.type).aggregate(new String[]{min, max});
+            }
+        }
+        
+        @Override
+        public String toLabel() {
+            return "Geometric mean of bounds";
+        }
+
+        @Override
+        public String toString(){
+            return "GeometricMeanOfBounds";
         }
     }
 
