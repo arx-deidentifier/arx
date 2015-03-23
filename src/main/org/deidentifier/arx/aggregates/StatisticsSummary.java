@@ -242,18 +242,18 @@ public class StatisticsSummary {
      * @param kurtosis
      * @param geometricMean
      */
-    StatisticsSummary(    ScaleOfMeasure scale,
-                                  int numberOfMeasures,
-                                  String mode,
-                                  String median,
-                                  String min,
-                                  String max,
-                                  String arithmeticMean,
-                                  String sampleVariance,
-                                  String populationVariance,
-                                  String range,
-                                  String kurtosis,
-                                  String geometricMean) {
+    StatisticsSummary(ScaleOfMeasure scale,
+                      int numberOfMeasures,
+                      String mode,
+                      String median,
+                      String min,
+                      String max,
+                      String arithmeticMean,
+                      String sampleVariance,
+                      String populationVariance,
+                      String range,
+                      String kurtosis,
+                      String geometricMean) {
         this.numberOfMeasures = numberOfMeasures;
         this.scale = scale;
         this.mode = mode;
@@ -282,17 +282,17 @@ public class StatisticsSummary {
      * @param range
      * @param kurtosis
      */
-    StatisticsSummary(    ScaleOfMeasure scale,
-                                  int numberOfMeasures,
-                                  String mode,
-                                  String median,
-                                  String min,
-                                  String max,
-                                  String arithmeticMean,
-                                  String sampleVariance,
-                                  String populationVariance,
-                                  String range,
-                                  String kurtosis) {
+    StatisticsSummary(ScaleOfMeasure scale,
+                      int numberOfMeasures,
+                      String mode,
+                      String median,
+                      String min,
+                      String max,
+                      String arithmeticMean,
+                      String sampleVariance,
+                      String populationVariance,
+                      String range,
+                      String kurtosis) {
         this(scale, numberOfMeasures, mode, median, min, max, arithmeticMean, sampleVariance, populationVariance, range, kurtosis, null);
     }
 
@@ -305,12 +305,12 @@ public class StatisticsSummary {
      * @param min
      * @param max
      */
-    StatisticsSummary(    ScaleOfMeasure scale,
-                                  int numberOfMeasures,
-                                  String mode,
-                                  String median,
-                                  String min,
-                                  String max) {
+    StatisticsSummary(ScaleOfMeasure scale,
+                      int numberOfMeasures,
+                      String mode,
+                      String median,
+                      String min,
+                      String max) {
         this(scale, numberOfMeasures, mode, median, min, max, null, null, null, null, null, null);
     }
 
@@ -320,7 +320,9 @@ public class StatisticsSummary {
      * @param numberOfMeasures
      * @param mode
      */
-    StatisticsSummary(ScaleOfMeasure scale, int numberOfMeasures, String mode) {
+    StatisticsSummary(ScaleOfMeasure scale, 
+                      int numberOfMeasures, 
+                      String mode) {
         this(scale, numberOfMeasures, mode, null, null, null, null, null, null, null, null, null);
     }
 }
