@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>AggregateFunction (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -99,7 +99,7 @@
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.AggregateFunctionWithParameter</a>, <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericBounds.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericBounds</a>, <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericInterval.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericInterval</a>, <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSet.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericSet</a></dd>
+<dd><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.AggregateFunctionWithParameter</a>, <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericArithmeticMean.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericArithmeticMean</a>, <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericArithmeticMeanOfBounds.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericArithmeticMeanOfBounds</a>, <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericBounds.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericBounds</a>, <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericGeometricMean.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericGeometricMean</a>, <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericGeometricMeanOfBounds.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericGeometricMeanOfBounds</a>, <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericInterval.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericInterval</a>, <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSet.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericSet</a></dd>
 </dl>
 <hr>
 <br>
@@ -140,6 +140,20 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericArithmeticMean.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericArithmeticMean</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericArithmeticMean.html" title="type parameter in AggregateFunction.GenericArithmeticMean">T</a>&gt;</strong></code>
+<div class="block">An aggregate function that returns the arithmetic mean, if it may be computed, "NULL"
+ otherwise.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericArithmeticMeanOfBounds.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericArithmeticMeanOfBounds</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericArithmeticMeanOfBounds.html" title="type parameter in AggregateFunction.GenericArithmeticMeanOfBounds">T</a>&gt;</strong></code>
+<div class="block">An aggregate function that returns the arithmetic mean of min & max, if it may be computed, "NULL"
+ otherwise.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericBounds.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericBounds</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericBounds.html" title="type parameter in AggregateFunction.GenericBounds">T</a>&gt;</strong></code>
 <div class="block">An aggregate function that returns an interval consisting of the
  first and the last element following the predefined order .</div>
@@ -155,6 +169,20 @@ implements java.io.Serializable</pre>
 <td class="colFirst"><code>static class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericConstant.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericConstant</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericConstant.html" title="type parameter in AggregateFunction.GenericConstant">T</a>&gt;</strong></code>
 <div class="block">An aggregate function that returns a constant value.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericGeometricMean.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericGeometricMean</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericGeometricMean.html" title="type parameter in AggregateFunction.GenericGeometricMean">T</a>&gt;</strong></code>
+<div class="block">An aggregate function that returns the geometric mean, if it may be computed, "NULL"
+ otherwise.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericGeometricMeanOfBounds.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.GenericGeometricMeanOfBounds</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericGeometricMeanOfBounds.html" title="type parameter in AggregateFunction.GenericGeometricMeanOfBounds">T</a>&gt;</strong></code>
+<div class="block">An aggregate function that returns the geometric mean of min & max, if it may be computed, "NULL"
+ otherwise.</div>
 </td>
 </tr>
 <tr class="rowColor">

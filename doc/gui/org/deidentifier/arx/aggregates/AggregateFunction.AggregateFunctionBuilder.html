@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>AggregateFunction.AggregateFunctionBuilder (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -122,6 +122,18 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createArithmeticMeanFunction()">createArithmeticMeanFunction</a></strong>()</code>
+<div class="block">An aggregate function that returns a the arithmetic mean, if it can be computed, NULL otherwise.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createArithmeticMeanOfBoundsFunction()">createArithmeticMeanOfBoundsFunction</a></strong>()</code>
+<div class="block">An aggregate function that returns a the arithmetic mean of min & max, if it can be computed, NULL otherwise.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createBoundsFunction()">createBoundsFunction</a></strong>()</code>
 <div class="block">An aggregate function that returns an interval consisting of the
  first and the last element following the predefined order.</div>
@@ -131,6 +143,18 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createConstantFunction(java.lang.String)">createConstantFunction</a></strong>(java.lang.String&nbsp;value)</code>
 <div class="block">An aggregate function that returns a constant value.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createGeometricMeanFunction()">createGeometricMeanFunction</a></strong>()</code>
+<div class="block">An aggregate function that returns a the geometric mean, if it can be computed, NULL otherwise.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createGeometricMeanOfBoundsFunction()">createGeometricMeanOfBoundsFunction</a></strong>()</code>
+<div class="block">An aggregate function that returns a the geometric mean of min & max, if it can be computed, NULL otherwise.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -198,6 +222,28 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="createArithmeticMeanFunction()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createArithmeticMeanFunction</h4>
+<pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createArithmeticMeanFunction()</pre>
+<div class="block">An aggregate function that returns a the arithmetic mean, if it can be computed, NULL otherwise.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="createArithmeticMeanOfBoundsFunction()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createArithmeticMeanOfBoundsFunction</h4>
+<pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createArithmeticMeanOfBoundsFunction()</pre>
+<div class="block">An aggregate function that returns a the arithmetic mean of min & max, if it can be computed, NULL otherwise.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="createBoundsFunction()">
 <!--   -->
 </a>
@@ -220,6 +266,28 @@ extends java.lang.Object</pre>
 <div class="block">An aggregate function that returns a constant value.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="createGeometricMeanFunction()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createGeometricMeanFunction</h4>
+<pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createGeometricMeanFunction()</pre>
+<div class="block">An aggregate function that returns a the geometric mean, if it can be computed, NULL otherwise.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="createGeometricMeanOfBoundsFunction()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createGeometricMeanOfBoundsFunction</h4>
+<pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createGeometricMeanOfBoundsFunction()</pre>
+<div class="block">An aggregate function that returns a the geometric mean of min & max, if it can be computed, NULL otherwise.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createIntervalFunction()">
