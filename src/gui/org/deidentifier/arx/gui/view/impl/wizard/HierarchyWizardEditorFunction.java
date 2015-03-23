@@ -115,6 +115,8 @@ public class HierarchyWizardEditorFunction<T> {
         this.createEntry(AggregateFunction.forType(type).createIntervalFunction(true, false));
         this.createEntry(AggregateFunction.forType(type).createSetFunction());
         this.createEntry(AggregateFunction.forType(type).createSetOfPrefixesFunction(1));
+        this.createEntry(AggregateFunction.forType(type).createArithmeticMeanFunction());
+        this.createEntry(AggregateFunction.forType(type).createGeometricMeanFunction());
         
 
         createLabel(composite, "Aggregate function:");
