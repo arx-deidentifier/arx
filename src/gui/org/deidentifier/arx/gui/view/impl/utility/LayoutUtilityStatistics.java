@@ -39,19 +39,22 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 public class LayoutUtilityStatistics implements ILayout, IView {
 
-    /**  Constant */
+    /** Constant */
+    private static final String         TAB_SUMMARY            = Resources.getMessage("StatisticsView.6"); //$NON-NLS-1$
+
+    /** Constant */
     private static final String         TAB_DISTRIBUTION       = Resources.getMessage("StatisticsView.0"); //$NON-NLS-1$
-    
-    /**  Constant */
+
+    /** Constant */
     private static final String         TAB_DISTRIBUTION_TABLE = Resources.getMessage("StatisticsView.4"); //$NON-NLS-1$
-    
-    /**  Constant */
+
+    /** Constant */
     private static final String         TAB_CONTINGENCY        = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
-    
-    /**  Constant */
+
+    /** Constant */
     private static final String         TAB_CONTINGENCY_TABLE  = Resources.getMessage("StatisticsView.5"); //$NON-NLS-1$
-    
-    /**  Constant */
+
+    /** Constant */
     private static final String         TAB_PROPERTIES         = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
 
     /**  View */
@@ -102,6 +105,8 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         
         // Create the tab folder
         folder = new ComponentTitledFolder(parent, controller, bar, null);
+        final Composite item0 = folder.createItem(TAB_SUMMARY, null);
+        item0.setLayout(new FillLayout());
         final Composite item1 = folder.createItem(TAB_DISTRIBUTION, null);
         item1.setLayout(new FillLayout());
         final Composite item1b = folder.createItem(TAB_DISTRIBUTION_TABLE, null);
@@ -117,6 +122,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         this.enable.setEnabled(false);
         
         // Create the views
+        new ViewStatisticsSummaryTable(item0, controller, target, reset);
         new ViewStatisticsDistributionHistogram(item1, controller, target, reset);
         new ViewStatisticsDistributionTable(item1b, controller, target, reset);
         new ViewStatisticsContingencyHeatmap(item2, controller, target, reset);

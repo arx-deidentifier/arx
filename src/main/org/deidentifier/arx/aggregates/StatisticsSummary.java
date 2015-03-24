@@ -36,10 +36,26 @@ public class StatisticsSummary {
      * @author Fabian Prasser
      */
     public static enum ScaleOfMeasure {
-        NOMINAL,
-        ORDINAL,
-        INTERVAL,
-        RATIO
+        NOMINAL("Nominal scale"),
+        ORDINAL("Ordinal scale"),
+        INTERVAL("Interval scale"),
+        RATIO("Ratio scale");
+        
+        /** Label*/
+        private final String label;
+        
+        /**
+         * Construct
+         * @param label
+         */
+        private ScaleOfMeasure(String label) {
+            this.label = label;
+        }
+        
+         @Override
+        public String toString() {
+            return label;
+        }
     }
     
     /**
@@ -47,7 +63,7 @@ public class StatisticsSummary {
      * @author Fabian Prasser
      *
      */
-    static final class SummaryStatisticsOrdinal {
+    static final class StatisticsSummaryOrdinal {
 
         /** Var */
         private final DataType<?>  type;
@@ -68,7 +84,7 @@ public class StatisticsSummary {
          * Constructor
          * @param type
          */
-        SummaryStatisticsOrdinal(DataType<?> type) {
+        StatisticsSummaryOrdinal(DataType<?> type) {
             this.type = type;
         }
         

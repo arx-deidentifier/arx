@@ -37,7 +37,7 @@ import org.deidentifier.arx.DataType.ARXOrderedString;
 import org.deidentifier.arx.DataType.ARXString;
 import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
 import org.deidentifier.arx.aggregates.StatisticsSummary.ScaleOfMeasure;
-import org.deidentifier.arx.aggregates.StatisticsSummary.SummaryStatisticsOrdinal;
+import org.deidentifier.arx.aggregates.StatisticsSummary.StatisticsSummaryOrdinal;
 
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
@@ -590,7 +590,7 @@ public class StatisticsBuilder {
     public Map<String, StatisticsSummary> getSummaryStatistics(boolean listwiseDeletion) {
 
         Map<String, DescriptiveStatistics> statistics = new HashMap<String, DescriptiveStatistics>();
-        Map<String, SummaryStatisticsOrdinal> ordinal = new HashMap<String, SummaryStatisticsOrdinal>();
+        Map<String, StatisticsSummaryOrdinal> ordinal = new HashMap<String, StatisticsSummaryOrdinal>();
         Map<String, ScaleOfMeasure> scales = new HashMap<String, ScaleOfMeasure>();
         
         // Detect scales
@@ -614,7 +614,7 @@ public class StatisticsBuilder {
             // Store
             scales.put(attribute, scale);
             statistics.put(attribute, new DescriptiveStatistics());
-            ordinal.put(attribute, new SummaryStatisticsOrdinal(type));
+            ordinal.put(attribute, new StatisticsSummaryOrdinal(type));
         }
         
         // Compute summary statistics
@@ -674,12 +674,12 @@ public class StatisticsBuilder {
             DataType<?> type = handle.getDataType(attribute);
             ordinal.get(attribute).analyze();
             if (scale == ScaleOfMeasure.NOMINAL) {
-                SummaryStatisticsOrdinal stats = ordinal.get(attribute);
+                StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary(ScaleOfMeasure.NOMINAL, 
                                                             stats.getNumberOfMeasures(), 
                                                             stats.getMode()));
             } else if (scale == ScaleOfMeasure.ORDINAL) {
-                SummaryStatisticsOrdinal stats = ordinal.get(attribute);
+                StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary(ScaleOfMeasure.ORDINAL, 
                                                             stats.getNumberOfMeasures(), 
                                                             stats.getMode(),
@@ -687,7 +687,7 @@ public class StatisticsBuilder {
                                                             stats.getMin(),
                                                             stats.getMax()));
             } else if (scale == ScaleOfMeasure.INTERVAL) {
-                SummaryStatisticsOrdinal stats = ordinal.get(attribute);
+                StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
                 result.put(attribute, new StatisticsSummary(ScaleOfMeasure.INTERVAL, 
                                                             stats.getNumberOfMeasures(), 
@@ -701,7 +701,7 @@ public class StatisticsBuilder {
                                                             toString(type, stats2.getMax() - stats2.getMin()),
                                                             toString(type, stats2.getKurtosis())));
             } else if (scale == ScaleOfMeasure.RATIO) {
-                SummaryStatisticsOrdinal stats = ordinal.get(attribute);
+                StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
                 result.put(attribute, new StatisticsSummary(ScaleOfMeasure.RATIO, 
                                                             stats.getNumberOfMeasures(), 
