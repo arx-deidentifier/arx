@@ -174,7 +174,8 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextVi
                 // Perform work
                 // TODO: This view computes the statistics for all attributes, each time the selected attribute is changed
                 // TODO: This is done because of list-wise deletion, could be implemented more efficient anyways, however
-                this.summary = builder.getSummaryStatistics(true).get(attribute);
+                boolean listwiseDeletion = getModel() != null ? getModel().getUseListwiseDeletion() : true;
+                this.summary = builder.getSummaryStatistics(listwiseDeletion).get(attribute);
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){

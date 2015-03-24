@@ -240,6 +240,9 @@ public class Model implements Serializable {
     /** Description. */
     private MetricDescription                     metricDescription               = ARXConfiguration.create().getMetric().getDescription();
     
+    /** Summary statistics */
+    private Boolean                               useListwiseDeletion             = true;
+    
     /* *****************************************
      * RISK-BASED STUFF
      ******************************************/
@@ -259,7 +262,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	/**
+    /**
 	 * Adds an entry to the audit trail
 	 * @param entry
 	 */
@@ -268,7 +271,7 @@ public class Model implements Serializable {
 	    this.setModified();
 	}
 
-	/**
+    /**
      * Creates an anonymizer for the current config.
      *
      * @return
@@ -288,8 +291,8 @@ public class Model implements Serializable {
         // Return the anonymizer
 		return anonymizer;
 	}
-    
-    /**
+
+	/**
      * Replaces the output config with a clone of the input config.
      */
     public void createClonedConfig() {
@@ -388,7 +391,7 @@ public class Model implements Serializable {
         }
 	}
     
-	/**
+    /**
      * Creates an ARXConfiguration for the subset.
      *
      * @return
@@ -406,7 +409,7 @@ public class Model implements Serializable {
         // Return the config
 		return config;
 	}
-	
+
 	/**
      * Returns the current anonymizer.
      *
@@ -415,7 +418,7 @@ public class Model implements Serializable {
 	public ARXAnonymizer getAnonymizer() {
 		return anonymizer;
 	}
-	
+    
 	/**
      * Returns the last two selected attributes.
      *
@@ -425,7 +428,7 @@ public class Model implements Serializable {
 		if (pair == null) pair = new String[] { null, null };
 		return pair;
 	}
-
+	
 	/**
 	 * Returns the audit trail
 	 * @return
@@ -436,7 +439,7 @@ public class Model implements Serializable {
 	    }
 	    return auditTrail;
 	}
-
+	
 	/**
      * Returns the clipboard.
      *
@@ -536,7 +539,7 @@ public class Model implements Serializable {
 	    else if (inputConfig.getInput()==null) return null;
 	    else return inputConfig.getInput().getDefinition();
 	}
-	
+
 	/**
 	 * Returns the input population model
 	 * @return
@@ -578,7 +581,7 @@ public class Model implements Serializable {
 	        return locale;
 	    }
 	}
-
+	
 	/**
      * When a dataset has more records than this threshold,
      * visualization of statistics will be disabled.
@@ -703,7 +706,7 @@ public class Model implements Serializable {
 		return outputNode;
 	}
 
-    /**
+	/**
      * Returns a string representation of the currently applied transformation.
      *
      * @return
@@ -727,7 +730,7 @@ public class Model implements Serializable {
         return null;
     }
 
-	/**
+    /**
      * Returns the path of the project.
      *
      * @return
@@ -735,7 +738,7 @@ public class Model implements Serializable {
 	public String getPath() {
 		return path;
 	}
-	
+
 	/**
      * @return the perspective
      */
@@ -745,7 +748,7 @@ public class Model implements Serializable {
         }
         return perspective;
     }
-	
+
 	/**
      * Returns the current query.
      *
@@ -754,7 +757,7 @@ public class Model implements Serializable {
 	public String getQuery() {
         return query;
     }
-
+	
 	/**
      * Returns the current result.
      *
@@ -763,7 +766,7 @@ public class Model implements Serializable {
 	public ARXResult getResult() {
 		return result;
 	}
-
+	
 	/**
      * Returns the risk-based model.
      *
@@ -782,7 +785,7 @@ public class Model implements Serializable {
         return riskBasedModel;
     }
 
-    /**
+	/**
      * Returns the risk model
      * @return the risk model
      */
@@ -792,8 +795,8 @@ public class Model implements Serializable {
         }
         return riskModel;
     }
-    
-    /**
+
+	/**
      * Returns the currently selected attribute.
      *
      * @return
@@ -802,7 +805,7 @@ public class Model implements Serializable {
 		return selectedAttribute;
 	}
 
-	/**
+    /**
      * Returns the selected transformation.
      *
      * @return
@@ -810,7 +813,7 @@ public class Model implements Serializable {
 	public ARXNode getSelectedNode() {
 		return selectedNode;
 	}
-
+    
     /**
      * Returns a set of quasi identifiers selected for risk analysis
      * @return
@@ -853,7 +856,7 @@ public class Model implements Serializable {
         return this.selectedQuasiIdentifiers;
     }
 
-    /**
+	/**
      * Returns the separator.
      *
      * @return
@@ -871,7 +874,7 @@ public class Model implements Serializable {
 		return snapshotSizeDataset;
 	}
 
-	/**
+    /**
      * Returns the according parameter.
      *
      * @return
@@ -880,7 +883,7 @@ public class Model implements Serializable {
 		return snapshotSizeSnapshot;
 	}
 
-	/**
+    /**
      * Returns the origin of the subset.
      *
      * @return
@@ -889,7 +892,7 @@ public class Model implements Serializable {
         return this.subsetOrigin;
     }
 
-    /**
+	/**
      * Returns the t-closeness model.
      *
      * @return
@@ -910,6 +913,19 @@ public class Model implements Serializable {
 		return time;
 	}
 
+    /**
+     * Returns whether list-wise deletion is used for summary statistics
+     * @return
+     */
+    public Boolean getUseListwiseDeletion() {
+        
+        // Backwards compatibility
+        if (useListwiseDeletion == null) {
+            useListwiseDeletion = true;
+        }
+        return useListwiseDeletion;
+    }
+
 	/**
      * Returns the view configuration.
      *
@@ -919,7 +935,7 @@ public class Model implements Serializable {
         return this.viewConfig;
     }
 
-    /**
+	/**
      * Returns whether debugging is enabled.
      *
      * @return
@@ -928,7 +944,7 @@ public class Model implements Serializable {
 	    return debugEnabled;
 	}
 
-	/**
+    /**
      * Returns whether this project is modified.
      *
      * @return
@@ -949,7 +965,7 @@ public class Model implements Serializable {
 		return modified;
 	}
 
-    /**
+	/**
      * Returns whether a quasi-identifier is selected.
      *
      * @return
@@ -958,7 +974,7 @@ public class Model implements Serializable {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
 	}
 
-	/**
+    /**
      * Returns whether a sensitive attribute is selected.
      *
      * @return
@@ -966,7 +982,7 @@ public class Model implements Serializable {
 	public boolean isSensitiveAttributeSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
-	
+
 	/**
      * Returns whether visualization is enabled.
      *
@@ -979,7 +995,7 @@ public class Model implements Serializable {
 	        return this.showVisualization;
 	    }
 	}
-
+	
 	/**
      * Resets the model.
      */
@@ -995,8 +1011,8 @@ public class Model implements Serializable {
         subsetOrigin = "None";
         groups = null;
 	}
-    
-    /**
+
+	/**
      * Returns the last two selected attributes.
      */
     public void resetAttributePair() {
@@ -1031,8 +1047,8 @@ public class Model implements Serializable {
 		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB));
 		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ));
 	}
-
-	/**
+    
+    /**
      * Sets the anonymizer.
      *
      * @param anonymizer
@@ -1081,7 +1097,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-    /**
+	/**
      * Sets the according parameter.
      *
      * @param val
@@ -1091,7 +1107,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	/**
+    /**
      * Sets the size of the input in bytes.
      *
      * @param inputBytes
@@ -1169,7 +1185,7 @@ public class Model implements Serializable {
     public void setMetricDescription(MetricDescription description) {
         this.metricDescription = description;
     }
-	
+
 	/**
      * Marks this project as modified.
      */
@@ -1196,7 +1212,7 @@ public class Model implements Serializable {
 		nodeFilter = filter;
 		setModified();
 	}
-
+	
 	/**
      * Sets the current output.
      *
@@ -1249,7 +1265,7 @@ public class Model implements Serializable {
         setModified();
     }
 
-    /**
+	/**
      * Sets the result.
      *
      * @param result
@@ -1262,15 +1278,15 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
-    
-	/**
+
+    /**
      * Marks this project as saved.
      */
 	public void setSaved() {
 		modified = false;
 	}
     
-    /**
+	/**
      * Sets the selected attribute.
      *
      * @param attribute
@@ -1303,8 +1319,8 @@ public class Model implements Serializable {
 		selectedNode = node;
 		setModified();
 	}
-
-	/**
+    
+    /**
      * Sets a set of quasi identifiers selected for risk analysis
      * @param set
      */
@@ -1313,7 +1329,7 @@ public class Model implements Serializable {
         this.setModified();
     }
 
-    /**
+	/**
      * 
      *
      * @param snapshotSize
@@ -1374,6 +1390,14 @@ public class Model implements Serializable {
 		    clipboard.setUnmodified();
 		}
 	}
+
+    /**
+     * Sets whether list-wise deletion should be used for summary statistics
+     * @param useListwiseDeletion
+     */
+    public void setUseListwiseDeletion(boolean useListwiseDeletion) {
+        this.useListwiseDeletion = useListwiseDeletion;
+    }
     
     /**
      * Sets the view configuration.

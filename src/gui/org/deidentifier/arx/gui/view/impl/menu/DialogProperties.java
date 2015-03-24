@@ -74,6 +74,7 @@ public class DialogProperties implements IDialog {
         this.createTabTransformation(this.dialog);
         this.createTabInternals(this.dialog);
         this.createTabVisualization(this.dialog);
+        this.createTabUtility(this.dialog);
         this.createTabRisk(this.dialog);
         this.createTabSolver(this.dialog);
     }
@@ -163,6 +164,20 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.33"), getLocales()) { //$NON-NLS-1$
             protected String getValue() { return model.getLocale().getLanguage().toUpperCase(); }
             protected void setValue(Object t) { model.setLocale(((String)t).equals("Default") ? Locale.getDefault() : new Locale(((String)t).toLowerCase())); }}); //$NON-NLS-1$
+    }
+
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabUtility(PreferencesDialog window) {
+
+        window.addCategory(Resources.getMessage("PropertyDialog.60"), //$NON-NLS-1$
+                           controller.getResources().getImage("settings-utility.png")); //$NON-NLS-1$
+        
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.61")) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getUseListwiseDeletion(); }
+            protected void setValue(Object t) { model.setUseListwiseDeletion((Boolean)t); }});
     }
 
     /**
