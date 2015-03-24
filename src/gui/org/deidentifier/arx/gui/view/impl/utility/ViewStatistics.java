@@ -104,26 +104,17 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         this.reset();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
     @Override
     public void reset() {
         this.doReset();
         status.setEmpty();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(final ModelEvent event) {
 
@@ -245,6 +236,14 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * @param context
      */
     protected abstract void doUpdate(T context);
+
+    /**
+     * Returns the model
+     * @return
+     */
+    protected Model getModel() {
+        return this.model;
+    }
 
     /**
      * Status update.
