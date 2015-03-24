@@ -42,11 +42,11 @@ public class Example30 extends Example {
         data.add("age", "gender", "zipcode", "date");
         data.add("45", "female", "81675", "01.01.1982");
         data.add("34", "male", "81667", "11.05.1982");
-        data.add("66", "male", "81925", "31.08.1982");
+        data.add("NULL", "male", "81925", "31.08.1982");
         data.add("70", "female", "81931", "02.07.1982");
-        data.add("34", "female", "81931", "05.01.1982");
+        data.add("34", "female", null, "05.01.1982");
         data.add("70", "male", "81931", "24.03.1982");
-        data.add("45", "male", "81931", "23.11.1982");
+        data.add("45", "male", "81931", "NULL");
         
         System.out.println(data.getHandle().getStatistics().getSummaryStatistics(true));
         
