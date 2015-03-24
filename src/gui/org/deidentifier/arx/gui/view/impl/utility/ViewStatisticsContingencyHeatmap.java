@@ -68,9 +68,6 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
         super(parent, controller, target, reset);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Control createControl(Composite parent) {
         this.jhc = new JHC(parent, SWT.DOUBLE_BUFFERED);
@@ -98,27 +95,16 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
         return jhc.getControl();
     }
 
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createViewConfig(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext)
-     */
     @Override
     protected AnalysisContextVisualizationContingency createViewConfig(AnalysisContext context) {
         return new AnalysisContextVisualizationContingency(context);
     }
 
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doReset()
-     */
     @Override
     protected void doReset() {
         jhc.setData(null, new JHCConfiguration("", "", MAX_SIZE, MAX_SIZE, gradient, layout));
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doUpdate(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContextVisualization)
-     */
     @Override
     protected void doUpdate(AnalysisContextVisualizationContingency context) {
         int column1 = context.handle.getColumnIndexOf(context.attribute1);

@@ -106,9 +106,6 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Control createControl(Composite parent) {
         this.root = new Composite(parent, SWT.NONE);
@@ -116,17 +113,11 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
         return this.root;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createViewConfig(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext)
-     */
     @Override
     protected AnalysisContextVisualizationDistribution createViewConfig(AnalysisContext context) {
         return new AnalysisContextVisualizationDistribution(context);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doReset()
-     */
     @Override
     protected void doReset() {
         
@@ -224,9 +215,6 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
         updateCategories();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doUpdate(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContextVisualization)
-     */
     @Override
     protected void doUpdate(AnalysisContextVisualizationDistribution context) {
 

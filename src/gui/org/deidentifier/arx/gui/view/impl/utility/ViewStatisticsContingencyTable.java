@@ -72,9 +72,6 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Control createControl(Composite parent) {
         
@@ -91,19 +88,11 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
         return this.table.getControl();
     }
 
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createViewConfig(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext)
-     */
     @Override
     protected AnalysisContextVisualizationContingency createViewConfig(AnalysisContext context) {
         return new AnalysisContextVisualizationContingency(context);
     }
 
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doReset()
-     */
     @Override
     protected void doReset() {
         if (this.manager != null) {
@@ -112,9 +101,6 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
         this.table.clear();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doUpdate(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContextVisualization)
-     */
     @Override
     protected void doUpdate(AnalysisContextVisualizationContingency context) {
 

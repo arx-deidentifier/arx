@@ -64,9 +64,6 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Control createControl(Composite parent) {
 
@@ -83,17 +80,11 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
         return this.table.getControl();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createViewConfig(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext)
-     */
     @Override
     protected AnalysisContextVisualizationDistribution createViewConfig(AnalysisContext context) {
         return new AnalysisContextVisualizationDistribution(context);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doReset()
-     */
     @Override
     protected void doReset() {
         if (this.manager != null) {
@@ -102,9 +93,6 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
         this.table.clear();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doUpdate(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContextVisualization)
-     */
     @Override
     protected void doUpdate(AnalysisContextVisualizationDistribution context) {
 
