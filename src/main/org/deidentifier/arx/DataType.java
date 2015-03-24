@@ -1810,7 +1810,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @return
      */
     public static final boolean isNull(String value) {
-        return (value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE));
+        return value == null || (value.length() == NULL_VALUE.length() && value.toUpperCase().equals(NULL_VALUE));
     }
     
     /**
