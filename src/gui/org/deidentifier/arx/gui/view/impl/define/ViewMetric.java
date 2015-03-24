@@ -293,7 +293,7 @@ public class ViewMetric implements IView {
         }
 
         if (comboAggregate.getItemCount() == 0) {
-            comboAggregate.add("None available");
+            comboAggregate.add(Resources.getMessage("ViewMetric.0")); //$NON-NLS-1$
             comboAggregate.select(0);
         }
 

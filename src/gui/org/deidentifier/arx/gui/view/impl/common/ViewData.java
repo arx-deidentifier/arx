@@ -116,7 +116,7 @@ public abstract class ViewData implements IView {
         IMAGE_DESCENDING        = controller.getResources().getImage("sort_descending.png");//$NON-NLS-1$
 
         // Create title bar
-        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-140");
+        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-140"); //$NON-NLS-1$
         bar.add(Resources.getMessage("DataView.1"), //$NON-NLS-1$ 
                 IMAGE_ASCENDING,
                 new Runnable() {
@@ -136,7 +136,7 @@ public abstract class ViewData implements IView {
                     }
                 });
         bar.add(Resources.getMessage("DataView.2"), //$NON-NLS-1$ 
-                controller.getResources().getImage("sort_groups.png"),
+                controller.getResources().getImage("sort_groups.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -144,7 +144,7 @@ public abstract class ViewData implements IView {
                     }
                 });
         bar.add(Resources.getMessage("DataView.3"), //$NON-NLS-1$ 
-                controller.getResources().getImage("sort_subset.png"),
+                controller.getResources().getImage("sort_subset.png"), //$NON-NLS-1$
                 true,
                 new Runnable() {
                     @Override

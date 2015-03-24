@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -96,8 +97,8 @@ public class ComponentFilterTable {
                                 Controller controller, 
                                 List<String> properties) {
         
-        IMAGE_ENABLED = controller.getResources().getImage("tick.png");
-        IMAGE_DISABLED = controller.getResources().getImage("cross.png");
+        IMAGE_ENABLED = controller.getResources().getImage("tick.png"); //$NON-NLS-1$
+        IMAGE_DISABLED = controller.getResources().getImage("cross.png"); //$NON-NLS-1$
         
         this.listeners = new ArrayList<SelectionListener>();
         this.selected = new HashMap<String, Map<String, Boolean>>();
@@ -159,7 +160,7 @@ public class ComponentFilterTable {
     public void addEntry(String entry, List<String> properties) {
 
         if (!this.properties.containsAll(properties)) {
-            throw new RuntimeException("All properties of an entry must be contained in the overall list");
+            throw new RuntimeException(Resources.getMessage("ComponentFilterTable.2")); //$NON-NLS-1$
         }
 
         TableItem item = new TableItem(table, SWT.NONE);
@@ -262,10 +263,10 @@ public class ComponentFilterTable {
      */
     public boolean isSelected(String entry, String property) {
         if (!this.entries.contains(entry)) {
-            throw new RuntimeException("Unknown entry");
+            throw new RuntimeException(Resources.getMessage("ComponentFilterTable.3")); //$NON-NLS-1$
         }
         if (!this.properties.contains(property)) {
-            throw new RuntimeException("Unknown property");
+            throw new RuntimeException(Resources.getMessage("ComponentFilterTable.4")); //$NON-NLS-1$
         }
         Map<String, Boolean> map = selected.get(entry);
         if (map == null) {
@@ -314,14 +315,14 @@ public class ComponentFilterTable {
 
         TableColumn column = new TableColumn(table, SWT.LEFT);
         column.setWidth(LABEL_WIDTH);
-        column.setText("");
+        column.setText(""); //$NON-NLS-1$
         for (String property : properties) {
             column = new TableColumn(table, SWT.CENTER);
             column.setText(property);
             column.setWidth(CHECKBOX_WIDTH);
         }
         column = new TableColumn(table, SWT.LEFT);
-        column.setText("");
+        column.setText(""); //$NON-NLS-1$
     }
 
     /**
@@ -333,10 +334,10 @@ public class ComponentFilterTable {
      */
     public void setSelected(String entry, String property, boolean selected) {
         if (!this.entries.contains(entry)) {
-            throw new RuntimeException("Unknown entry");
+            throw new RuntimeException(Resources.getMessage("ComponentFilterTable.7")); //$NON-NLS-1$
         }
         if (!this.properties.contains(property)) {
-            throw new RuntimeException("Unknown property");
+            throw new RuntimeException(Resources.getMessage("ComponentFilterTable.8")); //$NON-NLS-1$
         }
         if (!this.selected.containsKey(entry)) {
             this.selected.put(entry, new HashMap<String, Boolean>());

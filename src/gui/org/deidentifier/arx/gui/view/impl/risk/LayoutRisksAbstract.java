@@ -80,19 +80,19 @@ public class LayoutRisksAbstract implements ILayout, IView {
         this.isInput = input;
         this.isTop = top;
         this.controller = controller;
-        this.imageEnabled = controller.getResources().getImage("tick.png");
-        this.imageDisabled = controller.getResources().getImage("cross.png");
+        this.imageEnabled = controller.getResources().getImage("tick.png"); //$NON-NLS-1$
+        this.imageDisabled = controller.getResources().getImage("cross.png"); //$NON-NLS-1$
         
         controller.addListener(ModelPart.OUTPUT, this);
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
         controller.addListener(ModelPart.MODEL, this);
         
-        ComponentTitledFolderButton bar = new ComponentTitledFolderButton(isTop ? "id-3001" : "id-3002");
+        ComponentTitledFolderButton bar = new ComponentTitledFolderButton(isTop ? "id-3001" : "id-3002"); //$NON-NLS-1$ //$NON-NLS-2$
         
         if (isTop) {
             bar.add(Resources.getMessage("DataView.3"), //$NON-NLS-1$ 
-                    controller.getResources().getImage("sort_subset.png"),
+                    controller.getResources().getImage("sort_subset.png"), //$NON-NLS-1$
                     true,
                     new Runnable() {
                         @Override

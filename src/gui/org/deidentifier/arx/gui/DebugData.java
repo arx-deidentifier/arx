@@ -68,8 +68,8 @@ public class DebugData {
     private String getDebugData(DataDefinition definition){
         
         StringBuilder builder = new StringBuilder();
-        builder.append("DataDefinition@").append(definition.hashCode());
-        builder.append(definition.isLocked() ? " [Locked]\n" : "\n");
+        builder.append("DataDefinition@").append(definition.hashCode()); //$NON-NLS-1$
+        builder.append(definition.isLocked() ? " [Locked]\n" : "\n"); //$NON-NLS-1$ //$NON-NLS-2$
         return builder.toString();
     }
     
@@ -81,8 +81,8 @@ public class DebugData {
      */
     private String getDebugData(Hierarchy hierarchy){
         
-        if (hierarchy==null || hierarchy.getHierarchy()==null || hierarchy.getHierarchy().length==0) return "empty";
-        else return "height="+hierarchy.getHierarchy()[0].length;
+        if (hierarchy==null || hierarchy.getHierarchy()==null || hierarchy.getHierarchy().length==0) return "empty"; //$NON-NLS-1$
+        else return "height="+hierarchy.getHierarchy()[0].length; //$NON-NLS-1$
     }
 
     /**
@@ -96,15 +96,15 @@ public class DebugData {
     private String getDebugData(String prefix, DataHandle handle, boolean view){
         
         StringBuilder builder = new StringBuilder();
-        builder.append("DataHandle@").append(handle.hashCode());
+        builder.append("DataHandle@").append(handle.hashCode()); //$NON-NLS-1$
         if (handle.isOrphaned()) {
-            builder.append(" [Orphaned]\n");
+            builder.append(" [Orphaned]\n"); //$NON-NLS-1$
         } else {
-            builder.append("\n");
-            builder.append(prefix).append("DataDefinition@").append(handle.getDefinition().hashCode());
-            builder.append(handle.getDefinition().isLocked() ? " [Locked]\n" : "\n");
+            builder.append("\n"); //$NON-NLS-1$
+            builder.append(prefix).append("DataDefinition@").append(handle.getDefinition().hashCode()); //$NON-NLS-1$
+            builder.append(handle.getDefinition().isLocked() ? " [Locked]\n" : "\n"); //$NON-NLS-1$ //$NON-NLS-2$
             if (!view) {
-                builder.append(prefix).append("View").append(getDebugData(prefix+"View", handle.getView(), true));
+                builder.append(prefix).append("View").append(getDebugData(prefix+"View", handle.getView(), true)); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }  
         return builder.toString();
@@ -125,45 +125,45 @@ public class DebugData {
         }
         
         StringBuilder builder = new StringBuilder();
-        builder.append("Handles\n");
-        builder.append(" - Definitions\n");
-        builder.append("   * Input : ").append(getDebugData(model.getInputDefinition()));
-        builder.append("   * Output: ").append(getDebugData(model.getOutputDefinition()));
-        builder.append(" - Input\n");
-        builder.append("   * Input : ").append(getDebugData("             ", model.getInputConfig().getInput().getHandle(), false));
+        builder.append("Handles\n"); //$NON-NLS-1$
+        builder.append(" - Definitions\n"); //$NON-NLS-1$
+        builder.append("   * Input : ").append(getDebugData(model.getInputDefinition())); //$NON-NLS-1$
+        builder.append("   * Output: ").append(getDebugData(model.getOutputDefinition())); //$NON-NLS-1$
+        builder.append(" - Input\n"); //$NON-NLS-1$
+        builder.append("   * Input : ").append(getDebugData("             ", model.getInputConfig().getInput().getHandle(), false)); //$NON-NLS-1$ //$NON-NLS-2$
         if (model.getOutput() != null) {
-            builder.append(" - Output\n");
-            builder.append("   * Input : ").append(getDebugData("             ", model.getOutputConfig().getInput().getHandle(), false));
-            builder.append("   * Output: ").append(getDebugData("             ", model.getOutput(), false));
+            builder.append(" - Output\n"); //$NON-NLS-1$
+            builder.append("   * Input : ").append(getDebugData("             ", model.getOutputConfig().getInput().getHandle(), false)); //$NON-NLS-1$ //$NON-NLS-2$
+            builder.append("   * Output: ").append(getDebugData("             ", model.getOutput(), false)); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        builder.append("\n");
+        builder.append("\n"); //$NON-NLS-1$
         if (model.getInputConfig() != null || model.getOutputConfig() != null){
-            builder.append("Hierarchies\n");
+            builder.append("Hierarchies\n"); //$NON-NLS-1$
             if (model.getInputConfig() != null){
-                builder.append(" - Input\n");
+                builder.append(" - Input\n"); //$NON-NLS-1$
                 for (Entry<String, Hierarchy> entry : model.getInputConfig().getHierarchies().entrySet()) {
-                    builder.append("   * ").append(entry.getKey()).append(": ").append(getDebugData(entry.getValue())).append("\n");
+                    builder.append("   * ").append(entry.getKey()).append(": ").append(getDebugData(entry.getValue())).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }    
             }
             if (model.getOutputConfig() != null){
-                builder.append(" - Input\n");
+                builder.append(" - Input\n"); //$NON-NLS-1$
                 for (Entry<String, Hierarchy> entry : model.getOutputConfig().getHierarchies().entrySet()) {
-                    builder.append("   * ").append(entry.getKey()).append(": ").append(getDebugData(entry.getValue())).append("\n");
+                    builder.append("   * ").append(entry.getKey()).append(": ").append(getDebugData(entry.getValue())).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }    
             }
-            builder.append("\n");
+            builder.append("\n"); //$NON-NLS-1$
         }
         
-        builder.append("Visualization\n");
-        builder.append(" - Hidden   : ").append(!model.isVisualizationEnabled()).append("\n");
-        builder.append(" - Hidden at: ").append(model.getMaximalSizeForComplexOperations()).append("\n");
-        builder.append("\n");
-        builder.append("Event log\n");
+        builder.append("Visualization\n"); //$NON-NLS-1$
+        builder.append(" - Hidden   : ").append(!model.isVisualizationEnabled()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+        builder.append(" - Hidden at: ").append(model.getMaximalSizeForComplexOperations()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+        builder.append("\n"); //$NON-NLS-1$
+        builder.append("Event log\n"); //$NON-NLS-1$
         if (eventBuffer.isEmpty()) {
-            builder.append(" - Empty\n");
+            builder.append(" - Empty\n"); //$NON-NLS-1$
         } else {
             for (String s : eventBuffer){
-                builder.append(s).append("\n");
+                builder.append(s).append("\n"); //$NON-NLS-1$
             }
         }
         

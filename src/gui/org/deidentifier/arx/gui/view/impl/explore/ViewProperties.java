@@ -74,7 +74,7 @@ public class ViewProperties implements IView {
         this.controller = controller;
 
         // Create group
-        ComponentTitledBorder border = new ComponentTitledBorder(parent, controller, Resources.getMessage("NodePropertiesView.0"), "id-22"); //$NON-NLS-1$
+        ComponentTitledBorder border = new ComponentTitledBorder(parent, controller, Resources.getMessage("NodePropertiesView.0"), "id-22"); //$NON-NLS-1$ //$NON-NLS-2$
         root = new Composite(border.getControl(), SWT.NONE);
         border.setChild(root);
         border.setLayoutData(SWTUtil.createFillGridData());

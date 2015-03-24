@@ -32,7 +32,7 @@ public class Vocabulary_V1 extends Vocabulary {
      */
     @Override
     public void checkVersion(String version) throws SAXException {
-        if (!version.equals("2.0")) {
+        if (!version.equals("2.0")) { //$NON-NLS-1$
             throw new SAXException(Resources.getMessage("WorkerLoad.10") + version); //$NON-NLS-1$
         }
     }
@@ -66,7 +66,7 @@ public class Vocabulary_V1 extends Vocabulary {
      */
     @Override
     public String getAttributeWeight() {
-        return "attributeWeight";
+        return "attributeWeight"; //$NON-NLS-1$
     }
 	
 	/* (non-Javadoc)
@@ -74,7 +74,7 @@ public class Vocabulary_V1 extends Vocabulary {
      */
     @Override
     public String getAttributeWeights() {
-        return "attributeWeights";
+        return "attributeWeights"; //$NON-NLS-1$
     }
 	
 	/* (non-Javadoc)
@@ -170,7 +170,7 @@ public class Vocabulary_V1 extends Vocabulary {
 	 */
 	@Override
 	public String getHeader() {
-		return "<!-- ARX XML Vocabulary Version 1.0 -->";
+		return "<!-- ARX XML Vocabulary Version 1.0 -->"; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -244,7 +244,7 @@ public class Vocabulary_V1 extends Vocabulary {
      */
     @Override
     public String getLocale() {
-        return "locale";
+        return "locale"; //$NON-NLS-1$
     }
 
 	/* (non-Javadoc)
@@ -502,7 +502,7 @@ public class Vocabulary_V1 extends Vocabulary {
      */
     @Override
     public String getVocabularyVersion() {
-        return "1.0";
+        return "1.0"; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -510,6 +510,6 @@ public class Vocabulary_V1 extends Vocabulary {
      */
     @Override
     public String getWeight() {
-        return "weight";
+        return "weight"; //$NON-NLS-1$
     }
 }

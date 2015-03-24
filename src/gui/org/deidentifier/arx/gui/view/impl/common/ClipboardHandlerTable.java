@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -72,7 +73,7 @@ public class ClipboardHandlerTable {
     public Menu getMenu() {
         Menu menu = new Menu(table);
         MenuItem itemCopy = new MenuItem(menu, SWT.NONE);
-        itemCopy.setText("Copy");
+        itemCopy.setText(Resources.getMessage("ClipboardHandlerTable.0")); //$NON-NLS-1$
         itemCopy.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
                 copy();
@@ -98,17 +99,17 @@ public class ClipboardHandlerTable {
         
         for (TableItem item : table.getItems()) {
             if (builder.length() != 0) {
-                builder.append("\n");
+                builder.append("\n"); //$NON-NLS-1$
             }
             int added = 0;
             for (int i=0; i<properties.size(); i++) {
                 String value = item.getText(i);
-                if (value != null && !value.equals("")) {
+                if (value != null && !value.equals("")) { //$NON-NLS-1$
                     if (added!=0) {
-                        builder.append(", ");
+                        builder.append(", "); //$NON-NLS-1$
                     }
                     added++;
-                    builder.append(properties.get(i)).append(": ").append(value);
+                    builder.append(properties.get(i)).append(": ").append(value); //$NON-NLS-1$
                 }
             }
         }

@@ -21,6 +21,7 @@ import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
+import org.deidentifier.arx.gui.resources.Resources;
 
 /**
  * This class implements a model for the l-diversity criterion.
@@ -84,7 +85,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
     	    case VARIANT_DISTINCT: return new DistinctLDiversity(getAttribute(), l);
     	    case VARIANT_ENTROPY: return new EntropyLDiversity(getAttribute(), l); 
     	    case VARIANT_RECURSIVE: return new RecursiveCLDiversity(getAttribute(), c, l);
-	        default: throw new RuntimeException("Internal error: invalid variant of l-diversity");
+	        default: throw new RuntimeException(Resources.getMessage("Model.0")); //$NON-NLS-1$
 	    }
 	}
 	
@@ -99,8 +100,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 	
 	@Override
     public String getLabel() {
-        // TODO: Move to messages.properties
-        return "l-Diversity";
+        return Resources.getMessage("Model.1"); //$NON-NLS-1$
     }
 	
 	/**
@@ -127,7 +127,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
     @Override
     public void pull(ModelExplicitCriterion criterion) {
         if (!(criterion instanceof ModelLDiversityCriterion)) {
-            throw new RuntimeException("Invalid type of criterion");
+            throw new RuntimeException(Resources.getMessage("Model.2")); //$NON-NLS-1$
         }
         ModelLDiversityCriterion other = (ModelLDiversityCriterion)criterion;
         this.variant = other.variant;
@@ -164,12 +164,11 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
     
     @Override
     public String toString() {
-        // TODO: Move to messages.properties
         switch (variant) {
-            case VARIANT_DISTINCT: return "Distinct-"+l+"-diversity";
-            case VARIANT_ENTROPY: return "Entropy-"+l+"-diversity"; 
-            case VARIANT_RECURSIVE: return "Recursive-("+String.valueOf(c)+", "+l+")-diversity";
-            default: throw new RuntimeException("Internal error: invalid variant of l-diversity");
+            case VARIANT_DISTINCT: return Resources.getMessage("Model.3")+l+Resources.getMessage("Model.4"); //$NON-NLS-1$ //$NON-NLS-2$
+            case VARIANT_ENTROPY: return Resources.getMessage("Model.5")+l+Resources.getMessage("Model.6");  //$NON-NLS-1$ //$NON-NLS-2$
+            case VARIANT_RECURSIVE: return Resources.getMessage("Model.7")+String.valueOf(c)+Resources.getMessage("Model.8")+l+Resources.getMessage("Model.9"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            default: throw new RuntimeException(Resources.getMessage("Model.10")); //$NON-NLS-1$
         }
     }
 }

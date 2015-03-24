@@ -115,7 +115,7 @@ public class DialogFindReplace extends TitleAreaDialog {
         if (message != null) {
             this.errorMessage.setText(message);
         } else {
-            this.errorMessage.setText("");
+            this.errorMessage.setText(""); //$NON-NLS-1$
         }
 
         // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
@@ -170,7 +170,7 @@ public class DialogFindReplace extends TitleAreaDialog {
                                 IDialogConstants.OK_ID,
                                 IDialogConstants.OK_LABEL,
                                 true);
-        okButton.setEnabled(elements.contains(""));
+        okButton.setEnabled(elements.contains("")); //$NON-NLS-1$
         createButton(parent,
                      IDialogConstants.CANCEL_ID,
                      IDialogConstants.CANCEL_LABEL,

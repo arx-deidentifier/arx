@@ -473,7 +473,7 @@ public class HierarchyWizardEditorRenderer<T> {
                         max = dtype.add(scale2, max); 
                     }
                     
-                    element.bounds = "["+dtype.format(min)+", "+dtype.format(max)+"[";
+                    element.bounds = "["+dtype.format(min)+", "+dtype.format(max)+"["; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     String[] values = {dtype.format(min), dtype.format(max)};
                     element.label = group.function.aggregate(values);
                     element.min = min;
@@ -528,7 +528,7 @@ public class HierarchyWizardEditorRenderer<T> {
                     min = dtype.add(element.offset, min);
                     max = dtype.add(element.offset, max);
                 } 
-                element.bounds = "["+dtype.format(min)+", "+dtype.format(max)+"[";
+                element.bounds = "["+dtype.format(min)+", "+dtype.format(max)+"["; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 String[] values = {dtype.format(min), dtype.format(max)};
                 element.label = interval.function.aggregate(values);
                 element.interval = interval;

@@ -67,7 +67,7 @@ public class ViewAttributeWeights implements IView {
     private final Composite     root;
     
     /** Misc. */
-    private final DecimalFormat format     = new DecimalFormat("0.000");
+    private final DecimalFormat format     = new DecimalFormat("0.000"); //$NON-NLS-1$
 
     /**
      * Creates a new instance.
@@ -202,7 +202,7 @@ public class ViewAttributeWeights implements IView {
                 for(int i=0; i<qis.size(); i++){
                     
                     final Label label = new Label(composites.get(i), SWT.CENTER);
-                    label.setText("0.0");
+                    label.setText("0.0"); //$NON-NLS-1$
                     label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
                     
                     final String attribute = qis.get(i);
@@ -219,12 +219,12 @@ public class ViewAttributeWeights implements IView {
                                 // Correctly indicate weights slightly > 0
                                 double parsedValue = format.parse(format.format(value)).doubleValue();
                                 if (parsedValue == 0d && value > 0d) {
-                                    label.setText(">0");
+                                    label.setText(">0"); //$NON-NLS-1$
                                 }
                                 
                                 // Correctly indicate weights slightly < 1
                                 if (parsedValue == 1d && value < 1d) {
-                                    label.setText("<1");
+                                    label.setText("<1"); //$NON-NLS-1$
                                 }
                                 
                             } catch (ParseException e) {

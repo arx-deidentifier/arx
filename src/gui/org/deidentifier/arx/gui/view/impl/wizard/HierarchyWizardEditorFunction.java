@@ -23,6 +23,7 @@ import java.util.List;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionWithParameter;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorSelection;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
@@ -101,13 +102,13 @@ public class HierarchyWizardEditorFunction<T> {
         this.defaultFunction = new AggregateFunction<T>(type){
             private static final long serialVersionUID = -6444219024682845316L;
             @Override public String aggregate(String[] values) {return null;}
-            @Override public String toLabel() {return "Default";}
-            @Override public String toString() {return "Default";}
+            @Override public String toLabel() {return Resources.getMessage("HierarchyWizardEditorFunction.0");} //$NON-NLS-1$
+            @Override public String toString() {return Resources.getMessage("HierarchyWizardEditorFunction.1");} //$NON-NLS-1$
         };
         
         if (!general) {
             this.createEntry(this.defaultFunction);
-            this.createEntry(AggregateFunction.forType(type).createConstantFunction(""));
+            this.createEntry(AggregateFunction.forType(type).createConstantFunction("")); //$NON-NLS-1$
         } 
         
         this.createEntry(AggregateFunction.forType(type).createBoundsFunction());
@@ -121,7 +122,7 @@ public class HierarchyWizardEditorFunction<T> {
         this.createEntry(AggregateFunction.forType(type).createGeometricMeanOfBoundsFunction());
         
 
-        createLabel(composite, "Aggregate function:");
+        createLabel(composite, Resources.getMessage("HierarchyWizardEditorFunction.3")); //$NON-NLS-1$
         this.editor1 = new EditorSelection(composite, labels.toArray(new String[labels.size()])) {
             @Override
             public boolean accepts(final String s) {
@@ -144,11 +145,11 @@ public class HierarchyWizardEditorFunction<T> {
             }
         };
 
-        createLabel(composite, "Function Parameter:");
+        createLabel(composite, Resources.getMessage("HierarchyWizardEditorFunction.4")); //$NON-NLS-1$
         this.editor2 = new EditorString(composite) {
             @Override
             public boolean accepts(String s) {
-                if (s=="") s = null;
+                if (s=="") s = null; //$NON-NLS-1$
                 if (function == null) return false;
                 if (!function.hasParameter()) return false;
                 else return ((AggregateFunctionWithParameter<T>)function).acceptsParameter(s);
@@ -156,18 +157,18 @@ public class HierarchyWizardEditorFunction<T> {
 
             @Override
             public String getValue() {
-                if (function == null) return "";
-                if (!function.hasParameter()) return "";
+                if (function == null) return ""; //$NON-NLS-1$
+                if (!function.hasParameter()) return ""; //$NON-NLS-1$
                 else {
                     String param = ((AggregateFunctionWithParameter<T>)function).getParameter();
-                    if (param == null) return "";
+                    if (param == null) return ""; //$NON-NLS-1$
                     else return param;
                 }
             }
 
             @Override
             public void setValue(String s) {
-                if (s=="") s = null;
+                if (s=="") s = null; //$NON-NLS-1$
                 if (function == null) return;
                 if (!function.hasParameter()) return;
                 else {

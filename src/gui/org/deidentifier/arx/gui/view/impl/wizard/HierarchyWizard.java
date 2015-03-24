@@ -167,19 +167,19 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
                                                                                 .getImage("hierarchy.png"))); //$NON-NLS-1$
         
         // Initialize buttons
-        this.buttonLoad = new ARXWizardButton("Load...", new SelectionAdapter(){
+        this.buttonLoad = new ARXWizardButton(Resources.getMessage("HierarchyWizard.1"), new SelectionAdapter(){ //$NON-NLS-1$
             @Override public void widgetSelected(SelectionEvent arg0) {
                 load();
             }
         });
 
-        this.buttonSave = new ARXWizardButton("Save...", new SelectionAdapter(){
+        this.buttonSave = new ARXWizardButton(Resources.getMessage("HierarchyWizard.2"), new SelectionAdapter(){ //$NON-NLS-1$
             @Override public void widgetSelected(SelectionEvent arg0) {
                 save();
             }
         });
         
-        ARXWizardButton help = new ARXWizardButton("Help...", new SelectionAdapter(){
+        ARXWizardButton help = new ARXWizardButton(Resources.getMessage("HierarchyWizard.3"), new SelectionAdapter(){ //$NON-NLS-1$
             @Override public void widgetSelected(SelectionEvent arg0) {
                 help();
             }
@@ -239,7 +239,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      * Shows the help dialog.
      */
     private void help() {
-        controller.actionShowHelpDialog("id-51");
+        controller.actionShowHelpDialog("id-51"); //$NON-NLS-1$
     }
     
     /**
@@ -247,14 +247,14 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      */
     private void load(){
 
-        final String ERROR_HEADER = "Error loading hierarchy specification";
-        final String ERROR_TEXT = "Unknown error: ";
-        final String ERROR_RATIO_TEXT = "Intervals can only be used for data types with ratio scales";
-        final String ERROR_TYPE_TEXT = "Incompatible data types";
-        final String ERROR_APPLY_TEXT = "Cannot apply specification: ";
+        final String ERROR_HEADER = Resources.getMessage("HierarchyWizard.5"); //$NON-NLS-1$
+        final String ERROR_TEXT = Resources.getMessage("HierarchyWizard.6"); //$NON-NLS-1$
+        final String ERROR_RATIO_TEXT = Resources.getMessage("HierarchyWizard.7"); //$NON-NLS-1$
+        final String ERROR_TYPE_TEXT = Resources.getMessage("HierarchyWizard.8"); //$NON-NLS-1$
+        final String ERROR_APPLY_TEXT = Resources.getMessage("HierarchyWizard.9"); //$NON-NLS-1$
         
         // Dialog
-        String file = controller.actionShowOpenFileDialog(getShell(), "*.ahs");
+        String file = controller.actionShowOpenFileDialog(getShell(), "*.ahs"); //$NON-NLS-1$
         if (file == null) return;
 
         // Load
@@ -319,11 +319,11 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      */
     private void save(){
         
-        final String ERROR_HEADER = "Error saving hierarchy specification";
-        final String ERROR_TEXT = "Unknown error: ";
+        final String ERROR_HEADER = Resources.getMessage("HierarchyWizard.11"); //$NON-NLS-1$
+        final String ERROR_TEXT = Resources.getMessage("HierarchyWizard.12"); //$NON-NLS-1$
         
         // Dialog
-        String file = controller.actionShowSaveFileDialog(getShell(), "*.ahs");
+        String file = controller.actionShowSaveFileDialog(getShell(), "*.ahs"); //$NON-NLS-1$
         if (file == null) return;
 
         // Save

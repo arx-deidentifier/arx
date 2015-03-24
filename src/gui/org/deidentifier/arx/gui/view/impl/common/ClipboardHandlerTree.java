@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -73,7 +74,7 @@ public class ClipboardHandlerTree {
     public Menu getMenu() {
         Menu menu = new Menu(tree.getTree());
         MenuItem itemCopy = new MenuItem(menu, SWT.NONE);
-        itemCopy.setText("Copy");
+        itemCopy.setText(Resources.getMessage("ClipboardHandlerTree.0")); //$NON-NLS-1$
         itemCopy.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
                 copy();
@@ -152,7 +153,7 @@ public class ClipboardHandlerTree {
         }
         
         for (Object item : getItems(tree)) {
-            getText(tree, item, properties, builder, "");
+            getText(tree, item, properties, builder, ""); //$NON-NLS-1$
         }
         
         return builder.toString();
@@ -169,23 +170,23 @@ public class ClipboardHandlerTree {
      */
     private void getText(TreeViewer tree, Object item, List<String> properties, StringBuilder builder, String prefix){
         if (builder.length() != 0) {
-            builder.append("\n");
+            builder.append("\n"); //$NON-NLS-1$
         }
         builder.append(prefix);
         int added = 0;
         for (int i=0; i<properties.size(); i++) {
             String value = getLabel(tree, item, i);
-            if (value != null && !value.equals("")) {
+            if (value != null && !value.equals("")) { //$NON-NLS-1$
                 if (added!=0) {
-                    builder.append(", ");
+                    builder.append(", "); //$NON-NLS-1$
                 }
                 added++;
-                builder.append(properties.get(i)).append(": ").append(value);
+                builder.append(properties.get(i)).append(": ").append(value); //$NON-NLS-1$
             }
         }
         
         for (Object child : getChildren(tree, item)) {
-            getText(tree, child, properties, builder, prefix+"\t");
+            getText(tree, child, properties, builder, prefix+"\t"); //$NON-NLS-1$
         }
     }
 }

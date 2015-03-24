@@ -115,7 +115,7 @@ public class MainSplash {
      * @return
      */
     private boolean isMac() {
-        return (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0);
+        return (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**

@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.io.IImportColumnIndexed;
 import org.deidentifier.arx.io.ImportColumn;
@@ -101,11 +102,11 @@ public class ImportWizardPagePreview extends WizardPage {
                                                .getColumn()
                                                .getDataType();
 
-            String result = "Datatype: " + datatype.getDescription().getLabel();
+            String result = Resources.getMessage("ImportWizardPagePreview.0") + datatype.getDescription().getLabel(); //$NON-NLS-1$
 
             /* Add format for appropriate data types */
             if (datatype.getDescription().hasFormat()) {
-                result += ", format: " +
+                result += Resources.getMessage("ImportWizardPagePreview.1") + //$NON-NLS-1$
                           ((DataTypeWithFormat) datatype).getFormat();
             }
             return result;
@@ -128,11 +129,11 @@ public class ImportWizardPagePreview extends WizardPage {
      */
     public ImportWizardPagePreview(ImportWizard wizardImport) {
 
-        super("WizardImportPreviewPage");
+        super("WizardImportPreviewPage"); //$NON-NLS-1$
         this.wizardImport = wizardImport;
 
-        setTitle("Preview");
-        setDescription("Please check whether everything is right");
+        setTitle(Resources.getMessage("ImportWizardPagePreview.3")); //$NON-NLS-1$
+        setDescription(Resources.getMessage("ImportWizardPagePreview.4")); //$NON-NLS-1$
 
     }
 
@@ -193,7 +194,7 @@ public class ImportWizardPagePreview extends WizardPage {
                 tableViewerColumn.setLabelProvider(new PreviewColumnLabelProvider(((IImportColumnIndexed) column).getIndex()));
 
                 TableColumn tblclmnColumn = tableViewerColumn.getColumn();
-                tblclmnColumn.setToolTipText("Datatype: " +
+                tblclmnColumn.setToolTipText(Resources.getMessage("ImportWizardPagePreview.5") + //$NON-NLS-1$
                                              column.getDataType());
                 tblclmnColumn.setWidth(100);
                 tblclmnColumn.setText(column.getAliasName());

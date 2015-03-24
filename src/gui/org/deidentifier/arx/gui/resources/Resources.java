@@ -76,9 +76,9 @@ public class Resources {
      * @return
      */
     public static String getLicencseText() {
-        InputStream stream = Resources.class.getResourceAsStream("license.txt");
+        InputStream stream = Resources.class.getResourceAsStream("license.txt"); //$NON-NLS-1$
         BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-        String content = "";
+        String content = ""; //$NON-NLS-1$
         try {
             StringBuilder sb = new StringBuilder();
             String line;

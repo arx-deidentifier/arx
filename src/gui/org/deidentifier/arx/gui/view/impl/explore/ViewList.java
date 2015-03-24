@@ -73,8 +73,8 @@ public class ViewList extends ViewSolutionSpace {
      * @return
      */
     private static final boolean isLinux() {
-        String os = System.getProperty("os.name").toLowerCase();
-        return !(os.indexOf("win") >= 0 || os.indexOf("mac") >= 0);
+        String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+        return !(os.indexOf("win") >= 0 || os.indexOf("mac") >= 0); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /** The table. */

@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.wizard;
 
 import org.deidentifier.arx.aggregates.AggregateFunction;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView;
@@ -64,7 +65,7 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
         composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.editorFunction = new HierarchyWizardEditorFunction<T>(this, model, composite, false);
 
-        createLabel(composite, "Size:");
+        createLabel(composite, Resources.getMessage("HierarchyWizardEditorGroup.0")); //$NON-NLS-1$
         this.editorSize = new EditorString(composite) {
             @Override
             public boolean accepts(final String s) {
@@ -79,7 +80,7 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
 
             @Override
             public String getValue() {
-                if (group==null) return "";
+                if (group==null) return ""; //$NON-NLS-1$
                 else return String.valueOf(group.size);
             }
 

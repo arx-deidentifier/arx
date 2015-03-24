@@ -32,6 +32,7 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Interval;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView;
 
 /**
@@ -228,7 +229,7 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
             
             // Check
             if (!(type instanceof DataTypeWithRatioScale)) {
-                throw new IllegalArgumentException("Data type with ratio scale is required");
+                throw new IllegalArgumentException(Resources.getMessage("HierarchyWizardModelGrouping.0")); //$NON-NLS-1$
             }
             
             // Prepare
@@ -536,7 +537,7 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
             try {
                 Arrays.sort(this.data, builder.getComparator());
             } catch (Exception e){
-                throw new IllegalArgumentException("The given order cannot be applied to the data");
+                throw new IllegalArgumentException(Resources.getMessage("HierarchyWizardModelGrouping.1")); //$NON-NLS-1$
             }
         }
         this.showIntervals = false;

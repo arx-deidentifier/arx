@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.model;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.gui.resources.Resources;
 
 /**
  * This class implements a model for the d-presence criterion.
@@ -73,7 +74,7 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 	@Override
     public String getLabel() {
         // TODO: Move to messages.properties
-        return "(" + '\u03B4' + ")-Presence";
+        return Resources.getMessage("Model.0") + '\u03B4' + Resources.getMessage("Model.1"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
@@ -108,6 +109,6 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
     @Override
     public String toString() {
         // TODO: Move to messages.properties
-        return "("+String.valueOf(dmin)+", "+String.valueOf(dmax)+")-Presence";
+        return Resources.getMessage("Model.2")+String.valueOf(dmin)+Resources.getMessage("Model.3")+String.valueOf(dmax)+Resources.getMessage("Model.4"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

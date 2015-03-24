@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 public class Update implements Runnable {
     
     /** The UPDATE_URL. */
-    private static final String UPDATE_URL = "http://arx.deidentifier.org/wp-content/uploads/downloads/version.txt";
+    private static final String UPDATE_URL = "http://arx.deidentifier.org/wp-content/uploads/downloads/version.txt"; //$NON-NLS-1$
     
     /** The shell. */
     private final Shell         shell;
@@ -62,7 +62,7 @@ public class Update implements Runnable {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    MessageDialog.openInformation(shell, Resources.getMessage("Update.1"), Resources.getMessage("Update.2"));
+                    MessageDialog.openInformation(shell, Resources.getMessage("Update.1"), Resources.getMessage("Update.2")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             });
         }
@@ -77,8 +77,8 @@ public class Update implements Runnable {
      */
     private int compareVersions(String version1, String version2) {
         try {
-            String[] version1Parts = version1.split("\\.");
-            String[] version2Parts = version2.split("\\.");
+            String[] version1Parts = version1.split("\\."); //$NON-NLS-1$
+            String[] version2Parts = version2.split("\\."); //$NON-NLS-1$
             int length = Math.max(version1Parts.length, version2Parts.length);
             for (int i = 0; i < length; i++) {
                 int version1Part = i < version1Parts.length ? Integer.parseInt(version1Parts[i]) : 0;
@@ -107,7 +107,7 @@ public class Update implements Runnable {
             in = new BufferedReader(new InputStreamReader(new URL(UPDATE_URL).openStream()));
             String line;
             while ((line = in.readLine()) != null) {
-                builder.append(line).append("\n");
+                builder.append(line).append("\n"); //$NON-NLS-1$
             }
         } catch (IOException e) {
             // Ignore

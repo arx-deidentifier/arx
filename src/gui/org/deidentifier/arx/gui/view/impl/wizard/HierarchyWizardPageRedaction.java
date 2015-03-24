@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
@@ -88,14 +89,11 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
                                         final HierarchyWizardPageFinal<T> finalPage) {
         super(wizard, model.getRedactionModel(), finalPage);
         this.model = model.getRedactionModel();
-        setTitle("Create a hierarchy by redacting characters");
-        setDescription("Specify the parameters");
+        setTitle(Resources.getMessage("HierarchyWizardPageRedaction.0")); //$NON-NLS-1$
+        setDescription(Resources.getMessage("HierarchyWizardPageRedaction.1")); //$NON-NLS-1$
         setPageComplete(true);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     public void createControl(final Composite parent) {
         
@@ -103,33 +101,33 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         composite.setLayout(SWTUtil.createGridLayout(1, false));
         
         Group group1 = new Group(composite, SWT.SHADOW_ETCHED_IN);
-        group1.setText("Alignment");
+        group1.setText(Resources.getMessage("HierarchyWizardPageRedaction.2")); //$NON-NLS-1$
         group1.setLayout(SWTUtil.createGridLayout(1, false));
         group1.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         buttonLeftAlign = new Button(group1, SWT.RADIO);
-        buttonLeftAlign.setText("Align items to the left");
+        buttonLeftAlign.setText(Resources.getMessage("HierarchyWizardPageRedaction.3")); //$NON-NLS-1$
         buttonRightAlign = new Button(group1, SWT.RADIO);
-        buttonRightAlign.setText("Align items to the right");
+        buttonRightAlign.setText(Resources.getMessage("HierarchyWizardPageRedaction.4")); //$NON-NLS-1$
     
         Group group2 = new Group(composite, SWT.SHADOW_ETCHED_IN);
-        group2.setText("Redaction");
+        group2.setText(Resources.getMessage("HierarchyWizardPageRedaction.5")); //$NON-NLS-1$
         group2.setLayout(SWTUtil.createGridLayout(1, false));
         group2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         buttonLeftRedact = new Button(group2, SWT.RADIO);
-        buttonLeftRedact.setText("Redact characters left to right");
+        buttonLeftRedact.setText(Resources.getMessage("HierarchyWizardPageRedaction.6")); //$NON-NLS-1$
         buttonRightRedact = new Button(group2, SWT.RADIO);
-        buttonRightRedact.setText("Redact characters right to left");
+        buttonRightRedact.setText(Resources.getMessage("HierarchyWizardPageRedaction.7")); //$NON-NLS-1$
     
         Group group3 = new Group(composite, SWT.SHADOW_ETCHED_IN);
-        group3.setText("Characters");
+        group3.setText(Resources.getMessage("HierarchyWizardPageRedaction.8")); //$NON-NLS-1$
         group3.setLayout(SWTUtil.createGridLayout(2, false));
         group3.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         Label label1 = new Label(group3, SWT.NONE);
-        label1.setText("Padding character");
+        label1.setText(Resources.getMessage("HierarchyWizardPageRedaction.9")); //$NON-NLS-1$
         comboPaddingChar = new Combo(group3, SWT.READ_ONLY);
         comboPaddingChar.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         Label label2 = new Label(group3, SWT.NONE);
-        label2.setText("Redaction character");
+        label2.setText(Resources.getMessage("HierarchyWizardPageRedaction.10")); //$NON-NLS-1$
         comboRedactionChar = new Combo(group3, SWT.READ_ONLY);
         comboRedactionChar.setLayoutData(SWTUtil.createFillHorizontallyGridData());
     
@@ -137,26 +135,26 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         createItems(comboRedactionChar, false);
 
         Group group4 = new Group(composite, SWT.SHADOW_ETCHED_IN);
-        group4.setText("Domain properties");
+        group4.setText(Resources.getMessage("HierarchyWizardPageRedaction.11")); //$NON-NLS-1$
         GridLayout layout = SWTUtil.createGridLayout(6, false);
         layout.horizontalSpacing = 10;
         group4.setLayout(layout);
         group4.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         Label label3 = new Label(group4, SWT.NONE);
         
-        label3.setText("Domain size");
+        label3.setText(Resources.getMessage("HierarchyWizardPageRedaction.12")); //$NON-NLS-1$
         textDomainSize = new Text(group4, SWT.BORDER);
         textDomainSize.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         decorate(textDomainSize);
         
         Label label4 = new Label(group4, SWT.NONE);
-        label4.setText("Alphabet size");
+        label4.setText(Resources.getMessage("HierarchyWizardPageRedaction.13")); //$NON-NLS-1$
         textAlphabetSize = new Text(group4, SWT.BORDER);
         textAlphabetSize.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         decorate(textAlphabetSize);
         
         Label label5 = new Label(group4, SWT.NONE);
-        label5.setText("Max. characters");
+        label5.setText(Resources.getMessage("HierarchyWizardPageRedaction.14")); //$NON-NLS-1$
         textMaximalLength = new Text(group4, SWT.BORDER);
         textMaximalLength.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         decorate(textMaximalLength);
@@ -213,9 +211,6 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         setControl(composite);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-     */
     @Override
     public boolean isPageComplete() {
         
@@ -242,23 +237,17 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         return false;
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardPageBuilder#setVisible(boolean)
-     */
     @Override
     public void setVisible(boolean value){
         super.setVisible(value);
         model.setVisible(value);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardPageBuilder#updatePage()
-     */
     @Override
     public void updatePage() {
-        textMaximalLength.setText(model.getMaxValueLength() == null ? "" : String.valueOf(model.getMaxValueLength()));
-        textAlphabetSize.setText(model.getAlphabetSize() == null ? "" : String.valueOf(model.getAlphabetSize()));
-        textDomainSize.setText(model.getDomainSize() == null ? "" : String.valueOf(model.getDomainSize()));
+        textMaximalLength.setText(model.getMaxValueLength() == null ? "" : String.valueOf(model.getMaxValueLength())); //$NON-NLS-1$
+        textAlphabetSize.setText(model.getAlphabetSize() == null ? "" : String.valueOf(model.getAlphabetSize())); //$NON-NLS-1$
+        textDomainSize.setText(model.getDomainSize() == null ? "" : String.valueOf(model.getDomainSize())); //$NON-NLS-1$
         buttonLeftAlign.setSelection(model.getAlignmentOrder() == Order.LEFT_TO_RIGHT);
         buttonRightAlign.setSelection(model.getAlignmentOrder() == Order.RIGHT_TO_LEFT);
         buttonLeftRedact.setSelection(model.getAlignmentOrder() == Order.LEFT_TO_RIGHT);
@@ -274,11 +263,11 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
      * @param padding
      */
     private void createItems(Combo combo, boolean padding){
-        if (padding) combo.add("( )");
-        combo.add("(*)");
-        combo.add("(x)");
-        combo.add("(#)");
-        combo.add("(-)");
+        if (padding) combo.add("( )"); //$NON-NLS-1$
+        combo.add("(*)"); //$NON-NLS-1$
+        combo.add("(x)"); //$NON-NLS-1$
+        combo.add("(#)"); //$NON-NLS-1$
+        combo.add("(-)"); //$NON-NLS-1$
     }
 
     /**
@@ -292,7 +281,7 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
             @Override
             public void modifyText(ModifyEvent arg0) {
                 if (!isValidNumber(text.getText())) {
-                    decoration.setDescriptionText("Not a valid positive number");
+                    decoration.setDescriptionText(Resources.getMessage("HierarchyWizardPageRedaction.23")); //$NON-NLS-1$
                     Image image = FieldDecorationRegistry.getDefault()
                           .getFieldDecoration(FieldDecorationRegistry.DEC_ERROR)
                           .getImage();
@@ -327,7 +316,7 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
                 return i;
             }
         }
-        combo.add("("+String.valueOf(value)+")");
+        combo.add("("+String.valueOf(value)+")"); //$NON-NLS-1$ //$NON-NLS-2$
         return combo.getItemCount()-1;
     }
     

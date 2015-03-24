@@ -88,16 +88,16 @@ public class LayoutUtilityStatistics implements ILayout, IView {
                             final ModelPart target,
                             final ModelPart reset) {
 
-        this.enabled = controller.getResources().getImage("tick.png");
-        this.disabled = controller.getResources().getImage("cross.png");
+        this.enabled = controller.getResources().getImage("tick.png"); //$NON-NLS-1$
+        this.disabled = controller.getResources().getImage("cross.png"); //$NON-NLS-1$
         this.controller = controller;
         
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_UTILITY_VISUALIZATION, this);
 
         // Create enable/disable button
-        final String label = Resources.getMessage("StatisticsView.3");
-        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-50");
+        final String label = Resources.getMessage("StatisticsView.3"); //$NON-NLS-1$
+        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-50"); //$NON-NLS-1$
         bar.add(label, disabled, true, new Runnable() { @Override public void run() {
             toggleEnabled();
             toggleImage(); 

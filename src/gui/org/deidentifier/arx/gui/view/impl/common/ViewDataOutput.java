@@ -44,7 +44,7 @@ public class ViewDataOutput extends ViewData {
     public ViewDataOutput(final Composite parent,
                          final Controller controller) {
         
-        super(parent, controller, Resources.getMessage("AnalyzeView.0")); //$NON-NLS-1
+        super(parent, controller, Resources.getMessage("AnalyzeView.0")); //$NON-NLS-1 //$NON-NLS-1$
     }
     
     /* (non-Javadoc)

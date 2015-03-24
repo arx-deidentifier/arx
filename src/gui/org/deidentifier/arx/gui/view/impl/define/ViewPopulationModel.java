@@ -26,6 +26,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -59,7 +60,7 @@ public class ViewPopulationModel implements IView {
     /** View */
     private Text             text2;
     /** View */
-    private DecimalFormat    format = new DecimalFormat("0.########################################");
+    private DecimalFormat    format = new DecimalFormat("0.########################################"); //$NON-NLS-1$
     /** Model */
     private Model            model;
 
@@ -93,8 +94,8 @@ public class ViewPopulationModel implements IView {
 
     @Override
     public void reset() {
-        text.setText("");
-        text2.setText("");
+        text.setText(""); //$NON-NLS-1$
+        text2.setText(""); //$NON-NLS-1$
         SWTUtil.disable(root);
     }
 
@@ -116,7 +117,7 @@ public class ViewPopulationModel implements IView {
     private void create(final Composite parent) {
 
         Label lbl1 = new Label(parent, SWT.NONE);
-        lbl1.setText("Region:");
+        lbl1.setText(Resources.getMessage("ViewPopulationModel.3")); //$NON-NLS-1$
         
         combo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY);
         for (Region region : Region.values()) {
@@ -126,17 +127,17 @@ public class ViewPopulationModel implements IView {
         combo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         Label lbl2 = new Label(parent, SWT.NONE);
-        lbl2.setText("Sampling fraction:");
+        lbl2.setText(Resources.getMessage("ViewPopulationModel.4")); //$NON-NLS-1$
         
         text = new Text(parent, SWT.BORDER | SWT.SINGLE);
-        text.setText("0");
+        text.setText("0"); //$NON-NLS-1$
         text.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         Label lbl3 = new Label(parent, SWT.NONE);
-        lbl3.setText("Population size:");
+        lbl3.setText(Resources.getMessage("ViewPopulationModel.6")); //$NON-NLS-1$
         
         text2 = new Text(parent, SWT.BORDER | SWT.SINGLE);
-        text2.setText("0");
+        text2.setText("0"); //$NON-NLS-1$
         text2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         combo.addSelectionListener(new SelectionAdapter(){

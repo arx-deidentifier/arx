@@ -319,7 +319,7 @@ public class Controller implements IView {
                 }
             }
         } else {
-            throw new RuntimeException("Invalid type of criterion");
+            throw new RuntimeException(Resources.getMessage("Controller.1")); //$NON-NLS-1$
         }
 
         // Break if none found
@@ -364,7 +364,7 @@ public class Controller implements IView {
                     }
                 }
             } else {
-                throw new RuntimeException("Invalid type of criterion");
+                throw new RuntimeException(Resources.getMessage("Controller.15")); //$NON-NLS-1$
             }
 
             update(new ModelEvent(this, ModelPart.CRITERION_DEFINITION, criterion));
@@ -522,7 +522,7 @@ public class Controller implements IView {
                 t = worker.getError().getCause();
             }
             if (t instanceof NullPointerException) {
-                main.showErrorDialog(main.getShell(), "Internal error", t);
+                main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.36"), t); //$NON-NLS-1$
             } else {
                 main.showInfoDialog(main.getShell(),
                                     Resources.getMessage("Controller.13"), //$NON-NLS-1$
@@ -899,7 +899,7 @@ public class Controller implements IView {
                     }
                 }
                 if ((error instanceof IllegalArgumentException) || (error instanceof IOException)) {
-                    main.showInfoDialog(main.getShell(), "Error loading hierarchy", error.getMessage());
+                    main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.37"), error.getMessage()); //$NON-NLS-1$
                 } else {
                     main.showErrorDialog(main.getShell(),
                                          Resources.getMessage("Controller.78"), error); //$NON-NLS-1$
@@ -1057,8 +1057,8 @@ public class Controller implements IView {
         if (worker.getError() != null) {
             
             String message = worker.getError().getMessage();
-            if (message == null || message.equals("")) {
-                message = "Error loading project: "+worker.getError().getClass().getSimpleName();
+            if (message == null || message.equals("")) { //$NON-NLS-1$
+                message = Resources.getMessage("Controller.46")+worker.getError().getClass().getSimpleName(); //$NON-NLS-1$
             }
             
             getResources().getLogger().info(worker.getError());
@@ -1372,7 +1372,7 @@ public class Controller implements IView {
         for (int i = 0; i < data.getHandle().getNumRows(); i++) {
             set.add(i);
         }
-        model.setSubsetOrigin("All");
+        model.setSubsetOrigin(Resources.getMessage("Controller.47")); //$NON-NLS-1$
         update(new ModelEvent(this,
                               ModelPart.RESEARCH_SUBSET,
                               set));
@@ -1399,7 +1399,7 @@ public class Controller implements IView {
         if (worker.getError() != null) {
             if (worker.getError() instanceof IllegalArgumentException) {
                 main.showInfoDialog(main.getShell(),
-                                    "Error loading data",
+                                    Resources.getMessage("Controller.48"), //$NON-NLS-1$
                                     worker.getError().getMessage());
             } else {
                 main.showErrorDialog(main.getShell(),
@@ -1415,12 +1415,12 @@ public class Controller implements IView {
         try {
             DataSubset subset = DataSubset.create(data, subsetData);
             model.getInputConfig().setResearchSubset(subset.getSet());
-            model.setSubsetOrigin("File");
+            model.setSubsetOrigin(Resources.getMessage("Controller.53")); //$NON-NLS-1$
             update(new ModelEvent(this,
                                   ModelPart.RESEARCH_SUBSET,
                                   subset.getSet()));
         } catch (IllegalArgumentException e) {
-            main.showInfoDialog(main.getShell(), "Error matching data", e.getMessage());
+            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.60"), e.getMessage()); //$NON-NLS-1$
         }
     }
 
@@ -1431,7 +1431,7 @@ public class Controller implements IView {
         Data data = model.getInputConfig().getInput();
         RowSet empty = RowSet.create(data);
         model.getInputConfig().setResearchSubset(empty);
-        model.setSubsetOrigin("None");
+        model.setSubsetOrigin(Resources.getMessage("Controller.65")); //$NON-NLS-1$
         update(new ModelEvent(this,
                               ModelPart.RESEARCH_SUBSET,
                               empty));
@@ -1450,7 +1450,7 @@ public class Controller implements IView {
 
         this.model.getInputConfig().setResearchSubset(subset.getSet());
         this.model.setQuery(result.query);
-        model.setSubsetOrigin("Query");
+        model.setSubsetOrigin(Resources.getMessage("Controller.70")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
 
@@ -1562,7 +1562,7 @@ public class Controller implements IView {
                 }
             }
             if ((error instanceof IllegalArgumentException) || (error instanceof IOException)) {
-                main.showInfoDialog(main.getShell(), "Error loading data", error.getMessage());
+                main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.71"), error.getMessage()); //$NON-NLS-1$
             } else {
                 main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.76"), error); //$NON-NLS-1$
             }
@@ -1654,7 +1654,7 @@ public class Controller implements IView {
                 }
             }
             if ((error instanceof IllegalArgumentException) || (error instanceof IOException)) {
-                main.showInfoDialog(main.getShell(), "Error loading hierarchy", error.getMessage());
+                main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.72"), error.getMessage()); //$NON-NLS-1$
             } else {
                 main.showErrorDialog(main.getShell(),
                                      Resources.getMessage("Controller.78"), error); //$NON-NLS-1$

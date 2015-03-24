@@ -74,14 +74,11 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         super(wizard, model.getOrderModel(), finalPage);
         this.model = model.getOrderModel();
         this.controller = controller;
-        setTitle("Create a hierarchy by ordering and grouping items");
-        setDescription("Specify the parameters");
+        setTitle(Resources.getMessage("HierarchyWizardPageOrder.0")); //$NON-NLS-1$
+        setDescription(Resources.getMessage("HierarchyWizardPageOrder.4")); //$NON-NLS-1$
         setPageComplete(true);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     public void createControl(final Composite parent) {
         
@@ -92,12 +89,9 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         setControl(composite);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardPageBuilder#updatePage()
-     */
     @Override
     public void updatePage() {
-        table.setData(getDataProvider(model.getData()), new String[]{"Values"});
+        table.setData(getDataProvider(model.getData()), new String[]{Resources.getMessage("HierarchyWizardPageOrder.6")}); //$NON-NLS-1$
         combo.select(getIndexOfDataType(model.getDataType()));
         if (editor != null) editor.setFunction(model.getDefaultFunction());
         model.update();
@@ -136,7 +130,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
             DataTypeDescription<?> description = getDataType(label);
     
             // Open format dialog
-            if (description.getLabel().equals("OrderedString")) {
+            if (description.getLabel().equals("OrderedString")) { //$NON-NLS-1$
                 final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                 final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                 String[] array = controller.actionShowOrderValuesDialog(getShell(), 
@@ -154,7 +148,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
                         }
                     } catch (Exception e) {
                         controller.actionShowInfoDialog(getShell(), 
-                                                        "Error", "Cannot create data type: " + e.getMessage());
+                                                        Resources.getMessage("HierarchyWizardPageOrder.15"), Resources.getMessage("HierarchyWizardPageOrder.16") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
                         type = DataType.STRING;
                     }
                 }
@@ -207,7 +201,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
      */
     private void createGroups(Composite parent){
         Group composite = new Group(parent, SWT.NONE);
-        composite.setText("Groups");
+        composite.setText(Resources.getMessage("HierarchyWizardPageOrder.17")); //$NON-NLS-1$
         composite.setLayout(SWTUtil.createGridLayout(1, false));
         composite.setLayoutData(SWTUtil.createFillGridData());
         editor =  new HierarchyWizardEditor<T>(composite, (HierarchyWizardModelGrouping<T>) model);
@@ -221,7 +215,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
      */
     private void createOrder(Composite parent){
         Group composite = new Group(parent, SWT.NONE);
-        composite.setText("Order");
+        composite.setText(Resources.getMessage("HierarchyWizardPageOrder.18")); //$NON-NLS-1$
         composite.setLayout(SWTUtil.createGridLayout(1, false));
         composite.setLayoutData(SWTUtil.createFillVerticallyGridData());
         
@@ -326,7 +320,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
                 return desc;
             }
         }
-        throw new RuntimeException("Unknown data type: "+label);
+        throw new RuntimeException(Resources.getMessage("HierarchyWizardPageOrder.19")+label); //$NON-NLS-1$
     }
     
     /**

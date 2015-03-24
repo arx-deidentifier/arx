@@ -121,14 +121,14 @@ public class ViewCriteriaList implements IView {
         });
 
         this.column1 = new DynamicTableColumn(table, SWT.NONE);
-        this.column1.setText("Type");
-        this.column1.setWidth("10%", "30px");
+        this.column1.setText(Resources.getMessage("ViewCriteriaList.0")); //$NON-NLS-1$
+        this.column1.setWidth("10%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
         this.column2 = new DynamicTableColumn(table, SWT.NONE);
         this.column2.setText(Resources.getMessage("CriterionSelectionDialog.2")); //$NON-NLS-1$
-        this.column2.setWidth("45%", "100px");
+        this.column2.setWidth("45%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         this.column3 = new DynamicTableColumn(table, SWT.NONE);
         this.column3.setText(Resources.getMessage("CriterionSelectionDialog.3")); //$NON-NLS-1$
-        this.column3.setWidth("45%", "100px");
+        this.column3.setWidth("45%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         
         this.column1.pack();
         this.column2.pack();
@@ -248,14 +248,14 @@ public class ViewCriteriaList implements IView {
         
         if (model.getKAnonymityModel().isEnabled()) {
             TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(new String[] { "", model.getKAnonymityModel().toString(), "" });
+            item.setText(new String[] { "", model.getKAnonymityModel().toString(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
             item.setImage(0, symbolK);
             item.setData(model.getKAnonymityModel());
         }
 
         if (model.getDPresenceModel().isEnabled()) {
             TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(new String[] { "", model.getDPresenceModel().toString(), "" });
+            item.setText(new String[] { "", model.getDPresenceModel().toString(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
             item.setImage(0, symbolD);
             item.setData(model.getDPresenceModel());
         }
@@ -280,7 +280,7 @@ public class ViewCriteriaList implements IView {
         
         for (ModelExplicitCriterion c :explicit) {
             TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(new String[] { "", c.toString(), c.getAttribute() });
+            item.setText(new String[] { "", c.toString(), c.getAttribute() }); //$NON-NLS-1$
             if (c instanceof ModelLDiversityCriterion) {
                 item.setImage(0, symbolL);
             } else {
@@ -303,7 +303,7 @@ public class ViewCriteriaList implements IView {
         
         for (ModelRiskBasedCriterion c : riskBased) {
             TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(new String[] { "", c.toString(), "" });
+            item.setText(new String[] { "", c.toString(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
             item.setImage(0, symbolR);
             item.setData(c);
         }

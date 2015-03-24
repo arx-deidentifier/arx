@@ -67,9 +67,6 @@ public class ViewHierarchy implements IView {
      */
     private class HierarchyDataProvider implements IDataProvider {
 
-        /* (non-Javadoc)
-         * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getColumnCount()
-         */
         @Override
         public int getColumnCount() {
             if (hierarchy == null) return 0;
@@ -78,26 +75,17 @@ public class ViewHierarchy implements IView {
             else return hierarchy[0].length;
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getDataValue(int, int)
-         */
         @Override
         public Object getDataValue(int columnIndex, int rowIndex) {
             return hierarchy[rowIndex][columnIndex];
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getRowCount()
-         */
         @Override
         public int getRowCount() {
             if (hierarchy == null) return 0;
             else return hierarchy.length;
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#setDataValue(int, int, java.lang.Object)
-         */
         @Override
         public void setDataValue(int columnIndex, int rowIndex, Object newValue) {
             // Ignore
@@ -111,17 +99,11 @@ public class ViewHierarchy implements IView {
      */
     private class HierarchyHeaderDataProvider extends HierarchyDataProvider {
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.gui.view.impl.common.ViewHierarchy.HierarchyDataProvider#getDataValue(int, int)
-         */
         @Override
         public Object getDataValue(int columnIndex, int rowIndex) {
-            return "Level-"+columnIndex;
+            return Resources.getMessage("ViewHierarchy.0")+columnIndex; //$NON-NLS-1$
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.gui.view.impl.common.ViewHierarchy.HierarchyDataProvider#getRowCount()
-         */
         @Override
         public int getRowCount() {
             return 1;
@@ -242,9 +224,6 @@ public class ViewHierarchy implements IView {
         createTable(parent);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -253,9 +232,6 @@ public class ViewHierarchy implements IView {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
     @Override
     public void reset() {
         setHierarchy(null);
@@ -284,9 +260,6 @@ public class ViewHierarchy implements IView {
         base.setLayoutData(d);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(final ModelEvent event) {
 
@@ -478,7 +451,7 @@ public class ViewHierarchy implements IView {
             String[] row = new String[columns];
             System.arraycopy(hierarchy[i], 0, row, 0, selected+1);
             System.arraycopy(hierarchy[i], selected+1, row, selected+2, columns-selected-2);
-            row[selected+1]="";
+            row[selected+1]=""; //$NON-NLS-1$
             temp[i] = row;
         }
         
@@ -507,7 +480,7 @@ public class ViewHierarchy implements IView {
         System.arraycopy(hierarchy, 0, temp, 0, selected+1);
         System.arraycopy(hierarchy, selected+1, temp, selected+2, rows-selected-2);
         temp[selected+1] = new String[columns];
-        Arrays.fill(temp[selected+1], "");
+        Arrays.fill(temp[selected+1], ""); //$NON-NLS-1$
         
         this.hierarchy = temp;
         this.table.refresh();

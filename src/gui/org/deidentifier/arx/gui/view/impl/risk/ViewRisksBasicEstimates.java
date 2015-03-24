@@ -109,7 +109,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
     private void createItem(String label, PopulationUniquenessModel value) {
         TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, label);
-        item.setText(1, value == null ? "N/A" : value.toString());
+        item.setText(1, value == null ? "N/A" : value.toString()); //$NON-NLS-1$
     }
     
     /**
@@ -129,7 +129,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
         
-        format  = new DecimalFormat("##0.00000");
+        format  = new DecimalFormat("##0.00000"); //$NON-NLS-1$
         
         table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setHeaderVisible(true);
@@ -216,15 +216,15 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
                     i.dispose();
                 }
                 
-                createItem(Resources.getMessage("RiskAnalysis.14"), lowestRisk);
-                createItem(Resources.getMessage("RiskAnalysis.17"), fractionOfTuplesAffectedByLowestRisk);
-                createItem(Resources.getMessage("RiskAnalysis.8"), averageRisk);
-                createItem(Resources.getMessage("RiskAnalysis.9"), highestRisk);
-                createItem(Resources.getMessage("RiskAnalysis.10"), fractionOfTuplesAffectedByHighestRisk);
-                createItem(Resources.getMessage("RiskAnalysis.11"), fractionOfUniqueTuples);
-                createItem(Resources.getMessage("RiskAnalysis.12"), fractionOfUniqueTuplesDankar);
-                createItem(Resources.getMessage("RiskAnalysis.18"), dankarModel);
-                createItem(Resources.getMessage("RiskAnalysis.25"), getQuasiIdentifiers(context));
+                createItem(Resources.getMessage("RiskAnalysis.14"), lowestRisk); //$NON-NLS-1$
+                createItem(Resources.getMessage("RiskAnalysis.17"), fractionOfTuplesAffectedByLowestRisk); //$NON-NLS-1$
+                createItem(Resources.getMessage("RiskAnalysis.8"), averageRisk); //$NON-NLS-1$
+                createItem(Resources.getMessage("RiskAnalysis.9"), highestRisk); //$NON-NLS-1$
+                createItem(Resources.getMessage("RiskAnalysis.10"), fractionOfTuplesAffectedByHighestRisk); //$NON-NLS-1$
+                createItem(Resources.getMessage("RiskAnalysis.11"), fractionOfUniqueTuples); //$NON-NLS-1$
+                createItem(Resources.getMessage("RiskAnalysis.12"), fractionOfUniqueTuplesDankar); //$NON-NLS-1$
+                createItem(Resources.getMessage("RiskAnalysis.18"), dankarModel); //$NON-NLS-1$
+                createItem(Resources.getMessage("RiskAnalysis.25"), getQuasiIdentifiers(context)); //$NON-NLS-1$
 
                 table.setRedraw(true);
                 

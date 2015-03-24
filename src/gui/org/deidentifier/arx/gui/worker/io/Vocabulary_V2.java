@@ -33,8 +33,8 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
      */
     @Override
     public void checkVersion(String version) throws SAXException {
-        if (!(version.equals("2.0") || version.startsWith("2.1") || version.startsWith("2.2")
-                                    || version.startsWith("2.3") || version.startsWith("3.0"))) {
+        if (!(version.equals("2.0") || version.startsWith("2.1") || version.startsWith("2.2") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                    || version.startsWith("2.3") || version.startsWith("3.0"))) { //$NON-NLS-1$ //$NON-NLS-2$
             throw new SAXException(Resources.getMessage("WorkerLoad.10") + version); //$NON-NLS-1$
         }
     }
@@ -61,18 +61,18 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
 	@Override
 	public String getHeader() {
 		StringBuilder b = new StringBuilder();
-		b.append("<!-- ARX XML Vocabulary Version 2.0 -->\n");
-		b.append("<!-- n = node                       -->\n");
-		b.append("<!-- i = id                         -->\n");
-		b.append("<!-- t = transformation             -->\n");
-		b.append("<!-- a = anonymity                  -->\n");
-		b.append("<!-- c = checked                    -->\n");
-		b.append("<!-- p = predecessors               -->\n");
-		b.append("<!-- s = successors                 -->\n");
-		b.append("<!-- l = infoloss                   -->\n");
-		b.append("<!-- f = min                        -->\n");
-		b.append("<!-- u = max                        -->\n");
-		b.append("<!-- z = attribute                  -->\n");
+		b.append("<!-- ARX XML Vocabulary Version 2.0 -->\n"); //$NON-NLS-1$
+		b.append("<!-- n = node                       -->\n"); //$NON-NLS-1$
+		b.append("<!-- i = id                         -->\n"); //$NON-NLS-1$
+		b.append("<!-- t = transformation             -->\n"); //$NON-NLS-1$
+		b.append("<!-- a = anonymity                  -->\n"); //$NON-NLS-1$
+		b.append("<!-- c = checked                    -->\n"); //$NON-NLS-1$
+		b.append("<!-- p = predecessors               -->\n"); //$NON-NLS-1$
+		b.append("<!-- s = successors                 -->\n"); //$NON-NLS-1$
+		b.append("<!-- l = infoloss                   -->\n"); //$NON-NLS-1$
+		b.append("<!-- f = min                        -->\n"); //$NON-NLS-1$
+		b.append("<!-- u = max                        -->\n"); //$NON-NLS-1$
+		b.append("<!-- z = attribute                  -->\n"); //$NON-NLS-1$
 		return b.toString();
 	}
 	
@@ -145,6 +145,6 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
      */
     @Override
     public String getVocabularyVersion() {
-        return "2.0";
+        return "2.0"; //$NON-NLS-1$
     }
 }

@@ -130,10 +130,10 @@ public class ModelEvent {
      */
     @Override
     public String toString() {
-        String sourceLabel = "NULL";
-        if (source != null) sourceLabel = source.getClass().getSimpleName()+"@" + source.hashCode();
-        String dataLabel = "NULL";
-        if (data != null) dataLabel = data.getClass().getSimpleName()+"@" + data.hashCode();
-        return "[part=" + part + ", source=" + sourceLabel + ", data=" + dataLabel + "]";
+        String sourceLabel = "NULL"; //$NON-NLS-1$
+        if (source != null) sourceLabel = source.getClass().getSimpleName()+"@" + source.hashCode(); //$NON-NLS-1$
+        String dataLabel = "NULL"; //$NON-NLS-1$
+        if (data != null) dataLabel = data.getClass().getSimpleName()+"@" + data.hashCode(); //$NON-NLS-1$
+        return "[part=" + part + ", source=" + sourceLabel + ", data=" + dataLabel + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     }
 }

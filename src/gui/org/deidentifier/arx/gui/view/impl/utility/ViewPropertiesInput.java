@@ -257,13 +257,13 @@ public class ViewPropertiesInput extends ViewProperties {
         }
 
         // Print quasi-identifying attributes
-        final DecimalFormat format = new DecimalFormat("0.000");
+        final DecimalFormat format = new DecimalFormat("0.000"); //$NON-NLS-1$
         final Property quasiIdentifying = new Property(attributes, Resources.getMessage("PropertiesView.20"), new String[] { String.valueOf(definition.getQuasiIdentifyingAttributes().size()) }); //$NON-NLS-1$
         index = 0;
         for (int i = 0; i < data.getNumColumns(); i++) {
             final String s = data.getAttributeName(i);
             if (definition.getQuasiIdentifyingAttributes().contains(s)) {
-                final String[] values = new String[] { "", "", "", "", "" , "", ""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                final String[] values = new String[] { "", "", "", "", "" , "", ""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
                 values[0] = s;
                 if (definition.getHierarchy(s) != null) {
                     DataType<?> type = definition.getDataType(s);

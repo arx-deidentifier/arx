@@ -185,8 +185,8 @@ public abstract class ViewSolutionSpace implements IView {
         
         this.label = new CLabel(this.secondary, SWT.NONE);
         this.label.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, true).minSize(400, 200).create());
-        this.label.setImage(controller.getResources().getImage("warning.png"));
-        this.label.setText("");
+        this.label.setImage(controller.getResources().getImage("warning.png")); //$NON-NLS-1$
+        this.label.setText(""); //$NON-NLS-1$
         this.label.setAlignment(SWT.LEFT);
         
         // Show primary
@@ -542,7 +542,7 @@ public abstract class ViewSolutionSpace implements IView {
         
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
-        ps.format(Resources.getMessage("LatticeView.7"), num, max);
+        ps.format(Resources.getMessage("LatticeView.7"), num, max); //$NON-NLS-1$
         label.setText(os.toString());
         
         this.layout.topControl = this.secondary;

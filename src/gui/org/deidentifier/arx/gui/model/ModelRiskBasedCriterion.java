@@ -21,6 +21,7 @@ import org.deidentifier.arx.criteria.AverageReidentificationRisk;
 import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleUniqueness;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**
@@ -90,7 +91,7 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
         case VARIANT_SAMPLE_UNIQUES:
             return new SampleUniqueness(threshold);
         default:
-            throw new RuntimeException("Internal error: invalid variant of risk-based criterion");
+            throw new RuntimeException(Resources.getMessage("Model.0")); //$NON-NLS-1$
         }
 	}
 
@@ -98,19 +99,19 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
     public String getLabel() {
         switch (variant) {
         case VARIANT_AVERAGE_RISK:
-            return "Average-Reidentification-Risk";
+            return Resources.getMessage("Model.1"); //$NON-NLS-1$
         case VARIANT_POPULATION_UNIQUES_DANKAR:
-            return "Population-Uniqueness (Dankar)";
+            return Resources.getMessage("Model.2"); //$NON-NLS-1$
         case VARIANT_POPULATION_UNIQUES_PITMAN:
-            return "Population-Uniqueness (Pitman)";
+            return Resources.getMessage("Model.3"); //$NON-NLS-1$
         case VARIANT_POPULATION_UNIQUES_SNB:
-            return "Population-Uniqueness (SNB)";
+            return Resources.getMessage("Model.4"); //$NON-NLS-1$
         case VARIANT_POPULATION_UNIQUES_ZAYATZ:
-            return "Population-Uniqueness (Zayatz)";
+            return Resources.getMessage("Model.5"); //$NON-NLS-1$
         case VARIANT_SAMPLE_UNIQUES:
-            return "Sample-Uniqueness";
+            return Resources.getMessage("Model.6"); //$NON-NLS-1$
         default:
-            throw new RuntimeException("Internal error: invalid variant of risk-based criterion");
+            throw new RuntimeException(Resources.getMessage("Model.7")); //$NON-NLS-1$
         }
     }
 	
@@ -145,22 +146,21 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 
     @Override
     public String toString() {
-        // TODO: Move to messages.properties
         switch (variant) {
         case VARIANT_AVERAGE_RISK:
-            return "(" + threshold + ")-Average-Reidentification-Risk";
+            return Resources.getMessage("Model.8") + threshold + Resources.getMessage("Model.9"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_POPULATION_UNIQUES_DANKAR:
-            return "(" + threshold + ")-Population-Uniqueness (Dankar)";
+            return Resources.getMessage("Model.10") + threshold + Resources.getMessage("Model.11"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_POPULATION_UNIQUES_PITMAN:
-            return "(" + threshold + ")-Population-Uniqueness (Pitman)";
+            return Resources.getMessage("Model.12") + threshold + Resources.getMessage("Model.13"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_POPULATION_UNIQUES_SNB:
-            return "(" + threshold + ")-Population-Uniqueness (SNB)";
+            return Resources.getMessage("Model.14") + threshold + Resources.getMessage("Model.15"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_POPULATION_UNIQUES_ZAYATZ:
-            return "(" + threshold + ")-Population-Uniqueness (Zayatz)";
+            return Resources.getMessage("Model.16") + threshold + Resources.getMessage("Model.17"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_SAMPLE_UNIQUES:
-            return "(" + threshold + ")-Sample-Uniqueness";
+            return Resources.getMessage("Model.18") + threshold + Resources.getMessage("Model.19"); //$NON-NLS-1$ //$NON-NLS-2$
         default:
-            throw new RuntimeException("Internal error: invalid variant of risk-based criterion");
+            throw new RuntimeException(Resources.getMessage("Model.20")); //$NON-NLS-1$
         }
     }
     

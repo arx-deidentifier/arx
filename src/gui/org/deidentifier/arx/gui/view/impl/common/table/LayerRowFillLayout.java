@@ -87,7 +87,7 @@ public class LayerRowFillLayout extends CTLayer implements IUniqueIndexLayer {
     @Override
     public Object getDataValueByPosition(final int columnPosition, final int rowPosition) {
         if (isActive() && isAdditionalRowPosition(rowPosition)) {
-            return "";
+            return ""; //$NON-NLS-1$
         } else {
             return super.getDataValueByPosition(columnPosition, rowPosition);
         }

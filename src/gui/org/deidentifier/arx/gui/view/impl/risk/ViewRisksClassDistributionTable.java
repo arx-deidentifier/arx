@@ -89,7 +89,7 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
     @Override
     protected Control createControl(Composite parent) {
 
-        this.format = new DecimalFormat("##0.00000");
+        this.format = new DecimalFormat("##0.00000"); //$NON-NLS-1$
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
         

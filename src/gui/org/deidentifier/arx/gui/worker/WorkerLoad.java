@@ -348,7 +348,7 @@ public class WorkerLoad extends Worker<Model> {
                     if (attr == null) { throw new SAXException(Resources.getMessage("WorkerLoad.3")); } //$NON-NLS-1$
                     
                     // TODO: For backwards compatibility only
-                    if (vocabulary.getVocabularyVersion().equals("1.0")) {
+                    if (vocabulary.getVocabularyVersion().equals("1.0")) { //$NON-NLS-1$
                         
                         // Data type
                         if (dtype.equals(DataType.STRING.toString())) {
@@ -358,7 +358,7 @@ public class WorkerLoad extends Worker<Model> {
                         } else {
                             definition.setDataType(attr, DataType.createDate(dtype));
                         }
-                    } else if (vocabulary.getVocabularyVersion().equals("2.0")) {
+                    } else if (vocabulary.getVocabularyVersion().equals("2.0")) { //$NON-NLS-1$
                         
                         // Find matching data type
                         DataType<?> datatype = null;
@@ -368,7 +368,7 @@ public class WorkerLoad extends Worker<Model> {
                                 // Check format
                                 if (format != null){
                                     if (!description.hasFormat()) {
-                                        throw new RuntimeException("Invalid format specified for data type");
+                                        throw new RuntimeException(Resources.getMessage("WorkerLoad.14")); //$NON-NLS-1$
                                     }
                                     datatype = description.newInstance(format);
                                 } else {
@@ -380,7 +380,7 @@ public class WorkerLoad extends Worker<Model> {
                         
                         // Check if found
                         if (datatype == null){
-                            throw new RuntimeException("No data type specified for attribute: "+attr);
+                            throw new RuntimeException(Resources.getMessage("WorkerLoad.15")+attr); //$NON-NLS-1$
                         }
                         
                         // Store
@@ -420,14 +420,14 @@ public class WorkerLoad extends Worker<Model> {
                         
                         int height = hierarchy.getHierarchy().length>0 ?
                                      hierarchy.getHierarchy()[0].length : 0;
-                        if (min.equals("All")) {
+                        if (min.equals("All")) { //$NON-NLS-1$
                             config.setMinimumGeneralization(attr, null);
                             definition.setMinimumGeneralization(attr, 0);
                         } else {
                             config.setMinimumGeneralization(attr, Integer.valueOf(min));
                             definition.setMinimumGeneralization(attr, Integer.valueOf(min));
                         }
-                        if (max.equals("All")) {
+                        if (max.equals("All")) { //$NON-NLS-1$
                             config.setMaximumGeneralization(attr, null);
                             definition.setMaximumGeneralization(attr, height-1);
                         } else {
@@ -436,7 +436,7 @@ public class WorkerLoad extends Worker<Model> {
                         }
 
                         // TODO: For backwards compatibility only
-                        if (vocabulary.getVocabularyVersion().equals("1.0")) {
+                        if (vocabulary.getVocabularyVersion().equals("1.0")) { //$NON-NLS-1$
                             if (config.getMinimumGeneralization(attr) != null &&
                                 config.getMinimumGeneralization(attr).equals(0)){
                                 config.setMinimumGeneralization(attr, null);

@@ -24,6 +24,7 @@ import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTable;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
@@ -126,7 +127,7 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
                 }
 
                 // Retrieve
-                final DecimalFormat format = new DecimalFormat("##0.00000");
+                final DecimalFormat format = new DecimalFormat("##0.00000"); //$NON-NLS-1$
 
                 // Now update the table
                 table.setData(new IDataProvider() {
@@ -134,7 +135,7 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
                         return 2;
                     }
                     public Object getDataValue(int arg0, int arg1) {
-                        return arg0 == 0 ? distribution.values[arg1] : format.format(distribution.frequency[arg1]*100d)+"%";
+                        return arg0 == 0 ? distribution.values[arg1] : format.format(distribution.frequency[arg1]*100d)+"%"; //$NON-NLS-1$
                     }
                     public int getRowCount() {
                         return distribution.values.length;
@@ -142,7 +143,7 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
                     public void setDataValue(int arg0, int arg1, Object arg2) { 
                         /* Ignore */
                     }
-                }, new String[] { "Value", "Frequency" });
+                }, new String[] { Resources.getMessage("ViewStatisticsDistributionTable.2"), Resources.getMessage("ViewStatisticsDistributionTable.3") }); //$NON-NLS-1$ //$NON-NLS-2$
                 setStatusDone();
             }
 

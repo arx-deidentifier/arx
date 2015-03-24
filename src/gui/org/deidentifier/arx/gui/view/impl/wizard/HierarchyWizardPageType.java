@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.wizard;
 
 import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -84,22 +85,16 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         this.intervalPage = intervalPage;
         this.model = model;
         this.next = intervalPage;
-        setTitle("Create a generalization hierarchy");
-        setDescription("Specify the type of hierarchy");
+        setTitle(Resources.getMessage("HierarchyWizardPageType.0")); //$NON-NLS-1$
+        setDescription(Resources.getMessage("HierarchyWizardPageType.1")); //$NON-NLS-1$
         setPageComplete(true);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
-     */
     @Override
     public boolean canFlipToNextPage() {
         return isPageComplete();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     public void createControl(final Composite parent) {
         final Composite composite = new Composite(parent, SWT.NONE);
@@ -107,15 +102,15 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         composite.setLayout(SWTUtil.createGridLayout(1, false));
         
         this.interval = new Button(composite, SWT.RADIO);
-        this.interval.setText("Use intervals (for variables with ratio scale)");
+        this.interval.setText(Resources.getMessage("HierarchyWizardPageType.2")); //$NON-NLS-1$
         this.interval.setEnabled(model.getIntervalModel() != null);
         
         this.order = new Button(composite, SWT.RADIO);
-        this.order.setText("Use ordering (e.g., for variables with ordinal scale)");
+        this.order.setText(Resources.getMessage("HierarchyWizardPageType.3")); //$NON-NLS-1$
         this.order.setEnabled(true);
         
         this.redaction = new Button(composite, SWT.RADIO);
-        this.redaction.setText("Use redaction (e.g., for alphanumeric strings) ");
+        this.redaction.setText(Resources.getMessage("HierarchyWizardPageType.4")); //$NON-NLS-1$
         this.redaction.setEnabled(true);
         
         this.interval.addSelectionListener(new SelectionAdapter(){
@@ -154,31 +149,22 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         case ORDER_BASED:     next = orderPage;     break;
         case REDACTION_BASED: next = redactionPage; break;
         default:
-            throw new IllegalStateException("Unknown type of builder");
+            throw new IllegalStateException("Unknown type of builder"); //$NON-NLS-1$
         }
         
         setControl(composite);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
-     */
     @Override
     public IWizardPage getNextPage() {
         return next;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-     */
     @Override
     public boolean isPageComplete() {
         return true;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
-     */
     @Override
     public void setVisible(boolean value){
         

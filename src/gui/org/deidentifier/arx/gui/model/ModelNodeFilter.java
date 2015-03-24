@@ -26,6 +26,7 @@ import java.util.Set;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.ARXResult;
 
 /**
@@ -132,7 +133,7 @@ public class ModelNodeFilter implements Serializable {
      */
     public void allowInformationLoss(final double min, final double max) {
         if (min<0d || min>1d || max <0d || max>1d) {
-            throw new IllegalArgumentException("Threshold must be in range [0,1]");
+            throw new IllegalArgumentException(Resources.getMessage("Model.0")); //$NON-NLS-1$
         }
         minInformationLoss = min;
         maxInformationLoss = max;

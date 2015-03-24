@@ -63,25 +63,25 @@ public class LayoutCriteria implements ILayout {
                           final Controller controller) {
 
 
-        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-80");
-        bar.add(Resources.getMessage("CriterionDefinitionView.80"), 
-                controller.getResources().getImage("add.png"),
+        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-80"); //$NON-NLS-1$
+        bar.add(Resources.getMessage("CriterionDefinitionView.80"),  //$NON-NLS-1$
+                controller.getResources().getImage("add.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
                         criteriaView.actionAdd();
                     }
                 });
-        bar.add(Resources.getMessage("CriterionDefinitionView.59"), 
-                controller.getResources().getImage("remove.png"),
+        bar.add(Resources.getMessage("CriterionDefinitionView.59"),  //$NON-NLS-1$
+                controller.getResources().getImage("remove.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
                         criteriaView.actionRemove();
                     }
                 });
-        bar.add(Resources.getMessage("CriterionDefinitionView.82"), 
-                controller.getResources().getImage("edit.png"),
+        bar.add(Resources.getMessage("CriterionDefinitionView.82"),  //$NON-NLS-1$
+                controller.getResources().getImage("edit.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -89,8 +89,8 @@ public class LayoutCriteria implements ILayout {
                     }
                 });
 
-        bar.add(Resources.getMessage("CriterionDefinitionView.57"), 
-                controller.getResources().getImage("bullet_arrow_up.png"),
+        bar.add(Resources.getMessage("CriterionDefinitionView.57"),  //$NON-NLS-1$
+                controller.getResources().getImage("bullet_arrow_up.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -98,8 +98,8 @@ public class LayoutCriteria implements ILayout {
                     }
                 });
         
-        bar.add(Resources.getMessage("CriterionDefinitionView.58"), 
-                controller.getResources().getImage("bullet_arrow_down.png"),
+        bar.add(Resources.getMessage("CriterionDefinitionView.58"),  //$NON-NLS-1$
+                controller.getResources().getImage("bullet_arrow_down.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -110,17 +110,17 @@ public class LayoutCriteria implements ILayout {
         // Add view
         folder = new ComponentTitledFolder(parent, controller, bar, null);
 
-        buttonCross = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.59"));
-        buttonUp = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.57"));
-        buttonDown = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.58"));
-        buttonAdd = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.80"));
-        buttonConfigure = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.82"));
+        buttonCross = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.59")); //$NON-NLS-1$
+        buttonUp = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.57")); //$NON-NLS-1$
+        buttonDown = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.58")); //$NON-NLS-1$
+        buttonAdd = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.80")); //$NON-NLS-1$
+        buttonConfigure = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.82")); //$NON-NLS-1$
 
-        Composite composite1 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.4"), null);
+        Composite composite1 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.4"), null); //$NON-NLS-1$
         composite1.setLayout(SWTUtil.createGridLayout(1));
         this.criteriaView = new ViewCriteriaList(composite1, controller, this);
 
-        Composite composite2 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.5"), null);
+        Composite composite2 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.5"), null); //$NON-NLS-1$
         composite2.setLayout(new FillLayout());
         new ViewPopulationModel(composite2, controller);
         

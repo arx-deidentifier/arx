@@ -49,7 +49,7 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
     public HierarchyWizardPageBuilder(final HierarchyWizard<T> wizard,
                                       final HierarchyWizardModelAbstract<T> model, 
                                       final HierarchyWizardPageFinal<T> finalPage){
-        super("");
+        super(""); //$NON-NLS-1$
         this.wizard = wizard;
         this.model = model;
         this.finalPage = finalPage;

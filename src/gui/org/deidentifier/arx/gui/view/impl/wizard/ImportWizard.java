@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.ImportWizardModel.SourceType;
 import org.deidentifier.arx.io.ImportColumn;
 import org.deidentifier.arx.io.ImportConfiguration;
@@ -99,7 +100,7 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      */
     public ImportWizard(Controller controller, Model model) {
 
-        setWindowTitle("Import data");
+        setWindowTitle(Resources.getMessage("ImportWizard.0")); //$NON-NLS-1$
         this.setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(controller.getResources()
                                                                            .getImage("import.png"))); //$NON-NLS-1$
         this.data = new ImportWizardModel(model);
@@ -261,7 +262,7 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
                                                   data.getSelectedJdbcTable());
 
         } else {
-            throw new RuntimeException("Configuration type not supported");
+            throw new RuntimeException("Configuration type not supported"); //$NON-NLS-1$
         }
 
         for (ImportColumn c : data.getEnabledColumns()) {

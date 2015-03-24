@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
 import org.eclipse.swt.SWT;
@@ -75,7 +76,7 @@ public class HierarchyWizardEditorMenu<T> {
         
         this.menu = new Menu(composite);
         this.remove = new MenuItem(menu, SWT.NONE);
-        this.remove.setText("Remove");
+        this.remove.setText(Resources.getMessage("HierarchyWizardEditorMenu.0")); //$NON-NLS-1$
         this.remove.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
                 model.remove(model.getSelectedElement());
@@ -85,7 +86,7 @@ public class HierarchyWizardEditorMenu<T> {
         new MenuItem(menu, SWT.SEPARATOR);
         
         this.addBefore = new MenuItem(menu, SWT.NONE);
-        this.addBefore.setText("Add before");
+        this.addBefore.setText(Resources.getMessage("HierarchyWizardEditorMenu.1")); //$NON-NLS-1$
         this.addBefore.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
                 model.addBefore(model.getSelectedElement());
@@ -93,7 +94,7 @@ public class HierarchyWizardEditorMenu<T> {
         });
         
         this.addAfter = new MenuItem(menu, SWT.NONE);
-        this.addAfter.setText("Add after");
+        this.addAfter.setText(Resources.getMessage("HierarchyWizardEditorMenu.2")); //$NON-NLS-1$
         this.addAfter.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
                 model.addAfter(model.getSelectedElement());
@@ -103,7 +104,7 @@ public class HierarchyWizardEditorMenu<T> {
         new MenuItem(menu, SWT.SEPARATOR);
         
         this.mergeDown = new MenuItem(menu, SWT.NONE);
-        this.mergeDown.setText("Merge down");
+        this.mergeDown.setText(Resources.getMessage("HierarchyWizardEditorMenu.3")); //$NON-NLS-1$
         this.mergeDown.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
                 model.mergeDown(model.getSelectedElement());
@@ -111,7 +112,7 @@ public class HierarchyWizardEditorMenu<T> {
         });
         
         this.mergeUp = new MenuItem(menu, SWT.NONE);
-        this.mergeUp.setText("Merge up");
+        this.mergeUp.setText(Resources.getMessage("HierarchyWizardEditorMenu.4")); //$NON-NLS-1$
         this.mergeUp.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
                 model.mergeUp(model.getSelectedElement());
@@ -121,7 +122,7 @@ public class HierarchyWizardEditorMenu<T> {
         new MenuItem(menu, SWT.SEPARATOR);
         
         this.addRight = new MenuItem(menu, SWT.NONE);
-        this.addRight.setText("Add groups");
+        this.addRight.setText(Resources.getMessage("HierarchyWizardEditorMenu.5")); //$NON-NLS-1$
         this.addRight.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
                 model.addRight(model.getSelectedElement());

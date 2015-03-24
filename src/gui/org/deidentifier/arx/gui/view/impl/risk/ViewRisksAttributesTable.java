@@ -54,7 +54,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
 public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
 
     /** View */
-    private DecimalFormat     format = new DecimalFormat("##0.000");
+    private DecimalFormat     format = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
     /** View */
     private Composite         root;
@@ -105,7 +105,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
         for (int i=0; i<list.size(); i++) {
             builder.append(list.get(i));
             if (i < list.size() - 1){
-                builder.append(", ");
+                builder.append(", "); //$NON-NLS-1$
             }
         }
         item.setText(0, builder.toString());
@@ -261,7 +261,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
                     risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.DANKAR);
                     break;
                 default:
-                    throw new RuntimeException("Invalid risk model");
+                    throw new RuntimeException("Invalid risk model"); //$NON-NLS-1$
                 }
 
                 // Our users are patient

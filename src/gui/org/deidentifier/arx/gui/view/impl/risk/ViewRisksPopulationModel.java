@@ -28,6 +28,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -66,7 +67,7 @@ public class ViewRisksPopulationModel implements IView {
     /** View */
     private Text             textPopulationSize;
     /** View */
-    private DecimalFormat    format = new DecimalFormat("0.########################################");
+    private DecimalFormat    format = new DecimalFormat("0.########################################"); //$NON-NLS-1$
     /** View */
     private Button           buttonUse;
     
@@ -120,8 +121,8 @@ public class ViewRisksPopulationModel implements IView {
     @Override
     public void reset() {
         table.select(0);
-        textSampleFraction.setText("");
-        textPopulationSize.setText("");
+        textSampleFraction.setText(""); //$NON-NLS-1$
+        textPopulationSize.setText(""); //$NON-NLS-1$
         SWTUtil.disable(root);
     }
 
@@ -153,7 +154,7 @@ public class ViewRisksPopulationModel implements IView {
     private void create(final Composite parent) {
         
         buttonUse = new Button(parent, SWT.CHECK);
-        buttonUse.setText("Use this model");
+        buttonUse.setText(Resources.getMessage("ViewRisksPopulationModel.3")); //$NON-NLS-1$
         buttonUse.setLayoutData(GridDataFactory.fillDefaults().span(2, 1).grab(true, false).create());
         buttonUse.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
@@ -164,7 +165,7 @@ public class ViewRisksPopulationModel implements IView {
         });
         
         Label lbl1 = new Label(parent, SWT.NONE);
-        lbl1.setText("Region:");
+        lbl1.setText(Resources.getMessage("ViewRisksPopulationModel.4")); //$NON-NLS-1$
         lbl1.setLayoutData(GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.TOP).create());
         
         table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.READ_ONLY);
@@ -183,18 +184,18 @@ public class ViewRisksPopulationModel implements IView {
         }
         
         Label lbl2 = new Label(parent, SWT.NONE);
-        lbl2.setText("Sampling fraction:");
+        lbl2.setText(Resources.getMessage("ViewRisksPopulationModel.5")); //$NON-NLS-1$
         
         textSampleFraction = new Text(parent, SWT.BORDER | SWT.SINGLE);
-        textSampleFraction.setText("0");
+        textSampleFraction.setText("0"); //$NON-NLS-1$
         textSampleFraction.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         textSampleFraction.setEditable(false);
         
         Label lbl3 = new Label(parent, SWT.NONE);
-        lbl3.setText("Population size:");
+        lbl3.setText(Resources.getMessage("ViewRisksPopulationModel.7")); //$NON-NLS-1$
         
         textPopulationSize = new Text(parent, SWT.BORDER | SWT.SINGLE);
-        textPopulationSize.setText("0");
+        textPopulationSize.setText("0"); //$NON-NLS-1$
         textPopulationSize.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         textPopulationSize.setEditable(false);
         

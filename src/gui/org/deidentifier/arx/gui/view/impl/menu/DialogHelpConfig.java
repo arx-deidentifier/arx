@@ -19,6 +19,8 @@ package org.deidentifier.arx.gui.view.impl.menu;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.gui.resources.Resources;
+
 /**
  * Configuration for the help dialog. Stores help topics and associated URLs
  * @author Fabian Prasser
@@ -63,77 +65,77 @@ public class DialogHelpConfig {
      */
     public DialogHelpConfig(){
         
-        entries.add(new Entry("id-70",
-                              "1. Perspectives",
-                              "http://arx.deidentifier.org/?page_id=1082&content-only=1&css=1"));
+        entries.add(new Entry("id-70", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.0"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1082&content-only=1&css=1")); //$NON-NLS-1$
 
-        entries.add(new Entry("id-140",
-                              "1.1. Viewing and Manipulating Data",
-                              "http://arx.deidentifier.org/?page_id=1055&content-only=1&css=1"));
+        entries.add(new Entry("id-140", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.1"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1055&content-only=1&css=1")); //$NON-NLS-1$
 
-        entries.add(new Entry("id-3",
-                              "2. Defining the transformation",
-                              "http://arx.deidentifier.org/?page_id=1076&content-only=1&css=1"));
+        entries.add(new Entry("id-3", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.7"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1076&content-only=1&css=1")); //$NON-NLS-1$
 
-        entries.add(new Entry("id-1",
-                              "2.1. Defining attribute properties",
-                              "http://arx.deidentifier.org/?page_id=1074&content-only=1&css=1"));
+        entries.add(new Entry("id-1", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.10"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1074&content-only=1&css=1")); //$NON-NLS-1$
         
-        entries.add(new Entry("id-51",
-                              "2.2. Creating generalization hierarchies",
-                              "http://arx.deidentifier.org/?page_id=3638&content-only=1&css=1"));
+        entries.add(new Entry("id-51", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.13"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=3638&content-only=1&css=1")); //$NON-NLS-1$
         
-        entries.add(new Entry("id-80",
-                              "2.3. Privacy criteria and population model",
-                              "http://arx.deidentifier.org/?page_id=1059&content-only=1&css=1"));
+        entries.add(new Entry("id-80", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.16"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1059&content-only=1&css=1")); //$NON-NLS-1$
         
-        entries.add(new Entry("id-60",
-                              "2.4. Transformations and utility",
-                              "http://arx.deidentifier.org/?page_id=1061&content-only=1&css=1"));
+        entries.add(new Entry("id-60", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.19"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1061&content-only=1&css=1")); //$NON-NLS-1$
 
-        entries.add(new Entry("id-40",
-                              "2.5. Defining a research subset",
-                              "http://arx.deidentifier.org/?page_id=1057&content-only=1&css=1"));
+        entries.add(new Entry("id-40", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.22"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1057&content-only=1&css=1")); //$NON-NLS-1$
 
-        entries.add(new Entry("id-4",
-                              "3. Exploring the solution space",
-                              "http://arx.deidentifier.org/?page_id=1078&content-only=1&css=1"));
+        entries.add(new Entry("id-4", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.25"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1078&content-only=1&css=1")); //$NON-NLS-1$
 
-        entries.add(new Entry("id-30",
-                              "3.1. Exploring the lattice",
-                              "http://arx.deidentifier.org/?page_id=1063&content-only=1&css=1"));
+        entries.add(new Entry("id-30", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.28"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1063&content-only=1&css=1")); //$NON-NLS-1$
         
-        entries.add(new Entry("id-21",
-                              "3.2. Filtering the lattice",
-                              "http://arx.deidentifier.org/?page_id=1065&content-only=1&css=1"));
+        entries.add(new Entry("id-21", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.31"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1065&content-only=1&css=1")); //$NON-NLS-1$
         
-        entries.add(new Entry("id-23",
-                              "3.3. Using the clipboard",
-                              "http://arx.deidentifier.org/?page_id=1067&content-only=1&css=1"));
+        entries.add(new Entry("id-23", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.34"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1067&content-only=1&css=1")); //$NON-NLS-1$
         
-        entries.add(new Entry("id-22",
-                              "3.4. Properties of transformations",
-                              "http://arx.deidentifier.org/?page_id=1069&content-only=1&css=1"));
+        entries.add(new Entry("id-22", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.37"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1069&content-only=1&css=1")); //$NON-NLS-1$
 
-        entries.add(new Entry("id-5",
-                              "4. Analyzing transformed datasets",
-                              "http://arx.deidentifier.org/?page_id=1080&content-only=1&css=1"));
+        entries.add(new Entry("id-5", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.40"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1080&content-only=1&css=1")); //$NON-NLS-1$
         
-        entries.add(new Entry("id-50",
-                              "4.1. Visualizations and properties",
-                              "http://arx.deidentifier.org/?page_id=1071&content-only=1&css=1"));
+        entries.add(new Entry("id-50", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.43"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=1071&content-only=1&css=1")); //$NON-NLS-1$
 
-        entries.add(new Entry("id-3000",
-                              "5. Analyzing re-identification risks",
-                              "http://arx.deidentifier.org/?page_id=3797&content-only=1&css=1"));
+        entries.add(new Entry("id-3000", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.46"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=3797&content-only=1&css=1")); //$NON-NLS-1$
 
-        entries.add(new Entry("id-3001",
-                              "5.1. Equivalence classes and attributes",
-                              "http://arx.deidentifier.org/?page_id=3799&content-only=1&css=1"));
+        entries.add(new Entry("id-3001", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.49"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=3799&content-only=1&css=1")); //$NON-NLS-1$
 
-        entries.add(new Entry("id-3002",
-                              "5.2. Risk estimates and settings",
-                              "http://arx.deidentifier.org/?page_id=3801&content-only=1&css=1"));
+        entries.add(new Entry("id-3002", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.52"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/?page_id=3801&content-only=1&css=1")); //$NON-NLS-1$
     }
     
     /**

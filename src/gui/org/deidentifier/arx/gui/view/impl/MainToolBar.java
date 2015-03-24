@@ -153,24 +153,24 @@ public class MainToolBar extends AbstractMenu {
         public String toString() {
 
             // Prepare
-            DecimalFormat format = new DecimalFormat("#########0.000");
+            DecimalFormat format = new DecimalFormat("#########0.000"); //$NON-NLS-1$
             double prunedPercentage = (double) this.numTransformationsPruned /
                                       (double) this.numTransformationsInSearchSpace * 100d;
 
             // Render statistics about the solution space
             StringBuilder sb = new StringBuilder();
-            sb.append("Solution space\n");
-            sb.append(" - Total transformations: ")
+            sb.append(Resources.getMessage("MainToolBar.1")); //$NON-NLS-1$
+            sb.append(Resources.getMessage("MainToolBar.2")) //$NON-NLS-1$
               .append(this.numTransformationsInSearchSpace)
-              .append("\n");
-            sb.append(" - Pruned transformations: ")
+              .append("\n"); //$NON-NLS-1$
+            sb.append(Resources.getMessage("MainToolBar.12")) //$NON-NLS-1$
               .append(this.numTransformationsPruned);
-            sb.append(" [")
+            sb.append(" [") //$NON-NLS-1$
               .append(format.format(prunedPercentage))
-              .append("%]\n");
-            sb.append(" - Execution time: ")
+              .append("%]\n"); //$NON-NLS-1$
+            sb.append(Resources.getMessage("MainToolBar.18")) //$NON-NLS-1$
               .append(format.format(this.executionTime))
-              .append("s");
+              .append("s"); //$NON-NLS-1$
             
             if (this.numTransformationsAnonymous != 0 ||
                 this.numTransformationsNotAnonymous != 0 ||
@@ -180,38 +180,38 @@ public class MainToolBar extends AbstractMenu {
                 this.numTransformationsInfolossAvailable != 0) {
                 
                 // Render the classification result
-                sb.append("\nClassification result");
+                sb.append(Resources.getMessage("MainToolBar.22")); //$NON-NLS-1$
                 if (this.numTransformationsAnonymous != 0) {
-                    sb.append("\n - Anonymous transformations: ")
+                    sb.append(Resources.getMessage("MainToolBar.24")) //$NON-NLS-1$
                       .append(this.numTransformationsAnonymous);
                 }
                 if (this.numTransformationsNotAnonymous != 0) {
-                    sb.append("\n - Non-anonymous transformations: ")
+                    sb.append(Resources.getMessage("MainToolBar.26")) //$NON-NLS-1$
                       .append(this.numTransformationsNotAnonymous);
                 }
                 if (this.numTransformationsProbablyAnonymous != 0) {
-                    sb.append("\n - Probably anonymous transformations: ")
+                    sb.append(Resources.getMessage("MainToolBar.28")) //$NON-NLS-1$
                       .append(this.numTransformationsProbablyAnonymous);
                 }
                 if (this.numTransformationsProbablyNotAnonymous != 0) {
-                    sb.append("\n - Probably non-anonymous transformations: ")
+                    sb.append(Resources.getMessage("MainToolBar.30")) //$NON-NLS-1$
                       .append(this.numTransformationsProbablyNotAnonymous);
                 }
                 if (this.numTransformationsAnonymityUnknown != 0) {
-                    sb.append("\n - Transformations with unknown properties: ")
+                    sb.append(Resources.getMessage("MainToolBar.34")) //$NON-NLS-1$
                       .append(this.numTransformationsAnonymityUnknown);
                 }
                 if (this.numTransformationsInfolossAvailable != 0) {
-                    sb.append("\n - Transformations with information loss available: ")
+                    sb.append(Resources.getMessage("MainToolBar.35")) //$NON-NLS-1$
                       .append(this.numTransformationsInfolossAvailable);
                 }
             }
             // Render information about the optimum
             if (this.optimum != null) {
-                sb.append("\nGlobal optimum")
-                  .append("\n - Transformation: ")
+                sb.append(Resources.getMessage("MainToolBar.36")) //$NON-NLS-1$
+                  .append(Resources.getMessage("MainToolBar.37")) //$NON-NLS-1$
                   .append(Arrays.toString(optimum.getTransformation()));
-                sb.append("\n - Information loss: ")
+                sb.append(Resources.getMessage("MainToolBar.38")) //$NON-NLS-1$
                   .append(optimum.getMaximumInformationLoss().toString());
             }
 
@@ -262,7 +262,7 @@ public class MainToolBar extends AbstractMenu {
         toolbar.setLayoutData(SWTUtil.createFillHorizontallyGridData());
 
         // Create items
-        this.createItems(toolbar, items, "");
+        this.createItems(toolbar, items, ""); //$NON-NLS-1$
         this.createLabels();
 
         // Pack
@@ -404,7 +404,7 @@ public class MainToolBar extends AbstractMenu {
                     this.toolitems.add(menuItem);
                 }
                 
-                createItems(toolbar, group.getItems(), label.length() != 0 ? label + " -> " + group.getLabel() : group.getLabel());
+                createItems(toolbar, group.getItems(), label.length() != 0 ? label + " -> " + group.getLabel() : group.getLabel()); //$NON-NLS-1$
                 
             // Create separator
             } else if (item instanceof MainMenuSeparator) {
@@ -418,7 +418,7 @@ public class MainToolBar extends AbstractMenu {
             } else {
 
                 ToolItem menuItem = new ToolItem(toolbar, SWT.PUSH);
-                menuItem.setToolTipText(label.length() != 0 ? label + " -> " + item.getLabel() : item.getLabel());
+                menuItem.setToolTipText(label.length() != 0 ? label + " -> " + item.getLabel() : item.getLabel()); //$NON-NLS-1$
                 if (item.getImage() != null) {
                     menuItem.setImage(item.getImage());
                     SWTUtil.createDisabledImage(menuItem);
@@ -454,10 +454,10 @@ public class MainToolBar extends AbstractMenu {
         labelApplied.setText(Resources.getMessage("MainToolBar.32")); //$NON-NLS-1$
         labelApplied.pack();
         
-        // Copy info to clipboard on right-click
+        // Copy info to clip board on right-click
         Menu menu = new Menu(toolbar);
         MenuItem itemCopy = new MenuItem(menu, SWT.NONE);
-        itemCopy.setText("Copy");
+        itemCopy.setText(Resources.getMessage("MainToolBar.42")); //$NON-NLS-1$
         itemCopy.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
                 if (tooltip != null) {

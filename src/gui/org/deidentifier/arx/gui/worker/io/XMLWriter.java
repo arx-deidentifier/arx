@@ -73,10 +73,10 @@ public class XMLWriter {
 	public void indent(String element) throws IOException{
 		elements.push(element);
 		this.append(prefix.toString());
-		this.append("<");
+		this.append("<"); //$NON-NLS-1$
 		this.append(element);
-		this.append(">\n");
-		this.prefix.append("\t");
+		this.append(">\n"); //$NON-NLS-1$
+		this.prefix.append("\t"); //$NON-NLS-1$
 	}
 
 	/**
@@ -90,15 +90,15 @@ public class XMLWriter {
 	public void indent(String element, String attribute, int value) throws IOException{
 		elements.push(element);
 		this.append(prefix.toString());
-		this.append("<");
+		this.append("<"); //$NON-NLS-1$
 		this.append(element);
-		this.append(" ");
+		this.append(" "); //$NON-NLS-1$
 		this.append(attribute);
-		this.append("=\"");
+		this.append("=\""); //$NON-NLS-1$
 		this.append(String.valueOf(value));
-		this.append("\"");
-		this.append(">\n");
-		this.prefix.append("\t");
+		this.append("\""); //$NON-NLS-1$
+		this.append(">\n"); //$NON-NLS-1$
+		this.prefix.append("\t"); //$NON-NLS-1$
 	}
 
 	/**
@@ -119,9 +119,9 @@ public class XMLWriter {
 		this.prefix.setLength(this.prefix.length()-1);
 		String element = elements.pop();
 		this.append(prefix.toString());
-		this.append("</");
+		this.append("</"); //$NON-NLS-1$
 		this.append(element);
-		this.append(">\n");
+		this.append(">\n"); //$NON-NLS-1$
 	}
 
 	/**
@@ -228,13 +228,13 @@ public class XMLWriter {
      */
 	public void write(String attribute, String value) throws IOException{
 		this.append(prefix.toString());
-		this.append("<");
+		this.append("<"); //$NON-NLS-1$
 		this.append(attribute);
-		this.append(">");
+		this.append(">"); //$NON-NLS-1$
 		this.append(StringEscapeUtils.escapeXml(value));
-		this.append("</");
+		this.append("</"); //$NON-NLS-1$
 		this.append(attribute);
-		this.append(">\n");
+		this.append(">\n"); //$NON-NLS-1$
 	}
 
 	/**

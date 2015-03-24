@@ -17,6 +17,7 @@
 package org.deidentifier.arx.gui.view.impl.common;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.FillLayout;
@@ -81,7 +82,7 @@ public class ComponentStatus {
         
         if (parent.getLayout() == null ||
             !(parent.getLayout() instanceof StackLayout)) {
-            throw new RuntimeException("Parent must have a StackLayout");
+            throw new RuntimeException("Parent must have a StackLayout"); //$NON-NLS-1$
         }
         
         this.layout = (StackLayout)parent.getLayout();
@@ -136,7 +137,7 @@ public class ComponentStatus {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout());
         ComponentStatusLabel label = new ComponentStatusLabel(composite, SWT.CENTER);
-        label.setText("No data available.");
+        label.setText(Resources.getMessage("ComponentStatus.1")); //$NON-NLS-1$
         return composite;
     }
     
@@ -150,8 +151,8 @@ public class ComponentStatus {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout());
         ComponentStatusLabel label = new ComponentStatusLabel(composite, SWT.CENTER);
-        label.setGIF(controller.getResources().getStream("working.gif"));
-        label.setText("Analyzing...");
+        label.setGIF(controller.getResources().getStream("working.gif")); //$NON-NLS-1$
+        label.setText(Resources.getMessage("ComponentStatus.3")); //$NON-NLS-1$
         if (provider != null) {
             label.setProgressProvider(provider);
         }

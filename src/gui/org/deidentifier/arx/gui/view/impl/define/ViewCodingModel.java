@@ -21,6 +21,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -135,12 +136,12 @@ public class ViewCodingModel implements IView {
                 e.gc.fillPolygon(left);
 
                 e.gc.setForeground(COLOR_TEXT);
-                e.gc.drawText("Suppression", OFFSET, OFFSET);
+                e.gc.drawText(Resources.getMessage("ViewCodingModel.0"), OFFSET, OFFSET); //$NON-NLS-1$
 
                 e.gc.setBackground(COLOR_LIGHT);
                 e.gc.fillPolygon(right);
 
-                final String string = "Generalization";
+                final String string = Resources.getMessage("ViewCodingModel.1"); //$NON-NLS-1$
                 e.gc.setForeground(COLOR_TEXT);
                 Point extent = e.gc.textExtent(string);
                 e.gc.drawText(string, width - OFFSET - extent.x, height - OFFSET - extent.y);
@@ -183,7 +184,7 @@ public class ViewCodingModel implements IView {
         // Button
         Button button = new Button(sliderBase, SWT.PUSH);
         button.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).align(SWT.LEFT, SWT.CENTER).create());
-        button.setText("Reset");
+        button.setText(Resources.getMessage("ViewCodingModel.2")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0) {
                 setSuppressionWeight(0.5d);

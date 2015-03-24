@@ -135,10 +135,10 @@ public class ComponentTable implements IComponent {
         
         // Check and store
         if (config == null) {
-            throw new IllegalArgumentException("Config must not be null");
+            throw new IllegalArgumentException("Config must not be null"); //$NON-NLS-1$
         }
         if (parent == null) {
-            throw new IllegalArgumentException("Parent must not be null");
+            throw new IllegalArgumentException("Parent must not be null"); //$NON-NLS-1$
         }
         this.root = new Composite(parent, checkStyle(style));
         this.root.setLayout(new FillLayout());

@@ -112,22 +112,22 @@ public class ViewClipboard implements IView {
         this.controller = controller;
 
         ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-23"); //$NON-NLS-1$
-        bar.add("Remove", IMAGE_REMOVE, new Runnable(){
+        bar.add(Resources.getMessage("ViewClipboard.0"), IMAGE_REMOVE, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionRemove();
             }
         });
-        bar.add("Move up", IMAGE_UP, new Runnable(){
+        bar.add(Resources.getMessage("ViewClipboard.1"), IMAGE_UP, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionUp();
             }
         });
-        bar.add("Move down", IMAGE_DOWN, new Runnable(){
+        bar.add(Resources.getMessage("ViewClipboard.2"), IMAGE_DOWN, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionDown();
             }
         });
-        bar.add("Sort by information loss", IMAGE_SORT, new Runnable(){
+        bar.add(Resources.getMessage("ViewClipboard.3"), IMAGE_SORT, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionSort();
             }

@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.wizard;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ViewHierarchy;
 import org.eclipse.jface.wizard.WizardPage;
@@ -59,31 +60,25 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
      * @param wizard
      */
     public HierarchyWizardPageFinal(final HierarchyWizard<T> wizard) {
-        super("");
+        super(""); //$NON-NLS-1$
         this.wizard = wizard;
-        setTitle("Review the hierarchy");
-        setDescription("Overview of groups and values");
+        setTitle(Resources.getMessage("HierarchyWizardPageFinal.1")); //$NON-NLS-1$
+        setDescription(Resources.getMessage("HierarchyWizardPageFinal.2")); //$NON-NLS-1$
         setPageComplete(true);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
-     */
     @Override
     public boolean canFlipToNextPage() {
         return isPageComplete();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     public void  createControl(final Composite parent) {
         composite = new Composite(parent, SWT.NONE);
         composite.setLayout(SWTUtil.createGridLayout(2, false));
 
         final Group center = new Group(composite, SWT.SHADOW_ETCHED_IN);
-        center.setText("#Groups");
+        center.setText(Resources.getMessage("HierarchyWizardPageFinal.3")); //$NON-NLS-1$
         center.setLayoutData(SWTUtil.createFillVerticallyGridData());
         center.setLayout(SWTUtil.createGridLayout(1, false));
         
@@ -95,7 +90,7 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
         list.setLayoutData(SWTUtil.createFillGridData());
         
         final Group right = new Group(composite, SWT.SHADOW_ETCHED_IN);
-        right.setText("Table");
+        right.setText(Resources.getMessage("HierarchyWizardPageFinal.4")); //$NON-NLS-1$
         right.setLayoutData(SWTUtil.createFillGridData());
         right.setLayout(SWTUtil.createGridLayout(1, false));
         view = new ViewHierarchy(right);
@@ -103,9 +98,6 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
         setControl(composite);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-     */
     @Override
     public boolean isPageComplete() {
         return false;
@@ -129,9 +121,6 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
         this.hierarchy = hierarchy;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
-     */
     @Override
     public void setVisible(boolean value){
         

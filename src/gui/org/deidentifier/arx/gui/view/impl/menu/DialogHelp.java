@@ -132,10 +132,10 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         ToolBar toolbar = new ToolBar(root, SWT.NONE);
         toolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
         final ToolItem back = new ToolItem(toolbar, SWT.PUSH);
-        back.setText("Back");
+        back.setText(Resources.getMessage("DialogHelp.0")); //$NON-NLS-1$
         back.setEnabled(false);
         final ToolItem forward = new ToolItem(toolbar, SWT.PUSH);
-        forward.setText("Forward");
+        forward.setText(Resources.getMessage("DialogHelp.3")); //$NON-NLS-1$
         forward.setEnabled(false);
         
         // Base

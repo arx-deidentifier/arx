@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.io.ImportColumn;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -120,13 +121,13 @@ public class ImportWizardPageColumns extends WizardPage {
                     StringBuilder builder = new StringBuilder();
                     builder.append(match.getFirst().getDescription().getLabel());
                     if (match.getFirst() instanceof DataTypeWithFormat && ((DataTypeWithFormat)match.getFirst()).getFormat() != null) {
-                        builder.append(" (");
+                        builder.append(" ("); //$NON-NLS-1$
                         builder.append(((DataTypeWithFormat)match.getFirst()).getFormat());
-                        builder.append(")");
+                        builder.append(")"); //$NON-NLS-1$
                     }
-                    builder.append(" ");
+                    builder.append(" "); //$NON-NLS-1$
                     builder.append((int)(match.getSecond() * 100d));
-                    builder.append("%");
+                    builder.append("%"); //$NON-NLS-1$
                     
                     String label = builder.toString();
                     DataType<?> type = match.getFirst();
@@ -334,11 +335,11 @@ public class ImportWizardPageColumns extends WizardPage {
             selectAll = !selectAll;
 
             if (selectAll) {
-                tblclmnEnabled.setToolTipText("Select all");
-                tblclmnEnabled.setText("SA");
+                tblclmnEnabled.setToolTipText(Resources.getMessage("ImportWizardPageColumns.4")); //$NON-NLS-1$
+                tblclmnEnabled.setText(Resources.getMessage("ImportWizardPageColumns.5")); //$NON-NLS-1$
             } else {
-                tblclmnEnabled.setToolTipText("Deselect all");
-                tblclmnEnabled.setText("DA");
+                tblclmnEnabled.setToolTipText(Resources.getMessage("ImportWizardPageColumns.6")); //$NON-NLS-1$
+                tblclmnEnabled.setText(Resources.getMessage("ImportWizardPageColumns.7")); //$NON-NLS-1$
             }
             check();
         }
@@ -422,12 +423,12 @@ public class ImportWizardPageColumns extends WizardPage {
      */
     public ImportWizardPageColumns(ImportWizard wizardImport) {
 
-        super("WizardImportCsvPage");
+        super("WizardImportCsvPage"); //$NON-NLS-1$
 
         this.wizardImport = wizardImport;
         
-        setTitle("Columns");
-        setDescription("Please check and/or modify the detected columns");
+        setTitle(Resources.getMessage("ImportWizardPageColumns.9")); //$NON-NLS-1$
+        setDescription(Resources.getMessage("ImportWizardPageColumns.10")); //$NON-NLS-1$
 
     }
     
@@ -521,8 +522,8 @@ public class ImportWizardPageColumns extends WizardPage {
 
         /* Actual column for {@link tableViewerColumnEnabled} */
         tblclmnEnabled = tableViewerColumnEnabled.getColumn();
-        tblclmnEnabled.setToolTipText("Deselect all");
-        tblclmnEnabled.setText("DA");
+        tblclmnEnabled.setToolTipText(Resources.getMessage("ImportWizardPageColumns.11")); //$NON-NLS-1$
+        tblclmnEnabled.setText(Resources.getMessage("ImportWizardPageColumns.12")); //$NON-NLS-1$
         tblclmnEnabled.setWidth(40);
         tblclmnEnabled.addSelectionListener(new ColumnEnabledSelectionListener());
 
@@ -547,9 +548,9 @@ public class ImportWizardPageColumns extends WizardPage {
 
         /* Actual column for {@link tableViewerColumnName} */
         tblclmnName = tableViewerColumnName.getColumn();
-        tblclmnName.setToolTipText("Name of the column");
+        tblclmnName.setToolTipText(Resources.getMessage("ImportWizardPageColumns.13")); //$NON-NLS-1$
         tblclmnName.setWidth(300);
-        tblclmnName.setText("Name");
+        tblclmnName.setText(Resources.getMessage("ImportWizardPageColumns.14")); //$NON-NLS-1$
 
         /* Column containing the datatypes */
         tableViewerColumnDatatype = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
@@ -572,9 +573,9 @@ public class ImportWizardPageColumns extends WizardPage {
 
         /* Actual column for {@link tableViewerColumnDatatype} */
         tblclmnDatatype = tableViewerColumnDatatype.getColumn();
-        tblclmnDatatype.setToolTipText("Datatype of the column");
+        tblclmnDatatype.setToolTipText(Resources.getMessage("ImportWizardPageColumns.15")); //$NON-NLS-1$
         tblclmnDatatype.setWidth(120);
-        tblclmnDatatype.setText("Datatype");
+        tblclmnDatatype.setText(Resources.getMessage("ImportWizardPageColumns.16")); //$NON-NLS-1$
 
         /* Column containing the format of the format */
         tableViewerColumnFormat = new TableViewerColumn(checkboxTableViewer,
@@ -601,23 +602,23 @@ public class ImportWizardPageColumns extends WizardPage {
                 if (column instanceof DataTypeWithFormat) {
                     return ((DataTypeWithFormat) column).getFormat();
                 }
-                return "";
+                return ""; //$NON-NLS-1$
             }
         });
 
         /* Actual column for {@link tableViewerColumnFormat} */
         tblclmnFormat = tableViewerColumnFormat.getColumn();
         tblclmnFormat.setWidth(120);
-        tblclmnFormat.setToolTipText("Format of the associated datatype");
+        tblclmnFormat.setToolTipText(Resources.getMessage("ImportWizardPageColumns.18")); //$NON-NLS-1$
         tblclmnFormat.setWidth(100);
-        tblclmnFormat.setText("Format");
+        tblclmnFormat.setText(Resources.getMessage("ImportWizardPageColumns.19")); //$NON-NLS-1$
 
         /* Buttons to move column up */
         btnUp = new Button(container, SWT.NONE);
-        btnUp.setText("Move up");
+        btnUp.setText(Resources.getMessage("ImportWizardPageColumns.20")); //$NON-NLS-1$
         btnUp.setImage(wizardImport.getController()
                                    .getResources()
-                                   .getImage("arrow_up.png"));
+                                   .getImage("arrow_up.png")); //$NON-NLS-1$
         btnUp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
         btnUp.setEnabled(false);
         btnUp.addSelectionListener(new SelectionAdapter() {
@@ -644,10 +645,10 @@ public class ImportWizardPageColumns extends WizardPage {
 
         /* Buttons to move column down */
         btnDown = new Button(container, SWT.NONE);
-        btnDown.setText("Move down");
+        btnDown.setText(Resources.getMessage("ImportWizardPageColumns.22")); //$NON-NLS-1$
         btnDown.setImage(wizardImport.getController()
                                      .getResources()
-                                     .getImage("arrow_down.png"));
+                                     .getImage("arrow_down.png")); //$NON-NLS-1$
         btnDown.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
         btnDown.setEnabled(false);
         btnDown.addSelectionListener(new SelectionAdapter() {
@@ -675,8 +676,8 @@ public class ImportWizardPageColumns extends WizardPage {
         
         btnCleansing = new Button(container, SWT.CHECK);
         btnCleansing.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
-        btnCleansing.setText("Perform data cleansing");
-        btnCleansing.setToolTipText("When checked, all values that do not conform to the selected data type will be replaced with null");
+        btnCleansing.setText(Resources.getMessage("ImportWizardPageColumns.24")); //$NON-NLS-1$
+        btnCleansing.setToolTipText(Resources.getMessage("ImportWizardPageColumns.25")); //$NON-NLS-1$
         btnCleansing.setEnabled(true);
         btnCleansing.setSelection(wizardImport.getData().isPerformCleansing());
         btnCleansing.addSelectionListener(new SelectionAdapter() {
@@ -726,7 +727,7 @@ public class ImportWizardPageColumns extends WizardPage {
         }
         
         if (!selected) {
-            setErrorMessage("You need to select at least one column");
+            setErrorMessage(Resources.getMessage("ImportWizardPageColumns.26")); //$NON-NLS-1$
             setPageComplete(false);
             return;
         }
@@ -737,7 +738,7 @@ public class ImportWizardPageColumns extends WizardPage {
                 String name1 = c1.getColumn().getAliasName();
                 for (ImportWizardModelColumn c2 : wizardImport.getData().getWizardColumns()) {
                     if (c2.isEnabled() && c1 != c2 && name1.equals(c2.getColumn().getAliasName())) {
-                        setErrorMessage("Column names need to be unique: " + name1);
+                        setErrorMessage(Resources.getMessage("ImportWizardPageColumns.27") + name1); //$NON-NLS-1$
                         setPageComplete(false);
                         return;
                     }

@@ -80,7 +80,7 @@ public class ViewDataInput extends ViewData {
         if (editable) {
             final Menu menu = new Menu(parent.getShell());
             MenuItem item1 = new MenuItem(menu, SWT.NONE);
-            item1.setText("Find/Replace...");
+            item1.setText(Resources.getMessage("ViewDataInput.0")); //$NON-NLS-1$
             item1.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(final SelectionEvent arg0) {

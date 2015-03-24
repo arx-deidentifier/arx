@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.model;
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.gui.resources.Resources;
 
 /**
  * This class implements a model for the t-closeness criterion.
@@ -67,14 +68,13 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
             case VARIANT_EQUAL: return new EqualDistanceTCloseness(getAttribute(), t);
             case VARIANT_HIERARCHICAL: return new HierarchicalDistanceTCloseness(getAttribute(), t,
                                                                             model.getInputConfig().getHierarchy(getAttribute()));
-            default: throw new RuntimeException("Internal error: invalid variant of t-closeness");
+            default: throw new RuntimeException(Resources.getMessage("Model.0")); //$NON-NLS-1$
 	    }
 	}
 	
 	@Override
     public String getLabel() {
-        // TODO: Move to messages.properties
-        return "t-Closeness";
+        return Resources.getMessage("Model.1"); //$NON-NLS-1$
     }
 	
 	/**
@@ -106,13 +106,10 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
         this.setEnabled(other.isEnabled());
     }
     
-    /* (non-Javadoc)
-	 * @see org.deidentifier.arx.gui.model.ModelExplicitCriterion#pull(org.deidentifier.arx.gui.model.ModelExplicitCriterion)
-	 */
 	@Override
     public void pull(ModelExplicitCriterion criterion) {
         if (!(criterion instanceof ModelTClosenessCriterion)) {
-            throw new RuntimeException("Invalid type of criterion");
+            throw new RuntimeException(Resources.getMessage("Model.2")); //$NON-NLS-1$
         }
         ModelTClosenessCriterion other = (ModelTClosenessCriterion)criterion;
         this.variant = other.variant;
@@ -139,11 +136,10 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
     
     @Override
     public String toString() {
-        // TODO: Move to messages.properties
         switch (variant) {
-            case VARIANT_EQUAL: return String.valueOf(t)+"-Closeness (constant ground-distance)";
-            case VARIANT_HIERARCHICAL: return String.valueOf(t)+"-Closeness (hierarchical ground-distance)";
-            default: throw new RuntimeException("Internal error: invalid variant of t-closeness");
+            case VARIANT_EQUAL: return String.valueOf(t)+Resources.getMessage("Model.3"); //$NON-NLS-1$
+            case VARIANT_HIERARCHICAL: return String.valueOf(t)+Resources.getMessage("Model.4"); //$NON-NLS-1$
+            default: throw new RuntimeException(Resources.getMessage("Model.5")); //$NON-NLS-1$
         }
     }
 }

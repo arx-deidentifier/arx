@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.io.ImportColumnJDBC;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -78,8 +79,8 @@ public class ImportWizardPageTable extends WizardPage {
             return new Long(rows).toString();
         } else {
             int exp = (int) (Math.log(rows) / Math.log(unit));
-            char pre = "kMGTPE".charAt(exp - 1);
-            return String.format("%.1f%s", rows / Math.pow(unit, exp), pre);
+            char pre = "kMGTPE".charAt(exp - 1); //$NON-NLS-1$
+            return String.format("%.1f%s", rows / Math.pow(unit, exp), pre); //$NON-NLS-1$
         }
     }
 
@@ -100,10 +101,10 @@ public class ImportWizardPageTable extends WizardPage {
      */
     public ImportWizardPageTable(ImportWizard wizardImport) {
 
-        super("WizardImportTablePage");
+        super("WizardImportTablePage"); //$NON-NLS-1$
         this.wizardImport = wizardImport;
-        setTitle("Tables");
-        setDescription("Please select the table you want to import from");
+        setTitle(Resources.getMessage("ImportWizardPageTable.3")); //$NON-NLS-1$
+        setDescription(Resources.getMessage("ImportWizardPageTable.4")); //$NON-NLS-1$
     }
 
     /**
@@ -162,9 +163,9 @@ public class ImportWizardPageTable extends WizardPage {
         });
 
         TableColumn tblclmnColumnName = tableViewerColumnName.getColumn();
-        tblclmnColumnName.setToolTipText("Name of the table");
+        tblclmnColumnName.setToolTipText(Resources.getMessage("ImportWizardPageTable.5")); //$NON-NLS-1$
         tblclmnColumnName.setWidth(300);
-        tblclmnColumnName.setText("Name");
+        tblclmnColumnName.setText(Resources.getMessage("ImportWizardPageTable.6")); //$NON-NLS-1$
 
         TableViewerColumn tableViewerColumnColumns = new TableViewerColumn(tableViewer,
                                                                         SWT.NONE);
@@ -181,18 +182,18 @@ public class ImportWizardPageTable extends WizardPage {
 
                 int columns = getNumberOfColumns((String) element);
                 if (columns != -1) {
-                    return "" + columns;
+                    return "" + columns; //$NON-NLS-1$
                 } else {
-                    return "???";
+                    return "???"; //$NON-NLS-1$
                 }
             }
 
         });
 
         TableColumn tblclmnColumns = tableViewerColumnColumns.getColumn();
-        tblclmnColumns.setToolTipText("Number of columns for this table");
+        tblclmnColumns.setToolTipText(Resources.getMessage("ImportWizardPageTable.9")); //$NON-NLS-1$
         tblclmnColumns.setWidth(100);
-        tblclmnColumns.setText("# columns");
+        tblclmnColumns.setText(Resources.getMessage("ImportWizardPageTable.10")); //$NON-NLS-1$
 
         TableViewerColumn tableViewerColumnRows = new TableViewerColumn(tableViewer,
                                                                         SWT.NONE);
@@ -209,9 +210,9 @@ public class ImportWizardPageTable extends WizardPage {
 
                 long rows = getNumberOfRows((String) element);
                 if (rows != -1) {
-                    return " ~ " + humanReadableRowCount(rows);
+                    return " ~ " + humanReadableRowCount(rows); //$NON-NLS-1$
                 } else {
-                    return "???";
+                    return "???"; //$NON-NLS-1$
                 }
             }
 
@@ -230,7 +231,7 @@ public class ImportWizardPageTable extends WizardPage {
 
                 long rows = getNumberOfRows((String) element);
                 if (rows > 1000) {
-                    return "" + rows;
+                    return "" + rows; //$NON-NLS-1$
                 } else {
                     return null;
                 }
@@ -238,9 +239,9 @@ public class ImportWizardPageTable extends WizardPage {
         });
 
         TableColumn tblclmnRows = tableViewerColumnRows.getColumn();
-        tblclmnRows.setToolTipText("Number of rows contained in table");
+        tblclmnRows.setToolTipText(Resources.getMessage("ImportWizardPageTable.14")); //$NON-NLS-1$
         tblclmnRows.setWidth(100);
-        tblclmnRows.setText("# rows");
+        tblclmnRows.setText(Resources.getMessage("ImportWizardPageTable.15")); //$NON-NLS-1$
 
         setPageComplete(false);
     }
@@ -290,13 +291,13 @@ public class ImportWizardPageTable extends WizardPage {
 
             while (rs.next()) {
                 ImportColumnJDBC column = new ImportColumnJDBC(i++,
-                                                   rs.getString("COLUMN_NAME"),
+                                                   rs.getString("COLUMN_NAME"), //$NON-NLS-1$
                                                    DataType.STRING);
                 columns.add(new ImportWizardModelColumn(column));
             }
 
         } catch (SQLException e) {
-            setErrorMessage("Couldn't read columns");
+            setErrorMessage(Resources.getMessage("ImportWizardPageTable.17")); //$NON-NLS-1$
         }
 
         wizardImport.getData().setWizardColumns(columns);
@@ -331,7 +332,7 @@ public class ImportWizardPageTable extends WizardPage {
             }
 
         } catch (SQLException e) {
-            setErrorMessage("Couldn't determine number of columns");
+            setErrorMessage(Resources.getMessage("ImportWizardPageTable.18")); //$NON-NLS-1$
         }
 
         return i;
@@ -356,7 +357,7 @@ public class ImportWizardPageTable extends WizardPage {
             Statement statement = wizardImport.getData()
                                               .getJdbcConnection()
                                               .createStatement();
-            statement.execute("SELECT COUNT(*) FROM " + table);
+            statement.execute("SELECT COUNT(*) FROM " + table); //$NON-NLS-1$
             ResultSet resultSet = statement.getResultSet();
 
             if (resultSet.next()) {
@@ -388,7 +389,7 @@ public class ImportWizardPageTable extends WizardPage {
 
             Statement statement = connection.createStatement();
             statement.setMaxRows(ImportWizardModel.PREVIEW_MAX_LINES);
-            statement.execute("SELECT * FROM " + selectedTable);
+            statement.execute("SELECT * FROM " + selectedTable); //$NON-NLS-1$
             ResultSet rs = statement.getResultSet();
 
             while (rs.next()) {
@@ -401,7 +402,7 @@ public class ImportWizardPageTable extends WizardPage {
                 previewData.add(previewRow);
             }
         } catch (SQLException e) {
-            setErrorMessage("Couldn't read preview");
+            setErrorMessage(Resources.getMessage("ImportWizardPageTable.21")); //$NON-NLS-1$
         }
 
         wizardImport.getData().setPreviewData(previewData);

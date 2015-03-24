@@ -133,7 +133,7 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
                     return;
                 }
 
-                final DecimalFormat format = new DecimalFormat("##0.00000");
+                final DecimalFormat format = new DecimalFormat("##0.00000"); //$NON-NLS-1$
 
                 // Set data
                 table.setData(new IDataProvider(){
@@ -146,7 +146,7 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
                     @Override
                     public Object getDataValue(int arg0, int arg1) {
                         int index = Sorting.binarySearchFromTo(outputValues[arg0], arg1, 0, outputValues[arg0].length - 1);
-                        return format.format((index >= 0 ? outputFrequencies[arg0][index] : 0)*100d)+"%";
+                        return format.format((index >= 0 ? outputFrequencies[arg0][index] : 0)*100d)+"%"; //$NON-NLS-1$
                     }
 
                     @Override

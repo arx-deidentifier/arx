@@ -51,12 +51,12 @@ public class DataTableDataProvider implements IDataProvider {
 	 */
 	@Override
 	public Object getDataValue(int col, int row) {
-        if (col == -1 || row == -1) return "";
+        if (col == -1 || row == -1) return ""; //$NON-NLS-1$
 		try {
 			return provider.getDataValue(col, row);
 		} catch (Exception e){
 		    // TODO: We silently ignore all errors at this point
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 

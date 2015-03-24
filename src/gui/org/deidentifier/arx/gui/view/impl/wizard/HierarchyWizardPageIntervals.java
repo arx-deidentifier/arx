@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -47,14 +48,11 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
                                         final HierarchyWizardPageFinal<T> finalPage) {
         super(wizard, model.getIntervalModel(), finalPage);
         this.model = model.getIntervalModel();
-        setTitle("Create a hierarchy by defining intervals");
-        setDescription("Specify the parameters");
+        setTitle(Resources.getMessage("HierarchyWizardPageIntervals.0")); //$NON-NLS-1$
+        setDescription(Resources.getMessage("HierarchyWizardPageIntervals.1")); //$NON-NLS-1$
         setPageComplete(true);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     public void createControl(final Composite parent) {
         
@@ -67,9 +65,6 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
         setControl(composite);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardPageBuilder#updatePage()
-     */
     @Override
     public void updatePage() {
         model.update();

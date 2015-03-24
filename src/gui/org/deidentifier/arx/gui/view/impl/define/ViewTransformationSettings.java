@@ -101,7 +101,7 @@ public class ViewTransformationSettings implements IView {
         precomputedVariant.setSelection(false);
         precomputationThreshold.setSelection(0);
         sliderOutliers.setSelection(0);
-        labelOutliers.setText("0"); //$NON-NLS-1
+        labelOutliers.setText("0"); //$NON-NLS-1 //$NON-NLS-1$
         buttonPracticalMonotonicity.setSelection(false);
         SWTUtil.disable(root);
     }

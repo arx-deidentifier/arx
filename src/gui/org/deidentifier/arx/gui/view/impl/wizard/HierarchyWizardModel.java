@@ -28,6 +28,7 @@ import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
+import org.deidentifier.arx.gui.resources.Resources;
 
 /**
  * The base model for the wizard.
@@ -106,7 +107,7 @@ public class HierarchyWizardModel<T> {
         } else if (type == Type.ORDER_BASED) {
             return orderModel.getBuilder(serializable);
         } else {
-            throw new IllegalArgumentException("Unknown type of builder");
+            throw new IllegalArgumentException(Resources.getMessage("HierarchyWizardModel.0")); //$NON-NLS-1$
         }
     }
     
@@ -132,7 +133,7 @@ public class HierarchyWizardModel<T> {
         } else if (type == Type.ORDER_BASED) {
             return orderModel.getHierarchy();
         } else {
-            throw new RuntimeException("Unknown type of builder");
+            throw new RuntimeException(Resources.getMessage("HierarchyWizardModel.1")); //$NON-NLS-1$
         }
     }
     
@@ -192,7 +193,7 @@ public class HierarchyWizardModel<T> {
             this.redactionModel.parse(builder);
             this.type = Type.REDACTION_BASED;
         } else {
-            throw new IllegalArgumentException("Unknown type of builder");
+            throw new IllegalArgumentException(Resources.getMessage("HierarchyWizardModel.2")); //$NON-NLS-1$
         }
     }
 

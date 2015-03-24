@@ -30,6 +30,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportColumn;
@@ -163,10 +164,10 @@ public class ImportWizardPageExcel extends WizardPage {
     public ImportWizardPageExcel(ImportWizard wizardImport)
     {
 
-        super("WizardImportExcelPage");
+        super("WizardImportExcelPage"); //$NON-NLS-1$
 
-        setTitle("Excel");
-        setDescription("Please provide the information requested below");
+        setTitle("Excel"); //$NON-NLS-1$
+        setDescription(Resources.getMessage("ImportWizardPageExcel.2")); //$NON-NLS-1$
         this.wizardImport = wizardImport;
 
     }
@@ -189,7 +190,7 @@ public class ImportWizardPageExcel extends WizardPage {
         /* Location label */
         lblLocation = new Label(container, SWT.NONE);
         lblLocation.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblLocation.setText("Location");
+        lblLocation.setText(Resources.getMessage("ImportWizardPageExcel.3")); //$NON-NLS-1$
 
         /* Combo box for selection of file */
         comboLocation = new Combo(container, SWT.READ_ONLY);
@@ -206,7 +207,7 @@ public class ImportWizardPageExcel extends WizardPage {
                 try {
                     readSheets();
                 } catch (IOException e) {
-                    setErrorMessage("Couldn't read sheets from file");
+                    setErrorMessage(Resources.getMessage("ImportWizardPageExcel.4")); //$NON-NLS-1$
                 }
 
                 /* Make widgets visible */
@@ -224,7 +225,7 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /* Button to open file selection dialog */
         btnChoose = new Button(container, SWT.NONE);
-        btnChoose.setText("Browse...");
+        btnChoose.setText(Resources.getMessage("ImportWizardPageExcel.5")); //$NON-NLS-1$
         btnChoose.addSelectionListener(new SelectionAdapter() {
 
             /**
@@ -241,7 +242,7 @@ public class ImportWizardPageExcel extends WizardPage {
 
                 /* Open file dialog */
                 final String path = wizardImport.getController().actionShowOpenFileDialog(getShell(), 
-                                                                                          "*.xls;*.xlsx");
+                                                                                          "*.xls;*.xlsx"); //$NON-NLS-1$
                 if (path == null) {
                     return;
                 }
@@ -261,7 +262,7 @@ public class ImportWizardPageExcel extends WizardPage {
         lblSheet = new Label(container, SWT.NONE);
         lblSheet.setVisible(false);
         lblSheet.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblSheet.setText("Sheet");
+        lblSheet.setText(Resources.getMessage("ImportWizardPageExcel.7")); //$NON-NLS-1$
 
         /* Sheet combobox */
         comboSheet = new Combo(container, SWT.READ_ONLY);
@@ -285,7 +286,7 @@ public class ImportWizardPageExcel extends WizardPage {
         /* Contains header button */
         btnContainsHeader = new Button(container, SWT.CHECK);
         btnContainsHeader.setVisible(false);
-        btnContainsHeader.setText("First row contains column names");
+        btnContainsHeader.setText(Resources.getMessage("ImportWizardPageExcel.8")); //$NON-NLS-1$
         btnContainsHeader.setSelection(true);
         btnContainsHeader.addSelectionListener(new SelectionAdapter() {
 
@@ -354,7 +355,7 @@ public class ImportWizardPageExcel extends WizardPage {
         setErrorMessage(null);
         tablePreview.setVisible(false);
 
-        if (comboLocation.getText().equals("")) {
+        if (comboLocation.getText().equals("")) { //$NON-NLS-1$
             return;
         }
 
@@ -405,7 +406,7 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /* Check whether there is at least one row in sheet and retrieve it */
         if (!rowIterator.hasNext()) {
-            throw new IOException("Sheet contains no actual data");
+            throw new IOException(Resources.getMessage("ImportWizardPageExcel.10")); //$NON-NLS-1$
         }
 
         /* Get first row */
@@ -413,7 +414,7 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /* Check whether there is at least one column in row */
         if (firstRow.getPhysicalNumberOfCells() < 1) {
-            throw new IOException("First row contains no data");
+            throw new IOException(Resources.getMessage("ImportWizardPageExcel.11")); //$NON-NLS-1$
         }
 
         /* Iterate over columns and add them */
@@ -441,7 +442,7 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /* Check whether there is actual any data */
         if (previewData.size() == 0) {
-            throw new IOException("No actual data in file");
+            throw new IOException(Resources.getMessage("ImportWizardPageExcel.12")); //$NON-NLS-1$
         }
 
         /* Disable redrawing once redesign is finished */
@@ -463,7 +464,7 @@ public class ImportWizardPageExcel extends WizardPage {
 
             if (btnContainsHeader.getSelection()) {
                 tableColumn.setText(column.getColumn().getAliasName());
-                tableColumn.setToolTipText("Column #" + ((ImportColumnExcel) column.getColumn()).getIndex());
+                tableColumn.setToolTipText(Resources.getMessage("ImportWizardPageExcel.13") + ((ImportColumnExcel) column.getColumn()).getIndex()); //$NON-NLS-1$
             }
             ColumnViewerToolTipSupport.enableFor(tableViewerPreview, ToolTip.NO_RECREATE);
         }
@@ -499,7 +500,7 @@ public class ImportWizardPageExcel extends WizardPage {
             stream = new FileInputStream(comboLocation.getText());
             workbook = WorkbookFactory.create(stream);
         } catch (InvalidFormatException e) {
-            throw new IOException("File format invalid");
+            throw new IOException(Resources.getMessage("ImportWizardPageExcel.14")); //$NON-NLS-1$
         }
 
         /* Add all sheets to combo */

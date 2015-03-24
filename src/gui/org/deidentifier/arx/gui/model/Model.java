@@ -42,6 +42,7 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricDescription;
@@ -1008,7 +1009,7 @@ public class Model implements Serializable {
         result = null;
         if (auditTrail != null) auditTrail.clear();
         selectedQuasiIdentifiers = null;
-        subsetOrigin = "None";
+        subsetOrigin = Resources.getMessage("Model.0"); //$NON-NLS-1$
         groups = null;
 	}
 
@@ -1353,8 +1354,8 @@ public class Model implements Serializable {
      * Sets how the subset was defined.
      */
     public void setSubsetManual(){
-        if (!this.subsetOrigin.endsWith("manual")) {
-            this.subsetOrigin += " + manual";
+        if (!this.subsetOrigin.endsWith(Resources.getMessage("Model.1"))) { //$NON-NLS-1$
+            this.subsetOrigin += Resources.getMessage("Model.2"); //$NON-NLS-1$
         }
     }
 

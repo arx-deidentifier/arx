@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.CSVSyntax;
@@ -224,7 +225,7 @@ public class ImportWizardPageCSV extends WizardPage {
      * 
      * @see {@link #delimiters}
      */
-    private final String[]                     labels            = { ";", ",", "|", "Tab" };
+    private final String[]                     labels            = { ";", ",", "|", "Tab" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
     /**
      * Indicates whether separator was detected automatically or by the user
@@ -255,9 +256,9 @@ public class ImportWizardPageCSV extends WizardPage {
     public ImportWizardPageCSV(ImportWizard wizardImport)
     {
 
-        super("WizardImportCsvPage");
-        setTitle("CSV");
-        setDescription("Please provide the information requested below");
+        super("WizardImportCsvPage"); //$NON-NLS-1$
+        setTitle("CSV"); //$NON-NLS-1$
+        setDescription(Resources.getMessage("ImportWizardPageCSV.6")); //$NON-NLS-1$
         this.wizardImport = wizardImport;
 
     }
@@ -280,7 +281,7 @@ public class ImportWizardPageCSV extends WizardPage {
         /* Location label */
         lblLocation = new Label(container, SWT.NONE);
         lblLocation.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblLocation.setText("Location");
+        lblLocation.setText(Resources.getMessage("ImportWizardPageCSV.7")); //$NON-NLS-1$
 
         /* Combo box for selection of file */
         comboLocation = new Combo(container, SWT.READ_ONLY);
@@ -309,7 +310,7 @@ public class ImportWizardPageCSV extends WizardPage {
 
         /* Button to open file selection dialog */
         btnChoose = new Button(container, SWT.NONE);
-        btnChoose.setText("Browse...");
+        btnChoose.setText(Resources.getMessage("ImportWizardPageCSV.8")); //$NON-NLS-1$
         btnChoose.addSelectionListener(new SelectionAdapter() {
 
             /**
@@ -325,7 +326,7 @@ public class ImportWizardPageCSV extends WizardPage {
 
                 /* Open file dialog */
                 final String path = wizardImport.getController().actionShowOpenFileDialog(getShell(), 
-                                                                                          "*.csv");
+                                                                                          "*.csv"); //$NON-NLS-1$
                 if (path == null) {
                     return;
                 }
@@ -345,7 +346,7 @@ public class ImportWizardPageCSV extends WizardPage {
         lblDelimiter = new Label(container, SWT.NONE);
         lblDelimiter.setVisible(false);
         lblDelimiter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblDelimiter.setText("Delimiter");
+        lblDelimiter.setText(Resources.getMessage("ImportWizardPageCSV.10")); //$NON-NLS-1$
 
         /* Delimiter combobox */
         comboDelimiter = new Combo(container, SWT.READ_ONLY);
@@ -378,7 +379,7 @@ public class ImportWizardPageCSV extends WizardPage {
         lblQuote = new Label(container, SWT.NONE);
         lblQuote.setVisible(false);
         lblQuote.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblQuote.setText("Quote");
+        lblQuote.setText(Resources.getMessage("ImportWizardPageCSV.11")); //$NON-NLS-1$
 
         /* Quote combobox */
         comboQuote = new Combo(container, SWT.READ_ONLY);
@@ -410,7 +411,7 @@ public class ImportWizardPageCSV extends WizardPage {
         lblEscape = new Label(container, SWT.NONE);
         lblEscape.setVisible(false);
         lblEscape.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblEscape.setText("Escape");
+        lblEscape.setText(Resources.getMessage("ImportWizardPageCSV.12")); //$NON-NLS-1$
 
         /* Escape combobox */
         comboEscape = new Combo(container, SWT.READ_ONLY);
@@ -442,7 +443,7 @@ public class ImportWizardPageCSV extends WizardPage {
         lblLinebreak = new Label(container, SWT.NONE);
         lblLinebreak.setVisible(false);
         lblLinebreak.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblLinebreak.setText("Linebreak");
+        lblLinebreak.setText(Resources.getMessage("ImportWizardPageCSV.13")); //$NON-NLS-1$
 
         /* Line break combobox */
         comboLinebreak = new Combo(container, SWT.READ_ONLY);
@@ -475,7 +476,7 @@ public class ImportWizardPageCSV extends WizardPage {
         /* Contains header button */
         btnContainsHeader = new Button(container, SWT.CHECK);
         btnContainsHeader.setVisible(false);
-        btnContainsHeader.setText("First row contains column names");
+        btnContainsHeader.setText(Resources.getMessage("ImportWizardPageCSV.14")); //$NON-NLS-1$
         btnContainsHeader.setSelection(true);
         btnContainsHeader.addSelectionListener(new SelectionAdapter() {
 
@@ -624,7 +625,7 @@ public class ImportWizardPageCSV extends WizardPage {
         setErrorMessage(null);
         tablePreview.setVisible(false);
 
-        if (comboLocation.getText().equals("")) {
+        if (comboLocation.getText().equals("")) { //$NON-NLS-1$
             return;
         }
 
@@ -643,7 +644,7 @@ public class ImportWizardPageCSV extends WizardPage {
             setErrorMessage(e.getMessage());
             return;
         } catch (TextParsingException e) {
-            setErrorMessage("Could not parse file. Maybe the selected syntax is invalid?");
+            setErrorMessage(Resources.getMessage("ImportWizardPageCSV.16")); //$NON-NLS-1$
             return;
         } catch (RuntimeException e) {
             if (e.getCause()!=null) {
@@ -703,7 +704,7 @@ public class ImportWizardPageCSV extends WizardPage {
             firstLine = it.next();
         } else {
             in.close();
-            throw new IOException("No data in file");
+            throw new IOException(Resources.getMessage("ImportWizardPageCSV.17")); //$NON-NLS-1$
         }
 
         /* Iterate over columns and add it to {@link #allColumns} */
@@ -733,7 +734,7 @@ public class ImportWizardPageCSV extends WizardPage {
 
         /* Check whether there is actual any data */
         if (previewData.size() == 0) {
-            throw new IOException("No preview data in file");
+            throw new IOException(Resources.getMessage("ImportWizardPageCSV.18")); //$NON-NLS-1$
         }
 
         /*
@@ -759,7 +760,7 @@ public class ImportWizardPageCSV extends WizardPage {
 
             if (btnContainsHeader.getSelection()) {
                 tableColumn.setText(column.getColumn().getAliasName());
-                tableColumn.setToolTipText("Column #" + ((ImportColumnCSV) column.getColumn()).getIndex());
+                tableColumn.setToolTipText(Resources.getMessage("ImportWizardPageCSV.19") + ((ImportColumnCSV) column.getColumn()).getIndex()); //$NON-NLS-1$
             }
             ColumnViewerToolTipSupport.enableFor(tableViewerPreview, ToolTip.NO_RECREATE);
         }

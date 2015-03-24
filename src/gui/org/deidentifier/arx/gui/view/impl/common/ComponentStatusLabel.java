@@ -1026,7 +1026,7 @@ public class ComponentStatusLabel extends Canvas {
                     }
                 }
                 if (i == lines.length-1 && progressProvider != null && progressProvider.getProgress() != 0) {
-                    gc.drawText(lines[i] + " (" + progressProvider.getProgress()+"%)", lineX, lineY, DRAW_FLAGS);
+                    gc.drawText(lines[i] + " (" + progressProvider.getProgress()+"%)", lineX, lineY, DRAW_FLAGS); //$NON-NLS-1$ //$NON-NLS-2$
                 } else {
                     gc.drawText(lines[i], lineX, lineY, DRAW_FLAGS);
                 }

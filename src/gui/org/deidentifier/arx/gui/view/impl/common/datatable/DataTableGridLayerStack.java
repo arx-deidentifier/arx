@@ -51,7 +51,7 @@ public class DataTableGridLayerStack extends DataTableGridLayer {
         DataHandle handle = context.getHandle();
         if (bodyDataProvider.getColumnCount() != 0) {
             if (rows != null) {
-                lcolumns.add("");
+                lcolumns.add(""); //$NON-NLS-1$
             }
             if (handle != null) {
                 for (int i = 0; i < handle.getNumColumns(); i++) {

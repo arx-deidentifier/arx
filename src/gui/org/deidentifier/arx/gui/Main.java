@@ -81,7 +81,7 @@ public class Main {
             main = new MainWindow(display, monitor);
             
             // Handler for loading a project
-            if (args.length > 0 && args[0].endsWith(".deid")) {
+            if (args.length > 0 && args[0].endsWith(".deid")) { //$NON-NLS-1$
                 main.onShow(new Runnable() {
                     public void run(){
                         load(main, args[0]);
@@ -127,7 +127,7 @@ public class Main {
             final String trace = sw.toString();
 
             // Show message
-            JOptionPane.showMessageDialog(null, trace, "Unexpected error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, trace, "Unexpected error", JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             System.exit(1);
 
         }
@@ -168,7 +168,7 @@ public class Main {
      * @return
      */
     private static boolean isUnix() {
-        String os = System.getProperty("os.name").toLowerCase();
-        return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0 );
+        String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+        return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0 ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

@@ -250,7 +250,7 @@ public class ViewAttributeDefinition implements IView {
                         DataType<?> type;
 
                         // Open format dialog
-                        if (description.getLabel().equals("OrderedString")) {
+                        if (description.getLabel().equals("OrderedString")) { //$NON-NLS-1$
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                             String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
@@ -266,7 +266,7 @@ public class ViewAttributeDefinition implements IView {
                                     }
                                 } catch (Exception e){
                                     controller.actionShowInfoDialog(controller.getResources().getShell(),
-                                                                    "Error", "Cannot create data type: "+e.getMessage());
+                                                                    Resources.getMessage("ViewAttributeDefinition.1"), Resources.getMessage("ViewAttributeDefinition.2")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
                                     type = DataType.STRING;
                                 }
                             }
@@ -301,7 +301,7 @@ public class ViewAttributeDefinition implements IView {
         dataTypeText = new Text(type, SWT.READ_ONLY | SWT.BORDER);
         dataTypeText.setLayoutData(SWTUtil.createFillGridData());
         dataTypeText.setEditable(false);
-        dataTypeText.setText("");
+        dataTypeText.setText(""); //$NON-NLS-1$
 
         // Editor hierarchy
         editor = new ViewHierarchy(group, attribute, controller);
@@ -332,7 +332,7 @@ public class ViewAttributeDefinition implements IView {
      */
     @Override
     public void reset() {
-        dataTypeText.setText("");
+        dataTypeText.setText(""); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -369,7 +369,7 @@ public class ViewAttributeDefinition implements IView {
                 return desc;
             }
         }
-        throw new RuntimeException("Unknown data type: "+label);
+        throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.5")+label); //$NON-NLS-1$
     }
     
     /**
@@ -399,7 +399,7 @@ public class ViewAttributeDefinition implements IView {
             }
             idx++;
         }
-        throw new RuntimeException("Unknown data type: "+type.getDescription().getLabel());
+        throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.6")+type.getDescription().getLabel()); //$NON-NLS-1$
     }
     
     /**
@@ -471,12 +471,12 @@ public class ViewAttributeDefinition implements IView {
             DataTypeWithFormat dtwf = (DataTypeWithFormat)dtype;
             String format = dtwf.getFormat();
             if (format==null) {
-                dataTypeText.setText("Default");
+                dataTypeText.setText(Resources.getMessage("ViewAttributeDefinition.7")); //$NON-NLS-1$
             } else {
                 dataTypeText.setText(format);
             }
         } else {
-            dataTypeText.setText("Default");
+            dataTypeText.setText(Resources.getMessage("ViewAttributeDefinition.8")); //$NON-NLS-1$
         }
     }
 

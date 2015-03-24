@@ -105,7 +105,7 @@ public class AnalysisManager {
          */
         public void start(){
             this.thread = new Thread(this);
-            this.thread.setName("StatisticsBuilder");
+            this.thread.setName("StatisticsBuilder"); //$NON-NLS-1$
             this.thread.setDaemon(true);
             this.thread.start();
         }

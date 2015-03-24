@@ -115,7 +115,7 @@ public class LayoutTransformationSettings implements ILayout, IView {
         group.setLayoutData(SWTUtil.createFillGridData());
         group.setLayout(new FillLayout());
 
-        folder = new ComponentTitledFolder(group, controller, null, "id-60");
+        folder = new ComponentTitledFolder(group, controller, null, "id-60"); //$NON-NLS-1$
         
         // Create general tab
         group = folder.createItem(Resources.getMessage("CriterionDefinitionView.61"), null);  //$NON-NLS-1$

@@ -53,15 +53,15 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
     private static final String LICENSE      = Resources.getLicencseText();
     
     /**  TODO */
-    private static final String ABOUT =   Resources.getMessage("AboutDialog.16") + "\n" +
-                                          Resources.getMessage("AboutDialog.18") + "\n\n" +
-                                          Resources.getMessage("AboutDialog.21") + Resources.getVersion();
+    private static final String ABOUT =   Resources.getMessage("AboutDialog.16") + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+                                          Resources.getMessage("AboutDialog.18") + "\n\n" + //$NON-NLS-1$ //$NON-NLS-2$
+                                          Resources.getMessage("AboutDialog.21") + Resources.getVersion(); //$NON-NLS-1$
     
     /**  TODO */
-    private static final String CONTRIBUTORS = "Karol Babioch (data import wizard)\n" +
-                                               "Ledian Xhani (hierarchy editor)\n" +
-                                               "Ljubomir Dshevlekov (hierarchy editor)\n" + 
-                                               "Michael Schneider (risk analysis)";
+    private static final String CONTRIBUTORS = "Karol Babioch (data import wizard)\n" + //$NON-NLS-1$
+                                               "Ledian Xhani (hierarchy editor)\n" + //$NON-NLS-1$
+                                               "Ljubomir Dshevlekov (hierarchy editor)\n" +  //$NON-NLS-1$
+                                               "Michael Schneider (risk analysis)"; //$NON-NLS-1$
     
     /**  TODO */
     private Image image;
@@ -172,7 +172,7 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
         
         // License
         CTabItem item1 = new CTabItem(folder, SWT.NULL);
-        item1.setText("License");
+        item1.setText("License"); //$NON-NLS-1$
         final Text license = new Text(folder, SWT.NONE | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
         license.setText(LICENSE);
         license.setEditable(false);
@@ -181,7 +181,7 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
         
         // Contributors
         CTabItem item2 = new CTabItem(folder, SWT.NULL);
-        item2.setText("Contributors");
+        item2.setText("Contributors"); //$NON-NLS-1$
         Composite composite = new Composite(folder, SWT.BORDER);
         composite.setBackground(license.getBackground());
         item2.setControl(composite);
@@ -194,16 +194,16 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
         
         // Information
         CTabItem item3 = new CTabItem(folder, SWT.NULL);
-        item3.setText("Links");
+        item3.setText("Links"); //$NON-NLS-1$
         Composite composite3 = new Composite(folder, SWT.BORDER);
         composite3.setBackground(license.getBackground());
         item3.setControl(composite3);
         composite3.setLayout(SWTUtil.createGridLayout(1, false));
-        createLink(composite3, "Website: <a>arx.deidentifier.org</a>", "Website", "http://arx.deidentifier.org");
-        createLink(composite3, "Manual: <a>arx.deidentifier.org/anonymization-tool</a>", "Manual", "http://arx.deidentifier.org/anonymization-tool/");
-        createLink(composite3, "API: <a>arx.deidentifier.org/api</a>", "API", "http://arx.deidentifier.org/api");
-        createLink(composite3, "Downloads: <a>arx.deidentifier.org/downloads</a>", "Downloads", "http://arx.deidentifier.org/downloads");
-        createLink(composite3, "Github: <a>github.com/arx-deidentifier</a>", "Github", "https://github.com/arx-deidentifier");
+        createLink(composite3, "Website: <a>arx.deidentifier.org</a>", "Website", "http://arx.deidentifier.org"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        createLink(composite3, "Manual: <a>arx.deidentifier.org/anonymization-tool</a>", "Manual", "http://arx.deidentifier.org/anonymization-tool/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        createLink(composite3, "API: <a>arx.deidentifier.org/api</a>", "API", "http://arx.deidentifier.org/api"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        createLink(composite3, "Downloads: <a>arx.deidentifier.org/downloads</a>", "Downloads", "http://arx.deidentifier.org/downloads"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        createLink(composite3, "Github: <a>github.com/arx-deidentifier</a>", "Github", "https://github.com/arx-deidentifier"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         return parent;
     }
     

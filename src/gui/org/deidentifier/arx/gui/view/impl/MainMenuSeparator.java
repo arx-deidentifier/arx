@@ -33,7 +33,7 @@ public class MainMenuSeparator extends MainMenuItem {
      * @param items
      */
     public MainMenuSeparator() {
-        super("", null, false);
+        super("", null, false); //$NON-NLS-1$
     }
     
     @Override

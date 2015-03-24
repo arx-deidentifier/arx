@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 import java.text.ParseException;
 
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView;
@@ -72,7 +73,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
                                      final boolean lower) {
 
         this.composite = new Group(parent, SWT.SHADOW_ETCHED_IN);
-        this.composite.setText(lower ? "Lower bound" : "Upper bound");
+        this.composite.setText(lower ? Resources.getMessage("HierarchyWizardEditorRange.0") : Resources.getMessage("HierarchyWizardEditorRange.1")); //$NON-NLS-1$ //$NON-NLS-2$
         this.composite.setLayout(SWTUtil.createGridLayout(2, false));
         this.composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.type = (DataTypeWithRatioScale<T>)model.getDataType();
@@ -128,7 +129,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
     private void createLabel(final HierarchyWizardModelGrouping<T> model,
                              final boolean lower,
                              final HierarchyWizardGroupingRange<T> adjustment) {
-        createLabel(composite, "Label:");
+        createLabel(composite, Resources.getMessage("HierarchyWizardEditorRange.2")); //$NON-NLS-1$
         label = new EditorString(composite) {
             
             @Override
@@ -139,7 +140,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
             @Override
             public String getValue() {
                 T value = adjustment.label;
-                if (value == null) return "";
+                if (value == null) return ""; //$NON-NLS-1$
                 else return type.format(value);
             }
 
@@ -185,7 +186,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
     private void createRepeat(final HierarchyWizardModelGrouping<T> model,
                               final boolean lower,
                               final HierarchyWizardGroupingRange<T> adjustment) {
-        createLabel(composite, "Repeat:");
+        createLabel(composite, Resources.getMessage("HierarchyWizardEditorRange.4")); //$NON-NLS-1$
         repeat = new EditorString(composite) {
             
             @Override
@@ -196,7 +197,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
             @Override
             public String getValue() {
                 T value = adjustment.repeat;
-                if (value == null) return "";
+                if (value == null) return ""; //$NON-NLS-1$
                 else return type.format(value);
             }
 
@@ -243,7 +244,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
     private void createSnap(final HierarchyWizardModelGrouping<T> model,
                             final boolean lower,
                             final HierarchyWizardGroupingRange<T> adjustment) {
-        createLabel(composite, "Snap:");
+        createLabel(composite, Resources.getMessage("HierarchyWizardEditorRange.6")); //$NON-NLS-1$
         snap = new EditorString(composite) {
             
             @Override
@@ -254,7 +255,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
             @Override
             public String getValue() {
                 T value = adjustment.snap;
-                if (value == null) return "";
+                if (value == null) return ""; //$NON-NLS-1$
                 else return type.format(value);
             }
 

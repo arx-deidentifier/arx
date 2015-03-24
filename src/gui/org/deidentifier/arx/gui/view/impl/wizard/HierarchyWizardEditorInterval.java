@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.aggregates.AggregateFunction;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView;
@@ -73,7 +74,7 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
         composite.setLayout(SWTUtil.createGridLayout(2, true));
         this.editorFunction = new HierarchyWizardEditorFunction<T>(this, model, composite, false);
         
-        createLabel(composite, "Min:");
+        createLabel(composite, Resources.getMessage("HierarchyWizardEditorInterval.0")); //$NON-NLS-1$
         editorMin = new EditorString(composite) {
             @Override
             public boolean accepts(final String s) {
@@ -86,7 +87,7 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
 
             @Override
             public String getValue() {
-                if (interval==null) return "";
+                if (interval==null) return ""; //$NON-NLS-1$
                 else return type.format(interval.min);
             }
 
@@ -101,7 +102,7 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
             }
         };
         
-        createLabel(composite, "Max:");
+        createLabel(composite, Resources.getMessage("HierarchyWizardEditorInterval.2")); //$NON-NLS-1$
         editorMax = new EditorString(composite) {
             
             @Override
@@ -115,7 +116,7 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
 
             @Override
             public String getValue() {
-                if (interval==null) return "";
+                if (interval==null) return ""; //$NON-NLS-1$
                 else return type.format(interval.max);
             }
 

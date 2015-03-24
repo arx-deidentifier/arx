@@ -142,7 +142,7 @@ public class MainWindow implements IView {
         shell.setLayout(SWTUtil.createGridLayout(1));
 
         // Create the tab folder
-        root = new ComponentTitledFolder(shell, controller, null, "id-70");
+        root = new ComponentTitledFolder(shell, controller, null, "id-70"); //$NON-NLS-1$
         root.setLayoutData(SWTUtil.createFillGridData());
 
         // Create the subviews
@@ -384,11 +384,11 @@ public class MainWindow implements IView {
 
         // Check
         if (!description.hasFormat()) {
-            throw new RuntimeException("This dialog can only be used for data types with format");
+            throw new RuntimeException(Resources.getMessage("MainWindow.6")); //$NON-NLS-1$
         }
 
         // Init
-        final String DEFAULT = "Default";
+        final String DEFAULT = Resources.getMessage("MainWindow.7"); //$NON-NLS-1$
 
         // Validator
         final IInputValidator validator = new IInputValidator() {
@@ -454,7 +454,7 @@ public class MainWindow implements IView {
     	    DialogHelp dialog = new DialogHelp(shell, controller, id);
     	    dialog.open();
     	} catch (Exception e) {
-    		this.showErrorDialog("Browser cannot be launched", e);
+    		this.showErrorDialog(Resources.getMessage("MainWindow.12"), e); //$NON-NLS-1$
     	}
     }
 
@@ -610,7 +610,7 @@ public class MainWindow implements IView {
         // Careful! In the main window, this is also called after editing the project properties
         if (event.part == ModelPart.MODEL) {
             final Model model = (Model) event.data;
-            shell.setText(Resources.getMessage("MainWindow.0") + " - " + model.getName()); //$NON-NLS-1$
+            shell.setText(Resources.getMessage("MainWindow.0") + " - " + model.getName()); //$NON-NLS-1$ //$NON-NLS-2$
             root.setEnabled(true);
             menu.update(event);
         }

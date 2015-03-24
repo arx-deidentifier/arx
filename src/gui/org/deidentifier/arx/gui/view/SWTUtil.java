@@ -156,18 +156,18 @@ public class SWTUtil {
                 if (item != null && item != current) {
                     current = item;
                     StringBuilder builder = new StringBuilder();
-                    builder.append("(");
+                    builder.append("("); //$NON-NLS-1$
                     int columns = item.getParent().getColumnCount();
                     for (int i = 0; i < columns; i++) {
                         String value = item.getText(i);
-                        if (value != null && !value.equals("")) {
+                        if (value != null && !value.equals("")) { //$NON-NLS-1$
                             builder.append(value);
                             if (i < columns - 1) {
-                                builder.append(", ");
+                                builder.append(", "); //$NON-NLS-1$
                             }
                         }
                     }
-                    builder.append(")");
+                    builder.append(")"); //$NON-NLS-1$
                     table.setToolTipText(builder.toString());
                 }
             }
@@ -466,7 +466,7 @@ public class SWTUtil {
      * @return
      */
     public static boolean isMac() {
-        return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
+        return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0; //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     /**

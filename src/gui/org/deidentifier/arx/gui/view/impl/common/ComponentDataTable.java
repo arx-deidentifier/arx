@@ -361,20 +361,20 @@ public class ComponentDataTable implements IComponent {
         natTable.getConfigRegistry().registerConfigAttribute(CellConfigAttributes.CELL_STYLE,
                                              style,
                                              DisplayMode.NORMAL,
-                                             "background0");
+                                             "background0"); //$NON-NLS-1$
         
         style = new Style();
         style.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, dark);
         natTable.getConfigRegistry().registerConfigAttribute(CellConfigAttributes.CELL_STYLE,
                                              style,
                                              DisplayMode.NORMAL,
-                                             "background1");
+                                             "background1"); //$NON-NLS-1$
         
         // Register checkbox painter for subset
         natTable.getConfigRegistry().registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, 
                                                               new CheckBoxPainter(), 
                                                               DisplayMode.NORMAL, 
-                                                              "checkbox");
+                                                              "checkbox"); //$NON-NLS-1$
         
         return natTable;
     }

@@ -21,6 +21,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView;
 
 /**
@@ -90,9 +91,6 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         return alphabetSize;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#getBuilder(boolean)
-     */
     @Override
     public HierarchyBuilderRedactionBased<T> getBuilder(boolean serializable) {
         
@@ -156,9 +154,6 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         return redactionOrder;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#parse(org.deidentifier.arx.aggregates.HierarchyBuilder)
-     */
     @Override
     public void parse(HierarchyBuilder<T> _builder) {
         
@@ -250,9 +245,6 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         // Empty by design
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#build()
-     */
     @Override
     protected void build() {
         super.hierarchy = null;
@@ -265,14 +257,14 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         try {
             super.groupsizes = builder.prepare(data);
         } catch(Exception e){
-            super.error = "Unknown error";
+            super.error = Resources.getMessage("HierarchyWizardModelRedaction.0"); //$NON-NLS-1$
             return;
         }
         
         try {
             super.hierarchy = builder.build();
         } catch(Exception e){
-            super.error = "Unknown error";
+            super.error = Resources.getMessage("HierarchyWizardModelRedaction.1"); //$NON-NLS-1$
             return;
         }
     }

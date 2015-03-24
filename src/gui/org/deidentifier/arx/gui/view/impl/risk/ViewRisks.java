@@ -280,7 +280,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         for (int i=0; i<list.size(); i++) {
             builder.append(list.get(i));
             if (i < list.size() - 1){
-                builder.append(", ");
+                builder.append(", "); //$NON-NLS-1$
             }
         }
         return builder.toString();

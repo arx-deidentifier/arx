@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Control;
 public class DataTableFillLayoutStyle extends AbstractRegistryConfiguration {
     
     /**  TODO */
-    public static final String DEFAULT_FILL_LAYOUT_CELL_CONFIG_LABEL = "FillLayoutCell_";
+    public static final String DEFAULT_FILL_LAYOUT_CELL_CONFIG_LABEL = "FillLayoutCell_"; //$NON-NLS-1$
 
     /**  TODO */
     private BorderStyle borderStyle = new BorderStyle(0, GUIHelper.getColor(240, 240, 240), LineStyleEnum.SOLID);

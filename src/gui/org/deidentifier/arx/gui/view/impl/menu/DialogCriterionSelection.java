@@ -158,7 +158,7 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
         table.setLayoutData(d);
 
         TableColumn column1 = new TableColumn(table, SWT.NONE);
-        column1.setText("");
+        column1.setText(""); //$NON-NLS-1$
         TableColumn column2 = new TableColumn(table, SWT.NONE);
         column2.setText(Resources.getMessage("CriterionSelectionDialog.2")); //$NON-NLS-1$
         TableColumn column3 = new TableColumn(table, SWT.NONE);
@@ -170,7 +170,7 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
         for (ModelExplicitCriterion c : elements) {
 
             TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(new String[] { "", c.toString(), c.getAttribute() });
+            item.setText(new String[] { "", c.toString(), c.getAttribute() }); //$NON-NLS-1$
             if (c instanceof ModelLDiversityCriterion) {
                 item.setImage(0, symbolL);
             } else if (c instanceof ModelTClosenessCriterion) {

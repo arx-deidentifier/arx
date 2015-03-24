@@ -237,12 +237,12 @@ public class WorkerSave extends Worker<Model> {
         writer.write(vocabulary.getEscape(), model.getCSVSyntax().getEscape());
         writer.write(vocabulary.getQuote(), model.getCSVSyntax().getQuote());
         
-        String linebreak = "UNIX";
+        String linebreak = "UNIX"; //$NON-NLS-1$
         char[] _linebreak = model.getCSVSyntax().getLinebreak();
         if (_linebreak.length == 1 && _linebreak[0] == '\r') {
-            linebreak = "MAC";
+            linebreak = "MAC"; //$NON-NLS-1$
         } else if (_linebreak.length == 2){
-            linebreak = "WINDOWS";
+            linebreak = "WINDOWS"; //$NON-NLS-1$
         }
         writer.write(vocabulary.getLinebreak(), linebreak);
         
@@ -351,8 +351,8 @@ public class WorkerSave extends Worker<Model> {
                 if (t instanceof Hierarchy){
                     Integer min = config.getMinimumGeneralization(attr);
                     Integer max = config.getMaximumGeneralization(attr);
-                	writer.write(vocabulary.getMin(), min==null ? "All" : String.valueOf(min));
-                	writer.write(vocabulary.getMax(), max==null ? "All" : String.valueOf(max));
+                	writer.write(vocabulary.getMin(), min==null ? "All" : String.valueOf(min)); //$NON-NLS-1$
+                	writer.write(vocabulary.getMax(), max==null ? "All" : String.valueOf(max)); //$NON-NLS-1$
                 }
             }
             writer.unindent();
@@ -599,7 +599,7 @@ public class WorkerSave extends Worker<Model> {
     private void writeMetadata(final Model model, final ZipOutputStream zip) throws IOException {
     	
         // Write metadata
-        zip.putNextEntry(new ZipEntry("metadata.xml"));
+        zip.putNextEntry(new ZipEntry("metadata.xml")); //$NON-NLS-1$
         final OutputStreamWriter w = new OutputStreamWriter(zip);
         XMLWriter writer = new XMLWriter(new FileBuilder(w));
         writer.indent(vocabulary.getMetadata());

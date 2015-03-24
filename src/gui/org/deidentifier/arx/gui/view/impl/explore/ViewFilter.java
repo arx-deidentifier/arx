@@ -131,12 +131,12 @@ public class ViewFilter implements IView {
 
         // Bar
         ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-21"); //$NON-NLS-1$
-        bar.add("Show optimum", IMG_OPTIMUM, new Runnable(){
+        bar.add(Resources.getMessage("ViewFilter.0"), IMG_OPTIMUM, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionShowOptimum();
             }
         });
-        bar.add("Reset", IMG_RESET, new Runnable(){
+        bar.add(Resources.getMessage("ViewFilter.1"), IMG_RESET, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionReset();
             }
@@ -386,8 +386,8 @@ public class ViewFilter implements IView {
         
         anonymous = new Button(composite, SWT.CHECK | SWT.NO_FOCUS);
         anonymous.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).create());
-        anonymous.setToolTipText("Anonymous");
-        anonymous.setText("");
+        anonymous.setToolTipText(Resources.getMessage("ViewFilter.2")); //$NON-NLS-1$
+        anonymous.setText(""); //$NON-NLS-1$
         anonymous.setSelection(false);
         anonymous.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0) {
@@ -396,7 +396,7 @@ public class ViewFilter implements IView {
         });
         
         final Label anonymousLabel = new Label(composite, SWT.NONE);
-        anonymousLabel.setText(" Anonymous");
+        anonymousLabel.setText(Resources.getMessage("ViewFilter.4")); //$NON-NLS-1$
         anonymousLabel.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).create());
         anonymousLabel.addMouseListener(new MouseAdapter(){
             public void mouseDown(MouseEvent arg0) {
@@ -407,8 +407,8 @@ public class ViewFilter implements IView {
         
         
         nonanonymous = new Button(composite, SWT.CHECK | SWT.NO_FOCUS);
-        nonanonymous.setToolTipText("Non-anonymous");
-        nonanonymous.setText("");
+        nonanonymous.setToolTipText(Resources.getMessage("ViewFilter.5")); //$NON-NLS-1$
+        nonanonymous.setText(""); //$NON-NLS-1$
         nonanonymous.setSelection(false);
         nonanonymous.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).create());
         nonanonymous.addSelectionListener(new SelectionAdapter() {
@@ -418,7 +418,7 @@ public class ViewFilter implements IView {
         });
         
         final Label nonanonymousLabel = new Label(composite, SWT.NONE);
-        nonanonymousLabel.setText(" Non-anonymous");
+        nonanonymousLabel.setText(Resources.getMessage("ViewFilter.7")); //$NON-NLS-1$
         nonanonymousLabel.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).create());
         nonanonymousLabel.addMouseListener(new MouseAdapter(){
             public void mouseDown(MouseEvent arg0) {
@@ -428,8 +428,8 @@ public class ViewFilter implements IView {
         });
         
         unknown = new Button(composite, SWT.CHECK | SWT.NO_FOCUS);
-        unknown.setToolTipText("Unknown");
-        unknown.setText("");
+        unknown.setToolTipText(Resources.getMessage("ViewFilter.8")); //$NON-NLS-1$
+        unknown.setText(""); //$NON-NLS-1$
         unknown.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).create());
         unknown.setSelection(false);
         unknown.addSelectionListener(new SelectionAdapter() {
@@ -439,7 +439,7 @@ public class ViewFilter implements IView {
         });
         
         final Label unknownLabel = new Label(composite, SWT.NONE);
-        unknownLabel.setText(" Unknown");
+        unknownLabel.setText(Resources.getMessage("ViewFilter.10")); //$NON-NLS-1$
         unknownLabel.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).create());
         unknownLabel.addMouseListener(new MouseAdapter(){
             public void mouseDown(MouseEvent arg0) {
@@ -522,7 +522,7 @@ public class ViewFilter implements IView {
 
         // Reset filter
         if (nodeFilter == null) {
-            throw new IllegalStateException("Filter must not be null");
+            throw new IllegalStateException(Resources.getMessage("ViewFilter.11")); //$NON-NLS-1$
         }
         
         filter = nodeFilter;

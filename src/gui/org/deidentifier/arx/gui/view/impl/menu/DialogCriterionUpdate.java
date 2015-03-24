@@ -247,14 +247,14 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
         table.setLayoutData(d);
 
         DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.NONE);
-        column1.setText("Type");
-        column1.setWidth("10%", "30px");
+        column1.setText(Resources.getMessage("DialogCriterionUpdate.0")); //$NON-NLS-1$
+        column1.setWidth("10%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column2 = new DynamicTableColumn(table, SWT.NONE);
         column2.setText(Resources.getMessage("CriterionSelectionDialog.2")); //$NON-NLS-1$
-        column2.setWidth("45%", "100px");
+        column2.setWidth("45%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column3 = new DynamicTableColumn(table, SWT.NONE);
         column3.setText(Resources.getMessage("CriterionSelectionDialog.3")); //$NON-NLS-1$
-        column3.setWidth("45%", "100px");
+        column3.setWidth("45%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         
         column1.pack();
         column2.pack();
@@ -272,19 +272,19 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
             TableItem item = new TableItem(table, SWT.NONE);
             
             if (c instanceof ModelLDiversityCriterion) {
-                item.setText(new String[] { "", c.getLabel(), ((ModelLDiversityCriterion)c).getAttribute() });
+                item.setText(new String[] { "", c.getLabel(), ((ModelLDiversityCriterion)c).getAttribute() }); //$NON-NLS-1$
                 item.setImage(0, symbolL);
             } else if (c instanceof ModelTClosenessCriterion) {
-                item.setText(new String[] { "", c.getLabel(), ((ModelTClosenessCriterion)c).getAttribute() });
+                item.setText(new String[] { "", c.getLabel(), ((ModelTClosenessCriterion)c).getAttribute() }); //$NON-NLS-1$
                 item.setImage(0, symbolT);
             } else if (c instanceof ModelKAnonymityCriterion) {
-                item.setText(new String[] { "", c.getLabel(), "" });
+                item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
                 item.setImage(0, symbolK);
             } else if (c instanceof ModelDPresenceCriterion) {
-                item.setText(new String[] { "", c.getLabel(), "" });
+                item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
                 item.setImage(0, symbolD);
             } else if (c instanceof ModelRiskBasedCriterion) {
-                item.setText(new String[] { "", c.getLabel(), "" });
+                item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
                 item.setImage(0, symbolR);
             }
         }
@@ -305,7 +305,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
         });
 
         Group border = new Group(parent, SWT.SHADOW_ETCHED_IN);
-        border.setText("Configuration");
+        border.setText(Resources.getMessage("DialogCriterionUpdate.15")); //$NON-NLS-1$
         GridData data = SWTUtil.createFillGridData();
         data.grabExcessVerticalSpace = false;
         border.setLayoutData(data);

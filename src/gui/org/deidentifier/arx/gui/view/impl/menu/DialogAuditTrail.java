@@ -64,7 +64,7 @@ public class DialogAuditTrail extends TitleAreaDialog {
     public DialogAuditTrail(Shell shell, List<ModelAuditTrailEntry> auditTrail) {
         super(shell);
         this.title = Resources.getMessage("DialogAuditTrail.0"); //$NON-NLS-1$
-        this.message = Resources.getMessage("DialogAuditTrail.1");
+        this.message = Resources.getMessage("DialogAuditTrail.1"); //$NON-NLS-1$
         this.auditTrail = auditTrail;
     }
 
@@ -128,7 +128,7 @@ public class DialogAuditTrail extends TitleAreaDialog {
             public void handleEvent(final Event event) {
                 final TableItem item = (TableItem) event.item;
                 final int index = table.indexOf(item);
-                item.setText(0, "Find/Replace");
+                item.setText(0, Resources.getMessage("DialogAuditTrail.7")); //$NON-NLS-1$
                 item.setText(1, ((AuditTrailEntryFindReplace)auditTrail.get(index)).getAttribute());
                 item.setText(2, ((AuditTrailEntryFindReplace)auditTrail.get(index)).getSearchString());
                 item.setText(3, ((AuditTrailEntryFindReplace)auditTrail.get(index)).getReplacementString());

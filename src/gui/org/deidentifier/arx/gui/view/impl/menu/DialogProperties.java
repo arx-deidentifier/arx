@@ -68,7 +68,7 @@ public class DialogProperties implements IDialog {
         this.model = model;
         
         // Create dialog
-        this.dialog = new PreferencesDialog(parent, "Settings", "Project-specific preferences");
+        this.dialog = new PreferencesDialog(parent, Resources.getMessage("DialogProperties.0"), Resources.getMessage("DialogProperties.1")); //$NON-NLS-1$ //$NON-NLS-2$
         this.createTabProject(this.dialog);
         this.createTabIOSettings(this.dialog);
         this.createTabTransformation(this.dialog);
@@ -193,7 +193,7 @@ public class DialogProperties implements IDialog {
             protected Integer getValue() { return model.getRiskModel().getMaxQiSize(); }
             protected void setValue(Object t) { model.getRiskModel().setMaxQiSize((Integer)t); }});
         
-        window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.45"), getRiskModelsForAnalyses()) {
+        window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.45"), getRiskModelsForAnalyses()) { //$NON-NLS-1$
             protected String getValue() { return model.getRiskModel().getRiskModelForAttributes().name(); }
             protected void setValue(Object arg0) { model.getRiskModel().setRiskModelForAttributes(RiskModelForAttributes.valueOf((String)arg0)); }
         });
@@ -255,7 +255,7 @@ public class DialogProperties implements IDialog {
             protected Boolean getValue() { return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE); }
             protected void setValue(Object t) { model.getInputConfig().setAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE, (Boolean)t); }});
         
-        window.addPreference(new PreferenceString(Resources.getMessage("PropertyDialog.13"), "*") { //$NON-NLS-1$
+        window.addPreference(new PreferenceString(Resources.getMessage("PropertyDialog.13"), "*") { //$NON-NLS-1$ //$NON-NLS-2$
             protected String getValue() { return model.getInputConfig().getSuppressionString(); }
             protected void setValue(Object t) { model.getInputConfig().setSuppressionString((String)t); }});
         
@@ -287,7 +287,7 @@ public class DialogProperties implements IDialog {
      */
     private String[] getLocales() {
         List<String> languages = new ArrayList<String>();
-        languages.add("Default");
+        languages.add(Resources.getMessage("DialogProperties.4")); //$NON-NLS-1$
         for (String lang : Locale.getISOLanguages()) {
             languages.add(lang.toUpperCase());
         }

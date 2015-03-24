@@ -152,7 +152,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                         if (data != null && data.length>0 && series != null) {
                             int x = (int) Math.round(xAxis.getDataCoordinate(event.x));
                             if (x >= 0 && x < series.length) {
-                                chart.getPlotArea().setToolTipText("("+series[x]+", "+data[0].getYSeries()[x]+")");
+                                chart.getPlotArea().setToolTipText("("+series[x]+", "+data[0].getYSeries()[x]+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                 return;
                             }
                         }
@@ -177,7 +177,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
         chart.setForeground(root.getForeground());
         
         // OSX workaround
-        if (System.getProperty("os.name").toLowerCase().contains("mac")){
+        if (System.getProperty("os.name").toLowerCase().contains("mac")){ //$NON-NLS-1$ //$NON-NLS-2$
             int r = chart.getBackground().getRed()-13;
             int g = chart.getBackground().getGreen()-13;
             int b = chart.getBackground().getBlue()-13;

@@ -337,13 +337,13 @@ public class ViewPropertiesOutput extends ViewProperties {
             Set<RiskBasedCriterion> criteria = context.config.getCriteria(RiskBasedCriterion.class);
             for (RiskBasedCriterion criterion : criteria) {
                 
-                String type = "";
+                String type = ""; //$NON-NLS-1$
                 if (criterion instanceof AverageReidentificationRisk) {
-                    type = Resources.getMessage("PropertiesView.123");
+                    type = Resources.getMessage("PropertiesView.123"); //$NON-NLS-1$
                 } else if (criterion instanceof PopulationUniqueness) {
-                    type = Resources.getMessage("PropertiesView.125");
+                    type = Resources.getMessage("PropertiesView.125"); //$NON-NLS-1$
                 } else if (criterion instanceof SampleUniqueness) {
-                    type = Resources.getMessage("PropertiesView.124");
+                    type = Resources.getMessage("PropertiesView.124"); //$NON-NLS-1$
                 }
                         
                 Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { type }); //$NON-NLS-1$ //$NON-NLS-2$

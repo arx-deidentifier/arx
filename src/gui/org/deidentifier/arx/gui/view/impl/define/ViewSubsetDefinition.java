@@ -76,7 +76,7 @@ public class ViewSubsetDefinition implements IView{
     private ToolItem filter;
     
     /**  TODO */
-    private DecimalFormat format = new DecimalFormat("##0.00");
+    private DecimalFormat format = new DecimalFormat("##0.00"); //$NON-NLS-1$
     
     /**
      * Creates a new instance.
@@ -107,10 +107,10 @@ public class ViewSubsetDefinition implements IView{
      */
     @Override
     public void reset() {
-        size.setText("0");
-        total.setText("0");
-        percent.setText("0");
-        origin.setText("");
+        size.setText("0"); //$NON-NLS-1$
+        total.setText("0"); //$NON-NLS-1$
+        percent.setText("0"); //$NON-NLS-1$
+        origin.setText(""); //$NON-NLS-1$
         disable();
     }
     
@@ -146,33 +146,33 @@ public class ViewSubsetDefinition implements IView{
      */
     private Composite build(Composite parent) {
 
-        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-40");
-        bar.add(Resources.getMessage("SubsetDefinitionView.1"), 
-                controller.getResources().getImage("page_white.png"),
+        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-40"); //$NON-NLS-1$
+        bar.add(Resources.getMessage("SubsetDefinitionView.1"),  //$NON-NLS-1$
+                controller.getResources().getImage("page_white.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
                         controller.actionSubsetNone();
                     }
                 });
-        bar.add(Resources.getMessage("SubsetDefinitionView.2"), 
-                controller.getResources().getImage("page_white_text.png"),
+        bar.add(Resources.getMessage("SubsetDefinitionView.2"),  //$NON-NLS-1$
+                controller.getResources().getImage("page_white_text.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
                         controller.actionSubsetAll();
                     }
                 });
-        bar.add(Resources.getMessage("SubsetDefinitionView.3"), 
-                controller.getResources().getImage("disk.png"),
+        bar.add(Resources.getMessage("SubsetDefinitionView.3"),  //$NON-NLS-1$
+                controller.getResources().getImage("disk.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
                         controller.actionSubsetFile();
                     }
                 });
-        bar.add(Resources.getMessage("SubsetDefinitionView.4"), 
-                controller.getResources().getImage("find.png"),
+        bar.add(Resources.getMessage("SubsetDefinitionView.4"),  //$NON-NLS-1$
+                controller.getResources().getImage("find.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -182,7 +182,7 @@ public class ViewSubsetDefinition implements IView{
         
         ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, null);
         folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        Composite group = folder.createItem(Resources.getMessage("SubsetDefinitionView.0"), null);
+        Composite group = folder.createItem(Resources.getMessage("SubsetDefinitionView.0"), null); //$NON-NLS-1$
         folder.setSelection(0);
         GridLayout layout = new GridLayout();
         layout.numColumns = 9;
@@ -191,36 +191,36 @@ public class ViewSubsetDefinition implements IView{
         group.setLayoutData(SWTUtil.createFillGridData());
         
         Label l = new Label(group, SWT.NONE);
-        l.setText(Resources.getMessage("SubsetDefinitionView.6"));
+        l.setText(Resources.getMessage("SubsetDefinitionView.6")); //$NON-NLS-1$
         size = new Text(group, SWT.BORDER);
-        size.setText("0");
+        size.setText("0"); //$NON-NLS-1$
         size.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         size.setEditable(false);
         l = new Label(group, SWT.NONE);
-        l.setText("/");
+        l.setText("/"); //$NON-NLS-1$
         total = new Text(group, SWT.BORDER);
-        total.setText("0");
+        total.setText("0"); //$NON-NLS-1$
         total.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         total.setEditable(false);
         l = new Label(group, SWT.NONE);
-        l.setText("=");
+        l.setText("="); //$NON-NLS-1$
         percent = new Text(group, SWT.BORDER);
-        percent.setText("0");
+        percent.setText("0"); //$NON-NLS-1$
         percent.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         percent.setEditable(false);
         l = new Label(group, SWT.NONE);
-        l.setText("%");
+        l.setText("%"); //$NON-NLS-1$
         l = new Label(group, SWT.NONE);
-        l.setText(Resources.getMessage("SubsetDefinitionView.5"));
+        l.setText(Resources.getMessage("SubsetDefinitionView.5")); //$NON-NLS-1$
         origin = new Text(group, SWT.BORDER);
-        origin.setText("");
+        origin.setText(""); //$NON-NLS-1$
         origin.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         origin.setEditable(false);
         
-        all = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.1"));
-        none = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.2"));
-        file = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.3"));
-        filter = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.4"));
+        all = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.1")); //$NON-NLS-1$
+        none = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.2")); //$NON-NLS-1$
+        file = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.3")); //$NON-NLS-1$
+        filter = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.4")); //$NON-NLS-1$
         
         return group;
     }

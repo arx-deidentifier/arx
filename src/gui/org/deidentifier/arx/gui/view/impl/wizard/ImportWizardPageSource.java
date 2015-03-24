@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.ImportWizardModel.SourceType;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -68,9 +69,9 @@ public class ImportWizardPageSource extends WizardPage {
      * @param wizardImport Reference to wizard containing this page
      */
     public ImportWizardPageSource(ImportWizard wizardImport) {
-        super("WizardImportSourcePage");
-        setTitle("Source");
-        setDescription("Select the source you want to import data from");
+        super("WizardImportSourcePage"); //$NON-NLS-1$
+        setTitle(Resources.getMessage("ImportWizardPageSource.1")); //$NON-NLS-1$
+        setDescription(Resources.getMessage("ImportWizardPageSource.2")); //$NON-NLS-1$
         this.wizardImport = wizardImport;
     }
 
@@ -92,7 +93,7 @@ public class ImportWizardPageSource extends WizardPage {
 
         /* Add button for CSV */
         btnCsv = new Button(container, SWT.RADIO);
-        btnCsv.setText("CSV");
+        btnCsv.setText(Resources.getMessage("ImportWizardPageSource.3")); //$NON-NLS-1$
         btnCsv.addSelectionListener(new SelectionAdapter() {
 
             @Override
@@ -104,7 +105,7 @@ public class ImportWizardPageSource extends WizardPage {
 
         /* Add button for Excel */
         btnExcel = new Button(container, SWT.RADIO);
-        btnExcel.setText("Excel (XLS, XLSX)");
+        btnExcel.setText(Resources.getMessage("ImportWizardPageSource.4")); //$NON-NLS-1$
         btnExcel.addSelectionListener(new SelectionAdapter() {
 
             @Override
@@ -116,7 +117,7 @@ public class ImportWizardPageSource extends WizardPage {
 
         /* Add button for JDBC */
         btnJdbc = new Button(container, SWT.RADIO);
-        btnJdbc.setText("Database (JDBC)");
+        btnJdbc.setText(Resources.getMessage("ImportWizardPageSource.5")); //$NON-NLS-1$
         btnJdbc.addSelectionListener(new SelectionAdapter() {
 
             @Override

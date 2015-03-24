@@ -66,7 +66,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
     private static final int           MIN_CATEGORY_WIDTH = 10;
 
     /** View */
-    private static final DecimalFormat FORMAT             = new DecimalFormat("##0.0###################");
+    private static final DecimalFormat FORMAT             = new DecimalFormat("##0.0###################"); //$NON-NLS-1$
 
     /** Labels for the plot. */
     private static final double[]      POINTS             = getPoints();
@@ -195,13 +195,13 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
                             for (int i = 0; i < data.length; i++) {
                                 ISeries yseries = data[i];
                                 builder.append(yseries.getId());
-                                builder.append("(");
+                                builder.append("("); //$NON-NLS-1$
                                 builder.append(series[x]);
-                                builder.append(", ");
+                                builder.append(", "); //$NON-NLS-1$
                                 builder.append(yseries.getYSeries()[x]);
-                                builder.append(")");
+                                builder.append(")"); //$NON-NLS-1$
                                 if (i < data.length - 1) {
-                                    builder.append(", ");
+                                    builder.append(", "); //$NON-NLS-1$
                                 }
                             }
                         }
@@ -230,7 +230,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
         chart.setForeground(root.getForeground());
         
         // OSX workaround
-        if (System.getProperty("os.name").toLowerCase().contains("mac")){
+        if (System.getProperty("os.name").toLowerCase().contains("mac")){ //$NON-NLS-1$ //$NON-NLS-2$
             int r = chart.getBackground().getRed()-13;
             int g = chart.getBackground().getGreen()-13;
             int b = chart.getBackground().getBlue()-13;
@@ -359,13 +359,13 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
 
                 ISeriesSet seriesSet = chart.getSeriesSet();
                 if (showAllModels) {
-                    createSeries(seriesSet, dataPitman, "Pitman", PlotSymbolType.CIRCLE, GUIHelper.COLOR_BLACK);
-                    createSeries(seriesSet, dataZayatz, "Zayatz", PlotSymbolType.CROSS, GUIHelper.COLOR_BLUE);
-                    createSeries(seriesSet, dataSNB, "SNB", PlotSymbolType.DIAMOND, GUIHelper.COLOR_RED);
-                    createSeries(seriesSet, dataDankar, "Dankar", PlotSymbolType.SQUARE, GUIHelper.COLOR_DARK_GRAY);
+                    createSeries(seriesSet, dataPitman, "Pitman", PlotSymbolType.CIRCLE, GUIHelper.COLOR_BLACK); //$NON-NLS-1$
+                    createSeries(seriesSet, dataZayatz, "Zayatz", PlotSymbolType.CROSS, GUIHelper.COLOR_BLUE); //$NON-NLS-1$
+                    createSeries(seriesSet, dataSNB, "SNB", PlotSymbolType.DIAMOND, GUIHelper.COLOR_RED); //$NON-NLS-1$
+                    createSeries(seriesSet, dataDankar, "Dankar", PlotSymbolType.SQUARE, GUIHelper.COLOR_DARK_GRAY); //$NON-NLS-1$
                     chart.getLegend().setVisible(true);
                 } else {
-                    createSeries(seriesSet, dataDankar, "Dankar", PlotSymbolType.SQUARE, GUIHelper.COLOR_BLACK);
+                    createSeries(seriesSet, dataDankar, "Dankar", PlotSymbolType.SQUARE, GUIHelper.COLOR_BLACK); //$NON-NLS-1$
                     chart.getLegend().setVisible(false);
                 }
                 

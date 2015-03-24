@@ -26,6 +26,7 @@ import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.ImportColumn;
 import org.deidentifier.arx.io.ImportColumnIndexed;
 import org.deidentifier.arx.io.ImportColumnJDBC;
@@ -246,7 +247,7 @@ public char getCsvQuote() {
     public List<Pair<DataType<?>, Double>> getMatchingDataTypes(ImportWizardModelColumn column) {
         
         if (wizardColumns.indexOf(column) == -1) { 
-            throw new IllegalArgumentException("Column not part of preview data"); 
+            throw new IllegalArgumentException(Resources.getMessage("ImportWizardModel.0"));  //$NON-NLS-1$
         }
 
         Data data = Data.create(getPreviewData());
@@ -296,7 +297,7 @@ public char getCsvQuote() {
                 }
             }
         } else {
-            throw new IllegalArgumentException("Column not part of preview data");
+            throw new IllegalArgumentException(Resources.getMessage("ImportWizardModel.1")); //$NON-NLS-1$
         }
 
         return result;

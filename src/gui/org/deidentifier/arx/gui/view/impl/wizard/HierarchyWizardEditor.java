@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.wizard;
 
 import org.deidentifier.arx.aggregates.AggregateFunction;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardEditorFunction.IHierarchyFunctionEditorParent;
@@ -170,7 +171,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
      */
     private void createGeneralTab(CTabFolder tabFolder) {
     	CTabItem tabItem1 = new CTabItem(tabFolder, SWT.NULL);
-        tabItem1.setText("General");
+        tabItem1.setText(Resources.getMessage("HierarchyWizardEditor.0")); //$NON-NLS-1$
         Composite parent = new Composite(tabFolder, SWT.NULL);
         parent.setLayout(SWTUtil.createGridLayout(2, false));
         parent.setLayoutData(SWTUtil.createFillHorizontallyGridData());
@@ -186,7 +187,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
      */
     private void createGroupTab(CTabFolder tabFolder) {
     	CTabItem tabItem3 = new CTabItem(tabFolder, SWT.NULL);
-        tabItem3.setText("Group");
+        tabItem3.setText(Resources.getMessage("HierarchyWizardEditor.1")); //$NON-NLS-1$
         Composite parent = new Composite(tabFolder, SWT.NULL);
         parent.setLayout(SWTUtil.createGridLayout(1, false));
         new HierarchyWizardEditorGroup<T>(parent, model);
@@ -201,7 +202,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
      */
     private void createIntervalTab(CTabFolder tabFolder) {
         CTabItem tabItem2 = new CTabItem(tabFolder, SWT.NULL);
-        tabItem2.setText("Interval");
+        tabItem2.setText(Resources.getMessage("HierarchyWizardEditor.2")); //$NON-NLS-1$
         Composite parent = new Composite(tabFolder, SWT.NULL);
         parent.setLayout(SWTUtil.createGridLayout(2, false));
         new HierarchyWizardEditorInterval<T>(parent, model);
@@ -215,7 +216,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
      */
     private void createRangeTab(CTabFolder tabFolder) {
     	CTabItem tabItem4 = new CTabItem(tabFolder, SWT.NULL);
-        tabItem4.setText("Range");
+        tabItem4.setText(Resources.getMessage("HierarchyWizardEditor.3")); //$NON-NLS-1$
         Composite parent = new Composite(tabFolder, SWT.NULL);
         parent.setLayout(SWTUtil.createGridLayout(2, false));
         new HierarchyWizardEditorRange<T>(parent, model, true);

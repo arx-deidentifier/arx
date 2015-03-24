@@ -26,6 +26,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -91,7 +92,7 @@ public class ViewRisksQuasiIdentifiers implements IView {
         // Create button
         Button button = new Button(parent, SWT.PUSH);
         button.setLayoutData(SWTUtil.createGridData());
-        button.setText("Clear");
+        button.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.0")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0) {
                 for (TableItem item : table.getItems()) {
@@ -103,7 +104,7 @@ public class ViewRisksQuasiIdentifiers implements IView {
         
         // Create label
         label = new Label(parent, SWT.RIGHT);
-        label.setText("");
+        label.setText(""); //$NON-NLS-1$
         label.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         // Reset view
@@ -117,7 +118,7 @@ public class ViewRisksQuasiIdentifiers implements IView {
 
     @Override
     public void reset() {
-        label.setText("");
+        label.setText(""); //$NON-NLS-1$
         for (TableItem item : table.getItems()) {
             item.dispose();
         }
@@ -153,10 +154,10 @@ public class ViewRisksQuasiIdentifiers implements IView {
             if (selection.size() <= model.getRiskModel().getMaxQiSize()) {
                 model.setSelectedQuasiIdentifiers(selection);
                 controller.update(new ModelEvent(ViewRisksQuasiIdentifiers.this, ModelPart.SELECTED_QUASI_IDENTIFIERS, selection));
-                label.setText("Resulting quasi-identifiers: " + (int)(Math.pow(2, selection.size())-1));
+                label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.3") + (int)(Math.pow(2, selection.size())-1)); //$NON-NLS-1$
                 label.setForeground(GUIHelper.COLOR_BLACK);
             } else {
-                label.setText("Too many quasi-identifiers: " + (int)(Math.pow(2, selection.size())-1));
+                label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.4") + (int)(Math.pow(2, selection.size())-1)); //$NON-NLS-1$
                 label.setForeground(GUIHelper.COLOR_RED);
             }
         }
@@ -191,7 +192,7 @@ public class ViewRisksQuasiIdentifiers implements IView {
             item.setChecked(selection.contains(value));
         }
         
-        label.setText("Resulting quasi-identifiers: " + (int)(Math.pow(2, selection.size())-1));
+        label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.5") + (int)(Math.pow(2, selection.size())-1)); //$NON-NLS-1$
         
         root.setRedraw(true);
         SWTUtil.enable(root);
