@@ -648,7 +648,7 @@ public class StatisticsBuilder {
                     // Analyze
                     if (value != null && !DataType.isNull(value)) {
                         if (clazz == Long.class || clazz == Double.class) {
-                            statistics.get(attribute).addValue((Double)type.parse(value));
+                            statistics.get(attribute).addValue(((Number)type.parse(value)).doubleValue());
                             ordinal.get(attribute).addValue(value);
                         } else if (clazz == Date.class) {
                             statistics.get(attribute).addValue(((Date)type.parse(value)).getTime());
@@ -672,6 +672,7 @@ public class StatisticsBuilder {
             String attribute = handle.getAttributeName(col);
             ScaleOfMeasure scale = scales.get(attribute);
             DataType<?> type = handle.getDataType(attribute);
+            ordinal.get(attribute).analyze();
             if (scale == ScaleOfMeasure.NOMINAL) {
                 SummaryStatisticsOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary(ScaleOfMeasure.NOMINAL, 

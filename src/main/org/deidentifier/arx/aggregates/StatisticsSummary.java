@@ -32,6 +32,17 @@ import org.deidentifier.arx.DataType;
 public class StatisticsSummary {
     
     /**
+     * An enum for scales of measure
+     * @author Fabian Prasser
+     */
+    public static enum ScaleOfMeasure {
+        NOMINAL,
+        ORDINAL,
+        INTERVAL,
+        RATIO
+    }
+    
+    /**
      * Summary statistics for variables with ordinal scale
      * @author Fabian Prasser
      *
@@ -62,13 +73,68 @@ public class StatisticsSummary {
         }
         
         /**
+         * Returns a summary
+         * @return
+         */
+        public String getMax() {
+            return max;
+        }
+        
+        /**
+         * Returns a summary
+         * @return
+         */
+        public String getMedian() {
+            return median;
+        }
+
+        /**
+         * Returns a summary
+         * @return
+         */
+        public String getMin() {
+            return min;
+        }
+
+        /** 
+         * Returns a summary
+         * @return
+         */
+        public String getMode() {
+            return mode;
+        }
+
+        /**
+         * Returns the number of measurements
+         * @return
+         */
+        public int getNumberOfMeasures() {
+            return numberOfMeasures;
+        }
+
+        /**
+         * Returns the index of the next element that does not equal the element at the given index
+         * @param index
+         * @param values
+         * @return
+         */
+        private int moveWhileEqual(int index, List<String> values) {
+            String element = values.get(index);
+            // We can do == because of dictionary compression
+            while (index < values.size() && values.get(index) == element) { 
+                index++;
+            }
+            return index;
+        }
+
+        /**
          * Adds a value
          * @param value
          */
         void addValue(String value) {
             this.values.add(value);
         }
-        
+
         void analyze() {
             Collections.sort(values, new Comparator<String>() {
                 @Override
@@ -113,119 +179,111 @@ public class StatisticsSummary {
             // Clear
             values.clear();
         }
-
-        /** 
-         * Returns a summary
-         * @return
-         */
-        public String getMode() {
-            return mode;
-        }
-
-        /**
-         * Returns a summary
-         * @return
-         */
-        public String getMedian() {
-            return median;
-        }
-
-        /**
-         * Returns a summary
-         * @return
-         */
-        public String getMin() {
-            return min;
-        }
-
-        /**
-         * Returns a summary
-         * @return
-         */
-        public String getMax() {
-            return max;
-        }
-
-        /**
-         * Returns the number of measurements
-         * @return
-         */
-        public int getNumberOfMeasures() {
-            return numberOfMeasures;
-        }
-
-        /**
-         * Returns the index of the next element that does not equal the element at the given index
-         * @param index
-         * @param values
-         * @return
-         */
-        private int moveWhileEqual(int index, List<String> values) {
-            String element = values.get(index);
-            // We can do == because of dictionary compression
-            while (values.get(index) == element) { 
-                index++;
-            }
-            return index;
-        }
-    }
-    
-    /**
-     * An enum for scales of measure
-     * @author Fabian Prasser
-     */
-    public static enum ScaleOfMeasure {
-        NOMINAL,
-        ORDINAL,
-        INTERVAL,
-        RATIO
     }
     
     /** The associated scale of measure*/
-    public final ScaleOfMeasure scale;
+    private final ScaleOfMeasure scale;
     
     /** The number of measures*/
-    public final int numberOfMeasures;
+    private final int numberOfMeasures;
 
     /* ******************************************************************** 
      * ARXString, ARXOrderedString, ARXDate, ARXInteger, ARXDecimal 
      **********************************************************************/
     
     /** Mode*/
-    public final String mode;
+    private final String mode;
     
     /* ******************************************************************** 
      * ARXOrderedString, ARXDate, ARXInteger, ARXDecimal 
      **********************************************************************/
     
     /** Median, may be null*/
-    public final String median;
+    private final String median;
     /** Min, may be null*/
-    public final String min;
+    private final String min;
     /** Max, may be null*/
-    public final String max;
+    private final String max;
     
     /* ********************************************************************  
      * ARXDate, ARXInteger, ARXDecimal 
      **********************************************************************/
     
     /** Arithmetic mean, may be null*/
-    public final String arithmeticMean;
+    private final String arithmeticMean;
     /** Sample variance, may be null*/
-    public final String sampleVariance;
+    private final String sampleVariance;
     /** Population variance, may be null*/
-    public final String populationVariance;
+    private final String populationVariance;
     /** Range, may be null*/
-    public final String range;
+    private final String range;
     /** Kurtosis, may be null*/
-    public final String kurtosis;
+    private final String kurtosis;
     
     /* ********************************************************************  
      * ARXInteger, ARXDecimal 
      ********************************************************************* */
     
     /** Geometric mean, may be null*/
-    public final String geometricMean;
+    private final String geometricMean;
+
+    /**
+     * Constructor for ARXString
+     * @param scale
+     * @param numberOfMeasures
+     * @param mode
+     */
+    StatisticsSummary(ScaleOfMeasure scale, 
+                      int numberOfMeasures, 
+                      String mode) {
+        this(scale, numberOfMeasures, mode, null, null, null, null, null, null, null, null, null);
+    }
+
+    /**
+     * Constructor for ARXOrderedString
+     * @param scale
+     * @param numberOfMeasures
+     * @param mode
+     * @param median
+     * @param min
+     * @param max
+     */
+    StatisticsSummary(ScaleOfMeasure scale,
+                      int numberOfMeasures,
+                      String mode,
+                      String median,
+                      String min,
+                      String max) {
+        this(scale, numberOfMeasures, mode, median, min, max, null, null, null, null, null, null);
+    }
+
+    /**
+     * Constructor for ARXDate 
+     * @param scale
+     * @param numberOfMeasures
+     * @param mode
+     * @param median
+     * @param min
+     * @param max
+     * @param arithmeticMean
+     * @param sampleVariance
+     * @param populationVariance
+     * @param range
+     * @param kurtosis
+     */
+    StatisticsSummary(ScaleOfMeasure scale,
+                      int numberOfMeasures,
+                      String mode,
+                      String median,
+                      String min,
+                      String max,
+                      String arithmeticMean,
+                      String sampleVariance,
+                      String populationVariance,
+                      String range,
+                      String kurtosis) {
+        this(scale, numberOfMeasures, mode, median, min, max, arithmeticMean, sampleVariance, populationVariance, range, kurtosis, null);
+    }
 
     /**
      * Constructor for ARXInteger and ARXDecimal 
@@ -269,60 +327,196 @@ public class StatisticsSummary {
     }
 
     /**
-     * Constructor for ARXDate 
-     * @param scale
-     * @param numberOfMeasures
-     * @param mode
-     * @param median
-     * @param min
-     * @param max
-     * @param arithmeticMean
-     * @param sampleVariance
-     * @param populationVariance
-     * @param range
-     * @param kurtosis
+     * Returns the mean
+     * @return
      */
-    StatisticsSummary(ScaleOfMeasure scale,
-                      int numberOfMeasures,
-                      String mode,
-                      String median,
-                      String min,
-                      String max,
-                      String arithmeticMean,
-                      String sampleVariance,
-                      String populationVariance,
-                      String range,
-                      String kurtosis) {
-        this(scale, numberOfMeasures, mode, median, min, max, arithmeticMean, sampleVariance, populationVariance, range, kurtosis, null);
+    public String getArithmeticMean() {
+        return arithmeticMean;
     }
 
     /**
-     * Constructor for ARXOrderedString
-     * @param scale
-     * @param numberOfMeasures
-     * @param mode
-     * @param median
-     * @param min
-     * @param max
+     * Returns the geometric mean
+     * @return
      */
-    StatisticsSummary(ScaleOfMeasure scale,
-                      int numberOfMeasures,
-                      String mode,
-                      String median,
-                      String min,
-                      String max) {
-        this(scale, numberOfMeasures, mode, median, min, max, null, null, null, null, null, null);
+    public String getGeometricMean() {
+        return geometricMean;
     }
 
     /**
-     * Constructor for ARXString
-     * @param scale
-     * @param numberOfMeasures
-     * @param mode
+     * Returns the kurtosis
+     * @return
      */
-    StatisticsSummary(ScaleOfMeasure scale, 
-                      int numberOfMeasures, 
-                      String mode) {
-        this(scale, numberOfMeasures, mode, null, null, null, null, null, null, null, null, null);
+    public String getKurtosis() {
+        return kurtosis;
+    }
+
+    /**
+     * Returns the max
+     * @return
+     */
+    public String getMax() {
+        return max;
+    }
+
+    /**
+     * Returns the median
+     * @return
+     */
+    public String getMedian() {
+        return median;
+    }
+
+    /**
+     * Returns the min
+     * @return
+     */
+    public String getMin() {
+        return min;
+    }
+
+    /**
+     * Returns the mode
+     * @return
+     */
+    public String getMode() {
+        return mode;
+    }
+
+    /**
+     * Returns the number of measures
+     * @return
+     */
+    public int getNumberOfMeasures() {
+        return numberOfMeasures;
+    }
+
+    /**
+     * Returns the population variance
+     * @return
+     */
+    public String getPopulationVariance() {
+        return populationVariance;
+    }
+
+    /**
+     * Returns the range
+     * @return
+     */
+    public String getRange() {
+        return range;
+    }
+
+    /**
+     * Returns the sample variance
+     * @return
+     */
+    public String getSampleVariance() {
+        return sampleVariance;
+    }
+
+    /**
+     * Returns the scale of measure
+     * @return
+     */
+    public ScaleOfMeasure getScale() {
+        return scale;
+    }
+    
+    /**
+     * Returns whether the following measure is available: mean
+     * @return
+     */
+    public boolean isArithmeticMeanAvailable() {
+        return null != arithmeticMean;
+    }
+
+    /**
+     * Returns whether the following measure is available: geometric mean
+     * @return
+     */
+    public boolean isGeometricMeanAvailable() {
+        return null != geometricMean;
+    }
+
+    /**
+     * Returns whether the following measure is available: kurtosis
+     * @return
+     */
+    public boolean isKurtosisAvailable() {
+        return null != kurtosis;
+    }
+
+    /**
+     * Returns whether the following measure is available: max
+     * @return
+     */
+    public boolean isMaxAvailable() {
+        return null != max;
+    }
+
+    /**
+     * Returns whether the following measure is available: median
+     * @return
+     */
+    public boolean isMedianAvailable() {
+        return null != median;
+    }
+
+    /**
+     * Returns whether the following measure is available: min
+     * @return
+     */
+    public boolean isMinAvailable() {
+        return null != min;
+    }
+
+    /**
+     * Returns whether the following measure is available: mode
+     * @return
+     */
+    public boolean isModeAvailable() {
+        return null != mode;
+    }
+
+    /**
+     * Returns whether the following measure is available: population variance
+     * @return
+     */
+    public boolean isPopulationVarianceAvailable() {
+        return null != populationVariance;
+    }
+
+    /**
+     * Returns whether the following measure is available: range
+     * @return
+     */
+    public boolean isRangeAvailable() {
+        return null != range;
+    }
+
+    /**
+     * Returns whether the following measure is available: sample variance
+     * @return
+     */
+    public boolean isSampleVarianceAvailable() {
+        return null != sampleVariance;
+    }
+
+    @Override
+    public String toString() {
+        return "StatisticsSummary [\n" + 
+                                   " - scale=" + scale + "\n" + 
+                                   " - numberOfMeasures=" + numberOfMeasures + "\n" + 
+                                   (isModeAvailable() ? " - mode=" + mode + "\n" : "") + 
+                                   (isMedianAvailable() ?  " - median=" + median + "\n" : "") + 
+                                   (isMinAvailable() ?  " - min=" + min + "\n" : "") + 
+                                   (isMaxAvailable() ?  " - max=" + max + "\n" : "") + 
+                                   (isArithmeticMeanAvailable() ?  " - arithmeticMean=" + arithmeticMean + "\n" : "") + 
+                                   (isSampleVarianceAvailable() ?  " - sampleVariance=" + sampleVariance + "\n" : "") + 
+                                   (isPopulationVarianceAvailable() ?  " - populationVariance=" + populationVariance + "\n" : "") + 
+                                   (isRangeAvailable() ? " - range=" + range + "\n" : "") + 
+                                   (isKurtosisAvailable() ?  " - kurtosis=" + kurtosis + "\n" : "") + 
+                                   (isGeometricMeanAvailable() ?  " - geometricMean=" + geometricMean + "\n" : "") + 
+                                   "]";
     }
 }
