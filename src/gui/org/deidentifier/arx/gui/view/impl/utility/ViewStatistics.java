@@ -37,29 +37,29 @@ import org.eclipse.swt.widgets.Control;
 public abstract class ViewStatistics<T extends AnalysisContextVisualization> implements IView {
 
     /** Our users are patient. */
-    public static final int MINIMAL_WORKING_TIME = 500;
-    
+    public static final int       MINIMAL_WORKING_TIME = 500;
+
     /** Internal stuff. */
-    private AnalysisContext       context  = new AnalysisContext();
-    
+    private AnalysisContext       context              = new AnalysisContext();
+
     /** Internal stuff. */
     private final Controller      controller;
-    
+
     /** Internal stuff. */
     private Model                 model;
-    
+
     /** Internal stuff. */
     private final ModelPart       reset;
-    
+
     /** Internal stuff. */
     private final ModelPart       target;
-    
+
     /** Internal stuff. */
     private final ComponentStatus status;
-    
+
     /** Internal stuff. */
-    private T viewContext;
-    
+    private T                     viewContext;
+
 	/**
      * Creates a new instance.
      *
