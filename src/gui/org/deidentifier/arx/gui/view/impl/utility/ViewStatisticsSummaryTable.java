@@ -141,19 +141,19 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextVi
                 table.setRedraw(false);
                 table.removeAll();
                 
-                createItem("Scale of measure", String.valueOf(summary.getScale()));
-                createItem("Number of measures", String.valueOf(summary.getNumberOfMeasures()));
+                createItem(Resources.getMessage("SummaryStatistics.13"), String.valueOf(summary.getScale())); //$NON-NLS-1$
+                createItem(Resources.getMessage("SummaryStatistics.12"), String.valueOf(summary.getNumberOfMeasures())); //$NON-NLS-1$
                 
-                if (summary.isModeAvailable()) createItem("Mode", summary.getMode());
-                if (summary.isMedianAvailable()) createItem("Median", summary.getMedian());
-                if (summary.isMinAvailable()) createItem("Min", summary.getMin());
-                if (summary.isMaxAvailable()) createItem("Max", summary.getMax());                
-                if (summary.isArithmeticMeanAvailable()) createItem("Arithmetic mean", summary.getArithmeticMean());
-                if (summary.isSampleVarianceAvailable()) createItem("Sample variance", summary.getSampleVariance());
-                if (summary.isPopulationVarianceAvailable()) createItem("Population variance", summary.getPopulationVariance());
-                if (summary.isRangeAvailable()) createItem("Range", summary.getRange());
-                if (summary.isKurtosisAvailable()) createItem("Kurtosis", summary.getKurtosis());
-                if (summary.isGeometricMeanAvailable()) createItem("Geometric mean", summary.getGeometricMean());
+                if (summary.isModeAvailable()) createItem(Resources.getMessage("SummaryStatistics.2"), summary.getMode()); //$NON-NLS-1$
+                if (summary.isMedianAvailable()) createItem(Resources.getMessage("SummaryStatistics.3"), summary.getMedian()); //$NON-NLS-1$
+                if (summary.isMinAvailable()) createItem(Resources.getMessage("SummaryStatistics.4"), summary.getMin()); //$NON-NLS-1$
+                if (summary.isMaxAvailable()) createItem(Resources.getMessage("SummaryStatistics.5"), summary.getMax());                 //$NON-NLS-1$
+                if (summary.isArithmeticMeanAvailable()) createItem(Resources.getMessage("SummaryStatistics.6"), summary.getArithmeticMean()); //$NON-NLS-1$
+                if (summary.isSampleVarianceAvailable()) createItem(Resources.getMessage("SummaryStatistics.7"), summary.getSampleVariance()); //$NON-NLS-1$
+                if (summary.isPopulationVarianceAvailable()) createItem(Resources.getMessage("SummaryStatistics.8"), summary.getPopulationVariance()); //$NON-NLS-1$
+                if (summary.isRangeAvailable()) createItem(Resources.getMessage("SummaryStatistics.9"), summary.getRange()); //$NON-NLS-1$
+                if (summary.isKurtosisAvailable()) createItem(Resources.getMessage("SummaryStatistics.10"), summary.getKurtosis()); //$NON-NLS-1$
+                if (summary.isGeometricMeanAvailable()) createItem(Resources.getMessage("SummaryStatistics.11"), summary.getGeometricMean()); //$NON-NLS-1$
 
                 table.setRedraw(true);
                 
