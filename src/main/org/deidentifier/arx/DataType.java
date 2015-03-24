@@ -121,9 +121,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#add(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Date add(Date augend, Date addend) {
             long d1 = augend.getTime();
@@ -131,19 +128,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return new Date(d1 + d2);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#clone()
-         */
         @Override
         public DataType<Date> clone() {
             return this;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.deidentifier.arx.DataType#compare(java.lang.Object, java.lang.Object)
-         */
         @Override
         public int compare(Date t1, Date t2) {
             if (t1 == null && t2 == null) {
@@ -156,11 +145,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return t1.compareTo(t2);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.deidentifier.arx.DataType#compare(java.lang.String, java.lang.String)
-         */
         @Override
         public int compare(final String s1, final String s2) throws ParseException {
             try {
@@ -179,9 +163,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#divide(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Date divide(Date dividend, Date divisor) {
             long d1 = dividend.getTime();
@@ -189,9 +170,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return new Date(d1 / d2);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#divide(java.lang.String, java.lang.String)
-         */
         @Override
         public String divide(String dividend, String divisor) {
             long d1 = parse(dividend).getTime();
@@ -199,9 +177,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return format(new Date(d1 / d2));
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#equals(java.lang.Object)
-         */
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) { return true; }
@@ -215,9 +190,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return true;
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#format(java.lang.Object)
-         */
         @Override
         public String format(Date s){
             if (s == null) {
@@ -226,17 +198,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         	return format.format(s);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#getDescription()
-         */
         @Override
         public DataTypeDescription<Date> getDescription(){
             return description;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithFormat#getFormat()
-         */
         @Override
         public String getFormat() {
             return string;
@@ -255,25 +221,16 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#getMaximum()
-         */
         @Override
         public Date getMaximum() {
             return new Date(Long.MAX_VALUE);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#getMinimum()
-         */
         @Override
         public Date getMinimum() {
             return new Date(Long.MIN_VALUE);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#hashCode()
-         */
         @Override
         public int hashCode() {
             if (string == null) {
@@ -288,9 +245,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#isValid(java.lang.String)
-         */
         @Override
         public boolean isValid(String s) {
             try {
@@ -301,9 +255,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#multiply(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Date multiply(Date multiplicand, Date multiplicator) {
             long d1 = multiplicand.getTime();
@@ -311,27 +262,18 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return new Date(d1 * d2);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#multiply(java.lang.Object, double)
-         */
         @Override
         public Date multiply(Date multiplicand, double multiplicator) {
             long d1 = multiplicand.getTime();
             return new Date((long)((double)d1 * multiplicator));
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#multiply(java.lang.Object, int)
-         */
         @Override
         public Date multiply(Date multiplicand, int multiplicator) {
             long d1 = multiplicand.getTime();
             return new Date(d1 * multiplicator);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#multiply(java.lang.String, java.lang.String)
-         */
         @Override
         public String multiply(String multiplicand, String multiplicator) {
             long d1 = parse(multiplicand).getTime();
@@ -339,9 +281,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return format(new Date(d1 * d2));
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#parse(java.lang.String)
-         */
         @Override
         public Date parse(String s) {
             if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
@@ -354,9 +293,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#ratio(java.lang.Object, java.lang.Object)
-         */
         @Override
         public double ratio(Date dividend, Date divisor) {
             long d1 = dividend.getTime();
@@ -364,9 +300,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return (double)d1 / (double)d2;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#subtract(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Date subtract(Date minuend, Date subtrahend) {
             long d1 = minuend.getTime();
@@ -374,9 +307,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return new Date(d1 - d2);
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString() {
             return "Date(" + string + ")";
@@ -454,25 +384,16 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#add(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Double add(Double augend, Double addend) {
             return parse(format(augend + addend));
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#clone()
-         */
         @Override
         public DataType<Double> clone() {
             return this;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#compare(java.lang.Object, java.lang.Object)
-         */
         @Override
         public int compare(Double t1, Double t2) {
             if (t1 == null && t2 == null) {
@@ -489,9 +410,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return Double.valueOf(d1).compareTo(Double.valueOf(d2));
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#compare(java.lang.String, java.lang.String)
-         */
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
             
@@ -513,17 +431,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#divide(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Double divide(Double dividend, Double divisor) {
             return parse(format(dividend / divisor));
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#divide(java.lang.String, java.lang.String)
-         */
         @Override
         public String divide(String dividend, String divisor) {
             Double d1 = parse(dividend);
@@ -531,9 +443,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return format(d1 / d2);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#equals(java.lang.Object)
-         */
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) { return true; }
@@ -547,9 +456,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return true;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#format(java.lang.Object)
-         */
         @Override
         public String format(Double s){
             if (s == null) {
@@ -562,17 +468,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#getDescription()
-         */
         @Override
         public DataTypeDescription<Double> getDescription(){
             return description;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithFormat#getFormat()
-         */
         @Override
         public String getFormat() {
             return string;
@@ -591,25 +491,16 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#getMaximum()
-         */
         @Override
         public Double getMaximum() {
             return Double.MAX_VALUE;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#getMinimum()
-         */
         @Override
         public Double getMinimum() {
             return -Double.MAX_VALUE;
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#hashCode()
-         */
         @Override
         public int hashCode() { 
             if (string==null) {
@@ -624,9 +515,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#isValid(java.lang.String)
-         */
         @Override
         public boolean isValid(String s) {
             try {
@@ -637,33 +525,21 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#multiply(java.lang.Object, double)
-         */
         @Override
         public Double multiply(Double multiplicand, double multiplicator) {
             return parse(format(multiplicand * multiplicator));
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#multiply(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Double multiply(Double multiplicand, Double multiplicator) {
             return parse(format(multiplicand * multiplicator));
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#multiply(java.lang.Object, int)
-         */
         @Override
         public Double multiply(Double multiplicand, int multiplicator) {
             return parse(format(multiplicand* multiplicator));
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#multiply(java.lang.String, java.lang.String)
-         */
         @Override
         public String multiply(String multiplicand, String multiplicator) {
             Double d1 = parse(multiplicand);
@@ -671,9 +547,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return format(d1 * d2);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#parse(java.lang.String)
-         */
         @Override
         public Double parse(String s) {
             if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
@@ -690,25 +563,16 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#ratio(java.lang.Object, java.lang.Object)
-         */
         @Override
         public double ratio(Double dividend, Double divisor) {
             return parse(format(dividend / divisor));
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#subtract(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Double subtract(Double minuend, Double subtrahend) {
             return parse(format(minuend - subtrahend));
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString() {
             return "Decimal";
@@ -787,25 +651,16 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#add(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Long add(Long augend, Long addend) {
             return augend + addend;
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#clone()
-         */
         @Override
         public DataType<Long> clone() {
             return this;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#compare(java.lang.Object, java.lang.Object)
-         */
         @Override
         public int compare(Long t1, Long t2) {
             if (t1 == null && t2 == null) {
@@ -818,9 +673,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return t1.compareTo(t2);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#compare(java.lang.String, java.lang.String)
-         */
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
             
@@ -841,17 +693,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#divide(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Long divide(Long dividend, Long divisor) {
             return (long)Math.round((double)dividend / (double)divisor);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#divide(java.lang.String, java.lang.String)
-         */
         @Override
         public String divide(String dividend, String divisor) {
             Long d1 = parse(dividend);
@@ -859,9 +705,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return format(d1 / d2);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#equals(java.lang.Object)
-         */
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) { return true; }
@@ -875,9 +718,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return true;
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#format(java.lang.Object)
-         */
         @Override
         public String format(Long s){
             if (s == null) {
@@ -890,17 +730,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#getDescription()
-         */
         @Override
         public DataTypeDescription<Long> getDescription(){
             return description;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithFormat#getFormat()
-         */
         @Override
         public String getFormat() {
             return string;
@@ -919,25 +753,16 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#getMaximum()
-         */
         @Override
         public Long getMaximum() {
             return Long.MAX_VALUE;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#getMinimum()
-         */
         @Override
         public Long getMinimum() {
             return Long.MIN_VALUE;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#hashCode()
-         */
         @Override
         public int hashCode() {
             if (string == null) {
@@ -952,9 +777,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#isValid(java.lang.String)
-         */
         @Override
         public boolean isValid(String s) {
             try {
@@ -965,33 +787,21 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#multiply(java.lang.Object, double)
-         */
         @Override
         public Long multiply(Long multiplicand, double multiplicator) {
             return (long)((double)multiplicand * multiplicator);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#multiply(java.lang.Object, int)
-         */
         @Override
         public Long multiply(Long multiplicand, int multiplicator) {
             return multiplicand * multiplicator;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#multiply(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Long multiply(Long multiplicand, Long multiplicator) {
             return (long)Math.round((double)multiplicand * (double)multiplicator);
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#multiply(java.lang.String, java.lang.String)
-         */
         @Override
         public String multiply(String multiplicand, String multiplicator) {
             Long d1 = parse(multiplicand);
@@ -999,9 +809,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return format(d1 * d2);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#parse(java.lang.String)
-         */
         @Override
         public Long parse(String s) {
             if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
@@ -1018,25 +825,16 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#ratio(java.lang.Object, java.lang.Object)
-         */
         @Override
         public double ratio(Long dividend, Long divisor) {
             return (double)dividend / (double)divisor;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithRatioScale#subtract(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Long subtract(Long minuend, Long subtrahend) {
             return minuend - subtrahend;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString() {
             return "Integer";
@@ -1135,17 +933,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#clone()
-         */
         @Override
         public DataType<String> clone() {
             return this;
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#compare(java.lang.String, java.lang.String)
-         */
         @Override
         public int compare(String s1, String s2) {
             
@@ -1169,9 +961,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#equals(java.lang.Object)
-         */
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) { return true; }
@@ -1189,9 +978,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return true;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#format(java.lang.Object)
-         */
         @Override
         public String format(String s){
             if (s == null) {
@@ -1203,9 +989,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         	return s;
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#getDescription()
-         */
         @Override
         public DataTypeDescription<String> getDescription(){
             return description;
@@ -1230,9 +1013,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return result;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType.DataTypeWithFormat#getFormat()
-         */
         @Override
         public String getFormat() {
             if (order == null) return "";
@@ -1263,17 +1043,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return Locale.getDefault();
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#hashCode()
-         */
         @Override
         public int hashCode() {
             return ARXOrderedString.class.hashCode();
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#isValid(java.lang.String)
-         */
         @Override
         public boolean isValid(String s) {
             if (s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
@@ -1285,9 +1059,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#parse(java.lang.String)
-         */
         @Override
         public String parse(String s) {
             if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
@@ -1299,9 +1070,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         	return s;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString() {
             return "OrderedString";
@@ -1326,17 +1094,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             @Override public DataType<String> newInstance(String format, Locale locale) {return STRING;}
         };
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#clone()
-         */
         @Override
         public DataType<String> clone() {
             return this;
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#compare(java.lang.String, java.lang.String)
-         */
         @Override
         public int compare(final String s1, final String s2) {
             if (s1 == null || s2 == null) {
@@ -1345,9 +1107,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return s1.compareTo(s2);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#equals(java.lang.Object)
-         */
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) { return true; }
@@ -1356,9 +1115,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return true;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#format(java.lang.Object)
-         */
         @Override
         public String format(String s){
             if (s == null) {
@@ -1367,33 +1123,21 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return s;
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#getDescription()
-         */
         @Override
         public DataTypeDescription<String> getDescription(){
             return description;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#hashCode()
-         */
         @Override
         public int hashCode() {
             return ARXString.class.hashCode();
         }
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#isValid(java.lang.String)
-         */
         @Override
         public boolean isValid(String s) {
             return s != null;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.DataType#parse(java.lang.String)
-         */
         @Override
         public String parse(String s) {
             if (s == null) {
@@ -1402,9 +1146,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return s;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString() {
             return "String";
@@ -1901,9 +1642,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         return result;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
     @Override
     public abstract DataType<T> clone();
     
@@ -1937,9 +1675,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         return AggregateFunction.forType(this);
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public abstract boolean equals(Object other);
 
@@ -1958,9 +1693,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public abstract DataTypeDescription<T> getDescription();
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public abstract int hashCode();
     

@@ -41,25 +41,16 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
      */
     protected final class GroupifyCounter implements IGroupify {
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callAll(int[], int)
-         */
         @Override
         public final void callAll(final int[] outtuple, final int i) {
             groupify.addAll(outtuple, i, 1, null, -1);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callGroupify(int[], org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-         */
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
             groupify.addGroupify(outtuple, element.representant, element.count, null, -1);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callSnapshot(int[], int[], int)
-         */
         @Override
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
             groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], null, null, -1);
@@ -72,25 +63,16 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
      */
     protected final class GroupifyCounterDistribution implements IGroupify {
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callAll(int[], int)
-         */
         @Override
         public final void callAll(final int[] outtuple, final int i) {
             groupify.addAll(outtuple, i, 1, sensitiveValues[i], -1);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callGroupify(int[], org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-         */
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
             groupify.addGroupify(outtuple, element.representant, element.count, element.distributions, -1);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callSnapshot(int[], int[], int)
-         */
         @Override
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
             
@@ -115,25 +97,16 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
      */
     protected final class GroupifyCounterSecondaryCounter implements IGroupify {
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callAll(int[], int)
-         */
         @Override
         public final void callAll(final int[] outtuple, final int i) {
             groupify.addAll(outtuple, i, 1, null, 1);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callGroupify(int[], org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-         */
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
             groupify.addGroupify(outtuple, element.representant, element.count, null, element.pcount);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callSnapshot(int[], int[], int)
-         */
         @Override
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
             groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], null, null, snapshot[i + 2]);
@@ -147,25 +120,16 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
      */
     protected final class GroupifyCounterSecondaryCounterDistribution implements IGroupify {
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callAll(int[], int)
-         */
         @Override
         public final void callAll(final int[] outtuple, final int i) {
             groupify.addAll(outtuple, i, 1, sensitiveValues[i], 1);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callGroupify(int[], org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-         */
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
             groupify.addGroupify(outtuple, element.representant, element.count, element.distributions, element.pcount);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callSnapshot(int[], int[], int)
-         */
         @Override
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
 
@@ -191,25 +155,16 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
      */
     protected final class GroupifyDistribution implements IGroupify {
         
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callAll(int[], int)
-         */
         @Override
         public final void callAll(final int[] outtuple, final int i) {
             groupify.addAll(outtuple, i, 1, sensitiveValues[i], -1);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callGroupify(int[], org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-         */
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
             groupify.addGroupify(outtuple, element.representant, element.count, element.distributions, -1);
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.check.transformer.AbstractTransformer.IGroupify#callSnapshot(int[], int[], int)
-         */
         @Override
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
 

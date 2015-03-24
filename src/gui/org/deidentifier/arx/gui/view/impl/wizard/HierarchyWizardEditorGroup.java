@@ -96,9 +96,6 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
         };
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardEditorFunction.IHierarchyFunctionEditorParent#setFunction(org.deidentifier.arx.aggregates.AggregateFunction)
-     */
     @Override
     public void setFunction(AggregateFunction<T> function) {
         if (this.group == null) return;
@@ -110,9 +107,6 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
         model.update(this);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView#update()
-     */
     @SuppressWarnings("unchecked")
     @Override
     public void update() {

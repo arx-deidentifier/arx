@@ -1467,9 +1467,6 @@ public class Controller implements IView {
         listeners.get(target).add(listener);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         for (final Set<IView> listeners : getListeners().values()) {
@@ -1517,9 +1514,6 @@ public class Controller implements IView {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
     @Override
     public void reset() {
         for (final Set<IView> listeners : getListeners().values()) {
@@ -1529,9 +1523,6 @@ public class Controller implements IView {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(final ModelEvent event) {
         if (model != null && model.isDebugEnabled()) this.debug.addEvent(event);

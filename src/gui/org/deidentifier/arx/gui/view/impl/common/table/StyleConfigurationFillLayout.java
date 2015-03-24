@@ -60,9 +60,6 @@ public class StyleConfigurationFillLayout extends CTStyleConfiguration {
         font = config.getFont();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.config.IConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
-     */
     @Override
     public void configureRegistry(IConfigRegistry configRegistry) {
         addFillLayoutStyleConfig(configRegistry);

@@ -84,9 +84,6 @@ public class DataTableBodyLayerStack extends AbstractLayerTransform {
         return viewportLayer;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#setClientAreaProvider(org.eclipse.nebula.widgets.nattable.util.IClientAreaProvider)
-     */
     @Override
     public void setClientAreaProvider(IClientAreaProvider clientAreaProvider) {
         super.setClientAreaProvider(clientAreaProvider);

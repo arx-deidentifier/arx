@@ -100,9 +100,6 @@ public class TestAnonymizationTCloseness extends TestAnonymizationAbstract {
         super(testCase);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.test.TestAnonymizationAbstract#test()
-     */
     @Override
     @Test
     public void test() throws IOException {

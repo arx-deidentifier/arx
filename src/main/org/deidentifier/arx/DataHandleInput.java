@@ -103,9 +103,6 @@ public class DataHandleInput extends DataHandle {
         this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), null);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.DataHandle#getAttributeName(int)
-     */
     @Override
     public String getAttributeName(final int column) {
         checkRegistry();
@@ -113,36 +110,24 @@ public class DataHandleInput extends DataHandle {
         return header[column];
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.DataHandle#getGeneralization(java.lang.String)
-     */
     @Override
     public int getGeneralization(final String attribute) {
         checkRegistry();
         return 0;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.DataHandle#getNumColumns()
-     */
     @Override
     public int getNumColumns() {
         checkRegistry();
         return header.length;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.DataHandle#getNumRows()
-     */
     @Override
     public int getNumRows() {
         checkRegistry();
         return data.length;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.DataHandle#getValue(int, int)
-     */
     @Override
     public String getValue(final int row, final int column) {
         checkRegistry();
@@ -151,17 +136,11 @@ public class DataHandleInput extends DataHandle {
         return internalGetValue(row, column);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.DataHandle#isOutlier(int)
-     */
     @Override
     public boolean isOutlier(int row){
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.DataHandle#iterator()
-     */
     @Override
     public Iterator<String[]> iterator() {
         checkRegistry();
@@ -219,17 +198,11 @@ public class DataHandleInput extends DataHandle {
         dataIS = null;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.DataHandle#getBaseDataType(java.lang.String)
-     */
     @Override
     protected DataType<?> getBaseDataType(final String attribute) {
         return this.getDataType(attribute);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.DataHandle#getDataTypeArray()
-     */
     @Override
     protected DataType<?>[][] getDataTypeArray() {
         checkRegistry();
@@ -245,9 +218,6 @@ public class DataHandleInput extends DataHandle {
         return dataTypes;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.DataHandle#getDistinctValues(int, org.deidentifier.arx.DataHandleStatistics.InterruptHandler)
-     */
     @Override
     protected String[] getDistinctValues(final int column, InterruptHandler handler) {
         checkRegistry();
@@ -262,11 +232,6 @@ public class DataHandleInput extends DataHandle {
         return vals;
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.ARXDataHandle#getValueInternal(int, int)
-     */
     @Override
     protected String internalGetValue(final int row, final int column) {
         return dictionary.getMapping()[column][data[row][column]];

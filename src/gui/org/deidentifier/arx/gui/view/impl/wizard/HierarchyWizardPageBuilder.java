@@ -57,26 +57,16 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
         this.model.update();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
-     */
     @Override
     public boolean canFlipToNextPage() {
         return isPageComplete();
     }
 
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
-     */
     @Override
     public IWizardPage getNextPage() {
         return finalPage;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
-     */
     @Override
     public void setVisible(boolean value){
         
@@ -89,9 +79,6 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
         model.setVisible(value);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView#update()
-     */
     @Override
     public void update() {
         if (model.getError() != null) {

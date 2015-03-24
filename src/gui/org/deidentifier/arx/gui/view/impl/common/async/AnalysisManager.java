@@ -78,9 +78,6 @@ public class AnalysisManager {
             return this.stopped;
         }
         
-        /* (non-Javadoc)
-         * @see java.lang.Runnable#run()
-         */
         @Override
         public void run() {
             try {

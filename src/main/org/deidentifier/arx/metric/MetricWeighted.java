@@ -51,27 +51,18 @@ public abstract class MetricWeighted<T extends InformationLoss<?>> extends Metri
         super(monotonic, independent);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     @SuppressWarnings("unchecked")
     protected T getLowerBoundInternal(final Node node) {
         return (T)node.getLowerBound();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     @SuppressWarnings("unchecked")
     protected T getLowerBoundInternal(final Node node, final IHashGroupify groupify) {
         return (T)node.getLowerBound();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
-     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 

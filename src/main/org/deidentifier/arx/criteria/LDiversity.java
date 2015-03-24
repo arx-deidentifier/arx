@@ -72,9 +72,6 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
         return minSize;
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#getRequirements()
-     */
     @Override
     public int getRequirements() {
 

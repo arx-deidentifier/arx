@@ -75,9 +75,6 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
         this.addConfiguration(new StyleConfigurationFillLayout(config));
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#doCommand(org.eclipse.nebula.widgets.nattable.command.ILayerCommand)
-     */
     @Override
     public boolean doCommand(ILayerCommand command) {
         if (command instanceof FillLayerResetCommand) {
@@ -92,35 +89,23 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
         return super.doCommand(command);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#getCellByPosition(int, int)
-     */
     @Override
     public ILayerCell getCellByPosition(int columnPosition, int rowPosition) {
         if (isAdditionalColumnActive() && isAdditionalColumn(columnPosition)) { return new LayerCell(this, columnPosition, rowPosition); }
         return super.getCellByPosition(columnPosition, rowPosition);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#getColumnCount()
-     */
     @Override
     public int getColumnCount() {
         return isAdditionalColumnActive() ? super.getColumnCount() + 1 : super.getColumnCount();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#getColumnIndexByPosition(int)
-     */
     @Override
     public int getColumnIndexByPosition(int columnPosition) {
         if (isAdditionalColumnActive() && isAdditionalColumn(columnPosition)) { return columnPosition; }
         return super.getColumnIndexByPosition(columnPosition);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer#getColumnPositionByIndex(int)
-     */
     @Override
     public int getColumnPositionByIndex(int columnIndex) {
         if (columnIndex >= 0 && columnIndex < getColumnCount()) {
@@ -130,9 +115,6 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#getColumnPositionByX(int)
-     */
     @Override
     public int getColumnPositionByX(int x) {
         
@@ -152,9 +134,6 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#getColumnWidthByPosition(int)
-     */
     @Override
     public int getColumnWidthByPosition(int columnPosition) {
         
@@ -167,9 +146,6 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#getConfigLabelsByPosition(int, int)
-     */
     @Override
     public LabelStack getConfigLabelsByPosition(int columnPosition, int rowPosition) {
         if (isAdditionalColumnActive() && isAdditionalColumn(columnPosition)) {
@@ -195,26 +171,17 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#getPreferredColumnCount()
-     */
     @Override
     public int getPreferredColumnCount() {
         return getColumnCount();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#getPreferredWidth()
-     */
     @Override
     public int getPreferredWidth() {
         return isEqualWidthActive() ? super.getWidth() + getGapWidth() :
                 isAdditionalColumnActive() ? super.getPreferredWidth()+ getColumnWidthByPosition(getAdditionalColumnPosition()) : super.getPreferredWidth();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer#getRowPositionByIndex(int)
-     */
     @Override
     public int getRowPositionByIndex(int rowIndex) {
         if (rowIndex >= 0 && rowIndex < getRowCount()) {
@@ -224,9 +191,6 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#getStartXOfColumnPosition(int)
-     */
     @Override
     public int getStartXOfColumnPosition(int columnPosition) {
         if (isEqualWidthActive()) {
@@ -236,18 +200,12 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#getWidth()
-     */
     @Override
     public int getWidth() {
         return isEqualWidthActive() ? super.getWidth() + getGapWidth() :
                isAdditionalColumnActive() ? super.getWidth() + getColumnWidthByPosition(getAdditionalColumnPosition()) : super.getWidth();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayer#handleLayerEvent(org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent)
-     */
     @Override
     public void handleLayerEvent(ILayerEvent event) {
         if (event instanceof ColumnResizeEvent) {

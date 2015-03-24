@@ -73,9 +73,7 @@ public class WorkerExport extends Worker<DataHandle> {
         this.handle = handle;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-     */
+ 
     @Override
     public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                             			InterruptedException {

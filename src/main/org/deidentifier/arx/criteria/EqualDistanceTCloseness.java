@@ -47,18 +47,12 @@ public class EqualDistanceTCloseness extends TCloseness {
         super(attribute, t);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.ExplicitPrivacyCriterion#initialize(org.deidentifier.arx.framework.data.DataManager)
-     */
     @Override
     public void initialize(DataManager manager) {
         super.initialize(manager);
         distribution = manager.getDistribution(attribute);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
@@ -97,9 +91,6 @@ public class EqualDistanceTCloseness extends TCloseness {
         return val <= t;
     }
 
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
-	 */
 	@Override
 	public String toString() {
 		return t+"-closeness with equal distance for attribute '"+attribute+"'";

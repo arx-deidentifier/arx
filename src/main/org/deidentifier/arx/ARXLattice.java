@@ -614,9 +614,6 @@ public class ARXLattice implements Serializable {
             this.hashCode = Arrays.hashCode(array);
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
         @Override
         public final boolean equals(final Object obj) {
             if (this == obj) { return true; }
@@ -633,17 +630,11 @@ public class ARXLattice implements Serializable {
             return array;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
         @Override
         public final int hashCode() {
             return hashCode;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public final String toString() {
             return Arrays.toString(array);

@@ -93,9 +93,6 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView#update()
-     */
     @Override
     public void update() {
         repeat.update();

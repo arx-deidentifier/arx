@@ -63,26 +63,17 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
                                        );
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#isIndependent()
-     */
     @Override
     public boolean isIndependent() {
         // TODO: Remove
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed#toString()
-     */
     @Override
     public String toString() {
         return "Non-uniform entropy";
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         return null;

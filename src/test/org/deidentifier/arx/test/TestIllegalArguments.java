@@ -37,9 +37,6 @@ import org.junit.Test;
  */
 public class TestIllegalArguments extends AbstractTest {
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.test.AbstractTest#setUp()
-     */
     @Override
     @Before
     public void setUp() {

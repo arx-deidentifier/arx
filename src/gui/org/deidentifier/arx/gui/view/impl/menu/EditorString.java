@@ -80,9 +80,6 @@ public abstract class EditorString implements IEditor<String> {
         this.ok = ok;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IEditor#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     public void createControl(final Composite parent) {
         
@@ -111,9 +108,6 @@ public abstract class EditorString implements IEditor<String> {
         });
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IEditor#getCategory()
-     */
     @Override
     public String getCategory() {
         return category;
@@ -128,9 +122,6 @@ public abstract class EditorString implements IEditor<String> {
         return text;
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IEditor#getLabel()
-     */
     @Override
     public String getLabel() {
         return label;

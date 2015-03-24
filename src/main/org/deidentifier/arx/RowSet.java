@@ -88,9 +88,6 @@ public class RowSet implements Serializable, Cloneable {
         size += array[offset] != temp ? 1 : 0; 
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
     @Override
     public RowSet clone() {
         RowSet set = new RowSet(this.length);

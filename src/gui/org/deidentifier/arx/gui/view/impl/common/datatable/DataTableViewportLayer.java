@@ -50,10 +50,6 @@ public class DataTableViewportLayer extends ViewportLayer{
         this.context = context;
     }
     
-
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#doCommand(org.eclipse.nebula.widgets.nattable.command.ILayerCommand)
-     */
     @Override
     public boolean doCommand(ILayerCommand command) {
         
@@ -80,9 +76,6 @@ public class DataTableViewportLayer extends ViewportLayer{
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#moveCellPositionIntoViewport(int, int)
-     */
     @Override
     public void moveCellPositionIntoViewport(int scrollableColumnPosition, int scrollableRowPosition) {
         if (!(context.isRowExpanded() && context.isColumnExpanded())) {
@@ -90,9 +83,6 @@ public class DataTableViewportLayer extends ViewportLayer{
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#moveColumnPositionIntoViewport(int)
-     */
     @Override
     public void moveColumnPositionIntoViewport(int scrollableColumnPosition) {
         if (!context.isColumnExpanded()) {
@@ -100,10 +90,6 @@ public class DataTableViewportLayer extends ViewportLayer{
         }
     }
 
-
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#moveRowPositionIntoViewport(int)
-     */
     @Override
     public void moveRowPositionIntoViewport(int scrollableRowPosition) {
         if (!context.isRowExpanded()) {
@@ -147,28 +133,18 @@ public class DataTableViewportLayer extends ViewportLayer{
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#isLastColumnCompletelyDisplayed()
-     */
     @Override
     protected boolean isLastColumnCompletelyDisplayed() {
         if (context.isColumnExpanded()) return true;
         else return super.isLastColumnCompletelyDisplayed();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#isLastRowCompletelyDisplayed()
-     */
     @Override
     protected boolean isLastRowCompletelyDisplayed() {
         if (context.isRowExpanded()) return true;
         else return super.isLastRowCompletelyDisplayed();
     }
 
-
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#registerCommandHandlers()
-     */
     @Override
     protected void registerCommandHandlers() {
         registerCommandHandler(new RecalculateScrollBarsCommandHandler(this));

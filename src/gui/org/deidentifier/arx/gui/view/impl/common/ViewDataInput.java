@@ -110,9 +110,6 @@ public class ViewDataInput extends ViewData {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(final ModelEvent event) {
         
@@ -210,9 +207,6 @@ public class ViewDataInput extends ViewData {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#actionCellSelected(org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent)
-     */
     @Override
     protected void actionCellSelected(CellSelectionEvent arg1) {
 
@@ -244,26 +238,17 @@ public class ViewDataInput extends ViewData {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#actionSort()
-     */
     @Override
     protected void actionSort(){
         controller.actionDataSort(true);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#getDefinition()
-     */
     @Override
     protected DataDefinition getDefinition() {
         if (model == null) return null;
         else return model.getInputDefinition();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#getHandle()
-     */
     @Override
     protected DataHandle getHandle() {
         if (model != null){

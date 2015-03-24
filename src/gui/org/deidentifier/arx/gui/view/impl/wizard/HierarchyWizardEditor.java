@@ -136,9 +136,6 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
         this.model.update();
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardEditorFunction.IHierarchyFunctionEditorParent#setFunction(org.deidentifier.arx.aggregates.AggregateFunction)
-     */
     @Override
     public void setFunction(AggregateFunction<T> function) {
         model.setDefaultFunction(function);
@@ -155,9 +152,6 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
         this.composite.setLayoutData(object);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView#update()
-     */
     @Override
     public void update() {
         this.canvascomposite.redraw();

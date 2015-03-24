@@ -92,9 +92,6 @@ public class DPresence extends ImplicitPrivacyCriterion{
         return dMin;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#getRequirements()
-     */
     @Override
     public int getRequirements(){
         // Requires two counters
@@ -111,27 +108,17 @@ public class DPresence extends ImplicitPrivacyCriterion{
         return this.subset;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#initialize(org.deidentifier.arx.framework.data.DataManager)
-     */
     @Override
     public void initialize(DataManager manager) {
         // Nothing to do
     }
     
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         double delta = entry.count == 0 ? 0d : (double) entry.count / (double) entry.pcount;
         return (delta >= dMin) && (delta <= dMax);
     }
     
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
-	 */
 	@Override
 	public String toString() {
 		return "("+dMin+","+dMax+")-presence";

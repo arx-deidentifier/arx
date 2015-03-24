@@ -195,9 +195,6 @@ public abstract class ViewData implements IView {
         table.addScrollBarListener(listener);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -219,9 +216,6 @@ public abstract class ViewData implements IView {
         return table.getViewportLayer();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
     @Override
     public void reset() {
         table.reset();
@@ -231,9 +225,6 @@ public abstract class ViewData implements IView {
         descendingButton.setEnabled(false);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(final ModelEvent event) {
 

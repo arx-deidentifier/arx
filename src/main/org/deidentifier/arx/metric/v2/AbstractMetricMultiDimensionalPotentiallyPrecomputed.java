@@ -74,9 +74,6 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         this.precomputedMetric = precomputedMetric;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional#createMaxInformationLoss()
-     */
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         if (precomputed) {
@@ -86,10 +83,6 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         }
     }
 
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional#createMinInformationLoss()
-     */
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         if (precomputed) {
@@ -99,9 +92,6 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional#getAggregateFunction()
-     */
     @Override
     public AggregateFunction getAggregateFunction() {
         if (precomputed) {
@@ -111,9 +101,6 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#isIndependent()
-     */
     @Override
     public boolean isIndependent() {
         return precomputed ? precomputedMetric.isIndependent() : defaultMetric.isIndependent();
@@ -138,9 +125,6 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected InformationLossWithBound<AbstractILMultiDimensional>
             getInformationLossInternal(Node node, IHashGroupify groupify) {
@@ -148,18 +132,12 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
                              defaultMetric.getInformationLoss(node, groupify);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         return precomputed ? precomputedMetric.getLowerBound(node) : 
                              defaultMetric.getLowerBound(node);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node, IHashGroupify groupify) {
         return precomputed ? precomputedMetric.getLowerBound(node, groupify) : 
@@ -184,9 +162,6 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         return this.threshold;
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
-     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 

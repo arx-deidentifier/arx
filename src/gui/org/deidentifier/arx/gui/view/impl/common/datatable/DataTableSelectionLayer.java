@@ -41,41 +41,26 @@ public class DataTableSelectionLayer extends SelectionLayer {
         this.context = context;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.selection.SelectionLayer#isCellPositionSelected(int, int)
-     */
     @Override
     public boolean isCellPositionSelected(int columnPosition, int rowPosition) {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.selection.SelectionLayer#isColumnPositionFullySelected(int)
-     */
     @Override
     public boolean isColumnPositionFullySelected(int columnPosition) {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.selection.SelectionLayer#isColumnPositionSelected(int)
-     */
     @Override
     public boolean isColumnPositionSelected(int columnPosition) {
         return columnPosition-1==context.getSelectedIndex();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.selection.SelectionLayer#isRowPositionFullySelected(int)
-     */
     @Override
     public boolean isRowPositionFullySelected(int rowPosition) {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.selection.SelectionLayer#isRowPositionSelected(int)
-     */
     @Override
     public boolean isRowPositionSelected(int rowPosition) {
         return false;

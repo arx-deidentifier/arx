@@ -51,9 +51,6 @@ public class EntropyLDiversity extends LDiversity {
         logL = Math.log(l) / Math.log(2d);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
@@ -81,9 +78,6 @@ public class EntropyLDiversity extends LDiversity {
         return val >= logL;
     }
 
-    /* (non-Javadoc)
-	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
-	 */
 	@Override
 	public String toString() {
 		return "entropy-"+l+"-diversity for attribute '"+attribute+"'";

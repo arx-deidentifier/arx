@@ -43,9 +43,6 @@ public class Inclusion extends DPresence {
         super(subset);
     }
         
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.DPresence#getRequirements()
-     */
     @Override
     public int getRequirements(){
         // Requires two counters
@@ -53,25 +50,16 @@ public class Inclusion extends DPresence {
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.DPresence#initialize(org.deidentifier.arx.framework.data.DataManager)
-     */
     @Override
     public void initialize(DataManager manager) {
         // Nothing to do
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.DPresence#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.DPresence#toString()
-     */
     @Override
     public String toString() {
         return "Inclusion";

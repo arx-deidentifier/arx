@@ -45,9 +45,6 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
         super(testcase);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.test.TestUtilityMetricsAbstract#test()
-     */
     @Test
     public void test() throws IOException {
 

@@ -46,9 +46,6 @@ public class DataTableConfigLabelAccumulator implements IConfigLabelAccumulator 
         this.table = table;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator#accumulateConfigLabels(org.eclipse.nebula.widgets.nattable.layer.LabelStack, int, int)
-     */
     @Override
     public void accumulateConfigLabels(LabelStack configLabels, int columnPosition, int rowPosition) {
 

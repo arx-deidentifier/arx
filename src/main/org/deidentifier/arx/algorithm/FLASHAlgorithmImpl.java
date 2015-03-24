@@ -73,9 +73,6 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                                               new LinkedList<Node>() : null;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.algorithm.AbstractAlgorithm#traverse()
-     */
     @Override
     public void traverse() {
 

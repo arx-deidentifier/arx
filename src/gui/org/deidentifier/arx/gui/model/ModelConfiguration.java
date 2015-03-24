@@ -80,9 +80,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
         return config.addCriterion(c);
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
     @Override
     public ModelConfiguration clone() {
 

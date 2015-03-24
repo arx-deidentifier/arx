@@ -70,10 +70,6 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
         this.mean = getMean();
     }
     
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensional#clone()
-     */
     @Override
     public InformationLoss<double[]> clone() {
         return new ILMultiDimensionalRank(mean,
@@ -82,9 +78,6 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
                                           getWeights());
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensional#compareTo(org.deidentifier.arx.metric.InformationLoss)
-     */
     @Override
     public int compareTo(InformationLoss<?> other) {
         if (other == null) {
@@ -101,25 +94,16 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensional#getValue()
-     */
     @Override
     public double[] getValue() {
         return this.getValues();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.InformationLoss#hashCode()
-     */
     @Override
     public int hashCode() {
         return Arrays.hashCode(this.aggregate);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensional#relativeTo(org.deidentifier.arx.metric.InformationLoss, org.deidentifier.arx.metric.InformationLoss)
-     */
     @Override
     public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
         
@@ -131,9 +115,6 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
         return result < 0d ? 0d : (result > 1d ? 1d : result);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensional#toString()
-     */
     @Override
     public String toString() {
         return Arrays.toString(this.aggregate);
@@ -198,9 +179,6 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensional#convert(org.deidentifier.arx.metric.InformationLoss)
-     */
     @Override
     protected ILMultiDimensionalRank convert(InformationLoss<?> other) {
         if (other == null) return null;
@@ -213,9 +191,6 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensional#setValues(double[])
-     */
     @Override
     protected void setValues(double[] values) {
         super.setValues(values);

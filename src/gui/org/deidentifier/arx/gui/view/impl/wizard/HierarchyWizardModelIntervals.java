@@ -47,9 +47,6 @@ public class HierarchyWizardModelIntervals<T> extends HierarchyWizardModelGroupi
         this.update();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#getBuilder(boolean)
-     */
     @Override
     public HierarchyBuilderIntervalBased<T> getBuilder(boolean serializable) throws Exception{
         HierarchyBuilderIntervalBased<T> builder = HierarchyBuilderIntervalBased.create(super.getDataType(),
@@ -77,9 +74,6 @@ public class HierarchyWizardModelIntervals<T> extends HierarchyWizardModelGroupi
         return builder;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#parse(org.deidentifier.arx.aggregates.HierarchyBuilder)
-     */
     @Override
     public void parse(HierarchyBuilder<T> builder) throws IllegalArgumentException {
         
@@ -89,9 +83,6 @@ public class HierarchyWizardModelIntervals<T> extends HierarchyWizardModelGroupi
         super.parse((HierarchyBuilderIntervalBased<T>)builder);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#build()
-     */
     @Override
     protected void build() {
         super.hierarchy = null;

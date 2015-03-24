@@ -125,9 +125,6 @@ public class ModelEvent {
         this.source = source;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         String sourceLabel = "NULL"; //$NON-NLS-1$

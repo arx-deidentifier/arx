@@ -57,9 +57,6 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         super(false, false);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#createMaxInformationLoss()
-     */
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         return new InformationLossDefault(1);

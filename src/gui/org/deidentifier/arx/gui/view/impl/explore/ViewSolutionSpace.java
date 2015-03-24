@@ -193,11 +193,6 @@ public abstract class ViewSolutionSpace implements IView {
         this.showPrimaryComposite();
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -213,9 +208,6 @@ public abstract class ViewSolutionSpace implements IView {
         this.selectedNode = null;
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(final ModelEvent event) {
 

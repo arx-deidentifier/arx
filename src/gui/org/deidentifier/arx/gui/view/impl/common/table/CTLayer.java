@@ -57,9 +57,6 @@ public abstract class CTLayer extends AbstractLayerTransform implements CTCompon
         this.context = context;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.common.table.CTComponent#getConfig()
-     */
     public CTConfiguration getConfig(){
         return config;
     }

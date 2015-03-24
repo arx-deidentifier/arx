@@ -199,9 +199,6 @@ public class ViewCodingModel implements IView {
         root.pack();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -211,9 +208,6 @@ public class ViewCodingModel implements IView {
         COLOR_DARK.dispose();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
     @Override
     public void reset() {
         if (root.isDisposed()) {
@@ -224,9 +218,6 @@ public class ViewCodingModel implements IView {
         root.setRedraw(true);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(ModelEvent event) {
         if (event.part == ModelPart.MODEL) {

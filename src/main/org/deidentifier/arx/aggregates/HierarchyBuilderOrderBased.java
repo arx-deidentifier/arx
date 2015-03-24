@@ -268,9 +268,6 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         return comparator;
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased#prepareGroups()
-     */
     @SuppressWarnings("unchecked")
     @Override
     protected AbstractGroup[][] prepareGroups() {

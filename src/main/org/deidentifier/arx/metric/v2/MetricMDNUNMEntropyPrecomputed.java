@@ -72,18 +72,11 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
                                        );
     }
 
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed#toString()
-     */
     @Override
     public String toString() {
         return "Non-monotonic non-uniform entropy";
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         
@@ -137,26 +130,17 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
                                                createInformationLoss(bound));
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         return super.getInformationLossInternal(node, (IHashGroupify)null).getLowerBound();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                        IHashGroupify groupify) {
         return super.getInformationLossInternal(node, (IHashGroupify)null).getLowerBound();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
-     */
     @Override
     protected void initializeInternal(DataDefinition definition,
                                       Data input,

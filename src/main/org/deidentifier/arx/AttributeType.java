@@ -90,11 +90,6 @@ public class AttributeType implements Serializable, Cloneable {
                 hierarchy.add(row);
             }
 
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.deidentifier.arx.AttributeType.Hierarchy#clone()
-             */
             @Override
             public Hierarchy clone() {
                 if (array != null) {
@@ -104,11 +99,6 @@ public class AttributeType implements Serializable, Cloneable {
                 }
             }
 
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.deidentifier.arx.AttributeType.Hierarchy#getHierarchy()
-             */
             @Override
             public String[][] getHierarchy() {
                 if (array == null) {
@@ -145,21 +135,11 @@ public class AttributeType implements Serializable, Cloneable {
                 this.hierarchy = hierarchy;
             }
 
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.deidentifier.arx.AttributeType.Hierarchy#clone()
-             */
             @Override
             public Hierarchy clone() {
                 return new DefaultHierarchy(getHierarchy());
             }
 
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.deidentifier.arx.AttributeType.Hierarchy#getHierarchy()
-             */
             @Override
             public String[][] getHierarchy() {
                 return hierarchy;
@@ -192,11 +172,6 @@ public class AttributeType implements Serializable, Cloneable {
                 this.iterator = iterator;
             }
 
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.deidentifier.arx.AttributeType.Hierarchy#clone()
-             */
             @Override
             public Hierarchy clone() {
                 if (array != null) {
@@ -206,11 +181,6 @@ public class AttributeType implements Serializable, Cloneable {
                 }
             }
 
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.deidentifier.arx.AttributeType.Hierarchy#getHierarchy()
-             */
             @Override
             public String[][] getHierarchy() {
                 if (array == null) {
@@ -453,11 +423,6 @@ public class AttributeType implements Serializable, Cloneable {
             super(ATTR_TYPE_QI);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.deidentifier.arx.AttributeType#clone()
-         */
         @Override
         public abstract Hierarchy clone();
 
@@ -619,11 +584,6 @@ public class AttributeType implements Serializable, Cloneable {
         this.type = type;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#clone()
-     */
     @Override
     public AttributeType clone() {
         return this;

@@ -47,9 +47,6 @@ public abstract class TCloseness extends ExplicitPrivacyCriterion {
         this.t = t;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#getRequirements()
-     */
     @Override
     public int getRequirements(){
         // Requires a distribution

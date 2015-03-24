@@ -68,9 +68,6 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
         return hierarchy;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.ExplicitPrivacyCriterion#initialize(org.deidentifier.arx.framework.data.DataManager)
-     */
     @Override
     public void initialize(DataManager manager) {
         super.initialize(manager);
@@ -79,9 +76,6 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
         this.empty = new int[this.tree[1]];
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         
@@ -135,12 +129,7 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
                     extra = tree[tree[i + j]];
                 } else {
                     final int extra_child_index = tree[i + j] +
-                                                  tree[tree[i + j]] + 2; // pointer
-                                                                         // to
-                                                                         // the
-                                                                         // pos_e
-                                                                         // of
-                                                                         // node
+                                                  tree[tree[i + j]] + 2; // pointer to the pos_e of node
                     final int pos_child = tree[extra_child_index];
                     final int neg_child = tree[extra_child_index + 1];
                     extra = pos_child - neg_child;
@@ -169,9 +158,6 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
         return cost <= t;
     }
     
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
-	 */
 	@Override
 	public String toString() {
 		return t+"-closeness with hierarchical distance for attribute '"+attribute+"'";

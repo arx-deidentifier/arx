@@ -199,9 +199,6 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         pageType = new HierarchyWizardPageType<T>(this, model, pageIntervals, pageOrder, pageRedaction);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.Wizard#addPages()
-     */
     @Override
     public void addPages() {
         
@@ -214,9 +211,6 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.Wizard#canFinish()
-     */
     @Override
     public boolean canFinish() {
         return getDialog().getCurrentPage() instanceof HierarchyWizardPageFinal;

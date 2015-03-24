@@ -45,41 +45,26 @@ public abstract class MetricDefault extends Metric<InformationLossDefault> {
         super(monotonic, independent);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#createMaxInformationLoss()
-     */
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         return new InformationLossDefault(Double.MAX_VALUE);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#createMinInformationLoss()
-     */
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         return new InformationLossDefault(0d);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(final Node node) {
         return (InformationLossDefault)node.getLowerBound();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(final Node node, final IHashGroupify groupify) {
         return (InformationLossDefault)node.getLowerBound();
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
-     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 

@@ -45,18 +45,12 @@ public class ILMultiDimensionalGeometricMean extends AbstractILMultiDimensionalR
         super(values, weights);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensionalReduced#clone()
-     */
     @Override
     public InformationLoss<double[]> clone() {
         return new ILMultiDimensionalGeometricMean(getValues(),
                                                    getWeights());
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensionalReduced#getAggregate()
-     */
     @Override
     protected double getAggregate() {
         double[] values = getValues();

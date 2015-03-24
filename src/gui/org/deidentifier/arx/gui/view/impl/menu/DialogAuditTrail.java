@@ -139,11 +139,6 @@ public class DialogAuditTrail extends TitleAreaDialog {
         return composite;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.window.Window#getShellListener()
-     */
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {

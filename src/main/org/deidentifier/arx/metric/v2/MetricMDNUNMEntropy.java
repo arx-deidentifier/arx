@@ -63,17 +63,11 @@ public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
                                        );
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPrecomputed#toString()
-     */
     @Override
     public String toString() {
         return "Non-monotonic non-uniform entropy";
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPrecomputed#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         return null;

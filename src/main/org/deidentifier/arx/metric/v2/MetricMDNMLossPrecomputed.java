@@ -87,9 +87,6 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
                                        );
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNMLoss#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
 
@@ -127,17 +124,11 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
         return super.createInformationLoss(bound);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNMLoss#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node, IHashGroupify g) {
         return this.getLowerBoundInternal(node);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNMLoss#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
-     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 

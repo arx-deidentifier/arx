@@ -43,17 +43,11 @@ public class DistinctLDiversity extends LDiversity{
         super(attribute, l, true);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         return entry.distributions[index].size() >= minSize; // minSize=(int)l;
     }
 
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
-	 */
 	@Override
 	public String toString() {
 		return "distinct-"+minSize+"-diversity for attribute '"+attribute+"'";

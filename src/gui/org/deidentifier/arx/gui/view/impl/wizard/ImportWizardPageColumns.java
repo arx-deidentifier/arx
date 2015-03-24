@@ -246,9 +246,6 @@ public class ImportWizardPageColumns extends WizardPage {
             return ((ImportWizardModelColumn) column).isEnabled();
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.Object)
-         */
         @Override
         protected CellEditor getCellEditor(Object arg0) {
             return editor;

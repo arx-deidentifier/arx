@@ -182,9 +182,6 @@ public class MainWindow implements IView {
         controller.reset();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -601,9 +598,6 @@ public class MainWindow implements IView {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(final ModelEvent event) {
 

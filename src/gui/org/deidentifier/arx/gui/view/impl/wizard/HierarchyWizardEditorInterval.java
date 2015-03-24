@@ -132,9 +132,6 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
         };
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardEditorFunction.IHierarchyFunctionEditorParent#setFunction(org.deidentifier.arx.aggregates.AggregateFunction)
-     */
     @Override
     public void setFunction(AggregateFunction<T> function) {
         if (this.interval == null) return;
@@ -146,9 +143,6 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
         model.update(this);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView#update()
-     */
     @SuppressWarnings("unchecked")
     @Override
     public void update() {

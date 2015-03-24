@@ -90,18 +90,12 @@ public class ViewAttributeWeights implements IView {
         root.pack();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         controller.removeListener(this);
         root.dispose();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
     @Override
     public void reset() {
         if (root.isDisposed()) {
@@ -116,9 +110,6 @@ public class ViewAttributeWeights implements IView {
         root.setRedraw(true);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(ModelEvent event) {
 

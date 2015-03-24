@@ -85,9 +85,6 @@ public class DataTableGridLayer extends GridLayer {
         return bodyDataLayer;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.grid.layer.GridLayer#getBodyLayer()
-     */
     @Override
     public DataTableBodyLayerStack getBodyLayer() {
         return (DataTableBodyLayerStack) super.getBodyLayer();
@@ -102,9 +99,6 @@ public class DataTableGridLayer extends GridLayer {
         return columnHeaderDataLayer;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.grid.layer.GridLayer#getColumnHeaderLayer()
-     */
     @Override
     public ColumnHeaderLayer getColumnHeaderLayer() {
         return (ColumnHeaderLayer) super.getColumnHeaderLayer();
@@ -119,9 +113,6 @@ public class DataTableGridLayer extends GridLayer {
         return cornerDataLayer;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.grid.layer.GridLayer#getCornerLayer()
-     */
     @Override
     public CornerLayer getCornerLayer() {
         return (CornerLayer) super.getCornerLayer();
@@ -136,9 +127,6 @@ public class DataTableGridLayer extends GridLayer {
         return rowHeaderDataLayer;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.grid.layer.GridLayer#getRowHeaderLayer()
-     */
     @Override
     public RowHeaderLayer getRowHeaderLayer() {
         return (RowHeaderLayer) super.getRowHeaderLayer();

@@ -49,21 +49,11 @@ public class DataHandleOutput extends DataHandle {
         /** The current row. */
         private int row = -1;
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.Iterator#hasNext()
-         */
         @Override
         public boolean hasNext() {
             return row < dataQI.getArray().length;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.Iterator#next()
-         */
         @Override
         public String[] next() {
 
@@ -87,11 +77,6 @@ public class DataHandleOutput extends DataHandle {
             return result;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.Iterator#remove()
-         */
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
@@ -229,9 +214,6 @@ public class DataHandleOutput extends DataHandle {
         return header[col];
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.DataHandle#getDataType(java.lang.String)
-     */
     @Override
     public DataType<?> getDataType(String attribute) {
         
@@ -249,9 +231,6 @@ public class DataHandleOutput extends DataHandle {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.DataHandle#getGeneralization(java.lang.String)
-     */
     @Override
     public int getGeneralization(final String attribute) {
         checkRegistry();

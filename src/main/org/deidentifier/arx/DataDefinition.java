@@ -54,9 +54,6 @@ public class DataDefinition implements Cloneable{
     /** The mapped maximum generalization. */
     private final Map<String, Integer>             maxGeneralization = new HashMap<String, Integer>();
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
     @Override
     public DataDefinition clone() {
 

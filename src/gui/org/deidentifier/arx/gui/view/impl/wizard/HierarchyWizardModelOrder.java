@@ -55,9 +55,6 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         this.update();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#getBuilder(boolean)
-     */
     @Override
     public HierarchyBuilderOrderBased<T> getBuilder(boolean serializable) throws Exception {
         
@@ -123,9 +120,6 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#parse(org.deidentifier.arx.aggregates.HierarchyBuilder)
-     */
     @Override
     public void parse(HierarchyBuilder<T> builder) throws IllegalArgumentException {
         
@@ -170,9 +164,6 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#build()
-     */
     @Override
     protected void build() {
         super.hierarchy = null;

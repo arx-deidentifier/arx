@@ -38,9 +38,6 @@ public abstract class XMLHandler extends DefaultHandler {
     /** The arraylist */
     private CharArrayList sb = new CharArrayList();
 
-    /* (non-Javadoc)
-     * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
-     */
     @Override
     public void characters(final char[] ch,
                            final int start,
@@ -49,9 +46,6 @@ public abstract class XMLHandler extends DefaultHandler {
         sb.add(ch, start, length);
     }
 
-    /* (non-Javadoc)
-     * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-     */
     @Override
     public void endElement(final String uri,
                            final String localName,
@@ -60,9 +54,6 @@ public abstract class XMLHandler extends DefaultHandler {
         if (!end(uri, localName, qName)) { throw new SAXException(Resources.getMessage("WorkerLoad.0") + localName); } //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-     */
     @Override
     public void
             startElement(final String uri,

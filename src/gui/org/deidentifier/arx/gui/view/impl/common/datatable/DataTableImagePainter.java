@@ -48,9 +48,6 @@ public class DataTableImagePainter extends BackgroundPainter {
         this.context = context;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.painter.cell.BackgroundPainter#paintCell(org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell, org.eclipse.swt.graphics.GC, org.eclipse.swt.graphics.Rectangle, org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
-     */
     @Override
     public void paintCell(final ILayerCell cell,
                           final GC gc,

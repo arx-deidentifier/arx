@@ -94,17 +94,11 @@ public class ViewSubsetDefinition implements IView{
         this.root = build(parent);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
     @Override
     public void reset() {
         size.setText("0"); //$NON-NLS-1$
@@ -114,9 +108,6 @@ public class ViewSubsetDefinition implements IView{
         disable();
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {

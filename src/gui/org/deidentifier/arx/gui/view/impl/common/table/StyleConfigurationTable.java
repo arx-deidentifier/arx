@@ -79,9 +79,6 @@ public class StyleConfigurationTable extends CTStyleConfiguration {
         super(config);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.config.IConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
-     */
     @Override
     public void configureRegistry(IConfigRegistry configRegistry) {
         configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, cellPainter);

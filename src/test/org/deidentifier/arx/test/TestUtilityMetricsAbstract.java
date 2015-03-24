@@ -111,9 +111,6 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
             return builder.toString();
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString() {
             return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
@@ -182,9 +179,6 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
         this.testcase = testCase;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.test.AbstractTest#setUp()
-     */
     @Override
     @Before
     public void setUp() {

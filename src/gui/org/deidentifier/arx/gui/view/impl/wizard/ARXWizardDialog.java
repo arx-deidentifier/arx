@@ -104,9 +104,6 @@ public class ARXWizardDialog extends WizardDialog {
         this.map = new HashMap<ARXWizardButton, Button>();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.WizardDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
         this.getShell().setImages(Resources.getIconSet(getShell().getDisplay()));
@@ -121,9 +118,6 @@ public class ARXWizardDialog extends WizardDialog {
         super.createButtonsForButtonBar(parent);
     }
    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.WizardDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Control createDialogArea(Composite parent) {
         Control ctrl = super.createDialogArea(parent);
@@ -142,9 +136,6 @@ public class ARXWizardDialog extends WizardDialog {
         return map.get(button);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.WizardDialog#getProgressMonitor()
-     */
     @Override
     protected IProgressMonitor getProgressMonitor() {
         ProgressMonitorPart monitor = (ProgressMonitorPart) super.getProgressMonitor();

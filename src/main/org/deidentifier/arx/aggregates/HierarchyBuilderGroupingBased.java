@@ -86,9 +86,6 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             return size;
         }
         
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString(){
             return "Group[length="+size+", function="+function.toString()+"]";
@@ -194,9 +191,6 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             return level;
         }
      
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString(){
             StringBuilder b = new StringBuilder();

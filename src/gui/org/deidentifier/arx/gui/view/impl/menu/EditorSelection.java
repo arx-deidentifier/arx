@@ -71,17 +71,11 @@ public abstract class EditorSelection implements IEditor<String> {
         this.elems = elems;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IEditor#accepts(java.lang.Object)
-     */
     @Override
     public boolean accepts(final String s) {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IEditor#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     public void createControl(final Composite parent) {
         combo = new Combo(parent, SWT.READ_ONLY);
@@ -98,9 +92,6 @@ public abstract class EditorSelection implements IEditor<String> {
         });
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IEditor#getCategory()
-     */
     @Override
     public String getCategory() {
         return category;
@@ -115,9 +106,6 @@ public abstract class EditorSelection implements IEditor<String> {
         return combo;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IEditor#getLabel()
-     */
     @Override
     public String getLabel() {
         return label;

@@ -54,17 +54,11 @@ public class MetricSDDiscernability extends MetricSDNMDiscernability {
                                        );
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricSDNMDiscernability#toString()
-     */
     @Override
     public String toString() {
         return "Monotonic discernability (DM*)";
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricSDNMDiscernability#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         ILSingleDimensional result = super.getLowerBoundInternal(node, g);

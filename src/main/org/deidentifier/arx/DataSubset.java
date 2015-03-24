@@ -59,9 +59,6 @@ public class DataSubset implements Serializable {
             this.hashcode = Arrays.hashCode(data);
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
         @Override
         public boolean equals(Object obj) {
             if (obj == null) return false;
@@ -69,9 +66,6 @@ public class DataSubset implements Serializable {
             return Arrays.equals(data, other.data);
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
         @Override
         public int hashCode() {
             return hashcode;

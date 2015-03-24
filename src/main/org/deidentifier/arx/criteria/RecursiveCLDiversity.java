@@ -60,9 +60,6 @@ public class RecursiveCLDiversity extends LDiversity{
         return c;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
@@ -95,9 +92,6 @@ public class RecursiveCLDiversity extends LDiversity{
         return frequencyCopy[frequencyCopy.length - 1] < threshold;
     }
     
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
-	 */
 	@Override
 	public String toString() {
 		return "recursive-("+c+","+minSize+")-diversity for attribute '"+attribute+"'";

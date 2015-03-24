@@ -38,17 +38,11 @@ public class DataTableDataProvider implements IDataProvider {
 		this.provider = provider;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getColumnCount()
-	 */
 	@Override
 	public int getColumnCount() {
 		return this.provider.getColumnCount();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getDataValue(int, int)
-	 */
 	@Override
 	public Object getDataValue(int col, int row) {
         if (col == -1 || row == -1) return ""; //$NON-NLS-1$
@@ -60,17 +54,11 @@ public class DataTableDataProvider implements IDataProvider {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getRowCount()
-	 */
 	@Override
 	public int getRowCount() {
 		return this.provider.getRowCount();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#setDataValue(int, int, java.lang.Object)
-	 */
 	@Override
 	public void setDataValue(int arg0, int arg1, Object arg2) {
 		// Ignore

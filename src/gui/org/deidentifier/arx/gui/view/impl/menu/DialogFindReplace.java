@@ -243,11 +243,6 @@ public class DialogFindReplace extends TitleAreaDialog {
         return okButton;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.window.Window#getShellListener()
-     */
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {

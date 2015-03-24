@@ -89,9 +89,6 @@ public class StyleConfigurationHeader extends CTStyleConfiguration {
         this.region = region;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.config.IConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
-     */
     @Override
     public void configureRegistry(IConfigRegistry configRegistry) {
         //configure the painter

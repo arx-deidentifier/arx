@@ -191,11 +191,6 @@ public class ViewList extends ViewSolutionSpace {
         table.addListener(SWT.MouseExit, tableListener);
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         super.dispose();

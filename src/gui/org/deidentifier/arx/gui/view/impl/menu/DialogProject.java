@@ -80,9 +80,6 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         super(parent);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#create()
-     */
     @Override
     public void create() {
         super.create();
@@ -130,18 +127,12 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         return model;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -182,9 +173,6 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         });
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Control createDialogArea(final Composite parent) {
         final GridLayout l = new GridLayout();
@@ -226,9 +214,6 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         return parent;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#getShellListener()
-     */
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {

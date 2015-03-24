@@ -93,9 +93,6 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             this.isLeaf = true;
         }
         
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString(){
             return toString("");
@@ -209,9 +206,6 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             this.lower = false;
         }
         
-        /* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
         @Override
         @SuppressWarnings("unchecked")
         public boolean equals(Object obj) {
@@ -252,9 +246,6 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return min;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -292,9 +283,6 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return lower;
         }
         
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString(){
             DataType<T> type = (DataType<T>)builder.getDataType();
@@ -366,9 +354,6 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return snapBound;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString() {
             return "Range [repeat=" + repeatBound + ", snap=" +
@@ -591,9 +576,6 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         return this.upperRange;
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased#isValid()
-     */
     @Override
     @SuppressWarnings("unchecked")
     public String isValid() {
@@ -851,9 +833,6 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         return new Range[]{tempLower, tempUpper};
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased#prepareGroups()
-     */
     @Override
     @SuppressWarnings("unchecked")
     protected AbstractGroup[][] prepareGroups() {

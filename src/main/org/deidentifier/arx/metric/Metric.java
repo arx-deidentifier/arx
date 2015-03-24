@@ -94,9 +94,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
             this.name = name;
         }
         
-        /* (non-Javadoc)
-         * @see java.lang.Enum#toString()
-         */
         public String toString() {
             return name;
         }

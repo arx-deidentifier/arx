@@ -96,9 +96,6 @@ public class LayoutUtility implements ILayout {
             return in;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Runnable#run()
-         */
         @Override
         public void run() {
             final long time = System.currentTimeMillis();

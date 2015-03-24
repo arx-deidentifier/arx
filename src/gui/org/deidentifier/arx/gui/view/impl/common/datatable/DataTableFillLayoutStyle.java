@@ -61,9 +61,6 @@ public class DataTableFillLayoutStyle extends AbstractRegistryConfiguration {
         font = control.getFont();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.nebula.widgets.nattable.config.IConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
-     */
     @Override
     public void configureRegistry(IConfigRegistry configRegistry) {
         addFillLayoutStyleConfig(configRegistry);

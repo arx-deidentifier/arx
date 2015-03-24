@@ -50,18 +50,12 @@ public class ILMultiDimensionalSum extends AbstractILMultiDimensionalReduced {
         super(values, weights);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensionalReduced#clone()
-     */
     @Override
     public InformationLoss<double[]> clone() {
         return new ILMultiDimensionalSum(getValues(),
                                          getWeights());
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensionalReduced#getAggregate()
-     */
     @Override
     protected double getAggregate() {
         

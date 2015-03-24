@@ -85,9 +85,6 @@ public abstract class ARXWizard<T> extends Wizard implements IWizard {
         return dialog.open() == Window.OK;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.Wizard#performFinish()
-     */
     @Override
     public boolean performFinish() {
         return true;

@@ -58,57 +58,36 @@ public class DensityData extends JHCData{
             this.table = table;
         }
         
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap#getHeight()
-         */
         @Override
         public int getHeight() {
             return table.values2.length;
         }
 
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap#getMax()
-         */
         @Override
         public double getMax() {
             return table.maxFrequency;
         }
 
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap#getMin()
-         */
         @Override
         public double getMin() {
             return 0d;
         }
 
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap#getWidth()
-         */
         @Override
         public int getWidth() {
             return table.values1.length;
         }
 
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap#getXLabel(int)
-         */
         @Override
         public String getXLabel(int index) {
             return table.values1[index];
         }
 
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap#getYLabel(int)
-         */
         @Override
         public String getYLabel(int index) {
             return table.values2[index];
         }
 
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap#iterator()
-         */
         @Override
         public Iterator<Point> iterator() {
             return new Iterator<Point>(){
@@ -149,25 +128,16 @@ public class DensityData extends JHCData{
         /** value. */
         private double value;
 
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap.Point#getValue()
-         */
         @Override
         public double getValue() {
             return value;
         }
 
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap.Point#getX()
-         */
         @Override
         public int getX() {
             return x;
         }
 
-        /* (non-Javadoc)
-         * @see de.linearbits.jhc.JHCHeatmap.Point#getY()
-         */
         @Override
         public int getY() {
             return y;
@@ -213,17 +183,11 @@ public class DensityData extends JHCData{
         this.column2 = column2;
     }
 
-    /* (non-Javadoc)
-     * @see de.linearbits.jhc.JHCData#getHeatmap(int, int)
-     */
     @Override
     public JHCHeatmap getHeatmap(int width, int height) {
         return new DensityHeatmap(statistics.getContingencyTable(column1, width, column2, height));
     }
-       
-    /* (non-Javadoc)
-     * @see de.linearbits.jhc.JHCData#getHeight()
-     */
+
     @Override
     public int getHeight() {
         if (height == -1) {
@@ -233,9 +197,6 @@ public class DensityData extends JHCData{
         return height;
     }
 
-    /* (non-Javadoc)
-     * @see de.linearbits.jhc.JHCData#getWidth()
-     */
     @Override
     public int getWidth() {
         if (width == -1) {

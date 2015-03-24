@@ -45,9 +45,6 @@ public abstract class NodeAction {
             this.trigger = trigger;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.lattice.NodeAction#appliesTo(org.deidentifier.arx.framework.lattice.Node)
-         */
         @Override
         public boolean appliesTo(Node node) {
             return trigger.appliesTo(node) && additionalConditionAppliesTo(node);
@@ -82,9 +79,6 @@ public abstract class NodeAction {
             this.result = result;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.lattice.NodeAction#appliesTo(org.deidentifier.arx.framework.lattice.Node)
-         */
         @Override
         public boolean appliesTo(Node node) {
             return result;
@@ -111,9 +105,6 @@ public abstract class NodeAction {
             this.trigger = trigger;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.lattice.NodeAction#appliesTo(org.deidentifier.arx.framework.lattice.Node)
-         */
         @Override
         public boolean appliesTo(Node node) {
             return !trigger.appliesTo(node);
@@ -140,9 +131,6 @@ public abstract class NodeAction {
             this.trigger = trigger;
         }
 
-        /* (non-Javadoc)
-         * @see org.deidentifier.arx.framework.lattice.NodeAction#appliesTo(org.deidentifier.arx.framework.lattice.Node)
-         */
         @Override
         public boolean appliesTo(Node node) {
             return trigger.appliesTo(node) || additionalConditionAppliesTo(node);

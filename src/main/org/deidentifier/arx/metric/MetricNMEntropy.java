@@ -52,17 +52,11 @@ public class MetricNMEntropy extends MetricEntropy {
         super(false, false);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricEntropy#toString()
-     */
     @Override
     public String toString() {
         return "Non-Monotonic Non-Uniform Entropy";
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricEntropy#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
@@ -109,26 +103,17 @@ public class MetricNMEntropy extends MetricEntropy {
         return new InformationLossDefaultWithBound(round(originalInfoLoss - additionalInfoLoss), originalInfoLossDefault.getValue());
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricEntropy#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
-     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         return super.getInformationLossInternal(node, (IHashGroupify)null).getInformationLoss();
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricEntropy#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.MetricEntropy#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
-     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 

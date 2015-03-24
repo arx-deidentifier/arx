@@ -165,9 +165,6 @@ public class ComponentStatusLabel extends Canvas {
 
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.widgets.Composite#computeSize(int, int, boolean)
-     */
     public Point computeSize(int wHint, int hHint, boolean changed) {
         checkWidget();
         Point e = getTotalSize(image, text);
@@ -184,9 +181,6 @@ public class ComponentStatusLabel extends Canvas {
         return e;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.widgets.Widget#dispose()
-     */
     @Override
     public void dispose() {
         super.dispose();
@@ -242,9 +236,6 @@ public class ComponentStatusLabel extends Canvas {
         return rightMargin;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.widgets.Widget#getStyle()
-     */
     public int getStyle() {
         int style = super.getStyle();
         switch (align) {
@@ -271,9 +262,6 @@ public class ComponentStatusLabel extends Canvas {
         return text;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.widgets.Control#getToolTipText()
-     */
     public String getToolTipText() {
         checkWidget();
         return appToolTipText;
@@ -305,9 +293,6 @@ public class ComponentStatusLabel extends Canvas {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics.Color)
-     */
     public void setBackground(Color color) {
         super.setBackground(color);
         // Are these settings the same as before?
@@ -432,9 +417,6 @@ public class ComponentStatusLabel extends Canvas {
         redraw();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.widgets.Canvas#setFont(org.eclipse.swt.graphics.Font)
-     */
     public void setFont(Font font) {
         super.setFont(font);
         redraw();
@@ -566,9 +548,6 @@ public class ComponentStatusLabel extends Canvas {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.widgets.Control#setToolTipText(java.lang.String)
-     */
     public void setToolTipText(String string) {
         super.setToolTipText(string);
         appToolTipText = super.getToolTipText();

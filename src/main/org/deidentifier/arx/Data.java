@@ -60,11 +60,6 @@ public abstract class Data {
             data.add(row);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.deidentifier.arx.Data#iterator()
-         */
         @Override
         protected Iterator<String[]> iterator() {
             return data.iterator();
@@ -92,11 +87,6 @@ public abstract class Data {
             this.array = array;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.deidentifier.arx.Data#iterator()
-         */
         @Override
         protected Iterator<String[]> iterator() {
             return new Iterator<String[]>() {
@@ -146,11 +136,6 @@ public abstract class Data {
             this.iterator = iterator;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.deidentifier.arx.Data#iterator()
-         */
         @Override
         protected Iterator<String[]> iterator() {
             return iterator;

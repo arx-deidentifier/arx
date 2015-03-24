@@ -143,9 +143,6 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         folder.addSelectionListener(listener);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         this.enabled.dispose();
@@ -161,9 +158,6 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         return folder.getSelectionIndex();
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
     @Override
     public void reset() {
         model = null;
@@ -181,9 +175,6 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         folder.setSelection(index);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(ModelEvent event) {
 

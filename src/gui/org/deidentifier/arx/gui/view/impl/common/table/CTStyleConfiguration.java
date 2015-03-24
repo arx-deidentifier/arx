@@ -38,9 +38,6 @@ public abstract class CTStyleConfiguration extends AbstractRegistryConfiguration
         this.config = config;
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.common.table.CTComponent#getConfig()
-     */
     @Override
     public CTConfiguration getConfig() {
         return config;

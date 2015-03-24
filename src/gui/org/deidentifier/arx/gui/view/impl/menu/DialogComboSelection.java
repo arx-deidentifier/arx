@@ -164,9 +164,6 @@ public class DialogComboSelection extends Dialog {
         }
     }
 
-    /*
-     * (non-Javadoc) Method declared on Dialog.
-     */
     @Override
     protected void buttonPressed(int buttonId) {
         if (buttonId == IDialogConstants.OK_ID) {
@@ -177,13 +174,6 @@ public class DialogComboSelection extends Dialog {
         super.buttonPressed(buttonId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
-     * .Shell)
-     */
     @Override
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -193,13 +183,6 @@ public class DialogComboSelection extends Dialog {
         shell.setImages(Resources.getIconSet(shell.getDisplay()));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse
-     * .swt.widgets.Composite)
-     */
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
         // create OK and Cancel buttons by default
@@ -212,9 +195,6 @@ public class DialogComboSelection extends Dialog {
         }
     }
 
-    /*
-     * (non-Javadoc) Method declared on Dialog.
-     */
     @Override
     protected Control createDialogArea(Composite parent) {
         // create composite
@@ -267,9 +247,6 @@ public class DialogComboSelection extends Dialog {
         return okButton;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#getShellListener()
-     */
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {

@@ -66,10 +66,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         this.function = function;
     }
     
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#createMaxInformationLoss()
-     */
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         if (max == null) {
@@ -79,9 +75,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#createMinInformationLoss()
-     */
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         if (min == null) {
@@ -91,9 +84,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#getAggregateFunction()
-     */
     @Override
     public AggregateFunction getAggregateFunction() {
         return this.function;
@@ -166,9 +156,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         Arrays.fill(weights, 1d);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.Metric#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
-     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 

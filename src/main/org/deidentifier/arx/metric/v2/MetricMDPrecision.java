@@ -67,17 +67,11 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
                                        );
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNMPrecision#toString()
-     */
     @Override
     public String toString() {
         return "Monotonic precision";
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.metric.v2.MetricMDNMPrecision#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
-     */
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         AbstractILMultiDimensional loss = super.getLowerBoundInternal(node);

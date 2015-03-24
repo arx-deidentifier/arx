@@ -91,9 +91,6 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         this.data = data;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#create()
-     */
     @Override
     public void create() {
         super.create();
@@ -221,18 +218,12 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         table.redraw();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -263,9 +254,6 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         });
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Control createDialogArea(final Composite parent) {
         parent.setLayout(new GridLayout());
@@ -324,9 +312,6 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         return parent;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#getShellListener()
-     */
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {
@@ -337,9 +322,6 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         };
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-     */
     @Override
     protected boolean isResizable() {
         return false;

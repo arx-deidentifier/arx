@@ -55,9 +55,6 @@ public abstract class ExplicitPrivacyCriterion extends PrivacyCriterion {
         return attribute;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#initialize(org.deidentifier.arx.framework.data.DataManager)
-     */
     @Override
     public void initialize(DataManager manager) {
         String[] header = manager.getDataSE().getHeader();

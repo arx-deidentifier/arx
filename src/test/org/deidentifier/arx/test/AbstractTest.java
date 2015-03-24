@@ -58,9 +58,6 @@ public abstract class AbstractTest extends TestCase {
     /**  TODO */
     protected DataProvider provider = null;
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#setUp()
-     */
     @Override
     @Before
     public void setUp() {

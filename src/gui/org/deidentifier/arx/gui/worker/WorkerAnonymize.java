@@ -45,9 +45,6 @@ public class WorkerAnonymize extends Worker<ARXResult> {
         this.model = model;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-     */
     @Override
     public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                                         InterruptedException {

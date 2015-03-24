@@ -69,25 +69,16 @@ public class DataSelector {
             this.indices = getIndices();
         }
         
-        /* (non-Javadoc)
-         * @see de.linearbits.objectselector.IAccessor#exists(java.lang.String)
-         */
         @Override
         public boolean exists(String arg0) {
             return indices.containsKey(arg0);
         }
 
-        /* (non-Javadoc)
-         * @see de.linearbits.objectselector.IAccessor#getType(java.lang.String)
-         */
         @Override
         public DataType<?> getType(String arg0) {
             return types.get(arg0);
         }
 
-        /* (non-Javadoc)
-         * @see de.linearbits.objectselector.IAccessor#getValue(java.lang.Object, java.lang.String)
-         */
         @Override
         public Object getValue(Integer arg0, String arg1) {
             
@@ -97,17 +88,11 @@ public class DataSelector {
             return type.fromString(value);
         }
 
-        /* (non-Javadoc)
-         * @see de.linearbits.objectselector.IAccessor#isDataTypesSupported()
-         */
         @Override
         public boolean isDataTypesSupported() {
             return true;
         }
 
-        /* (non-Javadoc)
-         * @see de.linearbits.objectselector.IAccessor#isExistanceSupported()
-         */
         @Override
         public boolean isExistanceSupported() {
             return true;

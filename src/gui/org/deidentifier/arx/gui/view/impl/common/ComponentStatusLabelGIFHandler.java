@@ -47,9 +47,6 @@ class ComponentStatusLabelGIFHandler implements Runnable {
         this.loader = loader;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Runnable#run()
-     */
     @Override
     public void run() {
         int delayTime = loader.data[imageNumber].delayTime;

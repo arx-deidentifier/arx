@@ -69,9 +69,6 @@ public class Data implements Cloneable{
         this.map = map;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
     @Override
     public Data clone(){
         int[][] newData = new int[data.length][];

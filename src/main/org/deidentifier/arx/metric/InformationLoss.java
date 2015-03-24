@@ -93,9 +93,6 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
      */
     public abstract int compareTo(InformationLoss<?> other);
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public abstract boolean equals(Object obj);
 
@@ -106,9 +103,6 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
      */
     public abstract T getValue();
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public abstract int hashCode();
 
