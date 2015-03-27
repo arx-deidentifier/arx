@@ -121,7 +121,7 @@ Examples
 ------
 
 ARX Anonymization Tool
-###
+-----
 
 The graphical anonymization tool provides an intuitive interface for end-users and implements advanced features, such as 
 wizards and a context-sensitive help. Wizards support users in creating transformation rules, selecting data types, 
@@ -137,7 +137,7 @@ section by implementing four dedicated perspectives. A manual can be found here.
 want to take a look at one of our presentations.
 
 ARX Software Library
-###
+-----
 
 The Java software library offers a carefully designed API for seamless integration into other systems. 
 It provides full access to all features implemented in the ARX anonymization framework.
@@ -176,7 +176,7 @@ ARX is an open source tool for transforming structured (i.e. tabular) sensitive 
 2. A tool for privacy-preserving data analysis in an interactive scenario. For such methods, you may want to take a look at AirCloak, Airavat, Fuzz, PINQ or HIDE.
 
 Specific limitations
-###
+-----
     
 
 1. ARX implements in-memory data management, meaning that the dataset that is to be anonymized must fit into a machine's main memory. This should 
@@ -190,7 +190,7 @@ Specific limitations
    In the near future ARX will be extended with methods that overcome this limitation.
 
 General limitations
-###
+-----
 
 1. Data anonymization is a complex issue that must be performed by experts. There is no single 
    measure that is able to protect datasets from all possible threats, especially not while being flexible enough to support all usage 
