@@ -712,6 +712,7 @@ public class StatisticsBuilder {
                                                             toString(type, stats2.getMean(), false, false),
                                                             toString(type, stats2.getVariance(), isPeriod, true),
                                                             toString(type, stats2.getPopulationVariance(), isPeriod, true),
+                                                            toString(type, Math.sqrt(stats2.getVariance()), isPeriod, false),
                                                             toString(type, stats2.getMax() - stats2.getMin(), isPeriod, false),
                                                             toString(type, stats2.getKurtosis(), isPeriod, false)));
             } else if (scale == ScaleOfMeasure.RATIO) {
@@ -726,6 +727,7 @@ public class StatisticsBuilder {
                                                             toString(type, stats2.getMean(), false, false),
                                                             toString(type, stats2.getVariance(), false, false),
                                                             toString(type, stats2.getPopulationVariance(), false, false),
+                                                            toString(type, Math.sqrt(stats2.getVariance()), false, false),
                                                             toString(type, stats2.getMax() - stats2.getMin(), false, false),
                                                             toString(type, stats2.getKurtosis(), false, false),
                                                             toString(type, stats2.getGeometricMean(), false, false)));

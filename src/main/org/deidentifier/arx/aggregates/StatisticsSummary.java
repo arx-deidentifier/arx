@@ -239,6 +239,8 @@ public class StatisticsSummary {
     private final String sampleVariance;
     /** Population variance, may be null*/
     private final String populationVariance;
+    /** Std.dev, may be null*/
+    private final String stdDev;
     /** Range, may be null*/
     private final String range;
     /** Kurtosis, may be null*/
@@ -260,7 +262,7 @@ public class StatisticsSummary {
     StatisticsSummary(ScaleOfMeasure scale, 
                       int numberOfMeasures, 
                       String mode) {
-        this(scale, numberOfMeasures, mode, null, null, null, null, null, null, null, null, null);
+        this(scale, numberOfMeasures, mode, null, null, null, null, null, null, null, null, null, null);
     }
 
     /**
@@ -278,7 +280,7 @@ public class StatisticsSummary {
                       String median,
                       String min,
                       String max) {
-        this(scale, numberOfMeasures, mode, median, min, max, null, null, null, null, null, null);
+        this(scale, numberOfMeasures, mode, median, min, max, null, null, null, null, null, null, null);
     }
 
     /**
@@ -292,6 +294,7 @@ public class StatisticsSummary {
      * @param arithmeticMean
      * @param sampleVariance
      * @param populationVariance
+     * @param stdDev
      * @param range
      * @param kurtosis
      */
@@ -304,9 +307,10 @@ public class StatisticsSummary {
                       String arithmeticMean,
                       String sampleVariance,
                       String populationVariance,
+                      String stdDev,
                       String range,
                       String kurtosis) {
-        this(scale, numberOfMeasures, mode, median, min, max, arithmeticMean, sampleVariance, populationVariance, range, kurtosis, null);
+        this(scale, numberOfMeasures, mode, median, min, max, arithmeticMean, sampleVariance, populationVariance, stdDev, range, kurtosis, null);
     }
 
     /**
@@ -320,6 +324,7 @@ public class StatisticsSummary {
      * @param arithmeticMean
      * @param sampleVariance
      * @param populationVariance
+     * @param stdDev
      * @param range
      * @param kurtosis
      * @param geometricMean
@@ -333,6 +338,7 @@ public class StatisticsSummary {
                       String arithmeticMean,
                       String sampleVariance,
                       String populationVariance,
+                      String stdDev,
                       String range,
                       String kurtosis,
                       String geometricMean) {
@@ -348,6 +354,7 @@ public class StatisticsSummary {
         this.range = range;
         this.kurtosis = kurtosis;
         this.geometricMean = geometricMean;
+        this.stdDev = stdDev;
     }
 
     /**
@@ -439,6 +446,14 @@ public class StatisticsSummary {
     }
 
     /**
+     * Returns the standard deviation
+     * @return
+     */
+    public String getStdDev() {
+        return stdDev;
+    }
+
+    /**
      * Returns the scale of measure
      * @return
      */
@@ -526,6 +541,14 @@ public class StatisticsSummary {
         return null != sampleVariance;
     }
 
+    /**
+     * Returns whether the following measure is available: std. dev
+     * @return
+     */
+    public boolean isStdDevAvailable() {
+        return null != stdDev;
+    }
+    
     @Override
     public String toString() {
         return "StatisticsSummary [\n" + 

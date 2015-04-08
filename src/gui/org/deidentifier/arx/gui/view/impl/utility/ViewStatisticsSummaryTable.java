@@ -151,6 +151,7 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextVi
                 if (summary.isArithmeticMeanAvailable()) createItem(Resources.getMessage("SummaryStatistics.6"), summary.getArithmeticMean()); //$NON-NLS-1$
                 if (summary.isSampleVarianceAvailable()) createItem(Resources.getMessage("SummaryStatistics.7"), summary.getSampleVariance()); //$NON-NLS-1$
                 if (summary.isPopulationVarianceAvailable()) createItem(Resources.getMessage("SummaryStatistics.8"), summary.getPopulationVariance()); //$NON-NLS-1$
+                if (summary.isStdDevAvailable()) createItem(Resources.getMessage("SummaryStatistics.14"), summary.getStdDev()); //$NON-NLS-1$
                 if (summary.isRangeAvailable()) createItem(Resources.getMessage("SummaryStatistics.9"), summary.getRange()); //$NON-NLS-1$
                 if (summary.isKurtosisAvailable()) createItem(Resources.getMessage("SummaryStatistics.10"), summary.getKurtosis()); //$NON-NLS-1$
                 if (summary.isGeometricMeanAvailable()) createItem(Resources.getMessage("SummaryStatistics.11"), summary.getGeometricMean()); //$NON-NLS-1$
