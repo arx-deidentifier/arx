@@ -976,12 +976,12 @@ public class StatisticsBuilder {
             
             // Convert
             StringBuilder builder = new StringBuilder();
-            if (weeks != 0) builder.append(weeks).append(isSquare ? "w², " : "w, ");
-            if (days != 0) builder.append(days).append(isSquare ? "d², " : "d, ");
-            if (hours != 0) builder.append(hours).append(isSquare ? "h², " : "h, ");
-            if (minutes != 0) builder.append(minutes).append(isSquare ? "m², " : "m, ");
-            if (seconds != 0) builder.append(seconds).append(isSquare ? "s², " : "s, ");
-            builder.append(milliseconds).append(isSquare ? "ms²" : "ms");
+            if (weeks != 0) builder.append(weeks).append(isSquare ? "w^2, " : "w, ");
+            if (days != 0) builder.append(days).append(isSquare ? "d^2, " : "d, ");
+            if (hours != 0) builder.append(hours).append(isSquare ? "h^2, " : "h, ");
+            if (minutes != 0) builder.append(minutes).append(isSquare ? "m^2, " : "m, ");
+            if (seconds != 0) builder.append(seconds).append(isSquare ? "s^2, " : "s, ");
+            builder.append(milliseconds).append(isSquare ? "ms^2" : "ms");
             
             // Return
             return builder.toString();
