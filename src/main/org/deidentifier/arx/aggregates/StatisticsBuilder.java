@@ -703,6 +703,11 @@ public class StatisticsBuilder {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
                 boolean isPeriod = type.getDescription().getWrappedClass() == Date.class;
+                
+                // TODO: Something is wrong with commons math
+                double kurtosis = stats2.getKurtosis();
+                kurtosis = kurtosis < 0d ? Double.NaN : kurtosis;
+                
                 result.put(attribute, new StatisticsSummary(ScaleOfMeasure.INTERVAL, 
                                                             stats.getNumberOfMeasures(), 
                                                             stats.getMode(),
@@ -714,10 +719,15 @@ public class StatisticsBuilder {
                                                             toString(type, stats2.getPopulationVariance(), isPeriod, true),
                                                             toString(type, Math.sqrt(stats2.getVariance()), isPeriod, false),
                                                             toString(type, stats2.getMax() - stats2.getMin(), isPeriod, false),
-                                                            toString(type, stats2.getKurtosis(), isPeriod, false)));
+                                                            toString(type, kurtosis, isPeriod, false)));
             } else if (scale == ScaleOfMeasure.RATIO) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
+
+                // TODO: Something is wrong with commons math
+                double kurtosis = stats2.getKurtosis();
+                kurtosis = kurtosis < 0d ? Double.NaN : kurtosis;
+                
                 result.put(attribute, new StatisticsSummary(ScaleOfMeasure.RATIO, 
                                                             stats.getNumberOfMeasures(), 
                                                             stats.getMode(),
@@ -729,7 +739,7 @@ public class StatisticsBuilder {
                                                             toString(type, stats2.getPopulationVariance(), false, false),
                                                             toString(type, Math.sqrt(stats2.getVariance()), false, false),
                                                             toString(type, stats2.getMax() - stats2.getMin(), false, false),
-                                                            toString(type, stats2.getKurtosis(), false, false),
+                                                            toString(type, kurtosis, false, false),
                                                             toString(type, stats2.getGeometricMean(), false, false)));
             }
         }
