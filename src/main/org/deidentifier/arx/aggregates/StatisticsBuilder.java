@@ -748,6 +748,8 @@ public class StatisticsBuilder {
                                                                           final DataType<V> baseDataType,
                                                                           final Hierarchy hierarchy) {
 
+        // TODO: It would be cleaner to return an ARXOrderedString for generalized variables
+        // TODO: that have a suitable data type directly from the DataHandle 
         if (generalization == 0 || !(dataType instanceof ARXString)) {
             return new StatisticsSummaryOrdinal(dataType);
         } else if (baseDataType instanceof ARXString) {
@@ -930,19 +932,15 @@ public class StatisticsBuilder {
         Class<?> clazz = type.getDescription().getWrappedClass();
         if (isPeriod) {
             
-            // TODO: It's a bit weird that months are missing and a year is exactly 365 days
-            // TODO: Check if there is a better way to do this
+            // Init
             final long SECONDS = 1000;
             final long MINUTES = 60 * SECONDS;
             final long HOURS = 60 * MINUTES;
             final long DAYS = 24 * HOURS;
             final long WEEKS = 7 * DAYS;
-            final long YEARS = 365 * DAYS;
             
             // Compute
             long time = (long)value;
-            final int years = (int)(time / YEARS);
-            time = time % YEARS;
             final int weeks = (int)(time / WEEKS);
             time = time % WEEKS;
             final int days = (int)(time / DAYS);
@@ -957,7 +955,6 @@ public class StatisticsBuilder {
             
             // Convert
             StringBuilder builder = new StringBuilder();
-            if (years != 0) builder.append(years).append("y, ");
             if (weeks != 0) builder.append(weeks).append("w, ");
             if (days != 0) builder.append(days).append("d, ");
             if (hours != 0) builder.append(hours).append("h, ");
