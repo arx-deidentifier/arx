@@ -709,11 +709,11 @@ public class StatisticsBuilder {
                                                             stats.getMedian(),
                                                             stats.getMin(),
                                                             stats.getMax(),
-                                                            toString(type, stats2.getMean(), false),
-                                                            toString(type, stats2.getVariance(), isPeriod),
-                                                            toString(type, stats2.getPopulationVariance(), isPeriod),
-                                                            toString(type, stats2.getMax() - stats2.getMin(), isPeriod),
-                                                            toString(type, stats2.getKurtosis(), isPeriod)));
+                                                            toString(type, stats2.getMean(), false, false),
+                                                            toString(type, stats2.getVariance(), isPeriod, true),
+                                                            toString(type, stats2.getPopulationVariance(), isPeriod, true),
+                                                            toString(type, stats2.getMax() - stats2.getMin(), isPeriod, false),
+                                                            toString(type, stats2.getKurtosis(), isPeriod, false)));
             } else if (scale == ScaleOfMeasure.RATIO) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
@@ -723,12 +723,12 @@ public class StatisticsBuilder {
                                                             stats.getMedian(),
                                                             stats.getMin(),
                                                             stats.getMax(),
-                                                            toString(type, stats2.getMean(), false),
-                                                            toString(type, stats2.getVariance(), false),
-                                                            toString(type, stats2.getPopulationVariance(), false),
-                                                            toString(type, stats2.getMax() - stats2.getMin(), false),
-                                                            toString(type, stats2.getKurtosis(), false),
-                                                            toString(type, stats2.getGeometricMean(), false)));
+                                                            toString(type, stats2.getMean(), false, false),
+                                                            toString(type, stats2.getVariance(), false, false),
+                                                            toString(type, stats2.getPopulationVariance(), false, false),
+                                                            toString(type, stats2.getMax() - stats2.getMin(), false, false),
+                                                            toString(type, stats2.getKurtosis(), false, false),
+                                                            toString(type, stats2.getGeometricMean(), false, false)));
             }
         }
         
@@ -925,22 +925,44 @@ public class StatisticsBuilder {
      * @param type
      * @param value
      * @param isPeriod Defines whether the parameter is a time period
+     * @param isSquare Defines whether the period is a squared period
      * @return
      */
     @SuppressWarnings("unchecked")
-    private String toString(DataType<?> type, double value, boolean isPeriod) {
-        Class<?> clazz = type.getDescription().getWrappedClass();
+    private String toString(DataType<?> type, double value, boolean isPeriod, boolean isSquare) {
+        
+        // Handle corner cases
+        if (Double.isNaN(value)) {
+            return "Not available";
+        } else if (Double.isInfinite(value)) {
+            if (value < 0) {
+                return "-Infinity";
+            } else {
+                return "+Infinity";
+            }
+        }
+        
+        // Handle periods
         if (isPeriod) {
             
             // Init
-            final long SECONDS = 1000;
-            final long MINUTES = 60 * SECONDS;
-            final long HOURS = 60 * MINUTES;
-            final long DAYS = 24 * HOURS;
-            final long WEEKS = 7 * DAYS;
+            long SECONDS = 1000;
+            long MINUTES = 60 * SECONDS;
+            long HOURS = 60 * MINUTES;
+            long DAYS = 24 * HOURS;
+            long WEEKS = 7 * DAYS;
+            
+            // Square
+            if (isSquare) {
+                SECONDS *= SECONDS;
+                MINUTES *= MINUTES;
+                HOURS *= HOURS;
+                DAYS *= DAYS;
+                WEEKS *= WEEKS;
+            }
             
             // Compute
-            long time = (long)value;
+            long time = (long)Math.sqrt(value);
             final int weeks = (int)(time / WEEKS);
             time = time % WEEKS;
             final int days = (int)(time / DAYS);
@@ -955,17 +977,21 @@ public class StatisticsBuilder {
             
             // Convert
             StringBuilder builder = new StringBuilder();
-            if (weeks != 0) builder.append(weeks).append("w, ");
-            if (days != 0) builder.append(days).append("d, ");
-            if (hours != 0) builder.append(hours).append("h, ");
-            if (minutes != 0) builder.append(minutes).append("m, ");
-            if (seconds != 0) builder.append(seconds).append("s, ");
-            builder.append(milliseconds).append("ms");
+            if (weeks != 0) builder.append(weeks).append(isSquare ? "w², " : "w, ");
+            if (days != 0) builder.append(days).append(isSquare ? "d², " : "d, ");
+            if (hours != 0) builder.append(hours).append(isSquare ? "h², " : "h, ");
+            if (minutes != 0) builder.append(minutes).append(isSquare ? "m², " : "m, ");
+            if (seconds != 0) builder.append(seconds).append(isSquare ? "s², " : "s, ");
+            builder.append(milliseconds).append(isSquare ? "ms²" : "ms");
             
             // Return
             return builder.toString();
             
-        } else if (clazz == Long.class || clazz == Double.class) {
+        } 
+        
+        // Handle data types
+        Class<?> clazz = type.getDescription().getWrappedClass();
+        if (clazz == Long.class || clazz == Double.class) {
             return String.valueOf(value);
         } else if (clazz == Date.class) {
             return ((DataType<Date>) type).format(new Date((long) value));
