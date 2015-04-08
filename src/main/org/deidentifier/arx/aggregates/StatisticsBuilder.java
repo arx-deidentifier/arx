@@ -962,18 +962,17 @@ public class StatisticsBuilder {
             }
             
             // Compute
-            long time = (long)Math.sqrt(value);
-            final int weeks = (int)(time / WEEKS);
-            time = time % WEEKS;
-            final int days = (int)(time / DAYS);
-            time = time % DAYS;
-            final int hours = (int)(time / HOURS);
-            time = time % HOURS;
-            final int minutes = (int)(time / MINUTES);
-            time = time % MINUTES;
-            final int seconds = (int)(time / SECONDS);
-            time = time % SECONDS;
-            final int milliseconds = (int)(time);
+            final int weeks = (int)(value / WEEKS);
+            value = value % WEEKS;
+            final int days = (int)(value / DAYS);
+            value = value % DAYS;
+            final int hours = (int)(value / HOURS);
+            value = value % HOURS;
+            final int minutes = (int)(value / MINUTES);
+            value = value % MINUTES;
+            final int seconds = (int)(value / SECONDS);
+            value = value % SECONDS;
+            final int milliseconds = (int)(value);
             
             // Convert
             StringBuilder builder = new StringBuilder();
