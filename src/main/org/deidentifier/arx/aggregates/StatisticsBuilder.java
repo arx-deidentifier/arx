@@ -689,17 +689,18 @@ public class StatisticsBuilder {
             } else if (scale == ScaleOfMeasure.INTERVAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
+                boolean isPeriod = type.getDescription().getWrappedClass() == Date.class;
                 result.put(attribute, new StatisticsSummary(ScaleOfMeasure.INTERVAL, 
                                                             stats.getNumberOfMeasures(), 
                                                             stats.getMode(),
                                                             stats.getMedian(),
                                                             stats.getMin(),
                                                             stats.getMax(),
-                                                            toString(type, stats2.getMean()),
-                                                            toString(type, stats2.getVariance()),
-                                                            toString(type, stats2.getPopulationVariance()),
-                                                            toString(type, stats2.getMax() - stats2.getMin()),
-                                                            toString(type, stats2.getKurtosis())));
+                                                            toString(type, stats2.getMean(), false),
+                                                            toString(type, stats2.getVariance(), isPeriod),
+                                                            toString(type, stats2.getPopulationVariance(), isPeriod),
+                                                            toString(type, stats2.getMax() - stats2.getMin(), isPeriod),
+                                                            toString(type, stats2.getKurtosis(), isPeriod)));
             } else if (scale == ScaleOfMeasure.RATIO) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
@@ -709,12 +710,12 @@ public class StatisticsBuilder {
                                                             stats.getMedian(),
                                                             stats.getMin(),
                                                             stats.getMax(),
-                                                            toString(type, stats2.getMean()),
-                                                            toString(type, stats2.getVariance()),
-                                                            toString(type, stats2.getPopulationVariance()),
-                                                            toString(type, stats2.getMax() - stats2.getMin()),
-                                                            toString(type, stats2.getKurtosis()),
-                                                            toString(type, stats2.getGeometricMean())));
+                                                            toString(type, stats2.getMean(), false),
+                                                            toString(type, stats2.getVariance(), false),
+                                                            toString(type, stats2.getPopulationVariance(), false),
+                                                            toString(type, stats2.getMax() - stats2.getMin(), false),
+                                                            toString(type, stats2.getKurtosis(), false),
+                                                            toString(type, stats2.getGeometricMean(), false)));
             }
         }
         
@@ -859,12 +860,53 @@ public class StatisticsBuilder {
      * Used for building summary statistics 
      * @param type
      * @param value
+     * @param isPeriod Defines whether the parameter is a time period
      * @return
      */
     @SuppressWarnings("unchecked")
-    private String toString(DataType<?> type, double value) {
+    private String toString(DataType<?> type, double value, boolean isPeriod) {
         Class<?> clazz = type.getDescription().getWrappedClass();
-        if (clazz == Long.class || clazz == Double.class) {
+        if (isPeriod) {
+            
+            // TODO: It's a bit weird that months are missing and a year is exactly 365 days
+            // TODO: Check if there is a better way to do this
+            final long SECONDS = 1000;
+            final long MINUTES = 60 * SECONDS;
+            final long HOURS = 60 * MINUTES;
+            final long DAYS = 24 * HOURS;
+            final long WEEKS = 7 * DAYS;
+            final long YEARS = 365 * DAYS;
+            
+            // Compute
+            long time = (long)value;
+            final int years = (int)(time / YEARS);
+            time = time % YEARS;
+            final int weeks = (int)(time / WEEKS);
+            time = time % WEEKS;
+            final int days = (int)(time / DAYS);
+            time = time % DAYS;
+            final int hours = (int)(time / HOURS);
+            time = time % HOURS;
+            final int minutes = (int)(time / MINUTES);
+            time = time % MINUTES;
+            final int seconds = (int)(time / SECONDS);
+            time = time % SECONDS;
+            final int milliseconds = (int)(time);
+            
+            // Convert
+            StringBuilder builder = new StringBuilder();
+            if (years != 0) builder.append(years).append("y, ");
+            if (weeks != 0) builder.append(weeks).append("w, ");
+            if (days != 0) builder.append(days).append("d, ");
+            if (hours != 0) builder.append(hours).append("h, ");
+            if (minutes != 0) builder.append(minutes).append("m, ");
+            if (seconds != 0) builder.append(seconds).append("s, ");
+            builder.append(milliseconds).append("ms");
+            
+            // Return
+            return builder.toString();
+            
+        } else if (clazz == Long.class || clazz == Double.class) {
             return String.valueOf(value);
         } else if (clazz == Date.class) {
             return ((DataType<Date>) type).format(new Date((long) value));
