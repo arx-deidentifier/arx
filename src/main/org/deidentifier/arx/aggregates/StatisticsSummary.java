@@ -66,7 +66,7 @@ public class StatisticsSummary {
     static final class StatisticsSummaryOrdinal {
 
         /** Var */
-        private final DataType<?>  type;
+        private final Comparator<String> comparator;
         /** Var */
         private final List<String> values = new ArrayList<String>();
         /** Var */
@@ -84,8 +84,25 @@ public class StatisticsSummary {
          * Constructor
          * @param type
          */
-        StatisticsSummaryOrdinal(DataType<?> type) {
-            this.type = type;
+        StatisticsSummaryOrdinal(final DataType<?> type) {
+            this.comparator = new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    try {
+                        return type.compare(o1, o2);
+                    } catch (NumberFormatException | ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            };
+        }
+
+        /**
+         * Constructor
+         * @param comparator
+         */
+        StatisticsSummaryOrdinal(final Comparator<String> comparator) {
+            this.comparator = comparator;
         }
         
         /**
@@ -152,16 +169,7 @@ public class StatisticsSummary {
         }
 
         void analyze() {
-            Collections.sort(values, new Comparator<String>() {
-                @Override
-                public int compare(String o1, String o2) {
-                    try {
-                        return type.compare(o1, o2);
-                    } catch (NumberFormatException | ParseException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
+            Collections.sort(values, comparator);
             
             if (values.size() == 0) {
                 min = null;

@@ -19,6 +19,7 @@ package org.deidentifier.arx.aggregates;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -611,10 +612,21 @@ public class StatisticsBuilder {
                 scale = ScaleOfMeasure.ORDINAL;
             }
             
+            // Try to replace nominal scale with ordinal scale based on base data type
+            if (scale == ScaleOfMeasure.NOMINAL && handle.getGeneralization(attribute) != 0) {
+                if (!(handle.getBaseDataType(attribute) instanceof ARXString) &&
+                      getHierarchy(col, true) != null) {
+                    scale = ScaleOfMeasure.ORDINAL;
+                }
+            }
+            
             // Store
             scales.put(attribute, scale);
             statistics.put(attribute, new DescriptiveStatistics());
-            ordinal.put(attribute, new StatisticsSummaryOrdinal(type));
+            ordinal.put(attribute, getSummaryStatisticsOrdinal(handle.getGeneralization(attribute),
+                                                               handle.getDataType(attribute),
+                                                               handle.getBaseDataType(attribute),
+                                                               getHierarchy(col, true)));
         }
         
         // Compute summary statistics
@@ -636,7 +648,8 @@ public class StatisticsBuilder {
             
             // If yes, add
             if (include) {
-                // Detect scales
+                
+                // For each column
                 for (int col = 0; col < handle.getNumColumns(); col++) {
                     
                     // Meta
@@ -722,6 +735,55 @@ public class StatisticsBuilder {
         return result;
     }
     
+    /**
+     * Returns a summary statistics object for the given attribute
+     * @param generalization
+     * @param dataType
+     * @param baseDataType
+     * @param hierarchy
+     * @return
+     */
+    private <U,V> StatisticsSummaryOrdinal getSummaryStatisticsOrdinal(   final int generalization,
+                                                                          final DataType<U> dataType,
+                                                                          final DataType<V> baseDataType,
+                                                                          final Hierarchy hierarchy) {
+
+        if (generalization == 0 || !(dataType instanceof ARXString)) {
+            return new StatisticsSummaryOrdinal(dataType);
+        } else if (baseDataType instanceof ARXString) {
+            return new StatisticsSummaryOrdinal(dataType);
+        } else if (hierarchy == null){
+            return new StatisticsSummaryOrdinal(dataType);
+        } else {
+            final String[][] array = hierarchy.getHierarchy();
+            final Map<String, String> map = new HashMap<String, String>();
+            for (int i = 0; i < array.length; i++) {
+                map.put(array[i][generalization], array[i][0]);
+            }
+            return new StatisticsSummaryOrdinal(new Comparator<String>() {
+                public int compare(String o1, String o2) {
+                    V _o1 = null;
+                    try {
+                        _o1 = baseDataType.parse(map.get(o1));
+                    } catch (Exception e) {
+                        // Nothing to do
+                    }
+                    V _o2 = null; 
+                    try {
+                        _o2 = baseDataType.parse(map.get(o2));
+                    } catch (Exception e) {
+                        // Nothing to do
+                    }
+                    try {
+                        return baseDataType.compare(_o1, _o2);
+                    } catch (Exception e) {
+                        return 0;
+                    }
+                }
+            });
+        }
+    }
+
     /**
      * Checks whether an interruption happened.
      */
