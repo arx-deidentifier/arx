@@ -588,7 +588,7 @@ public class StatisticsBuilder {
      * @param listwiseDeletion A flag enabling list-wise deletion
      * @return
      */
-    public Map<String, StatisticsSummary> getSummaryStatistics(boolean listwiseDeletion) {
+    public <T> Map<String, StatisticsSummary<?>> getSummaryStatistics(boolean listwiseDeletion) {
 
         Map<String, DescriptiveStatistics> statistics = new HashMap<String, DescriptiveStatistics>();
         Map<String, StatisticsSummaryOrdinal> ordinal = new HashMap<String, StatisticsSummaryOrdinal>();
@@ -675,7 +675,7 @@ public class StatisticsBuilder {
         }
 
         // Convert
-        Map<String, StatisticsSummary> result = new HashMap<String, StatisticsSummary>();
+        Map<String, StatisticsSummary<?>> result = new HashMap<String, StatisticsSummary<?>>();
         for (int col = 0; col < handle.getNumColumns(); col++) {
             
             // Check
@@ -684,120 +684,113 @@ public class StatisticsBuilder {
             // Depending on scale
             String attribute = handle.getAttributeName(col);
             ScaleOfMeasure scale = scales.get(attribute);
-            DataType<?> type = handle.getDataType(attribute);
+            @SuppressWarnings("unchecked")
+            DataType<T> type = (DataType<T>) handle.getDataType(attribute);
             ordinal.get(attribute).analyze();
             if (scale == ScaleOfMeasure.NOMINAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
-                result.put(attribute, new StatisticsSummary(ScaleOfMeasure.NOMINAL, 
-                                                            stats.getNumberOfMeasures(), 
-                                                            stats.getMode()));
-            } else if (scale == ScaleOfMeasure.ORDINAL) {
-                StatisticsSummaryOrdinal stats = ordinal.get(attribute);
-                result.put(attribute, new StatisticsSummary(ScaleOfMeasure.ORDINAL, 
+                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.NOMINAL, 
                                                             stats.getNumberOfMeasures(), 
                                                             stats.getMode(),
+                                                            type.parse(stats.getMode())));
+            } else if (scale == ScaleOfMeasure.ORDINAL) {
+                StatisticsSummaryOrdinal stats = ordinal.get(attribute);
+                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.ORDINAL, 
+                                                            stats.getNumberOfMeasures(), 
+                                                            stats.getMode(),
+                                                            type.parse(stats.getMode()),
                                                             stats.getMedian(),
+                                                            type.parse(stats.getMedian()),
                                                             stats.getMin(),
-                                                            stats.getMax()));
+                                                            type.parse(stats.getMin()),
+                                                            stats.getMax(),
+                                                            type.parse(stats.getMax())));
             } else if (scale == ScaleOfMeasure.INTERVAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
                 boolean isPeriod = type.getDescription().getWrappedClass() == Date.class;
                 
-                // TODO: Something is wrong with commons math
+                // TODO: Something is wrong with commons math's kurtosis
                 double kurtosis = stats2.getKurtosis();
                 kurtosis = kurtosis < 0d ? Double.NaN : kurtosis;
+                double range = stats2.getMax() - stats2.getMin();
+                double stddev = Math.sqrt(stats2.getVariance());
                 
-                result.put(attribute, new StatisticsSummary(ScaleOfMeasure.INTERVAL, 
+                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.INTERVAL, 
                                                             stats.getNumberOfMeasures(), 
                                                             stats.getMode(),
+                                                            type.parse(stats.getMode()),
                                                             stats.getMedian(),
+                                                            type.parse(stats.getMedian()),
                                                             stats.getMin(),
+                                                            type.parse(stats.getMin()),
                                                             stats.getMax(),
+                                                            type.parse(stats.getMax()),
                                                             toString(type, stats2.getMean(), false, false),
+                                                            toValue(type, stats2.getMean()),
+                                                            stats2.getMean(),
                                                             toString(type, stats2.getVariance(), isPeriod, true),
+                                                            toValue(type, stats2.getVariance()),
+                                                            stats2.getVariance(),
                                                             toString(type, stats2.getPopulationVariance(), isPeriod, true),
-                                                            toString(type, Math.sqrt(stats2.getVariance()), isPeriod, false),
-                                                            toString(type, stats2.getMax() - stats2.getMin(), isPeriod, false),
-                                                            toString(type, kurtosis, isPeriod, false)));
+                                                            toValue(type, stats2.getPopulationVariance()),
+                                                            stats2.getPopulationVariance(),
+                                                            toString(type, stddev, isPeriod, false),
+                                                            toValue(type, stddev),
+                                                            stddev,
+                                                            toString(type, range, isPeriod, false),
+                                                            toValue(type, range),
+                                                            stats2.getMax() - stats2.getMin(),
+                                                            toString(type, kurtosis, isPeriod, false),
+                                                            toValue(type, kurtosis),
+                                                            kurtosis));
             } else if (scale == ScaleOfMeasure.RATIO) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
 
-                // TODO: Something is wrong with commons math
+                // TODO: Something is wrong with commons math's kurtosis
                 double kurtosis = stats2.getKurtosis();
                 kurtosis = kurtosis < 0d ? Double.NaN : kurtosis;
+                double range = stats2.getMax() - stats2.getMin();
+                double stddev = Math.sqrt(stats2.getVariance());
                 
-                result.put(attribute, new StatisticsSummary(ScaleOfMeasure.RATIO, 
+                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.RATIO, 
                                                             stats.getNumberOfMeasures(), 
                                                             stats.getMode(),
+                                                            type.parse(stats.getMode()),
                                                             stats.getMedian(),
+                                                            type.parse(stats.getMedian()),
                                                             stats.getMin(),
+                                                            type.parse(stats.getMin()),
                                                             stats.getMax(),
+                                                            type.parse(stats.getMax()),
                                                             toString(type, stats2.getMean(), false, false),
+                                                            toValue(type, stats2.getMean()),
+                                                            stats2.getMean(),
                                                             toString(type, stats2.getVariance(), false, false),
+                                                            toValue(type, stats2.getVariance()),
+                                                            stats2.getVariance(),
                                                             toString(type, stats2.getPopulationVariance(), false, false),
-                                                            toString(type, Math.sqrt(stats2.getVariance()), false, false),
-                                                            toString(type, stats2.getMax() - stats2.getMin(), false, false),
+                                                            toValue(type, stats2.getPopulationVariance()),
+                                                            stats2.getPopulationVariance(),
+                                                            toString(type, stddev, false, false),
+                                                            toValue(type, stddev),
+                                                            stddev,
+                                                            toString(type, range, false, false),
+                                                            toValue(type, range),
+                                                            range,
                                                             toString(type, kurtosis, false, false),
-                                                            toString(type, stats2.getGeometricMean(), false, false)));
+                                                            toValue(type, kurtosis),
+                                                            kurtosis,
+                                                            toString(type, stats2.getGeometricMean(), false, false),
+                                                            toValue(type, stats2.getGeometricMean()),
+                                                            stats2.getGeometricMean()));
             }
         }
         
         return result;
     }
     
-    /**
-     * Returns a summary statistics object for the given attribute
-     * @param generalization
-     * @param dataType
-     * @param baseDataType
-     * @param hierarchy
-     * @return
-     */
-    private <U,V> StatisticsSummaryOrdinal getSummaryStatisticsOrdinal(   final int generalization,
-                                                                          final DataType<U> dataType,
-                                                                          final DataType<V> baseDataType,
-                                                                          final Hierarchy hierarchy) {
-
-        // TODO: It would be cleaner to return an ARXOrderedString for generalized variables
-        // TODO: that have a suitable data type directly from the DataHandle 
-        if (generalization == 0 || !(dataType instanceof ARXString)) {
-            return new StatisticsSummaryOrdinal(dataType);
-        } else if (baseDataType instanceof ARXString) {
-            return new StatisticsSummaryOrdinal(dataType);
-        } else if (hierarchy == null){
-            return new StatisticsSummaryOrdinal(dataType);
-        } else {
-            final String[][] array = hierarchy.getHierarchy();
-            final Map<String, String> map = new HashMap<String, String>();
-            for (int i = 0; i < array.length; i++) {
-                map.put(array[i][generalization], array[i][0]);
-            }
-            return new StatisticsSummaryOrdinal(new Comparator<String>() {
-                public int compare(String o1, String o2) {
-                    V _o1 = null;
-                    try {
-                        _o1 = baseDataType.parse(map.get(o1));
-                    } catch (Exception e) {
-                        // Nothing to do
-                    }
-                    V _o2 = null; 
-                    try {
-                        _o2 = baseDataType.parse(map.get(o2));
-                    } catch (Exception e) {
-                        // Nothing to do
-                    }
-                    try {
-                        return baseDataType.compare(_o1, _o2);
-                    } catch (Exception e) {
-                        return 0;
-                    }
-                }
-            });
-        }
-    }
-
     /**
      * Checks whether an interruption happened.
      */
@@ -866,6 +859,57 @@ public class StatisticsBuilder {
         
         result[length-1] = function.aggregate(toAggregate.toArray(new String[toAggregate.size()]));
         return result;
+    }
+
+    /**
+     * Returns a summary statistics object for the given attribute
+     * @param generalization
+     * @param dataType
+     * @param baseDataType
+     * @param hierarchy
+     * @return
+     */
+    private <U,V> StatisticsSummaryOrdinal getSummaryStatisticsOrdinal(   final int generalization,
+                                                                          final DataType<U> dataType,
+                                                                          final DataType<V> baseDataType,
+                                                                          final Hierarchy hierarchy) {
+
+        // TODO: It would be cleaner to return an ARXOrderedString for generalized variables
+        // TODO: that have a suitable data type directly from the DataHandle 
+        if (generalization == 0 || !(dataType instanceof ARXString)) {
+            return new StatisticsSummaryOrdinal(dataType);
+        } else if (baseDataType instanceof ARXString) {
+            return new StatisticsSummaryOrdinal(dataType);
+        } else if (hierarchy == null){
+            return new StatisticsSummaryOrdinal(dataType);
+        } else {
+            final String[][] array = hierarchy.getHierarchy();
+            final Map<String, String> map = new HashMap<String, String>();
+            for (int i = 0; i < array.length; i++) {
+                map.put(array[i][generalization], array[i][0]);
+            }
+            return new StatisticsSummaryOrdinal(new Comparator<String>() {
+                public int compare(String o1, String o2) {
+                    V _o1 = null;
+                    try {
+                        _o1 = baseDataType.parse(map.get(o1));
+                    } catch (Exception e) {
+                        // Nothing to do
+                    }
+                    V _o2 = null; 
+                    try {
+                        _o2 = baseDataType.parse(map.get(o2));
+                    } catch (Exception e) {
+                        // Nothing to do
+                    }
+                    try {
+                        return baseDataType.compare(_o1, _o2);
+                    } catch (Exception e) {
+                        return 0;
+                    }
+                }
+            });
+        }
     }
     
 
@@ -1008,6 +1052,33 @@ public class StatisticsBuilder {
             return ((DataType<Date>) type).format(new Date((long) value));
         } else {
             return String.valueOf(value);
+        }
+    }
+
+    /**
+     * Used for building summary statistics 
+     * @param type
+     * @param value
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private <T> T toValue(DataType<T> type, double value) {
+        
+        // Handle corner cases
+        if (Double.isNaN(value) || Double.isInfinite(value)) {
+            return null;
+        }
+        
+        // Handle data types
+        Class<?> clazz = type.getDescription().getWrappedClass();
+        if (clazz == Long.class) {
+            return (T)Long.valueOf((long)value);
+        } else if (clazz == Double.class) {
+            return (T)Double.valueOf(value);
+        } else if (clazz == Date.class) {
+            return (T)new Date((long) value);
+        } else {
+            return (T)String.valueOf(value);
         }
     }
     

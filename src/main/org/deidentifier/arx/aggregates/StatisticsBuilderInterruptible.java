@@ -430,7 +430,7 @@ public class StatisticsBuilderInterruptible {
      * @return
      * @throws InterruptedException
      */
-    public Map<String, StatisticsSummary> getSummaryStatistics(boolean listwiseDeletion) throws InterruptedException {
+    public Map<String, StatisticsSummary<?>> getSummaryStatistics(boolean listwiseDeletion) throws InterruptedException {
         try {
             return builder.getSummaryStatistics(listwiseDeletion);
         } catch (Exception e) {

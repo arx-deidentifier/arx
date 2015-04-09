@@ -29,7 +29,7 @@ import org.deidentifier.arx.DataType;
  * @author Fabian Prasser
  *
  */
-public class StatisticsSummary {
+public class StatisticsSummary<T> {
     
     /**
      * An enum for scales of measure
@@ -82,6 +82,14 @@ public class StatisticsSummary {
 
         /**
          * Constructor
+         * @param comparator
+         */
+        StatisticsSummaryOrdinal(final Comparator<String> comparator) {
+            this.comparator = comparator;
+        }
+
+        /**
+         * Constructor
          * @param type
          */
         StatisticsSummaryOrdinal(final DataType<?> type) {
@@ -95,14 +103,6 @@ public class StatisticsSummary {
                     }
                 }
             };
-        }
-
-        /**
-         * Constructor
-         * @param comparator
-         */
-        StatisticsSummaryOrdinal(final Comparator<String> comparator) {
-            this.comparator = comparator;
         }
         
         /**
@@ -204,65 +204,115 @@ public class StatisticsSummary {
             values.clear();
         }
     }
-    
-    /** The associated scale of measure*/
+
+    /** The associated scale of measure */
     private final ScaleOfMeasure scale;
-    
-    /** The number of measures*/
-    private final int numberOfMeasures;
+
+    /** The number of measures */
+    private final int            numberOfMeasures;
 
     /* ******************************************************************** 
      * ARXString, ARXOrderedString, ARXDate, ARXInteger, ARXDecimal 
      **********************************************************************/
-    
-    /** Mode*/
-    private final String mode;
-    
+
+    /** Mode */
+    private final String         mode;
+    /** Mode */
+    private final T              modeT;
+
     /* ******************************************************************** 
      * ARXOrderedString, ARXDate, ARXInteger, ARXDecimal 
      **********************************************************************/
-    
-    /** Median, may be null*/
-    private final String median;
-    /** Min, may be null*/
-    private final String min;
-    /** Max, may be null*/
-    private final String max;
+
+    /** Median, may be null */
+    private final String         median;
+    /** Median, may be null */
+    private final T              medianT;
+    /** Min, may be null */
+    private final String         min;
+    /** Min, may be null */
+    private final T              minT;
+    /** Max, may be null */
+    private final String         max;
+    /** Max, may be null */
+    private final T              maxT;
     
     /* ********************************************************************  
      * ARXDate, ARXInteger, ARXDecimal 
      **********************************************************************/
-    
-    /** Arithmetic mean, may be null*/
-    private final String arithmeticMean;
-    /** Sample variance, may be null*/
-    private final String sampleVariance;
-    /** Population variance, may be null*/
-    private final String populationVariance;
-    /** Std.dev, may be null*/
-    private final String stdDev;
-    /** Range, may be null*/
-    private final String range;
-    /** Kurtosis, may be null*/
-    private final String kurtosis;
-    
+
+    /** Arithmetic mean, may be null */
+    private final String         arithmeticMean;
+    /** Arithmetic mean, may be null */
+    private final T              arithmeticMeanT;
+    /** Arithmetic mean, may be null */
+    private final double         arithmeticMeanD;
+    /** Sample variance, may be null */
+    private final String         sampleVariance;
+    /** Sample variance, may be null */
+    private final T              sampleVarianceT;
+    /** Sample variance, may be null */
+    private final double         sampleVarianceD;
+    /** Population variance, may be null */
+    private final String         populationVariance;
+    /** Population variance, may be null */
+    private final T              populationVarianceT;
+    /** Population variance, may be null */
+    private final double         populationVarianceD;
+    /** Std.dev, may be null */
+    private final String         stdDev;
+    /** Std.dev, may be null */
+    private final T              stdDevT;
+    /** Std.dev, may be null */
+    private final double         stdDevD;
+    /** Range, may be null */
+    private final String         range;
+    /** Range, may be null */
+    private final T              rangeT;
+    /** Range, may be null */
+    private final double         rangeD;
+    /** Kurtosis, may be null */
+    private final String         kurtosis;
+    /** Kurtosis, may be null */
+    private final T              kurtosisT;
+    /** Kurtosis, may be null */
+    private final double         kurtosisD;
+
     /* ********************************************************************  
      * ARXInteger, ARXDecimal 
      ********************************************************************* */
-    
-    /** Geometric mean, may be null*/
-    private final String geometricMean;
+
+    /** Geometric mean, may be null */
+    private final String         geometricMean;
+    /** Geometric mean, may be null */
+    private final T              geometricMeanT;
+    /** Geometric mean, may be null */
+    private final double         geometricMeanD;
 
     /**
      * Constructor for ARXString
      * @param scale
      * @param numberOfMeasures
      * @param mode
+     * @param modeT
      */
-    StatisticsSummary(ScaleOfMeasure scale, 
-                      int numberOfMeasures, 
-                      String mode) {
-        this(scale, numberOfMeasures, mode, null, null, null, null, null, null, null, null, null, null);
+    StatisticsSummary(ScaleOfMeasure scale,
+                      int numberOfMeasures,
+                      String mode,
+                      T modeT) {
+
+        this(scale, numberOfMeasures, 
+             mode, modeT,
+             null, null, 
+             null, null, 
+             null, null, 
+             null, null, Double.NaN,
+             null, null, Double.NaN, 
+             null, null, Double.NaN, 
+             null, null, Double.NaN, 
+             null, null, Double.NaN, 
+             null, null, Double.NaN, 
+             null, null, Double.NaN);
     }
 
     /**
@@ -270,17 +320,37 @@ public class StatisticsSummary {
      * @param scale
      * @param numberOfMeasures
      * @param mode
+     * @param modeT
      * @param median
+     * @param medianT
      * @param min
+     * @param minT
      * @param max
+     * @param maxT
      */
     StatisticsSummary(ScaleOfMeasure scale,
                       int numberOfMeasures,
                       String mode,
+                      T modeT,
                       String median,
+                      T medianT,
                       String min,
-                      String max) {
-        this(scale, numberOfMeasures, mode, median, min, max, null, null, null, null, null, null, null);
+                      T minT,
+                      String max,
+                      T maxT) {
+
+        this(scale, numberOfMeasures, 
+             mode, modeT,
+             median, medianT, 
+             min, minT,
+             max, maxT,
+             null, null, Double.NaN,
+             null, null, Double.NaN, 
+             null, null, Double.NaN, 
+             null, null, Double.NaN, 
+             null, null, Double.NaN, 
+             null, null, Double.NaN, 
+             null, null, Double.NaN);
     }
 
     /**
@@ -288,29 +358,74 @@ public class StatisticsSummary {
      * @param scale
      * @param numberOfMeasures
      * @param mode
+     * @param modeT
      * @param median
+     * @param medianT
      * @param min
+     * @param minT
      * @param max
+     * @param maxT
      * @param arithmeticMean
+     * @param arithmeticMeanT
+     * @param arithmeticMeanD
      * @param sampleVariance
+     * @param sampleVarianceT
+     * @param sampleVarianceD
      * @param populationVariance
+     * @param populationVarianceT
+     * @param populationVarianceD
      * @param stdDev
+     * @param stdDevT
+     * @param stdDevD
      * @param range
+     * @param rangeT
+     * @param rangeD
      * @param kurtosis
+     * @param kurtosisT
+     * @param kurtosisD
      */
     StatisticsSummary(ScaleOfMeasure scale,
                       int numberOfMeasures,
                       String mode,
+                      T modeT,
                       String median,
+                      T medianT,
                       String min,
+                      T minT,
                       String max,
+                      T maxT,
                       String arithmeticMean,
+                      T arithmeticMeanT,
+                      double arithmeticMeanD,
                       String sampleVariance,
+                      T sampleVarianceT,
+                      double sampleVarianceD,
                       String populationVariance,
+                      T populationVarianceT,
+                      double populationVarianceD,
                       String stdDev,
+                      T stdDevT,
+                      double stdDevD,
                       String range,
-                      String kurtosis) {
-        this(scale, numberOfMeasures, mode, median, min, max, arithmeticMean, sampleVariance, populationVariance, stdDev, range, kurtosis, null);
+                      T rangeT,
+                      double rangeD,
+                      String kurtosis,
+                      T kurtosisT,
+                      double kurtosisD) {
+        
+        
+        this(scale, numberOfMeasures, 
+             mode, modeT,
+             median, medianT, 
+             min, minT,
+             max, maxT,
+             arithmeticMean, arithmeticMeanT, arithmeticMeanD,
+             sampleVariance, sampleVarianceT, sampleVarianceD, 
+             populationVariance, populationVarianceT, populationVarianceD, 
+             stdDev, stdDevT, stdDevD, 
+             range, rangeT, rangeD, 
+             kurtosis, kurtosisT, kurtosisD, 
+             null, null, Double.NaN);
     }
 
     /**
@@ -318,106 +433,243 @@ public class StatisticsSummary {
      * @param scale
      * @param numberOfMeasures
      * @param mode
+     * @param modeT
      * @param median
+     * @param medianT
      * @param min
+     * @param minT
      * @param max
+     * @param maxT
      * @param arithmeticMean
+     * @param arithmeticMeanT
+     * @param arithmeticMeanD
      * @param sampleVariance
+     * @param sampleVarianceT
+     * @param sampleVarianceD
      * @param populationVariance
+     * @param populationVarianceT
+     * @param populationVarianceD
      * @param stdDev
+     * @param stdDevT
+     * @param stdDevD
      * @param range
+     * @param rangeT
+     * @param rangeD
      * @param kurtosis
+     * @param kurtosisT
+     * @param kurtosisD
      * @param geometricMean
+     * @param geometricMeanT
+     * @param geometricMeanD
      */
     StatisticsSummary(ScaleOfMeasure scale,
                       int numberOfMeasures,
                       String mode,
+                      T modeT,
                       String median,
+                      T medianT,
                       String min,
+                      T minT,
                       String max,
+                      T maxT,
                       String arithmeticMean,
+                      T arithmeticMeanT,
+                      double arithmeticMeanD,
                       String sampleVariance,
+                      T sampleVarianceT,
+                      double sampleVarianceD,
                       String populationVariance,
+                      T populationVarianceT,
+                      double populationVarianceD,
                       String stdDev,
+                      T stdDevT,
+                      double stdDevD,
                       String range,
+                      T rangeT,
+                      double rangeD,
                       String kurtosis,
-                      String geometricMean) {
+                      T kurtosisT,
+                      double kurtosisD,
+                      String geometricMean,
+                      T geometricMeanT,
+                      double geometricMeanD) {
         this.numberOfMeasures = numberOfMeasures;
         this.scale = scale;
         this.mode = mode;
+        this.modeT = modeT;
         this.median = median;
+        this.medianT = medianT;
         this.min = min;
+        this.minT = minT;
         this.max = max;
+        this.maxT = maxT;
         this.arithmeticMean = arithmeticMean;
+        this.arithmeticMeanT = arithmeticMeanT;
+        this.arithmeticMeanD = arithmeticMeanD;
         this.sampleVariance = sampleVariance;
+        this.sampleVarianceT = sampleVarianceT;
+        this.sampleVarianceD = sampleVarianceD;
         this.populationVariance = populationVariance;
+        this.populationVarianceT = populationVarianceT;
+        this.populationVarianceD = populationVarianceD;
         this.range = range;
+        this.rangeT = rangeT;
+        this.rangeD = rangeD;
         this.kurtosis = kurtosis;
+        this.kurtosisT = kurtosisT;
+        this.kurtosisD = kurtosisD;
         this.geometricMean = geometricMean;
+        this.geometricMeanT = geometricMeanT;
+        this.geometricMeanD = geometricMeanD;
         this.stdDev = stdDev;
+        this.stdDevT = stdDevT;
+        this.stdDevD = stdDevD;
+    }
+
+
+    /**
+     * Returns the mean
+     * @return
+     */
+    public double getArithmeticMeanAsDouble() {
+        return arithmeticMeanD;
     }
 
     /**
      * Returns the mean
      * @return
      */
-    public String getArithmeticMean() {
+    public String getArithmeticMeanAsString() {
         return arithmeticMean;
+    }
+
+    /**
+     * Returns the mean
+     * @return
+     */
+    public T getArithmeticMeanAsValue() {
+        return arithmeticMeanT;
     }
 
     /**
      * Returns the geometric mean
      * @return
      */
-    public String getGeometricMean() {
+    public double getGeometricMeanAsDouble() {
+        return geometricMeanD;
+    }
+
+    /**
+     * Returns the geometric mean
+     * @return
+     */
+    public String getGeometricMeanAsString() {
         return geometricMean;
+    }
+
+    /**
+     * Returns the geometric mean
+     * @return
+     */
+    public T getGeometricMeanAsValue() {
+        return geometricMeanT;
     }
 
     /**
      * Returns the kurtosis
      * @return
      */
-    public String getKurtosis() {
+    public double getKurtosisAsDouble() {
+        return kurtosisD;
+    }
+
+    /**
+     * Returns the kurtosis
+     * @return
+     */
+    public String getKurtosisAsString() {
         return kurtosis;
+    }
+
+    /**
+     * Returns the kurtosis
+     * @return
+     */
+    public T getKurtosisAsValue() {
+        return kurtosisT;
+    }
+
+    
+
+    /**
+     * Returns the max
+     * @return
+     */
+    public String getMaxAsString() {
+        return max;
     }
 
     /**
      * Returns the max
      * @return
      */
-    public String getMax() {
-        return max;
+    public T getMaxAsValue() {
+        return maxT;
     }
 
     /**
      * Returns the median
      * @return
      */
-    public String getMedian() {
+    public String getMedianAsString() {
         return median;
+    }
+    
+    /**
+     * Returns the median
+     * @return
+     */
+    public T getMedianAsValue() {
+        return medianT;
     }
 
     /**
      * Returns the min
      * @return
      */
-    public String getMin() {
+    public String getMinAsString() {
         return min;
+    }
+
+    /**
+     * Returns the min
+     * @return
+     */
+    public T getMinAsValue() {
+        return minT;
     }
 
     /**
      * Returns the mode
      * @return
      */
-    public String getMode() {
+    public String getModeAsString() {
         return mode;
+    }
+
+    /**
+     * Returns the mode
+     * @return
+     */
+    public T getModeAsValue() {
+        return modeT;
     }
 
     /**
      * Returns the number of measures
      * @return
      */
-    public int getNumberOfMeasures() {
+    public int getNumberOfMeasuresAsString() {
         return numberOfMeasures;
     }
 
@@ -425,32 +677,72 @@ public class StatisticsSummary {
      * Returns the population variance
      * @return
      */
-    public String getPopulationVariance() {
+    public double getPopulationVarianceAsDouble() {
+        return populationVarianceD;
+    }
+    
+    /**
+     * Returns the population variance
+     * @return
+     */
+    public String getPopulationVarianceAsString() {
         return populationVariance;
+    }
+
+    /**
+     * Returns the population variance
+     * @return
+     */
+    public T getPopulationVarianceAsValue() {
+        return populationVarianceT;
     }
 
     /**
      * Returns the range
      * @return
      */
-    public String getRange() {
+    public double getRangeAsDouble() {
+        return rangeD;
+    }
+
+    /**
+     * Returns the range
+     * @return
+     */
+    public String getRangeAsString() {
         return range;
+    }
+
+    /**
+     * Returns the range
+     * @return
+     */
+    public T getRangeAsValue() {
+        return rangeT;
     }
 
     /**
      * Returns the sample variance
      * @return
      */
-    public String getSampleVariance() {
-        return sampleVariance;
+    public double getSampleVarianceAsDouble() {
+        return sampleVarianceD;
     }
 
     /**
-     * Returns the standard deviation
+     * Returns the sample variance
      * @return
      */
-    public String getStdDev() {
-        return stdDev;
+    public String getSampleVarianceAsString() {
+        return sampleVariance;
+    }
+    
+    /**
+     * Returns the sample variance
+     * @return
+     */
+    public T getSampleVarianceAsValue() {
+        return sampleVarianceT;
     }
 
     /**
@@ -459,6 +751,30 @@ public class StatisticsSummary {
      */
     public ScaleOfMeasure getScale() {
         return scale;
+    }
+
+    /**
+     * Returns the standard deviation
+     * @return
+     */
+    public double getStdDevAsDouble() {
+        return stdDevD;
+    }
+
+    /**
+     * Returns the standard deviation
+     * @return
+     */
+    public String getStdDevAsString() {
+        return stdDev;
+    }
+
+    /**
+     * Returns the standard deviation
+     * @return
+     */
+    public T getStdDevAsValue() {
+        return stdDevT;
     }
     
     /**

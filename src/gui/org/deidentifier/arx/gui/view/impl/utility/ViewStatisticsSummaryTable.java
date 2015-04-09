@@ -117,8 +117,8 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextVi
         // Create an analysis
         Analysis analysis = new Analysis(){
 
-            private boolean           stopped = false;
-            private StatisticsSummary summary;
+            private boolean              stopped = false;
+            private StatisticsSummary<?> summary;
 
             @Override
             public int getProgress() {
@@ -142,19 +142,19 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextVi
                 table.removeAll();
                 
                 createItem(Resources.getMessage("SummaryStatistics.13"), String.valueOf(summary.getScale())); //$NON-NLS-1$
-                createItem(Resources.getMessage("SummaryStatistics.12"), String.valueOf(summary.getNumberOfMeasures())); //$NON-NLS-1$
+                createItem(Resources.getMessage("SummaryStatistics.12"), String.valueOf(summary.getNumberOfMeasuresAsString())); //$NON-NLS-1$
                 
-                if (summary.isModeAvailable()) createItem(Resources.getMessage("SummaryStatistics.2"), summary.getMode()); //$NON-NLS-1$
-                if (summary.isMedianAvailable()) createItem(Resources.getMessage("SummaryStatistics.3"), summary.getMedian()); //$NON-NLS-1$
-                if (summary.isMinAvailable()) createItem(Resources.getMessage("SummaryStatistics.4"), summary.getMin()); //$NON-NLS-1$
-                if (summary.isMaxAvailable()) createItem(Resources.getMessage("SummaryStatistics.5"), summary.getMax());                 //$NON-NLS-1$
-                if (summary.isArithmeticMeanAvailable()) createItem(Resources.getMessage("SummaryStatistics.6"), summary.getArithmeticMean()); //$NON-NLS-1$
-                if (summary.isSampleVarianceAvailable()) createItem(Resources.getMessage("SummaryStatistics.7"), summary.getSampleVariance()); //$NON-NLS-1$
-                if (summary.isPopulationVarianceAvailable()) createItem(Resources.getMessage("SummaryStatistics.8"), summary.getPopulationVariance()); //$NON-NLS-1$
-                if (summary.isStdDevAvailable()) createItem(Resources.getMessage("SummaryStatistics.14"), summary.getStdDev()); //$NON-NLS-1$
-                if (summary.isRangeAvailable()) createItem(Resources.getMessage("SummaryStatistics.9"), summary.getRange()); //$NON-NLS-1$
-                if (summary.isKurtosisAvailable()) createItem(Resources.getMessage("SummaryStatistics.10"), summary.getKurtosis()); //$NON-NLS-1$
-                if (summary.isGeometricMeanAvailable()) createItem(Resources.getMessage("SummaryStatistics.11"), summary.getGeometricMean()); //$NON-NLS-1$
+                if (summary.isModeAvailable()) createItem(Resources.getMessage("SummaryStatistics.2"), summary.getModeAsString()); //$NON-NLS-1$
+                if (summary.isMedianAvailable()) createItem(Resources.getMessage("SummaryStatistics.3"), summary.getMedianAsString()); //$NON-NLS-1$
+                if (summary.isMinAvailable()) createItem(Resources.getMessage("SummaryStatistics.4"), summary.getMinAsString()); //$NON-NLS-1$
+                if (summary.isMaxAvailable()) createItem(Resources.getMessage("SummaryStatistics.5"), summary.getMaxAsString());                 //$NON-NLS-1$
+                if (summary.isArithmeticMeanAvailable()) createItem(Resources.getMessage("SummaryStatistics.6"), summary.getArithmeticMeanAsString()); //$NON-NLS-1$
+                if (summary.isSampleVarianceAvailable()) createItem(Resources.getMessage("SummaryStatistics.7"), summary.getSampleVarianceAsString()); //$NON-NLS-1$
+                if (summary.isPopulationVarianceAvailable()) createItem(Resources.getMessage("SummaryStatistics.8"), summary.getPopulationVarianceAsString()); //$NON-NLS-1$
+                if (summary.isStdDevAvailable()) createItem(Resources.getMessage("SummaryStatistics.14"), summary.getStdDevAsString()); //$NON-NLS-1$
+                if (summary.isRangeAvailable()) createItem(Resources.getMessage("SummaryStatistics.9"), summary.getRangeAsString()); //$NON-NLS-1$
+                if (summary.isKurtosisAvailable()) createItem(Resources.getMessage("SummaryStatistics.10"), summary.getKurtosisAsString()); //$NON-NLS-1$
+                if (summary.isGeometricMeanAvailable()) createItem(Resources.getMessage("SummaryStatistics.11"), summary.getGeometricMeanAsString()); //$NON-NLS-1$
 
                 table.setRedraw(true);
                 
