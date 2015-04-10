@@ -178,7 +178,7 @@ public class DataHandleOutput extends DataHandle {
             this.inverseMap[dataSE.getMap()[i]] = i | (AttributeType.ATTR_TYPE_SE << AttributeType.SHIFT);
         }
         for (int i = 0; i < dataIS.getMap().length; i++) {
-            inverseMap[dataIS.getMap()[i]] = i | (AttributeType.ATTR_TYPE_IS << AttributeType.SHIFT);
+            this.inverseMap[dataIS.getMap()[i]] = i | (AttributeType.ATTR_TYPE_IS << AttributeType.SHIFT);
         }
 
         // Build inverse data array
