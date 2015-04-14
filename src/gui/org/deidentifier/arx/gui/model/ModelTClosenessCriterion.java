@@ -68,13 +68,13 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
             case VARIANT_EQUAL: return new EqualDistanceTCloseness(getAttribute(), t);
             case VARIANT_HIERARCHICAL: return new HierarchicalDistanceTCloseness(getAttribute(), t,
                                                                             model.getInputConfig().getHierarchy(getAttribute()));
-            default: throw new RuntimeException(Resources.getMessage("Model.0")); //$NON-NLS-1$
+            default: throw new RuntimeException(Resources.getMessage("Model.0c")); //$NON-NLS-1$
 	    }
 	}
 	
 	@Override
     public String getLabel() {
-        return Resources.getMessage("Model.1"); //$NON-NLS-1$
+        return Resources.getMessage("Model.1b"); //$NON-NLS-1$
     }
 	
 	/**
@@ -109,7 +109,7 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
 	@Override
     public void pull(ModelExplicitCriterion criterion) {
         if (!(criterion instanceof ModelTClosenessCriterion)) {
-            throw new RuntimeException(Resources.getMessage("Model.2")); //$NON-NLS-1$
+            throw new RuntimeException(Resources.getMessage("Model.2d")); //$NON-NLS-1$
         }
         ModelTClosenessCriterion other = (ModelTClosenessCriterion)criterion;
         this.variant = other.variant;
@@ -137,9 +137,9 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
     @Override
     public String toString() {
         switch (variant) {
-            case VARIANT_EQUAL: return String.valueOf(t)+Resources.getMessage("Model.3"); //$NON-NLS-1$
-            case VARIANT_HIERARCHICAL: return String.valueOf(t)+Resources.getMessage("Model.4"); //$NON-NLS-1$
-            default: throw new RuntimeException(Resources.getMessage("Model.5")); //$NON-NLS-1$
+            case VARIANT_EQUAL: return String.valueOf(t)+Resources.getMessage("Model.3b"); //$NON-NLS-1$
+            case VARIANT_HIERARCHICAL: return String.valueOf(t)+Resources.getMessage("Model.4b"); //$NON-NLS-1$
+            default: throw new RuntimeException(Resources.getMessage("Model.5b")); //$NON-NLS-1$
         }
     }
 }
