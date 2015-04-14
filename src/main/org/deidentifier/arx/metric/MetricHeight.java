@@ -119,10 +119,10 @@ public class MetricHeight extends MetricDefault {
 
         minHeight = 0;
         maxHeight = 0;
-        Set<String> qis = definition.getQuasiIdentifyingAttributes();
-        for (String qi : qis) {
-            minHeight += definition.getMinimumGeneralization(qi);
-            maxHeight += definition.getMaximumGeneralization(qi);
+        Set<String> genQis = definition.getGeneralizationAttributes();
+        for (String genQi : genQis) {
+            minHeight += definition.getMinimumGeneralization(genQi);
+            maxHeight += definition.getMaximumGeneralization(genQi);
         }
     }
 }

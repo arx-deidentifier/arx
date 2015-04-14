@@ -26,6 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.deidentifier.arx.aggregates.MicroaggregateFunction;
+import org.deidentifier.arx.aggregates.MicroaggregateFunction.ArithmeticMean;
+import org.deidentifier.arx.aggregates.MicroaggregateFunction.GeometricMean;
+import org.deidentifier.arx.aggregates.MicroaggregateFunction.HandlingOfNullValues;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.io.CSVSyntax;
@@ -37,6 +41,86 @@ import org.deidentifier.arx.io.CSVSyntax;
  * @author Florian Kohlmayer
  */
 public class AttributeType implements Serializable, Cloneable {
+    
+    /**
+     * This class is used to define aggregate functions for microaggregation.
+     * 
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     * @param <T>
+     *
+     */
+    public static class Microaggregation extends AttributeType implements Serializable {
+        /** SVUID */
+        private static final long            serialVersionUID = -7175337291872533713L;
+        
+        /** The microaggregation function */
+        private final MicroaggregateFunction function;
+        
+        /**
+         * Instantiates a new hierarchy.
+         */
+        public Microaggregation(MicroaggregateFunction function) {
+            super(ATTR_TYPE_QI);
+            this.function = function;
+        }
+        
+        /**
+         * Returns the aggregate function.
+         * 
+         * @return
+         */
+        public MicroaggregateFunction getFunction() {
+            return function;
+        }
+        
+        /**
+         * Creates an microaggregation attribute type.
+         * 
+         * @param function
+         * @return
+         */
+        public static Microaggregation create(MicroaggregateFunction function) {
+            return new Microaggregation(function);
+        }
+        
+        /**
+         * Creates an microaggregation using arithmetic mean function.
+         * 
+         * @return
+         */
+        public static Microaggregation createArithmeticMean() {
+            return new Microaggregation(new ArithmeticMean());
+        }
+        
+        /**
+         * Creates an microaggregation using arithmetic mean function.
+         * 
+         * @return
+         */
+        public static Microaggregation createArithmeticMean(HandlingOfNullValues nullValueHandling) {
+            return new Microaggregation(new ArithmeticMean(nullValueHandling));
+        }
+        
+        /**
+         * Creates an microaggregation using geometric mean function.
+         * 
+         * @return
+         */
+        public static AttributeType createGeometricMean() {
+            return new Microaggregation(new GeometricMean());
+        }
+        
+        /**
+         * Creates an microaggregation using geometric mean function.
+         * 
+         * @return
+         */
+        public static AttributeType createGeometricMean(HandlingOfNullValues nullValueHandling) {
+            return new Microaggregation(new GeometricMean(nullValueHandling));
+        }
+        
+    }
 
     /**
      * This class implements a generalization hierarchy.

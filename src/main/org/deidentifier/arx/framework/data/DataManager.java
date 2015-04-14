@@ -101,12 +101,12 @@ public class DataManager {
         this.header = header;
 
         Set<String> id = getIdentifiers(header, definition);
-        Set<String> qi = definition.getQuasiIdentifyingAttributes();
+        Set<String> gh = definition.getGeneralizationAttributes();
         Set<String> se = definition.getSensitiveAttributes();
         Set<String> is = definition.getInsensitiveAttributes();
 
         // Init dictionary
-        final Dictionary dictionaryQI = new Dictionary(qi.size());
+        final Dictionary dictionaryQI = new Dictionary(gh.size());
         final Dictionary dictionarySE = new Dictionary(se.size());
         final Dictionary dictionaryIS = new Dictionary(is.size());
 
@@ -127,7 +127,7 @@ public class DataManager {
         final String[] headerSE = new String[dictionarySE.getNumDimensions()];
         final String[] headerIS = new String[dictionaryIS.getNumDimensions()];
         for (final String column : header) {
-            if (qi.contains(column)) {
+            if (gh.contains(column)) {
                 map[counter] = indexQI + 1;
                 mapQI[indexQI] = counter;
                 dictionaryQI.registerAll(indexQI, dictionary, counter);
@@ -156,14 +156,14 @@ public class DataManager {
         dataIS = ddata[2];
 
         // Initialize minlevels
-        minLevels = new int[qi.size()];
-        hierarchyHeights = new int[qi.size()];
-        maxLevels = new int[qi.size()];
+        minLevels = new int[gh.size()];
+        hierarchyHeights = new int[gh.size()];
+        maxLevels = new int[gh.size()];
 
         // Build qi generalisation hierarchiesQI
-        hierarchiesQI = new GeneralizationHierarchy[qi.size()];
+        hierarchiesQI = new GeneralizationHierarchy[gh.size()];
         for (int i = 0; i < header.length; i++) {
-            if (qi.contains(header[i])) {
+            if (gh.contains(header[i])) {
                 final int dictionaryIndex = map[i] - 1;
                 if ((dictionaryIndex >= 0) && (dictionaryIndex < 999)) {
                     final String name = header[i];

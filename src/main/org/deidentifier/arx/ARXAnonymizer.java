@@ -424,15 +424,15 @@ public class ARXAnonymizer {
         }
         
         // Perform sanity checks
-        Set<String> qis = definition.getQuasiIdentifyingAttributes();
+        Set<String> genQis = definition.getGeneralizationAttributes();
         if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() > 1d)) { throw new IllegalArgumentException("Suppression rate " + config.getMaxOutliers() + "must be in [0, 1]"); }
-        if (qis.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier"); }
-        if (qis.size() > maxQuasiIdentifiers) { 
-            throw new IllegalArgumentException("Too many quasi-identifiers (" + qis.size()+"). This restriction is configurable."); 
+        if (genQis.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier with generalization"); }
+        if (genQis.size() > maxQuasiIdentifiers) { 
+            throw new IllegalArgumentException("Too many quasi-identifiers (" + genQis.size()+"). This restriction is configurable."); 
         }
         int transformations = 1;
-        for (String qi : qis) {
-            transformations *= definition.getMaximumGeneralization(qi) - definition.getMinimumGeneralization(qi) + 1;
+        for (String genQi : genQis) {
+            transformations *= definition.getMaximumGeneralization(genQi) - definition.getMinimumGeneralization(genQi) + 1;
         }
         if (transformations > maxTransformations) { 
             throw new IllegalArgumentException("Too many transformations in the search space (" + transformations+ "). This restriction is configurable."); 

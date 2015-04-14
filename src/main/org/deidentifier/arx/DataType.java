@@ -199,10 +199,19 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         }
 
         @Override
+        public Date fromDouble(Double value) {
+            if (value == null) {
+                return null;
+            }
+            long v = value.longValue();
+            return new Date(v);
+        }
+
+        @Override
         public DataTypeDescription<Date> getDescription(){
             return description;
         }
-
+        
         @Override
         public String getFormat() {
             return string;
@@ -220,7 +229,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return locale;
             }
         }
-        
+
         @Override
         public Date getMaximum() {
             return new Date(Long.MAX_VALUE);
@@ -229,6 +238,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         @Override
         public Date getMinimum() {
             return new Date(Long.MIN_VALUE);
+        }
+
+        @Override
+        public ScaleOfMeasure getScaleOfMeasure() {
+           return ScaleOfMeasure.INTERVAL;
         }
 
         @Override
@@ -273,7 +287,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             long d1 = multiplicand.getTime();
             return new Date(d1 * multiplicator);
         }
-
+        
         @Override
         public String multiply(String multiplicand, String multiplicator) {
             long d1 = parse(multiplicand).getTime();
@@ -292,7 +306,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
             }
         }
-        
+
         @Override
         public double ratio(Date dividend, Date divisor) {
             long d1 = dividend.getTime();
@@ -308,11 +322,19 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         }
 
         @Override
+        public Double toDouble(Date value) {
+          if (value == null) {
+              return null;
+          }
+          return (double)value.getTime();
+        }
+
+        @Override
         public String toString() {
             return "Date(" + string + ")";
         }
     }
-
+    
     /**
      * Base class for numeric types.
      *
@@ -393,7 +415,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public DataType<Double> clone() {
             return this;
         }
-
+        
         @Override
         public int compare(Double t1, Double t2) {
             if (t1 == null && t2 == null) {
@@ -469,6 +491,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         }
 
         @Override
+        public Double fromDouble(Double value) {
+            return value;
+        }
+
+        @Override
         public DataTypeDescription<Double> getDescription(){
             return description;
         }
@@ -501,6 +528,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return -Double.MAX_VALUE;
         }
         
+        @Override
+        public ScaleOfMeasure getScaleOfMeasure() {
+           return ScaleOfMeasure.RATIO;
+        }
+
         @Override
         public int hashCode() { 
             if (string==null) {
@@ -571,6 +603,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         @Override
         public Double subtract(Double minuend, Double subtrahend) {
             return parse(format(minuend - subtrahend));
+        }
+
+        @Override
+        public Double toDouble(Double value) {
+            return value;
         }
 
         @Override
@@ -660,7 +697,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public DataType<Long> clone() {
             return this;
         }
-
+        
         @Override
         public int compare(Long t1, Long t2) {
             if (t1 == null && t2 == null) {
@@ -717,7 +754,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             } else if (!getLocale().equals(other.getLocale())) { return false; }
             return true;
         }
-        
+
         @Override
         public String format(Long s){
             if (s == null) {
@@ -728,6 +765,14 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             } else {
                 return format.format(s);
             }
+        }
+        
+        @Override
+        public Long fromDouble(Double value) {
+           if (value == null) {
+               return null;
+           }
+            return value.longValue();
         }
         
         @Override
@@ -764,6 +809,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         }
 
         @Override
+        public ScaleOfMeasure getScaleOfMeasure() {
+           return ScaleOfMeasure.RATIO;
+        }
+
+        @Override
         public int hashCode() {
             if (string == null) {
                 return getLocale().hashCode();
@@ -796,19 +846,19 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public Long multiply(Long multiplicand, int multiplicator) {
             return multiplicand * multiplicator;
         }
-
+        
         @Override
         public Long multiply(Long multiplicand, Long multiplicator) {
             return (long)Math.round((double)multiplicand * (double)multiplicator);
         }
-        
+
         @Override
         public String multiply(String multiplicand, String multiplicator) {
             Long d1 = parse(multiplicand);
             Long d2 = parse(multiplicator);
             return format(d1 * d2);
         }
-
+        
         @Override
         public Long parse(String s) {
             if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
@@ -824,7 +874,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
             }
         }
-        
+
         @Override
         public double ratio(Long dividend, Long divisor) {
             return (double)dividend / (double)divisor;
@@ -833,6 +883,14 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         @Override
         public Long subtract(Long minuend, Long subtrahend) {
             return minuend - subtrahend;
+        }
+
+        @Override
+        public Double toDouble(Long value) {
+            if (value == null) {
+                return null;
+            }
+            return value.doubleValue();
         }
 
         @Override
@@ -886,7 +944,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 }
             }
         }
-
+        
         /**
          * Creates a new instance.
          *
@@ -914,7 +972,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 }
             }
         }
-        
+
         /**
          * Creates a new instance.
          *
@@ -960,7 +1018,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return s1.compareTo(s2);
             }
         }
-
+        
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) { return true; }
@@ -988,7 +1046,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         	return s;
         }
-        
+
         @Override
         public DataTypeDescription<String> getDescription(){
             return description;
@@ -1012,7 +1070,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             });
             return result;
         }
-
+        
         @Override
         public String getFormat() {
             if (order == null) return "";
@@ -1033,7 +1091,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
             return b.toString();
         }
-        
+
         /**
          * Returns the locale of the format.
          *
@@ -1041,6 +1099,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         public Locale getLocale() {
             return Locale.getDefault();
+        }
+        
+        @Override
+        public ScaleOfMeasure getScaleOfMeasure() {
+           return ScaleOfMeasure.ORDINAL;
         }
 
         @Override
@@ -1075,7 +1138,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return "OrderedString";
         }
     }
-    
+
     /**
      * Base class for string types.
      *
@@ -1099,6 +1162,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return this;
         }
         
+        
         @Override
         public int compare(final String s1, final String s2) {
             if (s1 == null || s2 == null) {
@@ -1106,7 +1170,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
             return s1.compareTo(s2);
         }
-
+        
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) { return true; }
@@ -1122,10 +1186,15 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
             return s;
         }
-        
+
         @Override
         public DataTypeDescription<String> getDescription(){
             return description;
+        }
+        
+        @Override
+        public ScaleOfMeasure getScaleOfMeasure() {
+           return ScaleOfMeasure.NOMINAL;
         }
 
         @Override
@@ -1268,8 +1337,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         public abstract Locale getLocale();
     }
-
-	/**
+    
+    /**
      * An interface for data types with a ratio scale.
      *
      * @author Fabian Prasser
@@ -1334,18 +1403,27 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract String format(T t);
 
         /**
+         * Converts the double representation into the datatype.
          * 
-         *
+         * @param value
          * @return
          */
-        public abstract DataTypeDescription<T> getDescription();
+        public abstract T fromDouble(Double value);
 
         /**
          * 
          *
          * @return
          */
+        public abstract DataTypeDescription<T> getDescription();
+        
+        /**
+         * 
+         *
+         * @return
+         */
         public T getMaximum();
+
 
         /**
          * 
@@ -1424,29 +1502,45 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract T subtract(T minuend, T subtrahend);
+        
+       /**
+     * Gets a double representation of the value.
+     * 
+     * @param value
+     * @return
+     */
+    public abstract Double toDouble(T value);
     }
 
-    /** The string representing the NULL value */
-    public static final String NULL_VALUE = "NULL";
-    
-    /**  SVUID */
-    private static final long serialVersionUID = -4380267779210935078L;
+    /**
+     * An enum for scales of measure
+     * BEWARE: The order of the enums is used to compare required with given scales!
+     * 
+     * @author Fabian Prasser
+     */ 
+    public static enum ScaleOfMeasure {
+        NOMINAL("Nominal scale"),
+        ORDINAL("Ordinal scale"),
+        INTERVAL("Interval scale"),
+        RATIO("Ratio scale");
+        
+        /** Label */
+        private final String label;
+        
+        /**
+         * Construct
+         * @param label
+         */
+        private ScaleOfMeasure(String label) {
+            this.label = label;
+        }
+        
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
 
-    /** A date data type with default format dd.mm.yyyy */
-    public static final DataType<Date>               DATE    = new ARXDate();
-
-    /** A generic decimal data type. */
-    public static final DataType<Double>             DECIMAL = new ARXDecimal();
-
-    /** A generic integer data type. */
-    public static final DataType<Long>               INTEGER = new ARXInteger();
-
-    /** A string data type. */
-    public static final DataType<String>             STRING  = new ARXString();
-
-    /** A ordered string data type. */
-    public static final DataType<String>             ORDERED_STRING  = new ARXOrderedString();
-    
     /**
      * A date data type with given format.
      *
@@ -1457,7 +1551,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static final DataType<Date> createDate(final String format) {
         return new ARXDate(format);
     }
-
+    
     /**
      * A date data type with given format.
      *
@@ -1469,7 +1563,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static final DataType<Date> createDate(final String format, final Locale locale) {
         return new ARXDate(format, locale);
     }
-    
+
     /**
      * A decimal data type with given format.
      *
@@ -1480,7 +1574,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static final DataType<Double> createDecimal(final String format) {
         return new ARXDecimal(format);
     }
-    
+
     /**
      * Creates a decimal data type with a format string from the given locale.
      *
@@ -1491,7 +1585,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static DataType<Double> createDecimal(String format, Locale locale) {
         return new ARXDecimal(format, locale);
     }
-    
+
     /**
      * An integer data type with given format.
      *
@@ -1502,7 +1596,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static final DataType<Long> createInteger(final String format) {
         return new ARXInteger(format);
     }
-    
+
     /**
      * An integer data type with given format using the given locale.
      *
@@ -1514,7 +1608,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static final DataType<Long> createInteger(final String format, Locale locale) {
         return new ARXInteger(format, locale);
     }
-    
+
     /**
      * A ordered string type with given format. 
      * 
@@ -1534,7 +1628,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static final DataType<String> createOrderedString(final String format) {
         return new ARXOrderedString(format);
     }
-    
+
     /**
      * A ordered string type with given format. 
      * 
@@ -1568,7 +1662,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         list.add(INTEGER.getDescription());
         return list;
     }
-
+    
     /**
      * 
      * Returns a datatype for the given class.
@@ -1627,7 +1721,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         result.add("dd.MM.yyyy'T'HH:mm:ssZZ");
         return result;
     }
-
+    
     /**
      * Provides a list of example formats for the <code>Decimal</code> data type.
      *
@@ -1638,9 +1732,30 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         result.add("#,##0");
         result.add("#,##0.###");
         result.add("#,##0%");
-        result.add("Â¤#,##0.00;(Â¤#,##0.00)");
+        result.add("¤#,##0.00;(¤#,##0.00)");
         return result;
     }
+    
+    /** The string representing the NULL value */
+    public static final String NULL_VALUE = "NULL";
+    
+    /**  SVUID */
+    private static final long serialVersionUID = -4380267779210935078L;
+    
+    /** A date data type with default format dd.mm.yyyy */
+    public static final DataType<Date>               DATE    = new ARXDate();
+    
+    /** A generic decimal data type. */
+    public static final DataType<Double>             DECIMAL = new ARXDecimal();
+
+    /** A generic integer data type. */
+    public static final DataType<Long>               INTEGER = new ARXInteger();
+    
+    /** A string data type. */
+    public static final DataType<String>             STRING  = new ARXString();
+
+    /** A ordered string data type. */
+    public static final DataType<String>             ORDERED_STRING  = new ARXOrderedString();
     
     @Override
     public abstract DataType<T> clone();
@@ -1657,6 +1772,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public abstract int compare(String s1, String s2) throws NumberFormatException, ParseException;
     
+    
     /**
      * Compare.
      *
@@ -1665,6 +1781,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @return
      */
     public abstract int compare(T t1, T t2);
+
     
     /**
      * Returns a new function builder.
@@ -1677,7 +1794,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     
     @Override
     public abstract boolean equals(Object other);
-
+    
     /**
      * Converts a value into a string.
      *
@@ -1685,13 +1802,20 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @return
      */
     public abstract String format(T t);
-    
+
     /**
      * Returns a description of the data type.
      *
      * @return
      */
     public abstract DataTypeDescription<T> getDescription();
+    
+    /**
+     * Returns the scale of measure for the data type.
+     * 
+     * @return
+     */
+    public abstract ScaleOfMeasure getScaleOfMeasure();
 
     @Override
     public abstract int hashCode();

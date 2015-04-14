@@ -24,7 +24,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.Microaggregation;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.MicroaggregateFunction;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
 
@@ -117,6 +119,21 @@ public class DataDefinition implements Cloneable{
             return ((Hierarchy) attributeTypes.get(attribute)).getHierarchy();
         }
     }
+    /**
+     * Returns the according microaggregation function.
+     * 
+     * @param attribute
+     * @return
+     */
+    public MicroaggregateFunction getMicroaggregateFunction(final String attribute) {
+        checkQuasiIdentifier(attribute);
+        if (!(attributeTypes.get(attribute) instanceof Microaggregation)) {
+            return null;
+        } else {
+            return ((Microaggregation) attributeTypes.get(attribute)).getFunction();
+        }
+    }
+    
     
     /**
      * Returns the associated builder, if any.
@@ -202,6 +219,36 @@ public class DataDefinition implements Cloneable{
         final Set<String> result = new HashSet<String>();
         for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
             if (entry.getValue().getType() == AttributeType.ATTR_TYPE_QI) {
+                result.add(entry.getKey());
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Returns the attributes for which generlaization is specified.
+     * 
+     * @return
+     */
+    public Set<String> getGeneralizationAttributes() {
+        final Set<String> result = new HashSet<String>();
+        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
+            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_QI && entry.getValue() instanceof Hierarchy) {
+                result.add(entry.getKey());
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Returns the attributes for which generlaization is specified.
+     * 
+     * @return
+     */
+    public Set<String> getMicroaggregationAttributes() {
+        final Set<String> result = new HashSet<String>();
+        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
+            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_QI && entry.getValue() instanceof Microaggregation) {
                 result.add(entry.getKey());
             }
         }
@@ -387,7 +434,7 @@ public class DataDefinition implements Cloneable{
     protected void materialize(DataHandle handle) {
         
         // For each qi
-        for (String qi : this.getQuasiIdentifyingAttributes()) {
+        for (String qi : this.getGeneralizationAttributes()) {
             
             // If no hierarchy is available
             if (!isHierarchyAvailable(qi)) {
