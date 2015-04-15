@@ -21,24 +21,33 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistic
 import org.deidentifier.arx.framework.data.Data;
 
 /**
+ * Helper class to convey buffers.
  * 
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
+ *
  */
 public class TransformedData {
-
-    /**  TODO */
-    public Data buffer;
     
-    /**  TODO */
+    /** The GH buffer */
+    public Data            bufferGH;
+    
+    /** The OT buffer */
+    public Data            bufferOT;
+    
+    /** The group statistic */
     public GroupStatistics statistics;
     
     /**
+     * Instantiate the helper object.
      * 
-     *
-     * @param data
+     * @param bufferGH
+     * @param bufferOT
      * @param statistics
      */
-    public TransformedData(Data data, GroupStatistics statistics) {
-        this.buffer = data;
+    public TransformedData(Data bufferGH, Data bufferOT, GroupStatistics statistics) {
+        this.bufferGH = bufferGH;
+        this.bufferOT = bufferOT;
         this.statistics = statistics;
     }
 }

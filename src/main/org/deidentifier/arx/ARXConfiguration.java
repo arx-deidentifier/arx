@@ -854,6 +854,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
         for (PrivacyCriterion c : criteria) {
             this.requirements |= c.getRequirements();
         }
+        
+        // Requirements for microaggregation
+        if (manager.getDataDI() != null) {
+            this.requirements |= ARXConfiguration.REQUIREMENT_DISTRIBUTION;
+        }
 
         // Initialize: Always make sure that d-presence is initialized first, because
         // the research subset needs to be available for initializing t-closeness
@@ -870,7 +875,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (this.containsCriterion(DPresence.class)) {
             dataLength = this.getCriterion(DPresence.class).getSubset().getArray().length;
         } else {
-            dataLength = manager.getDataQI().getDataLength();
+            dataLength = manager.getDataGH().getDataLength();
         }
 
         // Compute max outliers
@@ -899,7 +904,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Compute snapshot length
         this.snapshotLength = 2;
         if (this.requires(REQUIREMENT_DISTRIBUTION)) {
-            this.snapshotLength += 2 * manager.getDataSE().getHeader().length;
+            this.snapshotLength += 2 * manager.getDataDI().getHeader().length;
         }
         if (this.requires(REQUIREMENT_SECONDARY_COUNTER)) {
             this.snapshotLength += 1;

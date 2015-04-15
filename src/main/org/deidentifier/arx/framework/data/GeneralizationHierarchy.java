@@ -121,10 +121,10 @@ public class GeneralizationHierarchy {
         
         // Obtain dictionary
         String[] dictionary = null;
-        String[] header = manager.getDataQI().getHeader();
+        String[] header = manager.getDataGH().getHeader();
         for (int i=0; i<header.length; i++) {
             if (header[i].equals(attribute)) {
-                dictionary = manager.getDataQI().getDictionary().getMapping()[i];
+                dictionary = manager.getDataGH().getDictionary().getMapping()[i];
             }
         }
         

@@ -37,88 +37,96 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
  * @author Florian Kohlmayer
  */
 public class DataHandleOutput extends DataHandle {
-
+    
     /**
      * The class ResultIterator.
      * 
      * @author Fabian Prasser
- * @author Florian Kohlmayer
+     * @author Florian Kohlmayer
      */
     public class ResultIterator implements Iterator<String[]> {
-
+        
         /** The current row. */
         private int row = -1;
-
+        
         @Override
         public boolean hasNext() {
-            return row < dataQI.getArray().length;
+            return row < dataGH.getArray().length;
         }
-
+        
         @Override
         public String[] next() {
-
+            
             String[] result = null;
-
+            
             /* write header */
             if (row == -1) {
                 result = header;
-
+                
                 /* write a normal row */
             } else {
-
+                
                 // Create row
                 result = new String[header.length];
                 for (int i = 0; i < result.length; i++) {
                     result[i] = internalGetValue(row, i);
                 }
             }
-
+            
             row++;
             return result;
         }
-
+        
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }
     }
-
+    
     /** The current result. */
-    private ARXResult     result;
-
+    private ARXResult    result;
+    
     /** The current node. */
-    private ARXNode       node;
-
+    private ARXNode      node;
+    
     /** The data. */
-    protected Data        dataIS;
-
+    protected Data       dataIS;
+    
     /** The data. */
-    protected Data        dataQI;
-
+    protected Data       dataGH;
+    
     /** The data. */
-    protected Data        dataSE;
-
+    protected Data       dataOT;
+    
+    /** The data. */
+    protected Data       dataMA;
+    
+    /** The data. */
+    protected Data       dataDI;
+    
     /** An inverse map to data arrays. */
-    private int[][][]     inverseData;
-
+    private int[][][]    inverseData;
+    
     /** An inverse map to dictionaries. */
-    private Dictionary[]  inverseDictionaries;
-
+    private Dictionary[] inverseDictionaries;
+    
     /** An inverse map for column indices. */
-    private int[]         inverseMap;
-
+    private int[]        inverseMap;
+    
     /** The generalization hierarchies. */
-    private int[][][]     map;
-
+    // TODO: unused?
+    private int[][][]    map;
+    
     /** The names of the quasiIdentifer. */
-    private String[]      quasiIdentifiers;
-
+    // TODO: unused?
+    private String[]     quasiIdentifiers;
+    
     /** Suppression handling. */
-    private final int     suppressedAttributeTypes;
-
+    private final int    suppressedAttributeTypes;
+    
     /** Suppression handling. */
-    private final String  suppressionString;
-
+    private final String suppressionString;
+    
     /**
      * Instantiates a new handle.
      *
@@ -139,10 +147,35 @@ public class DataHandleOutput extends DataHandle {
                                final StatisticsEquivalenceClasses statistics,
                                final DataDefinition definition,
                                final ARXConfiguration config) {
-
+        this(result, registry, manager, buffer, null, node, statistics, definition, config);
+    }
+    
+    /**
+     * Instantiates a new handle.
+     * 
+     * @param result
+     * @param registry
+     * @param manager
+     * @param bufferGH
+     * @param bufferOT
+     * @param node
+     * @param statistics
+     * @param definition
+     * @param config
+     */
+    protected DataHandleOutput(final ARXResult result,
+                               final DataRegistry registry,
+                               final DataManager manager,
+                               final Data bufferGH,
+                               final Data bufferOT,
+                               final ARXNode node,
+                               final StatisticsEquivalenceClasses statistics,
+                               final DataDefinition definition,
+                               final ARXConfiguration config) {
+        
         registry.updateOutput(node, this);
         this.setRegistry(registry);
-
+        
         // Init
         this.suppressionString = config.getSuppressionString();
         this.suppressedAttributeTypes = config.getSuppressedAttributeTypes();
@@ -150,13 +183,14 @@ public class DataHandleOutput extends DataHandle {
         this.definition = definition;
         this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), statistics);
         this.node = node;
-
+        
         // Extract data
-        this.dataQI = buffer;
-        this.dataSE = manager.getDataSE();
+        this.dataGH = bufferGH;
+        this.dataOT = bufferOT;
+        this.dataDI = manager.getDataDI();
         this.dataIS = manager.getDataIS();
         this.header = manager.getHeader();
-
+        
         // Init quasi identifiers and hierarchies
         GeneralizationHierarchy[] hierarchies = manager.getHierarchies();
         this.quasiIdentifiers = new String[hierarchies.length];
@@ -165,33 +199,33 @@ public class DataHandleOutput extends DataHandle {
             this.quasiIdentifiers[i] = hierarchies[i].getName();
             this.map[i] = hierarchies[i].getArray();
         }
-
+        
         // Build map inverse
         this.inverseMap = new int[header.length];
         for (int i = 0; i < this.inverseMap.length; i++) {
             this.inverseMap[i] = (AttributeType.ATTR_TYPE_ID << AttributeType.SHIFT);
         }
-        for (int i = 0; i < this.dataQI.getMap().length; i++) {
-            this.inverseMap[dataQI.getMap()[i]] = i | (AttributeType.ATTR_TYPE_QI << AttributeType.SHIFT);
+        for (int i = 0; i < this.dataGH.getMap().length; i++) {
+            this.inverseMap[dataGH.getMap()[i]] = i | (AttributeType.ATTR_TYPE_QI << AttributeType.SHIFT);
         }
-        for (int i = 0; i < this.dataSE.getMap().length; i++) {
-            this.inverseMap[dataSE.getMap()[i]] = i | (AttributeType.ATTR_TYPE_SE << AttributeType.SHIFT);
+        for (int i = 0; i < this.dataDI.getMap().length; i++) {
+            this.inverseMap[dataDI.getMap()[i]] = i | (AttributeType.ATTR_TYPE_SE << AttributeType.SHIFT);
         }
         for (int i = 0; i < dataIS.getMap().length; i++) {
             this.inverseMap[dataIS.getMap()[i]] = i | (AttributeType.ATTR_TYPE_IS << AttributeType.SHIFT);
         }
-
+        
         // Build inverse data array
         this.inverseData = new int[3][][];
         this.inverseData[AttributeType.ATTR_TYPE_IS] = this.dataIS.getArray();
-        this.inverseData[AttributeType.ATTR_TYPE_SE] = this.dataSE.getArray();
-        this.inverseData[AttributeType.ATTR_TYPE_QI] = this.dataQI.getArray();
-
+        this.inverseData[AttributeType.ATTR_TYPE_SE] = this.dataDI.getArray();
+        this.inverseData[AttributeType.ATTR_TYPE_QI] = this.dataGH.getArray();
+        
         // Build inverse dictionary array
         this.inverseDictionaries = new Dictionary[3];
         this.inverseDictionaries[AttributeType.ATTR_TYPE_IS] = this.dataIS.getDictionary();
-        this.inverseDictionaries[AttributeType.ATTR_TYPE_SE] = this.dataSE.getDictionary();
-        this.inverseDictionaries[AttributeType.ATTR_TYPE_QI] = this.dataQI.getDictionary();
+        this.inverseDictionaries[AttributeType.ATTR_TYPE_SE] = this.dataDI.getDictionary();
+        this.inverseDictionaries[AttributeType.ATTR_TYPE_QI] = this.dataGH.getDictionary();
         
         // Create view
         this.getRegistry().createOutputSubset(node, config, statistics);
@@ -199,7 +233,7 @@ public class DataHandleOutput extends DataHandle {
         // Obtain data types
         this.dataTypes = getDataTypeArray();
     }
-
+    
     /**
      * Gets the attribute name.
      * 
@@ -213,13 +247,13 @@ public class DataHandleOutput extends DataHandle {
         checkColumn(col);
         return header[col];
     }
-
+    
     @Override
     public DataType<?> getDataType(String attribute) {
         
         checkRegistry();
         int col = this.getColumnIndexOf(attribute);
-
+        
         // Return the according values
         final int type = inverseMap[col] >>> AttributeType.SHIFT;
         switch (type) {
@@ -230,13 +264,13 @@ public class DataHandleOutput extends DataHandle {
             return dataTypes[type][index];
         }
     }
-
+    
     @Override
     public int getGeneralization(final String attribute) {
         checkRegistry();
         return node.getGeneralization(attribute);
     }
-
+    
     /**
      * Gets the num columns.
      * 
@@ -247,7 +281,7 @@ public class DataHandleOutput extends DataHandle {
         checkRegistry();
         return header.length;
     }
-
+    
     /**
      * Gets the num rows.
      * 
@@ -256,9 +290,9 @@ public class DataHandleOutput extends DataHandle {
     @Override
     public int getNumRows() {
         checkRegistry();
-        return dataQI.getDataLength();
+        return dataGH.getDataLength();
     }
-
+    
     /**
      * Gets the value.
      * 
@@ -270,17 +304,16 @@ public class DataHandleOutput extends DataHandle {
      */
     @Override
     public String getValue(final int row, final int col) {
-
+        
         // Check
         checkRegistry();
         checkColumn(col);
-        checkRow(row, dataQI.getDataLength());
-
+        checkRow(row, dataGH.getDataLength());
+        
         // Perform
         return internalGetValue(row, col);
     }
-
-
+    
     /**
      * Iterator.
      * 
@@ -291,12 +324,12 @@ public class DataHandleOutput extends DataHandle {
         checkRegistry();
         return new ResultIterator();
     }
-
+    
     @Override
     public boolean replace(int column, String original, String replacement) {
         throw new UnsupportedOperationException("This operation is only supported by handles for data input");
     }
-
+    
     /**
      * Releases all resources.
      */
@@ -304,8 +337,8 @@ public class DataHandleOutput extends DataHandle {
         result.releaseBuffer(this);
         node = null;
         dataIS = null;
-        dataQI = null;
-        dataSE = null;
+        dataGH = null;
+        dataDI = null;
         inverseData = null;
         inverseDictionaries = null;
         inverseMap = null;
@@ -319,6 +352,7 @@ public class DataHandleOutput extends DataHandle {
         statistics = null;
         node = null;
     }
+    
     /**
      * Creates the data type array.
      *
@@ -326,29 +360,29 @@ public class DataHandleOutput extends DataHandle {
      */
     @Override
     protected DataType<?>[][] getDataTypeArray() {
-
+        
         DataType<?>[][] dataTypes = new DataType[3][];
         dataTypes[AttributeType.ATTR_TYPE_IS] = new DataType[dataIS.getHeader().length];
-        dataTypes[AttributeType.ATTR_TYPE_SE] = new DataType[dataSE.getHeader().length];
-        dataTypes[AttributeType.ATTR_TYPE_QI] = new DataType[dataQI.getHeader().length];
-
+        dataTypes[AttributeType.ATTR_TYPE_SE] = new DataType[dataDI.getHeader().length];
+        dataTypes[AttributeType.ATTR_TYPE_QI] = new DataType[dataGH.getHeader().length];
+        
         for (int i = 0; i < dataTypes.length; i++) {
             final DataType<?>[] type = dataTypes[i];
-
+            
             String[] header = null;
-
+            
             switch (i) {
             case AttributeType.ATTR_TYPE_IS:
                 header = dataIS.getHeader();
                 break;
             case AttributeType.ATTR_TYPE_QI:
-                header = dataQI.getHeader();
+                header = dataGH.getHeader();
                 break;
             case AttributeType.ATTR_TYPE_SE:
-                header = dataSE.getHeader();
+                header = dataDI.getHeader();
                 break;
             }
-
+            
             for (int j = 0; j < type.length; j++) {
                 dataTypes[i][j] = definition.getDataType(header[j]);
                 if ((i == AttributeType.ATTR_TYPE_QI) &&
@@ -359,7 +393,7 @@ public class DataHandleOutput extends DataHandle {
         }
         return dataTypes;
     }
- 
+    
     /**
      * Gets the distinct values.
      *
@@ -369,11 +403,11 @@ public class DataHandleOutput extends DataHandle {
      */
     @Override
     protected String[] getDistinctValues(final int col, InterruptHandler handler) {
-
+        
         // Check
         checkRegistry();
         checkColumn(col);
-
+        
         final Set<String> vals = new HashSet<String>();
         for (int i = 0; i < getNumRows(); i++) {
             handler.checkInterrupt();
@@ -382,16 +416,16 @@ public class DataHandleOutput extends DataHandle {
         handler.checkInterrupt();
         return vals.toArray(new String[vals.size()]);
     }
-
+    
     /**
      * Returns the suppression string.
      *
      * @return
      */
-    protected String getSuppressionString(){
+    protected String getSuppressionString() {
         return this.suppressionString;
     }
-
+    
     /**
      * A negative integer, zero, or a positive integer as the first argument is
      * less than, equal to, or greater than the second. It uses the specified
@@ -413,9 +447,9 @@ public class DataHandleOutput extends DataHandle {
                                   final int row2,
                                   final int[] columns,
                                   final boolean ascending) {
-
+        
         for (final int index : columns) {
-
+            
             final int attributeType = inverseMap[index] >>> AttributeType.SHIFT;
             final int indexMap = inverseMap[index] & AttributeType.MASK;
             if (attributeType == AttributeType.ATTR_TYPE_ID) return 0;
@@ -431,14 +465,14 @@ public class DataHandleOutput extends DataHandle {
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
-
+            
             if (cmp != 0) {
                 return ascending ? cmp : -cmp;
             }
         }
         return 0;
     }
-
+    
     /**
      * Gets the value internal.
      * 
@@ -450,7 +484,7 @@ public class DataHandleOutput extends DataHandle {
      */
     @Override
     protected String internalGetValue(final int row, final int col) {
-
+        
         // Return the according values
         final int type = inverseMap[col] >>> AttributeType.SHIFT;
         switch (type) {
@@ -459,10 +493,12 @@ public class DataHandleOutput extends DataHandle {
         default:
             final int index = inverseMap[col] & AttributeType.MASK;
             final int[][] data = inverseData[type];
-
+            
             if ((suppressedAttributeTypes & (1 << type)) != 0 &&
-                ((dataQI.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) { return suppressionString; }
-
+                ((dataGH.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) {
+                return suppressionString;
+            }
+            
             final int value = data[row][index] & Data.REMOVE_OUTLIER_MASK;
             final String[][] dictionary = inverseDictionaries[type].getMapping();
             return dictionary[index][value];
@@ -476,15 +512,14 @@ public class DataHandleOutput extends DataHandle {
      * @return
      */
     protected boolean internalIsOutlier(final int row) {
-        return ((dataQI.getArray()[row][0] & Data.OUTLIER_MASK) != 0);
+        return ((dataGH.getArray()[row][0] & Data.OUTLIER_MASK) != 0);
     }
-
+    
     @Override
     protected boolean internalReplace(int column,
                                       String original,
                                       String replacement) {
-
-
+        
         // Init and check
         if (column >= inverseMap.length) return false;
         int type = inverseMap[column] >>> AttributeType.SHIFT;
@@ -506,7 +541,7 @@ public class DataHandleOutput extends DataHandle {
         // Return
         return found;
     }
-
+    
     /**
      * Swap internal.
      * 
@@ -516,8 +551,14 @@ public class DataHandleOutput extends DataHandle {
      *            the row2
      */
     protected void internalSwap(final int row1, final int row2) {
-        int[] temp = dataQI.getArray()[row1];
-        dataQI.getArray()[row1] = dataQI.getArray()[row2];
-        dataQI.getArray()[row2] = temp;
+        // Swap GH
+        int[] temp = dataGH.getArray()[row1];
+        dataGH.getArray()[row1] = dataGH.getArray()[row2];
+        dataGH.getArray()[row2] = temp;
+        
+        // Swap OT
+        temp = dataOT.getArray()[row1];
+        dataOT.getArray()[row1] = dataOT.getArray()[row2];
+        dataOT.getArray()[row2] = temp;
     }
 }

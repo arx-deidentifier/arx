@@ -108,8 +108,8 @@ public class ARXResult {
                                                     config.getCriteria());
 
         // Update handle
-        ((DataHandleInput)handle).update(manager.getDataQI().getArray(), 
-                                         manager.getDataSE().getArray(),
+        ((DataHandleInput)handle).update(manager.getDataGH().getArray(), 
+                                         manager.getDataDI().getArray(),
                                          manager.getDataIS().getArray());
         
         // Lock handle
@@ -119,7 +119,7 @@ public class ARXResult {
         config.initialize(manager);
 
         // Initialize the metric
-        metric.initialize(definition, manager.getDataQI(), manager.getHierarchies(), config);
+        metric.initialize(definition, manager.getDataGH(), manager.getHierarchies(), config);
 
         // Create a node checker
         final INodeChecker checker = new NodeChecker(manager,
@@ -304,14 +304,16 @@ public class ARXResult {
         
         // Clone if needed
         if (fork) {
-            information.buffer = information.buffer.clone(); 
+            information.bufferGH = information.bufferGH.clone(); 
+            information.bufferOT = information.bufferOT.clone(); 
         }
 
         // Create
         DataHandleOutput result = new DataHandleOutput(this,
                                                        registry,
                                                        manager,
-                                                       information.buffer,
+                                                       information.bufferGH,
+                                                       information.bufferOT,
                                                        node,
                                                        new StatisticsEquivalenceClasses(information.statistics),
                                                        definition,

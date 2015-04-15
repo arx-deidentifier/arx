@@ -107,7 +107,7 @@ public class ARXAnonymizer {
 		    // Create lattice
 	        final ARXLattice flattice = new ARXLattice(lattice,
 	                                                   algorithm.getGlobalOptimum(),
-	                                                   manager.getDataQI().getHeader(),
+	                                                   manager.getDataGH().getHeader(),
 	                                                   config.getInternalConfiguration());
 
 			// Create output handle
@@ -312,14 +312,14 @@ public class ARXAnonymizer {
 
         if (config.containsCriterion(KAnonymity.class)){
             KAnonymity c = config.getCriterion(KAnonymity.class);
-            if ((c.getK() > manager.getDataQI().getDataLength()) || (c.getK() < 1)) { 
-                throw new IllegalArgumentException("Parameter k (" + c.getK() + ") musst be positive and less or equal than the number of rows (" + manager.getDataQI().getDataLength()+")"); 
+            if ((c.getK() > manager.getDataGH().getDataLength()) || (c.getK() < 1)) { 
+                throw new IllegalArgumentException("Parameter k (" + c.getK() + ") musst be positive and less or equal than the number of rows (" + manager.getDataGH().getDataLength()+")"); 
             }
         }
         if (config.containsCriterion(LDiversity.class)){
             for (LDiversity c : config.getCriteria(LDiversity.class)){
-	            if ((c.getL() > manager.getDataQI().getDataLength()) || (c.getL() < 1)) { 
-	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") musst be positive and less or equal than the number of rows (" + manager.getDataQI().getDataLength()+")"); 
+	            if ((c.getL() > manager.getDataGH().getDataLength()) || (c.getL() < 1)) { 
+	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") musst be positive and less or equal than the number of rows (" + manager.getDataGH().getDataLength()+")"); 
 	            }
             }
         }
@@ -475,8 +475,8 @@ public class ARXAnonymizer {
         final DataManager manager = prepareDataManager(handle, definition, config);
         
         // Attach arrays to data handle
-        ((DataHandleInput)handle).update(manager.getDataQI().getArray(), 
-                                         manager.getDataSE().getArray(),
+        ((DataHandleInput)handle).update(manager.getDataGH().getArray(), 
+                                         manager.getDataDI().getArray(),
                                          manager.getDataIS().getArray());
 
         // Initialize
@@ -493,7 +493,7 @@ public class ARXAnonymizer {
         final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config.getInternalConfiguration(), historySize, snapshotSizeDataset, snapshotSizeSnapshot);
 
         // Initialize the metric
-        config.getMetric().initialize(definition, manager.getDataQI(), manager.getHierarchies(), config);
+        config.getMetric().initialize(definition, manager.getDataGH(), manager.getHierarchies(), config);
 
         // Create an algorithm instance
         FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());

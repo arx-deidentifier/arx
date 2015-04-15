@@ -17,15 +17,17 @@
 
 package org.deidentifier.arx.framework.check.groupify;
 
+import org.deidentifier.arx.aggregates.MicroaggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
+import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * Interface for hash groupify operators
  */
 public interface IHashGroupify {
-
+    
     /**
      * Generic adder for all combinations of criteria in mode transform ALL.
      *
@@ -36,7 +38,7 @@ public interface IHashGroupify {
      * @param pcount
      */
     public abstract void addAll(int[] outtuple, int representant, int count, int[] sensitive, int pcount);
-
+    
     /**
      * Generic adder for all combinations of criteria in mode transform GROUPIFY.
      *
@@ -47,8 +49,7 @@ public interface IHashGroupify {
      * @param pcount
      */
     public abstract void addGroupify(int[] outtuple, int representant, int count, Distribution[] distribution, int pcount);
-
-
+    
     /**
      * Generic adder for all combinations of criteria in mode transform SNAPSHOT.
      *
@@ -73,26 +74,26 @@ public interface IHashGroupify {
      * @param force
      */
     public abstract void analyze(Node transformation, boolean force);
-
+    
     /**
      * Clear.
      */
     public abstract void clear();
-
+    
     /**
      * Gets the first entry.
      * 
      * @return the first entry
      */
     public abstract HashGroupifyEntry getFirstEntry();
-
+    
     /**
      * Returns statistics about the groups.
      *
      * @return
      */
     public abstract GroupStatistics getGroupStatistics();
-
+    
     /**
      * Are all defined privacy criteria fulfilled by this transformation, given the specified limit on suppressed tuples.
      *
@@ -107,14 +108,24 @@ public interface IHashGroupify {
      */
     public abstract boolean isKAnonymous();
     
-
     /**
      * Marks all outliers.
      *
      * @param buffer
      */
     public abstract void markOutliers(int[][] buffer);
-
+    
+    /**
+     * Microaggregates.
+     * 
+     * @param data
+     * @param bufferOT
+     * @param startMA
+     * @param numMA
+     * @param functions
+     */
+    public void microaggregate(int[][] data, Data bufferOT, int startMA, int numMA, MicroaggregateFunction[] functions);
+    
     /**
      * Resets all flags that indicate that equivalence classes are suppressed.
      */

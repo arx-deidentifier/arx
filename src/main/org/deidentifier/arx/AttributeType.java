@@ -623,7 +623,7 @@ public class AttributeType implements Serializable, Cloneable {
         }
     }
 
-    /** TODO. */
+    /** SVUID. */
     private static final long   serialVersionUID            = -7358540408016873823L;
 
     /** The shift. */
