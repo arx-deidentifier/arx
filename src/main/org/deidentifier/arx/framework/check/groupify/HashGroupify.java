@@ -507,7 +507,7 @@ public class HashGroupify implements IHashGroupify {
                 }
                 Distribution[] dis = m.distributions;
                 int cnt = 0;
-                for (int i = startMA; i < numMA; i++) {
+                for (int i = startMA; i < startMA + numMA; i++) {
                     if (!cache.containsKey(dis[i])) {
                         String result = functions[cnt].aggregate(dis[i]);
                         int code = bufferOT.getDictionary().register(cnt, result);

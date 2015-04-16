@@ -306,7 +306,7 @@ public class DataManager {
                 final String name = header[i];
                 if (definition.getAttributeType(name) instanceof Microaggregation) {
                     functionsMA[dictionaryIndex] = ((Microaggregation) definition.getAttributeType(name)).getFunction();
-                    functionsMA[dictionaryIndex].init(dictionaryDI.getMapping()[dictionaryIndex], definition.getDataType(name));
+                    functionsMA[dictionaryIndex].init(dictionaryDI.getMapping()[dictionaryIndex + startIndexMA], definition.getDataType(name));
                 } else {
                     throw new IllegalStateException("No microaggregation function defined for attribute (" + header[i] + ")");
                 }
