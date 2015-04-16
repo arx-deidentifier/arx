@@ -218,13 +218,15 @@ public class DataManager {
                 dictionaryIS.registerAll(indexIS, dictionary, counter);
                 headerIS[indexIS] = header[counter];
                 indexIS++;
-                // TODO: CHECK: Changed default? - now all non defined attributes are identifying! Previously they were sensitive?
             } else if (se.contains(column)) {
                 map[counter] = new TypeInformation(AttributeTypeInternal.SENSITIVE, indexSE);
                 mapDI[indexSE] = counter;
                 dictionaryDI.registerAll(indexSE, dictionary, counter);
                 headerDI[indexSE] = header[counter];
                 indexSE++;
+            } else {
+                // TODO: CHECK: Changed default? - now all non defined attributes are identifying! Previously they were sensitive?
+                map[counter] = new TypeInformation(AttributeTypeInternal.IDENTIFIER, -1);
             }
             counter++;
         }
