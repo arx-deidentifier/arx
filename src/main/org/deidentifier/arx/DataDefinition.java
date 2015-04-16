@@ -233,7 +233,7 @@ public class DataDefinition implements Cloneable{
     public Set<String> getGeneralizationAttributes() {
         final Set<String> result = new HashSet<String>();
         for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
-            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_QI && entry.getValue() instanceof Hierarchy) {
+            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_QI && !(entry.getValue() instanceof Microaggregation)) {
                 result.add(entry.getKey());
             }
         }
