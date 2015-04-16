@@ -26,28 +26,42 @@ import com.carrotsearch.hppc.ObjectIntOpenHashMap;
  * @author Florian Kohlmayer
  */
 public class Dictionary {
-
+    
     /** The resulting array mapping dimension->integer->string. */
     private final String[][]               mapping;
-
+    
     /** Map used when building the dictionary. */
     private ObjectIntOpenHashMap<String>[] maps;
-
+    
+    /** Allow modification of the dictionary after finalizing? */
+    private final boolean                  allowModification;
+    
     /**
      * Instantiates a new dictionary.
      * 
      * @param dimensions
      *            the dimensions
      */
-    @SuppressWarnings("unchecked")
     public Dictionary(final int dimensions) {
+        this(dimensions, false);
+    }
+    
+    /**
+     * Instantiates a new dictionary.
+     * 
+     * @param dimensions
+     * @param allowModification
+     */
+    @SuppressWarnings("unchecked")
+    public Dictionary(int dimensions, boolean allowModification) {
         maps = new ObjectIntOpenHashMap[dimensions];
         mapping = new String[dimensions][];
         for (int i = 0; i < dimensions; i++) {
             maps[i] = new ObjectIntOpenHashMap<String>();
         }
+        this.allowModification = allowModification;
     }
-
+    
     /**
      * Finalizes all dimensions. @see finalize()
      */
@@ -62,11 +76,13 @@ public class Dictionary {
                     mapping[i][values[j]] = (String) keys[j];
                 }
             }
-
+            
         }
-        maps = null;
+        if (!allowModification) {
+            maps = null;
+        }
     }
-
+    
     /**
      * Returns the mapping array.
      *
@@ -75,7 +91,7 @@ public class Dictionary {
     public String[][] getMapping() {
         return mapping;
     }
-
+    
     /**
      * Returns the number of dimensions in the dictionary.
      *
@@ -84,7 +100,7 @@ public class Dictionary {
     public int getNumDimensions() {
         return mapping.length;
     }
-
+    
     /**
      * Returns the number of unique values contained before finalizing the
      * dictionary.
@@ -95,7 +111,7 @@ public class Dictionary {
     public int getNumUniqueUnfinalizedValues(final int dimension) {
         return maps[dimension].size();
     }
-
+    
     /**
      * Returns the registered value if present, null otherwise.
      *
@@ -111,7 +127,7 @@ public class Dictionary {
         }
         // return maps[dimension].get(string);
     }
-
+    
     /**
      * Registers a new string at the dictionary.
      * 
@@ -122,11 +138,11 @@ public class Dictionary {
      * @return the int
      */
     public int register(final int dimension, final String string) {
-
+        
         // Prepare
         ObjectIntOpenHashMap<String> map = maps[dimension];
         int size = map.size();
-
+        
         // Return or store
         if (map.putIfAbsent(string, size)) {
             return size;
@@ -134,7 +150,7 @@ public class Dictionary {
             return map.lget();
         }
     }
-
+    
     /**
      * Merges this dictionary with another dictionary.
      *

@@ -27,8 +27,8 @@ import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataManager.AttributeTypeInternal;
 import org.deidentifier.arx.framework.data.Dictionary;
-import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
 /**
  * An implementation of the class DataHandle for output data.
@@ -99,27 +99,19 @@ public class DataHandleOutput extends DataHandle {
     protected Data       dataOT;
     
     /** The data. */
-    protected Data       dataMA;
-    
-    /** The data. */
     protected Data       dataDI;
     
     /** An inverse map to data arrays. */
     private int[][][]    inverseData;
     
+    /** The start index of the MA attributes in the dataDI */
+    private final int    startIndexMA;
+    
     /** An inverse map to dictionaries. */
     private Dictionary[] inverseDictionaries;
     
-    /** An inverse map for column indices. */
+    /** An inverse map for column indices. map[i*2]=attribute type, map[i*2+1]=index position. */
     private int[]        inverseMap;
-    
-    /** The generalization hierarchies. */
-    // TODO: unused?
-    private int[][][]    map;
-    
-    /** The names of the quasiIdentifer. */
-    // TODO: unused?
-    private String[]     quasiIdentifiers;
     
     /** Suppression handling. */
     private final int    suppressedAttributeTypes;
@@ -178,7 +170,7 @@ public class DataHandleOutput extends DataHandle {
         
         // Init
         this.suppressionString = config.getSuppressionString();
-        this.suppressedAttributeTypes = config.getSuppressedAttributeTypes();
+        this.suppressedAttributeTypes = convert(config.getSuppressedAttributeTypes());
         this.result = result;
         this.definition = definition;
         this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), statistics);
@@ -190,42 +182,53 @@ public class DataHandleOutput extends DataHandle {
         this.dataDI = manager.getDataDI();
         this.dataIS = manager.getDataIS();
         this.header = manager.getHeader();
-        
-        // Init quasi identifiers and hierarchies
-        GeneralizationHierarchy[] hierarchies = manager.getHierarchies();
-        this.quasiIdentifiers = new String[hierarchies.length];
-        this.map = new int[hierarchies.length][][];
-        for (int i = 0; i < hierarchies.length; i++) {
-            this.quasiIdentifiers[i] = hierarchies[i].getName();
-            this.map[i] = hierarchies[i].getArray();
-        }
+        this.startIndexMA = manager.getStartIndexMA();
         
         // Build map inverse
-        this.inverseMap = new int[header.length];
-        for (int i = 0; i < this.inverseMap.length; i++) {
-            this.inverseMap[i] = (AttributeType.ATTR_TYPE_ID << AttributeType.SHIFT);
+        this.inverseMap = new int[header.length * 2];
+        // Init with attribute type ID
+        for (int i = 0; i < this.inverseMap.length; i += 2) {
+            this.inverseMap[i] = AttributeTypeInternal.IDENTIFIER;
+            this.inverseMap[i + 1] = -1;
         }
         for (int i = 0; i < this.dataGH.getMap().length; i++) {
-            this.inverseMap[dataGH.getMap()[i]] = i | (AttributeType.ATTR_TYPE_QI << AttributeType.SHIFT);
+            final int pos = dataGH.getMap()[i] * 2;
+            this.inverseMap[pos] = AttributeTypeInternal.GENERALIZATION;
+            this.inverseMap[pos + 1] = i;
         }
-        for (int i = 0; i < this.dataDI.getMap().length; i++) {
-            this.inverseMap[dataDI.getMap()[i]] = i | (AttributeType.ATTR_TYPE_SE << AttributeType.SHIFT);
+        for (int i = 0; i < this.startIndexMA; i++) {
+            final int pos = dataDI.getMap()[i] * 2;
+            this.inverseMap[pos] = AttributeTypeInternal.SENSITIVE;
+            this.inverseMap[pos + 1] = i;
         }
+        
+        for (int i = 0; i < dataOT.getMap().length; i++) {
+            final int pos = dataOT.getMap()[i] * 2;
+            this.inverseMap[pos] = AttributeTypeInternal.MICROAGGREGATION;
+            this.inverseMap[pos + 1] = i;
+        }
+        
         for (int i = 0; i < dataIS.getMap().length; i++) {
-            this.inverseMap[dataIS.getMap()[i]] = i | (AttributeType.ATTR_TYPE_IS << AttributeType.SHIFT);
+            final int pos = dataIS.getMap()[i] * 2;
+            this.inverseMap[pos] = AttributeTypeInternal.INSENSITIVE;
+            this.inverseMap[pos + 1] = i;
         }
         
         // Build inverse data array
-        this.inverseData = new int[3][][];
-        this.inverseData[AttributeType.ATTR_TYPE_IS] = this.dataIS.getArray();
-        this.inverseData[AttributeType.ATTR_TYPE_SE] = this.dataDI.getArray();
-        this.inverseData[AttributeType.ATTR_TYPE_QI] = this.dataGH.getArray();
+        this.inverseData = new int[5][][];
+        this.inverseData[AttributeTypeInternal.INSENSITIVE] = this.dataIS.getArray();
+        this.inverseData[AttributeTypeInternal.SENSITIVE] = this.dataDI.getArray();
+        this.inverseData[AttributeTypeInternal.GENERALIZATION] = this.dataGH.getArray();
+        this.inverseData[AttributeTypeInternal.IDENTIFIER] = null;
+        this.inverseData[AttributeTypeInternal.MICROAGGREGATION] = this.dataOT.getArray();
         
         // Build inverse dictionary array
-        this.inverseDictionaries = new Dictionary[3];
-        this.inverseDictionaries[AttributeType.ATTR_TYPE_IS] = this.dataIS.getDictionary();
-        this.inverseDictionaries[AttributeType.ATTR_TYPE_SE] = this.dataDI.getDictionary();
-        this.inverseDictionaries[AttributeType.ATTR_TYPE_QI] = this.dataGH.getDictionary();
+        this.inverseDictionaries = new Dictionary[5];
+        this.inverseDictionaries[AttributeTypeInternal.INSENSITIVE] = this.dataIS.getDictionary();
+        this.inverseDictionaries[AttributeTypeInternal.SENSITIVE] = this.dataDI.getDictionary();
+        this.inverseDictionaries[AttributeTypeInternal.GENERALIZATION] = this.dataGH.getDictionary();
+        this.inverseDictionaries[AttributeTypeInternal.IDENTIFIER] = null;
+        this.inverseDictionaries[AttributeTypeInternal.MICROAGGREGATION] = this.dataOT.getDictionary();
         
         // Create view
         this.getRegistry().createOutputSubset(node, config, statistics);
@@ -255,12 +258,13 @@ public class DataHandleOutput extends DataHandle {
         int col = this.getColumnIndexOf(attribute);
         
         // Return the according values
-        final int type = inverseMap[col] >>> AttributeType.SHIFT;
+        final int key = col * 2;
+        final int type = inverseMap[key];
         switch (type) {
-        case AttributeType.ATTR_TYPE_ID:
+        case AttributeTypeInternal.IDENTIFIER:
             return DataType.STRING;
         default:
-            final int index = inverseMap[col] & AttributeType.MASK;
+            final int index = inverseMap[key + 1];
             return dataTypes[type][index];
         }
     }
@@ -331,6 +335,36 @@ public class DataHandleOutput extends DataHandle {
     }
     
     /**
+     * Converts the suppressed attribute type bitset to the internal datatypes.
+     * 
+     * @param suppressedAttributeTypes
+     * @return
+     */
+    private int convert(int suppressedAttributeTypes) {
+        int converted = 0;
+        for (int j = 0; j < 32; j++) {
+            if ((suppressedAttributeTypes & (1 << j)) != 0) {
+                switch (j) {
+                case AttributeType.ATTR_TYPE_ID:
+                    converted |= (1 << AttributeTypeInternal.IDENTIFIER);
+                    break;
+                case AttributeType.ATTR_TYPE_IS:
+                    converted |= (1 << AttributeTypeInternal.INSENSITIVE);
+                    break;
+                case AttributeType.ATTR_TYPE_QI:
+                    converted |= (1 << AttributeTypeInternal.GENERALIZATION) | (1 << AttributeTypeInternal.MICROAGGREGATION);
+                    break;
+                case AttributeType.ATTR_TYPE_SE:
+                    converted |= (1 << AttributeTypeInternal.SENSITIVE);
+                    break;
+                }
+            }
+            
+        }
+        return converted;
+    }
+    
+    /**
      * Releases all resources.
      */
     protected void doRelease() {
@@ -339,11 +373,10 @@ public class DataHandleOutput extends DataHandle {
         dataIS = null;
         dataGH = null;
         dataDI = null;
+        dataOT = null;
         inverseData = null;
         inverseDictionaries = null;
         inverseMap = null;
-        map = null;
-        quasiIdentifiers = null;
         registry = null;
         subset = null;
         dataTypes = null;
@@ -361,10 +394,12 @@ public class DataHandleOutput extends DataHandle {
     @Override
     protected DataType<?>[][] getDataTypeArray() {
         
-        DataType<?>[][] dataTypes = new DataType[3][];
-        dataTypes[AttributeType.ATTR_TYPE_IS] = new DataType[dataIS.getHeader().length];
-        dataTypes[AttributeType.ATTR_TYPE_SE] = new DataType[dataDI.getHeader().length];
-        dataTypes[AttributeType.ATTR_TYPE_QI] = new DataType[dataGH.getHeader().length];
+        DataType<?>[][] dataTypes = new DataType[5][];
+        dataTypes[AttributeTypeInternal.INSENSITIVE] = new DataType[dataIS.getHeader().length];
+        dataTypes[AttributeTypeInternal.SENSITIVE] = new DataType[dataDI.getHeader().length];
+        dataTypes[AttributeTypeInternal.GENERALIZATION] = new DataType[dataGH.getHeader().length];
+        dataTypes[AttributeTypeInternal.MICROAGGREGATION] = new DataType[dataOT.getHeader().length];
+        dataTypes[AttributeTypeInternal.IDENTIFIER] = null;
         
         for (int i = 0; i < dataTypes.length; i++) {
             final DataType<?>[] type = dataTypes[i];
@@ -372,22 +407,28 @@ public class DataHandleOutput extends DataHandle {
             String[] header = null;
             
             switch (i) {
-            case AttributeType.ATTR_TYPE_IS:
+            case AttributeTypeInternal.INSENSITIVE:
                 header = dataIS.getHeader();
                 break;
-            case AttributeType.ATTR_TYPE_QI:
+            case AttributeTypeInternal.GENERALIZATION:
                 header = dataGH.getHeader();
                 break;
-            case AttributeType.ATTR_TYPE_SE:
+            case AttributeTypeInternal.SENSITIVE:
                 header = dataDI.getHeader();
                 break;
+            case AttributeTypeInternal.MICROAGGREGATION:
+                header = dataOT.getHeader();
+                break;
             }
-            
-            for (int j = 0; j < type.length; j++) {
-                dataTypes[i][j] = definition.getDataType(header[j]);
-                if ((i == AttributeType.ATTR_TYPE_QI) &&
-                    (node.getTransformation()[j] > 0)) {
-                    dataTypes[i][j] = DataType.STRING;
+            if (type != null) {
+                for (int j = 0; j < type.length; j++) {
+                    if (dataTypes[i][j] != null) {
+                        dataTypes[i][j] = definition.getDataType(header[j]);
+                        if ((i == AttributeTypeInternal.GENERALIZATION) &&
+                            (node.getTransformation()[j] > 0)) {
+                            dataTypes[i][j] = DataType.STRING;
+                        }
+                    }
                 }
             }
         }
@@ -449,10 +490,10 @@ public class DataHandleOutput extends DataHandle {
                                   final boolean ascending) {
         
         for (final int index : columns) {
-            
-            final int attributeType = inverseMap[index] >>> AttributeType.SHIFT;
-            final int indexMap = inverseMap[index] & AttributeType.MASK;
-            if (attributeType == AttributeType.ATTR_TYPE_ID) return 0;
+            final int key = index * 2;
+            final int attributeType = inverseMap[key];
+            final int indexMap = inverseMap[key + 1];
+            if (attributeType == AttributeTypeInternal.IDENTIFIER) return 0;
             
             int cmp = 0;
             try {
@@ -486,12 +527,13 @@ public class DataHandleOutput extends DataHandle {
     protected String internalGetValue(final int row, final int col) {
         
         // Return the according values
-        final int type = inverseMap[col] >>> AttributeType.SHIFT;
+        final int key = col * 2;
+        final int type = inverseMap[key];
         switch (type) {
-        case AttributeType.ATTR_TYPE_ID:
+        case AttributeTypeInternal.IDENTIFIER:
             return suppressionString;
         default:
-            final int index = inverseMap[col] & AttributeType.MASK;
+            final int index = inverseMap[key + 1];
             final int[][] data = inverseData[type];
             
             if ((suppressedAttributeTypes & (1 << type)) != 0 &&
@@ -522,10 +564,11 @@ public class DataHandleOutput extends DataHandle {
         
         // Init and check
         if (column >= inverseMap.length) return false;
-        int type = inverseMap[column] >>> AttributeType.SHIFT;
+        final int key = column * 2;
+        int type = inverseMap[key];
         if (type >= inverseDictionaries.length) return false;
         String[][] dictionary = inverseDictionaries[type].getMapping();
-        int index = inverseMap[column] & AttributeType.MASK;
+        int index = inverseMap[key + 1];
         if (index >= dictionary.length) return false;
         String[] values = dictionary[index];
         

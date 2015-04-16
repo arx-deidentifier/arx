@@ -50,10 +50,10 @@ public class DataManager {
      */
     public static class AttributeTypeInternal {
         public static final int GENERALIZATION   = 0;
-        public static final int MICROAGGREGATION = 1;
-        public static final int IDENTIFIER       = 2;
-        public static final int INSENSITIVE      = 3;
-        public static final int SENSITIVE        = 4;
+        public static final int MICROAGGREGATION = 4;
+        public static final int IDENTIFIER       = 3;
+        public static final int INSENSITIVE      = 2;
+        public static final int SENSITIVE        = 1;
     }
     
     /**
@@ -169,7 +169,7 @@ public class DataManager {
         final Dictionary dictionaryGH = new Dictionary(gh.size());
         final Dictionary dictionaryDI = new Dictionary(se.size() + ma.size());
         final Dictionary dictionaryIS = new Dictionary(is.size());
-        final Dictionary dictionaryOT = new Dictionary(ma.size()); // TODO: allow changing of dictionary after finalizing!
+        final Dictionary dictionaryOT = new Dictionary(ma.size(), true);
         
         // Init maps for reordering the output
         final int[] mapGH = new int[dictionaryGH.getNumDimensions()];
@@ -296,6 +296,7 @@ public class DataManager {
         dictionaryGH.finalizeAll();
         dictionaryDI.finalizeAll();
         dictionaryIS.finalizeAll();
+        dictionaryOT.finalizeAll();
         
         // Init microaggregation functions
         functionsMA = new MicroaggregateFunction[ma.size()];
