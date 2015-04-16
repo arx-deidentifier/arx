@@ -29,25 +29,6 @@ import org.eclipse.swt.widgets.Label;
  */
 public class ViewMicoaggregation implements IView {
     
-    /** The attribute for which the view was created */
-    private String                    attribute;
-    /** The controller */
-    private Controller                controller;
-    /** The base composite */
-    private Composite                 base;
-    /** The model */
-    private Model                     model;
-    /** The selected microaggregation function */
-    private MicroaggregateFunction    selectedFunction;
-    /** The list containing all valid functions for the selected datatype */
-    private Microaggregatefunctions[] validFunctions;
-    
-    /** Determines if the view should be enabled */
-    private boolean                   enabled = false;
-    /** The Comobox */
-    private Combo                     functionCombo;
-    private Button microaggregationButton;
-    
     /**
      * All availbale microaggregation fucntions
      * @author Florian Kohlmayer
@@ -75,18 +56,36 @@ public class ViewMicoaggregation implements IView {
         }
     }
     
+    /** The attribute for which the view was created */
+    private String                    attribute;
+    /** The controller */
+    private Controller                controller;
+    /** The base composite */
+    private Composite                 base;
+    /** The model */
+    private Model                     model;
+    /** The selected microaggregation function */
+    private MicroaggregateFunction    selectedFunction;
+    /** The list containing all valid functions for the selected datatype */
+    private Microaggregatefunctions[] validFunctions;
+    /** The Comobox */
+    private Combo                     functionCombo;
+    
+    /** The button */
+    private Button                    microaggregationButton;
+    
     /**
      * Instantiates.
      * 
      * @param parent
      * @param attribute
      * @param controller
-     * @param microaggregationButton 
+     * @param microaggregationButton
      */
     public ViewMicoaggregation(Composite parent, String attribute, Controller controller, Button microaggregationButton) {
         this.attribute = attribute;
         this.controller = controller;
-        this.model = controller.getModel();
+        model = controller.getModel();
         this.microaggregationButton = microaggregationButton;
         
         // Listener
@@ -119,8 +118,71 @@ public class ViewMicoaggregation implements IView {
         
     }
     
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+        if (!base.isDisposed()) {
+            base.dispose();
+        }
+    }
+    
+    @Override
+    public void reset() {
+        if (!base.isDisposed()) {
+            base.redraw();
+        }
+    }
+    
+    @Override
+    public void update(ModelEvent event) {
+        
+        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+            final String attr = (String) event.data;
+            if (attr.equals(attribute)) {
+                updateValidFunctions();
+            }
+        } else if (event.part == ModelPart.INPUT) {
+            updateValidFunctions();
+        } else if (event.part == ModelPart.DATA_TYPE) {
+            updateValidFunctions();
+        }
+    }
+    
     /**
-     * Upates the valid funcitons based on the datatype.
+     * Creates the selected function.
+     * @param index
+     */
+    private void selectfunction(int index) {
+        if (validFunctions.length > index) {
+            Microaggregatefunctions selected = validFunctions[index];
+            switch (selected) {
+            case ARITHMETIC_MEAN:
+                selectedFunction = new ArithmeticMean();
+                break;
+            case GEOMETRIC_MEAN:
+                selectedFunction = new GeometricMean();
+                break;
+            default:
+                throw new IllegalArgumentException("Microaggregatefuntion not supported!");
+            }
+            
+            functionCombo.select(index);
+            setCurrentFunction();
+        }
+    }
+    
+    /**
+     * Sets the current function to the model.
+     */
+    private void setCurrentFunction() {
+        if ((model == null) || (model.getInputConfig() == null)) {
+            return;
+        }
+        model.getInputConfig().setMicroaggregationFunction(attribute, selectedFunction);
+    }
+    
+    /**
+     * Updates the valid functions based on the datatype.
      */
     private void updateValidFunctions() {
         Microaggregatefunctions[] functions = Microaggregatefunctions.values();
@@ -146,120 +208,18 @@ public class ViewMicoaggregation implements IView {
             }
         }
         
-        this.functionCombo.setItems(items.toArray(new String[items.size()]));
+        functionCombo.setItems(items.toArray(new String[items.size()]));
         this.validFunctions = validFunctions.toArray(new Microaggregatefunctions[validFunctions.size()]);
         
         if (items.size() > 0) {
-            this.enabled = true;
-            this.microaggregationButton.setEnabled(true);
-            this.functionCombo.setEnabled(true);
+            microaggregationButton.setEnabled(true);
+            functionCombo.setEnabled(true);
             selectfunction(0);
         } else {
-            this.enabled = false;
-            this.functionCombo.setItems(new String[] { "No valid microaggregation function for datatype" });
-            this.functionCombo.select(0);
-            this.functionCombo.setEnabled(false);
-            this.microaggregationButton.setEnabled(false);
-            removeCurrentFunction();
-        }
-    }
-    
-    /**
-     * Creates the selected function.
-     * @param index
-     */
-    private void selectfunction(int index) {
-        if (validFunctions.length > index) {
-            Microaggregatefunctions selected = validFunctions[index];
-            switch (selected) {
-            case ARITHMETIC_MEAN:
-                this.selectedFunction = new ArithmeticMean();
-                this.functionCombo.select(index);
-                setCurrentFunction();
-                break;
-            case GEOMETRIC_MEAN:
-                this.selectedFunction = new GeometricMean();
-                this.functionCombo.select(index);
-                setCurrentFunction();
-                break;
-            default:
-                throw new IllegalArgumentException("Microaggregatefuntion not supported!");
-            }
-        }
-    }
-    
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-        if (!base.isDisposed()) {
-            base.dispose();
-        }
-    }
-    
-    /**
-     * Removes the function from the model.
-     */
-    public void removeCurrentFunction() {
-        if ((model == null) || (model.getInputConfig() == null)) {
-            return;
-        }
-        model.getInputConfig().removeMicroaggregationFunction(attribute);
-    }
-    
-    @Override
-    public void reset() {
-        if (!base.isDisposed()) {
-            base.redraw();
-        }
-    }
-    
-    /**
-     * Sets the current function to the model.
-     */
-    public void setCurrentFunction() {
-        if ((model == null) || (model.getInputConfig() == null)) {
-            return;
-        }
-        model.getInputConfig().setMicroaggregationFunction(attribute, selectedFunction);
-    }
-    
-    @Override
-    public void update(ModelEvent event) {
-        
-        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
-            final String attr = (String) event.data;
-            if (attr.equals(attribute)) {
-                updateValidFunctions();
-            }
-        } else if (event.part == ModelPart.INPUT) {
-            updateValidFunctions();
-        } else if (event.part == ModelPart.DATA_TYPE) {
-            updateValidFunctions();
-        }
-    }
-    
-    /**
-     * Returns if functions are available for the currently selected datatype.
-     * 
-     * @return
-     */
-    public boolean isEnabled() {
-        return enabled;
-    }
-    
-    /**
-     * Deselects the button and removes the current function from the model.
-     */
-    public void deselect() {
-        removeCurrentFunction();
-    }
-    
-    /**
-     * Selects the button and sets the current function.
-     */
-    public void select() {
-        if (enabled) {
-            setCurrentFunction();
+            functionCombo.setItems(new String[] { "No valid microaggregation function for datatype" });
+            functionCombo.select(0);
+            functionCombo.setEnabled(false);
+            microaggregationButton.setEnabled(false);
         }
     }
     

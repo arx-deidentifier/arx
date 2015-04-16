@@ -59,14 +59,14 @@ import org.eclipse.swt.widgets.MenuItem;
  * 
  */
 public class ViewHierarchy implements IView {
-
+    
     /**
      * A data provider for hierarchies.
      *
      * @author Fabian Prasser
      */
     private class HierarchyDataProvider implements IDataProvider {
-
+        
         @Override
         public int getColumnCount() {
             if (hierarchy == null) return 0;
@@ -74,48 +74,48 @@ public class ViewHierarchy implements IView {
             else if (hierarchy[0] == null) return 0;
             else return hierarchy[0].length;
         }
-
+        
         @Override
         public Object getDataValue(int columnIndex, int rowIndex) {
             return hierarchy[rowIndex][columnIndex];
         }
-
+        
         @Override
         public int getRowCount() {
             if (hierarchy == null) return 0;
             else return hierarchy.length;
         }
-
+        
         @Override
         public void setDataValue(int columnIndex, int rowIndex, Object newValue) {
             // Ignore
         }
     }
-
+    
     /**
      * A header data provider for hierarchies.
      *
      * @author Fabian Prasser
      */
     private class HierarchyHeaderDataProvider extends HierarchyDataProvider {
-
+        
         @Override
         public Object getDataValue(int columnIndex, int rowIndex) {
-            return Resources.getMessage("ViewHierarchy.0")+columnIndex; //$NON-NLS-1$
+            return Resources.getMessage("ViewHierarchy.0") + columnIndex; //$NON-NLS-1$
         }
-
+        
         @Override
         public int getRowCount() {
             return 1;
         }
     }
-
+    
     /** Constant. */
     private static final String ITEM_ALL  = Resources.getMessage("HierarchyView.0"); //$NON-NLS-1$
-
+                                                                                     
     /** Controller. */
     private Controller          controller;
-
+    
     /** Widget. */
     private Composite           base;
     
@@ -127,7 +127,7 @@ public class ViewHierarchy implements IView {
     
     /** Widget. */
     private ComponentTable      table     = null;
-
+    
     /** Model. */
     private final String        attribute;
     
@@ -139,7 +139,7 @@ public class ViewHierarchy implements IView {
     
     /** Model. */
     private boolean             editable  = true;
-
+    
     /** Menu. */
     private Menu                menu      = null;
     
@@ -172,18 +172,18 @@ public class ViewHierarchy implements IView {
     
     /** Item. */
     private MenuItem            itemInitialize;
-
+    
     /**
      * Constructor for non-editable views.
      *
      * @param parent
      */
     public ViewHierarchy(final Composite parent) {
-
+        
         this.attribute = null;
         this.editable = false;
         createTable(parent);
-
+        
     }
     
     /**
@@ -193,13 +193,13 @@ public class ViewHierarchy implements IView {
      * @param attribute
      */
     public ViewHierarchy(final Composite parent, final String attribute) {
-
+        
         this.attribute = attribute;
         this.editable = false;
         createTable(parent);
-
+        
     }
-
+    
     /**
      * Constructor for editable views.
      *
@@ -210,20 +210,20 @@ public class ViewHierarchy implements IView {
     public ViewHierarchy(final Composite parent,
                          final String attribute,
                          final Controller controller) {
-
+        
         // Register
         controller.addListener(ModelPart.HIERARCHY, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
-
+        
         this.controller = controller;
         this.attribute = attribute;
-
+        
         // build
         editable = true;
         createTable(parent);
     }
-
+    
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -231,17 +231,7 @@ public class ViewHierarchy implements IView {
             base.dispose();
         }
     }
-
-    /**
-     * Removes the hierarchy from the model.
-     */
-    public void removeCurrentHierarchy() {
-        if (model == null || model.getInputConfig() == null) {
-            return;
-        }
-        model.getInputConfig().removeHierarchy(attribute);
-    }
-
+    
     @Override
     public void reset() {
         setHierarchy(null);
@@ -249,14 +239,7 @@ public class ViewHierarchy implements IView {
             base.redraw();
         }
     }
-
-    /**
-     * Set the hierarchy to the model.
-     */
-    public void setCurrentHierarchy() {
-       pushHierarchy();
-    }
-
+    
     /**
      * Sets the hierarchy displayed by this view.
      *
@@ -267,7 +250,7 @@ public class ViewHierarchy implements IView {
         this.table.refresh();
         this.updateCombos();
     }
-
+    
     /**
      * Sets the layout data.
      *
@@ -276,10 +259,10 @@ public class ViewHierarchy implements IView {
     public void setLayoutData(final Object d) {
         base.setLayoutData(d);
     }
-
+    
     @Override
     public void update(final ModelEvent event) {
-
+        
         if (event.part == ModelPart.HIERARCHY) {
             if (attribute.equals(model.getSelectedAttribute())) {
                 setHierarchy((Hierarchy) event.data);
@@ -293,7 +276,7 @@ public class ViewHierarchy implements IView {
             AuditTrailEntryFindReplace entry = (AuditTrailEntryFindReplace) event.data;
             if (entry.getAttribute().equals(this.attribute) && hierarchy != null) {
                 for (String[] array : hierarchy) {
-                    for (int i=0; i<array.length; i++) {
+                    for (int i = 0; i < array.length; i++) {
                         if (array[i].equals(entry.getSearchString())) {
                             array[i] = entry.getReplacementString();
                         }
@@ -330,23 +313,22 @@ public class ViewHierarchy implements IView {
      */
     private void actionDeleteColumn() {
         
-        if (table.getSelectedColumn() == null) { 
-            return; 
+        if (table.getSelectedColumn() == null) {
+            return;
         }
-
+        
         int selected = table.getSelectedColumn();
-        int columns = hierarchy[0].length-1;
+        int columns = hierarchy[0].length - 1;
         int rows = hierarchy.length;
         String[][] temp = new String[rows][columns];
-        for (int i=0; i<rows; i++){
+        for (int i = 0; i < rows; i++) {
             String[] row = new String[columns];
             System.arraycopy(hierarchy[i], 0, row, 0, selected);
-            System.arraycopy(hierarchy[i], selected+1, row, selected, columns-selected);
+            System.arraycopy(hierarchy[i], selected + 1, row, selected, columns - selected);
             temp[i] = row;
         }
         
-        
-        if (columns==0){
+        if (columns == 0) {
             actionClear();
         } else {
             this.hierarchy = temp;
@@ -364,19 +346,19 @@ public class ViewHierarchy implements IView {
      */
     private void actionDeleteRow() {
         
-        if (table.getSelectedRow() == null) { 
-            return; 
+        if (table.getSelectedRow() == null) {
+            return;
         }
-
+        
         int selected = table.getSelectedRow();
         int columns = hierarchy[0].length;
-        int rows = hierarchy.length-1;
+        int rows = hierarchy.length - 1;
         String[][] temp = new String[rows][columns];
         
         System.arraycopy(hierarchy, 0, temp, 0, selected);
-        System.arraycopy(hierarchy, selected+1, temp, selected, rows-selected);
+        System.arraycopy(hierarchy, selected + 1, temp, selected, rows - selected);
         
-        if (rows==0){
+        if (rows == 0) {
             actionClear();
         } else {
             this.hierarchy = temp;
@@ -388,17 +370,17 @@ public class ViewHierarchy implements IView {
         pushMin();
         pushMax();
     }
-
+    
     /**
      * Renames an item.
      */
     private void actionEditItem() {
-
+        
         if (table.getSelectedRow() == null ||
-            table.getSelectedColumn() == null) { 
-            return; 
+            table.getSelectedColumn() == null) {
+            return;
         }
-
+        
         int selectedRow = table.getSelectedRow();
         int selectedColumn = table.getSelectedColumn();
         
@@ -416,7 +398,7 @@ public class ViewHierarchy implements IView {
         pushMin();
         pushMax();
     }
-
+    
     /**
      * Initializes the hierarchy with identity mapping.
      */
@@ -438,8 +420,8 @@ public class ViewHierarchy implements IView {
         
         // Create hierarchy
         String[][] hierarchy = new String[values.length][0];
-        for (int i=0; i<values.length; i++){
-            hierarchy[i] = new String[]{values[i]};
+        for (int i = 0; i < values.length; i++) {
+            hierarchy[i] = new String[] { values[i] };
         }
         
         // Set
@@ -450,25 +432,25 @@ public class ViewHierarchy implements IView {
         pushMin();
         pushMax();
     }
-
+    
     /**
      * Inserts a column.
      */
     private void actionInsertColumn() {
-
-        if (table.getSelectedColumn() == null) { 
-            return; 
+        
+        if (table.getSelectedColumn() == null) {
+            return;
         }
-
+        
         int selected = table.getSelectedColumn();
-        int columns = hierarchy[0].length+1;
+        int columns = hierarchy[0].length + 1;
         int rows = hierarchy.length;
         String[][] temp = new String[rows][columns];
-        for (int i=0; i<rows; i++){
+        for (int i = 0; i < rows; i++) {
             String[] row = new String[columns];
-            System.arraycopy(hierarchy[i], 0, row, 0, selected+1);
-            System.arraycopy(hierarchy[i], selected+1, row, selected+2, columns-selected-2);
-            row[selected+1]=""; //$NON-NLS-1$
+            System.arraycopy(hierarchy[i], 0, row, 0, selected + 1);
+            System.arraycopy(hierarchy[i], selected + 1, row, selected + 2, columns - selected - 2);
+            row[selected + 1] = ""; //$NON-NLS-1$
             temp[i] = row;
         }
         
@@ -479,25 +461,25 @@ public class ViewHierarchy implements IView {
         pushMin();
         pushMax();
     }
-
+    
     /**
      * Inserts a row.
      */
     private void actionInsertRow() {
-
-        if (table.getSelectedRow() == null) { 
-            return; 
+        
+        if (table.getSelectedRow() == null) {
+            return;
         }
-
+        
         int selected = table.getSelectedRow();
         int columns = hierarchy[0].length;
-        int rows = hierarchy.length+1;
+        int rows = hierarchy.length + 1;
         String[][] temp = new String[rows][columns];
         
-        System.arraycopy(hierarchy, 0, temp, 0, selected+1);
-        System.arraycopy(hierarchy, selected+1, temp, selected+2, rows-selected-2);
-        temp[selected+1] = new String[columns];
-        Arrays.fill(temp[selected+1], ""); //$NON-NLS-1$
+        System.arraycopy(hierarchy, 0, temp, 0, selected + 1);
+        System.arraycopy(hierarchy, selected + 1, temp, selected + 2, rows - selected - 2);
+        temp[selected + 1] = new String[columns];
+        Arrays.fill(temp[selected + 1], ""); //$NON-NLS-1$
         
         this.hierarchy = temp;
         this.table.refresh();
@@ -506,24 +488,24 @@ public class ViewHierarchy implements IView {
         pushMin();
         pushMax();
     }
-
+    
     /**
      * Moves an element down.
      */
     private void actionMoveRowDown() {
-
-        if (table.getSelectedRow() == null) { 
-            return; 
-        }
-
-        int selected = table.getSelectedRow();
         
-        if (selected == hierarchy.length-1) {
+        if (table.getSelectedRow() == null) {
             return;
         }
         
-        String[] temp = hierarchy[selected+1];
-        hierarchy[selected+1] = hierarchy[selected];
+        int selected = table.getSelectedRow();
+        
+        if (selected == hierarchy.length - 1) {
+            return;
+        }
+        
+        String[] temp = hierarchy[selected + 1];
+        hierarchy[selected + 1] = hierarchy[selected];
         hierarchy[selected] = temp;
         
         this.table.refresh();
@@ -532,24 +514,24 @@ public class ViewHierarchy implements IView {
         pushMin();
         pushMax();
     }
-
+    
     /**
      * Moves an element up.
      */
     private void actionMoveRowUp() {
-
-        if (table.getSelectedRow() == null) { 
-            return; 
-        }
-
-        int selected = table.getSelectedRow();
         
-        if (selected <=0) {
+        if (table.getSelectedRow() == null) {
             return;
         }
         
-        String[] temp = hierarchy[selected-1];
-        hierarchy[selected-1] = hierarchy[selected];
+        int selected = table.getSelectedRow();
+        
+        if (selected <= 0) {
+            return;
+        }
+        
+        String[] temp = hierarchy[selected - 1];
+        hierarchy[selected - 1] = hierarchy[selected];
         hierarchy[selected] = temp;
         
         this.table.refresh();
@@ -563,12 +545,12 @@ public class ViewHierarchy implements IView {
      * Renames an item.
      */
     private void actionRenameItem() {
-
+        
         if (table.getSelectedRow() == null ||
-            table.getSelectedColumn() == null) { 
-            return; 
+            table.getSelectedColumn() == null) {
+            return;
         }
-
+        
         int selectedRow = table.getSelectedRow();
         int selectedColumn = table.getSelectedColumn();
         
@@ -577,8 +559,8 @@ public class ViewHierarchy implements IView {
                                                                  Resources.getMessage("HierarchyView.13"), Resources.getMessage("HierarchyView.14"), oldValue); //$NON-NLS-1$ //$NON-NLS-2$
         
         if (newValue != null) {
-            for (int i=0; i<hierarchy.length; i++){
-                if (hierarchy[i][selectedColumn].equals(oldValue)){
+            for (int i = 0; i < hierarchy.length; i++) {
+                if (hierarchy[i][selectedColumn].equals(oldValue)) {
                     hierarchy[i][selectedColumn] = newValue;
                 }
             }
@@ -590,7 +572,7 @@ public class ViewHierarchy implements IView {
         pushMin();
         pushMax();
     }
-
+    
     /**
      * Creates all components required for making the table editable.
      */
@@ -602,7 +584,7 @@ public class ViewHierarchy implements IView {
         final GridLayout layout = new GridLayout();
         layout.numColumns = 4;
         bottom.setLayout(layout);
-
+        
         // Insert min button
         Label l1 = new Label(bottom, SWT.NONE);
         l1.setText(Resources.getMessage("HierarchyView.4")); //$NON-NLS-1$
@@ -614,7 +596,7 @@ public class ViewHierarchy implements IView {
                 pushMin();
             }
         });
-
+        
         // Insert max button
         Label l2 = new Label(bottom, SWT.NONE);
         l2.setText(Resources.getMessage("HierarchyView.6")); //$NON-NLS-1$
@@ -626,12 +608,12 @@ public class ViewHierarchy implements IView {
                 pushMax();
             }
         });
- 
+        
         // Saved the reference to the selected row and/or column
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(final MouseEvent e) {
-                if (e.button == 3) { 
+                if (e.button == 3) {
                     onMouseDown(table.toDisplay(e.x, e.y));
                 }
             }
@@ -639,12 +621,12 @@ public class ViewHierarchy implements IView {
         table.getControl().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(final MouseEvent e) {
-                if (e.button == 3) { 
+                if (e.button == 3) {
                     onMouseDown(table.getControl().toDisplay(e.x, e.y));
                 }
             }
         });
-
+        
         // Creates the editors menu
         this.menu = new Menu(table.getControl());
         
@@ -657,7 +639,7 @@ public class ViewHierarchy implements IView {
                 actionInsertRow();
             }
         });
-
+        
         // Delete row action
         itemDeleteRow = new MenuItem(menu, SWT.NONE);
         itemDeleteRow.setText(Resources.getMessage("HierarchyView.8")); //$NON-NLS-1$
@@ -667,7 +649,7 @@ public class ViewHierarchy implements IView {
                 actionDeleteRow();
             }
         });
-
+        
         // Separator
         new MenuItem(menu, SWT.SEPARATOR);
         
@@ -680,7 +662,7 @@ public class ViewHierarchy implements IView {
                 actionInsertColumn();
             }
         });
-
+        
         // Delete column action
         itemDeleteColumn = new MenuItem(menu, SWT.NONE);
         itemDeleteColumn.setText(Resources.getMessage("HierarchyView.10")); //$NON-NLS-1$
@@ -690,10 +672,10 @@ public class ViewHierarchy implements IView {
                 actionDeleteColumn();
             }
         });
-
+        
         // Separator
         new MenuItem(menu, SWT.SEPARATOR);
-
+        
         // Move up
         itemMoveRowUp = new MenuItem(menu, SWT.NONE);
         itemMoveRowUp.setText(Resources.getMessage("HierarchyView.11")); //$NON-NLS-1$
@@ -713,10 +695,10 @@ public class ViewHierarchy implements IView {
                 actionMoveRowDown();
             }
         });
-
+        
         // Separator
         new MenuItem(menu, SWT.SEPARATOR);
-
+        
         // Edit item action
         itemEditItem = new MenuItem(menu, SWT.NONE);
         itemEditItem.setText(Resources.getMessage("HierarchyView.18")); //$NON-NLS-1$
@@ -726,7 +708,7 @@ public class ViewHierarchy implements IView {
                 actionEditItem();
             }
         });
-
+        
         // Rename item action
         itemRenameItem = new MenuItem(menu, SWT.NONE);
         itemRenameItem.setText(Resources.getMessage("HierarchyView.15")); //$NON-NLS-1$
@@ -736,8 +718,7 @@ public class ViewHierarchy implements IView {
                 actionRenameItem();
             }
         });
-
-
+        
         // Separator
         new MenuItem(menu, SWT.SEPARATOR);
         
@@ -750,7 +731,7 @@ public class ViewHierarchy implements IView {
                 actionClear();
             }
         });
-
+        
         // Action intialize
         itemInitialize = new MenuItem(menu, SWT.NONE);
         itemInitialize.setText(Resources.getMessage("HierarchyView.19")); //$NON-NLS-1$
@@ -760,16 +741,16 @@ public class ViewHierarchy implements IView {
                 actionInitialize();
             }
         });
-
+        
     }
-
+    
     /**
      * Creates the control.
      *
      * @param parent
      */
     private void createTable(final Composite parent) {
-
+        
         // Create base composite
         this.base = new Composite(parent, SWT.NONE | SWT.BORDER);
         GridData bottomLayoutData = SWTUtil.createFillGridData();
@@ -778,7 +759,7 @@ public class ViewHierarchy implements IView {
         bottomLayout.numColumns = 1;
         this.base.setLayout(bottomLayout);
         this.base.setLayoutData(bottomLayoutData);
-
+        
         // Configure table
         CTConfiguration config = new CTConfiguration(parent, CTConfiguration.STYLE_TABLE);
         config.setHorizontalAlignment(SWT.LEFT);
@@ -787,12 +768,12 @@ public class ViewHierarchy implements IView {
         config.setRowSelectionEnabled(false);
         config.setColumnHeaderLayout(CTConfiguration.COLUMN_HEADER_LAYOUT_FILL);
         config.setRowHeaderLayout(CTConfiguration.ROW_HEADER_LAYOUT_FILL);
-
+        
         // Create table
         this.table = new ComponentTable(base, SWT.BORDER, config);
         this.table.getControl().setLayoutData(SWTUtil.createFillGridData());
         this.table.setData(new HierarchyDataProvider(), new HierarchyHeaderDataProvider());
-
+        
         // Create the menu and editing controls
         if (editable) {
             createMenu();
@@ -824,33 +805,35 @@ public class ViewHierarchy implements IView {
         itemRenameItem.setEnabled(cell);
         // ---------
         itemClear.setEnabled(cell || row || column);
-        itemInitialize.setEnabled(hierarchy == null || 
-                                   hierarchy.length==0 ||
-                                   hierarchy[0]==null ||
-                                   hierarchy[0].length==0);
-
+        itemInitialize.setEnabled(hierarchy == null ||
+                                  hierarchy.length == 0 ||
+                                  hierarchy[0] == null ||
+                                  hierarchy[0].length == 0);
+        
         // Show
         this.menu.setLocation(point);
         this.menu.setVisible(true);
     }
-
+    
     /**
      * Updates the global hierarchy definition.
      */
     private void pushHierarchy() {
-
+        
         // Just write it to the model
-        if (model == null || model.getInputConfig() == null) { return; }
+        if (model == null || model.getInputConfig() == null) {
+            return;
+        }
         Hierarchy h = Hierarchy.create(hierarchy);
         model.getInputConfig().setHierarchy(attribute, h);
     }
-
+    
     /**
      * Updates the max generalization level.
      *
      * @return
      */
-    private boolean pushMax(){
+    private boolean pushMax() {
         
         if (max.getSelectionIndex() >= 0) {
             if (max.getSelectionIndex() < (min.getSelectionIndex() - 1)) {
@@ -860,11 +843,11 @@ public class ViewHierarchy implements IView {
                 String val = max.getItem(max.getSelectionIndex());
                 model.getInputConfig().setMaximumGeneralization(attribute, val.equals(ITEM_ALL) ? null : Integer.valueOf(val));
                 return true;
-            } 
-        } 
+            }
+        }
         return false;
     }
-
+    
     /**
      * Updates the min generalization level.
      *
@@ -875,7 +858,7 @@ public class ViewHierarchy implements IView {
         if (min.getSelectionIndex() >= 0) {
             if (min.getSelectionIndex() > (max.getSelectionIndex() + 1)) {
                 min.select(max.getSelectionIndex() + 1);
-            } 
+            }
             if (model != null) {
                 String val = min.getItem(min.getSelectionIndex());
                 model.getInputConfig().setMinimumGeneralization(attribute, val.equals(ITEM_ALL) ? null : Integer.valueOf(val));
@@ -888,17 +871,19 @@ public class ViewHierarchy implements IView {
     /**
      * Updates the combos.
      */
-    private void updateCombos(){
+    private void updateCombos() {
         
         // Check whether min & max are still ok
-        if (model==null || min == null || min.isDisposed()) { return; }
-
+        if (model == null || min == null || min.isDisposed()) {
+            return;
+        }
+        
         // Prepare lists
         final List<String> minItems = new ArrayList<String>();
         final List<String> maxItems = new ArrayList<String>();
         minItems.add(ITEM_ALL);
         int length = 0;
-        if (!(hierarchy==null || hierarchy.length == 0)) {
+        if (!(hierarchy == null || hierarchy.length == 0)) {
             length = hierarchy[0].length;
         }
         for (int i = 0; i < length; i++) {
@@ -906,14 +891,14 @@ public class ViewHierarchy implements IView {
             maxItems.add(String.valueOf(i));
         }
         maxItems.add(ITEM_ALL);
-
+        
         // Determine min index
         Integer minModel = model.getInputConfig().getMinimumGeneralization(attribute);
         int minIndex = minModel != null ? minModel + 1 : 0;
-
+        
         // Determine max index
         Integer maxModel = model.getInputConfig().getMaximumGeneralization(attribute);
-        int maxIndex = maxModel != null ? maxModel : maxItems.size()-1;
+        int maxIndex = maxModel != null ? maxModel : maxItems.size() - 1;
         
         // Fix indices
         maxIndex = maxIndex > maxItems.size() - 1 ? maxItems.size() - 1 : maxIndex;
@@ -921,11 +906,11 @@ public class ViewHierarchy implements IView {
         minIndex = minIndex > minItems.size() - 1 ? minItems.size() - 1 : minIndex;
         minIndex = minIndex < 0 ? 0 : minIndex;
         minIndex = minIndex > (maxIndex + 1) ? maxIndex + 1 : minIndex;
-
+        
         // Set items
         min.setItems(minItems.toArray(new String[minItems.size()]));
         max.setItems(maxItems.toArray(new String[maxItems.size()]));
-
+        
         // Select
         min.select(minIndex);
         max.select(maxIndex);

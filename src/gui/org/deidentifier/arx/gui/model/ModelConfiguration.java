@@ -64,6 +64,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
     /** The associated microaggregation functions. */
     private Map<String, MicroaggregateFunction> functions         = new HashMap<String, MicroaggregateFunction>();
     
+    /** The associated modes (0 = generalization, 1 = microaggregation). */
+    private Map<String, Integer> attributeModes         = new HashMap<String, Integer>();
+    
     /** The associated research subset. */
     private RowSet                              researchSubset    = null;
     
@@ -315,12 +318,36 @@ public class ModelConfiguration implements Serializable, Cloneable {
         return config.isCriterionMonotonic();
     }
 
+    /** 
+     * Returns true if generalization is enabled for this attribute. If the attribute is not defined it will default to true.
+     * @param attribute
+     * @return
+     */
+    public boolean isGeneralizationEnabled(String attribute) {
+        if (this.attributeModes == null) {
+            this.attributeModes = new HashMap<String, Integer>();
+        }
+       return (this.attributeModes.get(attribute) == null) || (this.attributeModes.get(attribute) == 0);
+    }
+
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#isUseHeuristicSearchForSampleBasedCriteria()
      */
     public boolean isHeuristicForSampleBasedCriteria() {
         return config.isUseHeuristicSearchForSampleBasedCriteria();
+    }
+    
+    /** 
+     * Returns true if microaggregation is enabled for this attribute.
+     * @param attribute
+     * @return
+     */
+    public boolean isMicroaggregationEnabled(String attribute) {
+        if (this.attributeModes == null) {
+            this.attributeModes = new HashMap<String, Integer>();
+        }
+       return (this.attributeModes.get(attribute) != null) && (this.attributeModes.get(attribute) == 1);
     }
 
     /**
@@ -331,7 +358,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isModified() {
         return modified;
     }
-    
+
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -349,7 +376,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
 	public boolean isProtectSensitiveAssociations() {
 		return config.isProtectSensitiveAssociations();
 	}
-
+    
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#isSuppressionAlwaysEnabled()
@@ -364,8 +391,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void removeAllCriteria() {
         this.getCriteria().clear();
     }
-    
-    /**
+	
+	/**
      * Delegates to an instance of ARXConfiguration.
      *
      * @param <T>
@@ -377,7 +404,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         return config.removeCriterion(c);
     }
 
-    /**
+	/**
      * Removes a hierarchy.
      *
      * @param attribute
@@ -398,7 +425,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         hierarchyBuilders.remove(attr);
     }
 
-	/**
+    /**
      * Removes a microaggregation function.
      *
      * @param attribute
@@ -410,8 +437,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.functions.remove(attribute);
         this.setModified();
     }
-	
-	/**
+    
+    /**
      * Delegates to an instance of ARXConfiguration.
      *
      * @param supp
@@ -420,7 +447,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setMaxOutliers(supp);
     }
-
+    
     /**
      * @param type
      * @param enabled
@@ -443,13 +470,25 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * Enables generalization on the attribute.
+     * @param attribute
+     */
+    public void setGeneralizationEnabled(String attribute) {
+        if (this.attributeModes == null) {
+            this.attributeModes = new HashMap<String, Integer>();
+        }
+        this.attributeModes.put(attribute, 0);
+        setModified();
+    }
+    
+    /**
      * @param value
      * @see org.deidentifier.arx.ARXConfiguration#setUseHeuristicSearchForSampleBasedCriteria(boolean)
      */
     public void setHeuristicForSampleBasedCriteria(boolean value) {
         config.setUseHeuristicSearchForSampleBasedCriteria(value);
     }
-    
+
     /**
      * Assigns a hierarchy.
      *
@@ -483,7 +522,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         input = data;
         setModified();
     }
-
+    
     /**
      * Maximum generalization.
      *
@@ -497,7 +536,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         this.max.put(attribute, max);
     }
-    
+
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -507,7 +546,19 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setMetric(metric);
     }
-    
+
+    /**
+     * Enables microaggregation on the attribute.
+     * @param attribute
+     */
+    public void setMicroaggregationEnabled(String attribute) {
+        if (this.attributeModes == null) {
+            this.attributeModes = new HashMap<String, Integer>();
+        }
+        this.attributeModes.put(attribute, 1);
+        setModified();
+    }
+
     /**
      * Assigns a microaggregation function.
      *
@@ -521,7 +572,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.functions.put(attribute, hierarchy);
         this.setModified();
     }
-    
+
     /**
      * Minimum generalization.
      *
@@ -583,7 +634,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setSuppressionString(suppressionString);
     }
-
+    
+  
     /**
      * Sets the suppression/generalization weight, that will be respected by
      * the NDS metric.
@@ -601,7 +653,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void setUnmodified() {
         modified = false;
     }
-
+    
     /**
      * Mark as modified.
      */

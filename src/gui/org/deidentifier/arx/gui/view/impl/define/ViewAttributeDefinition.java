@@ -310,7 +310,11 @@ public class ViewAttributeDefinition implements IView {
         // Build generalization checkbox
         final Button generalizationButton = new Button(group, SWT.RADIO);
         generalizationButton.setText("Generalization");
-        generalizationButton.setSelection(true); // TODO: read from model
+        boolean generalizationEnabled = true;
+        if (model != null && model.getInputConfig() != null) {
+            generalizationEnabled = model.getInputConfig().isGeneralizationEnabled(attribute);
+        }
+        generalizationButton.setSelection(generalizationEnabled);
         generalizationButton.setEnabled(true);
         
         // Editor hierarchy
@@ -319,7 +323,11 @@ public class ViewAttributeDefinition implements IView {
         // Build microaggregation checkbox
         Button microaggregationButton = new Button(group, SWT.RADIO);
         microaggregationButton.setText("Microaggregation");
-        microaggregationButton.setSelection(false); // TODO: read from model
+        boolean microaggregationEnabled = false;
+        if (model != null && model.getInputConfig() != null) {
+            microaggregationEnabled = model.getInputConfig().isMicroaggregationEnabled(attribute);
+        }
+        microaggregationButton.setSelection(microaggregationEnabled);
         
         // Microaggregation configuration
         microaggregation = new ViewMicoaggregation(group, attribute, controller, microaggregationButton);
@@ -330,8 +338,9 @@ public class ViewAttributeDefinition implements IView {
             public void widgetSelected(final SelectionEvent arg0) {
                 // Toggle
                 if (((Button) arg0.getSource()).getSelection()) {
-                    microaggregation.deselect();
-                    editor.setCurrentHierarchy();
+                    if (model != null && model.getInputConfig() != null) {
+                        model.getInputConfig().setGeneralizationEnabled(attribute);
+                    }
                 }
             }
         });
@@ -340,14 +349,11 @@ public class ViewAttributeDefinition implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 // Toggle
-                if (((Button) arg0.getSource()).getSelection()) {
-                    generalizationButton.setSelection(false);
-                    editor.removeCurrentHierarchy();
-                    microaggregation.setCurrentFunction();
+                if (model != null && model.getInputConfig() != null) {
+                    model.getInputConfig().setMicroaggregationEnabled(attribute);
                 }
             }
         });
-        microaggregationButton.setEnabled(microaggregation.isEnabled());
         
         // Attach to tab
         tab.setControl(group);
