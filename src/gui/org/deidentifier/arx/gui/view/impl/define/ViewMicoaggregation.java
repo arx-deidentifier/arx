@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Label;
 public class ViewMicoaggregation implements IView {
     
     /**
-     * All availbale microaggregation fucntions
+     * All available microaggregation functions
      * @author Florian Kohlmayer
      *
      */
@@ -68,9 +68,8 @@ public class ViewMicoaggregation implements IView {
     private MicroaggregateFunction    selectedFunction;
     /** The list containing all valid functions for the selected datatype */
     private Microaggregatefunctions[] validFunctions;
-    /** The Comobox */
+    /** The Combobox */
     private Combo                     functionCombo;
-    
     /** The button */
     private Button                    microaggregationButton;
     
@@ -85,7 +84,7 @@ public class ViewMicoaggregation implements IView {
     public ViewMicoaggregation(Composite parent, String attribute, Controller controller, Button microaggregationButton) {
         this.attribute = attribute;
         this.controller = controller;
-        model = controller.getModel();
+        this.model = controller.getModel();
         this.microaggregationButton = microaggregationButton;
         
         // Listener
@@ -143,6 +142,9 @@ public class ViewMicoaggregation implements IView {
             }
         } else if (event.part == ModelPart.INPUT) {
             updateValidFunctions();
+            if (model != null && model.getInputConfig() != null) {
+                 // TODO: select correct function!
+                }
         } else if (event.part == ModelPart.DATA_TYPE) {
             updateValidFunctions();
         }
