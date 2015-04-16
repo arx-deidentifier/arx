@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.deidentifier.arx.AttributeType.Microaggregation;
+import org.deidentifier.arx.aggregates.MicroaggregateFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
@@ -420,6 +422,14 @@ public class ARXAnonymizer {
         for (String attribute : handle.getDefinition().getQuasiIdentifyingAttributes()){
             if (!attributes.contains(attribute)) {
                 throw new IllegalArgumentException("Quasi-identifying attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        
+        for (String attribute : handle.getDefinition().getMicroaggregationAttributes()) {
+            MicroaggregateFunction f = ((Microaggregation) definition.getAttributeType(attribute)).getFunction();
+            DataType<?> t = definition.getDataType(attribute);
+            if (f.getMinimalRequiredScale().compareTo(t.getScaleOfMeasure()) > 0) {
+                throw new IllegalArgumentException("Microaggregation attribute '" + attribute + "' has a aggregation function specified wich needs a datatype with at least a " + f.getMinimalRequiredScale());
             }
         }
         
