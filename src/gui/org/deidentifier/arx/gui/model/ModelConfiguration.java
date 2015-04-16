@@ -28,6 +28,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.MicroaggregateFunction;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
@@ -55,17 +56,20 @@ public class ModelConfiguration implements Serializable, Cloneable {
     private ARXConfiguration                 config            = ARXConfiguration.create();
     
     /** Is this model modified. */
-    private boolean                          modified          = false;
+    private boolean                             modified          = false;
     
     /** The associated hierarchies. */
-    private Map<String, Hierarchy>           hierarchies       = new HashMap<String, Hierarchy>();
+    private Map<String, Hierarchy>              hierarchies       = new HashMap<String, Hierarchy>();
+    
+    /** The associated microaggregation functions. */
+    private Map<String, MicroaggregateFunction> functions         = new HashMap<String, MicroaggregateFunction>();
     
     /** The associated research subset. */
-    private RowSet                           researchSubset    = null;
+    private RowSet                              researchSubset    = null;
     
     /** The suppression weight. */
-    private Double                           suppressionWeight = null;
-    
+    private Double                              suppressionWeight = null;
+
     /** Hierarchy builder. */
     private Map<String, HierarchyBuilder<?>> hierarchyBuilders = null;
 
@@ -236,6 +240,19 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * Returns the microaggregation function.
+     *
+     * @param attribute
+     * @return 
+     */
+    public MicroaggregateFunction getMicroaggregationFunction(String attribute){
+        if (this.functions == null) {
+            this.functions = new HashMap<String, MicroaggregateFunction>();
+        }
+        return this.functions.get(attribute);
+    }
+    
+    /**
      * Minimum generalization.
      *
      * @param attribute
@@ -256,7 +273,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
 	public RowSet getResearchSubset() {
 		return researchSubset;
 	}
-    
+
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#getSuppressionString()
@@ -314,7 +331,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isModified() {
         return modified;
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -323,7 +340,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isPracticalMonotonicity() {
         return config.isPracticalMonotonicity();
     }
-    
+
     /**
      * Protect sensitive associations.
      *
@@ -347,7 +364,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void removeAllCriteria() {
         this.getCriteria().clear();
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -359,8 +376,18 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         return config.removeCriterion(c);
     }
-    
+
     /**
+     * Removes a hierarchy.
+     *
+     * @param attribute
+     */
+    public void removeHierarchy(String attribute){
+        this.hierarchies.remove(attribute);
+        this.setModified();
+    }
+	
+	/**
      * Removes the builder for the given attribute.
      *
      * @param attr
@@ -371,7 +398,20 @@ public class ModelConfiguration implements Serializable, Cloneable {
         hierarchyBuilders.remove(attr);
     }
 
-    /**
+	/**
+     * Removes a microaggregation function.
+     *
+     * @param attribute
+     */
+    public void removeMicroaggregationFunction(String attribute){
+        if (this.functions == null) {
+            this.functions = new HashMap<String, MicroaggregateFunction>();
+        }
+        this.functions.remove(attribute);
+        this.setModified();
+    }
+	
+	/**
      * Delegates to an instance of ARXConfiguration.
      *
      * @param supp
@@ -380,8 +420,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setMaxOutliers(supp);
     }
-	
-	/**
+
+    /**
      * @param type
      * @param enabled
      * @see org.deidentifier.arx.ARXConfiguration#setAttributeTypeSuppressed(org.deidentifier.arx.AttributeType, boolean)
@@ -390,8 +430,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setAttributeTypeSuppressed(type, enabled);
     }
-
-	/**
+    
+    /**
      * Sets the according attribute weight.
      *
      * @param attribute
@@ -401,15 +441,15 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setAttributeWeight(attribute, weight);
     }
-	
-	/**
+    
+    /**
      * @param value
      * @see org.deidentifier.arx.ARXConfiguration#setUseHeuristicSearchForSampleBasedCriteria(boolean)
      */
     public void setHeuristicForSampleBasedCriteria(boolean value) {
         config.setUseHeuristicSearchForSampleBasedCriteria(value);
     }
-
+    
     /**
      * Assigns a hierarchy.
      *
@@ -466,6 +506,20 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void setMetric(Metric<?> metric) {
         setModified();
         config.setMetric(metric);
+    }
+    
+    /**
+     * Assigns a microaggregation function.
+     *
+     * @param attribute
+     * @param hierarchy
+     */
+    public void setMicroaggregationFunction(String attribute, MicroaggregateFunction hierarchy){
+        if (this.functions == null) {
+            this.functions = new HashMap<String, MicroaggregateFunction>();
+        }
+        this.functions.put(attribute, hierarchy);
+        this.setModified();
     }
     
     /**

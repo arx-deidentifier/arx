@@ -232,12 +232,29 @@ public class ViewHierarchy implements IView {
         }
     }
 
+    /**
+     * Removes the hierarchy from the model.
+     */
+    public void removeCurrentHierarchy() {
+        if (model == null || model.getInputConfig() == null) {
+            return;
+        }
+        model.getInputConfig().removeHierarchy(attribute);
+    }
+
     @Override
     public void reset() {
         setHierarchy(null);
         if (!base.isDisposed()) {
             base.redraw();
         }
+    }
+
+    /**
+     * Set the hierarchy to the model.
+     */
+    public void setCurrentHierarchy() {
+       pushHierarchy();
     }
 
     /**
@@ -296,7 +313,7 @@ public class ViewHierarchy implements IView {
             }
         }
     }
-
+    
     /**
      * Clears the hierarchy.
      */
@@ -307,7 +324,7 @@ public class ViewHierarchy implements IView {
         pushMin();
         pushMax();
     }
-
+    
     /**
      * Deletes a column.
      */
@@ -371,7 +388,7 @@ public class ViewHierarchy implements IView {
         pushMin();
         pushMax();
     }
-    
+
     /**
      * Renames an item.
      */
@@ -399,7 +416,7 @@ public class ViewHierarchy implements IView {
         pushMin();
         pushMax();
     }
-    
+
     /**
      * Initializes the hierarchy with identity mapping.
      */
@@ -541,7 +558,7 @@ public class ViewHierarchy implements IView {
         pushMin();
         pushMax();
     }
-
+    
     /**
      * Renames an item.
      */
@@ -745,7 +762,7 @@ public class ViewHierarchy implements IView {
         });
 
     }
-    
+
     /**
      * Creates the control.
      *
@@ -754,7 +771,7 @@ public class ViewHierarchy implements IView {
     private void createTable(final Composite parent) {
 
         // Create base composite
-        this.base = new Composite(parent, SWT.NONE);
+        this.base = new Composite(parent, SWT.NONE | SWT.BORDER);
         GridData bottomLayoutData = SWTUtil.createFillGridData();
         bottomLayoutData.grabExcessVerticalSpace = true;
         GridLayout bottomLayout = new GridLayout();
@@ -781,7 +798,7 @@ public class ViewHierarchy implements IView {
             createMenu();
         }
     }
-
+    
     /**
      * Mouse down action.
      *
@@ -827,7 +844,7 @@ public class ViewHierarchy implements IView {
         Hierarchy h = Hierarchy.create(hierarchy);
         model.getInputConfig().setHierarchy(attribute, h);
     }
-    
+
     /**
      * Updates the max generalization level.
      *
@@ -867,7 +884,7 @@ public class ViewHierarchy implements IView {
         }
         return false;
     }
-
+    
     /**
      * Updates the combos.
      */

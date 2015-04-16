@@ -46,6 +46,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -53,62 +54,65 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * This view displays basic attribute information.
- * TODO: Display data type formats 
+ * TODO: Display data type formats
  * 
  * @author Fabian Prasser
  */
 public class ViewAttributeDefinition implements IView {
-
-    /**  TODO */
-    private static final AttributeType[] COMBO1_TYPES  = new AttributeType[] { 
-                                        AttributeType.INSENSITIVE_ATTRIBUTE,
-                                        AttributeType.SENSITIVE_ATTRIBUTE,
-                                        null,
-                                        AttributeType.IDENTIFYING_ATTRIBUTE };
     
-    /**  TODO */
-    private static final String[]       COMBO1_VALUES = new String[] { 
-                                        Resources.getMessage("AttributeDefinitionView.0"), //$NON-NLS-1$
-                                        Resources.getMessage("AttributeDefinitionView.1"), //$NON-NLS-1$
-                                        Resources.getMessage("AttributeDefinitionView.2"), //$NON-NLS-1$
-                                        Resources.getMessage("AttributeDefinitionView.3") }; //$NON-NLS-1$
-
-    /**  TODO */
+    /** TODO */
+    private static final AttributeType[] COMBO1_TYPES  = new AttributeType[] {
+                                                       AttributeType.INSENSITIVE_ATTRIBUTE,
+                                                       AttributeType.SENSITIVE_ATTRIBUTE,
+                                                       null,
+                                                       AttributeType.IDENTIFYING_ATTRIBUTE };
+    
+    /** TODO */
+    private static final String[]        COMBO1_VALUES = new String[] {
+                                                       Resources.getMessage("AttributeDefinitionView.0"), //$NON-NLS-1$
+            Resources.getMessage("AttributeDefinitionView.1"), //$NON-NLS-1$
+            Resources.getMessage("AttributeDefinitionView.2"), //$NON-NLS-1$
+            Resources.getMessage("AttributeDefinitionView.3") };                             //$NON-NLS-1$
+                                                                                              
+    /** TODO */
     private String                       attribute     = null;
     
-    /**  TODO */
+    /** TODO */
     private Model                        model;
-
-    /**  TODO */
+    
+    /** TODO */
     private final Controller             controller;
     
-    /**  TODO */
+    /** TODO */
     private final Combo                  dataTypeCombo;
     
-    /**  TODO */
+    /** TODO */
     private final Text                   dataTypeText;
     
-    /**  TODO */
+    /** TODO */
     private final ViewHierarchy          editor;
     
-    /**  TODO */
+    /** TODO */
+    private final ViewMicoaggregation    microaggregation;
+    
+    /** TODO */
     private final Image                  IMAGE_IDENTIFYING;
     
-    /**  TODO */
+    /** TODO */
     private final Image                  IMAGE_INSENSITIVE;
     
-    /**  TODO */
+    /** TODO */
     private final Image                  IMAGE_QUASI_IDENTIFYING;
     
-    /**  TODO */
+    /** TODO */
     private final Image                  IMAGE_SENSITIVE;
     
-    /**  TODO */
+    /** TODO */
     private final CTabItem               tab;
     
-    /**  TODO */
+    /** TODO */
     private final Combo                  typeCombo;
-
+    
     /**
      * Constructor.
      *
@@ -119,38 +123,38 @@ public class ViewAttributeDefinition implements IView {
     public ViewAttributeDefinition(final CTabFolder parent,
                                    final String attribute,
                                    final Controller controller) {
-
+        
         // Load images
         IMAGE_INSENSITIVE = controller.getResources().getImage("bullet_green.png"); //$NON-NLS-1$
         IMAGE_SENSITIVE = controller.getResources().getImage("bullet_purple.png"); //$NON-NLS-1$
         IMAGE_QUASI_IDENTIFYING = controller.getResources().getImage("bullet_yellow.png"); //$NON-NLS-1$
         IMAGE_IDENTIFYING = controller.getResources().getImage("bullet_red.png"); //$NON-NLS-1$
-
+        
         // Register
         this.controller = controller;
         this.attribute = attribute;
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.INPUT, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
-
+        
         // Create input group
         tab = new CTabItem(parent, SWT.NULL);
         tab.setText(attribute);
         tab.setShowClose(false);
         tab.setImage(IMAGE_INSENSITIVE);
-
+        
         Composite group = new Composite(parent, SWT.NULL);
         group.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
         groupInputGridLayout.numColumns = 1;
         group.setLayout(groupInputGridLayout);
-
+        
         final Composite type = new Composite(group, SWT.NULL);
         type.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout typeInputGridLayout = new GridLayout();
         typeInputGridLayout.numColumns = 6;
         type.setLayout(typeInputGridLayout);
-
+        
         final IView outer = this;
         final Label kLabel = new Label(type, SWT.PUSH);
         kLabel.setText(Resources.getMessage("AttributeDefinitionView.7")); //$NON-NLS-1$
@@ -161,7 +165,7 @@ public class ViewAttributeDefinition implements IView {
         typeCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-
+                
                 if ((typeCombo.getSelectionIndex() != -1) &&
                     (attribute != null)) {
                     if ((model != null) &&
@@ -169,7 +173,7 @@ public class ViewAttributeDefinition implements IView {
                         final AttributeType type = COMBO1_TYPES[typeCombo.getSelectionIndex()];
                         final DataDefinition definition = model.getInputDefinition();
                         
-                        // Handle QIs 
+                        // Handle QIs
                         if (type == null) {
                             definition.setAttributeType(attribute,
                                                         Hierarchy.create());
@@ -182,21 +186,21 @@ public class ViewAttributeDefinition implements IView {
                         
                         // Enable/disable criteria for sensitive attributes
                         if (type != AttributeType.SENSITIVE_ATTRIBUTE) {
-                        	
+                            
                             if (model.getLDiversityModel().get(attribute).isEnabled() ||
-                                model.getTClosenessModel().get(attribute).isEnabled()){
+                                model.getTClosenessModel().get(attribute).isEnabled()) {
                                 criteriaDisabled = true;
                             }
-
-                        	model.getTClosenessModel().get(attribute).setEnabled(false);
-                        	model.getLDiversityModel().get(attribute).setEnabled(false);
+                            
+                            model.getTClosenessModel().get(attribute).setEnabled(false);
+                            model.getLDiversityModel().get(attribute).setEnabled(false);
                         }
                         
                         // Enable/disable criteria for quasi-identifiers
-                        if (definition.getQuasiIdentifyingAttributes().isEmpty()){
-
-                            if ( model.getKAnonymityModel().isEnabled() ||
-                                 model.getDPresenceModel().isEnabled()){
+                        if (definition.getQuasiIdentifyingAttributes().isEmpty()) {
+                            
+                            if (model.getKAnonymityModel().isEnabled() ||
+                                model.getDPresenceModel().isEnabled()) {
                                 criteriaDisabled = true;
                             }
                             
@@ -208,19 +212,19 @@ public class ViewAttributeDefinition implements IView {
                                 }
                                 c.setEnabled(false);
                             }
-
-                        } 
-
+                            
+                        }
+                        
                         // Update icon
                         updateIcon();
                         
                         // Update criteria
-                        if (criteriaDisabled){
+                        if (criteriaDisabled) {
                             controller.update(new ModelEvent(outer,
                                                              ModelPart.CRITERION_DEFINITION,
                                                              null));
                         }
-
+                        
                         // Update the views
                         controller.update(new ModelEvent(outer,
                                                          ModelPart.ATTRIBUTE_TYPE,
@@ -229,7 +233,7 @@ public class ViewAttributeDefinition implements IView {
                 }
             }
         });
-
+        
         final Label kLabel2 = new Label(type, SWT.PUSH);
         kLabel2.setText(Resources.getMessage("AttributeDefinitionView.8")); //$NON-NLS-1$
         dataTypeCombo = new Combo(type, SWT.READ_ONLY);
@@ -243,18 +247,18 @@ public class ViewAttributeDefinition implements IView {
                     (attribute != null)) {
                     if ((model != null) &&
                         (model.getInputConfig().getInput() != null)) {
-
+                        
                         // Obtain type
                         String label = dataTypeCombo.getItem(dataTypeCombo.getSelectionIndex());
                         DataTypeDescription<?> description = getDataType(label);
                         DataType<?> type;
-
+                        
                         // Open format dialog
                         if (description.getLabel().equals("OrderedString")) { //$NON-NLS-1$
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                             String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
-                                                                                    text1, text2, DataType.STRING, 
+                                                                                    text1, text2, DataType.STRING,
                                                                                     model.getLocale(), getValuesAsArray());
                             if (array == null) {
                                 type = DataType.STRING;
@@ -264,9 +268,9 @@ public class ViewAttributeDefinition implements IView {
                                     if (!isValidDataType(type, getValuesAsList())) {
                                         type = DataType.STRING;
                                     }
-                                } catch (Exception e){
+                                } catch (Exception e) {
                                     controller.actionShowInfoDialog(controller.getResources().getShell(),
-                                                                    Resources.getMessage("ViewAttributeDefinition.1"), Resources.getMessage("ViewAttributeDefinition.2")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                                                                    Resources.getMessage("ViewAttributeDefinition.1"), Resources.getMessage("ViewAttributeDefinition.2") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
                                     type = DataType.STRING;
                                 }
                             }
@@ -286,7 +290,7 @@ public class ViewAttributeDefinition implements IView {
                                 type = DataType.STRING;
                             }
                         }
-
+                        
                         // Set and update
                         model.getInputDefinition().setDataType(attribute, type);
                         updateDataType();
@@ -295,40 +299,80 @@ public class ViewAttributeDefinition implements IView {
                 }
             }
         });
-
+        
         final Label kLabel3 = new Label(type, SWT.PUSH);
         kLabel3.setText(Resources.getMessage("AttributeDefinitionView.10")); //$NON-NLS-1$
         dataTypeText = new Text(type, SWT.READ_ONLY | SWT.BORDER);
         dataTypeText.setLayoutData(SWTUtil.createFillGridData());
         dataTypeText.setEditable(false);
         dataTypeText.setText(""); //$NON-NLS-1$
-
+        
+        // Build generalization checkbox
+        final Button generalizationButton = new Button(group, SWT.RADIO);
+        generalizationButton.setText("Generalization");
+        generalizationButton.setSelection(true); // TODO: read from model
+        generalizationButton.setEnabled(true);
+        
         // Editor hierarchy
         editor = new ViewHierarchy(group, attribute, controller);
-
+        
+        // Build microaggregation checkbox
+        Button microaggregationButton = new Button(group, SWT.RADIO);
+        microaggregationButton.setText("Microaggregation");
+        microaggregationButton.setSelection(false); // TODO: read from model
+        
+        // Microaggregation configuration
+        microaggregation = new ViewMicoaggregation(group, attribute, controller, microaggregationButton);
+        
+        // Listener
+        generalizationButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                // Toggle
+                if (((Button) arg0.getSource()).getSelection()) {
+                    microaggregation.deselect();
+                    editor.setCurrentHierarchy();
+                }
+            }
+        });
+        
+        microaggregationButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                // Toggle
+                if (((Button) arg0.getSource()).getSelection()) {
+                    generalizationButton.setSelection(false);
+                    editor.removeCurrentHierarchy();
+                    microaggregation.setCurrentFunction();
+                }
+            }
+        });
+        microaggregationButton.setEnabled(microaggregation.isEnabled());
+        
         // Attach to tab
         tab.setControl(group);
     }
-
+    
     @Override
     public void dispose() {
         
         // Dispose views
         controller.removeListener(this);
         editor.dispose();
-
+        microaggregation.dispose();
+        
         // Dispose images
         IMAGE_INSENSITIVE.dispose();
         IMAGE_SENSITIVE.dispose();
         IMAGE_QUASI_IDENTIFYING.dispose();
         IMAGE_IDENTIFYING.dispose();
     }
-
+    
     @Override
     public void reset() {
         dataTypeText.setText(""); //$NON-NLS-1$
     }
-
+    
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
@@ -354,13 +398,13 @@ public class ViewAttributeDefinition implements IView {
      * @param label
      * @return
      */
-    private DataTypeDescription<?> getDataType(String label){
-        for (DataTypeDescription<?> desc : DataType.list()){
-            if (label.equals(desc.getLabel())){
+    private DataTypeDescription<?> getDataType(String label) {
+        for (DataTypeDescription<?> desc : DataType.list()) {
+            if (label.equals(desc.getLabel())) {
                 return desc;
             }
         }
-        throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.5")+label); //$NON-NLS-1$
+        throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.5") + label); //$NON-NLS-1$
     }
     
     /**
@@ -368,9 +412,9 @@ public class ViewAttributeDefinition implements IView {
      *
      * @return
      */
-    private String[] getDataTypes(){
+    private String[] getDataTypes() {
         List<String> list = new ArrayList<String>();
-        for (DataTypeDescription<?> desc : DataType.list()){
+        for (DataTypeDescription<?> desc : DataType.list()) {
             list.add(desc.getLabel());
         }
         return list.toArray(new String[list.size()]);
@@ -382,15 +426,15 @@ public class ViewAttributeDefinition implements IView {
      * @param type
      * @return
      */
-    private int getIndexOfDataType(DataType<?> type){
+    private int getIndexOfDataType(DataType<?> type) {
         int idx = 0;
-        for (DataTypeDescription<?> desc : DataType.list()){
+        for (DataTypeDescription<?> desc : DataType.list()) {
             if (desc.getLabel().equals(type.getDescription().getLabel())) {
                 return idx;
             }
             idx++;
         }
-        throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.6")+type.getDescription().getLabel()); //$NON-NLS-1$
+        throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.6") + type.getDescription().getLabel()); //$NON-NLS-1$
     }
     
     /**
@@ -411,7 +455,7 @@ public class ViewAttributeDefinition implements IView {
     private Collection<String> getValuesAsList() {
         return Arrays.asList(getValuesAsArray());
     }
-
+    
     /**
      * Checks whether the data type is valid.
      *
@@ -419,15 +463,15 @@ public class ViewAttributeDefinition implements IView {
      * @param values
      * @return
      */
-    private boolean isValidDataType(DataType<?> type, Collection<String> values){
-        for (String value : values){
+    private boolean isValidDataType(DataType<?> type, Collection<String> values) {
+        for (String value : values) {
             if (!type.isValid(value)) {
                 return false;
             }
         }
         return true;
     }
-
+    
     /**
      * 
      * Update the attribute type.
@@ -445,23 +489,23 @@ public class ViewAttributeDefinition implements IView {
             }
         }
     }
-
+    
     /**
      * Update the data type.
      */
     private void updateDataType() {
-
+        
         final DataType<?> dtype = model.getInputDefinition()
                                        .getDataType(attribute);
         
         dataTypeCombo.select(getIndexOfDataType(dtype));
         
-        if (!(dtype instanceof ARXOrderedString) && 
+        if (!(dtype instanceof ARXOrderedString) &&
             dtype.getDescription().hasFormat()) {
             
-            DataTypeWithFormat dtwf = (DataTypeWithFormat)dtype;
+            DataTypeWithFormat dtwf = (DataTypeWithFormat) dtype;
             String format = dtwf.getFormat();
-            if (format==null) {
+            if (format == null) {
                 dataTypeText.setText(Resources.getMessage("ViewAttributeDefinition.7")); //$NON-NLS-1$
             } else {
                 dataTypeText.setText(format);
@@ -470,7 +514,7 @@ public class ViewAttributeDefinition implements IView {
             dataTypeText.setText(Resources.getMessage("ViewAttributeDefinition.8")); //$NON-NLS-1$
         }
     }
-
+    
     /**
      * Update the column icon.
      */

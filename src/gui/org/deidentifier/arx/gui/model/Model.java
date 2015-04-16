@@ -35,6 +35,7 @@ import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.Microaggregation;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
@@ -318,26 +319,36 @@ public class Model implements Serializable {
 		// Initialie the metric
 		config.setMetric(this.getMetricDescription().createInstance(this.getMetricConfiguration()));
 
-		// Initialize definition
+        // Initialize definition
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
             
-            Hierarchy hierarchy = config.getHierarchy(attr);
-            /* Handle non-existent hierarchies*/
-            if (hierarchy == null || hierarchy.getHierarchy()==null) {
-                hierarchy = Hierarchy.create();
-                config.setHierarchy(attr, hierarchy);
+            if (config.getMicroaggregationFunction(attr) != null) {
+                definition.setAttributeType(attr, Microaggregation.create(config.getMicroaggregationFunction(attr)));
+            } else {
+                Hierarchy hierarchy = config.getHierarchy(attr);
+                /* Handle non-existent hierarchies */
+                if (hierarchy == null || hierarchy.getHierarchy() == null) {
+                    hierarchy = Hierarchy.create();
+                    config.setHierarchy(attr, hierarchy);
+                }
+                Integer min = config.getMinimumGeneralization(attr);
+                Integer max = config.getMaximumGeneralization(attr);
+                
+                if (min == null) {
+                    min = 0;
+                }
+                if (max == null) {
+                    if (hierarchy.getHierarchy().length == 0) {
+                        max = 0;
+                    }
+                    else {
+                        max = hierarchy.getHierarchy()[0].length - 1;
+                    }
+                }
+                definition.setAttributeType(attr, hierarchy);
+                definition.setMinimumGeneralization(attr, min);
+                definition.setMaximumGeneralization(attr, max);
             }
-            Integer min = config.getMinimumGeneralization(attr);
-            Integer max = config.getMaximumGeneralization(attr);
-            
-            if (min==null){ min = 0; }
-            if (max==null) {
-                if (hierarchy.getHierarchy().length==0){ max = 0; } 
-                else { max = hierarchy.getHierarchy()[0].length-1; }
-            }
-            definition.setAttributeType(attr, hierarchy);
-            definition.setMinimumGeneralization(attr, min);
-            definition.setMaximumGeneralization(attr, max);
         }
         
 		if (this.kAnonymityModel != null &&
