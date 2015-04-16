@@ -37,7 +37,7 @@ public class ViewMicoaggregation implements IView {
     public enum Microaggregatefunctions {
         
         ARITHMETIC_MEAN("Arithmetic mean"),
-        GEOMETRIC_MEAN("Gemoetric mean");
+        GEOMETRIC_MEAN("Geometric mean");
         
         /** Label */
         private final String label;
