@@ -422,12 +422,10 @@ public class DataHandleOutput extends DataHandle {
             }
             if (type != null) {
                 for (int j = 0; j < type.length; j++) {
-                    if (dataTypes[i][j] != null) {
-                        dataTypes[i][j] = definition.getDataType(header[j]);
-                        if ((i == AttributeTypeInternal.GENERALIZATION) &&
-                            (node.getTransformation()[j] > 0)) {
-                            dataTypes[i][j] = DataType.STRING;
-                        }
+                    dataTypes[i][j] = definition.getDataType(header[j]);
+                    if ((i == AttributeTypeInternal.GENERALIZATION) &&
+                        (node.getTransformation()[j] > 0)) {
+                        dataTypes[i][j] = DataType.STRING;
                     }
                 }
             }
