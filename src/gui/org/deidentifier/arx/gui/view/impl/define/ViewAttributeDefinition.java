@@ -113,6 +113,12 @@ public class ViewAttributeDefinition implements IView {
     /** TODO */
     private final Combo                  typeCombo;
     
+    /** The button */
+    private Button                       generalizationButton;
+    
+    /** The button */
+    private Button                       microaggregationButton;
+    
     /**
      * Constructor.
      *
@@ -308,26 +314,17 @@ public class ViewAttributeDefinition implements IView {
         dataTypeText.setText(""); //$NON-NLS-1$
         
         // Build generalization checkbox
-        final Button generalizationButton = new Button(group, SWT.RADIO);
+        generalizationButton = new Button(group, SWT.RADIO);
         generalizationButton.setText("Generalization");
-        boolean generalizationEnabled = true;
-        if (model != null && model.getInputConfig() != null) {
-            generalizationEnabled = model.getInputConfig().isGeneralizationEnabled(attribute);
-        }
-        generalizationButton.setSelection(generalizationEnabled);
         generalizationButton.setEnabled(true);
         
         // Editor hierarchy
         editor = new ViewHierarchy(group, attribute, controller);
         
         // Build microaggregation checkbox
-        Button microaggregationButton = new Button(group, SWT.RADIO);
+        microaggregationButton = new Button(group, SWT.RADIO);
         microaggregationButton.setText("Microaggregation");
-        boolean microaggregationEnabled = false;
-        if (model != null && model.getInputConfig() != null) {
-            microaggregationEnabled = model.getInputConfig().isMicroaggregationEnabled(attribute);
-        }
-        microaggregationButton.setSelection(microaggregationEnabled);
+ 
         
         // Microaggregation configuration
         microaggregation = new ViewMicoaggregation(group, attribute, controller, microaggregationButton);
@@ -395,6 +392,17 @@ public class ViewAttributeDefinition implements IView {
             updateAttributeType();
             updateDataType();
             editor.update(event);
+            boolean microaggregationEnabled = false;
+            if (model != null && model.getInputConfig() != null) {
+                microaggregationEnabled = model.getInputConfig().isMicroaggregationEnabled(attribute);
+            }
+            microaggregationButton.setSelection(microaggregationEnabled);
+            
+            boolean generlaizationEnabled = true;
+            if (model != null && model.getInputConfig() != null) {
+                generlaizationEnabled = model.getInputConfig().isGeneralizationEnabled(attribute);
+            }
+            generalizationButton.setSelection(generlaizationEnabled);
         }
     }
     
