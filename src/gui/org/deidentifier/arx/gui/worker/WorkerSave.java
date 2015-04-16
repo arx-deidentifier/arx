@@ -37,6 +37,7 @@ import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.Microaggregation;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
@@ -343,9 +344,10 @@ public class WorkerSave extends Worker<Model> {
             }
             
             if (t instanceof Hierarchy || 
-                (t == AttributeType.SENSITIVE_ATTRIBUTE && config.getHierarchy(attr)!=null)) {
+                (t == AttributeType.SENSITIVE_ATTRIBUTE && config.getHierarchy(attr)!=null)
+                || (t instanceof Microaggregation && config.getHierarchy(attr)!=null)) {
             	writer.write(vocabulary.getRef(), "hierarchies/" + toFileName(attr) + ".csv"); //$NON-NLS-1$ //$NON-NLS-2$
-                if (t instanceof Hierarchy){
+                if (t instanceof Hierarchy || (t instanceof Microaggregation && config.getHierarchy(attr)!=null)){
                     Integer min = config.getMinimumGeneralization(attr);
                     Integer max = config.getMaximumGeneralization(attr);
                 	writer.write(vocabulary.getMin(), min==null ? "All" : String.valueOf(min)); //$NON-NLS-1$
