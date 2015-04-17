@@ -29,7 +29,6 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
  * This abstract class represents an microaggregate function.
  *
  * @author Florian Kohlmayer
- * @param <T>
  */
 public abstract class MicroaggregateFunction implements Serializable {
     
