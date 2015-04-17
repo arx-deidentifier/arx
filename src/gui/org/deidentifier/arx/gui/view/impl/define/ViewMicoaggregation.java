@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.aggregates.MicroaggregateFunction;
-import org.deidentifier.arx.aggregates.MicroaggregateFunction.ArithmeticMean;
-import org.deidentifier.arx.aggregates.MicroaggregateFunction.GeometricMean;
+import org.deidentifier.arx.aggregates.MicroaggregationFunctionDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -29,49 +28,20 @@ import org.eclipse.swt.widgets.Label;
  */
 public class ViewMicoaggregation implements IView {
     
-    /**
-     * All available microaggregation functions
-     * @author Florian Kohlmayer
-     *
-     */
-    public enum Microaggregatefunction {
-        
-        ARITHMETIC_MEAN("Arithmetic mean"),
-        GEOMETRIC_MEAN("Geometric mean");
-        
-        /** Label */
-        private final String label;
-        
-        /**
-         * Construct
-         * @param label
-         */
-        private Microaggregatefunction(String label) {
-            this.label = label;
-        }
-        
-        @Override
-        public String toString() {
-            return label;
-        }
-    }
-    
     /** The attribute for which the view was created */
-    private String                   attribute;
+    private String                                attribute;
     /** The controller */
-    private Controller               controller;
+    private Controller                            controller;
     /** The base composite */
-    private Composite                base;
+    private Composite                             base;
     /** The model */
-    private Model                    model;
-    /** The selected microaggregation function */
-    private MicroaggregateFunction   selectedFunction;
+    private Model                                 model;
     /** The list containing all valid functions for the selected datatype */
-    private Microaggregatefunction[] validFunctions;
+    private MicroaggregationFunctionDescription[] validFunctions;
     /** The Combobox */
-    private Combo                    functionCombo;
+    private Combo                                 functionCombo;
     /** The button */
-    private Button                   microaggregationButton;
+    private Button                                microaggregationButton;
     
     /**
      * Instantiates.
@@ -88,7 +58,7 @@ public class ViewMicoaggregation implements IView {
         this.microaggregationButton = microaggregationButton;
         
         // Listener
-        controller.addListener(ModelPart.INPUT, this);
+        controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         
@@ -105,8 +75,6 @@ public class ViewMicoaggregation implements IView {
         fLabel.setText("Function");
         functionCombo = new Combo(base, SWT.READ_ONLY);
         functionCombo.setLayoutData(SWTUtil.createFillGridData());
-        updateValidFunctions();
-        
         functionCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -114,6 +82,8 @@ public class ViewMicoaggregation implements IView {
                 selectfunction(index);
             }
         });
+        
+        updateValidFunctions();
         
     }
     
@@ -135,33 +105,21 @@ public class ViewMicoaggregation implements IView {
     @Override
     public void update(ModelEvent event) {
         
+        // System.out.println("Event: " + event);
+        
         if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             final String attr = (String) event.data;
             if (attr.equals(attribute)) {
                 updateValidFunctions();
-            }
-        } else if (event.part == ModelPart.INPUT) {
-            updateValidFunctions();
-            if (model != null && model.getInputConfig() != null) {
-                MicroaggregateFunction restoredFunction = model.getInputConfig().getMicroaggregationFunction(attribute);
-                System.out.println(restoredFunction);
-                for (int i = 0; i < validFunctions.length; i++) {
-                    Microaggregatefunction function = validFunctions[i];
-                    switch (function) {
-                    case ARITHMETIC_MEAN:
-                        if (restoredFunction instanceof ArithmeticMean) {
+                if (model != null && model.getInputConfig() != null) {
+                    MicroaggregationFunctionDescription restoredFunction = model.getInputConfig().getMicroaggregationFunctionDescription(attribute);
+                    for (int i = 0; i < validFunctions.length; i++) {
+                        MicroaggregationFunctionDescription function = validFunctions[i];
+                        if (function.equals(restoredFunction)) {
                             selectfunction(i);
                             break;
                         }
-                        break;
-                    case GEOMETRIC_MEAN:
-                        if (restoredFunction instanceof GeometricMean) {
-                            selectfunction(i);
-                            break;
-                        }
-                        break;
                     }
-                    
                 }
             }
         } else if (event.part == ModelPart.DATA_TYPE) {
@@ -175,71 +133,42 @@ public class ViewMicoaggregation implements IView {
      */
     private void selectfunction(int index) {
         if (validFunctions.length > index) {
-            Microaggregatefunction selected = validFunctions[index];
-            switch (selected) {
-            case ARITHMETIC_MEAN:
-                selectedFunction = new ArithmeticMean();
-                break;
-            case GEOMETRIC_MEAN:
-                selectedFunction = new GeometricMean();
-                break;
-            default:
-                throw new IllegalArgumentException("Microaggregatefuntion not supported!");
+            MicroaggregationFunctionDescription selected = validFunctions[index];
+            if ((model == null) || (model.getInputConfig() == null)) {
+                functionCombo.select(0);
+                return;
             }
-            
             functionCombo.select(index);
-            setCurrentFunction();
+            model.getInputConfig().setMicroaggregationFunctionDescription(attribute, selected);
         }
-    }
-    
-    /**
-     * Sets the current function to the model.
-     */
-    private void setCurrentFunction() {
-        if ((model == null) || (model.getInputConfig() == null)) {
-            return;
-        }
-        model.getInputConfig().setMicroaggregationFunction(attribute, selectedFunction);
     }
     
     /**
      * Updates the valid functions based on the datatype.
      */
     private void updateValidFunctions() {
-        Microaggregatefunction[] functions = Microaggregatefunction.values();
+        List<MicroaggregationFunctionDescription> functions = MicroaggregateFunction.list();
         List<String> items = new ArrayList<String>();
-        List<Microaggregatefunction> validFunctions = new ArrayList<Microaggregatefunction>();
-        for (int i = 0; i < functions.length; i++) {
-            Microaggregatefunction function = functions[i];
-            switch (function) {
-            case ARITHMETIC_MEAN:
-                if (new ArithmeticMean().getMinimalRequiredScale().compareTo(model.getInputDefinition().getDataType(attribute).getScaleOfMeasure()) <= 0) {
-                    items.add(function.toString());
-                    validFunctions.add(function);
-                }
-                break;
-            case GEOMETRIC_MEAN:
-                if (new GeometricMean().getMinimalRequiredScale().compareTo(model.getInputDefinition().getDataType(attribute).getScaleOfMeasure()) <= 0) {
-                    items.add(function.toString());
-                    validFunctions.add(function);
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Microaggregation function not supported!");
+        List<MicroaggregationFunctionDescription> validFunctions = new ArrayList<MicroaggregationFunctionDescription>();
+        for (int i = 0; i < functions.size(); i++) {
+            MicroaggregationFunctionDescription function = functions.get(i);
+            if (function.getRequiredScaleOfMeasure().compareTo(model.getInputDefinition().getDataType(attribute).getScaleOfMeasure()) <= 0) {
+                items.add(function.getLabel());
+                validFunctions.add(function);
             }
         }
         
-        functionCombo.setItems(items.toArray(new String[items.size()]));
-        this.validFunctions = validFunctions.toArray(new Microaggregatefunction[validFunctions.size()]);
+        this.validFunctions = validFunctions.toArray(new MicroaggregationFunctionDescription[validFunctions.size()]);
         
         if (items.size() > 0) {
-            microaggregationButton.setEnabled(true);
+            functionCombo.setItems(items.toArray(new String[items.size()]));
             functionCombo.setEnabled(true);
             selectfunction(0);
+            microaggregationButton.setEnabled(true);
         } else {
             functionCombo.setItems(new String[] { "No valid microaggregation function for datatype" });
-            functionCombo.select(0);
             functionCombo.setEnabled(false);
+            functionCombo.select(0);
             microaggregationButton.setEnabled(false);
         }
     }

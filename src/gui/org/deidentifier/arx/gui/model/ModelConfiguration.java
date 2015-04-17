@@ -28,7 +28,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.aggregates.MicroaggregateFunction;
+import org.deidentifier.arx.aggregates.MicroaggregationFunctionDescription;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
@@ -62,7 +62,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     private Map<String, Hierarchy>              hierarchies       = new HashMap<String, Hierarchy>();
     
     /** The associated microaggregation functions. */
-    private Map<String, MicroaggregateFunction> functions         = new HashMap<String, MicroaggregateFunction>();
+    private Map<String, MicroaggregationFunctionDescription> functions         = new HashMap<String, MicroaggregationFunctionDescription>();
     
     /** The associated modes (0 = generalization, 1 = microaggregation). */
     private Map<String, Integer> attributeModes         = new HashMap<String, Integer>();
@@ -248,9 +248,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @param attribute
      * @return 
      */
-    public MicroaggregateFunction getMicroaggregationFunction(String attribute){
+    public MicroaggregationFunctionDescription getMicroaggregationFunctionDescription(String attribute){
         if (this.functions == null) {
-            this.functions = new HashMap<String, MicroaggregateFunction>();
+            this.functions = new HashMap<String, MicroaggregationFunctionDescription>();
         }
         return this.functions.get(attribute);
     }
@@ -430,9 +430,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
      *
      * @param attribute
      */
-    public void removeMicroaggregationFunction(String attribute){
+    public void removeMicroaggregationFunctionDescription(String attribute){
         if (this.functions == null) {
-            this.functions = new HashMap<String, MicroaggregateFunction>();
+            this.functions = new HashMap<String, MicroaggregationFunctionDescription>();
         }
         this.functions.remove(attribute);
         this.setModified();
@@ -563,13 +563,13 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * Assigns a microaggregation function.
      *
      * @param attribute
-     * @param hierarchy
+     * @param microaggregation
      */
-    public void setMicroaggregationFunction(String attribute, MicroaggregateFunction hierarchy){
+    public void setMicroaggregationFunctionDescription(String attribute, MicroaggregationFunctionDescription microaggregation){
         if (this.functions == null) {
-            this.functions = new HashMap<String, MicroaggregateFunction>();
+            this.functions = new HashMap<String, MicroaggregationFunctionDescription>();
         }
-        this.functions.put(attribute, hierarchy);
+        this.functions.put(attribute, microaggregation);
         this.setModified();
     }
 

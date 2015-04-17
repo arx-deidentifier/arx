@@ -17,7 +17,9 @@
 package org.deidentifier.arx.aggregates;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.deidentifier.arx.DataType;
@@ -31,6 +33,42 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
  * @author Florian Kohlmayer
  */
 public abstract class MicroaggregateFunction implements Serializable {
+    
+    public static List<MicroaggregationFunctionDescription> list() {
+        return Arrays.asList(new MicroaggregationFunctionDescription[] {
+                new MicroaggregationFunctionDescription("Arithmetic Mean",
+                                                        ScaleOfMeasure.INTERVAL) {
+                    
+                    /** SVUID */
+                    private static final long serialVersionUID = -1456232652408261065L;
+                    
+                    @Override
+                    public boolean isInstance(MicroaggregateFunction function) {
+                        return (function instanceof ArithmeticMean);
+                    }
+                    
+                    @Override
+                    public MicroaggregateFunction createInstance(HandlingOfNullValues nullValueHandling) {
+                        return new ArithmeticMean(nullValueHandling);
+                    }
+                }, new MicroaggregationFunctionDescription("Geometric Mean",
+                                                           ScaleOfMeasure.RATIO) {
+                    
+                    /** SVUID */
+                    private static final long serialVersionUID = 7737081838418104854L;
+                    
+                    @Override
+                    public boolean isInstance(MicroaggregateFunction function) {
+                        return (function instanceof GeometricMean);
+                    }
+                    
+                    @Override
+                    public MicroaggregateFunction createInstance(HandlingOfNullValues nullValueHandling) {
+                        return new GeometricMean(nullValueHandling);
+                    }
+                },
+        });
+    }
     
     /**
      * This class calculates the arithmetic mean for a given distribution.
