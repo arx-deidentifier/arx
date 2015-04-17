@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.framework.data;
 
+import java.util.Arrays;
+
 import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
@@ -35,6 +37,9 @@ public class Dictionary {
     
     /** Allow modification of the dictionary after finalizing? */
     private final boolean                  allowModification;
+    
+    /** Rewind dicrionary to this index */
+    private int[]                          lastIndex;
     
     /**
      * Instantiates a new dictionary.
@@ -60,6 +65,8 @@ public class Dictionary {
             maps[i] = new ObjectIntOpenHashMap<String>();
         }
         this.allowModification = allowModification;
+        this.lastIndex = new int[dimensions];
+        Arrays.fill(this.lastIndex, -1); // Init
     }
     
     /**
@@ -76,11 +83,14 @@ public class Dictionary {
                     mapping[i][values[j]] = (String) keys[j];
                 }
             }
-            
+            if (lastIndex[i] == -1) {
+                lastIndex[i] = maps[i].size();
+            }
         }
         if (!allowModification) {
             maps = null;
         }
+        
     }
     
     /**
@@ -164,6 +174,19 @@ public class Dictionary {
         final String[] vals = dictionary.mapping[sourceDimension];
         for (int id = 0; id < vals.length; id++) {
             maps[targetDimension].put(vals[id], id);
+        }
+    }
+    
+    /**
+     * Rewinds the dictionary on the given dimension to the initial rewind position.
+     * @param dimension
+     */
+    public void rewind(final int dimension) {
+        if (!allowModification) {
+            throw new IllegalArgumentException("Not allowed.");
+        }
+        for (int i = lastIndex[dimension]; i < maps[dimension].size(); i++) {
+            maps[dimension].remove(mapping[dimension][i]);
         }
     }
 }

@@ -493,6 +493,9 @@ public class HashGroupify implements IHashGroupify {
     public void microaggregate(final int[][] data, final Data bufferOT, final int startMA, final int numMA, final MicroaggregateFunction[] functions) {
         // TODO: to improve performace microaggregation and outlier marking could be integrated
         Map<Distribution, Integer> cache = new HashMap<Distribution, Integer>();
+        for (int i = 0; i < numMA; i++) {
+            bufferOT.getDictionary().rewind(i);
+        }
         for (int row = 0; row < data.length; row++) {
             if (subset == null || subset.contains(row)) {
                 final int[] key = data[row];
