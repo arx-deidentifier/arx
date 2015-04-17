@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.ScaleOfMeasure;
 
 /**
  * A base class for summary statistics
@@ -30,33 +31,6 @@ import org.deidentifier.arx.DataType;
  *
  */
 public class StatisticsSummary<T> {
-    
-    /**
-     * An enum for scales of measure
-     * @author Fabian Prasser
-     */
-    public static enum ScaleOfMeasure {
-        NOMINAL("Nominal scale"),
-        ORDINAL("Ordinal scale"),
-        INTERVAL("Interval scale"),
-        RATIO("Ratio scale");
-        
-        /** Label*/
-        private final String label;
-        
-        /**
-         * Construct
-         * @param label
-         */
-        private ScaleOfMeasure(String label) {
-            this.label = label;
-        }
-        
-         @Override
-        public String toString() {
-            return label;
-        }
-    }
     
     /**
      * Summary statistics for variables with ordinal scale
