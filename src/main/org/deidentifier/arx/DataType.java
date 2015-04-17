@@ -45,34 +45,46 @@ import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilde
  * @param <T>
  */
 public abstract class DataType<T> implements Serializable, Comparator<T> {
-
+    
     /**
      * Base class for date/time types.
      *
      * @author Fabian Prasser
      */
-	public static class ARXDate extends DataType<Date> implements DataTypeWithFormat, DataTypeWithRatioScale<Date> {
-
-        /**  SVUID */
+    public static class ARXDate extends DataType<Date> implements DataTypeWithFormat, DataTypeWithRatioScale<Date> {
+        
+        /** SVUID */
         private static final long                      serialVersionUID = -1658470914184442833L;
-
+        
         /** The description of the data type. */
-        private static final DataTypeDescription<Date> description = new DataTypeDescription<Date>(Date.class, "Date/Time",  true, listDateFormats()){
-            private static final long serialVersionUID = -1723392257250720908L;
-            @Override public DataType<Date> newInstance() { return DATE; }
-            @Override public DataType<Date> newInstance(String format) {return createDate(format);}
-            @Override public DataType<Date> newInstance(String format, Locale locale) {return createDate(format, locale);}
-        };
-
+        private static final DataTypeDescription<Date> description      = new DataTypeDescription<Date>(Date.class, "Date/Time", true, listDateFormats()) {
+                                                                            private static final long serialVersionUID = -1723392257250720908L;
+                                                                            
+                                                                            @Override
+                                                                            public DataType<Date> newInstance() {
+                                                                                return DATE;
+                                                                            }
+                                                                            
+                                                                            @Override
+                                                                            public DataType<Date> newInstance(String format) {
+                                                                                return createDate(format);
+                                                                            }
+                                                                            
+                                                                            @Override
+                                                                            public DataType<Date> newInstance(String format, Locale locale) {
+                                                                                return createDate(format, locale);
+                                                                            }
+                                                                        };
+        
         /** Format. */
         private final SimpleDateFormat                 format;
-
+        
         /** Format string. */
         private final String                           string;
-
+        
         /** Locale. */
         private final Locale                           locale;
-
+        
         /**
          * Create a date with a "dd.MM.yyyy" format string
          * for <code>SimpleDateFormat</code> and default locale.
@@ -81,7 +93,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         private ARXDate() {
             this("Default");
         }
-
+        
         /**
          * Create a date with a format string and the default locale. Format strings must be valid formats
          * for <code>SimpleDateFormat</code>.
@@ -120,19 +132,19 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 this.locale = locale;
             }
         }
-
+        
         @Override
         public Date add(Date augend, Date addend) {
             long d1 = augend.getTime();
             long d2 = addend.getTime();
             return new Date(d1 + d2);
         }
-
+        
         @Override
         public DataType<Date> clone() {
             return this;
         }
-
+        
         @Override
         public int compare(Date t1, Date t2) {
             if (t1 == null && t2 == null) {
@@ -144,7 +156,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
             return t1.compareTo(t2);
         }
-
+        
         @Override
         public int compare(final String s1, final String s2) throws ParseException {
             try {
@@ -162,53 +174,69 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 throw new IllegalArgumentException("Invalid value", e);
             }
         }
-
+        
         @Override
         public Date divide(Date dividend, Date divisor) {
             long d1 = dividend.getTime();
             long d2 = divisor.getTime();
             return new Date(d1 / d2);
         }
-
+        
         @Override
         public String divide(String dividend, String divisor) {
             long d1 = parse(dividend).getTime();
             long d2 = parse(divisor).getTime();
             return format(new Date(d1 / d2));
         }
-
+        
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) { return true; }
-            if (obj == null) { return false; }
-            if (getClass() != obj.getClass()) { return false; }
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
             final ARXDate other = (ARXDate) obj;
-            if (string == null) { if (other.string != null) { return false; }
-            } else if (!string.equals(other.string)) { return false; }
-            if (getLocale() == null) { if (other.getLocale() != null) { return false; }
-            } else if (!getLocale().equals(other.getLocale())) { return false; }
+            if (string == null) {
+                if (other.string != null) {
+                    return false;
+                }
+            } else if (!string.equals(other.string)) {
+                return false;
+            }
+            if (getLocale() == null) {
+                if (other.getLocale() != null) {
+                    return false;
+                }
+            } else if (!getLocale().equals(other.getLocale())) {
+                return false;
+            }
             return true;
         }
         
         @Override
-        public String format(Date s){
+        public String format(Date s) {
             if (s == null) {
                 return NULL_VALUE;
             }
-        	return format.format(s);
+            return format.format(s);
         }
-
+        
         @Override
         public Date fromDouble(Double value) {
             if (value == null) {
                 return null;
             }
-            long v = value.longValue();
+            long v = Math.round(value);
             return new Date(v);
         }
-
+        
         @Override
-        public DataTypeDescription<Date> getDescription(){
+        public DataTypeDescription<Date> getDescription() {
             return description;
         }
         
@@ -229,22 +257,22 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return locale;
             }
         }
-
+        
         @Override
         public Date getMaximum() {
             return new Date(Long.MAX_VALUE);
         }
-
+        
         @Override
         public Date getMinimum() {
             return new Date(Long.MIN_VALUE);
         }
-
+        
         @Override
         public ScaleOfMeasure getScaleOfMeasure() {
-           return ScaleOfMeasure.INTERVAL;
+            return ScaleOfMeasure.INTERVAL;
         }
-
+        
         @Override
         public int hashCode() {
             if (string == null) {
@@ -258,30 +286,30 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return result;
             }
         }
-
+        
         @Override
         public boolean isValid(String s) {
             try {
                 parse(s);
                 return true;
-            } catch (Exception e){
+            } catch (Exception e) {
                 return false;
             }
         }
-
+        
         @Override
         public Date multiply(Date multiplicand, Date multiplicator) {
             long d1 = multiplicand.getTime();
             long d2 = multiplicator.getTime();
             return new Date(d1 * d2);
         }
-
+        
         @Override
         public Date multiply(Date multiplicand, double multiplicator) {
             long d1 = multiplicand.getTime();
-            return new Date((long)((double)d1 * multiplicator));
+            return new Date((long) ((double) d1 * multiplicator));
         }
-
+        
         @Override
         public Date multiply(Date multiplicand, int multiplicator) {
             long d1 = multiplicand.getTime();
@@ -294,41 +322,41 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             long d2 = parse(multiplicator).getTime();
             return format(new Date(d1 * d2));
         }
-
+        
         @Override
         public Date parse(String s) {
-            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+            if (s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
                 return null;
             }
-        	try {
-				return format.parse(s);
-        	} catch (Exception e) {
+            try {
+                return format.parse(s);
+            } catch (Exception e) {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
             }
         }
-
+        
         @Override
         public double ratio(Date dividend, Date divisor) {
             long d1 = dividend.getTime();
             long d2 = divisor.getTime();
-            return (double)d1 / (double)d2;
+            return (double) d1 / (double) d2;
         }
-
+        
         @Override
         public Date subtract(Date minuend, Date subtrahend) {
             long d1 = minuend.getTime();
             long d2 = subtrahend.getTime();
             return new Date(d1 - d2);
         }
-
+        
         @Override
         public Double toDouble(Date value) {
-          if (value == null) {
-              return null;
-          }
-          return (double)value.getTime();
+            if (value == null) {
+                return null;
+            }
+            return (double) value.getTime();
         }
-
+        
         @Override
         public String toString() {
             return "Date(" + string + ")";
@@ -341,31 +369,43 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @author Fabian Prasser
      */
     public static class ARXDecimal extends DataType<Double> implements DataTypeWithFormat, DataTypeWithRatioScale<Double> {
-
-        /**  SVUID */
+        
+        /** SVUID */
         private static final long                        serialVersionUID = 7293446977526103610L;
-
+        
         /** The description of the data type. */
-        private static final DataTypeDescription<Double> description = new DataTypeDescription<Double>(Double.class, "Decimal", true, listDecimalFormats()){
-            private static final long serialVersionUID = -3549629178680030868L;
-            @Override public DataType<Double> newInstance() { return DECIMAL; }
-            @Override public DataType<Double> newInstance(String format) {return createDecimal(format);}
-            @Override public DataType<Double> newInstance(String format, Locale locale) {return createDecimal(format, locale);}
-        };
-
+        private static final DataTypeDescription<Double> description      = new DataTypeDescription<Double>(Double.class, "Decimal", true, listDecimalFormats()) {
+                                                                              private static final long serialVersionUID = -3549629178680030868L;
+                                                                              
+                                                                              @Override
+                                                                              public DataType<Double> newInstance() {
+                                                                                  return DECIMAL;
+                                                                              }
+                                                                              
+                                                                              @Override
+                                                                              public DataType<Double> newInstance(String format) {
+                                                                                  return createDecimal(format);
+                                                                              }
+                                                                              
+                                                                              @Override
+                                                                              public DataType<Double> newInstance(String format, Locale locale) {
+                                                                                  return createDecimal(format, locale);
+                                                                              }
+                                                                          };
+        
         /** Format. */
         private final DecimalFormat                      format;
-
+        
         /** Format string. */
         private final String                             string;
-
+        
         /** Locale. */
         private final Locale                             locale;
-
+        
         /**
          * Default constructor.
          */
-        private ARXDecimal(){
+        private ARXDecimal() {
             this("Default");
         }
         
@@ -375,8 +415,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @param format
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
          */
-        private ARXDecimal(String format){
-            if (format == null || format.equals("Default")){
+        private ARXDecimal(String format) {
+            if (format == null || format.equals("Default")) {
                 this.format = null;
                 this.string = null;
                 this.locale = null;
@@ -386,7 +426,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 this.locale = null;
             }
         }
-
+        
         /**
          * Create a numeric with a format string and given locale. Format strings must be valid formats
          * for <code>DecimalFormat</code>.
@@ -395,7 +435,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
          */
         private ARXDecimal(String format, Locale locale) {
-            if (format == null || format.equals("Default")){
+            if (format == null || format.equals("Default")) {
                 this.format = null;
                 this.string = null;
                 this.locale = locale;
@@ -405,7 +445,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 this.locale = locale;
             }
         }
-
+        
         @Override
         public Double add(Double augend, Double addend) {
             return parse(format(augend + addend));
@@ -431,7 +471,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             d2 = d2 == -0.0d ? 0d : d2;
             return Double.valueOf(d1).compareTo(Double.valueOf(d2));
         }
-
+        
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
             
@@ -449,57 +489,73 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 d2 = d2.doubleValue() == -0.0d ? 0d : d2;
                 return d1.compareTo(d2);
             } catch (Exception e) {
-                throw new IllegalArgumentException("Invalid value: '"+s1+"' or '"+s2+"'", e);
+                throw new IllegalArgumentException("Invalid value: '" + s1 + "' or '" + s2 + "'", e);
             }
         }
-
+        
         @Override
         public Double divide(Double dividend, Double divisor) {
             return parse(format(dividend / divisor));
         }
-
+        
         @Override
         public String divide(String dividend, String divisor) {
             Double d1 = parse(dividend);
             Double d2 = parse(divisor);
             return format(d1 / d2);
         }
-
+        
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) { return true; }
-            if (obj == null) { return false; }
-            if (getClass() != obj.getClass()) { return false; }
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
             final ARXDecimal other = (ARXDecimal) obj;
-            if (string == null) { if (other.string != null) { return false; }
-            } else if (!string.equals(other.string)) { return false; }
-            if (getLocale() == null) { if (other.getLocale() != null) { return false; }
-            } else if (!getLocale().equals(other.getLocale())) { return false; }
+            if (string == null) {
+                if (other.string != null) {
+                    return false;
+                }
+            } else if (!string.equals(other.string)) {
+                return false;
+            }
+            if (getLocale() == null) {
+                if (other.getLocale() != null) {
+                    return false;
+                }
+            } else if (!getLocale().equals(other.getLocale())) {
+                return false;
+            }
             return true;
         }
-
+        
         @Override
-        public String format(Double s){
+        public String format(Double s) {
             if (s == null) {
                 return NULL_VALUE;
             }
-            if (format==null){
+            if (format == null) {
                 return String.valueOf(s);
             } else {
                 return format.format(s);
             }
         }
-
+        
         @Override
         public Double fromDouble(Double value) {
             return value;
         }
-
+        
         @Override
-        public DataTypeDescription<Double> getDescription(){
+        public DataTypeDescription<Double> getDescription() {
             return description;
         }
-
+        
         @Override
         public String getFormat() {
             return string;
@@ -517,12 +573,12 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return locale;
             }
         }
-
+        
         @Override
         public Double getMaximum() {
             return Double.MAX_VALUE;
         }
-
+        
         @Override
         public Double getMinimum() {
             return -Double.MAX_VALUE;
@@ -530,12 +586,12 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         
         @Override
         public ScaleOfMeasure getScaleOfMeasure() {
-           return ScaleOfMeasure.RATIO;
+            return ScaleOfMeasure.RATIO;
         }
-
+        
         @Override
-        public int hashCode() { 
-            if (string==null) {
+        public int hashCode() {
+            if (string == null) {
                 return getLocale().hashCode();
             }
             else {
@@ -546,42 +602,42 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return result;
             }
         }
-
+        
         @Override
         public boolean isValid(String s) {
             try {
                 parse(s);
                 return true;
-            } catch (Exception e){
+            } catch (Exception e) {
                 return false;
             }
         }
-
+        
         @Override
         public Double multiply(Double multiplicand, double multiplicator) {
             return parse(format(multiplicand * multiplicator));
         }
-
+        
         @Override
         public Double multiply(Double multiplicand, Double multiplicator) {
             return parse(format(multiplicand * multiplicator));
         }
-
+        
         @Override
         public Double multiply(Double multiplicand, int multiplicator) {
-            return parse(format(multiplicand* multiplicator));
+            return parse(format(multiplicand * multiplicator));
         }
-
+        
         @Override
         public String multiply(String multiplicand, String multiplicator) {
             Double d1 = parse(multiplicand);
             Double d2 = parse(multiplicator);
             return format(d1 * d2);
         }
-
+        
         @Override
         public Double parse(String s) {
-            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+            if (s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
                 return null;
             }
             try {
@@ -594,59 +650,71 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
             }
         }
-
+        
         @Override
         public double ratio(Double dividend, Double divisor) {
             return parse(format(dividend / divisor));
         }
-
+        
         @Override
         public Double subtract(Double minuend, Double subtrahend) {
             return parse(format(minuend - subtrahend));
         }
-
+        
         @Override
         public Double toDouble(Double value) {
             return value;
         }
-
+        
         @Override
         public String toString() {
             return "Decimal";
         }
     }
-
+    
     /**
      * Base class for numeric types.
      *
      * @author Fabian Prasser
      */
-    public static class ARXInteger extends DataType<Long> implements DataTypeWithFormat, DataTypeWithRatioScale<Long>  {
+    public static class ARXInteger extends DataType<Long> implements DataTypeWithFormat, DataTypeWithRatioScale<Long> {
         
-        /**  SVUID */
-        private static final long serialVersionUID = -631163546929231044L;
-
+        /** SVUID */
+        private static final long                      serialVersionUID = -631163546929231044L;
+        
         /** The description of the data type. */
-        private static final DataTypeDescription<Long> description = new DataTypeDescription<Long>(Long.class, "Integer", false, new ArrayList<String>()){
-            private static final long serialVersionUID = -4498725217659811835L;
-            @Override public DataType<Long> newInstance() { return INTEGER; }
-            @Override public DataType<Long> newInstance(String format) {return createInteger(format);}
-            @Override public DataType<Long> newInstance(String format, Locale locale) {return createInteger(format, locale);}
-        };
-
+        private static final DataTypeDescription<Long> description      = new DataTypeDescription<Long>(Long.class, "Integer", false, new ArrayList<String>()) {
+                                                                            private static final long serialVersionUID = -4498725217659811835L;
+                                                                            
+                                                                            @Override
+                                                                            public DataType<Long> newInstance() {
+                                                                                return INTEGER;
+                                                                            }
+                                                                            
+                                                                            @Override
+                                                                            public DataType<Long> newInstance(String format) {
+                                                                                return createInteger(format);
+                                                                            }
+                                                                            
+                                                                            @Override
+                                                                            public DataType<Long> newInstance(String format, Locale locale) {
+                                                                                return createInteger(format, locale);
+                                                                            }
+                                                                        };
+        
         /** Format. */
         private final DecimalFormat                    format;
-
+        
         /** Format string. */
         private final String                           string;
-
+        
         /** Locale. */
         private final Locale                           locale;
-
+        
         /**
          * Default constructor.
          */
-        private ARXInteger(){
+        private ARXInteger() {
             this("Default");
         }
         
@@ -656,10 +724,10 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @param format
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
          */
-        private ARXInteger(String format){
-            if (format == null || format.equals("Default")){
+        private ARXInteger(String format) {
+            if (format == null || format.equals("Default")) {
                 this.format = null;
-                this.string = null;   
+                this.string = null;
                 this.locale = null;
             } else {
                 this.format = new DecimalFormat(format);
@@ -676,8 +744,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @param locale
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
          */
-        private ARXInteger(String format, Locale locale){
-            if (format == null || format.equals("Default")){
+        private ARXInteger(String format, Locale locale) {
+            if (format == null || format.equals("Default")) {
                 this.format = null;
                 this.string = null;
                 this.locale = locale;
@@ -709,7 +777,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
             return t1.compareTo(t2);
         }
-
+        
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
             
@@ -726,41 +794,57 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return d1.compareTo(d2);
                 
             } catch (Exception e) {
-                throw new IllegalArgumentException(e.getMessage() + ": " + s1 +" or " + s2, e);
+                throw new IllegalArgumentException(e.getMessage() + ": " + s1 + " or " + s2, e);
             }
         }
-
+        
         @Override
         public Long divide(Long dividend, Long divisor) {
-            return (long)Math.round((double)dividend / (double)divisor);
+            return (long) Math.round((double) dividend / (double) divisor);
         }
-
+        
         @Override
         public String divide(String dividend, String divisor) {
             Long d1 = parse(dividend);
             Long d2 = parse(divisor);
             return format(d1 / d2);
         }
-
+        
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) { return true; }
-            if (obj == null) { return false; }
-            if (getClass() != obj.getClass()) { return false; }
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
             final ARXInteger other = (ARXInteger) obj;
-            if (string == null) { if (other.string != null) { return false; }
-            } else if (!string.equals(other.string)) { return false; }
-            if (getLocale() == null) { if (other.getLocale() != null) { return false; }
-            } else if (!getLocale().equals(other.getLocale())) { return false; }
+            if (string == null) {
+                if (other.string != null) {
+                    return false;
+                }
+            } else if (!string.equals(other.string)) {
+                return false;
+            }
+            if (getLocale() == null) {
+                if (other.getLocale() != null) {
+                    return false;
+                }
+            } else if (!getLocale().equals(other.getLocale())) {
+                return false;
+            }
             return true;
         }
-
+        
         @Override
-        public String format(Long s){
+        public String format(Long s) {
             if (s == null) {
                 return NULL_VALUE;
             }
-            if (format==null){
+            if (format == null) {
                 return String.valueOf(s);
             } else {
                 return format.format(s);
@@ -769,17 +853,17 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         
         @Override
         public Long fromDouble(Double value) {
-           if (value == null) {
-               return null;
-           }
-            return value.longValue();
+            if (value == null) {
+                return null;
+            }
+            return Math.round(value);
         }
         
         @Override
-        public DataTypeDescription<Long> getDescription(){
+        public DataTypeDescription<Long> getDescription() {
             return description;
         }
-
+        
         @Override
         public String getFormat() {
             return string;
@@ -797,22 +881,22 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return locale;
             }
         }
-
+        
         @Override
         public Long getMaximum() {
             return Long.MAX_VALUE;
         }
-
+        
         @Override
         public Long getMinimum() {
             return Long.MIN_VALUE;
         }
-
+        
         @Override
         public ScaleOfMeasure getScaleOfMeasure() {
-           return ScaleOfMeasure.RATIO;
+            return ScaleOfMeasure.RATIO;
         }
-
+        
         @Override
         public int hashCode() {
             if (string == null) {
@@ -826,22 +910,22 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return result;
             }
         }
-
+        
         @Override
         public boolean isValid(String s) {
             try {
                 parse(s);
                 return true;
-            } catch (Exception e){
+            } catch (Exception e) {
                 return false;
             }
         }
-
+        
         @Override
         public Long multiply(Long multiplicand, double multiplicator) {
-            return (long)((double)multiplicand * multiplicator);
+            return (long) ((double) multiplicand * multiplicator);
         }
-
+        
         @Override
         public Long multiply(Long multiplicand, int multiplicator) {
             return multiplicand * multiplicator;
@@ -849,9 +933,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         
         @Override
         public Long multiply(Long multiplicand, Long multiplicator) {
-            return (long)Math.round((double)multiplicand * (double)multiplicator);
+            return (long) Math.round((double) multiplicand * (double) multiplicator);
         }
-
+        
         @Override
         public String multiply(String multiplicand, String multiplicator) {
             Long d1 = parse(multiplicand);
@@ -861,7 +945,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         
         @Override
         public Long parse(String s) {
-            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+            if (s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
                 return null;
             }
             try {
@@ -874,17 +958,17 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
             }
         }
-
+        
         @Override
         public double ratio(Long dividend, Long divisor) {
-            return (double)dividend / (double)divisor;
+            return (double) dividend / (double) divisor;
         }
-
+        
         @Override
         public Long subtract(Long minuend, Long subtrahend) {
             return minuend - subtrahend;
         }
-
+        
         @Override
         public Double toDouble(Long value) {
             if (value == null) {
@@ -892,54 +976,66 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
             return value.doubleValue();
         }
-
+        
         @Override
         public String toString() {
             return "Integer";
         }
     }
-
+    
     /**
      * Base class for ordered string types.
      *
      * @author Fabian Prasser
      */
     public static class ARXOrderedString extends DataType<String> implements DataTypeWithFormat {
-
-        /**  SVUID */
+        
+        /** SVUID */
         private static final long                        serialVersionUID = -830897705078418835L;
-
-        /**  The defined order */
+        
+        /** The defined order */
         private final Map<String, Integer>               order;
-
+        
         /** The description of the data type. */
-        private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "OrderedString", true, new ArrayList<String>()){
-            private static final long serialVersionUID = -6300869938311742699L;
-            @Override public DataType<String> newInstance() { return ORDERED_STRING; }
-            @Override public DataType<String> newInstance(String format) {return createOrderedString(format);}
-            @Override public DataType<String> newInstance(String format, Locale locale) {return createOrderedString(format);}
-        };
+        private static final DataTypeDescription<String> description      = new DataTypeDescription<String>(String.class, "OrderedString", true, new ArrayList<String>()) {
+                                                                              private static final long serialVersionUID = -6300869938311742699L;
+                                                                              
+                                                                              @Override
+                                                                              public DataType<String> newInstance() {
+                                                                                  return ORDERED_STRING;
+                                                                              }
+                                                                              
+                                                                              @Override
+                                                                              public DataType<String> newInstance(String format) {
+                                                                                  return createOrderedString(format);
+                                                                              }
+                                                                              
+                                                                              @Override
+                                                                              public DataType<String> newInstance(String format, Locale locale) {
+                                                                                  return createOrderedString(format);
+                                                                              }
+                                                                          };
         
         /**
          * Creates a new instance.
          */
-        private ARXOrderedString(){
+        private ARXOrderedString() {
             this("Default");
         }
-
+        
         /**
          * Creates a new instance.
          *
          * @param format Ordered list of strings
          */
-        private ARXOrderedString(List<String> format){
-            if (format.size()==0) {
+        private ARXOrderedString(List<String> format) {
+            if (format.size() == 0) {
                 this.order = null;
             } else {
-                this.order = new HashMap<String, Integer>(); 
-                for (int i=0; i< format.size(); i++){
+                this.order = new HashMap<String, Integer>();
+                for (int i = 0; i < format.size(); i++) {
                     if (this.order.put(format.get(i), i) != null) {
-                        throw new IllegalArgumentException("Duplicate value '"+format.get(i)+"'");
+                        throw new IllegalArgumentException("Duplicate value '" + format.get(i) + "'");
                     }
                 }
             }
@@ -950,18 +1046,18 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          *
          * @param format Ordered list of string separated by line feeds
          */
-        private ARXOrderedString(String format){
-            if (format==null || format.equals("Default") || format.equals("")) {
+        private ARXOrderedString(String format) {
+            if (format == null || format.equals("Default") || format.equals("")) {
                 this.order = null;
             } else {
                 try {
-                    this.order = new HashMap<String, Integer>(); 
+                    this.order = new HashMap<String, Integer>();
                     BufferedReader reader = new BufferedReader(new StringReader(format));
                     int index = 0;
                     String line = reader.readLine();
                     while (line != null) {
                         if (this.order.put(line, index) != null) {
-                            throw new IllegalArgumentException("Duplicate value '"+line+"'");
+                            throw new IllegalArgumentException("Duplicate value '" + line + "'");
                         }
                         line = reader.readLine();
                         index++;
@@ -972,20 +1068,20 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 }
             }
         }
-
+        
         /**
          * Creates a new instance.
          *
          * @param format Ordered list of strings
          */
-        private ARXOrderedString(String[] format){
+        private ARXOrderedString(String[] format) {
             if (format.length == 0) {
                 this.order = null;
             } else {
-                this.order = new HashMap<String, Integer>(); 
-                for (int i=0; i< format.length; i++){
+                this.order = new HashMap<String, Integer>();
+                for (int i = 0; i < format.length; i++) {
                     if (this.order.put(format[i], i) != null) {
-                        throw new IllegalArgumentException("Duplicate value '"+format[i]+"'");
+                        throw new IllegalArgumentException("Duplicate value '" + format[i] + "'");
                     }
                 }
             }
@@ -1008,7 +1104,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             } else if (s2 == null) {
                 return -1;
             }
-            if (order != null){
+            if (order != null) {
                 try {
                     return order.get(s1).compareTo(order.get(s2));
                 } catch (Exception e) {
@@ -1021,34 +1117,40 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) { return true; }
-            if (obj == null) { return false; }
-            if (getClass() != obj.getClass()) { return false; }
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
             if (this.order == null) {
-                if (((ARXOrderedString)obj).order != null) { 
+                if (((ARXOrderedString) obj).order != null) {
                     return false;
                 }
             } else {
-                if (!((ARXOrderedString)obj).order.equals(this.order)) {
+                if (!((ARXOrderedString) obj).order.equals(this.order)) {
                     return false;
                 }
             }
             return true;
         }
-
+        
         @Override
-        public String format(String s){
+        public String format(String s) {
             if (s == null) {
                 return NULL_VALUE;
             }
             if (order != null && !order.containsKey(s)) {
-                throw new IllegalArgumentException("Unknown string '"+s+"'");
+                throw new IllegalArgumentException("Unknown string '" + s + "'");
             }
-        	return s;
+            return s;
         }
-
+        
         @Override
-        public DataTypeDescription<String> getDescription(){
+        public DataTypeDescription<String> getDescription() {
             return description;
         }
         
@@ -1063,8 +1165,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return result;
             }
             result.addAll(order.keySet());
-            Collections.sort(result, new Comparator<String>(){
-                @Override public int compare(String arg0, String arg1) {
+            Collections.sort(result, new Comparator<String>() {
+                @Override
+                public int compare(String arg0, String arg1) {
                     return order.get(arg0).compareTo(order.get(arg1));
                 }
             });
@@ -1076,22 +1179,22 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             if (order == null) return "";
             List<String> list = new ArrayList<String>();
             list.addAll(order.keySet());
-            Collections.sort(list, new Comparator<String>(){
+            Collections.sort(list, new Comparator<String>() {
                 @Override
                 public int compare(String arg0, String arg1) {
                     return order.get(arg0).compareTo(order.get(arg1));
-                } 
+                }
             });
             StringBuilder b = new StringBuilder();
-            for (int i=0; i<list.size(); i++) {
+            for (int i = 0; i < list.size(); i++) {
                 b.append(list.get(i));
-                if (i<list.size()-1) {
+                if (i < list.size() - 1) {
                     b.append("\n");
                 }
             }
             return b.toString();
         }
-
+        
         /**
          * Returns the locale of the format.
          *
@@ -1103,14 +1206,14 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         
         @Override
         public ScaleOfMeasure getScaleOfMeasure() {
-           return ScaleOfMeasure.ORDINAL;
+            return ScaleOfMeasure.ORDINAL;
         }
-
+        
         @Override
         public int hashCode() {
             return ARXOrderedString.class.hashCode();
         }
-
+        
         @Override
         public boolean isValid(String s) {
             if (s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
@@ -1121,24 +1224,24 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return true;
             }
         }
-
+        
         @Override
         public String parse(String s) {
-            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+            if (s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
                 return null;
             }
             if (order != null && !order.containsKey(s)) {
-                throw new IllegalArgumentException("Unknown string '"+s+"'");
+                throw new IllegalArgumentException("Unknown string '" + s + "'");
             }
-        	return s;
+            return s;
         }
-
+        
         @Override
         public String toString() {
             return "OrderedString";
         }
     }
-
+    
     /**
      * Base class for string types.
      *
@@ -1146,22 +1249,33 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public static class ARXString extends DataType<String> {
         
-        /**  SVUID */
-        private static final long serialVersionUID = 903334212175979691L;
+        /** SVUID */
+        private static final long                        serialVersionUID = 903334212175979691L;
         
         /** The description of the data type. */
-        private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "String", false, new ArrayList<String>()){
-            private static final long serialVersionUID = -6679110898204862834L;
-            @Override public DataType<String> newInstance() { return STRING; }
-            @Override public DataType<String> newInstance(String format) {return STRING;}
-            @Override public DataType<String> newInstance(String format, Locale locale) {return STRING;}
-        };
+        private static final DataTypeDescription<String> description      = new DataTypeDescription<String>(String.class, "String", false, new ArrayList<String>()) {
+                                                                              private static final long serialVersionUID = -6679110898204862834L;
+                                                                              
+                                                                              @Override
+                                                                              public DataType<String> newInstance() {
+                                                                                  return STRING;
+                                                                              }
+                                                                              
+                                                                              @Override
+                                                                              public DataType<String> newInstance(String format) {
+                                                                                  return STRING;
+                                                                              }
+                                                                              
+                                                                              @Override
+                                                                              public DataType<String> newInstance(String format, Locale locale) {
+                                                                                  return STRING;
+                                                                              }
+                                                                          };
         
         @Override
         public DataType<String> clone() {
             return this;
         }
-        
         
         @Override
         public int compare(final String s1, final String s2) {
@@ -1173,30 +1287,36 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) { return true; }
-            if (obj == null) { return false; }
-            if (getClass() != obj.getClass()) { return false; }
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
             return true;
         }
-
+        
         @Override
-        public String format(String s){
+        public String format(String s) {
             if (s == null) {
                 throw new IllegalArgumentException("Null is not a string");
             }
             return s;
         }
-
+        
         @Override
-        public DataTypeDescription<String> getDescription(){
+        public DataTypeDescription<String> getDescription() {
             return description;
         }
         
         @Override
         public ScaleOfMeasure getScaleOfMeasure() {
-           return ScaleOfMeasure.NOMINAL;
+            return ScaleOfMeasure.NOMINAL;
         }
-
+        
         @Override
         public int hashCode() {
             return ARXString.class.hashCode();
@@ -1206,7 +1326,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public boolean isValid(String s) {
             return s != null;
         }
-
+        
         @Override
         public String parse(String s) {
             if (s == null) {
@@ -1214,7 +1334,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
             return s;
         }
-
+        
         @Override
         public String toString() {
             return "String";
@@ -1228,21 +1348,21 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @param <T>
      */
     public static abstract class DataTypeDescription<T> implements Serializable {
-
-        /**  SVUID */
+        
+        /** SVUID */
         private static final long serialVersionUID = 6369986224526795419L;
         
         /** The wrapped java class. */
-        private Class<?> clazz;
+        private Class<?>          clazz;
         
         /** If yes, a list of available formats. */
-        private List<String> exampleFormats;
+        private List<String>      exampleFormats;
         
         /** Can the type be parameterized with a format string. */
-        private boolean hasFormat;
+        private boolean           hasFormat;
         
         /** A human readable label. */
-        private String label;
+        private String            label;
         
         /**
          * Internal constructor.
@@ -1309,7 +1429,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract DataType<T> newInstance(String format);
-
+        
         /**
          * Creates a new instance with the given format string and the given locale.
          *
@@ -1354,7 +1474,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract T add(T augend, T addend);
-
+        
         /**
          * 
          *
@@ -1365,8 +1485,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @throws ParseException
          */
         public abstract int compare(String s1, String s2) throws NumberFormatException,
-                                                                 ParseException;
-
+                                                         ParseException;
+        
         /**
          * 
          *
@@ -1375,7 +1495,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract int compare(T t1, T t2);
-
+        
         /**
          * 
          *
@@ -1401,15 +1521,15 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract String format(T t);
-
+        
         /**
-         * Converts the double representation into the datatype.
+         * Converts (rounds) the double representation into the datatype.
          * 
          * @param value
          * @return
          */
         public abstract T fromDouble(Double value);
-
+        
         /**
          * 
          *
@@ -1423,8 +1543,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public T getMaximum();
-
-
+        
         /**
          * 
          *
@@ -1439,7 +1558,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract boolean isValid(String s);
-
+        
         /**
          * 
          *
@@ -1449,7 +1568,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         public abstract String multiply(String multiplicand,
                                         String multiplicator);
-
+        
         /**
          * 
          *
@@ -1458,7 +1577,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract T multiply(T multiplicand, double multiplicator);
-
+        
         /**
          * 
          *
@@ -1467,7 +1586,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract T multiply(T multiplicand, int multiplicator);
-
+        
         /**
          * 
          *
@@ -1476,7 +1595,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract T multiply(T multiplicand, T multiplicator);
-
+        
         /**
          * 
          *
@@ -1503,21 +1622,21 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         public abstract T subtract(T minuend, T subtrahend);
         
-       /**
-     * Gets a double representation of the value.
-     * 
-     * @param value
-     * @return
-     */
-    public abstract Double toDouble(T value);
+        /**
+         * Gets a double representation of the value.
+         * 
+         * @param value
+         * @return
+         */
+        public abstract Double toDouble(T value);
     }
-
+    
     /**
      * An enum for scales of measure
      * BEWARE: The order of the enums is used to compare required with given scales!
      * 
      * @author Fabian Prasser
-     */ 
+     */
     public static enum ScaleOfMeasure {
         NOMINAL("Nominal scale"),
         ORDINAL("Ordinal scale"),
@@ -1540,7 +1659,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return label;
         }
     }
-
+    
     /**
      * A date data type with given format.
      *
@@ -1563,7 +1682,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static final DataType<Date> createDate(final String format, final Locale locale) {
         return new ARXDate(format, locale);
     }
-
+    
     /**
      * A decimal data type with given format.
      *
@@ -1574,7 +1693,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static final DataType<Double> createDecimal(final String format) {
         return new ARXDecimal(format);
     }
-
+    
     /**
      * Creates a decimal data type with a format string from the given locale.
      *
@@ -1585,7 +1704,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static DataType<Double> createDecimal(String format, Locale locale) {
         return new ARXDecimal(format, locale);
     }
-
+    
     /**
      * An integer data type with given format.
      *
@@ -1596,7 +1715,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static final DataType<Long> createInteger(final String format) {
         return new ARXInteger(format);
     }
-
+    
     /**
      * An integer data type with given format using the given locale.
      *
@@ -1608,9 +1727,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static final DataType<Long> createInteger(final String format, Locale locale) {
         return new ARXInteger(format, locale);
     }
-
+    
     /**
-     * A ordered string type with given format. 
+     * A ordered string type with given format.
      * 
      * @param format List of ordered strings
      * @return
@@ -1620,7 +1739,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     }
     
     /**
-     * A ordered string type with given format. 
+     * A ordered string type with given format.
      * 
      * @param format List of ordered strings separated by line feeds
      * @return
@@ -1628,9 +1747,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static final DataType<String> createOrderedString(final String format) {
         return new ARXOrderedString(format);
     }
-
+    
     /**
-     * A ordered string type with given format. 
+     * A ordered string type with given format.
      * 
      * @param format List of ordered strings
      * @return
@@ -1653,7 +1772,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      *
      * @return
      */
-    public static final List<DataTypeDescription<?>> list(){
+    public static final List<DataTypeDescription<?>> list() {
         List<DataTypeDescription<?>> list = new ArrayList<DataTypeDescription<?>>();
         list.add(STRING.getDescription());
         list.add(ORDERED_STRING.getDescription());
@@ -1672,10 +1791,10 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static final <U> DataTypeDescription<U> list(Class<U> clazz){
+    public static final <U> DataTypeDescription<U> list(Class<U> clazz) {
         for (DataTypeDescription<?> entry : list()) {
             if (entry.getWrappedClass() == clazz) {
-                return (DataTypeDescription<U>)entry;
+                return (DataTypeDescription<U>) entry;
             }
         }
         return null;
@@ -1686,7 +1805,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      *
      * @return
      */
-    private static List<String> listDateFormats(){
+    private static List<String> listDateFormats() {
         List<String> result = new ArrayList<String>();
         result.add("yyyy-MM-dd'T'HH:mm:ss'Z'");
         result.add("yyyy-MM-ddZZ");
@@ -1727,7 +1846,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      *
      * @return
      */
-    private static List<String> listDecimalFormats(){
+    private static List<String> listDecimalFormats() {
         List<String> result = new ArrayList<String>();
         result.add("#,##0");
         result.add("#,##0.###");
@@ -1737,32 +1856,32 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     }
     
     /** The string representing the NULL value */
-    public static final String NULL_VALUE = "NULL";
+    public static final String           NULL_VALUE       = "NULL";
     
-    /**  SVUID */
-    private static final long serialVersionUID = -4380267779210935078L;
+    /** SVUID */
+    private static final long            serialVersionUID = -4380267779210935078L;
     
     /** A date data type with default format dd.mm.yyyy */
-    public static final DataType<Date>               DATE    = new ARXDate();
+    public static final DataType<Date>   DATE             = new ARXDate();
     
     /** A generic decimal data type. */
-    public static final DataType<Double>             DECIMAL = new ARXDecimal();
-
+    public static final DataType<Double> DECIMAL          = new ARXDecimal();
+    
     /** A generic integer data type. */
-    public static final DataType<Long>               INTEGER = new ARXInteger();
+    public static final DataType<Long>   INTEGER          = new ARXInteger();
     
     /** A string data type. */
-    public static final DataType<String>             STRING  = new ARXString();
-
+    public static final DataType<String> STRING           = new ARXString();
+    
     /** A ordered string data type. */
-    public static final DataType<String>             ORDERED_STRING  = new ARXOrderedString();
+    public static final DataType<String> ORDERED_STRING   = new ARXOrderedString();
     
     @Override
     public abstract DataType<T> clone();
     
     /**
-     * Compares two values. The result is 0 if both values are equal, 
-     * less than 0 if the first value is less than the second argument, 
+     * Compares two values. The result is 0 if both values are equal,
+     * less than 0 if the first value is less than the second argument,
      * and greater than 0 if the first value is greater than the second argument.
      * @param s1
      * @param s2
@@ -1772,7 +1891,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public abstract int compare(String s1, String s2) throws NumberFormatException, ParseException;
     
-    
     /**
      * Compare.
      *
@@ -1781,14 +1899,13 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @return
      */
     public abstract int compare(T t1, T t2);
-
     
     /**
      * Returns a new function builder.
      *
      * @return
      */
-    public AggregateFunctionBuilder<T> createAggregate(){
+    public AggregateFunctionBuilder<T> createAggregate() {
         return AggregateFunction.forType(this);
     }
     
@@ -1802,7 +1919,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @return
      */
     public abstract String format(T t);
-
+    
     /**
      * Returns a description of the data type.
      *
@@ -1816,7 +1933,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @return
      */
     public abstract ScaleOfMeasure getScaleOfMeasure();
-
+    
     @Override
     public abstract int hashCode();
     
