@@ -104,26 +104,33 @@ public class ViewMicoaggregation implements IView {
     
     @Override
     public void update(ModelEvent event) {
-        
-        // System.out.println("Event: " + event);
-        
         if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             final String attr = (String) event.data;
             if (attr.equals(attribute)) {
                 updateValidFunctions();
-                if (model != null && model.getInputConfig() != null) {
-                    MicroaggregationFunctionDescription restoredFunction = model.getInputConfig().getMicroaggregationFunctionDescription(attribute);
-                    for (int i = 0; i < validFunctions.length; i++) {
-                        MicroaggregationFunctionDescription function = validFunctions[i];
-                        if (function.equals(restoredFunction)) {
-                            selectfunction(i);
-                            break;
-                        }
-                    }
-                }
+                restoreStoredFunction();
             }
         } else if (event.part == ModelPart.DATA_TYPE) {
             updateValidFunctions();
+        }
+    }
+    
+    /**
+     * Restores the function stored in the view model.
+     */
+    private void restoreStoredFunction() {
+        if (model != null && model.getInputConfig() != null) {
+            MicroaggregationFunctionDescription restoredFunction = model.getInputConfig().getMicroaggregationFunctionDescription(attribute);
+            for (int i = 0; i < validFunctions.length; i++) {
+                MicroaggregationFunctionDescription function = validFunctions[i];
+                if (function.equals(restoredFunction)) {
+                    selectfunction(i);
+                    return;
+                }
+            }
+            if (validFunctions.length > 0) {
+                selectfunction(0);
+            }
         }
     }
     
@@ -163,7 +170,7 @@ public class ViewMicoaggregation implements IView {
         if (items.size() > 0) {
             functionCombo.setItems(items.toArray(new String[items.size()]));
             functionCombo.setEnabled(true);
-            selectfunction(0);
+            restoreStoredFunction();
             microaggregationButton.setEnabled(true);
         } else {
             functionCombo.setItems(new String[] { "No valid microaggregation function for datatype" });

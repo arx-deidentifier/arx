@@ -48,6 +48,15 @@ public abstract class MicroaggregationFunctionDescription implements Serializabl
      */
     public abstract MicroaggregateFunction createInstance(HandlingOfNullValues nullValueHandling);
     
+    @Override
+    public boolean equals(Object paramObject) {
+        MicroaggregationFunctionDescription other = (MicroaggregationFunctionDescription) paramObject;
+        if (other == null) {
+            return false;
+        }
+        return other.label.equals(this.label) && other.requiredScaleOfMeasure == this.requiredScaleOfMeasure;
+    }
+    
     /**
      * Returns the label.
      * 
