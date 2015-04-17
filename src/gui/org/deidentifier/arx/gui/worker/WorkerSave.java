@@ -344,15 +344,16 @@ public class WorkerSave extends Worker<Model> {
             }
             
             if (t instanceof Hierarchy || 
-                (t == AttributeType.SENSITIVE_ATTRIBUTE && config.getHierarchy(attr)!=null)
-                || (t instanceof Microaggregation && config.getHierarchy(attr)!=null)) {
+                (t == AttributeType.SENSITIVE_ATTRIBUTE && config.getHierarchy(attr)!=null)) {
             	writer.write(vocabulary.getRef(), "hierarchies/" + toFileName(attr) + ".csv"); //$NON-NLS-1$ //$NON-NLS-2$
-                if (t instanceof Hierarchy || (t instanceof Microaggregation && config.getHierarchy(attr)!=null)){
+                if (t instanceof Hierarchy){
                     Integer min = config.getMinimumGeneralization(attr);
                     Integer max = config.getMaximumGeneralization(attr);
                 	writer.write(vocabulary.getMin(), min==null ? "All" : String.valueOf(min)); //$NON-NLS-1$
                 	writer.write(vocabulary.getMax(), max==null ? "All" : String.valueOf(max)); //$NON-NLS-1$
                 }
+            } else if (t instanceof Microaggregation) {
+                writer.write(vocabulary.getMicroaggregationFunction(),config.getMicroaggregationFunctionDescription(attr).getLabel());
             }
             writer.unindent();
 

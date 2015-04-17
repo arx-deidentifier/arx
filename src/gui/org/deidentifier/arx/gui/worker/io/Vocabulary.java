@@ -29,16 +29,6 @@ import org.xml.sax.SAXException;
  */
 public abstract class Vocabulary {
     
-    /**  TODO */
-    private static final Map<String, Vocabulary> versions = new HashMap<String, Vocabulary>();
-    
-    static {
-        Vocabulary_V1 v1 = new Vocabulary_V1();
-        Vocabulary_V2 v2 = new Vocabulary_V2();
-        versions.put(v1.getVocabularyVersion(), v1);
-        versions.put(v2.getVocabularyVersion(), v2);
-    }
-    
     /**
      * 
      *
@@ -47,6 +37,16 @@ public abstract class Vocabulary {
      */
     public static Vocabulary forVersion(String version){
         return versions.get(version);
+    }
+    
+    /**  TODO */
+    private static final Map<String, Vocabulary> versions = new HashMap<String, Vocabulary>();
+    
+    static {
+        Vocabulary_V1 v1 = new Vocabulary_V1();
+        Vocabulary_V2 v2 = new Vocabulary_V2();
+        versions.put(v1.getVocabularyVersion(), v1);
+        versions.put(v2.getVocabularyVersion(), v2);
     }
 	
 	/**
@@ -283,6 +283,12 @@ public abstract class Vocabulary {
 	
 	/**
      * 
+     * @return
+     */
+    public abstract String getMicroaggregationFunction();
+	
+	/**
+     * 
      *
      * @return
      */
@@ -315,14 +321,14 @@ public abstract class Vocabulary {
      * @return
      */
 	public abstract String getNode2();
-	
-	/**
+    
+    /**
      * 
      *
      * @return
      */
 	public abstract String getPracticalMonotonicity();
-    
+
     /**
      * 
      *
@@ -343,14 +349,14 @@ public abstract class Vocabulary {
      * @return
      */
 	public abstract String getProtectSensitiveAssociations();
-
+    
+    
     /**
      * 
      *
      * @return
      */
     public abstract String getQuote();
-    
     
     /**
      * 
@@ -414,14 +420,14 @@ public abstract class Vocabulary {
      * @return
      */
     public abstract String getSuppressedAttributeTypes();
-    
+
     /**
      * 
      *
      * @return
      */
     public abstract String getSuppressionAlwaysEnabled();
-
+    
     /**
      * 
      *
@@ -449,21 +455,21 @@ public abstract class Vocabulary {
      * @return
      */
 	public abstract String getVersion();
-    
-    /**
-     * 
-     *
-     * @return
-     */
-	public abstract String getVocabulary();
 
     /**
      * 
      *
      * @return
      */
-    public abstract String getVocabularyVersion();
+	public abstract String getVocabulary();
     
+	/**
+     * 
+     *
+     * @return
+     */
+    public abstract String getVocabularyVersion();
+	
 	/**
      * 
      *
@@ -494,7 +500,7 @@ public abstract class Vocabulary {
      * @return
      */
 	public boolean isAttribute(String value){return value.equals(getAttribute());}
-	
+
 	/**
      * 
      *
@@ -502,7 +508,7 @@ public abstract class Vocabulary {
      * @return
      */
     public boolean isAttributeWeight(String value) {return value.equals(getAttributeWeight());}
-
+	
 	/**
      * 
      *
@@ -656,6 +662,13 @@ public abstract class Vocabulary {
 	public boolean isMetric(String value){return value.equals(getMetric());}
 	
 	/**
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public boolean isMicroaggregationFunction(String value){return value.equals(getMicroaggregationFunction());}
+	
+	/**
      * 
      *
      * @param value
@@ -743,14 +756,14 @@ public abstract class Vocabulary {
      */
 	public boolean isRemoveOutliers(String value){return value.equals(getRemoveOutliers());}
 	
-	/**
+    /**
      * 
      *
      * @param value
      * @return
      */
 	public boolean isSuccessors(String value){return value.equals(getSuccessors());}
-	
+    
     /**
      * 
      *
@@ -766,7 +779,7 @@ public abstract class Vocabulary {
      * @return
      */
     public boolean isSuppressionAlwaysEnabled(String value) {return value.equals(getSuppressionAlwaysEnabled());}
-    
+
     /**
      * 
      *
@@ -774,7 +787,7 @@ public abstract class Vocabulary {
      * @return
      */
 	public boolean isTransformation(String value){return value.equals(getTransformation());}
-
+    
     /**
      * 
      *
@@ -798,12 +811,12 @@ public abstract class Vocabulary {
      * @return
      */
 	public boolean isVocabulary(String value) { return value.equals(getVocabulary()); }
-    
+
     /**
      * 
      *
      * @param value
      * @return
      */
-    public boolean isWeight(String value) {return value.equals(getWeight());}    
+    public boolean isWeight(String value) {return value.equals(getWeight());}
 }

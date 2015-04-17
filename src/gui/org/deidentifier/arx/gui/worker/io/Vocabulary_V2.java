@@ -61,6 +61,7 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
 		b.append("<!-- f = min                        -->\n"); //$NON-NLS-1$
 		b.append("<!-- u = max                        -->\n"); //$NON-NLS-1$
 		b.append("<!-- z = attribute                  -->\n"); //$NON-NLS-1$
+	    b.append("<!-- m = microaggregate function    -->\n"); //$NON-NLS-1$
 		return b.toString();
 	}
 	
@@ -83,6 +84,11 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
 	public String getMin2() {
 		return "f"; //$NON-NLS-1$
 	}
+	
+	@Override
+    public String getMicroaggregationFunction() {
+        return "m"; //$NON-NLS-1$
+    }
 
 	@Override
 	public String getNode2() {

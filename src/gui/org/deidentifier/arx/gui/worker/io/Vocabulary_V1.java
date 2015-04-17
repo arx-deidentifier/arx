@@ -328,4 +328,9 @@ public class Vocabulary_V1 extends Vocabulary {
     public String getWeight() {
         return "weight"; //$NON-NLS-1$
     }
+
+    @Override
+    public String getMicroaggregationFunction() {
+        return "microaggregation";
+    }
 }
