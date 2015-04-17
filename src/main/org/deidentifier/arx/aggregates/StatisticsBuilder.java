@@ -58,9 +58,9 @@ public class StatisticsBuilder {
      */
     class ComputationInterruptedException extends RuntimeException {
         
-        /**  TODO */
+        /** TODO */
         private static final long serialVersionUID = 5339918851212367422L;
-
+        
         /**
          * 
          *
@@ -69,7 +69,7 @@ public class StatisticsBuilder {
         public ComputationInterruptedException(String message) {
             super(message);
         }
-
+        
         /**
          * 
          *
@@ -84,10 +84,10 @@ public class StatisticsBuilder {
     private StatisticsEquivalenceClasses ecStatistics;
     
     /** The handle. */
-    private DataHandleStatistics handle;
+    private DataHandleStatistics         handle;
     
     /** The stop flag. */
-    private volatile boolean interrupt;
+    private volatile boolean             interrupt;
     
     /**
      * Creates a new instance.
@@ -96,7 +96,7 @@ public class StatisticsBuilder {
      * @param ecStatistics
      */
     public StatisticsBuilder(DataHandleStatistics handle,
-                          StatisticsEquivalenceClasses ecStatistics) {
+                             StatisticsEquivalenceClasses ecStatistics) {
         this.ecStatistics = ecStatistics;
         this.handle = handle;
     }
@@ -115,7 +115,7 @@ public class StatisticsBuilder {
      * @return
      */
     public StatisticsContingencyTable getContingencyTable(int column1, boolean orderFromDefinition1,
-                                                int column2, boolean orderFromDefinition2) {
+                                                          int column2, boolean orderFromDefinition2) {
         
         return getContingencyTable(column1, getHierarchy(column1, orderFromDefinition1),
                                    column2, getHierarchy(column2, orderFromDefinition2));
@@ -125,17 +125,17 @@ public class StatisticsBuilder {
      * Returns a contingency table for the given columns. The order for string data items is derived
      * from the provided hierarchies
      * 
-     * @param column1     The first column
-     * @param hierarchy1  The hierarchy for the first column, may be null
-     * @param column2     The second column
-     * @param hierarchy2  The hierarchy for the second column, may be null
+     * @param column1 The first column
+     * @param hierarchy1 The hierarchy for the first column, may be null
+     * @param column2 The second column
+     * @param hierarchy2 The hierarchy for the second column, may be null
      * @return
      */
     public StatisticsContingencyTable getContingencyTable(int column1,
                                                           Hierarchy hierarchy1,
                                                           int column2,
                                                           Hierarchy hierarchy2) {
-
+        
         // Reset stop flag
         interrupt = false;
         
@@ -145,12 +145,12 @@ public class StatisticsBuilder {
         
         // Create maps of indexes
         Map<String, Integer> indexes1 = new HashMap<String, Integer>();
-        for (int i=0; i<values1.length; i++){
+        for (int i = 0; i < values1.length; i++) {
             checkInterrupt();
             indexes1.put(values1[i], i);
         }
         Map<String, Integer> indexes2 = new HashMap<String, Integer>();
-        for (int i=0; i<values2.length; i++){
+        for (int i = 0; i < values2.length; i++) {
             checkInterrupt();
             indexes2.put(values2[i], i);
         }
@@ -158,7 +158,7 @@ public class StatisticsBuilder {
         // Create entry set
         int max = Integer.MIN_VALUE;
         final Map<Entry, Integer> entries = new HashMap<Entry, Integer>();
-        for (int row=0; row<handle.getNumRows(); row++){
+        for (int row = 0; row < handle.getNumRows(); row++) {
             checkInterrupt();
             int index1 = indexes1.get(handle.getValue(row, column1));
             int index2 = indexes2.get(handle.getValue(row, column2));
@@ -172,10 +172,10 @@ public class StatisticsBuilder {
         // Create iterator
         final int count = handle.getNumRows();
         final Iterator<Entry> internal = entries.keySet().iterator();
-        final Iterator<Entry> iterator = new Iterator<Entry>(){
-
-            private Map<Entry, Integer> _entries = entries;
-            private Iterator<Entry> _internal = internal;
+        final Iterator<Entry> iterator = new Iterator<Entry>() {
+            
+            private Map<Entry, Integer> _entries  = entries;
+            private Iterator<Entry>     _internal = internal;
             
             @Override
             public boolean hasNext() {
@@ -184,34 +184,34 @@ public class StatisticsBuilder {
                 boolean result = _internal.hasNext();
                 
                 // Try to release resources as early as possible
-                if (!result){
+                if (!result) {
                     _internal = null;
                     _entries = null;
                 }
                 return result;
             }
-
+            
             @Override
             public Entry next() {
                 if (_internal == null) return null;
                 Entry e = _internal.next();
-                e.frequency = (double)_entries.get(e) / (double)count;
+                e.frequency = (double) _entries.get(e) / (double) count;
                 return e;
             }
-
+            
             @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }
         };
-
+        
         // Result result
-        return new StatisticsContingencyTable(values1, values2, count, (double)max/(double)count, iterator);
+        return new StatisticsContingencyTable(values1, values2, count, (double) max / (double) count, iterator);
     }
-
+    
     /**
-     * Returns a contingency table for the given columns. This method assumes that the 
-     * order of string data items can (and should) be derived from the hierarchies provided 
+     * Returns a contingency table for the given columns. This method assumes that the
+     * order of string data items can (and should) be derived from the hierarchies provided
      * in the data definition (if any)
      * 
      * @param column1 The first column
@@ -237,10 +237,10 @@ public class StatisticsBuilder {
      *            definition (if any)
      * @return
      */
-    public StatisticsContingencyTable getContingencyTable(int column1, 
+    public StatisticsContingencyTable getContingencyTable(int column1,
                                                           int size1,
                                                           boolean orderFromDefinition1,
-                                                          int column2, 
+                                                          int column2,
                                                           int size2,
                                                           boolean orderFromDefinition2) {
         
@@ -252,12 +252,12 @@ public class StatisticsBuilder {
      * Returns a contingency table for the given columns. The order for string data items is derived
      * from the provided hierarchies
      * 
-     * @param column1     The first column
-     * @param size1       The maximal size in this dimension
-     * @param hierarchy1  The hierarchy for the first column, may be null
-     * @param column2     The second column
-     * @param size2       The maximal size in this dimension
-     * @param hierarchy2  The hierarchy for the second column, may be null
+     * @param column1 The first column
+     * @param size1 The maximal size in this dimension
+     * @param hierarchy1 The hierarchy for the first column, may be null
+     * @param column2 The second column
+     * @param size2 The maximal size in this dimension
+     * @param hierarchy2 The hierarchy for the second column, may be null
      * @return
      */
     public StatisticsContingencyTable getContingencyTable(int column1,
@@ -266,7 +266,7 @@ public class StatisticsBuilder {
                                                           int column2,
                                                           int size2,
                                                           Hierarchy hierarchy2) {
-
+        
         // Reset stop flag
         interrupt = false;
         
@@ -274,7 +274,7 @@ public class StatisticsBuilder {
         if (size1 <= 0 || size2 <= 0) {
             throw new IllegalArgumentException("Size must be > 0");
         }
-
+        
         // Obtain default table
         StatisticsContingencyTable table = getContingencyTable(column1,
                                                                hierarchy1,
@@ -282,8 +282,8 @@ public class StatisticsBuilder {
                                                                hierarchy2);
         
         // Check if suitable
-        if (table.values1.length<=size1 &&
-            table.values2.length<=size2) {
+        if (table.values1.length <= size1 &&
+            table.values2.length <= size2) {
             return table;
         }
         
@@ -294,21 +294,21 @@ public class StatisticsBuilder {
         double factor2;
         
         // Compute factors and values
-        if (table.values1.length>size1) {
-            factor1 = (double)size1 / (double)table.values1.length;
+        if (table.values1.length > size1) {
+            factor1 = (double) size1 / (double) table.values1.length;
             values1 = getScaledValues(table.values1, size1);
         } else {
             factor1 = 1;
             values1 = table.values1;
         }
-        if (table.values2.length>size2) {
-            factor2 = (double)size2 / (double)table.values2.length;
+        if (table.values2.length > size2) {
+            factor2 = (double) size2 / (double) table.values2.length;
             values2 = getScaledValues(table.values2, size2);
         } else {
             factor2 = 1;
             values2 = table.values2;
         }
-
+        
         // Create entry set
         final Map<Entry, Double> entries = new HashMap<Entry, Double>();
         Iterator<Entry> iter = table.iterator;
@@ -316,8 +316,8 @@ public class StatisticsBuilder {
         while (iter.hasNext()) {
             checkInterrupt();
             Entry old = iter.next();
-            int index1 = (int)Math.round((double)old.value1 * factor1);
-            int index2 = (int)Math.round((double)old.value2 * factor2);
+            int index1 = (int) Math.round((double) old.value1 * factor1);
+            int index2 = (int) Math.round((double) old.value2 * factor2);
             index1 = index1 < size1 ? index1 : size1 - 1;
             index2 = index2 < size2 ? index2 : size2 - 1;
             Entry entry = new Entry(index1, index2);
@@ -326,13 +326,13 @@ public class StatisticsBuilder {
             max = Math.max(value, max);
             entries.put(entry, value);
         }
-                
+        
         // Create iterator
         final Iterator<Entry> internal = entries.keySet().iterator();
-        final Iterator<Entry> iterator = new Iterator<Entry>(){
-
-            private Map<Entry, Double> _entries = entries;
-            private Iterator<Entry> _internal = internal;
+        final Iterator<Entry> iterator = new Iterator<Entry>() {
+            
+            private Map<Entry, Double> _entries  = entries;
+            private Iterator<Entry>    _internal = internal;
             
             @Override
             public boolean hasNext() {
@@ -341,13 +341,13 @@ public class StatisticsBuilder {
                 boolean result = _internal.hasNext();
                 
                 // Try to release resources as early as possible
-                if (!result){
+                if (!result) {
                     _internal = null;
                     _entries = null;
                 }
                 return result;
             }
-
+            
             @Override
             public Entry next() {
                 if (_internal == null) return null;
@@ -355,29 +355,29 @@ public class StatisticsBuilder {
                 e.frequency = _entries.get(e);
                 return e;
             }
-
+            
             @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }
         };
-
+        
         // Result result
         return new StatisticsContingencyTable(values1, values2, table.count, max, iterator);
     }
-
+    
     /**
-     * Returns a contingency table for the given columns. This method assumes that the 
-     * order of string data items can (and should) be derived from the hierarchies provided 
+     * Returns a contingency table for the given columns. This method assumes that the
+     * order of string data items can (and should) be derived from the hierarchies provided
      * in the data definition (if any)
      * 
      * @param column1 The first column
-     * @param size1   The maximal size in this dimension
+     * @param size1 The maximal size in this dimension
      * @param column2 The second column
-     * @param size2   The maximal size in this dimension
+     * @param size2 The maximal size in this dimension
      * @return
      */
-    public StatisticsContingencyTable getContingencyTable(int column1, 
+    public StatisticsContingencyTable getContingencyTable(int column1,
                                                           int size1,
                                                           int column2,
                                                           int size2) {
@@ -391,17 +391,17 @@ public class StatisticsBuilder {
      * @return
      */
     public String[] getDistinctValues(int column) {
-        return this.handle.getDistinctValues(column, new InterruptHandler(){
+        return this.handle.getDistinctValues(column, new InterruptHandler() {
             @Override
             public void checkInterrupt() {
                 StatisticsBuilder.this.checkInterrupt();
             }
         });
     }
-
+    
     /**
-     * Returns an ordered list of the distinct set of data items from the given column. This method assumes 
-     * that the order of string data items can (and should) be derived from the hierarchy provided in the 
+     * Returns an ordered list of the distinct set of data items from the given column. This method assumes
+     * that the order of string data items can (and should) be derived from the hierarchy provided in the
      * data definition (if any)
      * 
      * @param column The column
@@ -410,7 +410,7 @@ public class StatisticsBuilder {
     public String[] getDistinctValuesOrdered(int column) {
         return this.getDistinctValuesOrdered(column, true);
     }
-
+    
     /**
      * Returns an ordered list of the distinct set of data items from the given column.
      *
@@ -423,9 +423,9 @@ public class StatisticsBuilder {
     public String[] getDistinctValuesOrdered(int column, boolean orderFromDefinition) {
         return getDistinctValuesOrdered(column, getHierarchy(column, orderFromDefinition));
     }
-
+    
     /**
-     * Returns an ordered list of the distinct set of data items from the given column. This method assumes 
+     * Returns an ordered list of the distinct set of data items from the given column. This method assumes
      * that the order of string data items can (and should) be derived from the provided hierarchy
      * 
      * @param column The column
@@ -433,7 +433,7 @@ public class StatisticsBuilder {
      * @return
      */
     public String[] getDistinctValuesOrdered(int column, Hierarchy hierarchy) {
-
+        
         // Reset stop flag
         interrupt = false;
         
@@ -443,16 +443,16 @@ public class StatisticsBuilder {
         final DataType<?> datatype = handle.getDataType(attribute);
         final int level = handle.getGeneralization(attribute);
         final String[][] _hierarchy = hierarchy != null ? hierarchy.getHierarchy() : null;
-
+        
         // Sort by data type
-        if (_hierarchy == null || level==0){
+        if (_hierarchy == null || level == 0) {
             sort(list, datatype, handle.getSuppressionString());
-        // Sort by hierarchy and data type
+            // Sort by hierarchy and data type
         } else {
             // Build order directly from the hierarchy
             final Map<String, Integer> order = new HashMap<String, Integer>();
             int max = 0; // The order to use for the suppression string
-
+            
             // Create base order
             Set<String> baseSet = new HashSet<String>();
             DataType<?> baseType = handle.getBaseDataType(attribute);
@@ -471,7 +471,7 @@ public class StatisticsBuilder {
                 checkInterrupt();
                 baseOrder.put(baseArray[i], i);
             }
-
+            
             // Build higher level order from base order
             for (int i = 0; i < _hierarchy.length; i++) {
                 checkInterrupt();
@@ -495,19 +495,19 @@ public class StatisticsBuilder {
         // Done
         return list;
     }
-
+    
     /**
      * Returns statistics about the equivalence classes.
      *
      * @return
      */
-    public StatisticsEquivalenceClasses getEquivalenceClassStatistics(){
+    public StatisticsEquivalenceClasses getEquivalenceClassStatistics() {
         return ecStatistics;
     }
     
     /**
-     * Returns a frequency distribution for the values in the given column. This method assumes that the 
-     * order of string data items can (and should) be derived from the hierarchy provided in the data 
+     * Returns a frequency distribution for the values in the given column. This method assumes that the
+     * order of string data items can (and should) be derived from the hierarchy provided in the data
      * definition (if any)
      * 
      * @param column The column
@@ -531,15 +531,15 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Returns a frequency distribution for the values in the given column. The order for string data items 
+     * Returns a frequency distribution for the values in the given column. The order for string data items
      * is derived from the provided hierarchy
      * 
-     * @param column    The column
-     * @param hierarchy The hierarchy, may be null      
+     * @param column The column
+     * @param hierarchy The hierarchy, may be null
      * @return
      */
     public StatisticsFrequencyDistribution getFrequencyDistribution(int column, Hierarchy hierarchy) {
-
+        
         // Reset stop flag
         interrupt = false;
         
@@ -549,13 +549,13 @@ public class StatisticsBuilder {
         
         // Create map of indexes
         Map<String, Integer> indexes = new HashMap<String, Integer>();
-        for (int i=0; i<values.length; i++){
+        for (int i = 0; i < values.length; i++) {
             checkInterrupt();
             indexes.put(values[i], i);
         }
         
         // Count frequencies
-        for (int row=0; row<handle.getNumRows(); row++){
+        for (int row = 0; row < handle.getNumRows(); row++) {
             checkInterrupt();
             String value = handle.getValue(row, column);
             frequencies[indexes.get(value)]++;
@@ -563,9 +563,9 @@ public class StatisticsBuilder {
         
         // Divide by count
         int count = handle.getNumRows();
-        for (int i=0; i<frequencies.length; i++){
+        for (int i = 0; i < frequencies.length; i++) {
             checkInterrupt();
-            frequencies[i] /= (double)count;
+            frequencies[i] /= (double) count;
         }
         
         // Return
@@ -578,19 +578,19 @@ public class StatisticsBuilder {
      *
      * @return
      */
-    public StatisticsBuilderInterruptible getInterruptibleInstance(){
+    public StatisticsBuilderInterruptible getInterruptibleInstance() {
         return new StatisticsBuilderInterruptible(handle, ecStatistics);
     }
     
     /**
-     * Returns summary statistics for all attributes. 
+     * Returns summary statistics for all attributes.
      * 
      * @param listwiseDeletion A flag enabling list-wise deletion
      * @return
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public <T> Map<String, StatisticsSummary<?>> getSummaryStatistics(boolean listwiseDeletion) {
-
+        
         Map<String, DescriptiveStatistics> statistics = new HashMap<String, DescriptiveStatistics>();
         Map<String, StatisticsSummaryOrdinal> ordinal = new HashMap<String, StatisticsSummaryOrdinal>();
         Map<String, ScaleOfMeasure> scales = new HashMap<String, ScaleOfMeasure>();
@@ -608,7 +608,7 @@ public class StatisticsBuilder {
             // Try to replace nominal scale with ordinal scale based on base data type
             if (scale == ScaleOfMeasure.NOMINAL && handle.getGeneralization(attribute) != 0) {
                 if (!(handle.getBaseDataType(attribute) instanceof ARXString) &&
-                      getHierarchy(col, true) != null) {
+                    getHierarchy(col, true) != null) {
                     scale = ScaleOfMeasure.ORDINAL;
                 }
             }
@@ -651,14 +651,18 @@ public class StatisticsBuilder {
                     DataType<?> type = handle.getDataType(attribute);
                     
                     // Analyze
-                    ordinal.get(attribute).addValue(value);
-                    if (type instanceof DataTypeWithRatioScale) {
-                        statistics.get(attribute).addValue(((DataTypeWithRatioScale) type).toDouble(type.parse(value)));
+                    // Replace suppression string with NULL value
+                    // TODO: this is only a comparison and String level!!
+                    if (!value.equals(handle.getSuppressionString())) {
+                        ordinal.get(attribute).addValue(value);
+                        if (type instanceof DataTypeWithRatioScale) {
+                            statistics.get(attribute).addValue(((DataTypeWithRatioScale) type).toDouble(type.parse(value)));
+                        }
                     }
                 }
             }
         }
-
+        
         // Convert
         Map<String, StatisticsSummary<?>> result = new HashMap<String, StatisticsSummary<?>>();
         for (int col = 0; col < handle.getNumColumns(); col++) {
@@ -673,22 +677,22 @@ public class StatisticsBuilder {
             ordinal.get(attribute).analyze();
             if (scale == ScaleOfMeasure.NOMINAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
-                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.NOMINAL, 
-                                                            stats.getNumberOfMeasures(), 
-                                                            stats.getMode(),
-                                                            type.parse(stats.getMode())));
+                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.NOMINAL,
+                                                               stats.getNumberOfMeasures(),
+                                                               stats.getMode(),
+                                                               type.parse(stats.getMode())));
             } else if (scale == ScaleOfMeasure.ORDINAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
-                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.ORDINAL, 
-                                                            stats.getNumberOfMeasures(), 
-                                                            stats.getMode(),
-                                                            type.parse(stats.getMode()),
-                                                            stats.getMedian(),
-                                                            type.parse(stats.getMedian()),
-                                                            stats.getMin(),
-                                                            type.parse(stats.getMin()),
-                                                            stats.getMax(),
-                                                            type.parse(stats.getMax())));
+                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.ORDINAL,
+                                                               stats.getNumberOfMeasures(),
+                                                               stats.getMode(),
+                                                               type.parse(stats.getMode()),
+                                                               stats.getMedian(),
+                                                               type.parse(stats.getMedian()),
+                                                               stats.getMin(),
+                                                               type.parse(stats.getMin()),
+                                                               stats.getMax(),
+                                                               type.parse(stats.getMax())));
             } else if (scale == ScaleOfMeasure.INTERVAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
@@ -700,75 +704,75 @@ public class StatisticsBuilder {
                 double range = stats2.getMax() - stats2.getMin();
                 double stddev = Math.sqrt(stats2.getVariance());
                 
-                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.INTERVAL, 
-                                                            stats.getNumberOfMeasures(), 
-                                                            stats.getMode(),
-                                                            type.parse(stats.getMode()),
-                                                            stats.getMedian(),
-                                                            type.parse(stats.getMedian()),
-                                                            stats.getMin(),
-                                                            type.parse(stats.getMin()),
-                                                            stats.getMax(),
-                                                            type.parse(stats.getMax()),
-                                                            toString(type, stats2.getMean(), false, false),
-                                                            toValue(type, stats2.getMean()),
-                                                            stats2.getMean(),
-                                                            toString(type, stats2.getVariance(), isPeriod, true),
-                                                            toValue(type, stats2.getVariance()),
-                                                            stats2.getVariance(),
-                                                            toString(type, stats2.getPopulationVariance(), isPeriod, true),
-                                                            toValue(type, stats2.getPopulationVariance()),
-                                                            stats2.getPopulationVariance(),
-                                                            toString(type, stddev, isPeriod, false),
-                                                            toValue(type, stddev),
-                                                            stddev,
-                                                            toString(type, range, isPeriod, false),
-                                                            toValue(type, range),
-                                                            stats2.getMax() - stats2.getMin(),
-                                                            toString(type, kurtosis, isPeriod, false),
-                                                            toValue(type, kurtosis),
-                                                            kurtosis));
+                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.INTERVAL,
+                                                               stats.getNumberOfMeasures(),
+                                                               stats.getMode(),
+                                                               type.parse(stats.getMode()),
+                                                               stats.getMedian(),
+                                                               type.parse(stats.getMedian()),
+                                                               stats.getMin(),
+                                                               type.parse(stats.getMin()),
+                                                               stats.getMax(),
+                                                               type.parse(stats.getMax()),
+                                                               toString(type, stats2.getMean(), false, false),
+                                                               toValue(type, stats2.getMean()),
+                                                               stats2.getMean(),
+                                                               toString(type, stats2.getVariance(), isPeriod, true),
+                                                               toValue(type, stats2.getVariance()),
+                                                               stats2.getVariance(),
+                                                               toString(type, stats2.getPopulationVariance(), isPeriod, true),
+                                                               toValue(type, stats2.getPopulationVariance()),
+                                                               stats2.getPopulationVariance(),
+                                                               toString(type, stddev, isPeriod, false),
+                                                               toValue(type, stddev),
+                                                               stddev,
+                                                               toString(type, range, isPeriod, false),
+                                                               toValue(type, range),
+                                                               stats2.getMax() - stats2.getMin(),
+                                                               toString(type, kurtosis, isPeriod, false),
+                                                               toValue(type, kurtosis),
+                                                               kurtosis));
             } else if (scale == ScaleOfMeasure.RATIO) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
-
+                
                 // TODO: Something is wrong with commons math's kurtosis
                 double kurtosis = stats2.getKurtosis();
                 kurtosis = kurtosis < 0d ? Double.NaN : kurtosis;
                 double range = stats2.getMax() - stats2.getMin();
                 double stddev = Math.sqrt(stats2.getVariance());
                 
-                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.RATIO, 
-                                                            stats.getNumberOfMeasures(), 
-                                                            stats.getMode(),
-                                                            type.parse(stats.getMode()),
-                                                            stats.getMedian(),
-                                                            type.parse(stats.getMedian()),
-                                                            stats.getMin(),
-                                                            type.parse(stats.getMin()),
-                                                            stats.getMax(),
-                                                            type.parse(stats.getMax()),
-                                                            toString(type, stats2.getMean(), false, false),
-                                                            toValue(type, stats2.getMean()),
-                                                            stats2.getMean(),
-                                                            toString(type, stats2.getVariance(), false, false),
-                                                            toValue(type, stats2.getVariance()),
-                                                            stats2.getVariance(),
-                                                            toString(type, stats2.getPopulationVariance(), false, false),
-                                                            toValue(type, stats2.getPopulationVariance()),
-                                                            stats2.getPopulationVariance(),
-                                                            toString(type, stddev, false, false),
-                                                            toValue(type, stddev),
-                                                            stddev,
-                                                            toString(type, range, false, false),
-                                                            toValue(type, range),
-                                                            range,
-                                                            toString(type, kurtosis, false, false),
-                                                            toValue(type, kurtosis),
-                                                            kurtosis,
-                                                            toString(type, stats2.getGeometricMean(), false, false),
-                                                            toValue(type, stats2.getGeometricMean()),
-                                                            stats2.getGeometricMean()));
+                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.RATIO,
+                                                               stats.getNumberOfMeasures(),
+                                                               stats.getMode(),
+                                                               type.parse(stats.getMode()),
+                                                               stats.getMedian(),
+                                                               type.parse(stats.getMedian()),
+                                                               stats.getMin(),
+                                                               type.parse(stats.getMin()),
+                                                               stats.getMax(),
+                                                               type.parse(stats.getMax()),
+                                                               toString(type, stats2.getMean(), false, false),
+                                                               toValue(type, stats2.getMean()),
+                                                               stats2.getMean(),
+                                                               toString(type, stats2.getVariance(), false, false),
+                                                               toValue(type, stats2.getVariance()),
+                                                               stats2.getVariance(),
+                                                               toString(type, stats2.getPopulationVariance(), false, false),
+                                                               toValue(type, stats2.getPopulationVariance()),
+                                                               stats2.getPopulationVariance(),
+                                                               toString(type, stddev, false, false),
+                                                               toValue(type, stddev),
+                                                               stddev,
+                                                               toString(type, range, false, false),
+                                                               toValue(type, range),
+                                                               range,
+                                                               toString(type, kurtosis, false, false),
+                                                               toValue(type, kurtosis),
+                                                               kurtosis,
+                                                               toString(type, stats2.getGeometricMean(), false, false),
+                                                               toValue(type, stats2.getGeometricMean()),
+                                                               stats2.getGeometricMean()));
             }
         }
         
@@ -778,12 +782,12 @@ public class StatisticsBuilder {
     /**
      * Checks whether an interruption happened.
      */
-    private void checkInterrupt(){
+    private void checkInterrupt() {
         if (interrupt) {
             throw new ComputationInterruptedException("Interrupted");
         }
     }
-
+    
     /**
      * Returns the appropriate hierarchy, if any.
      *
@@ -791,8 +795,8 @@ public class StatisticsBuilder {
      * @param orderFromDefinition
      * @return
      */
-    private Hierarchy getHierarchy(int column, boolean orderFromDefinition){
-
+    private Hierarchy getHierarchy(int column, boolean orderFromDefinition) {
+        
         // Init
         final String attribute = handle.getAttributeName(column);
         final AttributeType type = handle.getDefinition().getAttributeType(attribute);
@@ -808,7 +812,7 @@ public class StatisticsBuilder {
         
         return hierarchy;
     }
-
+    
     /**
      * Scales the given string array.
      *
@@ -820,18 +824,18 @@ public class StatisticsBuilder {
         
         // Init
         AggregateFunction<String> function = AggregateFunction.forType(DataType.STRING).createSetFunction();
-        double factor = (double)length / (double)values.length;
+        double factor = (double) length / (double) values.length;
         String[] result = new String[length];
         
         // Aggregate
         int previous = 0;
         List<String> toAggregate = new ArrayList<String>();
-        for (int i=0; i<values.length; i++){
+        for (int i = 0; i < values.length; i++) {
             
             checkInterrupt();
             
-            int index = (int)Math.round((double)i * factor);
-            index = index < length ? index : length -1;
+            int index = (int) Math.round((double) i * factor);
+            index = index < length ? index : length - 1;
             
             if (index != previous) {
                 result[previous] = function.aggregate(toAggregate.toArray(new String[toAggregate.size()]));
@@ -841,10 +845,10 @@ public class StatisticsBuilder {
             toAggregate.add(values[i]);
         }
         
-        result[length-1] = function.aggregate(toAggregate.toArray(new String[toAggregate.size()]));
+        result[length - 1] = function.aggregate(toAggregate.toArray(new String[toAggregate.size()]));
         return result;
     }
-
+    
     /**
      * Returns a summary statistics object for the given attribute
      * @param generalization
@@ -853,18 +857,18 @@ public class StatisticsBuilder {
      * @param hierarchy
      * @return
      */
-    private <U,V> StatisticsSummaryOrdinal getSummaryStatisticsOrdinal(   final int generalization,
-                                                                          final DataType<U> dataType,
-                                                                          final DataType<V> baseDataType,
-                                                                          final Hierarchy hierarchy) {
-
+    private <U, V> StatisticsSummaryOrdinal getSummaryStatisticsOrdinal(final int generalization,
+                                                                        final DataType<U> dataType,
+                                                                        final DataType<V> baseDataType,
+                                                                        final Hierarchy hierarchy) {
+        
         // TODO: It would be cleaner to return an ARXOrderedString for generalized variables
-        // TODO: that have a suitable data type directly from the DataHandle 
+        // TODO: that have a suitable data type directly from the DataHandle
         if (generalization == 0 || !(dataType instanceof ARXString)) {
             return new StatisticsSummaryOrdinal(dataType);
         } else if (baseDataType instanceof ARXString) {
             return new StatisticsSummaryOrdinal(dataType);
-        } else if (hierarchy == null){
+        } else if (hierarchy == null) {
             return new StatisticsSummaryOrdinal(dataType);
         } else {
             final String[][] array = hierarchy.getHierarchy();
@@ -880,7 +884,7 @@ public class StatisticsBuilder {
                     } catch (Exception e) {
                         // Nothing to do
                     }
-                    V _o2 = null; 
+                    V _o2 = null;
                     try {
                         _o2 = baseDataType.parse(map.get(o2));
                     } catch (Exception e) {
@@ -896,7 +900,6 @@ public class StatisticsBuilder {
         }
     }
     
-
     /**
      * Orders the given array by data type.
      *
@@ -904,8 +907,8 @@ public class StatisticsBuilder {
      * @param type
      * @param suppressionString
      */
-    private void sort(final String[] array, final DataType<?> type, final String suppressionString){
-        GenericSorting.mergeSort(0, array.length, new IntComparator(){
+    private void sort(final String[] array, final DataType<?> type, final String suppressionString) {
+        GenericSorting.mergeSort(0, array.length, new IntComparator() {
             
             @Override
             public int compare(int arg0, int arg1) {
@@ -917,11 +920,13 @@ public class StatisticsBuilder {
                             : (s1 == suppressionString ? +1
                                     : (s2 == suppressionString ? -1
                                             : type.compare(s1, s2)));
-                } catch (IllegalArgumentException | ParseException e) {
+                } catch (
+                        IllegalArgumentException
+                        | ParseException e) {
                     throw new RuntimeException("Some values seem to not conform to the data type", e);
                 }
             }
-        }, new Swapper(){
+        }, new Swapper() {
             @Override
             public void swap(int arg0, int arg1) {
                 String temp = array[arg0];
@@ -937,8 +942,8 @@ public class StatisticsBuilder {
      * @param array
      * @param order
      */
-    private void sort(final String[] array, final Map<String, Integer> order){
-        GenericSorting.mergeSort(0, array.length, new IntComparator(){
+    private void sort(final String[] array, final Map<String, Integer> order) {
+        GenericSorting.mergeSort(0, array.length, new IntComparator() {
             @Override
             public int compare(int arg0, int arg1) {
                 checkInterrupt();
@@ -950,7 +955,7 @@ public class StatisticsBuilder {
                     return order1.compareTo(order2);
                 }
             }
-        }, new Swapper(){
+        }, new Swapper() {
             @Override
             public void swap(int arg0, int arg1) {
                 String temp = array[arg0];
@@ -961,7 +966,7 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Used for building summary statistics 
+     * Used for building summary statistics
      * @param type
      * @param value
      * @param isPeriod Defines whether the parameter is a time period
@@ -1002,17 +1007,17 @@ public class StatisticsBuilder {
             }
             
             // Compute
-            final int weeks = (int)(value / WEEKS);
+            final int weeks = (int) (value / WEEKS);
             value = value % WEEKS;
-            final int days = (int)(value / DAYS);
+            final int days = (int) (value / DAYS);
             value = value % DAYS;
-            final int hours = (int)(value / HOURS);
+            final int hours = (int) (value / HOURS);
             value = value % HOURS;
-            final int minutes = (int)(value / MINUTES);
+            final int minutes = (int) (value / MINUTES);
             value = value % MINUTES;
-            final int seconds = (int)(value / SECONDS);
+            final int seconds = (int) (value / SECONDS);
             value = value % SECONDS;
-            final int milliseconds = (int)(value);
+            final int milliseconds = (int) (value);
             
             // Convert
             StringBuilder builder = new StringBuilder();
@@ -1026,7 +1031,7 @@ public class StatisticsBuilder {
             // Return
             return builder.toString();
             
-        } 
+        }
         
         // Handle data types
         if (type instanceof DataTypeWithRatioScale) {
@@ -1035,9 +1040,9 @@ public class StatisticsBuilder {
             return String.valueOf(value);
         }
     }
-
+    
     /**
-     * Used for building summary statistics 
+     * Used for building summary statistics
      * @param type
      * @param value
      * @return
@@ -1053,20 +1058,20 @@ public class StatisticsBuilder {
         // Handle data types
         Class<?> clazz = type.getDescription().getWrappedClass();
         if (clazz == Long.class) {
-            return (T)Long.valueOf((long)value);
+            return (T) Long.valueOf((long) value);
         } else if (clazz == Double.class) {
-            return (T)Double.valueOf(value);
+            return (T) Double.valueOf(value);
         } else if (clazz == Date.class) {
-            return (T)new Date((long) value);
+            return (T) new Date((long) value);
         } else {
-            return (T)String.valueOf(value);
+            return (T) String.valueOf(value);
         }
     }
     
     /**
      * Stops all computations. May lead to exceptions being thrown. Use with care.
      */
-    void interrupt(){
+    void interrupt() {
         this.interrupt = true;
     }
 }
