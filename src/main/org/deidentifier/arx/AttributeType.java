@@ -30,6 +30,8 @@ import org.deidentifier.arx.aggregates.MicroaggregateFunction;
 import org.deidentifier.arx.aggregates.MicroaggregateFunction.ArithmeticMean;
 import org.deidentifier.arx.aggregates.MicroaggregateFunction.GeometricMean;
 import org.deidentifier.arx.aggregates.MicroaggregateFunction.HandlingOfNullValues;
+import org.deidentifier.arx.aggregates.MicroaggregateFunction.Median;
+import org.deidentifier.arx.aggregates.MicroaggregateFunction.Modus;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.io.CSVSyntax;
@@ -42,86 +44,6 @@ import org.deidentifier.arx.io.CSVSyntax;
  */
 public class AttributeType implements Serializable, Cloneable {
     
-    /**
-     * This class is used to define aggregate functions for microaggregation.
-     * 
-     * @author Fabian Prasser
-     * @author Florian Kohlmayer
-     * @param <T>
-     *
-     */
-    public static class Microaggregation extends AttributeType implements Serializable {
-        /** SVUID */
-        private static final long            serialVersionUID = -7175337291872533713L;
-        
-        /** The microaggregation function */
-        private final MicroaggregateFunction function;
-        
-        /**
-         * Instantiates a new hierarchy.
-         */
-        public Microaggregation(MicroaggregateFunction function) {
-            super(ATTR_TYPE_QI);
-            this.function = function;
-        }
-        
-        /**
-         * Returns the aggregate function.
-         * 
-         * @return
-         */
-        public MicroaggregateFunction getFunction() {
-            return function;
-        }
-        
-        /**
-         * Creates an microaggregation attribute type.
-         * 
-         * @param function
-         * @return
-         */
-        public static Microaggregation create(MicroaggregateFunction function) {
-            return new Microaggregation(function);
-        }
-        
-        /**
-         * Creates an microaggregation using arithmetic mean function.
-         * 
-         * @return
-         */
-        public static Microaggregation createArithmeticMean() {
-            return new Microaggregation(new ArithmeticMean());
-        }
-        
-        /**
-         * Creates an microaggregation using arithmetic mean function.
-         * 
-         * @return
-         */
-        public static Microaggregation createArithmeticMean(HandlingOfNullValues nullValueHandling) {
-            return new Microaggregation(new ArithmeticMean(nullValueHandling));
-        }
-        
-        /**
-         * Creates an microaggregation using geometric mean function.
-         * 
-         * @return
-         */
-        public static AttributeType createGeometricMean() {
-            return new Microaggregation(new GeometricMean());
-        }
-        
-        /**
-         * Creates an microaggregation using geometric mean function.
-         * 
-         * @return
-         */
-        public static AttributeType createGeometricMean(HandlingOfNullValues nullValueHandling) {
-            return new Microaggregation(new GeometricMean(nullValueHandling));
-        }
-        
-    }
-
     /**
      * This class implements a generalization hierarchy.
      *
@@ -281,9 +203,6 @@ public class AttributeType implements Serializable, Cloneable {
                 return array;
             }
         }
-
-        /** TODO. */
-        private static final long serialVersionUID = -4721439386792383385L;
 
         /**
          * Creates a new default hierarchy.
@@ -500,6 +419,9 @@ public class AttributeType implements Serializable, Cloneable {
             return new ArrayHierarchy(array);
         }
 
+        /** TODO. */
+        private static final long serialVersionUID = -4721439386792383385L;
+
         /**
          * Instantiates a new hierarchy.
          */
@@ -621,6 +543,104 @@ public class AttributeType implements Serializable, Cloneable {
             final CSVDataOutput output = new CSVDataOutput(path, config);
             output.write(getHierarchy());
         }
+    }
+
+    /**
+     * This class is used to define aggregate functions for microaggregation.
+     * 
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     * @param <T>
+     *
+     */
+    public static class Microaggregation extends AttributeType implements Serializable {
+        /**
+         * Creates an microaggregation attribute type.
+         * 
+         * @param function
+         * @return
+         */
+        public static Microaggregation create(MicroaggregateFunction function) {
+            return new Microaggregation(function);
+        }
+        
+        /**
+         * Creates an microaggregation using arithmetic mean function.
+         * 
+         * @return
+         */
+        public static Microaggregation createArithmeticMean() {
+            return new Microaggregation(new ArithmeticMean());
+        }
+        
+        /**
+         * Creates an microaggregation using arithmetic mean function.
+         * 
+         * @return
+         */
+        public static Microaggregation createArithmeticMean(HandlingOfNullValues nullValueHandling) {
+            return new Microaggregation(new ArithmeticMean(nullValueHandling));
+        }
+        
+        /**
+         * Creates an microaggregation using geometric mean function.
+         * 
+         * @return
+         */
+        public static AttributeType createGeometricMean() {
+            return new Microaggregation(new GeometricMean());
+        }
+        
+        /**
+         * Creates an microaggregation using geometric mean function.
+         * 
+         * @return
+         */
+        public static AttributeType createGeometricMean(HandlingOfNullValues nullValueHandling) {
+            return new Microaggregation(new GeometricMean(nullValueHandling));
+        }
+        
+        /**
+         * Creates an microaggregation using the median.
+         * 
+         * @return
+         */
+        public static AttributeType createMedian() {
+            return new Microaggregation(new Median());
+        }
+        
+        /**
+         * Creates an microaggregation using the modus.
+         * 
+         * @return
+         */
+        public static AttributeType createModus() {
+            return new Microaggregation(new Modus());
+        }
+        
+        /** SVUID */
+        private static final long            serialVersionUID = -7175337291872533713L;
+        
+        /** The microaggregation function */
+        private final MicroaggregateFunction function;
+        
+        /**
+         * Instantiates a new hierarchy.
+         */
+        public Microaggregation(MicroaggregateFunction function) {
+            super(ATTR_TYPE_QI);
+            this.function = function;
+        }
+        
+        /**
+         * Returns the aggregate function.
+         * 
+         * @return
+         */
+        public MicroaggregateFunction getFunction() {
+            return function;
+        }
+        
     }
 
     /** SVUID. */
