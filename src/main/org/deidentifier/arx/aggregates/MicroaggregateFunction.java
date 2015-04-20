@@ -25,6 +25,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.DataType.ScaleOfMeasure;
+import org.deidentifier.arx.aggregates.StatisticsSummary.StatisticsSummaryOrdinal;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 
 /**
@@ -33,42 +34,6 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
  * @author Florian Kohlmayer
  */
 public abstract class MicroaggregateFunction implements Serializable {
-    
-    public static List<MicroaggregationFunctionDescription> list() {
-        return Arrays.asList(new MicroaggregationFunctionDescription[] {
-                new MicroaggregationFunctionDescription("Arithmetic Mean",
-                                                        ScaleOfMeasure.INTERVAL) {
-                    
-                    /** SVUID */
-                    private static final long serialVersionUID = -1456232652408261065L;
-                    
-                    @Override
-                    public boolean isInstance(MicroaggregateFunction function) {
-                        return (function instanceof ArithmeticMean);
-                    }
-                    
-                    @Override
-                    public MicroaggregateFunction createInstance(HandlingOfNullValues nullValueHandling) {
-                        return new ArithmeticMean(nullValueHandling);
-                    }
-                }, new MicroaggregationFunctionDescription("Geometric Mean",
-                                                           ScaleOfMeasure.RATIO) {
-                    
-                    /** SVUID */
-                    private static final long serialVersionUID = 7737081838418104854L;
-                    
-                    @Override
-                    public boolean isInstance(MicroaggregateFunction function) {
-                        return (function instanceof GeometricMean);
-                    }
-                    
-                    @Override
-                    public MicroaggregateFunction createInstance(HandlingOfNullValues nullValueHandling) {
-                        return new GeometricMean(nullValueHandling);
-                    }
-                },
-        });
-    }
     
     /**
      * This class calculates the arithmetic mean for a given distribution.
@@ -214,6 +179,136 @@ public abstract class MicroaggregateFunction implements Serializable {
     }
     
     /**
+     * This class calculates the median for a given distribution.
+     * @author Florian Kohlmayer
+     *
+     */
+    public static class Median extends MicroaggregateFunction {
+        
+        /** SVUID. */
+        private static final long        serialVersionUID = -2070029487780931767L;
+        /** Commons math object to calculate the statistic. */
+        private StatisticsSummaryOrdinal stats;
+        
+        /**
+         * Instantiates.
+         */
+        public Median() {
+            this(HandlingOfNullValues.IGNORE);
+        }
+        
+        /**
+         * Instantiates.
+         *
+         * @param nullValueHandling the null value handling
+         */
+        public Median(HandlingOfNullValues nullValueHandling) {
+            super(nullValueHandling);
+        }
+        
+        @Override
+        public ScaleOfMeasure getMinimalRequiredScale() {
+            return ScaleOfMeasure.ORDINAL;
+        }
+        
+        @Override
+        public String toString() {
+            return "Microaggrate function: Median";
+        }
+        
+        @Override
+        protected String aggregateInternal(Distribution values) {
+            Iterator<String> it = new DistributionIteratorString(values, dictionary);
+            
+            stats = new StatisticsSummaryOrdinal(type);
+            
+            while (it.hasNext()) {
+                String value = it.next();
+                if (value == null) {
+                    switch (handleNullValues) {
+                    case IGNORE:
+                        // Do nothing
+                        break;
+                    case IDENTITIY:
+                        stats.addValue(DataType.NULL_VALUE);
+                        break;
+                    }
+                } else {
+                    stats.addValue(value);
+                }
+                
+            }
+            stats.analyze();
+            return stats.getMedian();
+        }
+    }
+    
+    /**
+     * This class calculates the mode for a given distribution.
+     * @author Florian Kohlmayer
+     *
+     */
+    public static class Modus extends MicroaggregateFunction {
+        
+        /** SVUID. */
+        private static final long        serialVersionUID = -2070029487780931767L;
+        /** Commons math object to calculate the statistic. */
+        private StatisticsSummaryOrdinal stats;
+        
+        /**
+         * Instantiates.
+         */
+        public Modus() {
+            this(HandlingOfNullValues.IGNORE);
+        }
+        
+        /**
+         * Instantiates.
+         *
+         * @param nullValueHandling the null value handling
+         */
+        public Modus(HandlingOfNullValues nullValueHandling) {
+            super(nullValueHandling);
+        }
+        
+        @Override
+        public ScaleOfMeasure getMinimalRequiredScale() {
+            return ScaleOfMeasure.NOMINAL;
+        }
+        
+        @Override
+        public String toString() {
+            return "Microaggrate function: Modus";
+        }
+        
+        @Override
+        protected String aggregateInternal(Distribution values) {
+            Iterator<String> it = new DistributionIteratorString(values, dictionary);
+            
+            stats = new StatisticsSummaryOrdinal(type);
+            
+            while (it.hasNext()) {
+                String value = it.next();
+                if (value == null) {
+                    switch (handleNullValues) {
+                    case IGNORE:
+                        // Do nothing
+                        break;
+                    case IDENTITIY:
+                        stats.addValue(DataType.NULL_VALUE);
+                        break;
+                    }
+                } else {
+                    stats.addValue(value);
+                }
+                
+            }
+            stats.analyze();
+            return stats.getMode();
+        }
+    }
+    
+    /**
      * Double iterator for distributions.
      * @author Florian Kohlmayer
      *
@@ -297,6 +392,154 @@ public abstract class MicroaggregateFunction implements Serializable {
             throw new UnsupportedOperationException();
         }
         
+    }
+    
+    /**
+     * Double iterator for distributions.
+     * @author Florian Kohlmayer
+     *
+     */
+    private class DistributionIteratorString implements Iterator<String> {
+        
+        /** The distribution. */
+        private final Distribution values;
+        
+        /** The dictionary. */
+        private final String[]     dictionary;
+        
+        /** The index of the next bucket. */
+        private int                nextBucket;
+        
+        /** The frequency of the current value. */
+        private int                currentFrequency;
+        
+        /** The value of the current bucket. */
+        private String             currentValue;
+        
+        /** Counts the remaining entries. */
+        private int                remaining;
+        
+        /**
+         * Instantiates the iterator.
+         *
+         * @param values the values
+         * @param type the type
+         * @param dictionary the dictionary
+         */
+        public DistributionIteratorString(Distribution values, String[] dictionary) {
+            this.values = values;
+            this.dictionary = dictionary;
+            nextBucket = 0;
+            currentFrequency = 0;
+            currentValue = null;
+            
+            // Calculate number of entries for "hasNext()"
+            // TODO there has to be a more efficient way!
+            if (values.size() > 0) {
+                int[] buckets = values.getBuckets();
+                for (int i = 0; i < buckets.length; i += 2) {
+                    if (buckets[i] != -1) { // bucket not empty
+                        remaining += buckets[i + 1];
+                    }
+                }
+            }
+        }
+        
+        @Override
+        public boolean hasNext() {
+            return remaining != 0;
+        }
+        
+        @Override
+        public String next() {
+            if (currentFrequency == 0) {
+                int value = values.getBuckets()[nextBucket];
+                while (value == -1) { // Bucket not empty
+                    nextBucket += 2;
+                    value = values.getBuckets()[nextBucket];
+                }
+                currentValue = dictionary[value];
+                currentFrequency = values.getBuckets()[nextBucket + 1];
+                nextBucket += 2;
+            }
+            currentFrequency--;
+            remaining--;
+            return currentValue;
+        }
+        
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+        
+    }
+    
+    public static List<MicroaggregationFunctionDescription> list() {
+        return Arrays.asList(new MicroaggregationFunctionDescription[] {
+                new MicroaggregationFunctionDescription("Arithmetic Mean",
+                                                        ScaleOfMeasure.INTERVAL) {
+                    
+                    /** SVUID */
+                    private static final long serialVersionUID = -1456232652408261065L;
+                    
+                    @Override
+                    public MicroaggregateFunction createInstance(HandlingOfNullValues nullValueHandling) {
+                        return new ArithmeticMean(nullValueHandling);
+                    }
+                    
+                    @Override
+                    public boolean isInstance(MicroaggregateFunction function) {
+                        return (function instanceof ArithmeticMean);
+                    }
+                }, new MicroaggregationFunctionDescription("Geometric Mean",
+                                                           ScaleOfMeasure.RATIO) {
+                    
+                    /** SVUID */
+                    private static final long serialVersionUID = 7737081838418104854L;
+                    
+                    @Override
+                    public MicroaggregateFunction createInstance(HandlingOfNullValues nullValueHandling) {
+                        return new GeometricMean(nullValueHandling);
+                    }
+                    
+                    @Override
+                    public boolean isInstance(MicroaggregateFunction function) {
+                        return (function instanceof GeometricMean);
+                    }
+                },
+                new MicroaggregationFunctionDescription("Mode",
+                                                        ScaleOfMeasure.NOMINAL) {
+                    
+                    /** SVUID */
+                    private static final long serialVersionUID = -2500330309804167183L;
+                    
+                    @Override
+                    public MicroaggregateFunction createInstance(HandlingOfNullValues nullValueHandling) {
+                        return new Modus(nullValueHandling);
+                    }
+                    
+                    @Override
+                    public boolean isInstance(MicroaggregateFunction function) {
+                        return (function instanceof Modus);
+                    }
+                },
+                new MicroaggregationFunctionDescription("Median",
+                                                        ScaleOfMeasure.ORDINAL) {
+                    
+                    /** SVUID */
+                    private static final long serialVersionUID = 6765052918594701507L;
+                    
+                    @Override
+                    public MicroaggregateFunction createInstance(HandlingOfNullValues nullValueHandling) {
+                        return new Median(nullValueHandling);
+                    }
+                    
+                    @Override
+                    public boolean isInstance(MicroaggregateFunction function) {
+                        return (function instanceof Median);
+                    }
+                },
+        });
     }
     
     /** The NULL value handling. */
