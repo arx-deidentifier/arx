@@ -56,38 +56,6 @@ public class DataManager {
         public static final int SENSITIVE        = 1;
     }
     
-    /**
-     * This class represents the attribute type and the index position within this type.
-     * @author Florian Kohlmayer
-     *
-     */
-    public static class TypeInformation {
-        private int attributeType;
-        private int indexPosition;
-        
-        public TypeInformation(int attributeType, int indexPosition) {
-            this.attributeType = attributeType;
-            this.indexPosition = indexPosition;
-        }
-        
-        public int getAttributeType() {
-            return attributeType;
-        }
-        
-        public int getIndexPosition() {
-            return indexPosition;
-        }
-        
-        public void setAttributeType(int attributeType) {
-            this.attributeType = attributeType;
-        }
-        
-        public void setIndexPosition(int indexPosition) {
-            this.indexPosition = indexPosition;
-        }
-        
-    }
-    
     /** The data. */
     protected final Data                                 dataGH;
     
@@ -189,21 +157,26 @@ public class DataManager {
         
         // DI contains SE and MA attributes. First all SE attributes, followed by all MA attributes.
         // Build map
-        final TypeInformation[] map = new TypeInformation[header.length];
+        
+        // A map for column indices. map[i*2]=attribute type, map[i*2+1]=index position. */
+        final int[] map = new int[header.length * 2];
         final String[] headerGH = new String[dictionaryGH.getNumDimensions()];
         final String[] headerDI = new String[dictionaryDI.getNumDimensions()];
         final String[] headerIS = new String[dictionaryIS.getNumDimensions()];
         final String[] headerOT = new String[dictionaryOT.getNumDimensions()];
         
         for (final String column : header) {
+            final int idx = counter * 2;
             if (gh.contains(column)) {
-                map[counter] = new TypeInformation(AttributeTypeInternal.GENERALIZATION, indexGH);
+                map[idx] = AttributeTypeInternal.GENERALIZATION;
+                map[idx + 1] = indexGH;
                 mapGH[indexGH] = counter;
                 dictionaryGH.registerAll(indexGH, dictionary, counter);
                 headerGH[indexGH] = header[counter];
                 indexGH++;
             } else if (ma.contains(column)) {
-                map[counter] = new TypeInformation(AttributeTypeInternal.MICROAGGREGATION, indexMA);
+                map[idx] = AttributeTypeInternal.MICROAGGREGATION;
+                map[idx + 1] = indexMA;
                 mapDI[indexMA] = counter;
                 dictionaryDI.registerAll(indexMA, dictionary, counter);
                 headerDI[indexMA] = header[counter];
@@ -213,20 +186,23 @@ public class DataManager {
                 headerOT[indexOT] = header[counter];
                 indexOT++;
             } else if (is.contains(column)) {
-                map[counter] = new TypeInformation(AttributeTypeInternal.INSENSITIVE, indexIS);
+                map[idx] = AttributeTypeInternal.INSENSITIVE;
+                map[idx + 1] = indexIS;
                 mapIS[indexIS] = counter;
                 dictionaryIS.registerAll(indexIS, dictionary, counter);
                 headerIS[indexIS] = header[counter];
                 indexIS++;
             } else if (se.contains(column)) {
-                map[counter] = new TypeInformation(AttributeTypeInternal.SENSITIVE, indexSE);
+                map[idx] = AttributeTypeInternal.SENSITIVE;
+                map[idx + 1] = indexSE;
                 mapDI[indexSE] = counter;
                 dictionaryDI.registerAll(indexSE, dictionary, counter);
                 headerDI[indexSE] = header[counter];
                 indexSE++;
             } else {
                 // TODO: CHECK: Changed default? - now all non defined attributes are identifying! Previously they were sensitive?
-                map[counter] = new TypeInformation(AttributeTypeInternal.IDENTIFIER, -1);
+                map[idx] = AttributeTypeInternal.IDENTIFIER;
+                map[idx + 1] = -1;
             }
             counter++;
         }
@@ -246,8 +222,9 @@ public class DataManager {
         // Build qi generalisation hierarchiesQI
         hierarchiesQI = new GeneralizationHierarchy[gh.size()];
         for (int i = 0; i < header.length; i++) {
-            if (gh.contains(header[i]) && map[i].attributeType == AttributeTypeInternal.GENERALIZATION) {
-                final int dictionaryIndex = map[i].getIndexPosition();
+            final int idx = i * 2;
+            if (gh.contains(header[i]) && map[idx] == AttributeTypeInternal.GENERALIZATION) {
+                final int dictionaryIndex = map[idx + 1];
                 final String name = header[i];
                 
                 if (definition.getAttributeType(name) instanceof Hierarchy) {
@@ -279,8 +256,9 @@ public class DataManager {
         int index = 0;
         for (int i = 0; i < header.length; i++) {
             final String name = header[i];
-            if (sensitiveHierarchies.containsKey(name) && map[i].attributeType == AttributeTypeInternal.SENSITIVE) {
-                final int dictionaryIndex = map[i].getIndexPosition();
+            final int idx = i * 2;
+            if (sensitiveHierarchies.containsKey(name) && map[idx] == AttributeTypeInternal.SENSITIVE) {
+                final int dictionaryIndex = map[idx + 1];
                 final String[][] hiers = sensitiveHierarchies.get(name);
                 if (hiers != null) {
                     hierarchiesSE.put(name, new GeneralizationHierarchy(name, hiers, dictionaryIndex, dictionaryDI));
@@ -303,8 +281,9 @@ public class DataManager {
         // Init microaggregation functions
         functionsMA = new MicroaggregateFunction[ma.size()];
         for (int i = 0; i < header.length; i++) {
-            if (ma.contains(header[i]) && map[i].attributeType == AttributeTypeInternal.MICROAGGREGATION) {
-                final int dictionaryIndex = map[i].getIndexPosition() - startIndexMA;
+            final int idx = i * 2;
+            if (ma.contains(header[i]) && map[idx] == AttributeTypeInternal.MICROAGGREGATION) {
+                final int dictionaryIndex = map[idx + 1] - startIndexMA;
                 final String name = header[i];
                 if (definition.getAttributeType(name) instanceof Microaggregation) {
                     functionsMA[dictionaryIndex] = ((Microaggregation) definition.getAttributeType(name)).getFunction();
@@ -631,7 +610,7 @@ public class DataManager {
      * @return
      */
     private Data[] encode(final int[][] data,
-                          final TypeInformation[] map,
+                          final int[] map,
                           final int[] mapGH,
                           final int[] mapDI,
                           final int[] mapIS,
@@ -662,8 +641,9 @@ public class DataManager {
             final int[] tupleOT = new int[headerOT.length];
             
             for (int i = 0; i < tuple.length; i++) {
-                int aType = map[i].getAttributeType();
-                final int iPos = map[i].getIndexPosition();
+                final int idx = i * 2;
+                int aType = map[idx];
+                final int iPos = map[idx + 1];
                 switch (aType) {
                 case AttributeTypeInternal.GENERALIZATION:
                     tupleGH[iPos] = tuple[i];
