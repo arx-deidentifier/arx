@@ -323,7 +323,7 @@ public class Model implements Serializable {
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
             
             if (config.isMicroaggregationEnabled(attr)) {
-                definition.setAttributeType(attr, Microaggregation.create(config.getMicroaggregationFunctionDescription(attr).createInstance()));
+                definition.setAttributeType(attr, Microaggregation.create(config.getMicroaggregationFunctionDescription(attr).createInstance(config.getMicroaggregationHandlingOfNullValues(attr))));
             } else {
                 Hierarchy hierarchy = config.getHierarchy(attr);
                 /* Handle non-existent hierarchies */

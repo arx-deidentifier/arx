@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.aggregates.MicroaggregateFunction;
+import org.deidentifier.arx.aggregates.MicroaggregateFunction.HandlingOfNullValues;
 import org.deidentifier.arx.aggregates.MicroaggregationFunctionDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -40,6 +41,8 @@ public class ViewMicoaggregation implements IView {
     private MicroaggregationFunctionDescription[] validFunctions;
     /** The Combobox */
     private Combo                                 functionCombo;
+    /** The Combobox */
+    private Combo                                 nullValueCombo;
     /** The button */
     private Button                                microaggregationButton;
     
@@ -51,10 +54,10 @@ public class ViewMicoaggregation implements IView {
      * @param controller
      * @param microaggregationButton
      */
-    public ViewMicoaggregation(Composite parent, String attribute, Controller controller, Button microaggregationButton) {
+    public ViewMicoaggregation(Composite parent, final String attribute, Controller controller, Button microaggregationButton) {
         this.attribute = attribute;
         this.controller = controller;
-        this.model = controller.getModel();
+        model = controller.getModel();
         this.microaggregationButton = microaggregationButton;
         
         // Listener
@@ -66,13 +69,13 @@ public class ViewMicoaggregation implements IView {
         base = new Composite(parent, SWT.NONE | SWT.BORDER);
         GridData layoutData = SWTUtil.createFillHorizontallyGridData();
         GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
+        layout.numColumns = 4;
         base.setLayout(layout);
         base.setLayoutData(layoutData);
         
         // add dropdown selection boxes
         final Label fLabel = new Label(base, SWT.PUSH);
-        fLabel.setText("Function");
+        fLabel.setText("Function:");
         functionCombo = new Combo(base, SWT.READ_ONLY);
         functionCombo.setLayoutData(SWTUtil.createFillGridData());
         functionCombo.addSelectionListener(new SelectionAdapter() {
@@ -80,6 +83,24 @@ public class ViewMicoaggregation implements IView {
             public void widgetSelected(final SelectionEvent arg0) {
                 int index = ((Combo) arg0.getSource()).getSelectionIndex();
                 selectfunction(index);
+            }
+        });
+        
+        // add dropdown selection boxes
+        final Label hLabel = new Label(base, SWT.PUSH);
+        hLabel.setText("Null values:");
+        nullValueCombo = new Combo(base, SWT.READ_ONLY);
+        nullValueCombo.setLayoutData(SWTUtil.createFillGridData());
+        nullValueCombo.setItems(getHandlingOfNullValuesLabels());
+        nullValueCombo.select(0);
+        
+        nullValueCombo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                int index = ((Combo) arg0.getSource()).getSelectionIndex();
+                if ((model != null) && (model.getInputConfig() != null)) {
+                    model.getInputConfig().setMicroaggregationHandlingOfNullValues(attribute, HandlingOfNullValues.values()[index]);
+                }
             }
         });
         
@@ -109,6 +130,7 @@ public class ViewMicoaggregation implements IView {
             if (attr.equals(attribute)) {
                 updateValidFunctions();
                 restoreStoredFunction();
+                restoreStoredHandlingOfNullValues();
             }
         } else if (event.part == ModelPart.DATA_TYPE) {
             updateValidFunctions();
@@ -116,10 +138,23 @@ public class ViewMicoaggregation implements IView {
     }
     
     /**
+     * Helper function to convert enums to label array.
+     * @return
+     */
+    private String[] getHandlingOfNullValuesLabels() {
+        HandlingOfNullValues[] values = HandlingOfNullValues.values();
+        String[] result = new String[values.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = values[i].getLabel();
+        }
+        return result;
+    }
+    
+    /**
      * Restores the function stored in the view model.
      */
     private void restoreStoredFunction() {
-        if (model != null && model.getInputConfig() != null) {
+        if ((model != null) && (model.getInputConfig() != null)) {
             MicroaggregationFunctionDescription restoredFunction = model.getInputConfig().getMicroaggregationFunctionDescription(attribute);
             for (int i = 0; i < validFunctions.length; i++) {
                 MicroaggregationFunctionDescription function = validFunctions[i];
@@ -130,6 +165,21 @@ public class ViewMicoaggregation implements IView {
             }
             if (validFunctions.length > 0) {
                 selectfunction(0);
+            }
+        }
+    }
+    
+    /**
+     * Restores the stored handling of null values.
+     */
+    private void restoreStoredHandlingOfNullValues() {
+        if ((model != null) && (model.getInputConfig() != null)) {
+            HandlingOfNullValues restored = model.getInputConfig().getMicroaggregationHandlingOfNullValues(attribute);
+            HandlingOfNullValues[] values = HandlingOfNullValues.values();
+            for (int i = 0; i < values.length; i++) {
+                if (values[i].equals(restored)) {
+                    nullValueCombo.select(i);
+                }
             }
         }
     }

@@ -28,6 +28,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.MicroaggregateFunction.HandlingOfNullValues;
 import org.deidentifier.arx.aggregates.MicroaggregationFunctionDescription;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
@@ -39,43 +40,46 @@ import org.deidentifier.arx.metric.Metric;
  * @author Fabian Prasser
  */
 public class ModelConfiguration implements Serializable, Cloneable {
-
+    
     /** SVUID. */
-    private static final long                serialVersionUID  = -2887699232096897527L;
+    private static final long                                serialVersionUID  = -2887699232096897527L;
     
     /** Minimum generalization. */
-    private Map<String, Integer>             min               = new HashMap<String, Integer>();
+    private Map<String, Integer>                             min               = new HashMap<String, Integer>();
     
     /** Maximum generalization. */
-    private Map<String, Integer>             max               = new HashMap<String, Integer>();
+    private Map<String, Integer>                             max               = new HashMap<String, Integer>();
     
     /** Input data. */
-    private transient Data                   input             = null;
+    private transient Data                                   input             = null;
     
     /** Associated ARXConfiguration. */
-    private ARXConfiguration                 config            = ARXConfiguration.create();
+    private ARXConfiguration                                 config            = ARXConfiguration.create();
     
     /** Is this model modified. */
-    private boolean                             modified          = false;
+    private boolean                                          modified          = false;
     
     /** The associated hierarchies. */
-    private Map<String, Hierarchy>              hierarchies       = new HashMap<String, Hierarchy>();
+    private Map<String, Hierarchy>                           hierarchies       = new HashMap<String, Hierarchy>();
     
     /** The associated microaggregation functions. */
     private Map<String, MicroaggregationFunctionDescription> functions         = new HashMap<String, MicroaggregationFunctionDescription>();
     
+    /** The associated handling of null values. */
+    private Map<String, HandlingOfNullValues>                handling          = new HashMap<String, HandlingOfNullValues>();
+    
     /** The associated modes (0 = generalization, 1 = microaggregation). */
-    private Map<String, Integer> attributeModes         = new HashMap<String, Integer>();
+    private Map<String, Integer>                             attributeModes    = new HashMap<String, Integer>();
     
     /** The associated research subset. */
-    private RowSet                              researchSubset    = null;
+    private RowSet                                           researchSubset    = null;
     
     /** The suppression weight. */
-    private Double                              suppressionWeight = null;
-
+    private Double                                           suppressionWeight = null;
+    
     /** Hierarchy builder. */
-    private Map<String, HierarchyBuilder<?>> hierarchyBuilders = null;
-
+    private Map<String, HierarchyBuilder<?>>                 hierarchyBuilders = null;
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -89,7 +93,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     
     @Override
     public ModelConfiguration clone() {
-
+        
         final ModelConfiguration c = new ModelConfiguration();
         c.input = input;
         c.min = new HashMap<String, Integer>(min);
@@ -104,7 +108,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         c.suppressionWeight = this.suppressionWeight;
         return c;
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -114,7 +118,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz) {
         return config.containsCriterion(clazz);
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -123,7 +127,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public double getAllowedOutliers() {
         return config.getMaxOutliers();
     }
-
+    
     /**
      * Returns the associated attribute weight.
      *
@@ -133,7 +137,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public double getAttributeWeight(String attribute) {
         return config.getAttributeWeight(attribute);
     }
-
+    
     /**
      * Returns all weights.
      *
@@ -142,14 +146,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public Map<String, Double> getAttributeWeights() {
         return config.getAttributeWeights();
     }
-
+    
     /**
      * Returns the current config.
      *
      * @return
      */
-    public ARXConfiguration getConfig(){
-    	return config;
+    public ARXConfiguration getConfig() {
+        return config;
     }
     
     /**
@@ -160,7 +164,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public Set<PrivacyCriterion> getCriteria() {
         return config.getCriteria();
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -171,7 +175,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public <T extends PrivacyCriterion> Set<T> getCriteria(Class<T> clazz) {
         return config.getCriteria(clazz);
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -182,23 +186,23 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public <T extends PrivacyCriterion> T getCriterion(Class<T> clazz) {
         return config.getCriterion(clazz);
     }
-
+    
     /**
      * Returns the set of all assigned hierarchies.
      *
      * @return
      */
-    public Map<String, Hierarchy> getHierarchies(){
+    public Map<String, Hierarchy> getHierarchies() {
         return this.hierarchies;
     }
-
+    
     /**
      * Returns the assigned hierarchy, if any. Else null.
      *
      * @param attribute
      * @return
      */
-    public Hierarchy getHierarchy(String attribute){
+    public Hierarchy getHierarchy(String attribute) {
         return this.hierarchies.get(attribute);
     }
     
@@ -209,30 +213,30 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public HierarchyBuilder<?> getHierarchyBuilder(String attr) {
-        if (hierarchyBuilders==null) return null;
+        if (hierarchyBuilders == null) return null;
         else return hierarchyBuilders.get(attr);
     }
-
+    
     /**
      * @return the input
      */
     public Data getInput() {
         return input;
     }
-
+    
     /**
      * Maximum generalization.
      *
      * @param attribute
      * @return
      */
-    public Integer getMaximumGeneralization(String attribute){
+    public Integer getMaximumGeneralization(String attribute) {
         if (this.max == null) {
             return null;
         }
         return this.max.get(attribute);
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -246,13 +250,25 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * Returns the microaggregation function.
      *
      * @param attribute
-     * @return 
+     * @return
      */
-    public MicroaggregationFunctionDescription getMicroaggregationFunctionDescription(String attribute){
+    public MicroaggregationFunctionDescription getMicroaggregationFunctionDescription(String attribute) {
         if (this.functions == null) {
             this.functions = new HashMap<String, MicroaggregationFunctionDescription>();
         }
         return this.functions.get(attribute);
+    }
+    
+    public HandlingOfNullValues getMicroaggregationHandlingOfNullValues(String attribute) {
+        if (this.handling == null) {
+            this.handling = new HashMap<String, HandlingOfNullValues>();
+        }
+        HandlingOfNullValues handling = this.handling.get(attribute);
+        if (handling == null) {
+            return HandlingOfNullValues.IGNORE;
+        } else {
+            return handling;
+        }
     }
     
     /**
@@ -261,7 +277,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @param attribute
      * @return
      */
-    public Integer getMinimumGeneralization(String attribute){
+    public Integer getMinimumGeneralization(String attribute) {
         if (this.min == null) {
             return null;
         }
@@ -273,10 +289,10 @@ public class ModelConfiguration implements Serializable, Cloneable {
      *
      * @return
      */
-	public RowSet getResearchSubset() {
-		return researchSubset;
-	}
-
+    public RowSet getResearchSubset() {
+        return researchSubset;
+    }
+    
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#getSuppressionString()
@@ -284,7 +300,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public String getSuppressionString() {
         return config.getSuppressionString();
     }
-
+    
     /**
      * Returns the suppression/generalization weight, that will be respected by
      * the NDS metric.
@@ -292,14 +308,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public double getSuppressionWeight() {
-
+        
         // For backwards compatibility
-        if (this.suppressionWeight == null){
+        if (this.suppressionWeight == null) {
             this.suppressionWeight = 0.5d;
         }
         return suppressionWeight;
     }
-
+    
     /**
      * @param type
      * @return
@@ -308,7 +324,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isAttributeTypeSuppressed(AttributeType type) {
         return config.isAttributeTypeSuppressed(type);
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -317,8 +333,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isCriterionMonotonic() {
         return config.isCriterionMonotonic();
     }
-
-    /** 
+    
+    /**
      * Returns true if generalization is enabled for this attribute. If the attribute is not defined it will default to true.
      * @param attribute
      * @return
@@ -327,9 +343,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (this.attributeModes == null) {
             this.attributeModes = new HashMap<String, Integer>();
         }
-       return (this.attributeModes.get(attribute) == null) || (this.attributeModes.get(attribute) == 0);
+        return (this.attributeModes.get(attribute) == null) || (this.attributeModes.get(attribute) == 0);
     }
-
+    
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#isUseHeuristicSearchForSampleBasedCriteria()
@@ -338,7 +354,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         return config.isUseHeuristicSearchForSampleBasedCriteria();
     }
     
-    /** 
+    /**
      * Returns true if microaggregation is enabled for this attribute.
      * @param attribute
      * @return
@@ -347,9 +363,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (this.attributeModes == null) {
             this.attributeModes = new HashMap<String, Integer>();
         }
-       return (this.attributeModes.get(attribute) != null) && (this.attributeModes.get(attribute) == 1);
+        return (this.attributeModes.get(attribute) != null) && (this.attributeModes.get(attribute) == 1);
     }
-
+    
     /**
      * Has the config been modified.
      *
@@ -358,7 +374,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isModified() {
         return modified;
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -367,15 +383,15 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isPracticalMonotonicity() {
         return config.isPracticalMonotonicity();
     }
-
+    
     /**
      * Protect sensitive associations.
      *
      * @return
      */
-	public boolean isProtectSensitiveAssociations() {
-		return config.isProtectSensitiveAssociations();
-	}
+    public boolean isProtectSensitiveAssociations() {
+        return config.isProtectSensitiveAssociations();
+    }
     
     /**
      * @return
@@ -384,15 +400,15 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isSuppressionAlwaysEnabled() {
         return config.isSuppressionAlwaysEnabled();
     }
-
+    
     /**
      * Removes all criteria.
      */
     public void removeAllCriteria() {
         this.getCriteria().clear();
     }
-	
-	/**
+    
+    /**
      * Delegates to an instance of ARXConfiguration.
      *
      * @param <T>
@@ -403,34 +419,34 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         return config.removeCriterion(c);
     }
-
-	/**
+    
+    /**
      * Removes a hierarchy.
      *
      * @param attribute
      */
-    public void removeHierarchy(String attribute){
+    public void removeHierarchy(String attribute) {
         this.hierarchies.remove(attribute);
         this.setModified();
     }
-	
-	/**
+    
+    /**
      * Removes the builder for the given attribute.
      *
      * @param attr
      */
-    public void removeHierarchyBuilder(String attr){
-        if (hierarchyBuilders==null) return;
+    public void removeHierarchyBuilder(String attr) {
+        if (hierarchyBuilders == null) return;
         setModified();
         hierarchyBuilders.remove(attr);
     }
-
+    
     /**
      * Removes a microaggregation function.
      *
      * @param attribute
      */
-    public void removeMicroaggregationFunctionDescription(String attribute){
+    public void removeMicroaggregationFunctionDescription(String attribute) {
         if (this.functions == null) {
             this.functions = new HashMap<String, MicroaggregationFunctionDescription>();
         }
@@ -488,14 +504,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void setHeuristicForSampleBasedCriteria(boolean value) {
         config.setUseHeuristicSearchForSampleBasedCriteria(value);
     }
-
+    
     /**
      * Assigns a hierarchy.
      *
      * @param attribute
      * @param hierarchy
      */
-    public void setHierarchy(String attribute, Hierarchy hierarchy){
+    public void setHierarchy(String attribute, Hierarchy hierarchy) {
         this.hierarchies.put(attribute, hierarchy);
         this.setModified();
     }
@@ -507,7 +523,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @param builder
      */
     public void setHierarchyBuilder(String attr, HierarchyBuilder<?> builder) {
-        if (hierarchyBuilders==null){
+        if (hierarchyBuilders == null) {
             hierarchyBuilders = new HashMap<String, HierarchyBuilder<?>>();
         }
         setModified();
@@ -529,14 +545,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @param attribute
      * @param max
      */
-    public void setMaximumGeneralization(String attribute, Integer max){
+    public void setMaximumGeneralization(String attribute, Integer max) {
         if (this.max == null) {
             this.max = new HashMap<String, Integer>();
         }
         setModified();
         this.max.put(attribute, max);
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -546,7 +562,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setMetric(metric);
     }
-
+    
     /**
      * Enables microaggregation on the attribute.
      * @param attribute
@@ -558,35 +574,49 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.attributeModes.put(attribute, 1);
         setModified();
     }
-
+    
     /**
      * Assigns a microaggregation function.
      *
      * @param attribute
      * @param microaggregation
      */
-    public void setMicroaggregationFunctionDescription(String attribute, MicroaggregationFunctionDescription microaggregation){
+    public void setMicroaggregationFunctionDescription(String attribute, MicroaggregationFunctionDescription microaggregation) {
         if (this.functions == null) {
             this.functions = new HashMap<String, MicroaggregationFunctionDescription>();
         }
         this.functions.put(attribute, microaggregation);
         this.setModified();
     }
-
+    
+    /**
+     * Assigns the handling of null values
+     * 
+     * @param attribute
+     * @param handlingOfNullValues
+     */
+    public void setMicroaggregationHandlingOfNullValues(String attribute, HandlingOfNullValues handlingOfNullValues) {
+        if (this.handling == null) {
+            this.handling = new HashMap<String, HandlingOfNullValues>();
+        }
+        this.handling.put(attribute, handlingOfNullValues);
+        this.setModified();
+    }
+    
     /**
      * Minimum generalization.
      *
      * @param attribute
      * @param min
      */
-    public void setMinimumGeneralization(String attribute, Integer min){
+    public void setMinimumGeneralization(String attribute, Integer min) {
         if (this.min == null) {
             this.min = new HashMap<String, Integer>();
         }
         setModified();
         this.min.put(attribute, min);
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -596,27 +626,27 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setPracticalMonotonicity(assumeMonotonicity);
     }
-
+    
     /**
      * Protect sensitive associations.
      *
      * @param selection
      */
-	public void setProtectSensitiveAssociations(boolean selection) {
-	    setModified();
-		config.setProtectSensitiveAssociations(selection);
-	}
-
+    public void setProtectSensitiveAssociations(boolean selection) {
+        setModified();
+        config.setProtectSensitiveAssociations(selection);
+    }
+    
     /**
      * Sets the current research subset.
      *
      * @param subset
      */
-	public void setResearchSubset(RowSet subset) {
-	    setModified();
-	    this.researchSubset = subset;
-	}
-
+    public void setResearchSubset(RowSet subset) {
+        setModified();
+        this.researchSubset = subset;
+    }
+    
     /**
      * @param enabled
      * @see org.deidentifier.arx.ARXConfiguration#setSuppressionAlwaysEnabled(boolean)
@@ -625,7 +655,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setSuppressionAlwaysEnabled(enabled);
     }
-
+    
     /**
      * @param suppressionString
      * @see org.deidentifier.arx.ARXConfiguration#setSuppressionString(java.lang.String)
@@ -635,7 +665,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
         config.setSuppressionString(suppressionString);
     }
     
-  
     /**
      * Sets the suppression/generalization weight, that will be respected by
      * the NDS metric.
@@ -646,7 +675,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         this.suppressionWeight = suppressionWeight;
     }
-
+    
     /**
      * Sets the config unmodified.
      */

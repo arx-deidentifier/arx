@@ -174,8 +174,18 @@ public abstract class MicroaggregateFunction implements Serializable {
      * Options to handle NULL values.
      */
     public static enum HandlingOfNullValues {
-        IGNORE,
-        IDENTITIY
+        IGNORE("Ignore"),
+        IDENTITIY("Identity");
+        
+        private final String label;
+        
+        HandlingOfNullValues(String label) {
+            this.label = label;
+        }
+        
+        public String getLabel() {
+            return label;
+        }
     }
     
     /**
