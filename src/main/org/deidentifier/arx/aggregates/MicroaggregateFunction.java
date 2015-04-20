@@ -187,7 +187,7 @@ public abstract class MicroaggregateFunction implements Serializable {
         
         /** SVUID. */
         private static final long        serialVersionUID = -2070029487780931767L;
-        /** Commons math object to calculate the statistic. */
+        /** Object to calculate the statistic. */
         private StatisticsSummaryOrdinal stats;
         
         /**
@@ -252,7 +252,7 @@ public abstract class MicroaggregateFunction implements Serializable {
         
         /** SVUID. */
         private static final long        serialVersionUID = -2070029487780931767L;
-        /** Commons math object to calculate the statistic. */
+        /** Object to calculate the statistic. */
         private StatisticsSummaryOrdinal stats;
         
         /**
