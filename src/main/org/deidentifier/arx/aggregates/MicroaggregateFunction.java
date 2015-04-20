@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.DataType.ScaleOfMeasure;
@@ -99,6 +100,80 @@ public abstract class MicroaggregateFunction implements Serializable {
                 
             }
             return castedType.format(castedType.fromDouble(stats.getMean()));
+        }
+    }
+    
+    /**
+     * This class generalizes the given distribution.
+     * @author Florian Kohlmayer
+     *
+     */
+    public static class Generalize extends MicroaggregateFunction {
+        
+        /** SVUID */
+        private static final long serialVersionUID = 7696919455786979059L;
+        
+        private String[][]        hierarchy;
+        
+        public Generalize(HandlingOfNullValues nullValueHandling) {
+            super(nullValueHandling);
+        }
+        
+        public Generalize(Hierarchy hierarchy) {
+            this(hierarchy.getHierarchy());
+        }
+        
+        public Generalize(String[][] hierarchy) {
+            init(hierarchy);
+        }
+        
+        @Override
+        public ScaleOfMeasure getMinimalRequiredScale() {
+            return ScaleOfMeasure.NOMINAL;
+        }
+        
+        public void init(String[][] hierarchy) {
+            this.hierarchy = hierarchy;
+        }
+        
+        @Override
+        public String toString() {
+            return "Microaggrate function: Generalization";
+        }
+        
+        @Override
+        protected String aggregateInternal(Distribution values) {
+            if (hierarchy == null) {
+                throw new IllegalArgumentException("No hierarchy defined");
+            }
+            
+            Iterator<String> it = new DistributionIteratorString(values, dictionary);
+            int generalizedStep = 0;
+            int referenceLine = -1;
+            while (it.hasNext()) {
+                String value = it.next();
+                
+                int line = -1;
+                // find value
+                for (int i = 0; i < hierarchy.length; i++) {
+                    if (hierarchy[i][0].equals(value)) {
+                        line = i;
+                        if (referenceLine == -1) {
+                            referenceLine = i;
+                        }
+                        break;
+                    }
+                }
+                
+                String generalizedValue = hierarchy[line][generalizedStep];
+                
+                while (!generalizedValue.equals(hierarchy[referenceLine][generalizedStep])) {
+                    generalizedStep++;
+                    generalizedValue = hierarchy[line][generalizedStep];
+                }
+                
+            }
+            return hierarchy[referenceLine][generalizedStep];
         }
     }
     
@@ -547,6 +622,22 @@ public abstract class MicroaggregateFunction implements Serializable {
                     @Override
                     public boolean isInstance(MicroaggregateFunction function) {
                         return (function instanceof Median);
+                    }
+                },
+                new MicroaggregationFunctionDescription("Generalization",
+                                                        ScaleOfMeasure.NOMINAL) {
+                    
+                    /** SVUID */
+                    private static final long serialVersionUID = 6887045995246349265L;
+                    
+                    @Override
+                    public MicroaggregateFunction createInstance(HandlingOfNullValues nullValueHandling) {
+                        return new Generalize(nullValueHandling);
+                    }
+                    
+                    @Override
+                    public boolean isInstance(MicroaggregateFunction function) {
+                        return (function instanceof Generalize);
                     }
                 },
         });
