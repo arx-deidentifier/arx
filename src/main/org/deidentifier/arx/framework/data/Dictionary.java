@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.framework.data;
 
-import java.util.Arrays;
-
 import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
@@ -28,47 +26,28 @@ import com.carrotsearch.hppc.ObjectIntOpenHashMap;
  * @author Florian Kohlmayer
  */
 public class Dictionary {
-    
+
     /** The resulting array mapping dimension->integer->string. */
     private final String[][]               mapping;
-    
+
     /** Map used when building the dictionary. */
     private ObjectIntOpenHashMap<String>[] maps;
-    
-    /** Allow modification of the dictionary after finalizing? */
-    private final boolean                  allowModification;
-    
-    /** Rewind dicrionary to this index */
-    private int[]                          lastIndex;
-    
+
     /**
      * Instantiates a new dictionary.
      * 
      * @param dimensions
      *            the dimensions
      */
-    public Dictionary(final int dimensions) {
-        this(dimensions, false);
-    }
-    
-    /**
-     * Instantiates a new dictionary.
-     * 
-     * @param dimensions
-     * @param allowModification
-     */
     @SuppressWarnings("unchecked")
-    public Dictionary(int dimensions, boolean allowModification) {
+    public Dictionary(final int dimensions) {
         maps = new ObjectIntOpenHashMap[dimensions];
         mapping = new String[dimensions][];
         for (int i = 0; i < dimensions; i++) {
             maps[i] = new ObjectIntOpenHashMap<String>();
         }
-        this.allowModification = allowModification;
-        this.lastIndex = new int[dimensions];
-        Arrays.fill(this.lastIndex, -1); // Init
     }
-    
+
     /**
      * Finalizes all dimensions. @see finalize()
      */
@@ -83,16 +62,11 @@ public class Dictionary {
                     mapping[i][values[j]] = (String) keys[j];
                 }
             }
-            if (lastIndex[i] == -1) {
-                lastIndex[i] = maps[i].size();
-            }
+
         }
-        if (!allowModification) {
-            maps = null;
-        }
-        
+        maps = null;
     }
-    
+
     /**
      * Returns the mapping array.
      *
@@ -101,7 +75,7 @@ public class Dictionary {
     public String[][] getMapping() {
         return mapping;
     }
-    
+
     /**
      * Returns the number of dimensions in the dictionary.
      *
@@ -110,7 +84,7 @@ public class Dictionary {
     public int getNumDimensions() {
         return mapping.length;
     }
-    
+
     /**
      * Returns the number of unique values contained before finalizing the
      * dictionary.
@@ -121,7 +95,7 @@ public class Dictionary {
     public int getNumUniqueUnfinalizedValues(final int dimension) {
         return maps[dimension].size();
     }
-    
+
     /**
      * Returns the registered value if present, null otherwise.
      *
@@ -137,7 +111,7 @@ public class Dictionary {
         }
         // return maps[dimension].get(string);
     }
-    
+
     /**
      * Registers a new string at the dictionary.
      * 
@@ -148,11 +122,11 @@ public class Dictionary {
      * @return the int
      */
     public int register(final int dimension, final String string) {
-        
+
         // Prepare
         ObjectIntOpenHashMap<String> map = maps[dimension];
         int size = map.size();
-        
+
         // Return or store
         if (map.putIfAbsent(string, size)) {
             return size;
@@ -160,7 +134,7 @@ public class Dictionary {
             return map.lget();
         }
     }
-    
+
     /**
      * Merges this dictionary with another dictionary.
      *
@@ -174,19 +148,6 @@ public class Dictionary {
         final String[] vals = dictionary.mapping[sourceDimension];
         for (int id = 0; id < vals.length; id++) {
             maps[targetDimension].put(vals[id], id);
-        }
-    }
-    
-    /**
-     * Rewinds the dictionary on the given dimension to the initial rewind position.
-     * @param dimension
-     */
-    public void rewind(final int dimension) {
-        if (!allowModification) {
-            throw new IllegalArgumentException("Not allowed.");
-        }
-        for (int i = lastIndex[dimension]; i < maps[dimension].size(); i++) {
-            maps[dimension].remove(mapping[dimension][i]);
         }
     }
 }

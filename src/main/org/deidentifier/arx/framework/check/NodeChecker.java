@@ -27,6 +27,7 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -48,7 +49,7 @@ public class NodeChecker implements INodeChecker {
     private final Data                     dataGH;
     
     /** The buffer. */
-    private final Data                     bufferOT;
+    private Data                           bufferOT;
     
     /** The microaggregation functions. */
     private final MicroaggregateFunction[] functionsMA;
@@ -155,6 +156,8 @@ public class NodeChecker implements INodeChecker {
         // Microaggregate
         // Important: has to be done before marking outliers!
         if (bufferOT.getMap().length > 0) { //Implicit assumption: only microaggreation is to be done in bufferOT
+            // create new dictionary
+            bufferOT = new Data(bufferOT.getArray(), bufferOT.getHeader(), bufferOT.getMap(), new Dictionary(bufferOT.getHeader().length));
             currentGroupify.microaggregate(transformer.getBuffer(), bufferOT, startIndexMA, numMA, functionsMA);
         }
         

@@ -169,7 +169,7 @@ public class DataManager {
         final Dictionary dictionaryGH = new Dictionary(gh.size());
         final Dictionary dictionaryDI = new Dictionary(se.size() + ma.size());
         final Dictionary dictionaryIS = new Dictionary(is.size());
-        final Dictionary dictionaryOT = new Dictionary(ma.size(), true);
+        final Dictionary dictionaryOT = new Dictionary(ma.size());
         
         // Init maps for reordering the output
         final int[] mapGH = new int[dictionaryGH.getNumDimensions()];
