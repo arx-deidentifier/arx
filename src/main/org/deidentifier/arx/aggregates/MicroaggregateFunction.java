@@ -678,8 +678,7 @@ public abstract class MicroaggregateFunction implements Serializable {
      * @return the string
      */
     public String aggregate(Distribution values) {
-        String returnValue = aggregateInternal(values);
-        return returnValue.intern();
+        return aggregateInternal(values);
     }
     
     /**
