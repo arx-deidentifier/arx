@@ -518,7 +518,6 @@ public class HashGroupify implements IHashGroupify {
                 }
             }
         }
-        bufferOT.getDictionary().finalizeAll();
     }
     
     /**

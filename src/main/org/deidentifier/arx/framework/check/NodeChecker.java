@@ -159,6 +159,8 @@ public class NodeChecker implements INodeChecker {
             // create new dictionary
             bufferOT = new Data(bufferOT.getArray(), bufferOT.getHeader(), bufferOT.getMap(), new Dictionary(bufferOT.getHeader().length));
             currentGroupify.microaggregate(transformer.getBuffer(), bufferOT, startIndexMA, numMA, functionsMA);
+            // Finalize dictionary
+            bufferOT.getDictionary().finalizeAll();
         }
         
         // Find outliers
