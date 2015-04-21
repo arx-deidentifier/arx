@@ -24,6 +24,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
@@ -263,7 +264,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
 
         // Initialize y-axis
         ITitle yAxisTitle = yAxis.getTitle();
-        yAxisTitle.setText("Frequency"); //$NON-NLS-1$
+        yAxisTitle.setText(Resources.getMessage("ViewRisksPlotUniquenessEstimates.0")); //$NON-NLS-1$
         chart.setEnabled(false);
         updateCategories();
     }
