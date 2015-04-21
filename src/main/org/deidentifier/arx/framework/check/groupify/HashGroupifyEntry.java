@@ -46,12 +46,12 @@ public class HashGroupifyEntry {
     public HashGroupifyEntry nextOrdered  = null;
 
     /** The index of the representative row. */
-    public int               representant = -1;
+    public int               representative = -1;
 
     /** Is this class not an outlier?. */
     public boolean           isNotOutlier = false;
 
-    /** Frequency set for sensitive attributes *. */
+    /** Frequency set for other attributes *. */
     public Distribution[]    distributions;
 
     /**

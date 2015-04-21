@@ -34,18 +34,18 @@ public class TransformerAll extends AbstractTransformer {
      *
      * @param data the data
      * @param hierarchies the hierarchies
-     * @param sensitiveValues
+     * @param otherValues
      * @param dictionarySensValue
      * @param dictionarySensFreq
      * @param config
      */
     public TransformerAll(final int[][] data,
                           final GeneralizationHierarchy[] hierarchies,
-                          final int[][] sensitiveValues,
+                          final int[][] otherValues,
                           final IntArrayDictionary dictionarySensValue,
                           final IntArrayDictionary dictionarySensFreq,
                           final ARXConfigurationInternal config) {
-        super(data, hierarchies, sensitiveValues, dictionarySensValue, dictionarySensFreq, config);
+        super(data, hierarchies, otherValues, dictionarySensValue, dictionarySensFreq, config);
     }
 
     /*
@@ -80,8 +80,8 @@ public class TransformerAll extends AbstractTransformer {
     protected void processGroupify() {
         while (element != null) {
 
-            intuple = data[element.representant];
-            outtuple = buffer[element.representant];
+            intuple = data[element.representative];
+            outtuple = buffer[element.representative];
             for (int d = 0; d < dimensions; d++) {
                 final int state = generalization[d];
                 outtuple[d] = map[d][intuple[d]][state];

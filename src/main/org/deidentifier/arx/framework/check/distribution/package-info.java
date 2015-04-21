@@ -17,7 +17,7 @@
  */
 
 /**
- * This package implements means for efficiently maintaining distributions of sensitive values
+ * This package implements means for efficiently maintaining distributions of values
  * for each equivalence class
  * 
  * @author Fabian Prasser

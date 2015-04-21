@@ -288,16 +288,16 @@ public class HashGroupify implements IHashGroupify {
     }
     
     @Override
-    public void addAll(int[] key, int representant, int count, int[] sensitive, int pcount) {
+    public void addAll(int[] generalized, int representative, int count, int[] other, int pcount) {
         
         // Add
-        final int hash = HashTableUtil.hashcode(key);
-        final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
+        final int hash = HashTableUtil.hashcode(generalized);
+        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
         
-        // Is a sensitive attribute provided
-        if (sensitive != null) {
+        // Is a other attribute provided
+        if (other != null) {
             if (entry.distributions == null) {
-                entry.distributions = new Distribution[sensitive.length];
+                entry.distributions = new Distribution[other.length];
                 
                 // TODO: Improve!
                 for (int i = 0; i < entry.distributions.length; i++) {
@@ -305,23 +305,23 @@ public class HashGroupify implements IHashGroupify {
                 }
             }
             
-            // Only add sensitive value if in research subset
-            if (subset == null || subset.contains(representant)) {
+            // Only add other value if in research subset
+            if (subset == null || subset.contains(representative)) {
                 
                 // TODO: Improve!
                 for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i].add(sensitive[i]);
+                    entry.distributions[i].add(other[i]);
                 }
             }
         }
     }
     
     @Override
-    public void addGroupify(int[] key, int representant, int count, Distribution[] distributions, int pcount) {
+    public void addGroupify(int[] generalized, int representative, int count, Distribution[] distributions, int pcount) {
         
         // Add
-        final int hash = HashTableUtil.hashcode(key);
-        final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
+        final int hash = HashTableUtil.hashcode(generalized);
+        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
         
         // Is a distribution provided
         if (distributions != null) {
@@ -338,11 +338,11 @@ public class HashGroupify implements IHashGroupify {
     }
     
     @Override
-    public void addSnapshot(int[] key, int representant, int count, int[][] elements, int[][] frequencies, int pcount) {
+    public void addSnapshot(int[] generalized, int representative, int count, int[][] elements, int[][] frequencies, int pcount) {
         
         // Add
-        final int hash = HashTableUtil.hashcode(key);
-        final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
+        final int hash = HashTableUtil.hashcode(generalized);
+        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
         
         // Is a distribution provided
         if (elements != null) {
@@ -541,28 +541,28 @@ public class HashGroupify implements IHashGroupify {
     /**
      * Internal adder method.
      *
-     * @param key the key
+     * @param generalized the key
      * @param hash the hash
-     * @param representant
+     * @param representative
      * @param count
      * @param pcount
      * @return the hash groupify entry
      */
-    private final HashGroupifyEntry addInternal(final int[] key, final int hash, final int representant, int count, final int pcount) {
+    private final HashGroupifyEntry addInternal(final int[] generalized, final int hash, final int representative, int count, final int pcount) {
         
         // Find or create entry
         int index = hash & (buckets.length - 1);
-        HashGroupifyEntry entry = findEntry(key, index, hash);
+        HashGroupifyEntry entry = findEntry(generalized, index, hash);
         if (entry == null) {
             if (++elementCount > threshold) {
                 rehash();
                 index = hash & (buckets.length - 1);
             }
-            entry = createEntry(key, index, hash, representant);
+            entry = createEntry(generalized, index, hash, representative);
         }
         
         // If we enforce d-presence and the tuple is not contained in the research subset: set its count to zero
-        count = (subset != null && !subset.contains(representant)) ? 0 : count;
+        count = (subset != null && !subset.contains(representative)) ? 0 : count;
         
         // Track size: private table for d-presence, overall table, else
         entry.count += count;
@@ -574,26 +574,26 @@ public class HashGroupify implements IHashGroupify {
             entry.pcount += pcount;
             
             // This is a tuple from the research subset, but the class is not represented by a tuple from the subset.
-            // Or this is a tuple from the subset with a representant that is smaller than the current representant of the tuple (which is also from the subset)
+            // Or this is a tuple from the subset with a representative that is smaller than the current representative of the tuple (which is also from the subset)
             // Reset its representative, which is necessary for rollup / history, because
             // otherwise subset.contains(tupleID) could potentially return false.
-            // Moreover, we *must* always represent classes by its minimal representant to ensure that roll-ups and snapshots can be
+            // Moreover, we *must* always represent classes by its minimal representative to ensure that roll-ups and snapshots can be
             // utilized correctly. This is guaranteed, if there is no research subset, and needs to be enforced explicitly, if there is one.
             //
             // Consider the following scenario
             //
             // 1. Tuple from G1 (Not in subset)
             // 2. Tuple from G2 (Not in subset)
-            // 3. Tuple from G2 <-Representant
-            // 4. Tuple from G1 <-Representant
+            // 3. Tuple from G2 <-Representative
+            // 4. Tuple from G1 <-Representative
             //
             // We assume that G1 and G2 collapse in the next grouping operation.
             //
             // If we iterate over the whole dataset and always choose the last element, the group is represented by tuple 4
-            // If we iterate over a snapshot, G1 will be iterated over before G2 (although it has the larger representant), resetting the representative index 3
+            // If we iterate over a snapshot, G1 will be iterated over before G2 (although it has the larger representative), resetting the representative index 3
             //
             // To prevent this, we always choose the smallest index:
-            entry.representant = (count > 0 && (entry.count == count || entry.representant < representant)) ? representant : entry.representant;
+            entry.representative = (count > 0 && (entry.count == count || entry.representative < representative)) ? representative : entry.representative;
         }
         
         // Compute current total number of outliers, if k-anonymity is contained in the set of criteria
@@ -770,7 +770,7 @@ public class HashGroupify implements IHashGroupify {
     private HashGroupifyEntry createEntry(final int[] key, final int index, final int hash, final int line) {
         final HashGroupifyEntry entry = new HashGroupifyEntry(key, hash);
         entry.next = buckets[index];
-        entry.representant = line;
+        entry.representative = line;
         buckets[index] = entry;
         if (firstEntry == null) {
             firstEntry = entry;

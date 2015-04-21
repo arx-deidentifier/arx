@@ -313,7 +313,7 @@ public class History {
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
             // Store element
-            data[index] = m.representant;
+            data[index] = m.representative;
             data[index + 1] = m.count;
             // Add data for different requirements
             switch (requirements) {

@@ -138,7 +138,7 @@ public class HashGroupifyDistribution {
             comparator = new Comparator<HashGroupifyEntry>(){
                 public int compare(HashGroupifyEntry o1, HashGroupifyEntry o2) {
                     int cmp = Integer.compare(o1.count, o2.count);
-                    return cmp != 0 ? cmp : Integer.compare(o1.representant, o2.representant);
+                    return cmp != 0 ? cmp : Integer.compare(o1.representative, o2.representative);
                 }
             };
         } else {
@@ -169,7 +169,7 @@ public class HashGroupifyDistribution {
                     }
                     
                     cmp = loss1.getInformationLoss().compareTo(loss2.getInformationLoss());
-                    return cmp != 0 ? cmp : Integer.compare(o1.representant, o2.representant);
+                    return cmp != 0 ? cmp : Integer.compare(o1.representative, o2.representative);
                 }
             };
         }
