@@ -17,9 +17,6 @@
 
 package org.deidentifier.arx.framework.check.groupify;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.MicroaggregateFunction;
@@ -31,6 +28,8 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.Metric;
+
+import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
  * A hash groupify operator. It implements a hash table with chaining and keeps
@@ -492,7 +491,7 @@ public class HashGroupify implements IHashGroupify {
     @Override
     public void microaggregate(final int[][] data, final Data bufferOT, final int startMA, final int numMA, final MicroaggregateFunction[] functions) {
         // TODO: to improve performace microaggregation and outlier marking could be integrated
-        Map<Distribution, Integer> cache = new HashMap<Distribution, Integer>();
+        ObjectIntOpenHashMap<Distribution> cache = new ObjectIntOpenHashMap<Distribution>();
         for (int row = 0; row < data.length; row++) {
             if (subset == null || subset.contains(row)) {
                 final int[] key = data[row];
