@@ -288,7 +288,7 @@ public class HashGroupify implements IHashGroupify {
     }
     
     @Override
-    public void addAll(int[] generalized, int representative, int count, int[] other, int pcount) {
+    public void addAll(int[] generalized, int[] other, int representative, int count, int pcount) {
         
         // Add
         final int hash = HashTableUtil.hashcode(generalized);
@@ -317,7 +317,7 @@ public class HashGroupify implements IHashGroupify {
     }
     
     @Override
-    public void addGroupify(int[] generalized, int representative, int count, Distribution[] distributions, int pcount) {
+    public void addGroupify(int[] generalized, Distribution[] distributions, int representative, int count, int pcount) {
         
         // Add
         final int hash = HashTableUtil.hashcode(generalized);
@@ -338,7 +338,7 @@ public class HashGroupify implements IHashGroupify {
     }
     
     @Override
-    public void addSnapshot(int[] generalized, int representative, int count, int[][] elements, int[][] frequencies, int pcount) {
+    public void addSnapshot(int[] generalized, int[][] elements, int[][] frequencies, int representative, int count, int pcount) {
         
         // Add
         final int hash = HashTableUtil.hashcode(generalized);

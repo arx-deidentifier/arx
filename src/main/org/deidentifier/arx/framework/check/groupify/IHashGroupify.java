@@ -32,35 +32,35 @@ public interface IHashGroupify {
      * Generic adder for all combinations of criteria in mode transform ALL.
      *
      * @param generalized
+     * @param other
      * @param representative
      * @param count
-     * @param other
      * @param pcount
      */
-    public abstract void addAll(int[] generalized, int representative, int count, int[] other, int pcount);
+    public abstract void addAll(int[] generalized, int[] other, int representative, int count, int pcount);
     
     /**
      * Generic adder for all combinations of criteria in mode transform GROUPIFY.
      *
      * @param generalized
+     * @param distribution
      * @param representative
      * @param count
-     * @param distribution
      * @param pcount
      */
-    public abstract void addGroupify(int[] generalized, int representative, int count, Distribution[] distribution, int pcount);
+    public abstract void addGroupify(int[] generalized, Distribution[] distribution, int representative, int count, int pcount);
     
     /**
      * Generic adder for all combinations of criteria in mode transform SNAPSHOT.
      *
      * @param generalized
-     * @param representative
-     * @param count
      * @param elements
      * @param frequencies
+     * @param representative
+     * @param count
      * @param pcount
      */
-    public abstract void addSnapshot(int[] generalized, int representative, int count, int[][] elements, int[][] frequencies, int pcount);
+    public abstract void addSnapshot(int[] generalized, int[][] elements, int[][] frequencies, int representative, int count, int pcount);
     
     /**
      * Computes the anonymity properties and suppressed tuples etc. Must be called
