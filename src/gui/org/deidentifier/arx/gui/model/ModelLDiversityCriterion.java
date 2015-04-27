@@ -85,7 +85,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
     	    case VARIANT_DISTINCT: return new DistinctLDiversity(getAttribute(), l);
     	    case VARIANT_ENTROPY: return new EntropyLDiversity(getAttribute(), l); 
     	    case VARIANT_RECURSIVE: return new RecursiveCLDiversity(getAttribute(), c, l);
-	        default: throw new RuntimeException(Resources.getMessage("Model.0")); //$NON-NLS-1$
+	        default: throw new RuntimeException(Resources.getMessage("Model.0e")); //$NON-NLS-1$
 	    }
 	}
 	
@@ -100,7 +100,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 	
 	@Override
     public String getLabel() {
-        return Resources.getMessage("Model.1"); //$NON-NLS-1$
+        return Resources.getMessage("Model.1d"); //$NON-NLS-1$
     }
 	
 	/**
@@ -127,7 +127,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
     @Override
     public void pull(ModelExplicitCriterion criterion) {
         if (!(criterion instanceof ModelLDiversityCriterion)) {
-            throw new RuntimeException(Resources.getMessage("Model.2")); //$NON-NLS-1$
+            throw new RuntimeException(Resources.getMessage("Model.2b")); //$NON-NLS-1$
         }
         ModelLDiversityCriterion other = (ModelLDiversityCriterion)criterion;
         this.variant = other.variant;

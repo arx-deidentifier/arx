@@ -91,7 +91,7 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
         case VARIANT_SAMPLE_UNIQUES:
             return new SampleUniqueness(threshold);
         default:
-            throw new RuntimeException(Resources.getMessage("Model.0")); //$NON-NLS-1$
+            throw new RuntimeException(Resources.getMessage("Model.0b")); //$NON-NLS-1$
         }
 	}
 
@@ -99,19 +99,19 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
     public String getLabel() {
         switch (variant) {
         case VARIANT_AVERAGE_RISK:
-            return Resources.getMessage("Model.1"); //$NON-NLS-1$
+            return Resources.getMessage("Model.1a"); //$NON-NLS-1$
         case VARIANT_POPULATION_UNIQUES_DANKAR:
-            return Resources.getMessage("Model.2"); //$NON-NLS-1$
+            return Resources.getMessage("Model.2a"); //$NON-NLS-1$
         case VARIANT_POPULATION_UNIQUES_PITMAN:
-            return Resources.getMessage("Model.3"); //$NON-NLS-1$
+            return Resources.getMessage("Model.3a"); //$NON-NLS-1$
         case VARIANT_POPULATION_UNIQUES_SNB:
-            return Resources.getMessage("Model.4"); //$NON-NLS-1$
+            return Resources.getMessage("Model.4a"); //$NON-NLS-1$
         case VARIANT_POPULATION_UNIQUES_ZAYATZ:
-            return Resources.getMessage("Model.5"); //$NON-NLS-1$
+            return Resources.getMessage("Model.5a"); //$NON-NLS-1$
         case VARIANT_SAMPLE_UNIQUES:
-            return Resources.getMessage("Model.6"); //$NON-NLS-1$
+            return Resources.getMessage("Model.6a"); //$NON-NLS-1$
         default:
-            throw new RuntimeException(Resources.getMessage("Model.7")); //$NON-NLS-1$
+            throw new RuntimeException(Resources.getMessage("Model.7a")); //$NON-NLS-1$
         }
     }
 	
@@ -148,9 +148,9 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
     public String toString() {
         switch (variant) {
         case VARIANT_AVERAGE_RISK:
-            return Resources.getMessage("Model.8") + threshold + Resources.getMessage("Model.9"); //$NON-NLS-1$ //$NON-NLS-2$
+            return Resources.getMessage("Model.8a") + threshold + Resources.getMessage("Model.9a"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_POPULATION_UNIQUES_DANKAR:
-            return Resources.getMessage("Model.10") + threshold + Resources.getMessage("Model.11"); //$NON-NLS-1$ //$NON-NLS-2$
+            return Resources.getMessage("Model.10a") + threshold + Resources.getMessage("Model.11"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_POPULATION_UNIQUES_PITMAN:
             return Resources.getMessage("Model.12") + threshold + Resources.getMessage("Model.13"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_POPULATION_UNIQUES_SNB:

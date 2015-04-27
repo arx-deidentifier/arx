@@ -74,7 +74,7 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 	@Override
     public String getLabel() {
         // TODO: Move to messages.properties
-        return Resources.getMessage("Model.0") + '\u03B4' + Resources.getMessage("Model.1"); //$NON-NLS-1$ //$NON-NLS-2$
+        return Resources.getMessage("Model.0d") + '\u03B4' + Resources.getMessage("Model.1c"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
@@ -109,6 +109,6 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
     @Override
     public String toString() {
         // TODO: Move to messages.properties
-        return Resources.getMessage("Model.2")+String.valueOf(dmin)+Resources.getMessage("Model.3")+String.valueOf(dmax)+Resources.getMessage("Model.4"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return Resources.getMessage("Model.2c")+String.valueOf(dmin)+Resources.getMessage("Model.3c")+String.valueOf(dmax)+Resources.getMessage("Model.4c"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }
