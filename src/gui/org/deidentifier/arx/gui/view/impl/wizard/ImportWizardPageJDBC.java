@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2014 Karol Babioch <karol@babioch.de>
+ * Copyright 2014-2015 Karol Babioch, Fabian Prasser
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,19 +115,20 @@ public class ImportWizardPageJDBC extends WizardPage {
     /**  TODO */
     private Composite container;
 
-    /* String constants for different database types */
-    /**  TODO */
-    private static final String MSSQL = "MS SQL"; //$NON-NLS-1$
+    /** TODO */
+    private static final String ORACLE     = "Oracle";    //$NON-NLS-1$
 
-    /**  TODO */
-    private static final String MYSQL = "MySQL"; //$NON-NLS-1$
-    
-    /**  TODO */
+    /** TODO */
+    private static final String MSSQL      = "MS SQL";    //$NON-NLS-1$
+
+    /** TODO */
+    private static final String MYSQL      = "MySQL";     //$NON-NLS-1$
+
+    /** TODO */
     private static final String POSTGRESQL = "PostgreSQL"; //$NON-NLS-1$
-    
-    /**  TODO */
-    private static final String SQLITE = "SQLite"; //$NON-NLS-1$
 
+    /** TODO */
+    private static final String SQLITE     = "SQLite";    //$NON-NLS-1$
 
     /**
      * Creates a new instance of this page and sets its title and description.
@@ -165,7 +166,7 @@ public class ImportWizardPageJDBC extends WizardPage {
         /* Combo for choosing database type */
         comboType = new Combo(container, SWT.READ_ONLY);
         comboType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        comboType.setItems(new String[] {MSSQL, MYSQL, POSTGRESQL, SQLITE});
+        comboType.setItems(new String[] {ORACLE, MSSQL, POSTGRESQL, MYSQL, SQLITE});
         comboType.addSelectionListener(new SelectionAdapter() {
 
             /**
@@ -197,7 +198,9 @@ public class ImportWizardPageJDBC extends WizardPage {
                             txtPort.setText("3306"); //$NON-NLS-1$
                         } else if (comboType.getText().equals(POSTGRESQL)) {
                             txtPort.setText("5432"); //$NON-NLS-1$
-                        }
+                        } else if (comboType.getText().equals(ORACLE)) {
+                            txtPort.setText("1521"); //$NON-NLS-1$
+                        } 
                     }
                 }
 
@@ -392,7 +395,7 @@ public class ImportWizardPageJDBC extends WizardPage {
      * Unless all mandatory fields (everything besides the password) are
      * not empty this will try to connect to the database. It sets the message
      * and errors of this page accordingly and will also try to read in the
-     * tables once a successfull connection has been established.
+     * tables once a successful connection has been established.
      *
      * @see {@link #readTables()}
      */
@@ -440,6 +443,11 @@ public class ImportWizardPageJDBC extends WizardPage {
                 Class.forName("org.sqlite.JDBC"); //$NON-NLS-1$
                 connection = DriverManager.getConnection("jdbc:sqlite:" + comboLocation.getText()); //$NON-NLS-1$
 
+            } else if (comboType.getText().equals(POSTGRESQL)) {
+
+                Class.forName("org.postgresql.Driver"); //$NON-NLS-1$
+                connection = DriverManager.getConnection("jdbc:postgresql://" + txtServer.getText() + ":" + txtPort.getText() + "/" + txtDatabase.getText(), txtUsername.getText(), txtPassword.getText()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
             } else if (comboType.getText().equals(MSSQL)) {
 
                 Class.forName("net.sourceforge.jtds.jdbc.Driver"); //$NON-NLS-1$
@@ -449,13 +457,12 @@ public class ImportWizardPageJDBC extends WizardPage {
 
                 Class.forName("com.mysql.jdbc.Driver"); //$NON-NLS-1$
                 connection = DriverManager.getConnection("jdbc:mysql://" + txtServer.getText() + ":" + txtPort.getText() + "/" + txtDatabase.getText(), txtUsername.getText(), txtPassword.getText()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            } else if (comboType.getText().equals(ORACLE)) {
 
-            } else if (comboType.getText().equals(POSTGRESQL)) {
-
-                Class.forName("org.postgresql.Driver"); //$NON-NLS-1$
-                connection = DriverManager.getConnection("jdbc:postgresql://" + txtServer.getText() + ":" + txtPort.getText() + "/" + txtDatabase.getText(), txtUsername.getText(), txtPassword.getText()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+                Class.forName("oracle.jdbc.driver.OracleDriver"); //$NON-NLS-1$
+                connection = DriverManager.getConnection("jdbc:oracle:thin:@" + txtServer.getText() + ":" + txtPort.getText() + ":" + txtDatabase.getText(), txtUsername.getText(), txtPassword.getText()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
+            
             try {
                 if (!wizardImport.getData().getJdbcConnection().isClosed()) {
                     wizardImport.getData().getJdbcConnection().close();
