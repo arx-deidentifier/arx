@@ -93,6 +93,20 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
     }
     
     /**
+     * Closes any underlying JDBC connection that may have been created by ARX. If this object was constructed with a
+     * JDBC connection, you need to close it yourself.
+     */
+    public void close() {
+        if (this.manageConnection) {
+            try {
+                this.connection.close();
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
+    }
+    
+    /**
      * Adds a single column to import from
      * 
      * This makes sure that only {@link ImportColumnJDBC} can be added,
