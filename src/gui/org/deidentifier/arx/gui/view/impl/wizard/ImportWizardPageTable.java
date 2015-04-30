@@ -281,11 +281,12 @@ public class ImportWizardPageTable extends WizardPage {
         List<ImportWizardModelColumn> columns = new ArrayList<ImportWizardModelColumn>();
         
         int i = 0;
+        ResultSet rs = null;
         try {
-            ResultSet rs = connection.getMetaData().getColumns(null,
-                                                               null,
-                                                               selectedTable,
-                                                               null);
+            rs = connection.getMetaData().getColumns(null,
+                                                     null,
+                                                     selectedTable,
+                                                     null);
             
             while (rs.next()) {
                 ImportColumnJDBC column = new ImportColumnJDBC(i++,
@@ -296,6 +297,14 @@ public class ImportWizardPageTable extends WizardPage {
             
         } catch (SQLException e) {
             setErrorMessage(Resources.getMessage("ImportWizardPageTable.17")); //$NON-NLS-1$
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                /* Ignore silently */
+            }
         }
         
         wizardImport.getData().setWizardColumns(columns);
@@ -333,7 +342,7 @@ public class ImportWizardPageTable extends WizardPage {
             setErrorMessage(Resources.getMessage("ImportWizardPageTable.18")); //$NON-NLS-1$
         } finally {
             try {
-                if (rs != null && !rs.isClosed()) {
+                if (rs != null) {
                     rs.close();
                 }
             } catch (SQLException e) {
@@ -376,13 +385,16 @@ public class ImportWizardPageTable extends WizardPage {
             /* Ignore silently */
         } finally {
             try {
-                if (statement != null && !statement.isClosed()) {
-                    statement.close();
-                }
-                if (resultSet != null && !resultSet.isClosed()) {
+                if (resultSet != null) {
                     resultSet.close();
                 }
-                
+            } catch (SQLException e) {
+                /* Ignore silently */
+            }
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
             } catch (SQLException e) {
                 /* Ignore silently */
             }
@@ -404,13 +416,15 @@ public class ImportWizardPageTable extends WizardPage {
         
         List<String[]> previewData = new ArrayList<String[]>();
         Connection connection = wizardImport.getData().getJdbcConnection();
+        Statement statement = null;
+        ResultSet rs = null;
         
         try {
             
-            Statement statement = connection.createStatement();
+            statement = connection.createStatement();
             statement.setMaxRows(ImportWizardModel.PREVIEW_MAX_LINES);
             statement.execute("SELECT * FROM " + selectedTable); //$NON-NLS-1$
-            ResultSet rs = statement.getResultSet();
+            rs = statement.getResultSet();
             
             while (rs.next()) {
                 String[] previewRow = new String[rs.getMetaData()
@@ -423,6 +437,21 @@ public class ImportWizardPageTable extends WizardPage {
             }
         } catch (SQLException e) {
             setErrorMessage(Resources.getMessage("ImportWizardPageTable.21")); //$NON-NLS-1$
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                /* Ignore silently */
+            }
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e) {
+                /* Ignore silently */
+            }
         }
         
         wizardImport.getData().setPreviewData(previewData);

@@ -36,20 +36,23 @@ import org.deidentifier.arx.DataType;
  * @author Fabian Prasser
  */
 public class ImportAdapterJDBC extends ImportAdapter {
-
+    
     /** The configuration describing the CSV file being used. */
     private ImportConfigurationJDBC config;
-
+    
     /**
      * ResultSet containing rows to return.
      *
      * @see {@link #next()}
      */
     private ResultSet               resultSet;
-
+    
+    /** JDBC statement. */
+    private Statement               statement;
+    
     /** Indicates whether there is another row to return. */
     private boolean                 hasNext;
-
+    
     /**
      * Indicates whether the first row has already been returned
      * 
@@ -58,14 +61,14 @@ public class ImportAdapterJDBC extends ImportAdapter {
      * value of the table itself, the value defined by the user.
      */
     private boolean                 headerReturned;
-
+    
     /**
      * Number of rows that need to be processed in total.
      *
      * @see {@link #getProgress()}
      */
     private int                     totalRows;
-
+    
     /**
      * Creates a new instance of this object with given configuration.
      *
@@ -74,48 +77,49 @@ public class ImportAdapterJDBC extends ImportAdapter {
      * @todo Fix IOException
      */
     protected ImportAdapterJDBC(ImportConfigurationJDBC config) throws IOException {
-
+        
         super(config);
         this.config = config;
-
+        
         /* Preparation work */
         indexes = getIndexesToImport();
         dataTypes = getColumnDatatypes();
-
+        
         try {
-
-            Statement statement;
-
+            
             /* Used to keep track of progress */
             statement = config.getConnection().createStatement();
             statement.execute("SELECT COUNT(*) FROM " + config.getTable());
             resultSet = statement.getResultSet();
-
+            
             if (resultSet.next()) {
-
+                
                 totalRows = resultSet.getInt(1);
                 if (totalRows == 0) {
+                    closeResources();
                     throw new IOException("Table doesn't contain any rows");
                 }
-
+                
             } else {
+                closeResources();
                 throw new IOException("Couldn't determine number of rows");
             }
-
+            
             /* Query for actual data */
             statement = config.getConnection().createStatement();
             statement.execute("SELECT * FROM " + config.getTable());
             resultSet = statement.getResultSet();
             hasNext = resultSet.next();
-
+            
         } catch (SQLException e) {
+            closeResources();
             throw new IOException(e.getMessage());
         }
-
+        
         // Create header
         header = createHeader();
     }
-
+    
     /**
      * Returns the percentage of data that has already been returned
      * 
@@ -127,14 +131,14 @@ public class ImportAdapterJDBC extends ImportAdapter {
      */
     @Override
     public int getProgress() {
-
+        
         try {
             return (int) (((double) resultSet.getRow() / (double) totalRows) * 100d);
         } catch (SQLException e) {
             return 0;
         }
     }
-
+    
     /**
      * Indicates whether there is another element to return
      * 
@@ -146,7 +150,7 @@ public class ImportAdapterJDBC extends ImportAdapter {
     public boolean hasNext() {
         return hasNext;
     }
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -154,33 +158,35 @@ public class ImportAdapterJDBC extends ImportAdapter {
      */
     @Override
     public String[] next() {
-
+        
         /* Return header in first iteration */
         if (!headerReturned) {
             headerReturned = true;
             return header;
         }
-
+        
         try {
-
+            
             /* Create regular row */
             String[] result = new String[indexes.length];
             for (int i = 0; i < indexes.length; i++) {
-
+                
                 result[i] = resultSet.getString(indexes[i]);
                 if (!dataTypes[i].isValid(result[i])) {
                     if (config.columns.get(i).isCleansing()) {
                         result[i] = DataType.NULL_VALUE;
                     } else {
+                        closeResources();
                         throw new IllegalArgumentException("Data value does not match data type");
                     }
                 }
             }
-
+            
             /* Move cursor forward and assign result to {@link #hasNext} */
             hasNext = resultSet.next();
-
+            
             if (!hasNext) {
+                closeResources();
                 try {
                     if (!config.getConnection().isClosed()) {
                         config.getConnection().close();
@@ -189,14 +195,15 @@ public class ImportAdapterJDBC extends ImportAdapter {
                     /* Die silently */
                 }
             }
-
+            
             return result;
-
+            
         } catch (SQLException e) {
+            closeResources();
             throw new RuntimeException("Couldn't retrieve data from database");
         }
     }
-
+    
     /**
      * Dummy.
      */
@@ -204,7 +211,27 @@ public class ImportAdapterJDBC extends ImportAdapter {
     public void remove() {
         throw new UnsupportedOperationException();
     }
-
+    
+    /**
+     * Closes the JDBC resources.
+     */
+    private void closeResources() {
+        try {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+        } catch (Exception e) {
+            /* Ignore silently */
+        }
+        try {
+            if (statement != null) {
+                statement.close();
+            }
+        } catch (Exception e) {
+            /* Ignore silently */
+        }
+    }
+    
     /**
      * Creates the header row
      * 
@@ -216,24 +243,24 @@ public class ImportAdapterJDBC extends ImportAdapter {
      * @return
      */
     private String[] createHeader() {
-
+        
         /* Initialization */
         String[] header = new String[config.getColumns().size()];
         List<ImportColumn> columns = config.getColumns();
-
+        
         /* Create header */
         for (int i = 0, len = columns.size(); i < len; i++) {
-
+            
             ImportColumn column = columns.get(i);
-
+            
             /* Check whether name has been assigned explicitly or is nonempty */
             if ((column.getAliasName() != null) &&
                 !column.getAliasName().equals("")) {
-
+                
                 header[i] = column.getAliasName();
-
+                
             } else {
-
+                
                 /* Assign name from JDBC metadata */
                 try {
                     /* +1 offset, because counting in JDBC starts at 1 */
@@ -244,12 +271,12 @@ public class ImportAdapterJDBC extends ImportAdapter {
             }
             column.setAliasName(header[i]);
         }
-
+        
         /* Return header */
         return header;
-
+        
     }
-
+    
     /**
      * Returns an array with indexes of columns that should be imported
      * 
@@ -260,18 +287,18 @@ public class ImportAdapterJDBC extends ImportAdapter {
      * @return Array containing indexes of columns that should be imported
      */
     protected int[] getIndexesToImport() {
-
+        
         /* Get indexes to import from */
         ArrayList<Integer> indexes = new ArrayList<Integer>();
         for (ImportColumn column : config.getColumns()) {
             indexes.add(((ImportColumnJDBC) column).getIndex());
         }
-
+        
         int[] result = new int[indexes.size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = indexes.get(i) + 1;
         }
-
+        
         return result;
     }
 }

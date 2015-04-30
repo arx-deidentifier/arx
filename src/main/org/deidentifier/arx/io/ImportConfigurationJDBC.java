@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
  * @author Fabian Prasser
  */
 public class ImportConfigurationJDBC extends ImportConfiguration {
-
+    
     /**
      * Connection to be used.
      *
@@ -38,7 +38,7 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
      * @see {@link #getConnection()}
      */
     private Connection connection;
-
+    
     /**
      * Name of table to be used.
      *
@@ -46,7 +46,7 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
      * @see {@link #getTable()}
      */
     private String     table;
-
+    
     /**
      * Creates a new instance of this object.
      *
@@ -57,7 +57,7 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
         setConnection(connection);
         setTable(table);
     }
-
+    
     /**
      * Creates a new instance of this object.
      *
@@ -69,7 +69,7 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
         setConnection(DriverManager.getConnection(url));
         setTable(table);
     }
-
+    
     /**
      * Creates a new instance of this object.
      *
@@ -83,7 +83,7 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
         setConnection(DriverManager.getConnection(url, user, password));
         setTable(table);
     }
-
+    
     /**
      * Adds a single column to import from
      * 
@@ -95,22 +95,22 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
      */
     @Override
     public void addColumn(ImportColumn column) {
-
+        
         if (!(column instanceof ImportColumnJDBC)) {
             throw new IllegalArgumentException("");
         }
-
+        
         if (((ImportColumnJDBC) column).getIndex() == -1) {
             int index = getIndexForColumn(((ImportColumnJDBC) column).getName());
             ((ImportColumnJDBC) column).setIndex(index);
         }
-
+        
         for (ImportColumn c : columns) {
-
+            
             if (((ImportColumnJDBC) column).getIndex() == ((ImportColumnJDBC) c).getIndex()) {
                 throw new IllegalArgumentException("Column for this index already assigned");
             }
-
+            
             if (column.getAliasName() != null && c.getAliasName() != null &&
                 c.getAliasName().equals(column.getAliasName())) {
                 throw new IllegalArgumentException("Column names need to be unique");
@@ -118,21 +118,21 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
         }
         this.columns.add(column);
     }
-
+    
     /**
      * @return {@link #connection}
      */
     public Connection getConnection() {
         return connection;
     }
-
+    
     /**
      * @return {@link #table}
      */
     public String getTable() {
         return table;
     }
-
+    
     /**
      * @param connection
      *            {@link #setConnection(Connection)}
@@ -140,7 +140,7 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
     public void setConnection(Connection connection) {
         this.connection = connection;
     }
-
+    
     /**
      * @param table
      *            {@link #setTable(String)}
@@ -148,7 +148,7 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
     public void setTable(String table) {
         this.table = table;
     }
-
+    
     /**
      * 
      *
@@ -157,25 +157,38 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
      * @throws NoSuchElementException
      */
     private int getIndexForColumn(String aliasName) throws NoSuchElementException {
+        ResultSet rs = null;
+        int index = -1;
         try {
-
-            ResultSet rs = connection.getMetaData().getColumns(null,
-                                                               null,
-                                                               table,
-                                                               null);
-
+            
+            rs = connection.getMetaData().getColumns(null,
+                                                     null,
+                                                     table,
+                                                     null);
+            
             int i = 0;
             while (rs.next()) {
                 if (rs.getString("COLUMN_NAME").equals(aliasName)) {
-                    return i;
+                    index = i;
                 }
                 i++;
             }
         } catch (SQLException e) {
-            /* Catch silently*/
+            /* Catch silently */
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                /* Ignore silently */
+            }
+        }
+        if (index != -1) {
+            return index;
         }
         throw new NoSuchElementException("Index for column '" + aliasName +
                                          "' couldn't be found");
-
+        
     }
 }
