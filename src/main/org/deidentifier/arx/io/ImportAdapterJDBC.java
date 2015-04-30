@@ -187,13 +187,6 @@ public class ImportAdapterJDBC extends ImportAdapter {
             
             if (!hasNext) {
                 closeResources();
-                try {
-                    if (!config.getConnection().isClosed()) {
-                        config.getConnection().close();
-                    }
-                } catch (Exception e) {
-                    /* Die silently */
-                }
             }
             
             return result;
@@ -229,6 +222,13 @@ public class ImportAdapterJDBC extends ImportAdapter {
             }
         } catch (Exception e) {
             /* Ignore silently */
+        }
+        try {
+            if (config.isManageConnection()) {
+                config.getConnection().close();
+            }
+        } catch (Exception e) {
+            /* Die silently */
         }
     }
     

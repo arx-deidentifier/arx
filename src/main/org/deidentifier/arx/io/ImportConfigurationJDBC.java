@@ -48,14 +48,20 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
     private String     table;
     
     /**
+     * Determines whether we need to manage the JDBC connection.
+     */
+    private final boolean manageConnection;
+    
+    /**
      * Creates a new instance of this object.
      *
      * @param connection {@link #setConnection(Connection)}
      * @param table {@link #setTable(String)}
      */
     public ImportConfigurationJDBC(Connection connection, String table) {
-        setConnection(connection);
-        setTable(table);
+        this.connection = connection;
+        this.table = table;
+        this.manageConnection = false;
     }
     
     /**
@@ -66,8 +72,9 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
      * @throws SQLException
      */
     public ImportConfigurationJDBC(String url, String table) throws SQLException {
-        setConnection(DriverManager.getConnection(url));
-        setTable(table);
+        this.connection = DriverManager.getConnection(url);
+        this.table = table;
+        this.manageConnection = true;
     }
     
     /**
@@ -80,8 +87,9 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
      * @throws SQLException
      */
     public ImportConfigurationJDBC(String url, String user, String password, String table) throws SQLException {
-        setConnection(DriverManager.getConnection(url, user, password));
-        setTable(table);
+        this.connection = DriverManager.getConnection(url, user, password);
+        this.table = table;
+        this.manageConnection = true;
     }
     
     /**
@@ -122,31 +130,23 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
     /**
      * @return {@link #connection}
      */
-    public Connection getConnection() {
-        return connection;
+    protected Connection getConnection() {
+        return this.connection;
     }
     
     /**
      * @return {@link #table}
      */
-    public String getTable() {
-        return table;
+    protected String getTable() {
+        return this.table;
     }
     
     /**
-     * @param connection
-     *            {@link #setConnection(Connection)}
+     * Returns whether we need to close the connection
+     * @return
      */
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-    
-    /**
-     * @param table
-     *            {@link #setTable(String)}
-     */
-    public void setTable(String table) {
-        this.table = table;
+    protected boolean isManageConnection() {
+        return this.manageConnection;
     }
     
     /**
