@@ -93,16 +93,13 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
     }
     
     /**
-     * Closes any underlying JDBC connection that may have been created by ARX. If this object was constructed with a
-     * JDBC connection, you need to close it yourself.
+     * Closes any underlying JDBC connection that may have either been created by ARX or passed during construction.
      */
     public void close() {
-        if (this.manageConnection) {
-            try {
-                this.connection.close();
-            } catch (Exception e) {
-                // Ignore
-            }
+        try {
+            this.connection.close();
+        } catch (Exception e) {
+            // Ignore
         }
     }
     
