@@ -259,7 +259,7 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
         } else if (data.getSourceType() == SourceType.JDBC) {
 
             configuration = new ImportConfigurationJDBC(data.getJdbcConnection(),
-                                                  data.getSelectedJdbcTable());
+                                                        data.getSelectedJdbcTable());
 
         } else {
             throw new RuntimeException("Configuration type not supported"); //$NON-NLS-1$
