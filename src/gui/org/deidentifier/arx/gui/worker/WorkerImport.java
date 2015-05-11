@@ -24,6 +24,7 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
+import org.deidentifier.arx.io.ImportConfigurationJDBC;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -35,9 +36,9 @@ public class WorkerImport extends Worker<Data> {
 
     /** The path. */
     private final ImportConfiguration config;
-    
+
     /** The stop flag. */
-    private volatile boolean              stop = false;
+    private volatile boolean          stop = false;
 
     /**
      * Creates a new instance.
@@ -58,6 +59,7 @@ public class WorkerImport extends Worker<Data> {
         try {
             adapter = ImportAdapter.create(config);
         } catch (final Exception e) {
+            close(config);
             error = e;
             arg0.done();
             return;
@@ -88,12 +90,28 @@ public class WorkerImport extends Worker<Data> {
             result.getHandle(); // Prepare the handle
             stop = true;
             arg0.worked(1);
+            close(config);
             arg0.done();
         } catch (final Exception e) {
+            close(config);
             error = e;
             stop = true;
             arg0.done();
             return;
+        }
+    }
+
+    /**
+     * Closes any underlying JDBC connection
+     * @param config
+     */
+    private void close(ImportConfiguration config) {
+        if (config instanceof ImportConfigurationJDBC) {
+            try {
+                ((ImportConfigurationJDBC)config).close();
+            } catch (Exception e) {
+                // Die silently
+            }
         }
     }
 }

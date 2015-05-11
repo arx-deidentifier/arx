@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2014 Karol Babioch <karol@babioch.de>
+ * Copyright 2014-2015 Karol Babioch, Fabian Prasser
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -259,7 +259,7 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
         } else if (data.getSourceType() == SourceType.JDBC) {
 
             configuration = new ImportConfigurationJDBC(data.getJdbcConnection(),
-                                                  data.getSelectedJdbcTable());
+                                                        data.getSelectedJdbcTable());
 
         } else {
             throw new RuntimeException("Configuration type not supported"); //$NON-NLS-1$
