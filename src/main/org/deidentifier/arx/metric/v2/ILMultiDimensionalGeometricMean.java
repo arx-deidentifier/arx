@@ -30,10 +30,10 @@ import org.deidentifier.arx.metric.InformationLoss;
  * @author Florian Kohlmayer
  */
 public class ILMultiDimensionalGeometricMean extends AbstractILMultiDimensionalReduced {
-
+    
     /** SVUID. */
     private static final long serialVersionUID = 621501985571033348L;
-
+    
     /**
      * Creates a new instance.
      *
@@ -44,20 +44,20 @@ public class ILMultiDimensionalGeometricMean extends AbstractILMultiDimensionalR
                                     final double[] weights) {
         super(values, weights);
     }
-
+    
     @Override
     public InformationLoss<double[]> clone() {
         return new ILMultiDimensionalGeometricMean(getValues(),
                                                    getWeights());
     }
-
+    
     @Override
     protected double getAggregate() {
         double[] values = getValues();
         double[] weights = getWeights();
         double result = 1.0d;
         for (int i = 0; i < values.length; i++) {
-            result *= Math.pow((values[i] + 1d) * weights[i], 1.0d / (double) values.length);
+            result *= Math.pow((values[i] * weights[i] + 1d), 1.0d / (double) values.length);
         }
         return result - 1d;
     }
