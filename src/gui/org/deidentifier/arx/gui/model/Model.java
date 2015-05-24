@@ -327,9 +327,13 @@ public class Model implements Serializable {
                 definition.setAttributeType(attr, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
                 definition.setMicroAggregationFunction(attr, function);
             } else {
+                
+                // This increases the precision of the Loss utility measure
+                if (config.getHierarchyBuilder(attr) != null) {
+                    definition.setHierarchy(attr, config.getHierarchyBuilder(attr));
+                }
                 definition.setMicroAggregationFunction(attr, null);
                 Hierarchy hierarchy = config.getHierarchy(attr);
-                /* Handle non-existent hierarchies */
                 if (hierarchy != null && hierarchy.getHierarchy() != null) {
                     definition.setHierarchy(attr, hierarchy);
                 }
