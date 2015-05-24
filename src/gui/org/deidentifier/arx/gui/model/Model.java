@@ -332,7 +332,7 @@ public class Model implements Serializable {
             } else {
                 
                 // This increases the precision of the Loss utility measure
-                if (config.getHierarchyBuilder(attr) != null) {
+                if (this.getUseFunctionalHierarchies() && config.getHierarchyBuilder(attr) != null) {
                     definition.setHierarchy(attr, config.getHierarchyBuilder(attr));
                 }
                 definition.setMicroAggregationFunction(attr, null);
