@@ -280,7 +280,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
          */
         private <T> T getValueAt(List<T> values, List<Integer> frequencies, int index) {
             int pointer = 0;
-            while (frequencies.get(index) < index) {
+            while (frequencies.get(pointer) < index) {
                 pointer++;
             }
             return values.get(pointer);
