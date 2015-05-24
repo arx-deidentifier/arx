@@ -101,7 +101,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * @param ignoreMissingData
          */
         public DistributionAggregateFunctionGeneralization(boolean ignoreMissingData) {
-            super(ignoreMissingData, true);
+            super(ignoreMissingData, false);
         }
 
         @Override
