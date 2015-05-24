@@ -324,13 +324,14 @@ public class Model implements Serializable {
             
             if (config.getTransformationMode(attr) == ModelTransformationMode.MICRO_AGGREGATION) {
                 MicroAggregationFunction function = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
-                definition.setAttributeType(attr, function);
+                definition.setAttributeType(attr, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+                definition.setMicroAggregationFunction(attr, function);
             } else {
+                definition.setMicroAggregationFunction(attr, null);
                 Hierarchy hierarchy = config.getHierarchy(attr);
                 /* Handle non-existent hierarchies */
-                if (hierarchy == null || hierarchy.getHierarchy() == null) {
-                    hierarchy = Hierarchy.create();
-                    config.setHierarchy(attr, hierarchy);
+                if (hierarchy != null && hierarchy.getHierarchy() != null) {
+                    definition.setHierarchy(attr, hierarchy);
                 }
                 Integer min = config.getMinimumGeneralization(attr);
                 Integer max = config.getMaximumGeneralization(attr);

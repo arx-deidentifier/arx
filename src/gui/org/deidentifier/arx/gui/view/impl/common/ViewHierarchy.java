@@ -752,7 +752,7 @@ public class ViewHierarchy implements IView {
     private void createTable(final Composite parent) {
         
         // Create base composite
-        this.base = new Composite(parent, SWT.NONE | SWT.BORDER);
+        this.base = new Composite(parent, SWT.NONE);
         GridData bottomLayoutData = SWTUtil.createFillGridData();
         bottomLayoutData.grabExcessVerticalSpace = true;
         GridLayout bottomLayout = new GridLayout();

@@ -24,8 +24,10 @@ import java.util.List;
 
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataScale;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXOrderedString;
 import org.deidentifier.arx.DataType.DataTypeDescription;
@@ -33,9 +35,9 @@ import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
-import org.deidentifier.arx.gui.model.ModelTransformationMode;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
+import org.deidentifier.arx.gui.model.ModelTransformationMode;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
@@ -46,6 +48,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -75,6 +78,9 @@ public class ViewAttributeDefinition implements IView {
                                                         Resources.getMessage("AttributeDefinitionView.2"), //$NON-NLS-1$
                                                         Resources.getMessage("AttributeDefinitionView.3") }; //$NON-NLS-1$
     
+    /** Resource */
+    private static final List<MicroAggregationFunctionDescription> FUNCTIONS = AttributeType.listMicroAggregationFunctions(); 
+                                                                    
 
     /** Resource */
     private final Image                  IMAGE_IDENTIFYING;
@@ -103,14 +109,14 @@ public class ViewAttributeDefinition implements IView {
     /** Widget */
     private final Combo                  cmbType;
     /** Widget */
-    private Button                       btnGeneralization;
+    private final Combo                  cmbMode;
     /** Widget */
-    private Button                       btnMicroaggregation;
+    private final Combo                  cmbFunction;
+    /** Widget */
+    private final Button                 btnMissing;
     
     /** View */
     private final ViewHierarchy          viewGeneralization;
-    /** View */
-    private final ViewMicoaggregation    viewMicroaggregation;
     
     /**
      * Constructor.
@@ -135,6 +141,7 @@ public class ViewAttributeDefinition implements IView {
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.INPUT, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(ModelPart.DATA_TYPE, this);
         
         // Create input group
         tabItem = new CTabItem(parent, SWT.NULL);
@@ -142,22 +149,25 @@ public class ViewAttributeDefinition implements IView {
         tabItem.setShowClose(false);
         tabItem.setImage(IMAGE_INSENSITIVE);
         
+        // Group
         Composite group = new Composite(parent, SWT.NULL);
         group.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
         groupInputGridLayout.numColumns = 1;
         group.setLayout(groupInputGridLayout);
         
-        final Composite type = new Composite(group, SWT.NULL);
-        type.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        // Group
+        final Composite innerGroup = new Composite(group, SWT.NULL);
+        innerGroup.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout typeInputGridLayout = new GridLayout();
         typeInputGridLayout.numColumns = 6;
-        type.setLayout(typeInputGridLayout);
+        innerGroup.setLayout(typeInputGridLayout);
         
+        // Combo for attribute type
         final IView outer = this;
-        final Label kLabel = new Label(type, SWT.PUSH);
+        final Label kLabel = new Label(innerGroup, SWT.PUSH);
         kLabel.setText(Resources.getMessage("AttributeDefinitionView.7")); //$NON-NLS-1$
-        cmbType = new Combo(type, SWT.READ_ONLY);
+        cmbType = new Combo(innerGroup, SWT.READ_ONLY);
         cmbType.setLayoutData(SWTUtil.createFillGridData());
         cmbType.setItems(COMBO1_VALUES);
         cmbType.select(0);
@@ -233,9 +243,10 @@ public class ViewAttributeDefinition implements IView {
             }
         });
         
-        final Label kLabel2 = new Label(type, SWT.PUSH);
+        // Combo for data type
+        final Label kLabel2 = new Label(innerGroup, SWT.PUSH);
         kLabel2.setText(Resources.getMessage("AttributeDefinitionView.8")); //$NON-NLS-1$
-        cmbDataType = new Combo(type, SWT.READ_ONLY);
+        cmbDataType = new Combo(innerGroup, SWT.READ_ONLY);
         cmbDataType.setLayoutData(SWTUtil.createFillGridData());
         cmbDataType.setItems(getDataTypes());
         cmbDataType.select(getIndexOfDataType(DataType.STRING));
@@ -292,6 +303,7 @@ public class ViewAttributeDefinition implements IView {
                         
                         // Set and update
                         model.getInputDefinition().setDataType(attribute, type);
+                        updateFunction();
                         updateDataType();
                         controller.update(new ModelEvent(outer, ModelPart.DATA_TYPE, attribute));
                     }
@@ -299,54 +311,104 @@ public class ViewAttributeDefinition implements IView {
             }
         });
         
-        final Label kLabel3 = new Label(type, SWT.PUSH);
+        final Label kLabel3 = new Label(innerGroup, SWT.PUSH);
         kLabel3.setText(Resources.getMessage("AttributeDefinitionView.10")); //$NON-NLS-1$
-        txtDataType = new Text(type, SWT.READ_ONLY | SWT.BORDER);
+        txtDataType = new Text(innerGroup, SWT.READ_ONLY | SWT.BORDER);
         txtDataType.setLayoutData(SWTUtil.createFillGridData());
         txtDataType.setEditable(false);
         txtDataType.setText(""); //$NON-NLS-1$
-        
-        // Build generalization checkbox
-        btnGeneralization = new Button(group, SWT.RADIO);
-        btnGeneralization.setText(Resources.getMessage("ViewAttributeDefinition.0")); //$NON-NLS-1$
-        btnGeneralization.setEnabled(true);
-        
-        // Editor hierarchy
-        viewGeneralization = new ViewHierarchy(group, attribute, controller);
-        
-        // Build microaggregation checkbox
-        btnMicroaggregation = new Button(group, SWT.RADIO);
-        btnMicroaggregation.setText(Resources.getMessage("ViewAttributeDefinition.3")); //$NON-NLS-1$
- 
-        
-        // Microaggregation configuration
-        viewMicroaggregation = new ViewMicoaggregation(group, attribute, controller, btnMicroaggregation);
-        
-        // Listener
-        btnGeneralization.addSelectionListener(new SelectionAdapter() {
+
+        // Add combo for mode
+        final Label fLabel2 = new Label(innerGroup, SWT.PUSH);
+        fLabel2.setText(Resources.getMessage("ViewMicoaggregation.4")); //$NON-NLS-1$
+        cmbMode = new Combo(innerGroup, SWT.READ_ONLY);
+        cmbMode.setLayoutData(SWTUtil.createFillGridData());
+        cmbMode.setItems(new String[]{Resources.getMessage("ViewMicoaggregation.5"),
+                                      Resources.getMessage("ViewMicoaggregation.6")});
+        cmbMode.select(0);
+
+        // Add combo for function
+        final Label fLabel = new Label(innerGroup, SWT.PUSH);
+        fLabel.setText(Resources.getMessage("ViewMicoaggregation.0")); //$NON-NLS-1$
+        cmbFunction = new Combo(innerGroup, SWT.READ_ONLY);
+        cmbFunction.setLayoutData(SWTUtil.createFillGridData());
+        cmbFunction.setEnabled(false);
+        cmbFunction.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                // Toggle
-                if (((Button) arg0.getSource()).getSelection()) {
-                    if (model != null && model.getInputConfig() != null) {
-                        model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.GENERALIZATION);
-                    }
+                if (cmbFunction.getSelectionIndex() != -1 && model != null && model.getInputConfig() != null) {
+                    String function = cmbFunction.getItem(cmbFunction.getSelectionIndex());
+                    model.getInputConfig().setMicroAggregationFunction(attribute, getMicroAggregationFunction(function));
                 }
             }
         });
         
-        btnMicroaggregation.addSelectionListener(new SelectionAdapter() {
+        // Add button for missing data
+        btnMissing = new Button(innerGroup, SWT.CHECK);
+        GridData btnMissingData = SWTUtil.createFillGridData();
+        btnMissingData.horizontalSpan = 2;
+        btnMissing.setLayoutData(btnMissingData);
+        btnMissing.setText(Resources.getMessage("ViewMicoaggregation.2")); //$NON-NLS-1$
+        btnMissing.setSelection(true);
+        btnMissing.setEnabled(false);
+        btnMissing.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                // Toggle
                 if (model != null && model.getInputConfig() != null) {
-                    model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.MICRO_AGGREGATION);
+                    model.getInputConfig().setMicroAggregationIgnoreMissingData(attribute, btnMissing.getSelection());
                 }
+            }
+        });
+          
+        // Editor hierarchy
+        viewGeneralization = new ViewHierarchy(group, attribute, controller);
+
+        // Combo for transformation mode
+        cmbMode.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                if (model == null || model.getInputConfig() == null) {
+                    return;
+                }
+                if (cmbMode.getSelectionIndex() == 0) {
+                    model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.GENERALIZATION);
+                    cmbFunction.setEnabled(false);
+                    btnMissing.setEnabled(false);
+                } else {
+                    model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.MICRO_AGGREGATION);
+                    cmbFunction.setEnabled(true);
+                    btnMissing.setEnabled(true);
+                }
+            }
+        });
+
+        // Button for missing data
+        btnMissing.addSelectionListener(new SelectionAdapter(){
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                if (model == null || model.getInputConfig() == null) {
+                    return;
+                }
+                model.getInputConfig().setMicroAggregationIgnoreMissingData(attribute, btnMissing.getSelection());
             }
         });
         
         // Attach to tab
         tabItem.setControl(group);
+    }
+    
+    /**
+     * Returns the microaggregation function for the given label
+     * @param function
+     * @return
+     */
+    private MicroAggregationFunctionDescription getMicroAggregationFunction(String label) {
+        for (MicroAggregationFunctionDescription function : FUNCTIONS) {
+            if (function.getLabel().equals(label)) {
+                return function;
+            }
+        }
+        return null;
     }
     
     @Override
@@ -355,7 +417,6 @@ public class ViewAttributeDefinition implements IView {
         // Dispose views
         controller.removeListener(this);
         viewGeneralization.dispose();
-        viewMicroaggregation.dispose();
         
         // Dispose images
         IMAGE_INSENSITIVE.dispose();
@@ -373,6 +434,10 @@ public class ViewAttributeDefinition implements IView {
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
+            updateAttributeType();
+            updateDataType();
+            updateFunction();
+            updateMode();
             viewGeneralization.update(event);
         } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             final String attr = (String) event.data;
@@ -384,19 +449,56 @@ public class ViewAttributeDefinition implements IView {
         } else if (event.part == ModelPart.INPUT) {
             updateAttributeType();
             updateDataType();
+            updateMode();
             viewGeneralization.update(event);
-            boolean microaggregationEnabled = false;
-            boolean generalizationEnabled = true;
-            if (model != null && model.getInputConfig() != null) {
-                ModelTransformationMode mode = model.getInputConfig().getTransformationMode(attribute);
-                microaggregationEnabled = mode == ModelTransformationMode.MICRO_AGGREGATION;
-                generalizationEnabled = mode == ModelTransformationMode.GENERALIZATION;
-            }
-            btnMicroaggregation.setSelection(microaggregationEnabled);
-            btnGeneralization.setSelection(generalizationEnabled);
+        } else if (event.part == ModelPart.DATA_TYPE) {
+            updateFunction();
+            updateMode();
         }
     }
     
+    /**
+     * Update function
+     */
+    private void updateFunction() {
+        if (model != null && model.getInputConfig() != null) {
+            DataScale scale = model.getInputDefinition().getDataType(attribute).getDescription().getScale();
+            List<String> functions = new ArrayList<String>();
+            for (MicroAggregationFunctionDescription function : FUNCTIONS) {
+                if (scale.provides(function.getRequiredScale())) {
+                    functions.add(function.getLabel());
+                } 
+            }
+            this.cmbFunction.setItems(functions.toArray(new String[functions.size()]));
+            int index = functions.indexOf(model.getInputConfig().getMicroAggregationFunction(attribute));
+            if (index == -1) {
+                this.cmbFunction.select(0);
+                this.model.getInputConfig().setMicroAggregationFunction(attribute, getMicroAggregationFunction(functions.get(0)));
+            } else {
+                this.cmbFunction.select(index);
+                this.model.getInputConfig().setMicroAggregationFunction(attribute, getMicroAggregationFunction(functions.get(index)));
+            }
+            this.btnMissing.setSelection(this.model.getInputConfig().getMicroAggregationIgnoreMissingData(attribute));
+        }
+    }
+
+    /**
+     * Update mode
+     */
+    private void updateMode() {
+        if (model != null && model.getInputConfig() != null) {
+            if (model.getInputConfig().getTransformationMode(attribute) == ModelTransformationMode.GENERALIZATION) {
+                cmbMode.select(0);
+                cmbFunction.setEnabled(false);
+                btnMissing.setEnabled(false);
+            } else {
+                cmbMode.select(1);
+                cmbFunction.setEnabled(true);
+                btnMissing.setEnabled(true);
+            }
+        }
+    }
+
     /**
      * Returns a description for the given label.
      *
