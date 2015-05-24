@@ -234,7 +234,7 @@ public class Model implements Serializable {
     private Set<ModelRiskBasedCriterion>          riskBasedModel                  = new HashSet<ModelRiskBasedCriterion>();
 
     /* *****************************************
-     * UTILITY METRICS
+     * UTILITY ANALYSIS
      ******************************************/
     /** Configuration. */
     private MetricConfiguration                   metricConfig                    = ARXConfiguration.create().getMetric().getConfiguration();
@@ -249,7 +249,7 @@ public class Model implements Serializable {
     private Boolean                               useFunctionalHierarchies        = true;
     
     /* *****************************************
-     * RISK-BASED STUFF
+     * RISK ANALYSIS
      ******************************************/
     private Set<String>                           selectedQuasiIdentifiers        = null;
     
