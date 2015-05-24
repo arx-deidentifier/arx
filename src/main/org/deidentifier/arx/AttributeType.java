@@ -624,7 +624,7 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static MicroAggregationFunction createArithmeticMean(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionArithmeticMean(ignoreMissingData),
-                                                true, DataScale.INTERVAL, "Arithmetric mean");
+                                                DataScale.INTERVAL, "Arithmetric mean");
         }
         
         /**
@@ -643,7 +643,7 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static MicroAggregationFunction createGeneralization(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionGeneralization(ignoreMissingData),
-                                                false, DataScale.NOMINAL, "Generalization");
+                                                DataScale.NOMINAL, "Generalization");
         }
         
         /**
@@ -662,7 +662,7 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static MicroAggregationFunction createGeometricMean(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionGeometricMean(ignoreMissingData),
-                                                true, DataScale.INTERVAL, "Geometric mean");
+                                                DataScale.INTERVAL, "Geometric mean");
         }
         
         /**
@@ -681,7 +681,7 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static MicroAggregationFunction createMedian(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionMedian(ignoreMissingData),
-                                                true, DataScale.ORDINAL, "Median");
+                                                DataScale.ORDINAL, "Median");
         }
         
         /**
@@ -700,7 +700,7 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static MicroAggregationFunction createMode(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionMode(ignoreMissingData),
-                                                true, DataScale.ORDINAL, "Mode");
+                                                DataScale.ORDINAL, "Mode");
         }
         
         /** The microaggregation function */
@@ -712,25 +712,19 @@ public class AttributeType implements Serializable, Cloneable {
         /** The label*/
         private final String label;
         
-        /** Stores whether this is a type-preserving function*/
-        private final boolean typePreserving;
-        
         /**
          * Instantiates a new hierarchy.
          * @param function
-         * @param typePreserving
          * @param requiredScale
          * @param label 
          */
         private MicroAggregationFunction(DistributionAggregateFunction function,
-                                         boolean typePreserving,
                                          DataScale requiredScale,
                                          String label) {
             super(ATTR_TYPE_QI);
             this.function = function;
             this.requiredScale = requiredScale;
             this.label = label;
-            this.typePreserving = typePreserving;
         }
         
         /**
@@ -754,7 +748,7 @@ public class AttributeType implements Serializable, Cloneable {
          * @return
          */
         public boolean isTypePreserving() {
-            return typePreserving;
+            return function.isTypePreserving();
         }
 
         /**

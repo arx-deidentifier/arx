@@ -402,8 +402,8 @@ public class DataHandleOutput extends DataHandle {
         dataTypes[AttributeTypeInternal.IDENTIFYING] = null;
         
         for (int i = 0; i < dataTypes.length; i++) {
-            final DataType<?>[] type = dataTypes[i];
             
+            final DataType<?>[] type = dataTypes[i];
             String[] header = null;
             
             switch (i) {
@@ -423,8 +423,8 @@ public class DataHandleOutput extends DataHandle {
             if (type != null) {
                 for (int j = 0; j < type.length; j++) {
                     dataTypes[i][j] = definition.getDataType(header[j]);
-                    if ((i == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) &&
-                        (node.getTransformation()[j] > 0)) {
+                    if ((i == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED && node.getTransformation()[j] > 0) || 
+                        (i == AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED && !definition.getMicroAggregationFunction(header[j]).isTypePreserving())) {
                         dataTypes[i][j] = DataType.STRING;
                     }
                 }
