@@ -49,7 +49,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
         private static final long           serialVersionUID = 8379579591466576517L;
         
         /** Commons math object to calculate the statistic. */
-        private final DescriptiveStatistics stats            = new DescriptiveStatistics();
+        private transient DescriptiveStatistics stats;
 
         /**
          * Instantiates.
@@ -76,6 +76,12 @@ public abstract class DistributionAggregateFunction implements Serializable {
             }
             return type.format(rType.fromDouble(stats.getMean()));
         }
+
+        @Override
+        public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
+            super.initialize(dictionary, type, hierarchy);
+            this.stats = new DescriptiveStatistics();
+        }        
     }
 
     /**
@@ -154,10 +160,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
     public static class DistributionAggregateFunctionGeometricMean extends DistributionAggregateFunction {
 
         /** SVUID. */
-        private static final long           serialVersionUID = -3835477735362966307L;
-        
+        private static final long               serialVersionUID = -3835477735362966307L;
+
         /** Commons math object to calculate the statistic. */
-        private final DescriptiveStatistics stats            = new DescriptiveStatistics();
+        private transient DescriptiveStatistics stats;
 
         /**
          * Instantiates.
@@ -183,6 +189,12 @@ public abstract class DistributionAggregateFunction implements Serializable {
                 }
             }
             return type.format(rType.fromDouble(stats.getGeometricMean()));
+        }
+
+        @Override
+        public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
+            super.initialize(dictionary, type, hierarchy);
+            this.stats = new DescriptiveStatistics();
         }
     }
 
@@ -326,17 +338,17 @@ public abstract class DistributionAggregateFunction implements Serializable {
     }
 
     /** SVUID. */
-    private static final long serialVersionUID = 331877806010996154L;
+    private static final long       serialVersionUID = 331877806010996154L;
 
     /** Whether or not null values should be ignored */
-    protected boolean         ignoreNullValues;
-    /** Dictionary*/
-    protected String[] dictionary;
-    /** Type*/
-    protected DataType<?> type;
-    /** Hierarchy*/
-    protected int[][] hierarchy;
-    
+    protected boolean               ignoreNullValues;
+    /** Dictionary */
+    protected transient String[]    dictionary;
+    /** Type */
+    protected transient DataType<?> type;
+    /** Hierarchy */
+    protected transient int[][]     hierarchy;
+
     /**
      * Instantiates a new function.
      * 
