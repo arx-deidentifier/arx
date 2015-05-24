@@ -101,16 +101,16 @@ public class Controller implements IView {
 
     /** The debug data. */
     private final DebugData                  debug     = new DebugData();
-    
+
     /** Listeners registered by the views. */
     private final Map<ModelPart, Set<IView>> listeners = Collections.synchronizedMap(new HashMap<ModelPart, Set<IView>>());
-    
+
     /** The main window. */
     private final MainWindow                 main;
-    
+
     /** The model. */
     private Model                            model;
-    
+
     /** The resources. */
     private final Resources                  resources;
 
