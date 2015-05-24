@@ -182,18 +182,18 @@ public class DataHandleOutput extends DataHandle {
         this.dataDI = manager.getDataDI();
         this.dataIS = manager.getDataIS();
         this.header = manager.getHeader();
-        this.startIndexMA = manager.getStartIndexMA();
+        this.startIndexMA = manager.getStartMA();
         
         // Build map inverse
         this.inverseMap = new int[header.length * 2];
         // Init with attribute type ID
         for (int i = 0; i < this.inverseMap.length; i += 2) {
-            this.inverseMap[i] = AttributeTypeInternal.IDENTIFIER;
+            this.inverseMap[i] = AttributeTypeInternal.IDENTIFYING;
             this.inverseMap[i + 1] = -1;
         }
         for (int i = 0; i < this.dataGH.getMap().length; i++) {
             final int pos = dataGH.getMap()[i] * 2;
-            this.inverseMap[pos] = AttributeTypeInternal.GENERALIZATION;
+            this.inverseMap[pos] = AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED;
             this.inverseMap[pos + 1] = i;
         }
         for (int i = 0; i < this.startIndexMA; i++) {
@@ -204,7 +204,7 @@ public class DataHandleOutput extends DataHandle {
         
         for (int i = 0; i < dataOT.getMap().length; i++) {
             final int pos = dataOT.getMap()[i] * 2;
-            this.inverseMap[pos] = AttributeTypeInternal.MICROAGGREGATION;
+            this.inverseMap[pos] = AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED;
             this.inverseMap[pos + 1] = i;
         }
         
@@ -218,17 +218,17 @@ public class DataHandleOutput extends DataHandle {
         this.inverseData = new int[5][][];
         this.inverseData[AttributeTypeInternal.INSENSITIVE] = this.dataIS.getArray();
         this.inverseData[AttributeTypeInternal.SENSITIVE] = this.dataDI.getArray();
-        this.inverseData[AttributeTypeInternal.GENERALIZATION] = this.dataGH.getArray();
-        this.inverseData[AttributeTypeInternal.IDENTIFIER] = null;
-        this.inverseData[AttributeTypeInternal.MICROAGGREGATION] = this.dataOT.getArray();
+        this.inverseData[AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED] = this.dataGH.getArray();
+        this.inverseData[AttributeTypeInternal.IDENTIFYING] = null;
+        this.inverseData[AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED] = this.dataOT.getArray();
         
         // Build inverse dictionary array
         this.inverseDictionaries = new Dictionary[5];
         this.inverseDictionaries[AttributeTypeInternal.INSENSITIVE] = this.dataIS.getDictionary();
         this.inverseDictionaries[AttributeTypeInternal.SENSITIVE] = this.dataDI.getDictionary();
-        this.inverseDictionaries[AttributeTypeInternal.GENERALIZATION] = this.dataGH.getDictionary();
-        this.inverseDictionaries[AttributeTypeInternal.IDENTIFIER] = null;
-        this.inverseDictionaries[AttributeTypeInternal.MICROAGGREGATION] = this.dataOT.getDictionary();
+        this.inverseDictionaries[AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED] = this.dataGH.getDictionary();
+        this.inverseDictionaries[AttributeTypeInternal.IDENTIFYING] = null;
+        this.inverseDictionaries[AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED] = this.dataOT.getDictionary();
         
         // Create view
         this.getRegistry().createOutputSubset(node, config, statistics);
@@ -261,7 +261,7 @@ public class DataHandleOutput extends DataHandle {
         final int key = col * 2;
         final int type = inverseMap[key];
         switch (type) {
-        case AttributeTypeInternal.IDENTIFIER:
+        case AttributeTypeInternal.IDENTIFYING:
             return DataType.STRING;
         default:
             final int index = inverseMap[key + 1];
@@ -346,13 +346,13 @@ public class DataHandleOutput extends DataHandle {
             if ((suppressedAttributeTypes & (1 << j)) != 0) {
                 switch (j) {
                 case AttributeType.ATTR_TYPE_ID:
-                    converted |= (1 << AttributeTypeInternal.IDENTIFIER);
+                    converted |= (1 << AttributeTypeInternal.IDENTIFYING);
                     break;
                 case AttributeType.ATTR_TYPE_IS:
                     converted |= (1 << AttributeTypeInternal.INSENSITIVE);
                     break;
                 case AttributeType.ATTR_TYPE_QI:
-                    converted |= (1 << AttributeTypeInternal.GENERALIZATION) | (1 << AttributeTypeInternal.MICROAGGREGATION);
+                    converted |= (1 << AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) | (1 << AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED);
                     break;
                 case AttributeType.ATTR_TYPE_SE:
                     converted |= (1 << AttributeTypeInternal.SENSITIVE);
@@ -397,9 +397,9 @@ public class DataHandleOutput extends DataHandle {
         DataType<?>[][] dataTypes = new DataType[5][];
         dataTypes[AttributeTypeInternal.INSENSITIVE] = new DataType[dataIS.getHeader().length];
         dataTypes[AttributeTypeInternal.SENSITIVE] = new DataType[dataDI.getHeader().length];
-        dataTypes[AttributeTypeInternal.GENERALIZATION] = new DataType[dataGH.getHeader().length];
-        dataTypes[AttributeTypeInternal.MICROAGGREGATION] = new DataType[dataOT.getHeader().length];
-        dataTypes[AttributeTypeInternal.IDENTIFIER] = null;
+        dataTypes[AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED] = new DataType[dataGH.getHeader().length];
+        dataTypes[AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED] = new DataType[dataOT.getHeader().length];
+        dataTypes[AttributeTypeInternal.IDENTIFYING] = null;
         
         for (int i = 0; i < dataTypes.length; i++) {
             final DataType<?>[] type = dataTypes[i];
@@ -410,20 +410,20 @@ public class DataHandleOutput extends DataHandle {
             case AttributeTypeInternal.INSENSITIVE:
                 header = dataIS.getHeader();
                 break;
-            case AttributeTypeInternal.GENERALIZATION:
+            case AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED:
                 header = dataGH.getHeader();
                 break;
             case AttributeTypeInternal.SENSITIVE:
                 header = dataDI.getHeader();
                 break;
-            case AttributeTypeInternal.MICROAGGREGATION:
+            case AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED:
                 header = dataOT.getHeader();
                 break;
             }
             if (type != null) {
                 for (int j = 0; j < type.length; j++) {
                     dataTypes[i][j] = definition.getDataType(header[j]);
-                    if ((i == AttributeTypeInternal.GENERALIZATION) &&
+                    if ((i == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) &&
                         (node.getTransformation()[j] > 0)) {
                         dataTypes[i][j] = DataType.STRING;
                     }
@@ -491,7 +491,7 @@ public class DataHandleOutput extends DataHandle {
             final int key = index * 2;
             final int attributeType = inverseMap[key];
             final int indexMap = inverseMap[key + 1];
-            if (attributeType == AttributeTypeInternal.IDENTIFIER) return 0;
+            if (attributeType == AttributeTypeInternal.IDENTIFYING) return 0;
             
             int cmp = 0;
             try {
@@ -528,7 +528,7 @@ public class DataHandleOutput extends DataHandle {
         final int key = col * 2;
         final int type = inverseMap[key];
         switch (type) {
-        case AttributeTypeInternal.IDENTIFIER:
+        case AttributeTypeInternal.IDENTIFYING:
             return suppressionString;
         default:
             final int index = inverseMap[key + 1];

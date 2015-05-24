@@ -17,8 +17,8 @@
 
 package org.deidentifier.arx.framework.check.groupify;
 
-import org.deidentifier.arx.aggregates.MicroaggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -124,7 +124,7 @@ public interface IHashGroupify {
      * @param numMA
      * @param functions
      */
-    public void microaggregate(int[][] data, Data bufferOT, int startMA, int numMA, MicroaggregateFunction[] functions);
+    public void microaggregate(int[][] data, Data bufferOT, int startMA, int numMA, DistributionAggregateFunction[] functions);
     
     /**
      * Resets all flags that indicate that equivalence classes are suppressed.

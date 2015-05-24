@@ -24,6 +24,7 @@ import java.util.Iterator;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
@@ -33,12 +34,13 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
 
 /**
- * This class implements an example of how to use microaggregation with generalization
+ * This class implements an example of how to use microaggregation. It also demonstrates how, since version 3.1. of ARX
+ * attribute types and transformation methods should be specified separately.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class Example32 extends Example {
+public class Example33 extends Example {
     
     /**
      * Entry point.
@@ -48,7 +50,9 @@ public class Example32 extends Example {
      */
     public static void main(final String[] args) {
         
-        // Define data
+        /* *******************************
+         * Define data
+         *********************************/
         DefaultData data = Data.create();
         data.add("age", "gender", "zipcode", "date");
         data.add("45", "female", "81675", "01.01.1982");
@@ -58,28 +62,37 @@ public class Example32 extends Example {
         data.add("34", "female", "NULL", "05.01.1982");
         data.add("70", "male", "81931", "24.03.1982");
         data.add("45", "male", "81931", "NULL");
+
+        /* *******************************
+         * Define hierarchies
+         *********************************/
         
+        final DefaultHierarchy hierarchy = Hierarchy.create();
+        hierarchy.add("male", "*");
+        hierarchy.add("female", "*");
+
+        /* *******************************
+         * Define data types
+         *********************************/
         data.getDefinition().setDataType("age", DataType.INTEGER);
         data.getDefinition().setDataType("zipcode", DataType.DECIMAL);
         data.getDefinition().setDataType("date", DataType.DATE);
+
+        /* *******************************
+         * Define attribute types
+         *********************************/
+        data.getDefinition().setAttributeType("age", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        data.getDefinition().setAttributeType("gender", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
+        data.getDefinition().setAttributeType("date", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+
+        /* *******************************
+         * Define transformation methods
+         *********************************/
+        data.getDefinition().setMicroAggregationFunction("age", MicroAggregationFunction.createMode());
+        data.getDefinition().setMicroAggregationFunction("date", MicroAggregationFunction.createMedian());
+        data.getDefinition().setHierarchy("gender", hierarchy);
         
-        final DefaultHierarchy gender = Hierarchy.create();
-        gender.add("male", "*");
-        gender.add("female", "*");
-        
-        // Only excerpts for readability
-        final DefaultHierarchy zipcode = Hierarchy.create();
-        zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
-        zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
-        zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
-        zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
-        zipcode.add("NULL", "NULL", "NULL", "NULL", "NULL", "*****");
-        
-        data.getDefinition().setHierarchy("zipcode", zipcode);
-        data.getDefinition().setAttributeType("age", MicroAggregationFunction.createGeometricMean());
-        data.getDefinition().setAttributeType("gender", gender);
-        data.getDefinition().setAttributeType("zipcode", MicroAggregationFunction.createGeneralization());
-        data.getDefinition().setAttributeType("date", MicroAggregationFunction.createArithmeticMean());
         
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();

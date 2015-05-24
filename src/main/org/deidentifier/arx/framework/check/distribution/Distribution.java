@@ -201,9 +201,7 @@ public class Distribution {
     private void add(final int element, final int value) {
 
         final int mask = (elements.length - 1);
-        int index = (element & ((elements.length >> 1) - 1)) << 1; // start at
-                                                                   // home
-                                                                   // bucket
+        int index = (element & ((elements.length >> 1) - 1)) << 1; // start at home bucket
         while (true) {
             if (elements[index] == -1) { // empty bucket, not found
 

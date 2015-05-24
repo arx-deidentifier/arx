@@ -25,11 +25,10 @@ import java.util.Set;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.aggregates.MicroaggregateFunction.HandlingOfNullValues;
-import org.deidentifier.arx.aggregates.MicroaggregationFunctionDescription;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
@@ -40,46 +39,46 @@ import org.deidentifier.arx.metric.Metric;
  * @author Fabian Prasser
  */
 public class ModelConfiguration implements Serializable, Cloneable {
-    
+
     /** SVUID. */
-    private static final long                                serialVersionUID  = -2887699232096897527L;
-    
+    private static final long                                serialVersionUID                  = -2887699232096897527L;
+
     /** Minimum generalization. */
-    private Map<String, Integer>                             min               = new HashMap<String, Integer>();
-    
+    private Map<String, Integer>                             min                               = new HashMap<String, Integer>();
+
     /** Maximum generalization. */
-    private Map<String, Integer>                             max               = new HashMap<String, Integer>();
-    
+    private Map<String, Integer>                             max                               = new HashMap<String, Integer>();
+
     /** Input data. */
-    private transient Data                                   input             = null;
-    
+    private transient Data                                   input                             = null;
+
     /** Associated ARXConfiguration. */
-    private ARXConfiguration                                 config            = ARXConfiguration.create();
-    
+    private ARXConfiguration                                 config                            = ARXConfiguration.create();
+
     /** Is this model modified. */
-    private boolean                                          modified          = false;
-    
+    private boolean                                          modified                          = false;
+
     /** The associated hierarchies. */
-    private Map<String, Hierarchy>                           hierarchies       = new HashMap<String, Hierarchy>();
-    
+    private Map<String, Hierarchy>                           hierarchies                       = new HashMap<String, Hierarchy>();
+
     /** The associated microaggregation functions. */
-    private Map<String, MicroaggregationFunctionDescription> functions         = new HashMap<String, MicroaggregationFunctionDescription>();
-    
+    private Map<String, MicroAggregationFunctionDescription> microAggregationFunctions         = new HashMap<String, MicroAggregationFunctionDescription>();
+
     /** The associated handling of null values. */
-    private Map<String, HandlingOfNullValues>                handling          = new HashMap<String, HandlingOfNullValues>();
-    
-    /** The associated modes (0 = generalization, 1 = microaggregation). */
-    private Map<String, Integer>                             attributeModes    = new HashMap<String, Integer>();
-    
+    private Map<String, Boolean>                             microAggregationIgnoreMissingData = new HashMap<String, Boolean>();
+
+    /** The associated mode */
+    private Map<String, ModelTransformationMode>             transformationModes               = new HashMap<String, ModelTransformationMode>();
+
     /** The associated research subset. */
-    private RowSet                                           researchSubset    = null;
-    
+    private RowSet                                           researchSubset                    = null;
+
     /** The suppression weight. */
-    private Double                                           suppressionWeight = null;
-    
+    private Double                                           suppressionWeight                 = null;
+
     /** Hierarchy builder. */
-    private Map<String, HierarchyBuilder<?>>                 hierarchyBuilders = null;
-    
+    private Map<String, HierarchyBuilder<?>>                 hierarchyBuilders                 = null;
+
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -106,6 +105,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
             c.researchSubset = this.researchSubset.clone();
         }
         c.suppressionWeight = this.suppressionWeight;
+        c.microAggregationFunctions = new HashMap<String, MicroAggregationFunctionDescription>(microAggregationFunctions);
+        c.microAggregationIgnoreMissingData = new HashMap<String, Boolean>(microAggregationIgnoreMissingData);
+        c.transformationModes = new HashMap<String, ModelTransformationMode>(transformationModes);
         return c;
     }
     
@@ -252,22 +254,27 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @param attribute
      * @return
      */
-    public MicroaggregationFunctionDescription getMicroaggregationFunctionDescription(String attribute) {
-        if (this.functions == null) {
-            this.functions = new HashMap<String, MicroaggregationFunctionDescription>();
+    public MicroAggregationFunctionDescription getMicroAggregationFunction(String attribute) {
+        if (this.microAggregationFunctions == null) {
+            this.microAggregationFunctions = new HashMap<String, MicroAggregationFunctionDescription>();
         }
-        return this.functions.get(attribute);
+        return this.microAggregationFunctions.get(attribute);
     }
     
-    public HandlingOfNullValues getMicroaggregationHandlingOfNullValues(String attribute) {
-        if (this.handling == null) {
-            this.handling = new HashMap<String, HandlingOfNullValues>();
+    /**
+     * Returns the associated handling of missing data
+     * @param attribute
+     * @return
+     */
+    public Boolean getMicroAggregationIgnoreMissingData(String attribute) {
+        if (this.microAggregationIgnoreMissingData == null) {
+            this.microAggregationIgnoreMissingData = new HashMap<String, Boolean>();
         }
-        HandlingOfNullValues handling = this.handling.get(attribute);
-        if (handling == null) {
-            return HandlingOfNullValues.IGNORE;
+        Boolean ignore = this.microAggregationIgnoreMissingData.get(attribute);
+        if (ignore == null) {
+            return true;
         } else {
-            return handling;
+            return ignore;
         }
     }
     
@@ -317,6 +324,24 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * Returns the transformation mode for the given attribute. Returns ModelTransformationMode.GENERALIZATION
+     * if no entry was found, for backwards compatibility
+     * @param attribute
+     * @return
+     */
+    public ModelTransformationMode getTransformationMode(String attribute) {
+        if (this.transformationModes == null) {
+            this.transformationModes = new HashMap<String, ModelTransformationMode>();
+        }
+        ModelTransformationMode result = this.transformationModes.get(attribute);
+        if (result != null) {
+            return result;
+        } else {
+            return ModelTransformationMode.GENERALIZATION;
+        }
+    }
+    
+    /**
      * @param type
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#isAttributeTypeSuppressed(org.deidentifier.arx.AttributeType)
@@ -335,35 +360,11 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Returns true if generalization is enabled for this attribute. If the attribute is not defined it will default to true.
-     * @param attribute
-     * @return
-     */
-    public boolean isGeneralizationEnabled(String attribute) {
-        if (this.attributeModes == null) {
-            this.attributeModes = new HashMap<String, Integer>();
-        }
-        return (this.attributeModes.get(attribute) == null) || (this.attributeModes.get(attribute) == 0);
-    }
-    
-    /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#isUseHeuristicSearchForSampleBasedCriteria()
      */
     public boolean isHeuristicForSampleBasedCriteria() {
         return config.isUseHeuristicSearchForSampleBasedCriteria();
-    }
-    
-    /**
-     * Returns true if microaggregation is enabled for this attribute.
-     * @param attribute
-     * @return
-     */
-    public boolean isMicroaggregationEnabled(String attribute) {
-        if (this.attributeModes == null) {
-            this.attributeModes = new HashMap<String, Integer>();
-        }
-        return (this.attributeModes.get(attribute) != null) && (this.attributeModes.get(attribute) == 1);
     }
     
     /**
@@ -442,19 +443,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Removes a microaggregation function.
-     *
-     * @param attribute
-     */
-    public void removeMicroaggregationFunctionDescription(String attribute) {
-        if (this.functions == null) {
-            this.functions = new HashMap<String, MicroaggregationFunctionDescription>();
-        }
-        this.functions.remove(attribute);
-        this.setModified();
-    }
-    
-    /**
      * Delegates to an instance of ARXConfiguration.
      *
      * @param supp
@@ -483,18 +471,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void setAttributeWeight(String attribute, Double weight) {
         setModified();
         config.setAttributeWeight(attribute, weight);
-    }
-    
-    /**
-     * Enables generalization on the attribute.
-     * @param attribute
-     */
-    public void setGeneralizationEnabled(String attribute) {
-        if (this.attributeModes == null) {
-            this.attributeModes = new HashMap<String, Integer>();
-        }
-        this.attributeModes.put(attribute, 0);
-        setModified();
     }
     
     /**
@@ -564,42 +540,30 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Enables microaggregation on the attribute.
-     * @param attribute
-     */
-    public void setMicroaggregationEnabled(String attribute) {
-        if (this.attributeModes == null) {
-            this.attributeModes = new HashMap<String, Integer>();
-        }
-        this.attributeModes.put(attribute, 1);
-        setModified();
-    }
-    
-    /**
      * Assigns a microaggregation function.
      *
      * @param attribute
      * @param microaggregation
      */
-    public void setMicroaggregationFunctionDescription(String attribute, MicroaggregationFunctionDescription microaggregation) {
-        if (this.functions == null) {
-            this.functions = new HashMap<String, MicroaggregationFunctionDescription>();
+    public void setMicroAggregationFunction(String attribute, MicroAggregationFunctionDescription microaggregation) {
+        if (this.microAggregationFunctions == null) {
+            this.microAggregationFunctions = new HashMap<String, MicroAggregationFunctionDescription>();
         }
-        this.functions.put(attribute, microaggregation);
+        this.microAggregationFunctions.put(attribute, microaggregation);
         this.setModified();
     }
     
     /**
-     * Assigns the handling of null values
+     * Determines whether or not to ignore missing data
      * 
      * @param attribute
-     * @param handlingOfNullValues
+     * @param ignoreNullValues
      */
-    public void setMicroaggregationHandlingOfNullValues(String attribute, HandlingOfNullValues handlingOfNullValues) {
-        if (this.handling == null) {
-            this.handling = new HashMap<String, HandlingOfNullValues>();
+    public void setMicroAggregationIgnoreMissingData(String attribute, boolean ignoreMissingData) {
+        if (this.microAggregationIgnoreMissingData == null) {
+            this.microAggregationIgnoreMissingData = new HashMap<String, Boolean>();
         }
-        this.handling.put(attribute, handlingOfNullValues);
+        this.microAggregationIgnoreMissingData.put(attribute, ignoreMissingData);
         this.setModified();
     }
     
@@ -674,6 +638,19 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void setSuppressionWeight(double suppressionWeight) {
         setModified();
         this.suppressionWeight = suppressionWeight;
+    }
+    
+    /**
+     * Sets the transformation mode
+     * @param attribute
+     * @param mode
+     */
+    public void setTransformationMode(String attribute, ModelTransformationMode mode) {
+        if (this.transformationModes == null) {
+            this.transformationModes = new HashMap<String, ModelTransformationMode>();
+        }
+        this.transformationModes.put(attribute, mode);
+        setModified();
     }
     
     /**

@@ -353,7 +353,8 @@ public class WorkerSave extends Worker<Model> {
                 	writer.write(vocabulary.getMax(), max==null ? "All" : String.valueOf(max)); //$NON-NLS-1$
                 }
             } else if (t instanceof MicroAggregationFunction) {
-                writer.write(vocabulary.getMicroaggregationFunction(),config.getMicroaggregationFunctionDescription(attr).getLabel());
+                writer.write(vocabulary.getMicroAggregationFunction(), config.getMicroAggregationFunction(attr).getLabel());
+                writer.write(vocabulary.getMicroAggregationIgnoreMissingData(), config.getMicroAggregationIgnoreMissingData(attr));
             }
             writer.unindent();
 

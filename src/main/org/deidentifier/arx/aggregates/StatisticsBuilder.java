@@ -33,10 +33,10 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandleStatistics;
 import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
+import org.deidentifier.arx.DataScale;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXString;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
-import org.deidentifier.arx.DataType.ScaleOfMeasure;
 import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
 import org.deidentifier.arx.aggregates.StatisticsSummary.StatisticsSummaryOrdinal;
 
@@ -593,7 +593,7 @@ public class StatisticsBuilder {
         
         Map<String, DescriptiveStatistics> statistics = new HashMap<String, DescriptiveStatistics>();
         Map<String, StatisticsSummaryOrdinal> ordinal = new HashMap<String, StatisticsSummaryOrdinal>();
-        Map<String, ScaleOfMeasure> scales = new HashMap<String, ScaleOfMeasure>();
+        Map<String, DataScale> scales = new HashMap<String, DataScale>();
         
         // Detect scales
         for (int col = 0; col < handle.getNumColumns(); col++) {
@@ -603,13 +603,13 @@ public class StatisticsBuilder {
             DataType<?> type = handle.getDataType(attribute);
             
             // Scale
-            ScaleOfMeasure scale = type.getScaleOfMeasure();
+            DataScale scale = type.getDescription().getScale();
             
             // Try to replace nominal scale with ordinal scale based on base data type
-            if (scale == ScaleOfMeasure.NOMINAL && handle.getGeneralization(attribute) != 0) {
+            if (scale == DataScale.NOMINAL && handle.getGeneralization(attribute) != 0) {
                 if (!(handle.getBaseDataType(attribute) instanceof ARXString) &&
                     getHierarchy(col, true) != null) {
-                    scale = ScaleOfMeasure.ORDINAL;
+                    scale = DataScale.ORDINAL;
                 }
             }
             
@@ -629,7 +629,7 @@ public class StatisticsBuilder {
             boolean include = true;
             if (listwiseDeletion) {
                 for (int col = 0; col < handle.getNumColumns(); col++) {
-                    if (DataType.isNull(handle.getValue(row, col))) {
+                    if (handle.isSuppressed(row) || DataType.isNull(handle.getValue(row, col))) {
                         include = false;
                         break;
                     }
@@ -651,9 +651,7 @@ public class StatisticsBuilder {
                     DataType<?> type = handle.getDataType(attribute);
                     
                     // Analyze
-                    // Replace suppression string with NULL value
-                    // TODO: this is only a comparison and String level!!
-                    if (!value.equals(handle.getSuppressionString())) {
+                    if (!value.equals(handle.getSuppressionString()) && !DataType.isNull(value)) {
                         ordinal.get(attribute).addValue(value);
                         if (type instanceof DataTypeWithRatioScale) {
                             statistics.get(attribute).addValue(((DataTypeWithRatioScale) type).toDouble(type.parse(value)));
@@ -672,18 +670,18 @@ public class StatisticsBuilder {
             
             // Depending on scale
             String attribute = handle.getAttributeName(col);
-            ScaleOfMeasure scale = scales.get(attribute);
+            DataScale scale = scales.get(attribute);
             DataType<T> type = (DataType<T>) handle.getDataType(attribute);
             ordinal.get(attribute).analyze();
-            if (scale == ScaleOfMeasure.NOMINAL) {
+            if (scale == DataScale.NOMINAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
-                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.NOMINAL,
+                result.put(attribute, new StatisticsSummary<T>(DataScale.NOMINAL,
                                                                stats.getNumberOfMeasures(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode())));
-            } else if (scale == ScaleOfMeasure.ORDINAL) {
+            } else if (scale == DataScale.ORDINAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
-                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.ORDINAL,
+                result.put(attribute, new StatisticsSummary<T>(DataScale.ORDINAL,
                                                                stats.getNumberOfMeasures(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
@@ -693,7 +691,7 @@ public class StatisticsBuilder {
                                                                type.parse(stats.getMin()),
                                                                stats.getMax(),
                                                                type.parse(stats.getMax())));
-            } else if (scale == ScaleOfMeasure.INTERVAL) {
+            } else if (scale == DataScale.INTERVAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
                 boolean isPeriod = type.getDescription().getWrappedClass() == Date.class;
@@ -704,7 +702,7 @@ public class StatisticsBuilder {
                 double range = stats2.getMax() - stats2.getMin();
                 double stddev = Math.sqrt(stats2.getVariance());
                 
-                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.INTERVAL,
+                result.put(attribute, new StatisticsSummary<T>(DataScale.INTERVAL,
                                                                stats.getNumberOfMeasures(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
@@ -732,7 +730,7 @@ public class StatisticsBuilder {
                                                                toString(type, kurtosis, isPeriod, false),
                                                                toValue(type, kurtosis),
                                                                kurtosis));
-            } else if (scale == ScaleOfMeasure.RATIO) {
+            } else if (scale == DataScale.RATIO) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
                 
@@ -742,7 +740,7 @@ public class StatisticsBuilder {
                 double range = stats2.getMax() - stats2.getMin();
                 double stddev = Math.sqrt(stats2.getVariance());
                 
-                result.put(attribute, new StatisticsSummary<T>(ScaleOfMeasure.RATIO,
+                result.put(attribute, new StatisticsSummary<T>(DataScale.RATIO,
                                                                stats.getNumberOfMeasures(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
@@ -1035,7 +1033,8 @@ public class StatisticsBuilder {
         
         // Handle data types
         if (type instanceof DataTypeWithRatioScale) {
-            return ((DataTypeWithRatioScale) type).format(((DataTypeWithRatioScale) type).fromDouble(value));
+            DataTypeWithRatioScale rType = (DataTypeWithRatioScale) type;
+            return rType.format(rType.fromDouble(value));
         } else {
             return String.valueOf(value);
         }

@@ -19,7 +19,6 @@ package org.deidentifier.arx.framework.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,10 +26,11 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
-import org.deidentifier.arx.aggregates.MicroaggregateFunction;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
@@ -44,25 +44,27 @@ import com.carrotsearch.hppc.IntOpenHashSet;
 public class DataManager {
     
     /**
-     * Internal representation of attribute types. QI are split in generalizaiton and microaggregation.
+     * Internal representation of attribute types. Quasi-identifiers are split into the
+     * ones to which generalization is applied and the ones to which microaggregation is applied
      * @author Florian Kohlmayer
+     * @author Fabian Prasser
      *
      */
     public static class AttributeTypeInternal {
-        public static final int GENERALIZATION   = 0;
-        public static final int MICROAGGREGATION = 4;
-        public static final int IDENTIFIER       = 3;
-        public static final int INSENSITIVE      = 2;
-        public static final int SENSITIVE        = 1;
+        public static final int QUASI_IDENTIFYING_GENERALIZED     = 0;
+        public static final int QUASI_IDENTIFYING_MICROAGGREGATED = 4;
+        public static final int IDENTIFYING                       = 3;
+        public static final int INSENSITIVE                       = 2;
+        public static final int SENSITIVE                         = 1;
     }
     
-    /** The data. */
+    /** The data which is generalized */
     protected final Data                                 dataGH;
     
     /** The data. */
     protected final Data                                 dataDI;
     
-    /** The data. */
+    /** The data which is insensitive */
     protected final Data                                 dataIS;
     
     /** The buffer. */
@@ -72,10 +74,10 @@ public class DataManager {
     protected final GeneralizationHierarchy[]            hierarchiesQI;
     
     /** The microaggregation functions. */
-    protected final MicroaggregateFunction[]             functionsMA;
+    protected final DistributionAggregateFunction[]      functionsMA;
     
     /** The start index of the microaggregation attributes in the dataDI */
-    protected final int                                  startIndexMA;
+    protected final int                                  startMA;
     
     /** The number of microaggregation attributes in the dataDI */
     protected final int                                  numMA;
@@ -112,8 +114,14 @@ public class DataManager {
      * @param dictionary
      * @param definition
      * @param criteria
+     * @param function
      */
-    public DataManager(final String[] header, final int[][] data, final Dictionary dictionary, final DataDefinition definition, final Set<PrivacyCriterion> criteria) {
+    public DataManager(final String[] header, 
+                       final int[][] data, 
+                       final Dictionary dictionary, 
+                       final DataDefinition definition, 
+                       final Set<PrivacyCriterion> criteria,
+                       final Map<String, DistributionAggregateFunction> functions) {
         
         // Store research subset
         for (PrivacyCriterion c : criteria) {
@@ -127,17 +135,16 @@ public class DataManager {
         // Store columns for reordering the output
         this.header = header;
         
-        Set<String> id = getIdentifiers(header, definition);
-        Set<String> gh = definition.getGeneralizationAttributes();
+        Set<String> gh = definition.getQuasiIdentifiersWithGeneralization();
         Set<String> se = definition.getSensitiveAttributes();
-        Set<String> ma = definition.getMicroaggregationAttributes();
+        Set<String> ma = definition.getQuasiIdentifiersWithMicroaggregation();
         Set<String> is = definition.getInsensitiveAttributes();
         
         // Init dictionary
-        final Dictionary dictionaryGH = new Dictionary(gh.size());
-        final Dictionary dictionaryDI = new Dictionary(se.size() + ma.size());
-        final Dictionary dictionaryIS = new Dictionary(is.size());
-        final Dictionary dictionaryOT = new Dictionary(ma.size());
+        final Dictionary dictionaryGH = new Dictionary(gh.size());              // Generalization
+        final Dictionary dictionaryDI = new Dictionary(se.size() + ma.size());  // Frequency distributions
+        final Dictionary dictionaryIS = new Dictionary(is.size());              // Nothing
+        final Dictionary dictionaryOT = new Dictionary(ma.size());              // Anything else
         
         // Init maps for reordering the output
         final int[] mapGH = new int[dictionaryGH.getNumDimensions()];
@@ -146,17 +153,16 @@ public class DataManager {
         final int[] mapOT = new int[dictionaryOT.getNumDimensions()];
         
         // Indexes
-        this.startIndexMA = se.size();
+        this.startMA = se.size();
         this.numMA = ma.size();
         int indexGH = 0;
         int indexSE = 0;
         int indexIS = 0;
         int indexOT = 0;
-        int indexMA = this.startIndexMA;
+        int indexMA = this.startMA;
         int counter = 0;
         
-        // DI contains SE and MA attributes. First all SE attributes, followed by all MA attributes.
-        // Build map
+        // Build map: DI contains SE and MA attributes. First all SE attributes, followed by all MA attributes.
         
         // A map for column indices. map[i*2]=attribute type, map[i*2+1]=index position. */
         final int[] map = new int[header.length * 2];
@@ -168,14 +174,14 @@ public class DataManager {
         for (final String column : header) {
             final int idx = counter * 2;
             if (gh.contains(column)) {
-                map[idx] = AttributeTypeInternal.GENERALIZATION;
+                map[idx] = AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED;
                 map[idx + 1] = indexGH;
                 mapGH[indexGH] = counter;
                 dictionaryGH.registerAll(indexGH, dictionary, counter);
                 headerGH[indexGH] = header[counter];
                 indexGH++;
             } else if (ma.contains(column)) {
-                map[idx] = AttributeTypeInternal.MICROAGGREGATION;
+                map[idx] = AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED;
                 map[idx + 1] = indexMA;
                 mapDI[indexMA] = counter;
                 dictionaryDI.registerAll(indexMA, dictionary, counter);
@@ -200,15 +206,15 @@ public class DataManager {
                 headerDI[indexSE] = header[counter];
                 indexSE++;
             } else {
-                // TODO: CHECK: Changed default? - now all non defined attributes are identifying! Previously they were sensitive?
-                map[idx] = AttributeTypeInternal.IDENTIFIER;
+                // TODO: CHECK: Changed default? - now all undefined attributes are identifying! Previously they were sensitive?
+                map[idx] = AttributeTypeInternal.IDENTIFYING;
                 map[idx + 1] = -1;
             }
             counter++;
         }
         
         // encode Data
-        final Data[] ddata = encode(data, map, mapGH, mapDI, mapIS, mapOT, dictionaryGH, dictionaryDI, dictionaryIS, dictionaryOT, headerGH, headerDI, headerIS, headerOT, startIndexMA);
+        final Data[] ddata = encode(data, map, mapGH, mapDI, mapIS, mapOT, dictionaryGH, dictionaryDI, dictionaryIS, dictionaryOT, headerGH, headerDI, headerIS, headerOT, startMA);
         dataGH = ddata[0];
         dataDI = ddata[1];
         dataIS = ddata[2];
@@ -219,15 +225,15 @@ public class DataManager {
         hierarchyHeights = new int[gh.size()];
         maxLevels = new int[gh.size()];
         
-        // Build qi generalisation hierarchiesQI
+        // Build hierarchiesQI
         hierarchiesQI = new GeneralizationHierarchy[gh.size()];
         for (int i = 0; i < header.length; i++) {
             final int idx = i * 2;
-            if (gh.contains(header[i]) && map[idx] == AttributeTypeInternal.GENERALIZATION) {
+            if (gh.contains(header[i]) && map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) {
                 final int dictionaryIndex = map[idx + 1];
                 final String name = header[i];
                 
-                if (definition.getAttributeType(name) instanceof Hierarchy) {
+                if (definition.getHierarchy(name) != null) {
                     hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, definition.getHierarchy(name), dictionaryIndex, dictionaryGH);
                 } else {
                     throw new IllegalStateException("No hierarchy available for attribute (" + header[i] + ")");
@@ -240,7 +246,7 @@ public class DataManager {
                 maxLevels[dictionaryIndex] = maxGenLevel == null ? hierarchyHeights[dictionaryIndex] - 1 : maxGenLevel;
             }
         }
-        
+
         // Build map with hierarchies for sensitive attributes
         Map<String, String[][]> sensitiveHierarchies = new HashMap<String, String[][]>();
         for (PrivacyCriterion c : criteria) {
@@ -250,7 +256,7 @@ public class DataManager {
             }
         }
         
-        // Build sa generalisation hierarchies
+        // Build generalization hierarchies for sensitive attributes
         hierarchiesSE = new HashMap<String, GeneralizationHierarchy>();
         indexesSE = new HashMap<String, Integer>();
         int index = 0;
@@ -271,7 +277,30 @@ public class DataManager {
                 index++;
             }
         }
-        
+
+        // Build map with hierarchies for microaggregated attributes
+        Map<String, String[][]> maHierarchies = new HashMap<String, String[][]>();
+        for (String attribute : functions.keySet()) {
+            if (functions.get(attribute) instanceof DistributionAggregateFunctionGeneralization) {
+                maHierarchies.put(attribute, definition.getHierarchy(attribute));
+            }
+        }
+
+        // Build generalization hierarchies for microaggregated attributes
+        Map<String, int[][]> hierarchiesMA = new HashMap<String, int[][]>();
+        index = 0;
+        for (int i = 0; i < header.length; i++) {
+            final String name = header[i];
+            final int idx = i * 2;
+            if (maHierarchies.containsKey(name) && map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED) {
+                final int dictionaryIndex = map[idx + 1];
+                final String[][] hiers = maHierarchies.get(name);
+                if (hiers != null) {
+                    hierarchiesMA.put(name, new GeneralizationHierarchy(name, hiers, dictionaryIndex, dictionaryDI).map);
+                }
+            }
+        }
+
         // finalize dictionary
         dictionaryGH.finalizeAll();
         dictionaryDI.finalizeAll();
@@ -279,21 +308,22 @@ public class DataManager {
         dictionaryOT.finalizeAll();
         
         // Init microaggregation functions
-        functionsMA = new MicroaggregateFunction[ma.size()];
+        functionsMA = new DistributionAggregateFunction[ma.size()];
         for (int i = 0; i < header.length; i++) {
             final int idx = i * 2;
-            if (ma.contains(header[i]) && map[idx] == AttributeTypeInternal.MICROAGGREGATION) {
-                final int dictionaryIndex = map[idx + 1] - startIndexMA;
+            if (ma.contains(header[i]) && map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED) {
+                final int dictionaryIndex = map[idx + 1] - startMA;
                 final String name = header[i];
-                if (definition.getAttributeType(name) instanceof MicroAggregationFunction) {
-                    functionsMA[dictionaryIndex] = ((MicroAggregationFunction) definition.getAttributeType(name)).getFunction();
-                    functionsMA[dictionaryIndex].init(dictionaryDI.getMapping()[dictionaryIndex + startIndexMA], definition.getDataType(name));
+                if (definition.getMicroAggregationFunction(name) != null) {
+                    functionsMA[dictionaryIndex] = functions.get(name);
+                    functionsMA[dictionaryIndex].initialize(dictionaryDI.getMapping()[dictionaryIndex + startMA], 
+                                                            definition.getDataType(name),
+                                                            hierarchiesMA.get(name));
                 } else {
                     throw new IllegalStateException("No microaggregation function defined for attribute (" + header[i] + ")");
                 }
             }
         }
-        
     }
     
     /**
@@ -315,7 +345,7 @@ public class DataManager {
                           final Data dataIS,
                           final Data bufferOT,
                           final GeneralizationHierarchy[] hierarchiesQI,
-                          final MicroaggregateFunction[] functionsMA,
+                          final DistributionAggregateFunction[] functionsMA,
                           final int startIndexMA,
                           final int numMA,
                           final Map<String, GeneralizationHierarchy> hierarchiesSE,
@@ -336,7 +366,7 @@ public class DataManager {
         this.header = header;
         this.functionsMA = functionsMA;
         this.bufferOT = bufferOT;
-        this.startIndexMA = startIndexMA;
+        this.startMA = startIndexMA;
         this.numMA = numMA;
     }
     
@@ -413,7 +443,7 @@ public class DataManager {
      * 
      * @return
      */
-    public MicroaggregateFunction[] getFunctionsMA() {
+    public DistributionAggregateFunction[] getFunctionsMA() {
         return functionsMA;
     }
     
@@ -476,8 +506,8 @@ public class DataManager {
      * Gets the start index of the microaggregation attributes in the dataDI.
      * @return
      */
-    public int getStartIndexMA() {
-        return startIndexMA;
+    public int getStartMA() {
+        return startMA;
     }
     
     /**
@@ -645,16 +675,16 @@ public class DataManager {
                 int aType = map[idx];
                 final int iPos = map[idx + 1];
                 switch (aType) {
-                case AttributeTypeInternal.GENERALIZATION:
+                case AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED:
                     tupleGH[iPos] = tuple[i];
                     break;
-                case AttributeTypeInternal.IDENTIFIER:
+                case AttributeTypeInternal.IDENTIFYING:
                     // Ignore
                     break;
                 case AttributeTypeInternal.INSENSITIVE:
                     tupleIS[iPos] = tuple[i];
                     break;
-                case AttributeTypeInternal.MICROAGGREGATION:
+                case AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED:
                     tupleDI[iPos] = tuple[i];
                     tupleOT[iPos - startIndexMA] = tuple[i];
                     break;
@@ -672,40 +702,6 @@ public class DataManager {
         
         // Build data object
         final Data[] result = { new Data(valsGH, headerGH, mapGH, dictionaryGH), new Data(valsDI, headerDI, mapDI, dictionaryDI), new Data(valsIS, headerIS, mapIS, dictionaryIS), new Data(valsOT, headerOT, mapOT, dictionaryOT) };
-        return result;
-    }
-    
-    /**
-     * Performs a sanity check and returns all identifying attributes.
-     *
-     * @param columns
-     * @param definition
-     * @return
-     */
-    private Set<String> getIdentifiers(final String[] columns, final DataDefinition definition) {
-        
-        Set<String> result = new HashSet<String>();
-        result.addAll(definition.getIdentifyingAttributes());
-        
-        final int mappedColumnsCount = definition.getQuasiIdentifyingAttributes().size() + definition.getSensitiveAttributes().size() + definition.getInsensitiveAttributes().size() +
-                                       definition.getIdentifyingAttributes().size();
-        
-        // We always treat undefined attributes as identifiers
-        if (mappedColumnsCount < columns.length) {
-            for (int i = 0; i < columns.length; i++) {
-                
-                final String attribute = columns[i];
-                
-                // Check
-                if (!(definition.getQuasiIdentifyingAttributes().contains(attribute) || definition.getSensitiveAttributes().contains(attribute) || definition.getInsensitiveAttributes()
-                                                                                                                                                             .contains(attribute))) {
-                    
-                    // Add to identifiers
-                    result.add(attribute);
-                }
-            }
-        }
-        
         return result;
     }
 }

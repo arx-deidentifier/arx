@@ -1,15 +1,32 @@
+/*
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.deidentifier.arx.gui.view.impl.define;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.aggregates.MicroaggregateFunction;
-import org.deidentifier.arx.aggregates.MicroaggregateFunction.HandlingOfNullValues;
-import org.deidentifier.arx.aggregates.MicroaggregationFunctionDescription;
+import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.swt.SWT;
@@ -23,28 +40,32 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * This class represents the microaggregation view
+ * This class implements a view for configuring microaggregation.
+ * 
  * @author Florian Kohlmayer
+ * @author Fabian Prasser
  *
  */
 public class ViewMicoaggregation implements IView {
     
-    /** The attribute for which the view was created */
+    /** Model */
     private String                                attribute;
-    /** The controller */
-    private Controller                            controller;
-    /** The base composite */
-    private Composite                             base;
-    /** The model */
+    /** Model */
     private Model                                 model;
-    /** The list containing all valid functions for the selected datatype */
-    private MicroaggregationFunctionDescription[] validFunctions;
-    /** The Combobox */
-    private Combo                                 functionCombo;
-    /** The Combobox */
-    private Combo                                 nullValueCombo;
-    /** The button */
-    private Button                                microaggregationButton;
+    /** Model */
+    private MicroAggregationFunctionDescription[] functions;
+    
+    /** Controller */
+    private Controller                            controller;
+    
+    /** Widget */
+    private Composite                             cmpBase;
+    /** Widget */
+    private Combo                                 cmbFunction;
+    /** Widget */
+    private Button                                btnMissingData;
+    /** Widget */
+    private Button                                bntEnable;
     
     /**
      * Instantiates.
@@ -57,8 +78,8 @@ public class ViewMicoaggregation implements IView {
     public ViewMicoaggregation(Composite parent, final String attribute, Controller controller, Button microaggregationButton) {
         this.attribute = attribute;
         this.controller = controller;
-        model = controller.getModel();
-        this.microaggregationButton = microaggregationButton;
+        this.bntEnable = microaggregationButton;
+        this.model = controller.getModel();
         
         // Listener
         controller.addListener(ModelPart.MODEL, this);
@@ -66,60 +87,57 @@ public class ViewMicoaggregation implements IView {
         controller.addListener(ModelPart.DATA_TYPE, this);
         
         // Create base composite
-        base = new Composite(parent, SWT.NONE | SWT.BORDER);
+        cmpBase = new Composite(parent, SWT.NONE | SWT.BORDER);
         GridData layoutData = SWTUtil.createFillHorizontallyGridData();
         GridLayout layout = new GridLayout();
         layout.numColumns = 4;
-        base.setLayout(layout);
-        base.setLayoutData(layoutData);
+        cmpBase.setLayout(layout);
+        cmpBase.setLayoutData(layoutData);
         
-        // add dropdown selection boxes
-        final Label fLabel = new Label(base, SWT.PUSH);
-        fLabel.setText("Function:");
-        functionCombo = new Combo(base, SWT.READ_ONLY);
-        functionCombo.setLayoutData(SWTUtil.createFillGridData());
-        functionCombo.addSelectionListener(new SelectionAdapter() {
+        // Add dropdown selection boxes
+        final Label fLabel = new Label(cmpBase, SWT.PUSH);
+        fLabel.setText(Resources.getMessage("ViewMicoaggregation.0")); //$NON-NLS-1$
+        cmbFunction = new Combo(cmpBase, SWT.READ_ONLY);
+        cmbFunction.setLayoutData(SWTUtil.createFillGridData());
+        cmbFunction.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 int index = ((Combo) arg0.getSource()).getSelectionIndex();
-                selectfunction(index);
+                selectFunction(index);
             }
         });
         
-        // add dropdown selection boxes
-        final Label hLabel = new Label(base, SWT.PUSH);
-        hLabel.setText("Null values:");
-        nullValueCombo = new Combo(base, SWT.READ_ONLY);
-        nullValueCombo.setLayoutData(SWTUtil.createFillGridData());
-        nullValueCombo.setItems(getHandlingOfNullValuesLabels());
-        nullValueCombo.select(0);
-        
-        nullValueCombo.addSelectionListener(new SelectionAdapter() {
+        // Add button for missing data
+        final Label hLabel = new Label(cmpBase, SWT.PUSH);
+        hLabel.setText(Resources.getMessage("ViewMicoaggregation.1")); //$NON-NLS-1$
+        btnMissingData = new Button(cmpBase, SWT.CHECK);
+        btnMissingData.setLayoutData(SWTUtil.createFillGridData());
+        btnMissingData.setText(Resources.getMessage("ViewMicoaggregation.2")); //$NON-NLS-1$
+        btnMissingData.setSelection(true);
+        btnMissingData.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                int index = ((Combo) arg0.getSource()).getSelectionIndex();
                 if ((model != null) && (model.getInputConfig() != null)) {
-                    model.getInputConfig().setMicroaggregationHandlingOfNullValues(attribute, HandlingOfNullValues.values()[index]);
+                    model.getInputConfig().setMicroAggregationIgnoreMissingData(attribute, btnMissingData.getSelection());
                 }
             }
         });
         
-        updateValidFunctions();
-        
+        updateFunctions();
     }
     
     @Override
     public void dispose() {
         controller.removeListener(this);
-        if (!base.isDisposed()) {
-            base.dispose();
+        if (!cmpBase.isDisposed()) {
+            cmpBase.dispose();
         }
     }
     
     @Override
     public void reset() {
-        if (!base.isDisposed()) {
-            base.redraw();
+        if (!cmpBase.isDisposed()) {
+            cmpBase.redraw();
         }
     }
     
@@ -128,43 +146,30 @@ public class ViewMicoaggregation implements IView {
         if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             final String attr = (String) event.data;
             if (attr.equals(attribute)) {
-                updateValidFunctions();
-                restoreStoredFunction();
-                restoreStoredHandlingOfNullValues();
+                updateFunctions();
+                restoreFunction();
+                restoreHandlingOfMissingData();
             }
         } else if (event.part == ModelPart.DATA_TYPE) {
-            updateValidFunctions();
+            updateFunctions();
         }
-    }
-    
-    /**
-     * Helper function to convert enums to label array.
-     * @return
-     */
-    private String[] getHandlingOfNullValuesLabels() {
-        HandlingOfNullValues[] values = HandlingOfNullValues.values();
-        String[] result = new String[values.length];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = values[i].getLabel();
-        }
-        return result;
     }
     
     /**
      * Restores the function stored in the view model.
      */
-    private void restoreStoredFunction() {
+    private void restoreFunction() {
         if ((model != null) && (model.getInputConfig() != null)) {
-            MicroaggregationFunctionDescription restoredFunction = model.getInputConfig().getMicroaggregationFunctionDescription(attribute);
-            for (int i = 0; i < validFunctions.length; i++) {
-                MicroaggregationFunctionDescription function = validFunctions[i];
+            MicroAggregationFunctionDescription restoredFunction = model.getInputConfig().getMicroAggregationFunction(attribute);
+            for (int i = 0; i < functions.length; i++) {
+                MicroAggregationFunctionDescription function = functions[i];
                 if (function.equals(restoredFunction)) {
-                    selectfunction(i);
+                    selectFunction(i);
                     return;
                 }
             }
-            if (validFunctions.length > 0) {
-                selectfunction(0);
+            if (functions.length > 0) {
+                selectFunction(0);
             }
         }
     }
@@ -172,15 +177,9 @@ public class ViewMicoaggregation implements IView {
     /**
      * Restores the stored handling of null values.
      */
-    private void restoreStoredHandlingOfNullValues() {
+    private void restoreHandlingOfMissingData() {
         if ((model != null) && (model.getInputConfig() != null)) {
-            HandlingOfNullValues restored = model.getInputConfig().getMicroaggregationHandlingOfNullValues(attribute);
-            HandlingOfNullValues[] values = HandlingOfNullValues.values();
-            for (int i = 0; i < values.length; i++) {
-                if (values[i].equals(restored)) {
-                    nullValueCombo.select(i);
-                }
-            }
+            btnMissingData.setSelection(model.getInputConfig().getMicroAggregationIgnoreMissingData(attribute));
         }
     }
     
@@ -188,46 +187,45 @@ public class ViewMicoaggregation implements IView {
      * Creates the selected function.
      * @param index
      */
-    private void selectfunction(int index) {
-        if (validFunctions.length > index) {
-            MicroaggregationFunctionDescription selected = validFunctions[index];
+    private void selectFunction(int index) {
+        if (functions.length > index) {
+            MicroAggregationFunctionDescription selected = functions[index];
             if ((model == null) || (model.getInputConfig() == null)) {
-                functionCombo.select(0);
+                cmbFunction.select(0);
                 return;
             }
-            functionCombo.select(index);
-            model.getInputConfig().setMicroaggregationFunctionDescription(attribute, selected);
+            cmbFunction.select(index);
+            model.getInputConfig().setMicroAggregationFunction(attribute, selected);
         }
     }
     
     /**
-     * Updates the valid functions based on the datatype.
+     * Updates the valid functions based on the data type.
      */
-    private void updateValidFunctions() {
-        List<MicroaggregationFunctionDescription> functions = MicroaggregateFunction.list();
+    private void updateFunctions() {
+        List<MicroAggregationFunctionDescription> functions = AttributeType.listMicroAggregationFunctions();
         List<String> items = new ArrayList<String>();
-        List<MicroaggregationFunctionDescription> validFunctions = new ArrayList<MicroaggregationFunctionDescription>();
+        List<MicroAggregationFunctionDescription> validFunctions = new ArrayList<MicroAggregationFunctionDescription>();
         for (int i = 0; i < functions.size(); i++) {
-            MicroaggregationFunctionDescription function = functions.get(i);
-            if (function.getRequiredScaleOfMeasure().compareTo(model.getInputDefinition().getDataType(attribute).getScaleOfMeasure()) <= 0) {
+            MicroAggregationFunctionDescription function = functions.get(i);
+            if (model.getInputDefinition().getDataType(attribute).getDescription().getScale().provides(function.getRequiredScale())) {
                 items.add(function.getLabel());
                 validFunctions.add(function);
             }
         }
         
-        this.validFunctions = validFunctions.toArray(new MicroaggregationFunctionDescription[validFunctions.size()]);
+        this.functions = validFunctions.toArray(new MicroAggregationFunctionDescription[validFunctions.size()]);
         
         if (items.size() > 0) {
-            functionCombo.setItems(items.toArray(new String[items.size()]));
-            functionCombo.setEnabled(true);
-            restoreStoredFunction();
-            microaggregationButton.setEnabled(true);
+            cmbFunction.setItems(items.toArray(new String[items.size()]));
+            cmbFunction.setEnabled(true);
+            restoreFunction();
+            bntEnable.setEnabled(true);
         } else {
-            functionCombo.setItems(new String[] { "No valid microaggregation function for datatype" });
-            functionCombo.setEnabled(false);
-            functionCombo.select(0);
-            microaggregationButton.setEnabled(false);
+            cmbFunction.setItems(new String[] {Resources.getMessage("ViewMicoaggregation.3")}); //$NON-NLS-1$
+            cmbFunction.setEnabled(false);
+            cmbFunction.select(0);
+            bntEnable.setEnabled(false);
         }
     }
-    
 }

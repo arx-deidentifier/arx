@@ -49,6 +49,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
+import org.deidentifier.arx.gui.model.ModelTransformationMode;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.worker.io.Vocabulary;
 import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
@@ -331,7 +332,7 @@ public class WorkerLoad extends Worker<Model> {
         final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
         	
-            String attr, dtype, atype, ref, min, max, format, function;
+            String attr, dtype, atype, ref, min, max, format;
 
             @Override
             protected boolean end(final String uri,
@@ -405,8 +406,8 @@ public class WorkerLoad extends Worker<Model> {
                         definition.setAttributeType(attr, AttributeType.INSENSITIVE_ATTRIBUTE);
                     } else if (atype.equals(AttributeType.QUASI_IDENTIFYING_ATTRIBUTE.toString())) {
                         
-                        if (config.isMicroaggregationEnabled(attr)) {
-                            MicroAggregationFunction microaggregation = MicroAggregationFunction.create(config.getMicroaggregationFunctionDescription(attr).createInstance());
+                        if (config.getTransformationMode(attr) == ModelTransformationMode.MICRO_AGGREGATION) {
+                            MicroAggregationFunction microaggregation = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
                             definition.setAttributeType(attr, microaggregation);
                         } else {
                             Hierarchy hierarchy = config.getHierarchy(attr);
@@ -485,9 +486,6 @@ public class WorkerLoad extends Worker<Model> {
                 } else if (vocabulary.isMax(localName)) {
                     max = payload;
                     return true;
-                } else if (vocabulary.isMicroaggregationFunction(localName)) {
-                    function = payload;
-                    return true;
                 } else {
                     return false;
                 }
@@ -508,7 +506,6 @@ public class WorkerLoad extends Worker<Model> {
                     ref = null;
                     min = null;
                     max = null;
-                    function = null;
                     return true;
                 } else if (vocabulary.isName(localName) ||
                            vocabulary.isType(localName) ||

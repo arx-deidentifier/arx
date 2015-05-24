@@ -119,7 +119,7 @@ public class MetricHeight extends MetricDefault {
 
         minHeight = 0;
         maxHeight = 0;
-        Set<String> genQis = definition.getGeneralizationAttributes();
+        Set<String> genQis = definition.getQuasiIdentifiersWithGeneralization();
         for (String genQi : genQis) {
             minHeight += definition.getMinimumGeneralization(genQi);
             maxHeight += definition.getMaximumGeneralization(genQi);

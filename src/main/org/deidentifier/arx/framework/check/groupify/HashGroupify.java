@@ -19,12 +19,12 @@ package org.deidentifier.arx.framework.check.groupify;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.RowSet;
-import org.deidentifier.arx.aggregates.MicroaggregateFunction;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.Metric;
@@ -47,31 +47,23 @@ public class HashGroupify implements IHashGroupify {
      */
     public static class GroupStatistics {
         
-        /** TODO */
+        /** Statistic value */
         private double averageEquivalenceClassSize;
-        
-        /** TODO */
+        /** Statistic value */
         private int    maximalEquivalenceClassSize;
-        
-        /** TODO */
+        /** Statistic value */
         private int    minimalEquivalenceClassSize;
-        
-        /** TODO */
+        /** Statistic value */
         private double averageEquivalenceClassSizeIncludingOutliers;
-        
-        /** TODO */
+        /** Statistic value */
         private int    maximalEquivalenceClassSizeIncludingOutliers;
-        
-        /** TODO */
+        /** Statistic value */
         private int    minimalEquivalenceClassSizeIncludingOutliers;
-        
-        /** TODO */
+        /** Statistic value */
         private int    numberOfGroups;
-        
-        /** TODO */
+        /** Statistic value */
         private int    numberOfOutlyingEquivalenceClasses;
-        
-        /** TODO */
+        /** Statistic value */
         private int    numberOfOutlyingTuples;
         
         /**
@@ -489,8 +481,14 @@ public class HashGroupify implements IHashGroupify {
     }
     
     @Override
-    public void microaggregate(final int[][] data, final Data bufferOT, final int startMA, final int numMA, final MicroaggregateFunction[] functions) {
-        // TODO: to improve performace microaggregation and outlier marking could be integrated
+    public void microaggregate(final int[][] data, 
+                               final Data bufferOT, 
+                               final int startMA, 
+                               final int numMA, 
+                               final DistributionAggregateFunction[] functions) {
+        
+        // TODO: To improve performance, microaggregation and marking of outliers could be performed in one pass
+        // TODO: Does the cache make sense
         ObjectIntOpenHashMap<Distribution> cache = new ObjectIntOpenHashMap<Distribution>();
         for (int row = 0; row < data.length; row++) {
             if (subset == null || subset.contains(row)) {

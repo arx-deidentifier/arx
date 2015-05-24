@@ -17,11 +17,15 @@
 
 package org.deidentifier.arx;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -105,7 +109,8 @@ public class ARXResult {
                                                     dataArray,
                                                     dictionary,
                                                     handle.getDefinition(),
-                                                    config.getCriteria());
+                                                    config.getCriteria(),
+                                                    getAggregateFunctions(handle.getDefinition()));
 
         // Update handle
         ((DataHandleInput)handle).update(manager.getDataGH().getArray(), 
@@ -140,7 +145,6 @@ public class ARXResult {
         this.duration = time;
     }
     
-    
     /**
      * Creates a new instance.
      *
@@ -169,6 +173,8 @@ public class ARXResult {
         this.optimalNode = lattice.getOptimum();
         this.duration = duration;
     }
+
+
 
     /**
      * Returns the configuration used.
@@ -213,7 +219,7 @@ public class ARXResult {
     public DataHandle getHandle(ARXNode node) {
         return getOutput(node, false);
     }
-    
+
     /**
      * Returns the lattice.
      *
@@ -328,7 +334,7 @@ public class ARXResult {
         // Return
         return result;
     }
-
+    
     /**
      * Returns a handle to the data obtained by applying the optimal transformation. This method allows controlling whether
      * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
@@ -360,6 +366,19 @@ public class ARXResult {
      */
     public boolean isResultAvailable() {
         return optimalNode != null;
+    }
+
+    /**
+     * Returns a map of all microaggregation functions
+     * @param definition
+     * @return
+     */
+    private Map<String, DistributionAggregateFunction> getAggregateFunctions(DataDefinition definition) {
+        Map<String, DistributionAggregateFunction> result = new HashMap<String, DistributionAggregateFunction>();
+        for (String key : definition.getQuasiIdentifiersWithMicroaggregation()) {
+            result.put(key, definition.getMicroAggregationFunction(key).getFunction());
+        }
+        return result;
     }
 
     /**

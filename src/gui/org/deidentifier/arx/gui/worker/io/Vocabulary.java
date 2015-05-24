@@ -29,16 +29,6 @@ import org.xml.sax.SAXException;
  */
 public abstract class Vocabulary {
     
-    /**
-     * 
-     *
-     * @param version
-     * @return
-     */
-    public static Vocabulary forVersion(String version){
-        return versions.get(version);
-    }
-    
     /**  TODO */
     private static final Map<String, Vocabulary> versions = new HashMap<String, Vocabulary>();
     
@@ -47,6 +37,16 @@ public abstract class Vocabulary {
         Vocabulary_V2 v2 = new Vocabulary_V2();
         versions.put(v1.getVocabularyVersion(), v1);
         versions.put(v2.getVocabularyVersion(), v2);
+    }
+    
+    /**
+     * 
+     *
+     * @param version
+     * @return
+     */
+    public static Vocabulary forVersion(String version){
+        return versions.get(version);
     }
 	
 	/**
@@ -285,8 +285,14 @@ public abstract class Vocabulary {
      * 
      * @return
      */
-    public abstract String getMicroaggregationFunction();
-	
+    public abstract String getMicroAggregationFunction();
+
+    /**
+     * 
+     * @return
+     */
+    public abstract String getMicroAggregationIgnoreMissingData();
+    
 	/**
      * 
      *
@@ -666,8 +672,15 @@ public abstract class Vocabulary {
 	 * @param value
 	 * @return
 	 */
-	public boolean isMicroaggregationFunction(String value){return value.equals(getMicroaggregationFunction());}
-	
+	public boolean isMicroaggregationFunction(String value){return value.equals(getMicroAggregationFunction());}
+
+    /**
+     * 
+     * @param value
+     * @return
+     */
+    public boolean isMicroaggregationIgnoreMissingData(String value){return value.equals(getMicroAggregationIgnoreMissingData());}
+    
 	/**
      * 
      *

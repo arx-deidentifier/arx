@@ -22,8 +22,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.deidentifier.arx.DataScale;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.DataType.ScaleOfMeasure;
+import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 
 /**
  * A base class for summary statistics
@@ -42,17 +43,19 @@ public class StatisticsSummary<T> {
         /** Var */
         private final Comparator<String> comparator;
         /** Var */
-        private final List<String> values = new ArrayList<String>();
+        private final List<String>       values = new ArrayList<String>();
         /** Var */
-        private String             mode;
+        private String                   mode;
         /** Var */
-        private String             median;
+        private String                   median;
         /** Var */
-        private String             min;
+        private String                   min;
         /** Var */
-        private String             max;
+        private String                   max;
         /** Var */
-        private int                numberOfMeasures;
+        private int                      numberOfMeasures;
+        /** Var */
+        private DataType<?>              type;
 
         /**
          * Constructor
@@ -60,6 +63,7 @@ public class StatisticsSummary<T> {
          */
         StatisticsSummaryOrdinal(final Comparator<String> comparator) {
             this.comparator = comparator;
+            this.type = null;
         }
 
         /**
@@ -67,6 +71,7 @@ public class StatisticsSummary<T> {
          * @param type
          */
         StatisticsSummaryOrdinal(final DataType<?> type) {
+            this.type = type;
             this.comparator = new Comparator<String>() {
                 @Override
                 public int compare(String o1, String o2) {
@@ -138,25 +143,53 @@ public class StatisticsSummary<T> {
          * Adds a value
          * @param value
          */
-        void addValue(String value) {
+        public void addValue(String value) {
             this.values.add(value);
         }
+        
+        /**
+         * Clears the data
+         */
+        public void clear() {
+            this.values.clear();
+        }
 
-        void analyze() {
+        /**
+         * Analyzes the data
+         */
+        <T> void analyze() {
             Collections.sort(values, comparator);
             
             if (values.size() == 0) {
-                min = null;
-                max = null;
-                mode = null;
-                median = null;
+                min = DataType.NULL_VALUE;
+                max = DataType.NULL_VALUE;
+                mode = DataType.NULL_VALUE;
+                median = DataType.NULL_VALUE;
                 numberOfMeasures = 0;
             } else {
                 
                 // Determine simple things
                 min = values.get(0);
                 max = values.get(values.size() - 1);
-                median = values.get(values.size() / 2);
+                if (values.size() % 2 == 1) {
+                    median = values.get(values.size() / 2);
+                } else if (type != null && type instanceof DataTypeWithRatioScale<?>) {
+                    @SuppressWarnings("unchecked")
+                    DataType<T> dType = (DataType<T>)type;
+                    @SuppressWarnings("unchecked")
+                    DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>)dType;
+                    double median1 = rType.toDouble(dType.parse(values.get(values.size() / 2 - 1)));
+                    double median2 = rType.toDouble(dType.parse(values.get(values.size() / 2)));
+                    median = dType.format(rType.fromDouble((median1 + median2) / 2d));
+                } else {
+                    String median1 = values.get(values.size() / 2 - 1);
+                    String median2 = values.get(values.size() / 2);
+                    if (median1 == median2) {
+                        median = median1;
+                    } else {
+                        median = DataType.NULL_VALUE;
+                    }
+                }
                 numberOfMeasures = values.size();
                 
                 // Determine mode
@@ -180,7 +213,7 @@ public class StatisticsSummary<T> {
     }
 
     /** The associated scale of measure */
-    private final ScaleOfMeasure scale;
+    private final DataScale scale;
 
     /** The number of measures */
     private final int            numberOfMeasures;
@@ -270,7 +303,7 @@ public class StatisticsSummary<T> {
      * @param mode
      * @param modeT
      */
-    StatisticsSummary(ScaleOfMeasure scale,
+    StatisticsSummary(DataScale scale,
                       int numberOfMeasures,
                       String mode,
                       T modeT) {
@@ -302,7 +335,7 @@ public class StatisticsSummary<T> {
      * @param max
      * @param maxT
      */
-    StatisticsSummary(ScaleOfMeasure scale,
+    StatisticsSummary(DataScale scale,
                       int numberOfMeasures,
                       String mode,
                       T modeT,
@@ -358,7 +391,7 @@ public class StatisticsSummary<T> {
      * @param kurtosisT
      * @param kurtosisD
      */
-    StatisticsSummary(ScaleOfMeasure scale,
+    StatisticsSummary(DataScale scale,
                       int numberOfMeasures,
                       String mode,
                       T modeT,
@@ -436,7 +469,7 @@ public class StatisticsSummary<T> {
      * @param geometricMeanT
      * @param geometricMeanD
      */
-    StatisticsSummary(ScaleOfMeasure scale,
+    StatisticsSummary(DataScale scale,
                       int numberOfMeasures,
                       String mode,
                       T modeT,
@@ -723,7 +756,7 @@ public class StatisticsSummary<T> {
      * Returns the scale of measure
      * @return
      */
-    public ScaleOfMeasure getScale() {
+    public DataScale getScale() {
         return scale;
     }
 

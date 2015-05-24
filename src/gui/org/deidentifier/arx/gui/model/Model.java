@@ -39,8 +39,6 @@ import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.aggregates.MicroaggregateFunction;
-import org.deidentifier.arx.aggregates.MicroaggregateFunction.Generalize;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PopulationUniqueness;
@@ -318,18 +316,15 @@ public class Model implements Serializable {
 		config.removeAllCriteria();
 		if (definition == null) return;
 		
-		// Initialie the metric
+		// Initialize the metric
 		config.setMetric(this.getMetricDescription().createInstance(this.getMetricConfiguration()));
 
         // Initialize definition
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
             
-            if (config.isMicroaggregationEnabled(attr)) {
-                MicroaggregateFunction function = config.getMicroaggregationFunctionDescription(attr).createInstance(config.getMicroaggregationHandlingOfNullValues(attr));
-                if (config.getMicroaggregationFunctionDescription(attr).createInstance() instanceof Generalize) {
-                    ((Generalize) function).init(config.getHierarchy(attr).getHierarchy());
-                } 
-                definition.setAttributeType(attr, MicroAggregationFunction.create(function));
+            if (config.getTransformationMode(attr) == ModelTransformationMode.MICRO_AGGREGATION) {
+                MicroAggregationFunction function = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
+                definition.setAttributeType(attr, function);
             } else {
                 Hierarchy hierarchy = config.getHierarchy(attr);
                 /* Handle non-existent hierarchies */

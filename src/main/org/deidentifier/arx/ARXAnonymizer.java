@@ -18,11 +18,12 @@
 package org.deidentifier.arx;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
-import org.deidentifier.arx.aggregates.MicroaggregateFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
@@ -31,6 +32,8 @@ import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -183,13 +186,12 @@ public class ARXAnonymizer {
             throw new RuntimeException("This data handle is locked. Please release it first");
         }
         
-        
         if (data.getDefinition().getSensitiveAttributes().size() > 1 && config.isProtectSensitiveAssociations()) {
             throw new UnsupportedOperationException("Currently not supported!");
         }
         
         DataHandle handle = data.getHandle();
-        handle.getDefinition().materialize(handle);
+        handle.getDefinition().materializeHierarchies(handle);
         checkBeforeEncoding(handle, config);
         handle.getRegistry().reset();
         handle.getRegistry().createInputSubset(config);
@@ -425,16 +427,21 @@ public class ARXAnonymizer {
             }
         }
         
-        for (String attribute : handle.getDefinition().getMicroaggregationAttributes()) {
-            MicroaggregateFunction f = ((MicroAggregationFunction) definition.getAttributeType(attribute)).getFunction();
+        for (String attribute : handle.getDefinition().getQuasiIdentifiersWithMicroaggregation()) {
+            MicroAggregationFunction f = (MicroAggregationFunction) definition.getMicroAggregationFunction(attribute);
             DataType<?> t = definition.getDataType(attribute);
-            if (f.getMinimalRequiredScale().compareTo(t.getScaleOfMeasure()) > 0) {
-                throw new IllegalArgumentException("Microaggregation attribute '" + attribute + "' has a aggregation function specified wich needs a datatype with at least a " + f.getMinimalRequiredScale());
+            if (!t.getDescription().getScale().provides(f.getRequiredScale())) {
+                throw new IllegalArgumentException("Attribute '" + attribute + "' has an aggregation function specified wich needs a datatype with a scale of measure of at least " + f.getRequiredScale());
+            }
+            if (f.getFunction() instanceof DistributionAggregateFunctionGeneralization) {
+                if (definition.getHierarchy(attribute) == null) {
+                    throw new IllegalArgumentException("Attribute '" + attribute + "' has an aggregation function specified wich needs a generalization hierarchy");
+                }
             }
         }
         
         // Perform sanity checks
-        Set<String> genQis = definition.getGeneralizationAttributes();
+        Set<String> genQis = definition.getQuasiIdentifiersWithGeneralization();
         if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() > 1d)) { throw new IllegalArgumentException("Suppression rate " + config.getMaxOutliers() + "must be in [0, 1]"); }
         if (genQis.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier with generalization"); }
         if (genQis.size() > maxQuasiIdentifiers) { 
@@ -442,6 +449,9 @@ public class ARXAnonymizer {
         }
         int transformations = 1;
         for (String genQi : genQis) {
+            if (definition.getHierarchy(genQi) == null) {
+                throw new IllegalArgumentException("No hierarchy specified for quasi-identifier (" + genQi + ")");
+            }
             transformations *= definition.getMaximumGeneralization(genQi) - definition.getMinimumGeneralization(genQi) + 1;
         }
         if (transformations > maxTransformations) { 
@@ -464,8 +474,21 @@ public class ARXAnonymizer {
         final String[] header = ((DataHandleInput) handle).header;
         final int[][] dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria());
+        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria(), getAggregateFunctions(definition));
         return manager;
+    }
+
+    /**
+     * Returns a map of all microaggregation functions
+     * @param definition
+     * @return
+     */
+    private Map<String, DistributionAggregateFunction> getAggregateFunctions(DataDefinition definition) {
+        Map<String, DistributionAggregateFunction> result = new HashMap<String, DistributionAggregateFunction>();
+        for (String key : definition.getQuasiIdentifiersWithMicroaggregation()) {
+            result.put(key, definition.getMicroAggregationFunction(key).getFunction());
+        }
+        return result;
     }
 
     /**

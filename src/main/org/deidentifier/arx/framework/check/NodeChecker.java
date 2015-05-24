@@ -19,9 +19,9 @@ package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
-import org.deidentifier.arx.aggregates.MicroaggregateFunction;
 import org.deidentifier.arx.framework.check.StateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
@@ -41,58 +41,52 @@ import org.deidentifier.arx.metric.Metric;
  * @author Florian Kohlmayer
  */
 public class NodeChecker implements INodeChecker {
-    
+
     /** The config. */
-    private final ARXConfigurationInternal config;
-    
+    private final ARXConfigurationInternal        config;
+
     /** The data. */
-    private final Data                     dataGH;
-    
+    private final Data                            dataGH;
+
     /** The buffer. */
-    private Data                           bufferOT;
-    
+    private Data                                  bufferOT;
+
     /** The microaggregation functions. */
-    private final MicroaggregateFunction[] functionsMA;
-    
-    /** The start index of the microaggregation attributes in the dataDI */
-    private final int                      startIndexMA;
-    
-    /** The sop index of the microaggregation attributes in the dataDI */
-    private final int                      numMA;
-    
+    private final DistributionAggregateFunction[] functionsMA;
+
+    /** The start index of the attributes with microaggregation in the data array */
+    private final int                             startMA;
+
+    /** The number of attributes with microaggregation in the data array */
+    private final int                             numMA;
+
     /** The current hash groupify. */
-    protected IHashGroupify                currentGroupify;
-    
+    protected IHashGroupify                       currentGroupify;
+
     /** The history. */
-    protected History                      history;
-    
+    protected History                             history;
+
     /** The last hash groupify. */
-    protected IHashGroupify                lastGroupify;
-    
+    protected IHashGroupify                       lastGroupify;
+
     /** The metric. */
-    protected Metric<?>                    metric;
-    
+    protected Metric<?>                           metric;
+
     /** The state machine. */
-    protected StateMachine                 stateMachine;
-    
+    protected StateMachine                        stateMachine;
+
     /** The data transformer. */
-    protected Transformer                  transformer;
-    
+    protected Transformer                         transformer;
+
     /**
      * Creates a new NodeChecker instance.
      * 
-     * @param manager
-     *            The manager
-     * @param metric
-     *            The metric
-     * @param config
-     *            The anonymization configuration
-     * @param historyMaxSize
-     *            The history max size
-     * @param snapshotSizeDataset
-     *            The history threshold
-     * @param snapshotSizeSnapshot
-     *            The history threshold replacement
+     * @param manager The manager
+     * @param metric The metric
+     * @param config The configuration
+     * @param historyMaxSize The history max size
+     * @param snapshotSizeDataset A history threshold
+     * @param snapshotSizeSnapshot A history threshold
      */
     public NodeChecker(final DataManager manager, final Metric<?> metric, final ARXConfigurationInternal config, final int historyMaxSize, final double snapshotSizeDataset, final double snapshotSizeSnapshot) {
         
@@ -102,7 +96,7 @@ public class NodeChecker implements INodeChecker {
         this.dataGH = manager.getDataGH();
         this.bufferOT = manager.getBufferOT();
         this.functionsMA = manager.getFunctionsMA();
-        this.startIndexMA = manager.getStartIndexMA();
+        this.startMA = manager.getStartMA();
         this.numMA = manager.getNumMA();
         
         int initialSize = (int) (manager.getDataGH().getDataLength() * 0.01d);
@@ -158,7 +152,7 @@ public class NodeChecker implements INodeChecker {
         if (bufferOT.getMap().length > 0) { //Implicit assumption: only microaggreation is to be done in bufferOT
             // create new dictionary
             bufferOT = new Data(bufferOT.getArray(), bufferOT.getHeader(), bufferOT.getMap(), new Dictionary(bufferOT.getHeader().length));
-            currentGroupify.microaggregate(transformer.getBuffer(), bufferOT, startIndexMA, numMA, functionsMA);
+            currentGroupify.microaggregate(transformer.getBuffer(), bufferOT, startMA, numMA, functionsMA);
             // Finalize dictionary
             bufferOT.getDictionary().finalizeAll();
         }
