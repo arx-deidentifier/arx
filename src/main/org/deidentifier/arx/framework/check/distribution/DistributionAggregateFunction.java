@@ -200,6 +200,8 @@ public abstract class DistributionAggregateFunction implements Serializable {
 
     /**
      * This class calculates the median for a given distribution.
+     * 
+     * @author Fabian Prasser
      * @author Florian Kohlmayer
      * 
      */
@@ -301,6 +303,8 @@ public abstract class DistributionAggregateFunction implements Serializable {
 
     /**
      * This class calculates the mode for a given distribution.
+     * 
+     * @author Fabian Prasser
      * @author Florian Kohlmayer
      * 
      */
@@ -333,10 +337,60 @@ public abstract class DistributionAggregateFunction implements Serializable {
                     mode = value;
                 }
             }
-            return mode == -1 ? null : dictionary[mode];
+            return mode == -1 ? DataType.NULL_VALUE : dictionary[mode];
         }
     }
 
+
+    /**
+     * This class calculates the mode for a given distribution.
+     * 
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     * 
+     */
+    public static class DistributionAggregateFunctionInterval extends DistributionAggregateFunction {
+
+        /** SVUID. */
+        private static final long serialVersionUID = 2349775566497080868L;
+
+        /**
+         * Instantiates.
+         * 
+         * @param ignoreMissingData
+         */
+        public DistributionAggregateFunctionInterval(boolean ignoreMissingData) {
+            super(ignoreMissingData, false);
+        }
+
+        @Override
+        public <T> String aggregate(Distribution distribution) {
+
+            // Determine min & max
+            @SuppressWarnings("unchecked")
+            DataType<T> type = (DataType<T>)this.type;
+            T minT = null;
+            T maxT = null;
+            int[] buckets = distribution.getBuckets();
+            for (int i = 0; i < buckets.length; i += 2) {
+                int value = buckets[i];
+                if (value != -1) {
+                    T valT = type.parse(dictionary[value]);
+                    if (type.compare(valT, minT) < 0 ) {
+                        minT = valT;
+                    }
+                    if (type.compare(valT, maxT) > 0 ) {
+                        maxT = valT;
+                    }
+                }
+            }
+            
+            // Format
+            return minT == null || maxT == null ? DataType.NULL_VALUE : "[" + type.format(minT) + ", " + type.format(maxT) + "]";
+        }
+    }
+
+    
     /** SVUID. */
     private static final long       serialVersionUID = 331877806010996154L;
 

@@ -31,6 +31,7 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionInterval;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionMedian;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionMode;
 import org.deidentifier.arx.io.CSVDataOutput;
@@ -553,7 +554,7 @@ public class AttributeType implements Serializable, Cloneable {
     public abstract static class MicroAggregationFunctionDescription implements Serializable {
 
         /** SVUID*/
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = -6608355532280843693L;
 
         /** The required scale*/
         private final DataScale requiredScale;
@@ -644,6 +645,25 @@ public class AttributeType implements Serializable, Cloneable {
         public static MicroAggregationFunction createGeneralization(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionGeneralization(ignoreMissingData),
                                                 DataScale.NOMINAL, "Generalization");
+        }
+
+        /**
+         * Creates a microaggregation function returning intervals. Ignores missing data.
+         * @return
+         */
+        public static MicroAggregationFunction createInterval() {
+            return createInterval(true);
+        }
+        
+        /**
+         * Creates a microaggregation function returning intervals.
+         * 
+         * @param ignoreMissingData Should the function ignore missing data. Default is true.
+         * @return
+         */
+        public static MicroAggregationFunction createInterval(boolean ignoreMissingData) {
+            return new MicroAggregationFunction(new DistributionAggregateFunctionInterval(ignoreMissingData),
+                                                DataScale.ORDINAL, "Interval");
         }
         
         /**
@@ -847,31 +867,37 @@ public class AttributeType implements Serializable, Cloneable {
     public static List<MicroAggregationFunctionDescription> listMicroAggregationFunctions() {
         return Arrays.asList(new MicroAggregationFunctionDescription[] {
                 new MicroAggregationFunctionDescription(DataScale.INTERVAL, "Arithmetic mean") {
-                    /** SVUID*/ private static final long serialVersionUID = 1L;
+                    /** SVUID*/ private static final long serialVersionUID = -6625783559253337848L; 
                     @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createArithmeticMean(ignoreMissingData);
                     }
                 },
                 new MicroAggregationFunctionDescription(DataScale.INTERVAL, "Geometric mean") {
-                    /** SVUID*/ private static final long serialVersionUID = 1L;
+                    /** SVUID */ private static final long serialVersionUID = 1705485004601412223L;
                     @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createGeometricMean(ignoreMissingData);
                     }
                 },
                 new MicroAggregationFunctionDescription(DataScale.ORDINAL, "Median") {
-                    /** SVUID*/ private static final long serialVersionUID = 1L;
+                    /** SVUID*/ private static final long serialVersionUID = -690899494444878587L; 
                     @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createMedian(ignoreMissingData);
                     }
                 },
+                new MicroAggregationFunctionDescription(DataScale.ORDINAL, "Interval") {
+                    /** SVUID*/ private static final long serialVersionUID = 4266891310821078436L;
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                        return MicroAggregationFunction.createInterval(ignoreMissingData);
+                    }
+                },
                 new MicroAggregationFunctionDescription(DataScale.NOMINAL, "Mode") {
-                    /** SVUID*/ private static final long serialVersionUID = 1L;
+                    /** SVUID*/ private static final long serialVersionUID = 1803670665142101922L;
                     @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createMode(ignoreMissingData);
                     }
                 },
                 new MicroAggregationFunctionDescription(DataScale.NOMINAL, "Generalization") {
-                    /** SVUID*/ private static final long serialVersionUID = 1L;
+                    /** SVUID*/ private static final long serialVersionUID = 8001475078517380349L;
                     @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createGeneralization(ignoreMissingData);
                     }
