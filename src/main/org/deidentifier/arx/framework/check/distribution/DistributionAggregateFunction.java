@@ -57,7 +57,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * @param ignoreMissingData
          */
         public DistributionAggregateFunctionArithmeticMean(boolean ignoreMissingData) {
-            super(ignoreMissingData);
+            super(ignoreMissingData, true);
         }
 
         @Override
@@ -101,7 +101,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * @param ignoreMissingData
          */
         public DistributionAggregateFunctionGeneralization(boolean ignoreMissingData) {
-            super(ignoreMissingData);
+            super(ignoreMissingData, true);
         }
 
         @Override
@@ -171,7 +171,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * @param ignoreMissingData
          */
         public DistributionAggregateFunctionGeometricMean(boolean ignoreMissingData) {
-            super(ignoreMissingData);
+            super(ignoreMissingData, true);
         }
 
         @Override
@@ -214,7 +214,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * @param ignoreMissingData
          */
         public DistributionAggregateFunctionMedian(boolean ignoreMissingData) {
-            super(ignoreMissingData);
+            super(ignoreMissingData, true);
         }
 
         @Override
@@ -315,7 +315,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * @param ignoreMissingData
          */
         public DistributionAggregateFunctionMode(boolean ignoreMissingData) {
-            super(ignoreMissingData);
+            super(ignoreMissingData, true);
         }
 
         @Override
@@ -342,6 +342,8 @@ public abstract class DistributionAggregateFunction implements Serializable {
 
     /** Whether or not null values should be ignored */
     protected boolean               ignoreMissingData;
+    /** Stores whether this is a type-preserving function */
+    private final boolean           typePreserving;
     /** Dictionary */
     protected transient String[]    dictionary;
     /** Type */
@@ -353,9 +355,12 @@ public abstract class DistributionAggregateFunction implements Serializable {
      * Instantiates a new function.
      * 
      * @param ignoreMissingData
+     * @param typePreserving
      */
-    public DistributionAggregateFunction(boolean ignoreMissingData) {
+    public DistributionAggregateFunction(boolean ignoreMissingData,
+                                         boolean typePreserving) {
         this.ignoreMissingData = ignoreMissingData;
+        this.typePreserving = typePreserving;
     }
 
     /**
@@ -378,5 +383,13 @@ public abstract class DistributionAggregateFunction implements Serializable {
         this.dictionary = dictionary;
         this.type = type;
         this.hierarchy = hierarchy;
+    }
+    
+    /**
+     * Returns whether this is a type-preserving function
+     * @return
+     */
+    public boolean isTypePreserving() {
+        return this.typePreserving;
     }
 }

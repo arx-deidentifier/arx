@@ -624,7 +624,7 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static MicroAggregationFunction createArithmeticMean(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionArithmeticMean(ignoreMissingData),
-                                                DataScale.INTERVAL, "Arithmetric mean");
+                                                true, DataScale.INTERVAL, "Arithmetric mean");
         }
         
         /**
@@ -643,7 +643,7 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static MicroAggregationFunction createGeneralization(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionGeneralization(ignoreMissingData),
-                                                DataScale.NOMINAL, "Generalization");
+                                                false, DataScale.NOMINAL, "Generalization");
         }
         
         /**
@@ -662,7 +662,7 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static MicroAggregationFunction createGeometricMean(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionGeometricMean(ignoreMissingData),
-                                                DataScale.INTERVAL, "Geometric mean");
+                                                true, DataScale.INTERVAL, "Geometric mean");
         }
         
         /**
@@ -681,7 +681,7 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static MicroAggregationFunction createMedian(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionMedian(ignoreMissingData),
-                                                DataScale.ORDINAL, "Median");
+                                                true, DataScale.ORDINAL, "Median");
         }
         
         /**
@@ -700,7 +700,7 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static MicroAggregationFunction createMode(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionMode(ignoreMissingData),
-                                                DataScale.ORDINAL, "Mode");
+                                                true, DataScale.ORDINAL, "Mode");
         }
         
         /** The microaggregation function */
@@ -712,22 +712,29 @@ public class AttributeType implements Serializable, Cloneable {
         /** The label*/
         private final String label;
         
+        /** Stores whether this is a type-preserving function*/
+        private final boolean typePreserving;
+        
         /**
          * Instantiates a new hierarchy.
          * @param function
+         * @param typePreserving
          * @param requiredScale
          * @param label 
          */
         private MicroAggregationFunction(DistributionAggregateFunction function,
+                                         boolean typePreserving,
                                          DataScale requiredScale,
                                          String label) {
             super(ATTR_TYPE_QI);
             this.function = function;
             this.requiredScale = requiredScale;
             this.label = label;
+            this.typePreserving = typePreserving;
         }
         
         /**
+         * Returns a label for this function
          * @return the label
          */
         public String getLabel() {
@@ -735,15 +742,23 @@ public class AttributeType implements Serializable, Cloneable {
         }
 
         /**
-         * @return the requiredScale
+         * Returns the required scale of measure
+         * @return
          */
         public DataScale getRequiredScale() {
             return requiredScale;
         }
+        
+        /**
+         * Returns whether this is a type-preserving function
+         * @return
+         */
+        public boolean isTypePreserving() {
+            return typePreserving;
+        }
 
         /**
          * Returns the aggregate function.
-         * 
          * @return
          */
         protected DistributionAggregateFunction getFunction() {
