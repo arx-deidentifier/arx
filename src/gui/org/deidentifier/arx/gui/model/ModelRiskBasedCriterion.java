@@ -101,13 +101,10 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
         case VARIANT_AVERAGE_RISK:
             return Resources.getMessage("Model.1a"); //$NON-NLS-1$
         case VARIANT_POPULATION_UNIQUES_DANKAR:
-            return Resources.getMessage("Model.2a"); //$NON-NLS-1$
         case VARIANT_POPULATION_UNIQUES_PITMAN:
-            return Resources.getMessage("Model.3a"); //$NON-NLS-1$
         case VARIANT_POPULATION_UNIQUES_SNB:
-            return Resources.getMessage("Model.4a"); //$NON-NLS-1$
         case VARIANT_POPULATION_UNIQUES_ZAYATZ:
-            return Resources.getMessage("Model.5a"); //$NON-NLS-1$
+            return Resources.getMessage("Model.21"); //$NON-NLS-1$
         case VARIANT_SAMPLE_UNIQUES:
             return Resources.getMessage("Model.6a"); //$NON-NLS-1$
         default:
@@ -143,6 +140,16 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 	public void setThreshold(double threshold) {
 		this.threshold = threshold;
 	}
+	
+
+    /**
+     * Sets the variant.
+     *
+     * @param variant
+     */
+	public void setVariant(int variant) {
+	    this.variant = variant;
+	}
 
     @Override
     public String toString() {
@@ -177,4 +184,12 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 	                                                   riskModel.getPopulationModel().clone(),
 	                                                   riskModel.getSolverConfiguration());
 	}
+
+	/**
+	 * Returns the variant
+	 * @return
+	 */
+    public int getVariant() {
+        return this.variant;
+    }
 }

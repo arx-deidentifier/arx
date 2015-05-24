@@ -94,7 +94,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
     /** Root */
     private Composite            root       = null;
 
-    /** Is cancelling supported */
+    /** Is cancel operation supported */
     private final boolean        edit;
 
     /**
@@ -106,9 +106,9 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
      * @param edit
      */
     public DialogCriterionUpdate(final Controller controller,
-                                   final Shell parent,
-                                   List<ModelCriterion> elements,
-                                   boolean edit) {
+                                 final Shell parent,
+                                 List<ModelCriterion> elements,
+                                 boolean edit) {
         super(parent);
         super.setShellStyle(super.getShellStyle() | SWT.RESIZE | SWT.MAX); 
         this.elements = elements;
