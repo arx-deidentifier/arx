@@ -376,10 +376,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
                 int value = buckets[i];
                 if (value != -1) {
                     T valT = type.parse(dictionary[value]);
-                    if (type.compare(valT, minT) < 0 ) {
+                    if (minT == null || type.compare(valT, minT) < 0 ) {
                         minT = valT;
                     }
-                    if (type.compare(valT, maxT) > 0 ) {
+                    if (maxT == null || type.compare(valT, maxT) > 0 ) {
                         maxT = valT;
                     }
                 }
