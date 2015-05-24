@@ -700,7 +700,7 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static MicroAggregationFunction createMode(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionMode(ignoreMissingData),
-                                                DataScale.ORDINAL, "Mode");
+                                                DataScale.NOMINAL, "Mode");
         }
         
         /** The microaggregation function */
@@ -864,7 +864,7 @@ public class AttributeType implements Serializable, Cloneable {
                         return MicroAggregationFunction.createMedian(ignoreMissingData);
                     }
                 },
-                new MicroAggregationFunctionDescription(DataScale.ORDINAL, "Mode") {
+                new MicroAggregationFunctionDescription(DataScale.NOMINAL, "Mode") {
                     /** SVUID*/ private static final long serialVersionUID = 1L;
                     @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createMode(ignoreMissingData);
