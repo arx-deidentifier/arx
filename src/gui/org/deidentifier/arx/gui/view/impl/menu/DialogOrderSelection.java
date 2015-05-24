@@ -154,7 +154,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     private String[] getDataTypes(){
         ArrayList<String> list = new ArrayList<String>();
         for (DataTypeDescription<?> desc : DataType.list()){
-            if (!desc.getLabel().equals("OrderedString")) { //$NON-NLS-1$
+            if (!desc.getLabel().equals("Ordinal")) { //$NON-NLS-1$
                 list.add(desc.getLabel());
             }
         }

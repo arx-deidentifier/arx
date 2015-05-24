@@ -906,7 +906,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         private final Map<String, Integer>               order;
 
         /** The description of the data type. */
-        private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "OrderedString", DataScale.ORDINAL, true, new ArrayList<String>()){
+        private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "Ordinal", DataScale.ORDINAL, true, new ArrayList<String>()){
             private static final long serialVersionUID = -6300869938311742699L;
             @Override public DataType<String> newInstance() { return ORDERED_STRING; }
             @Override public DataType<String> newInstance(String format) {return createOrderedString(format);}
@@ -1123,7 +1123,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public String toString() {
-            return "OrderedString";
+            return "Ordinal";
         }
     }
     
