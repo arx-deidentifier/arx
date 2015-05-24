@@ -54,10 +54,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
         /**
          * Instantiates.
          * 
-         * @param ignoreNullValues
+         * @param ignoreMissingData
          */
-        public DistributionAggregateFunctionArithmeticMean(boolean ignoreNullValues) {
-            super(ignoreNullValues);
+        public DistributionAggregateFunctionArithmeticMean(boolean ignoreMissingData) {
+            super(ignoreMissingData);
         }
 
         @Override
@@ -70,7 +70,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
             stats.clear();
             while (it.hasNext()) {
                 Double value = it.next();
-                if (value != null || !ignoreNullValues) {
+                if (value != null || !ignoreMissingData) {
                     stats.addValue(value);
                 }
             }
@@ -98,10 +98,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
 
         /**
          * Creates a new instance
-         * @param ignoreNullValues
+         * @param ignoreMissingData
          */
-        public DistributionAggregateFunctionGeneralization(boolean ignoreNullValues) {
-            super(ignoreNullValues);
+        public DistributionAggregateFunctionGeneralization(boolean ignoreMissingData) {
+            super(ignoreMissingData);
         }
 
         @Override
@@ -168,10 +168,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
         /**
          * Instantiates.
          * 
-         * @param ignoreNullValues
+         * @param ignoreMissingData
          */
-        public DistributionAggregateFunctionGeometricMean(boolean ignoreNullValues) {
-            super(ignoreNullValues);
+        public DistributionAggregateFunctionGeometricMean(boolean ignoreMissingData) {
+            super(ignoreMissingData);
         }
 
         @Override
@@ -184,7 +184,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
             stats.clear();
             while (it.hasNext()) {
                 Double value = it.next();
-                if (value != null || !ignoreNullValues) {
+                if (value != null || !ignoreMissingData) {
                     stats.addValue(value);
                 }
             }
@@ -211,10 +211,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
         /**
          * Instantiates.
          * 
-         * @param ignoreNullValues
+         * @param ignoreMissingData
          */
-        public DistributionAggregateFunctionMedian(boolean ignoreNullValues) {
-            super(ignoreNullValues);
+        public DistributionAggregateFunctionMedian(boolean ignoreMissingData) {
+            super(ignoreMissingData);
         }
 
         @Override
@@ -312,10 +312,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
         /**
          * Instantiates.
          * 
-         * @param ignoreNullValues
+         * @param ignoreMissingData
          */
-        public DistributionAggregateFunctionMode(boolean ignoreNullValues) {
-            super(ignoreNullValues);
+        public DistributionAggregateFunctionMode(boolean ignoreMissingData) {
+            super(ignoreMissingData);
         }
 
         @Override
@@ -341,7 +341,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
     private static final long       serialVersionUID = 331877806010996154L;
 
     /** Whether or not null values should be ignored */
-    protected boolean               ignoreNullValues;
+    protected boolean               ignoreMissingData;
     /** Dictionary */
     protected transient String[]    dictionary;
     /** Type */
@@ -352,10 +352,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
     /**
      * Instantiates a new function.
      * 
-     * @param ignoreNullValues
+     * @param ignoreMissingData
      */
-    public DistributionAggregateFunction(boolean ignoreNullValues) {
-        this.ignoreNullValues = ignoreNullValues;
+    public DistributionAggregateFunction(boolean ignoreMissingData) {
+        this.ignoreMissingData = ignoreMissingData;
     }
 
     /**
