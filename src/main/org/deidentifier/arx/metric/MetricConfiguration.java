@@ -22,7 +22,7 @@ import java.io.Serializable;
 import org.deidentifier.arx.metric.Metric.AggregateFunction;
 
 /**
- * A class a configuration of a metric.
+ * A class for a configuration of a metric.
  *
  * @author Fabian Prasser
  */
