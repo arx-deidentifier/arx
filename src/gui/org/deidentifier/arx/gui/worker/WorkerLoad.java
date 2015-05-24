@@ -40,7 +40,7 @@ import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.AttributeType.Microaggregation;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataType;
@@ -406,7 +406,7 @@ public class WorkerLoad extends Worker<Model> {
                     } else if (atype.equals(AttributeType.QUASI_IDENTIFYING_ATTRIBUTE.toString())) {
                         
                         if (config.isMicroaggregationEnabled(attr)) {
-                            Microaggregation microaggregation = Microaggregation.create(config.getMicroaggregationFunctionDescription(attr).createInstance());
+                            MicroAggregationFunction microaggregation = MicroAggregationFunction.create(config.getMicroaggregationFunctionDescription(attr).createInstance());
                             definition.setAttributeType(attr, microaggregation);
                         } else {
                             Hierarchy hierarchy = config.getHierarchy(attr);

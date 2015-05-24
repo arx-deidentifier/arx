@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.AttributeType.Microaggregation;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.MicroaggregateFunction;
@@ -285,8 +285,8 @@ public class DataManager {
             if (ma.contains(header[i]) && map[idx] == AttributeTypeInternal.MICROAGGREGATION) {
                 final int dictionaryIndex = map[idx + 1] - startIndexMA;
                 final String name = header[i];
-                if (definition.getAttributeType(name) instanceof Microaggregation) {
-                    functionsMA[dictionaryIndex] = ((Microaggregation) definition.getAttributeType(name)).getFunction();
+                if (definition.getAttributeType(name) instanceof MicroAggregationFunction) {
+                    functionsMA[dictionaryIndex] = ((MicroAggregationFunction) definition.getAttributeType(name)).getFunction();
                     functionsMA[dictionaryIndex].init(dictionaryDI.getMapping()[dictionaryIndex + startIndexMA], definition.getDataType(name));
                 } else {
                     throw new IllegalStateException("No microaggregation function defined for attribute (" + header[i] + ")");

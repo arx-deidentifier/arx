@@ -553,69 +553,70 @@ public class AttributeType implements Serializable, Cloneable {
      * @param <T>
      *
      */
-    public static class Microaggregation extends AttributeType implements Serializable {
+    public static class MicroAggregationFunction extends AttributeType implements Serializable {
+        
         /**
-         * Creates an microaggregation attribute type.
+         * Creates a microaggregation function attribute type.
          * 
          * @param function
          * @return
          */
-        public static Microaggregation create(MicroaggregateFunction function) {
-            return new Microaggregation(function);
+        public static MicroAggregationFunction create(MicroaggregateFunction function) {
+            return new MicroAggregationFunction(function);
         }
         
         /**
-         * Creates an microaggregation using arithmetic mean function.
+         * Creates a microaggregation function using arithmetic mean function.
          * 
          * @return
          */
-        public static Microaggregation createArithmeticMean() {
-            return new Microaggregation(new ArithmeticMean());
+        public static MicroAggregationFunction createArithmeticMean() {
+            return new MicroAggregationFunction(new ArithmeticMean());
         }
         
         /**
-         * Creates an microaggregation using arithmetic mean function.
+         * Creates a microaggregation function using arithmetic mean function.
          * 
          * @return
          */
-        public static Microaggregation createArithmeticMean(HandlingOfNullValues nullValueHandling) {
-            return new Microaggregation(new ArithmeticMean(nullValueHandling));
+        public static MicroAggregationFunction createArithmeticMean(HandlingOfNullValues nullValueHandling) {
+            return new MicroAggregationFunction(new ArithmeticMean(nullValueHandling));
         }
         
         /**
-         * Creates an microaggregation using geometric mean function.
+         * Creates a microaggregation function using geometric mean function.
          * 
          * @return
          */
         public static AttributeType createGeometricMean() {
-            return new Microaggregation(new GeometricMean());
+            return new MicroAggregationFunction(new GeometricMean());
         }
         
         /**
-         * Creates an microaggregation using geometric mean function.
+         * Creates a microaggregation function using geometric mean function.
          * 
          * @return
          */
         public static AttributeType createGeometricMean(HandlingOfNullValues nullValueHandling) {
-            return new Microaggregation(new GeometricMean(nullValueHandling));
+            return new MicroAggregationFunction(new GeometricMean(nullValueHandling));
         }
         
         /**
-         * Creates an microaggregation using the median.
+         * Creates a microaggregation function using the median.
          * 
          * @return
          */
         public static AttributeType createMedian() {
-            return new Microaggregation(new Median());
+            return new MicroAggregationFunction(new Median());
         }
         
         /**
-         * Creates an microaggregation using the modus.
+         * Creates a microaggregation function using the modus.
          * 
          * @return
          */
         public static AttributeType createModus() {
-            return new Microaggregation(new Modus());
+            return new MicroAggregationFunction(new Modus());
         }
         
         /** SVUID */
@@ -627,7 +628,7 @@ public class AttributeType implements Serializable, Cloneable {
         /**
          * Instantiates a new hierarchy.
          */
-        public Microaggregation(MicroaggregateFunction function) {
+        public MicroAggregationFunction(MicroaggregateFunction function) {
             super(ATTR_TYPE_QI);
             this.function = function;
         }

@@ -26,7 +26,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
-import org.deidentifier.arx.AttributeType.Microaggregation;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.DataType;
@@ -75,10 +75,10 @@ public class Example31 extends Example {
         zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
         zipcode.add("NULL", "NULL", "NULL", "NULL", "NULL", "*****");
         
-        data.getDefinition().setAttributeType("age", Microaggregation.createGeometricMean());
+        data.getDefinition().setAttributeType("age", MicroAggregationFunction.createGeometricMean());
         data.getDefinition().setAttributeType("gender", gender);
         data.getDefinition().setAttributeType("zipcode", zipcode);
-        data.getDefinition().setAttributeType("date", Microaggregation.createArithmeticMean());
+        data.getDefinition().setAttributeType("date", MicroAggregationFunction.createArithmeticMean());
         
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();

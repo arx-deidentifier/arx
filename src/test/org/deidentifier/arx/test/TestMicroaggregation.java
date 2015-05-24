@@ -28,7 +28,7 @@ import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.AttributeType.Microaggregation;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
@@ -95,7 +95,7 @@ public class TestMicroaggregation extends AbstractTest {
     public void testMicroaggregationAdult() throws IOException {
         Data data = getDataObject("../arx-data/data-junit/adult.csv");
         
-        data.getDefinition().setAttributeType("age", Microaggregation.createArithmeticMean());
+        data.getDefinition().setAttributeType("age", MicroAggregationFunction.createArithmeticMean());
         data.getDefinition().setDataType("age", DataType.INTEGER);
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -123,7 +123,7 @@ public class TestMicroaggregation extends AbstractTest {
     public void testMicroaggregationArithmeticMean() throws IOException {
         DataProvider provider = new DataProvider();
         provider.createDataDefinition();
-        provider.data.getDefinition().setAttributeType("age", Microaggregation.createArithmeticMean());
+        provider.data.getDefinition().setAttributeType("age", MicroAggregationFunction.createArithmeticMean());
         provider.data.getDefinition().setAttributeType("gender", provider.getGender());
         provider.data.getDefinition().setAttributeType("zipcode", provider.getZipcode());
         
@@ -159,7 +159,7 @@ public class TestMicroaggregation extends AbstractTest {
     public void testMicroaggregationGeometricMean() throws IOException {
         DataProvider provider = new DataProvider();
         provider.createDataDefinition();
-        provider.data.getDefinition().setAttributeType("age", Microaggregation.createGeometricMean());
+        provider.data.getDefinition().setAttributeType("age", MicroAggregationFunction.createGeometricMean());
         provider.data.getDefinition().setAttributeType("gender", provider.getGender());
         provider.data.getDefinition().setAttributeType("zipcode", provider.getZipcode());
         

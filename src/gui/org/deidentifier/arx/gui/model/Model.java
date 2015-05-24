@@ -35,7 +35,7 @@ import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.AttributeType.Microaggregation;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
@@ -329,7 +329,7 @@ public class Model implements Serializable {
                 if (config.getMicroaggregationFunctionDescription(attr).createInstance() instanceof Generalize) {
                     ((Generalize) function).init(config.getHierarchy(attr).getHierarchy());
                 } 
-                definition.setAttributeType(attr, Microaggregation.create(function));
+                definition.setAttributeType(attr, MicroAggregationFunction.create(function));
             } else {
                 Hierarchy hierarchy = config.getHierarchy(attr);
                 /* Handle non-existent hierarchies */
