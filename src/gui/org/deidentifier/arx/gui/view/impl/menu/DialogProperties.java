@@ -178,6 +178,11 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.61")) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getUseListwiseDeletion(); }
             protected void setValue(Object t) { model.setUseListwiseDeletion((Boolean)t); }});
+        
+
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.62")) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getUseFunctionalHierarchies(); }
+            protected void setValue(Object t) { model.setUseFunctionalHierarchies((Boolean)t); }});
     }
 
     /**

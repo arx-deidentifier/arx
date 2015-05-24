@@ -244,6 +244,9 @@ public class Model implements Serializable {
     
     /** Summary statistics */
     private Boolean                               useListwiseDeletion             = true;
+
+    /** Utility estimation during anonymization */
+    private Boolean                               useFunctionalHierarchies        = true;
     
     /* *****************************************
      * RISK-BASED STUFF
@@ -944,6 +947,19 @@ public class Model implements Serializable {
         return useListwiseDeletion;
     }
 
+    /**
+     * Returns whether functional hierarchies should be used
+     * @return
+     */
+    public Boolean getUseFunctionalHierarchies() {
+        
+        // Backwards compatibility
+        if (useFunctionalHierarchies == null) {
+            useFunctionalHierarchies = true;
+        }
+        return useFunctionalHierarchies;
+    }
+
 	/**
      * Returns the view configuration.
      *
@@ -1415,6 +1431,14 @@ public class Model implements Serializable {
      */
     public void setUseListwiseDeletion(boolean useListwiseDeletion) {
         this.useListwiseDeletion = useListwiseDeletion;
+    }
+
+    /**
+     * Sets whether funtional hierarchies should be used during anonymization to esimtate utility
+     * @param useFunctionalHierarchies
+     */
+    public void setUseFunctionalHierarchies(boolean useFunctionalHierarchies) {
+        this.useFunctionalHierarchies = useFunctionalHierarchies;
     }
     
     /**
