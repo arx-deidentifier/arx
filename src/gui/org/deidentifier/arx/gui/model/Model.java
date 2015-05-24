@@ -325,41 +325,48 @@ public class Model implements Serializable {
 
         // Initialize definition
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
+
+            // Reset
+            definition.resetAttributeType(attr);
+            definition.resetHierarchy(attr);
+            definition.resetHierarchyBuilder(attr);
+            definition.resetMaximumGeneralization(attr);
+            definition.resetMicroAggregationFunction(attr);
+            definition.resetMinimumGeneralization(attr);
+            
+            // This increases the precision of the Loss utility measure
+            if (this.getUseFunctionalHierarchies() && config.getHierarchyBuilder(attr) != null) {
+                definition.setHierarchy(attr, config.getHierarchyBuilder(attr));
+            } else {
+                definition.setHierarchy(attr, (HierarchyBuilder<?>)null);
+            }
+            
+            // Set hierarchy
+            Hierarchy hierarchy = config.getHierarchy(attr);
+            if (hierarchy != null && hierarchy.getHierarchy() != null) {
+                definition.setHierarchy(attr, hierarchy);
+            }
+            
+            // Set attribute type
+            definition.setAttributeType(attr, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
             
             if (config.getTransformationMode(attr) == ModelTransformationMode.MICRO_AGGREGATION) {
+
+                // Prepare for microaggregation
                 MicroAggregationFunction function = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
-                definition.setAttributeType(attr, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
                 definition.setMicroAggregationFunction(attr, function);
             } else {
                 
-                // This increases the precision of the Loss utility measure
-                if (this.getUseFunctionalHierarchies() && config.getHierarchyBuilder(attr) != null) {
-                    definition.setHierarchy(attr, config.getHierarchyBuilder(attr));
-                } else {
-                    definition.setHierarchy(attr, (HierarchyBuilder<?>)null);
-                }
+                // Prepare for generalization
                 definition.setMicroAggregationFunction(attr, null);
-                Hierarchy hierarchy = config.getHierarchy(attr);
-                if (hierarchy != null && hierarchy.getHierarchy() != null) {
-                    definition.setHierarchy(attr, hierarchy);
-                }
                 Integer min = config.getMinimumGeneralization(attr);
                 Integer max = config.getMaximumGeneralization(attr);
-                
-                if (min == null) {
-                    min = 0;
+                if (min != null) {
+                    definition.setMinimumGeneralization(attr, min);
                 }
-                if (max == null) {
-                    if (hierarchy.getHierarchy().length == 0) {
-                        max = 0;
-                    }
-                    else {
-                        max = hierarchy.getHierarchy()[0].length - 1;
-                    }
+                if (max != null) {
+                    definition.setMaximumGeneralization(attr, max);
                 }
-                definition.setAttributeType(attr, hierarchy);
-                definition.setMinimumGeneralization(attr, min);
-                definition.setMaximumGeneralization(attr, max);
             }
         }
         

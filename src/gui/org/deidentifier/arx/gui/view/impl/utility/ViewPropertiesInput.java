@@ -198,6 +198,10 @@ public class ViewPropertiesInput extends ViewProperties {
         column8.setAlignment(SWT.LEFT);
         column8.setText(Resources.getMessage("PropertiesView.113")); //$NON-NLS-1$
         column8.setWidth(50);
+        final TreeColumn column9 = new TreeColumn(tree, SWT.RIGHT);
+        column9.setAlignment(SWT.LEFT);
+        column9.setText(Resources.getMessage("PropertiesView.126")); //$NON-NLS-1$
+        column9.setWidth(50);
 
         treeViewer.setContentProvider(new InputContentProvider());
         treeViewer.setLabelProvider(new InputLabelProvider());
@@ -263,7 +267,7 @@ public class ViewPropertiesInput extends ViewProperties {
         for (int i = 0; i < data.getNumColumns(); i++) {
             final String s = data.getAttributeName(i);
             if (definition.getQuasiIdentifyingAttributes().contains(s)) {
-                final String[] values = new String[] { "", "", "", "", "" , "", ""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+                final String[] values = new String[] { "", "", "", "", "" , "", "", ""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
                 values[0] = s;
                 if (definition.getHierarchy(s) != null) {
                     DataType<?> type = definition.getDataType(s);
@@ -282,6 +286,9 @@ public class ViewPropertiesInput extends ViewProperties {
                     values[3] = String.valueOf(height);
                     values[4] = String.valueOf(definition.getMinimumGeneralization(s));
                     values[5] = String.valueOf(definition.getMaximumGeneralization(s));
+                } 
+                if (definition.getMicroAggregationFunction(s) != null){
+                    values[7] = definition.getMicroAggregationFunction(s).getLabel();
                 }
                 values[6] = format.format(config.getAttributeWeight(s));
                 new Property(quasiIdentifying, Resources.getMessage("PropertiesView.26") + (index++), values); //$NON-NLS-1$

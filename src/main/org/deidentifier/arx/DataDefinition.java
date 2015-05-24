@@ -300,6 +300,54 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetMaximumGeneralization(String attr) {
+        this.minGeneralization.remove(attr);
+    }
+
+    /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetMinimumGeneralization(String attr) {
+        this.maxGeneralization.remove(attr);
+    }
+    
+    /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetAttributeType(String attr) {
+        this.attributeTypes.remove(attr);
+    }
+
+    /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetHierarchy(String attr) {
+        this.hierarchies.remove(attr);
+    }
+
+    /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetHierarchyBuilder(String attr) {
+        this.builders.remove(attr);
+    }
+
+    /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetMicroAggregationFunction(String attr) {
+        this.functions.remove(attr);
+    }
+
+    /**
      * Define the type of a given attribute.
      *
      * @param attribute
@@ -364,7 +412,7 @@ public class DataDefinition implements Cloneable{
     public void setHierarchy(String attribute, HierarchyBuilder<?> builder) {
         this.builders.put(attribute, builder);
     }
-
+    
     /**
      * Define the maximal generalization of a given attribute.
      *
@@ -377,7 +425,7 @@ public class DataDefinition implements Cloneable{
         checkLocked();
         maxGeneralization.put(attribute, maximum);
     }
-
+    
     /**
      * Associates the given microaggregation function
      * @param attribute
@@ -386,7 +434,7 @@ public class DataDefinition implements Cloneable{
     public void setMicroAggregationFunction(String attribute, MicroAggregationFunction function) {
         this.functions.put(attribute, function);
     }
-    
+
     /**
      * Define the minimal generalization of a given attribute.
      *
@@ -399,7 +447,7 @@ public class DataDefinition implements Cloneable{
         checkLocked();
         minGeneralization.put(attribute, minimum);
     }
-    
+
     /**
      * Checks whether this handle is locked.
      *
@@ -408,7 +456,7 @@ public class DataDefinition implements Cloneable{
     private void checkLocked() throws IllegalStateException{
         if (locked) {throw new IllegalStateException("This definition is currently locked");}
     }
-
+    
     /**
      * Checks whether the argument is null.
      *
@@ -432,7 +480,7 @@ public class DataDefinition implements Cloneable{
             throw new IllegalArgumentException("Attribute ("+attribute+") is not a quasi-identifier");
         }
     }
-    
+
     /**
      * Returns attributes by type
      * @param type
