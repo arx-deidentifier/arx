@@ -550,7 +550,10 @@ public class AttributeType implements Serializable, Cloneable {
      * This class describes a microaggregation function
      * @author Fabian Prasser
      */
-    public abstract static class MicroAggregationFunctionDescription {
+    public abstract static class MicroAggregationFunctionDescription implements Serializable {
+
+        /** SVUID*/
+        private static final long serialVersionUID = 1L;
 
         /** The required scale*/
         private final DataScale requiredScale;
@@ -835,32 +838,32 @@ public class AttributeType implements Serializable, Cloneable {
     public static List<MicroAggregationFunctionDescription> listMicroAggregationFunctions() {
         return Arrays.asList(new MicroAggregationFunctionDescription[] {
                 new MicroAggregationFunctionDescription(DataScale.INTERVAL, "Arithmetic mean") {
-                    @Override
-                    public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                    /** SVUID*/ private static final long serialVersionUID = 1L;
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createArithmeticMean(ignoreMissingData);
                     }
                 },
                 new MicroAggregationFunctionDescription(DataScale.INTERVAL, "Geometric mean") {
-                    @Override
-                    public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                    /** SVUID*/ private static final long serialVersionUID = 1L;
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createGeometricMean(ignoreMissingData);
                     }
                 },
                 new MicroAggregationFunctionDescription(DataScale.ORDINAL, "Median") {
-                    @Override
-                    public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                    /** SVUID*/ private static final long serialVersionUID = 1L;
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createMedian(ignoreMissingData);
                     }
                 },
                 new MicroAggregationFunctionDescription(DataScale.ORDINAL, "Mode") {
-                    @Override
-                    public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                    /** SVUID*/ private static final long serialVersionUID = 1L;
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createMode(ignoreMissingData);
                     }
                 },
                 new MicroAggregationFunctionDescription(DataScale.NOMINAL, "Generalization") {
-                    @Override
-                    public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                    /** SVUID*/ private static final long serialVersionUID = 1L;
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createGeneralization(ignoreMissingData);
                     }
                 }

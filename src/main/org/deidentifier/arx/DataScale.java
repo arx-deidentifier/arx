@@ -16,13 +16,15 @@
  */
 package org.deidentifier.arx;
 
+import java.io.Serializable;
+
 /**
  * This class represents different scales of measure. Note that the order of entries in this enum is important.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public enum DataScale {
+public enum DataScale implements Serializable {
     
     NOMINAL("Nominal scale"),
     
