@@ -39,6 +39,7 @@ import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PopulationUniqueness;
@@ -334,6 +335,8 @@ public class Model implements Serializable {
                 // This increases the precision of the Loss utility measure
                 if (this.getUseFunctionalHierarchies() && config.getHierarchyBuilder(attr) != null) {
                     definition.setHierarchy(attr, config.getHierarchyBuilder(attr));
+                } else {
+                    definition.setHierarchy(attr, (HierarchyBuilder<?>)null);
                 }
                 definition.setMicroAggregationFunction(attr, null);
                 Hierarchy hierarchy = config.getHierarchy(attr);
