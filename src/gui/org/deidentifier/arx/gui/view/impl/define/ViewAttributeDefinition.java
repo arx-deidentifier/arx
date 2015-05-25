@@ -226,6 +226,8 @@ public class ViewAttributeDefinition implements IView {
                         
                         // Update icon
                         updateIcon();
+                        // Update mode
+                        updateMode();
                         
                         // Update criteria
                         if (criteriaDisabled) {
@@ -397,20 +399,6 @@ public class ViewAttributeDefinition implements IView {
         tabItem.setControl(group);
     }
     
-    /**
-     * Returns the microaggregation function for the given label
-     * @param function
-     * @return
-     */
-    private MicroAggregationFunctionDescription getMicroAggregationFunction(String label) {
-        for (MicroAggregationFunctionDescription function : FUNCTIONS) {
-            if (function.getLabel().equals(label)) {
-                return function;
-            }
-        }
-        return null;
-    }
-    
     @Override
     public void dispose() {
         
@@ -458,48 +446,6 @@ public class ViewAttributeDefinition implements IView {
     }
     
     /**
-     * Update function
-     */
-    private void updateFunction() {
-        if (model != null && model.getInputConfig() != null) {
-            DataScale scale = model.getInputDefinition().getDataType(attribute).getDescription().getScale();
-            List<String> functions = new ArrayList<String>();
-            for (MicroAggregationFunctionDescription function : FUNCTIONS) {
-                if (scale.provides(function.getRequiredScale())) {
-                    functions.add(function.getLabel());
-                } 
-            }
-            this.cmbFunction.setItems(functions.toArray(new String[functions.size()]));
-            int index = functions.indexOf(model.getInputConfig().getMicroAggregationFunction(attribute));
-            if (index == -1) {
-                this.cmbFunction.select(0);
-                this.model.getInputConfig().setMicroAggregationFunction(attribute, getMicroAggregationFunction(functions.get(0)));
-            } else {
-                this.cmbFunction.select(index);
-                this.model.getInputConfig().setMicroAggregationFunction(attribute, getMicroAggregationFunction(functions.get(index)));
-            }
-            this.btnMissing.setSelection(this.model.getInputConfig().getMicroAggregationIgnoreMissingData(attribute));
-        }
-    }
-
-    /**
-     * Update mode
-     */
-    private void updateMode() {
-        if (model != null && model.getInputConfig() != null) {
-            if (model.getInputConfig().getTransformationMode(attribute) == ModelTransformationMode.GENERALIZATION) {
-                cmbMode.select(0);
-                cmbFunction.setEnabled(false);
-                btnMissing.setEnabled(false);
-            } else {
-                cmbMode.select(1);
-                cmbFunction.setEnabled(true);
-                btnMissing.setEnabled(true);
-            }
-        }
-    }
-
-    /**
      * Returns a description for the given label.
      *
      * @param label
@@ -526,7 +472,7 @@ public class ViewAttributeDefinition implements IView {
         }
         return list.toArray(new String[list.size()]);
     }
-    
+
     /**
      * Returns the index of a given data type.
      *
@@ -542,6 +488,20 @@ public class ViewAttributeDefinition implements IView {
             idx++;
         }
         throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.6") + type.getDescription().getLabel()); //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the microaggregation function for the given label
+     * @param function
+     * @return
+     */
+    private MicroAggregationFunctionDescription getMicroAggregationFunction(String label) {
+        for (MicroAggregationFunctionDescription function : FUNCTIONS) {
+            if (function.getLabel().equals(label)) {
+                return function;
+            }
+        }
+        return null;
     }
     
     /**
@@ -618,6 +578,31 @@ public class ViewAttributeDefinition implements IView {
     }
     
     /**
+     * Update function
+     */
+    private void updateFunction() {
+        if (model != null && model.getInputConfig() != null) {
+            DataScale scale = model.getInputDefinition().getDataType(attribute).getDescription().getScale();
+            List<String> functions = new ArrayList<String>();
+            for (MicroAggregationFunctionDescription function : FUNCTIONS) {
+                if (scale.provides(function.getRequiredScale())) {
+                    functions.add(function.getLabel());
+                } 
+            }
+            this.cmbFunction.setItems(functions.toArray(new String[functions.size()]));
+            int index = functions.indexOf(model.getInputConfig().getMicroAggregationFunction(attribute));
+            if (index == -1) {
+                this.cmbFunction.select(0);
+                this.model.getInputConfig().setMicroAggregationFunction(attribute, getMicroAggregationFunction(functions.get(0)));
+            } else {
+                this.cmbFunction.select(index);
+                this.model.getInputConfig().setMicroAggregationFunction(attribute, getMicroAggregationFunction(functions.get(index)));
+            }
+            this.btnMissing.setSelection(this.model.getInputConfig().getMicroAggregationIgnoreMissingData(attribute));
+        }
+    }
+    
+    /**
      * Update the column icon.
      */
     private void updateIcon() {
@@ -630,6 +615,32 @@ public class ViewAttributeDefinition implements IView {
             tabItem.setImage(IMAGE_SENSITIVE);
         } else if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
             tabItem.setImage(IMAGE_IDENTIFYING);
+        }
+    }
+    
+    /**
+     * Update mode
+     */
+    private void updateMode() {
+        
+        if (model.getInputDefinition().getQuasiIdentifyingAttributes().contains(attribute) &&
+            model != null && model.getInputConfig() != null) {
+            
+            if (model.getInputConfig().getTransformationMode(attribute) == ModelTransformationMode.GENERALIZATION) {
+                cmbMode.setEnabled(true);
+                cmbFunction.setEnabled(false);
+                btnMissing.setEnabled(false);
+                cmbMode.select(0);
+            } else {
+                cmbMode.setEnabled(true);
+                cmbFunction.setEnabled(true);
+                btnMissing.setEnabled(true);
+                cmbMode.select(1);
+            }
+        } else {
+            cmbMode.setEnabled(false);
+            cmbFunction.setEnabled(false);
+            btnMissing.setEnabled(false);
         }
     }
 }
