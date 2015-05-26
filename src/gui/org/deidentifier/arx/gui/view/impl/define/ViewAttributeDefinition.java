@@ -41,6 +41,7 @@ import org.deidentifier.arx.gui.model.ModelTransformationMode;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.common.ComponentMultiStack;
 import org.deidentifier.arx.gui.view.impl.common.ViewHierarchy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -58,7 +59,6 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * This view displays basic attribute information.
- * TODO: Display data type formats
  * 
  * @author Fabian Prasser
  */
@@ -80,44 +80,51 @@ public class ViewAttributeDefinition implements IView {
     
     /** Resource */
     private static final List<MicroAggregationFunctionDescription> FUNCTIONS = AttributeType.listMicroAggregationFunctions(); 
-                                                                    
 
-    /** Resource */
-    private final Image                  IMAGE_IDENTIFYING;
-    /** Resource */
-    private final Image                  IMAGE_INSENSITIVE;
-    /** Resource */
-    private final Image                  IMAGE_QUASI_IDENTIFYING;
-    /** Resource */
-    private final Image                  IMAGE_SENSITIVE;
+    /** Resource. */
+    private static final String                                    ITEM_ALL      = Resources.getMessage("HierarchyView.0");      //$NON-NLS-1$
     
-    
+    /** Resource */
+    private final Image                                            IMAGE_IDENTIFYING;
+    /** Resource */
+    private final Image                                            IMAGE_INSENSITIVE;
+    /** Resource */
+    private final Image                                            IMAGE_QUASI_IDENTIFYING;
+    /** Resource */
+    private final Image                                            IMAGE_SENSITIVE;
+
     /** Model */
-    private String                       attribute     = null;
+    private String                                                 attribute     = null;
     /** Model */
-    private Model                        model;
-    
+    private Model                                                  model;
+
     /** Controller */
-    private final Controller             controller;
-    
+    private final Controller                                       controller;
+
     /** Widget */
-    private final Combo                  cmbDataType;
+    private final Combo                                            cmbDataType;
     /** Widget */
-    private final Text                   txtDataType;
+    private final Text                                             txtDataType;
     /** Widget */
-    private final CTabItem               tabItem;
+    private final CTabItem                                         tabItem;
     /** Widget */
-    private final Combo                  cmbType;
+    private final Combo                                            cmbType;
     /** Widget */
-    private final Combo                  cmbMode;
+    private final Combo                                            cmbMode;
     /** Widget */
-    private final Combo                  cmbFunction;
+    private final Combo                                            cmbFunction;
     /** Widget */
-    private final Button                 btnMissing;
+    private final Button                                           btnMissing;
+    /** Widget. */
+    private final Combo                                            cmbMin;
+    /** Widget. */
+    private final Combo                                            cmbMax;
+    /** Widget. */
+    private final ComponentMultiStack                              transformationStack;
     
     /** View */
-    private final ViewHierarchy          viewGeneralization;
-    
+    private final ViewHierarchy                                    viewGeneralization;
+
     /**
      * Constructor.
      *
@@ -142,6 +149,7 @@ public class ViewAttributeDefinition implements IView {
         this.controller.addListener(ModelPart.INPUT, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         this.controller.addListener(ModelPart.DATA_TYPE, this);
+        this.controller.addListener(ModelPart.HIERARCHY, this);
         
         // Create input group
         tabItem = new CTabItem(parent, SWT.NULL);
@@ -164,7 +172,6 @@ public class ViewAttributeDefinition implements IView {
         innerGroup.setLayout(typeInputGridLayout);
         
         // Combo for attribute type
-        final IView outer = this;
         final Label kLabel = new Label(innerGroup, SWT.PUSH);
         kLabel.setText(Resources.getMessage("AttributeDefinitionView.7")); //$NON-NLS-1$
         cmbType = new Combo(innerGroup, SWT.READ_ONLY);
@@ -174,74 +181,7 @@ public class ViewAttributeDefinition implements IView {
         cmbType.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                
-                if ((cmbType.getSelectionIndex() != -1) &&
-                    (attribute != null)) {
-                    if ((model != null) &&
-                        (model.getInputConfig().getInput() != null)) {
-                        final AttributeType type = COMBO1_TYPES[cmbType.getSelectionIndex()];
-                        final DataDefinition definition = model.getInputDefinition();
-                        
-                        // Handle QIs
-                        if (type == null) {
-                            definition.setAttributeType(attribute,
-                                                        Hierarchy.create());
-                        } else {
-                            definition.setAttributeType(attribute, type);
-                        }
-                        
-                        // Do we need to disable criteria?
-                        boolean criteriaDisabled = false;
-                        
-                        // Enable/disable criteria for sensitive attributes
-                        if (type != AttributeType.SENSITIVE_ATTRIBUTE) {
-                            
-                            if (model.getLDiversityModel().get(attribute).isEnabled() ||
-                                model.getTClosenessModel().get(attribute).isEnabled()) {
-                                criteriaDisabled = true;
-                            }
-                            
-                            model.getTClosenessModel().get(attribute).setEnabled(false);
-                            model.getLDiversityModel().get(attribute).setEnabled(false);
-                        }
-                        
-                        // Enable/disable criteria for quasi-identifiers
-                        if (definition.getQuasiIdentifyingAttributes().isEmpty()) {
-                            
-                            if (model.getKAnonymityModel().isEnabled() ||
-                                model.getDPresenceModel().isEnabled()) {
-                                criteriaDisabled = true;
-                            }
-                            
-                            model.getKAnonymityModel().setEnabled(false);
-                            model.getDPresenceModel().setEnabled(false);
-                            for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
-                                if (c.isEnabled()) {
-                                    criteriaDisabled = true;
-                                }
-                                c.setEnabled(false);
-                            }
-                            
-                        }
-                        
-                        // Update icon
-                        updateIcon();
-                        // Update mode
-                        updateMode();
-                        
-                        // Update criteria
-                        if (criteriaDisabled) {
-                            controller.update(new ModelEvent(outer,
-                                                             ModelPart.CRITERION_DEFINITION,
-                                                             null));
-                        }
-                        
-                        // Update the views
-                        controller.update(new ModelEvent(outer,
-                                                         ModelPart.ATTRIBUTE_TYPE,
-                                                         attribute));
-                    }
-                }
+                actionAttributeTypeChanged();
             }
         });
         
@@ -255,61 +195,7 @@ public class ViewAttributeDefinition implements IView {
         cmbDataType.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                if ((cmbDataType.getSelectionIndex() != -1) &&
-                    (attribute != null)) {
-                    if ((model != null) &&
-                        (model.getInputConfig().getInput() != null)) {
-                        
-                        // Obtain type
-                        String label = cmbDataType.getItem(cmbDataType.getSelectionIndex());
-                        DataTypeDescription<?> description = getDataType(label);
-                        DataType<?> type;
-                        
-                        // Open format dialog
-                        if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
-                            final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
-                            final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
-                                                                                    text1, text2, DataType.STRING,
-                                                                                    model.getLocale(), getValuesAsArray());
-                            if (array == null) {
-                                type = DataType.STRING;
-                            } else {
-                                try {
-                                    type = DataType.createOrderedString(array);
-                                    if (!isValidDataType(type, getValuesAsList())) {
-                                        type = DataType.STRING;
-                                    }
-                                } catch (Exception e) {
-                                    controller.actionShowInfoDialog(controller.getResources().getShell(),
-                                                                    Resources.getMessage("ViewAttributeDefinition.1"), Resources.getMessage("ViewAttributeDefinition.2") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
-                                    type = DataType.STRING;
-                                }
-                            }
-                        } else if (description.hasFormat()) {
-                            final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
-                            final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
-                                                                                         text1, text2, model.getLocale(), description, getValuesAsList());
-                            if (format == null) {
-                                type = DataType.STRING;
-                            } else {
-                                type = description.newInstance(format, model.getLocale());
-                            }
-                        } else {
-                            type = description.newInstance();
-                            if (!isValidDataType(type, getValuesAsList())) {
-                                type = DataType.STRING;
-                            }
-                        }
-                        
-                        // Set and update
-                        model.getInputDefinition().setDataType(attribute, type);
-                        updateFunction();
-                        updateDataType();
-                        controller.update(new ModelEvent(outer, ModelPart.DATA_TYPE, attribute));
-                    }
-                }
+                actionDataTypeChanged();
             }
         });
         
@@ -328,73 +214,106 @@ public class ViewAttributeDefinition implements IView {
         cmbMode.setItems(new String[]{Resources.getMessage("ViewMicoaggregation.5"),
                                       Resources.getMessage("ViewMicoaggregation.6")});
         cmbMode.select(0);
-
-        // Add combo for function
-        final Label fLabel = new Label(innerGroup, SWT.PUSH);
-        fLabel.setText(Resources.getMessage("ViewMicoaggregation.0")); //$NON-NLS-1$
-        cmbFunction = new Combo(innerGroup, SWT.READ_ONLY);
-        cmbFunction.setLayoutData(SWTUtil.createFillGridData());
-        cmbFunction.setEnabled(false);
-        cmbFunction.addSelectionListener(new SelectionAdapter() {
+        cmbMode.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                if (cmbFunction.getSelectionIndex() != -1 && model != null && model.getInputConfig() != null) {
-                    String function = cmbFunction.getItem(cmbFunction.getSelectionIndex());
-                    model.getInputConfig().setMicroAggregationFunction(attribute, getMicroAggregationFunction(function));
-                }
+                actionTransformationModeChanged();
             }
         });
         
-        // Add button for missing data
-        btnMissing = new Button(innerGroup, SWT.CHECK);
+        // Create multistack
+        transformationStack = new ComponentMultiStack(innerGroup);
+        
+        // First column
+        Composite first = transformationStack.create(SWTUtil.createGridData());
+        Composite compositeLabelMin = new Composite(first, SWT.NONE);
+        GridLayout compositeLabelMinLayout = new GridLayout();
+        compositeLabelMinLayout.numColumns = 1;
+        compositeLabelMinLayout.marginLeft = 0;
+        compositeLabelMinLayout.marginRight = 0;
+        compositeLabelMinLayout.marginWidth = 0;
+        compositeLabelMin.setLayout(compositeLabelMinLayout);
+        Label labelMin = new Label(compositeLabelMin, SWT.PUSH);
+        labelMin.setText(Resources.getMessage("HierarchyView.4")); //$NON-NLS-1$
+        Composite compositelabelFunction = new Composite(first, SWT.NONE);
+        GridLayout compositelabelFunctionLayout = new GridLayout();
+        compositelabelFunctionLayout.numColumns = 1;
+        compositelabelFunctionLayout.marginLeft = 0;
+        compositelabelFunctionLayout.marginRight = 0;
+        compositelabelFunctionLayout.marginWidth = 0;
+        compositelabelFunction.setLayout(compositelabelFunctionLayout);
+        final Label labelFunction = new Label(compositelabelFunction, SWT.PUSH);
+        labelFunction.setText(Resources.getMessage("ViewMicoaggregation.0")); //$NON-NLS-1$
+
+        // Second column
+        Composite second = transformationStack.create(SWTUtil.createFillHorizontallyGridData());
+        this.cmbMin = new Combo(second, SWT.READ_ONLY);
+        this.cmbMin.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.cmbMin.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                actionMinChanged();
+            }
+        });
+        this.cmbFunction = new Combo(second, SWT.READ_ONLY);
+        this.cmbFunction.setLayoutData(SWTUtil.createFillGridData());
+        this.cmbFunction.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                actionFunctionChanged();
+            }
+        });
+
+        // Third column
+        Composite third = transformationStack.create(SWTUtil.createGridData());
+        Composite compositelabelMax = new Composite(third, SWT.NONE);
+        GridLayout compositelabelMaxLayout = new GridLayout();
+        compositelabelMaxLayout.numColumns = 1;
+        compositelabelMaxLayout.marginLeft = 0;
+        compositelabelMaxLayout.marginRight = 0;
+        compositelabelMaxLayout.marginWidth = 0;
+        compositelabelMax.setLayout(compositelabelMaxLayout);
+        Label labelMax = new Label(compositelabelMax, SWT.PUSH);
+        labelMax.setText(Resources.getMessage("HierarchyView.6")); //$NON-NLS-1$
+        Composite compositelabelMissing = new Composite(third, SWT.NONE);
+        GridLayout compositelabelMissingLayout = new GridLayout();
+        compositelabelMissingLayout.numColumns = 1;
+        compositelabelMissingLayout.marginLeft = 0;
+        compositelabelMissingLayout.marginRight = 0;
+        compositelabelMissingLayout.marginWidth = 0;
+        compositelabelMissing.setLayout(compositelabelMissingLayout);
+        Label labelMissing = new Label(compositelabelMissing, SWT.PUSH);
+        labelMissing.setText(Resources.getMessage("ViewMicoaggregation.7")); //$NON-NLS-1$
+
+        // Fourth column
+        Composite fourth = transformationStack.create(SWTUtil.createFillHorizontallyGridData());
+        this.cmbMax = new Combo(fourth, SWT.READ_ONLY);
+        this.cmbMax.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.cmbMax.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                actionMaxChanged();
+            }
+        });
+        btnMissing = new Button(fourth, SWT.CHECK);
         GridData btnMissingData = SWTUtil.createFillGridData();
         btnMissingData.horizontalSpan = 2;
         btnMissing.setLayoutData(btnMissingData);
         btnMissing.setText(Resources.getMessage("ViewMicoaggregation.2")); //$NON-NLS-1$
         btnMissing.setSelection(true);
-        btnMissing.setEnabled(false);
         btnMissing.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                if (model != null && model.getInputConfig() != null) {
-                    model.getInputConfig().setMicroAggregationIgnoreMissingData(attribute, btnMissing.getSelection());
-                }
+                actionMissingChanged();
             }
         });
+        
+        // Collect info about children in stack
+        transformationStack.pack();
           
         // Editor hierarchy
         viewGeneralization = new ViewHierarchy(group, attribute, controller);
 
-        // Combo for transformation mode
-        cmbMode.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                if (model == null || model.getInputConfig() == null) {
-                    return;
-                }
-                if (cmbMode.getSelectionIndex() == 0) {
-                    model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.GENERALIZATION);
-                    cmbFunction.setEnabled(false);
-                    btnMissing.setEnabled(false);
-                } else {
-                    model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.MICRO_AGGREGATION);
-                    cmbFunction.setEnabled(true);
-                    btnMissing.setEnabled(true);
-                }
-            }
-        });
-
-        // Button for missing data
-        btnMissing.addSelectionListener(new SelectionAdapter(){
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                if (model == null || model.getInputConfig() == null) {
-                    return;
-                }
-                model.getInputConfig().setMicroAggregationIgnoreMissingData(attribute, btnMissing.getSelection());
-            }
-        });
-        
         // Attach to tab
         tabItem.setControl(group);
     }
@@ -416,6 +335,7 @@ public class ViewAttributeDefinition implements IView {
     @Override
     public void reset() {
         txtDataType.setText(""); //$NON-NLS-1$
+        updateMinMax();
     }
     
     @Override
@@ -426,6 +346,7 @@ public class ViewAttributeDefinition implements IView {
             updateDataType();
             updateFunction();
             updateMode();
+            updateMinMax();
             viewGeneralization.update(event);
         } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             final String attr = (String) event.data;
@@ -434,14 +355,230 @@ public class ViewAttributeDefinition implements IView {
                 updateDataType();
                 updateIcon();
             }
+        } else if (event.part == ModelPart.HIERARCHY) {
+            System.out.println("Hierarchy:" + model.getSelectedAttribute());
+            // TODO: Attribute should be associated with the event
+            if (attribute.equals(model.getSelectedAttribute())) {
+                updateMinMax();
+            }
         } else if (event.part == ModelPart.INPUT) {
             updateAttributeType();
             updateDataType();
             updateMode();
+            updateMinMax();
             viewGeneralization.update(event);
         } else if (event.part == ModelPart.DATA_TYPE) {
             updateFunction();
             updateMode();
+        }
+    }
+    
+    /**
+     * Attribute type changed
+     */
+    private void actionAttributeTypeChanged() {
+        if ((cmbType.getSelectionIndex() != -1) &&
+            (attribute != null)) {
+            if ((model != null) &&
+                (model.getInputConfig().getInput() != null)) {
+                final AttributeType type = COMBO1_TYPES[cmbType.getSelectionIndex()];
+                final DataDefinition definition = model.getInputDefinition();
+                
+                // Handle QIs
+                if (type == null) {
+                    definition.setAttributeType(attribute,
+                                                Hierarchy.create());
+                } else {
+                    definition.setAttributeType(attribute, type);
+                }
+                
+                // Do we need to disable criteria?
+                boolean criteriaDisabled = false;
+                
+                // Enable/disable criteria for sensitive attributes
+                if (type != AttributeType.SENSITIVE_ATTRIBUTE) {
+                    
+                    if (model.getLDiversityModel().get(attribute).isEnabled() ||
+                        model.getTClosenessModel().get(attribute).isEnabled()) {
+                        criteriaDisabled = true;
+                    }
+                    
+                    model.getTClosenessModel().get(attribute).setEnabled(false);
+                    model.getLDiversityModel().get(attribute).setEnabled(false);
+                }
+                
+                // Enable/disable criteria for quasi-identifiers
+                if (definition.getQuasiIdentifyingAttributes().isEmpty()) {
+                    
+                    if (model.getKAnonymityModel().isEnabled() ||
+                        model.getDPresenceModel().isEnabled()) {
+                        criteriaDisabled = true;
+                    }
+                    
+                    model.getKAnonymityModel().setEnabled(false);
+                    model.getDPresenceModel().setEnabled(false);
+                    for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
+                        if (c.isEnabled()) {
+                            criteriaDisabled = true;
+                        }
+                        c.setEnabled(false);
+                    }
+                    
+                }
+                
+                // Update icon
+                updateIcon();
+                // Update mode
+                updateMode();
+                
+                // Update criteria
+                if (criteriaDisabled) {
+                    controller.update(new ModelEvent(this,
+                                                     ModelPart.CRITERION_DEFINITION,
+                                                     null));
+                }
+                
+                // Update the views
+                controller.update(new ModelEvent(this,
+                                                 ModelPart.ATTRIBUTE_TYPE,
+                                                 attribute));
+            }
+        }
+    }
+    
+    /**
+     * Data type changed
+     */
+    private void actionDataTypeChanged() {
+        if ((cmbDataType.getSelectionIndex() != -1) &&
+            (attribute != null)) {
+            if ((model != null) &&
+                (model.getInputConfig().getInput() != null)) {
+                
+                // Obtain type
+                String label = cmbDataType.getItem(cmbDataType.getSelectionIndex());
+                DataTypeDescription<?> description = getDataType(label);
+                DataType<?> type;
+                
+                // Open format dialog
+                if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
+                    final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
+                    final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
+                    String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
+                                                                            text1, text2, DataType.STRING,
+                                                                            model.getLocale(), getValuesAsArray());
+                    if (array == null) {
+                        type = DataType.STRING;
+                    } else {
+                        try {
+                            type = DataType.createOrderedString(array);
+                            if (!isValidDataType(type, getValuesAsList())) {
+                                type = DataType.STRING;
+                            }
+                        } catch (Exception e) {
+                            controller.actionShowInfoDialog(controller.getResources().getShell(),
+                                                            Resources.getMessage("ViewAttributeDefinition.1"), Resources.getMessage("ViewAttributeDefinition.2") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                            type = DataType.STRING;
+                        }
+                    }
+                } else if (description.hasFormat()) {
+                    final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
+                    final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
+                    final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
+                                                                                 text1, text2, model.getLocale(), description, getValuesAsList());
+                    if (format == null) {
+                        type = DataType.STRING;
+                    } else {
+                        type = description.newInstance(format, model.getLocale());
+                    }
+                } else {
+                    type = description.newInstance();
+                    if (!isValidDataType(type, getValuesAsList())) {
+                        type = DataType.STRING;
+                    }
+                }
+                
+                // Set and update
+                model.getInputDefinition().setDataType(attribute, type);
+                updateFunction();
+                updateDataType();
+                controller.update(new ModelEvent(this, ModelPart.DATA_TYPE, attribute));
+            }
+        }
+    }
+    
+    /**
+     * Function changed
+     */
+    private void actionFunctionChanged() {
+        if (cmbFunction.getSelectionIndex() != -1 && model != null && model.getInputConfig() != null) {
+            String function = cmbFunction.getItem(cmbFunction.getSelectionIndex());
+            model.getInputConfig().setMicroAggregationFunction(attribute, getMicroAggregationFunction(function));
+        }
+    }
+    
+    /**
+     * Updates the max generalization level.
+     *
+     * @return
+     */
+    private boolean actionMaxChanged() {
+        
+        if (cmbMax.getSelectionIndex() >= 0) {
+            if (cmbMax.getSelectionIndex() < (cmbMin.getSelectionIndex() - 1)) {
+                cmbMax.select(cmbMin.getSelectionIndex() - 1);
+            }
+            if (model != null) {
+                String val = cmbMax.getItem(cmbMax.getSelectionIndex());
+                model.getInputConfig().setMaximumGeneralization(attribute, val.equals(ITEM_ALL) ? null : Integer.valueOf(val));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Updates the min generalization level.
+     *
+     * @return
+     */
+    private boolean actionMinChanged() {
+        
+        if (cmbMin.getSelectionIndex() >= 0) {
+            if (cmbMin.getSelectionIndex() > (cmbMax.getSelectionIndex() + 1)) {
+                cmbMin.select(cmbMax.getSelectionIndex() + 1);
+            }
+            if (model != null) {
+                String val = cmbMin.getItem(cmbMin.getSelectionIndex());
+                model.getInputConfig().setMinimumGeneralization(attribute, val.equals(ITEM_ALL) ? null : Integer.valueOf(val));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Missing changed
+     */
+    private void actionMissingChanged() {
+        if (model != null && model.getInputConfig() != null) {
+            model.getInputConfig().setMicroAggregationIgnoreMissingData(attribute, btnMissing.getSelection());
+        }
+    }
+    
+    /**
+     * Transformation mode changed
+     */
+    private void actionTransformationModeChanged() {
+        if (model == null || model.getInputConfig() == null) {
+            return;
+        }
+        if (cmbMode.getSelectionIndex() == 0) {
+            model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.GENERALIZATION);
+            transformationStack.setLayer(0);
+        } else {
+            model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.MICRO_AGGREGATION);
+            transformationStack.setLayer(1);
         }
     }
     
@@ -472,7 +609,7 @@ public class ViewAttributeDefinition implements IView {
         }
         return list.toArray(new String[list.size()]);
     }
-
+    
     /**
      * Returns the index of a given data type.
      *
@@ -489,7 +626,7 @@ public class ViewAttributeDefinition implements IView {
         }
         throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.6") + type.getDescription().getLabel()); //$NON-NLS-1$
     }
-
+    
     /**
      * Returns the microaggregation function for the given label
      * @param function
@@ -538,7 +675,7 @@ public class ViewAttributeDefinition implements IView {
         }
         return true;
     }
-    
+
     /**
      * 
      * Update the attribute type.
@@ -601,7 +738,7 @@ public class ViewAttributeDefinition implements IView {
             this.btnMissing.setSelection(this.model.getInputConfig().getMicroAggregationIgnoreMissingData(attribute));
         }
     }
-    
+
     /**
      * Update the column icon.
      */
@@ -617,7 +754,58 @@ public class ViewAttributeDefinition implements IView {
             tabItem.setImage(IMAGE_IDENTIFYING);
         }
     }
-    
+
+    /**
+     * Updates the combos.
+     */
+    private void updateMinMax() {
+        
+        // Check whether min & max are still ok
+        if (model == null || model.getInputConfig() == null || cmbMin == null || cmbMin.isDisposed()) {
+            return;
+        }
+        
+        // Prepare lists
+        final List<String> minItems = new ArrayList<String>();
+        final List<String> maxItems = new ArrayList<String>();
+        minItems.add(ITEM_ALL);
+        int length = 0;
+        Hierarchy hierarchy = model.getInputConfig().getHierarchy(attribute);
+        if (!(hierarchy == null || hierarchy.getHierarchy() == null || hierarchy.getHierarchy()[0] == null || hierarchy.getHierarchy()[0].length == 0)) {
+            length = hierarchy.getHierarchy()[0].length;
+        }
+        for (int i = 0; i < length; i++) {
+            minItems.add(String.valueOf(i));
+            maxItems.add(String.valueOf(i));
+        }
+        maxItems.add(ITEM_ALL);
+        
+        // Determine min index
+        Integer minModel = model.getInputConfig().getMinimumGeneralization(attribute);
+        int minIndex = minModel != null ? minModel + 1 : 0;
+        
+        // Determine max index
+        Integer maxModel = model.getInputConfig().getMaximumGeneralization(attribute);
+        int maxIndex = maxModel != null ? maxModel : maxItems.size() - 1;
+        
+        // Fix indices
+        maxIndex = maxIndex > maxItems.size() - 1 ? maxItems.size() - 1 : maxIndex;
+        maxIndex = maxIndex < 0 ? maxItems.size() - 1 : maxIndex;
+        minIndex = minIndex > minItems.size() - 1 ? minItems.size() - 1 : minIndex;
+        minIndex = minIndex < 0 ? 0 : minIndex;
+        minIndex = minIndex > (maxIndex + 1) ? maxIndex + 1 : minIndex;
+        
+        // Set items
+        cmbMin.setItems(minItems.toArray(new String[minItems.size()]));
+        cmbMax.setItems(maxItems.toArray(new String[maxItems.size()]));
+        
+        // Select
+        cmbMin.select(minIndex);
+        cmbMax.select(maxIndex);
+        actionMinChanged();
+        actionMaxChanged();
+    }
+
     /**
      * Update mode
      */
@@ -627,20 +815,14 @@ public class ViewAttributeDefinition implements IView {
             model != null && model.getInputConfig() != null) {
             
             if (model.getInputConfig().getTransformationMode(attribute) == ModelTransformationMode.GENERALIZATION) {
-                cmbMode.setEnabled(true);
-                cmbFunction.setEnabled(false);
-                btnMissing.setEnabled(false);
+                transformationStack.setLayer(0);
                 cmbMode.select(0);
             } else {
-                cmbMode.setEnabled(true);
-                cmbFunction.setEnabled(true);
-                btnMissing.setEnabled(true);
+                transformationStack.setLayer(1);
                 cmbMode.select(1);
             }
         } else {
-            cmbMode.setEnabled(false);
-            cmbFunction.setEnabled(false);
-            btnMissing.setEnabled(false);
+            transformationStack.setLayer(0);
         }
     }
 }

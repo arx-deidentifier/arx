@@ -17,9 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.common;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -42,9 +40,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
@@ -109,21 +105,12 @@ public class ViewHierarchy implements IView {
             return 1;
         }
     }
-    
-    /** Constant. */
-    private static final String ITEM_ALL  = Resources.getMessage("HierarchyView.0"); //$NON-NLS-1$
-                                                                                     
+                               
     /** Controller. */
     private Controller          controller;
     
     /** Widget. */
     private Composite           base;
-    
-    /** Widget. */
-    private Combo               min;
-    
-    /** Widget. */
-    private Combo               max;
     
     /** Widget. */
     private ComponentTable      table     = null;
@@ -248,7 +235,6 @@ public class ViewHierarchy implements IView {
     public void setHierarchy(final AttributeType.Hierarchy type) {
         this.hierarchy = (type == null ? null : type.getHierarchy());
         this.table.refresh();
-        this.updateCombos();
     }
     
     /**
@@ -266,7 +252,6 @@ public class ViewHierarchy implements IView {
         if (event.part == ModelPart.HIERARCHY) {
             if (attribute.equals(model.getSelectedAttribute())) {
                 setHierarchy((Hierarchy) event.data);
-                updateCombos();
                 base.setEnabled(true);
                 base.redraw();
             }
@@ -288,7 +273,6 @@ public class ViewHierarchy implements IView {
             Hierarchy h = model.getInputConfig().getHierarchy(attribute);
             if (h != null) {
                 setHierarchy(h);
-                updateCombos();
                 base.setEnabled(true);
                 base.redraw();
             } else {
@@ -303,9 +287,7 @@ public class ViewHierarchy implements IView {
     private void actionClear() {
         
         setHierarchy(null);
-        pushHierarchy();
-        pushMin();
-        pushMax();
+        this.pushHierarchy();
     }
     
     /**
@@ -333,12 +315,9 @@ public class ViewHierarchy implements IView {
         } else {
             this.hierarchy = temp;
             this.table.refresh();
-            this.updateCombos();
         }
         
-        pushHierarchy();
-        pushMin();
-        pushMax();
+        this.pushHierarchy();
     }
     
     /**
@@ -363,12 +342,9 @@ public class ViewHierarchy implements IView {
         } else {
             this.hierarchy = temp;
             this.table.refresh();
-            this.updateCombos();
         }
         
-        pushHierarchy();
-        pushMin();
-        pushMax();
+        this.pushHierarchy();
     }
     
     /**
@@ -393,10 +369,7 @@ public class ViewHierarchy implements IView {
         }
         
         this.table.refresh();
-        this.updateCombos();
-        pushHierarchy();
-        pushMin();
-        pushMax();
+        this.pushHierarchy();
     }
     
     /**
@@ -427,10 +400,7 @@ public class ViewHierarchy implements IView {
         // Set
         this.hierarchy = hierarchy;
         this.table.refresh();
-        this.updateCombos();
-        pushHierarchy();
-        pushMin();
-        pushMax();
+        this.pushHierarchy();
     }
     
     /**
@@ -456,10 +426,7 @@ public class ViewHierarchy implements IView {
         
         this.hierarchy = temp;
         this.table.refresh();
-        this.updateCombos();
-        pushHierarchy();
-        pushMin();
-        pushMax();
+        this.pushHierarchy();
     }
     
     /**
@@ -483,10 +450,7 @@ public class ViewHierarchy implements IView {
         
         this.hierarchy = temp;
         this.table.refresh();
-        this.updateCombos();
-        pushHierarchy();
-        pushMin();
-        pushMax();
+        this.pushHierarchy();
     }
     
     /**
@@ -509,10 +473,7 @@ public class ViewHierarchy implements IView {
         hierarchy[selected] = temp;
         
         this.table.refresh();
-        this.updateCombos();
-        pushHierarchy();
-        pushMin();
-        pushMax();
+        this.pushHierarchy();
     }
     
     /**
@@ -535,10 +496,7 @@ public class ViewHierarchy implements IView {
         hierarchy[selected] = temp;
         
         this.table.refresh();
-        this.updateCombos();
-        pushHierarchy();
-        pushMin();
-        pushMax();
+        this.pushHierarchy();
     }
     
     /**
@@ -567,47 +525,13 @@ public class ViewHierarchy implements IView {
         }
         
         this.table.refresh();
-        this.updateCombos();
-        pushHierarchy();
-        pushMin();
-        pushMax();
+        this.pushHierarchy();
     }
     
     /**
      * Creates all components required for making the table editable.
      */
     private void createMenu() {
-        
-        // Create bottom composite
-        final Composite bottom = new Composite(base, SWT.NONE);
-        bottom.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        final GridLayout layout = new GridLayout();
-        layout.numColumns = 4;
-        bottom.setLayout(layout);
-        
-        // Insert min button
-        Label l1 = new Label(bottom, SWT.NONE);
-        l1.setText(Resources.getMessage("HierarchyView.4")); //$NON-NLS-1$
-        this.min = new Combo(bottom, SWT.READ_ONLY);
-        this.min.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        this.min.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                pushMin();
-            }
-        });
-        
-        // Insert max button
-        Label l2 = new Label(bottom, SWT.NONE);
-        l2.setText(Resources.getMessage("HierarchyView.6")); //$NON-NLS-1$
-        this.max = new Combo(bottom, SWT.READ_ONLY);
-        this.max.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        this.max.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                pushMax();
-            }
-        });
         
         // Saved the reference to the selected row and/or column
         table.addMouseListener(new MouseAdapter() {
@@ -826,95 +750,6 @@ public class ViewHierarchy implements IView {
         }
         Hierarchy h = Hierarchy.create(hierarchy);
         model.getInputConfig().setHierarchy(attribute, h);
-    }
-    
-    /**
-     * Updates the max generalization level.
-     *
-     * @return
-     */
-    private boolean pushMax() {
-        
-        if (max.getSelectionIndex() >= 0) {
-            if (max.getSelectionIndex() < (min.getSelectionIndex() - 1)) {
-                max.select(min.getSelectionIndex() - 1);
-            }
-            if (model != null) {
-                String val = max.getItem(max.getSelectionIndex());
-                model.getInputConfig().setMaximumGeneralization(attribute, val.equals(ITEM_ALL) ? null : Integer.valueOf(val));
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /**
-     * Updates the min generalization level.
-     *
-     * @return
-     */
-    private boolean pushMin() {
-        
-        if (min.getSelectionIndex() >= 0) {
-            if (min.getSelectionIndex() > (max.getSelectionIndex() + 1)) {
-                min.select(max.getSelectionIndex() + 1);
-            }
-            if (model != null) {
-                String val = min.getItem(min.getSelectionIndex());
-                model.getInputConfig().setMinimumGeneralization(attribute, val.equals(ITEM_ALL) ? null : Integer.valueOf(val));
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /**
-     * Updates the combos.
-     */
-    private void updateCombos() {
-        
-        // Check whether min & max are still ok
-        if (model == null || min == null || min.isDisposed()) {
-            return;
-        }
-        
-        // Prepare lists
-        final List<String> minItems = new ArrayList<String>();
-        final List<String> maxItems = new ArrayList<String>();
-        minItems.add(ITEM_ALL);
-        int length = 0;
-        if (!(hierarchy == null || hierarchy.length == 0)) {
-            length = hierarchy[0].length;
-        }
-        for (int i = 0; i < length; i++) {
-            minItems.add(String.valueOf(i));
-            maxItems.add(String.valueOf(i));
-        }
-        maxItems.add(ITEM_ALL);
-        
-        // Determine min index
-        Integer minModel = model.getInputConfig().getMinimumGeneralization(attribute);
-        int minIndex = minModel != null ? minModel + 1 : 0;
-        
-        // Determine max index
-        Integer maxModel = model.getInputConfig().getMaximumGeneralization(attribute);
-        int maxIndex = maxModel != null ? maxModel : maxItems.size() - 1;
-        
-        // Fix indices
-        maxIndex = maxIndex > maxItems.size() - 1 ? maxItems.size() - 1 : maxIndex;
-        maxIndex = maxIndex < 0 ? maxItems.size() - 1 : maxIndex;
-        minIndex = minIndex > minItems.size() - 1 ? minItems.size() - 1 : minIndex;
-        minIndex = minIndex < 0 ? 0 : minIndex;
-        minIndex = minIndex > (maxIndex + 1) ? maxIndex + 1 : minIndex;
-        
-        // Set items
-        min.setItems(minItems.toArray(new String[minItems.size()]));
-        max.setItems(maxItems.toArray(new String[maxItems.size()]));
-        
-        // Select
-        min.select(minIndex);
-        max.select(maxIndex);
-        pushMin();
-        pushMax();
+        controller.update(new ModelEvent(this, ModelPart.HIERARCHY, h));
     }
 }
