@@ -356,7 +356,6 @@ public class ViewAttributeDefinition implements IView {
                 updateIcon();
             }
         } else if (event.part == ModelPart.HIERARCHY) {
-            System.out.println("Hierarchy:" + model.getSelectedAttribute());
             // TODO: Attribute should be associated with the event
             if (attribute.equals(model.getSelectedAttribute())) {
                 updateMinMax();
