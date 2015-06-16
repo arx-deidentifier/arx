@@ -20,7 +20,7 @@ package org.deidentifier.arx.metric;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -58,7 +58,7 @@ public class MetricNMEntropy extends MetricEntropy {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final HashGroupify g) {
 
         // Obtain "standard" value
         final InformationLossDefault originalInfoLossDefault = node.getLowerBound() != null ? (InformationLossDefault)node.getLowerBound() :
@@ -75,7 +75,7 @@ public class MetricNMEntropy extends MetricEntropy {
 
         // Compute counts for suppressed values in each column 
         // m.count only counts tuples from the research subset
-        HashGroupifyEntry m = g.getFirstEntry();
+        HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (!m.isNotOutlier && m.count > 0) {
                 suppressedTuples += m.count;
@@ -105,12 +105,12 @@ public class MetricNMEntropy extends MetricEntropy {
 
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
-        return super.getInformationLossInternal(node, (IHashGroupify)null).getInformationLoss();
+        return super.getInformationLossInternal(node, (HashGroupify)null).getInformationLoss();
     }
     
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
-                                                           IHashGroupify groupify) {
+                                                           HashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
 

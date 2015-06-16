@@ -25,7 +25,7 @@ import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -120,7 +120,7 @@ public class MetricEntropy extends MetricDefault {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final HashGroupify g) {
 
         if (node.getLowerBound() != null) { 
             return new InformationLossWithBound<InformationLossDefault>((InformationLossDefault)node.getLowerBound(),
@@ -158,12 +158,12 @@ public class MetricEntropy extends MetricDefault {
 
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
-        return getInformationLossInternal(node, (IHashGroupify)null).getLowerBound();
+        return getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
 
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
-                                                           IHashGroupify groupify) {
+                                                           HashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
     

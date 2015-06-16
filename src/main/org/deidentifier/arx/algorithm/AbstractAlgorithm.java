@@ -20,8 +20,8 @@ package org.deidentifier.arx.algorithm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.framework.check.INodeChecker;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -42,7 +42,7 @@ public abstract class AbstractAlgorithm {
     private InformationLoss<?> optimalInformationLoss = null;
 
     /** A node checker. */
-    protected INodeChecker     checker                = null;
+    protected NodeChecker     checker                = null;
 
     /** The lattice. */
     protected Lattice          lattice                = null;
@@ -56,7 +56,7 @@ public abstract class AbstractAlgorithm {
      *            The checker
      */
     protected AbstractAlgorithm(final Lattice lattice,
-                                final INodeChecker checker) {
+                                final NodeChecker checker) {
         this.checker = checker;
         this.lattice = lattice;
     }
@@ -106,7 +106,7 @@ public abstract class AbstractAlgorithm {
 
             // Independent evaluation or check
             if (checker.getMetric().isIndependent()) {
-                InformationLossWithBound<?> loss = checker.getMetric().getInformationLoss(node, (IHashGroupify)null);
+                InformationLossWithBound<?> loss = checker.getMetric().getInformationLoss(node, (HashGroupify)null);
                 lattice.setInformationLoss(node, loss.getInformationLoss());
                 lattice.setLowerBound(node, loss.getLowerBound());
             } else {

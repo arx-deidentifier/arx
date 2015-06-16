@@ -24,8 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import org.deidentifier.arx.framework.check.INodeChecker;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.framework.lattice.NodeAction;
@@ -61,7 +61,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param config
      */
     public FLASHAlgorithmImpl(Lattice lattice,
-                              INodeChecker checker,
+                              NodeChecker checker,
                               FLASHStrategy strategy,
                               FLASHConfiguration config) {
 
@@ -93,7 +93,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // Check bottom for speed and remember the result to prevent repeated checks
         Node bottom = lattice.getBottom();
-        INodeChecker.Result result = checker.check(bottom);
+        NodeChecker.Result result = checker.check(bottom);
         lattice.setProperty(bottom, Node.PROPERTY_FORCE_SNAPSHOT);
         bottom.setData(result);
 
@@ -169,7 +169,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // Check or evaluate
         if (configuration.getTriggerEvaluate().appliesTo(node)) {
-            InformationLossWithBound<?> loss = checker.getMetric().getInformationLoss(node, (IHashGroupify)null);
+            InformationLossWithBound<?> loss = checker.getMetric().getInformationLoss(node, (HashGroupify)null);
             lattice.setInformationLoss(node, loss.getInformationLoss());
             lattice.setLowerBound(node, loss.getLowerBound());
             if (loss.getLowerBound() == null) {

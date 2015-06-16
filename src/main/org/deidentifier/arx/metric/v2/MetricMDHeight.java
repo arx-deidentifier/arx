@@ -22,7 +22,7 @@ import java.util.Arrays;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -95,7 +95,7 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
         AbstractILMultiDimensional loss = getLowerBoundInternal(node);
         return new ILMultiDimensionalWithBound(loss, (AbstractILMultiDimensional)loss.clone());
     }
@@ -112,7 +112,7 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
 
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
-                                                       IHashGroupify groupify) {
+                                                       HashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
 

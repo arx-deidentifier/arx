@@ -57,7 +57,7 @@ public abstract class ExplicitPrivacyCriterion extends PrivacyCriterion {
 
     @Override
     public void initialize(DataManager manager) {
-        String[] header = manager.getDataDI().getHeader();
+        String[] header = manager.getDataAnalyzed().getHeader();
         for (int i=0; i< header.length; i++){
             if (header[i].equals(attribute)) {
                 index = i;

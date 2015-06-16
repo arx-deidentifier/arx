@@ -18,7 +18,7 @@
 package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
@@ -95,12 +95,12 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
         
         double rows = getNumTuples();
         double dm = 0;
         double dmStar = 0;
-        HashGroupifyEntry m = g.getFirstEntry();
+        HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count>0){
                 double count = (double)m.count;
@@ -120,9 +120,9 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Node node,
-                                                        IHashGroupify groupify) {
+                                                        HashGroupify groupify) {
         double lowerBound = 0;
-        HashGroupifyEntry m = groupify.getFirstEntry();
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
             lowerBound += (m.count>0) ? ((double) m.count * (double) m.count) : 0;
             m = m.nextOrdered;

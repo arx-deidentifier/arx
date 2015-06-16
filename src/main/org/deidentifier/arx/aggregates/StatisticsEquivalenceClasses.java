@@ -16,7 +16,7 @@
  */
 package org.deidentifier.arx.aggregates;
 
-import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics;
 
 /**
  * Statistics about the equivalence classes.
@@ -26,14 +26,14 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistic
 public class StatisticsEquivalenceClasses {
 
     /**  TODO */
-    private GroupStatistics groupStatistics;
+    private EquivalenceClassStatistics groupStatistics;
     
     /**
      * Creates a new instance.
      *
      * @param groupStatistics Statistics obtained from hash groupify
      */
-    public StatisticsEquivalenceClasses(GroupStatistics groupStatistics) {
+    public StatisticsEquivalenceClasses(EquivalenceClassStatistics groupStatistics) {
         this.groupStatistics = groupStatistics;
     }
 

@@ -25,7 +25,7 @@ import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.framework.lattice.NodeAction;
 
@@ -247,16 +247,16 @@ public class History {
      * @param snapshot The snapshot that was previously used, if any
      * @return
      */
-    public boolean store(final Node transformation, final IHashGroupify groupify, final int[] snapshot) {
+    public boolean store(final Node transformation, final HashGroupify groupify, final int[] snapshot) {
 
         // Early abort if too large, or no space
-        if (size == 0 || groupify.size() > snapshotSizeDataset) {
+        if (size == 0 || groupify.getNumberOfEquivalenceClasses() > snapshotSizeDataset) {
             return false;
         }
 
         // Early abort if too large
         if (snapshot != null) {
-            final double relativeSize = (groupify.size() / ((double) snapshot.length / config.getSnapshotLength()));
+            final double relativeSize = (groupify.getNumberOfEquivalenceClasses() / ((double) snapshot.length / config.getSnapshotLength()));
             if (relativeSize > snapshotSizeSnapshot) { return false; }
         }
         
@@ -306,11 +306,11 @@ public class History {
      * @param g the g
      * @return the int[]
      */
-    private final int[] createSnapshot(final IHashGroupify g) {
+    private final int[] createSnapshot(final HashGroupify g) {
 
-        final int[] data = new int[g.size() * config.getSnapshotLength()];
+        final int[] data = new int[g.getNumberOfEquivalenceClasses() * config.getSnapshotLength()];
         int index = 0;
-        HashGroupifyEntry m = g.getFirstEntry();
+        HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             // Store element
             data[index] = m.representative;

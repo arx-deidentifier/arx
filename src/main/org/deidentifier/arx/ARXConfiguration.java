@@ -856,7 +856,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         
         // Requirements for microaggregation
-        if (manager.getDataDI() != null) {
+        if (manager.getDataAnalyzed() != null) {
             this.requirements |= ARXConfiguration.REQUIREMENT_DISTRIBUTION;
         }
 
@@ -875,7 +875,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (this.containsCriterion(DPresence.class)) {
             dataLength = this.getCriterion(DPresence.class).getSubset().getArray().length;
         } else {
-            dataLength = manager.getDataGH().getDataLength();
+            dataLength = manager.getDataGeneralized().getDataLength();
         }
 
         // Compute max outliers
@@ -904,7 +904,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Compute snapshot length
         this.snapshotLength = 2;
         if (this.requires(REQUIREMENT_DISTRIBUTION)) {
-            this.snapshotLength += 2 * manager.getDataDI().getHeader().length;
+            this.snapshotLength += 2 * manager.getDataAnalyzed().getHeader().length;
         }
         if (this.requires(REQUIREMENT_SECONDARY_COUNTER)) {
             this.snapshotLength += 1;

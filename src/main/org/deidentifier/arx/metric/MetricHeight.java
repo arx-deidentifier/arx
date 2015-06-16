@@ -22,7 +22,7 @@ import java.util.Set;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -80,7 +80,7 @@ public class MetricHeight extends MetricDefault {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final HashGroupify g) {
         int level = node.getLevel();
         return new InformationLossDefaultWithBound(level, level);
     }
@@ -92,7 +92,7 @@ public class MetricHeight extends MetricDefault {
 
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
-                                                           IHashGroupify groupify) {
+                                                           HashGroupify groupify) {
         return new InformationLossDefault(node.getLevel());
     }
 

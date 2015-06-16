@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.framework.check;
 
-import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics;
 import org.deidentifier.arx.framework.data.Data;
 
 /**
@@ -30,13 +30,13 @@ import org.deidentifier.arx.framework.data.Data;
 public class TransformedData {
     
     /** The GH buffer */
-    public Data            bufferGH;
+    public Data            bufferGeneralized;
     
     /** The OT buffer */
-    public Data            bufferOT;
+    public Data            bufferMicroaggregated;
     
     /** The group statistic */
-    public GroupStatistics statistics;
+    public EquivalenceClassStatistics statistics;
     
     /**
      * Instantiate the helper object.
@@ -45,9 +45,9 @@ public class TransformedData {
      * @param bufferOT
      * @param statistics
      */
-    public TransformedData(Data bufferGH, Data bufferOT, GroupStatistics statistics) {
-        this.bufferGH = bufferGH;
-        this.bufferOT = bufferOT;
+    public TransformedData(Data bufferGH, Data bufferOT, EquivalenceClassStatistics statistics) {
+        this.bufferGeneralized = bufferGH;
+        this.bufferMicroaggregated = bufferOT;
         this.statistics = statistics;
     }
 }

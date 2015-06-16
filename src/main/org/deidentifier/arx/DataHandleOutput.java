@@ -179,10 +179,10 @@ public class DataHandleOutput extends DataHandle {
         // Extract data
         this.dataGH = bufferGH;
         this.dataOT = bufferOT;
-        this.dataDI = manager.getDataDI();
-        this.dataIS = manager.getDataIS();
+        this.dataDI = manager.getDataAnalyzed();
+        this.dataIS = manager.getDataStatic();
         this.header = manager.getHeader();
-        this.startIndexMA = manager.getStartMA();
+        this.startIndexMA = manager.getMicroaggregationStartIndex();
         
         // Build map inverse
         this.inverseMap = new int[header.length * 2];

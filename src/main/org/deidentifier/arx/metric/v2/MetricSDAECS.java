@@ -18,7 +18,7 @@
 package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
@@ -92,14 +92,14 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
 
         // The total number of groups with suppression
         int groupsWithSuppression = 0;
         // The total number of groups without suppression
         int groupsWithoutSuppression = 0;
         
-        HashGroupifyEntry m = g.getFirstEntry();
+        HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count > 0) {
                 groupsWithSuppression += m.isNotOutlier ? 1 : 0;
@@ -123,10 +123,10 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Node node,
-                                                        IHashGroupify groupify) {
+                                                        HashGroupify groupify) {
         // Ignore suppression for the lower bound
         int groups = 0;
-        HashGroupifyEntry m = groupify.getFirstEntry();
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
             groups += (m.count > 0) ? 1 : 0;
             m = m.nextOrdered;

@@ -21,7 +21,7 @@ import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.transformer.AbstractTransformer;
 import org.deidentifier.arx.framework.check.transformer.Transformer01;
 import org.deidentifier.arx.framework.check.transformer.Transformer02;
@@ -49,17 +49,8 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
  */
 public class Transformer {
 
-    /** The buffer. */
-    protected int[][]                          buffer;
-
-    /** Other attribute values. */
-    protected int[][]                          other;
-
     /** The config. */
-    protected final ARXConfigurationInternal config;
-
-    /** The data. */
-    protected final int[][]                    data;
+    protected final ARXConfigurationInternal   config;
 
     /** The dictionary for the snapshot compression *. */
     protected IntArrayDictionary               dictionarySensFreq;
@@ -73,40 +64,49 @@ public class Transformer {
     /** The hierarchies. */
     protected final GeneralizationHierarchy[]  hierarchies;
 
+    /** Other attribute values. */
+    protected int[][]                          inputAnalyzed;
+
+    /** The data. */
+    protected final int[][]                    inputGeneralized;
+
     /** The instances. */
     protected final AbstractTransformer[]      instances;
+
+    /** The buffer. */
+    protected int[][]                          outputGeneralized;
 
     /**
      * Instantiates a new transformer.
      *
-     * @param data
+     * @param inputGeneralized
+     * @param inputAnalyzed
      * @param hierarchies
-     * @param other
      * @param config
      * @param dictionarySensValue
      * @param dictionarySensFreq
      */
-    public Transformer(final int[][] data,
+    public Transformer(final int[][] inputGeneralized,
+                       final int[][] inputAnalyzed,
                        final GeneralizationHierarchy[] hierarchies,
-                       final int[][] other,
                        final ARXConfigurationInternal config,
                        final IntArrayDictionary dictionarySensValue,
                        final IntArrayDictionary dictionarySensFreq) {
 
         this.config = config;
-        this.data = data;
+        this.inputGeneralized = inputGeneralized;
         this.hierarchies = hierarchies;
         this.instances = new AbstractTransformer[16];
-        this.buffer = new int[data.length][];
+        this.outputGeneralized = new int[inputGeneralized.length][];
         
-        for (int i = 0; i < data.length; i++) {
-            buffer[i] = new int[data[0].length];
+        for (int i = 0; i < inputGeneralized.length; i++) {
+            outputGeneralized[i] = new int[inputGeneralized[0].length];
         }
 
-        this.dimensions = data[0].length;
+        this.dimensions = inputGeneralized[0].length;
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
-        this.other = other;
+        this.inputAnalyzed = inputAnalyzed;
 
         buildApplicators();
     }
@@ -122,9 +122,9 @@ public class Transformer {
      *            the target
      * @return the hash groupify
      */
-    public IHashGroupify apply(final long projection,
+    public HashGroupify apply(final long projection,
                                final int[] transformation,
-                               final IHashGroupify target) {
+                               final HashGroupify target) {
         return applyInternal(projection,
                              transformation,
                              null,
@@ -146,10 +146,10 @@ public class Transformer {
      *            the target
      * @return the hash groupify
      */
-    public IHashGroupify applyRollup(final long projection,
+    public HashGroupify applyRollup(final long projection,
                                      final int[] state,
-                                     final IHashGroupify source,
-                                     final IHashGroupify target) {
+                                     final HashGroupify source,
+                                     final HashGroupify target) {
         return applyInternal(projection,
                              state,
                              source,
@@ -171,9 +171,9 @@ public class Transformer {
      *            the snapshot
      * @return the hash groupify
      */
-    public IHashGroupify applySnapshot(final long projection,
+    public HashGroupify applySnapshot(final long projection,
                                        final int[] state,
-                                       final IHashGroupify target,
+                                       final HashGroupify target,
                                        final int[] snapshot) {
         return applyInternal(projection,
                              state,
@@ -189,106 +189,106 @@ public class Transformer {
      * @return the buffer
      */
     public int[][] getBuffer() {
-        return buffer;
+        return outputGeneralized;
     }
 
     /**
      * Builds the applicators.
      */
     private void buildApplicators() {
-        instances[15] = new Transformer15(data,
+        instances[15] = new Transformer15(inputGeneralized,
                                           hierarchies,
-                                          other,
+                                          inputAnalyzed,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
-        instances[14] = new Transformer14(data,
+        instances[14] = new Transformer14(inputGeneralized,
                                           hierarchies,
-                                          other,
+                                          inputAnalyzed,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
-        instances[13] = new Transformer13(data,
+        instances[13] = new Transformer13(inputGeneralized,
                                           hierarchies,
-                                          other,
+                                          inputAnalyzed,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
-        instances[12] = new Transformer12(data,
+        instances[12] = new Transformer12(inputGeneralized,
                                           hierarchies,
-                                          other,
+                                          inputAnalyzed,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
-        instances[11] = new Transformer11(data,
+        instances[11] = new Transformer11(inputGeneralized,
                                           hierarchies,
-                                          other,
+                                          inputAnalyzed,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
-        instances[10] = new Transformer10(data,
+        instances[10] = new Transformer10(inputGeneralized,
                                           hierarchies,
-                                          other,
+                                          inputAnalyzed,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
-        instances[9] = new Transformer09(data,
+        instances[9] = new Transformer09(inputGeneralized,
                                          hierarchies,
-                                         other,
+                                         inputAnalyzed,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
-        instances[8] = new Transformer08(data,
+        instances[8] = new Transformer08(inputGeneralized,
                                          hierarchies,
-                                         other,
+                                         inputAnalyzed,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
-        instances[7] = new Transformer07(data,
+        instances[7] = new Transformer07(inputGeneralized,
                                          hierarchies,
-                                         other,
+                                         inputAnalyzed,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
-        instances[6] = new Transformer06(data,
+        instances[6] = new Transformer06(inputGeneralized,
                                          hierarchies,
-                                         other,
+                                         inputAnalyzed,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
-        instances[5] = new Transformer05(data,
+        instances[5] = new Transformer05(inputGeneralized,
                                          hierarchies,
-                                         other,
+                                         inputAnalyzed,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
-        instances[4] = new Transformer04(data,
+        instances[4] = new Transformer04(inputGeneralized,
                                          hierarchies,
-                                         other,
+                                         inputAnalyzed,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
-        instances[3] = new Transformer03(data,
+        instances[3] = new Transformer03(inputGeneralized,
                                          hierarchies,
-                                         other,
+                                         inputAnalyzed,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
-        instances[2] = new Transformer02(data,
+        instances[2] = new Transformer02(inputGeneralized,
                                          hierarchies,
-                                         other,
+                                         inputAnalyzed,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
-        instances[1] = new Transformer01(data,
+        instances[1] = new Transformer01(inputGeneralized,
                                          hierarchies,
-                                         other,
+                                         inputAnalyzed,
                                          dictionarySensValue,
                                          dictionarySensFreq,
                                          config);
-        instances[0] = new TransformerAll(data,
+        instances[0] = new TransformerAll(inputGeneralized,
                                           hierarchies,
-                                          other,
+                                          inputAnalyzed,
                                           dictionarySensValue,
                                           dictionarySensFreq,
                                           config);
@@ -311,10 +311,10 @@ public class Transformer {
      *            the transition
      * @return the hash groupify
      */
-    protected IHashGroupify applyInternal(final long projection,
+    protected HashGroupify applyInternal(final long projection,
                                           final int[] state,
-                                          final IHashGroupify source,
-                                          final IHashGroupify target,
+                                          final HashGroupify source,
+                                          final HashGroupify target,
                                           final int[] snapshot,
                                           final TransitionType transition) {
 
@@ -327,13 +327,13 @@ public class Transformer {
         switch (transition) {
         case UNOPTIMIZED:
             startIndex = 0;
-            stopIndex = data.length;
+            stopIndex = inputGeneralized.length;
             break;
         case ROLLUP:
             startIndex = 0;
-            stopIndex = source.size();
+            stopIndex = source.getNumberOfEquivalenceClasses();
             bucket = 0;
-            element = source.getFirstEntry();
+            element = source.getFirstEquivalenceClass();
             break;
         case SNAPSHOT:
             startIndex = 0;
@@ -356,7 +356,7 @@ public class Transformer {
                  stopIndex,
                  bucket,
                  element,
-                 buffer);
+                 outputGeneralized);
 
         return app.call();
     }

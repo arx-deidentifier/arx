@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
-import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -46,7 +45,7 @@ public class ARXResult {
     private ARXNode                bufferLockedByNode   = null;
 
     /** The node checker. */
-    private final INodeChecker     checker;
+    private final NodeChecker     checker;
 
     /** The config. */
     private final ARXConfiguration config;
@@ -113,9 +112,9 @@ public class ARXResult {
                                                     getAggregateFunctions(handle.getDefinition()));
 
         // Update handle
-        ((DataHandleInput)handle).update(manager.getDataGH().getArray(), 
-                                         manager.getDataDI().getArray(),
-                                         manager.getDataIS().getArray());
+        ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
+                                         manager.getDataAnalyzed().getArray(),
+                                         manager.getDataStatic().getArray());
         
         // Lock handle
         ((DataHandleInput)handle).setLocked(true);
@@ -124,10 +123,10 @@ public class ARXResult {
         config.initialize(manager);
 
         // Initialize the metric
-        metric.initialize(definition, manager.getDataGH(), manager.getHierarchies(), config);
+        metric.initialize(definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
         // Create a node checker
-        final INodeChecker checker = new NodeChecker(manager,
+        final NodeChecker checker = new NodeChecker(manager,
                                                      metric,
                                                      config.getInternalConfiguration(),
                                                      historySize,
@@ -158,7 +157,7 @@ public class ARXResult {
      */
     protected ARXResult(DataRegistry registry,
                         DataManager manager,
-                        INodeChecker checker,
+                        NodeChecker checker,
                         DataDefinition definition,
                         ARXConfiguration config,
                         ARXLattice lattice,
@@ -291,7 +290,7 @@ public class ARXResult {
         transformation.setTransformation(node.getTransformation(), level);
  
         // Apply the transformation
-        TransformedData information = checker.applyAndSetProperties(transformation);
+        TransformedData information = checker.applyTransformation(transformation);
 
         // Store
         if (!node.isChecked() || node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
@@ -310,16 +309,16 @@ public class ARXResult {
         
         // Clone if needed
         if (fork) {
-            information.bufferGH = information.bufferGH.clone(); 
-            information.bufferOT = information.bufferOT.clone(); 
+            information.bufferGeneralized = information.bufferGeneralized.clone(); 
+            information.bufferMicroaggregated = information.bufferMicroaggregated.clone(); 
         }
 
         // Create
         DataHandleOutput result = new DataHandleOutput(this,
                                                        registry,
                                                        manager,
-                                                       information.bufferGH,
-                                                       information.bufferOT,
+                                                       information.bufferGeneralized,
+                                                       information.bufferMicroaggregated,
                                                        node,
                                                        new StatisticsEquivalenceClasses(information.statistics),
                                                        definition,
