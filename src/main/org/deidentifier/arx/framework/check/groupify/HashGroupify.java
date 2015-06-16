@@ -24,9 +24,13 @@ import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.Metric;
+
+import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
  * A hash groupify operator. It implements a hash table with chaining and keeps
@@ -35,42 +39,34 @@ import org.deidentifier.arx.metric.Metric;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class HashGroupify implements IHashGroupify {
-
+public class HashGroupify {
+    
     /**
-     * Statistics about the groups, excluding outliers.
+     * Statistics about the equivalence classes, excluding outliers.
      *
      * @author Fabian Prasser
      */
-    public static class GroupStatistics {
-
-        /**  TODO */
+    public static class EquivalenceClassStatistics {
+        
+        /** Statistic value */
         private double averageEquivalenceClassSize;
-        
-        /**  TODO */
-        private int    maximalEquivalenceClassSize;
-        
-        /**  TODO */
-        private int    minimalEquivalenceClassSize;
-        
-        /**  TODO */
+        /** Statistic value */
         private double averageEquivalenceClassSizeIncludingOutliers;
-        
-        /**  TODO */
+        /** Statistic value */
+        private int    maximalEquivalenceClassSize;
+        /** Statistic value */
         private int    maximalEquivalenceClassSizeIncludingOutliers;
-        
-        /**  TODO */
+        /** Statistic value */
+        private int    minimalEquivalenceClassSize;
+        /** Statistic value */
         private int    minimalEquivalenceClassSizeIncludingOutliers;
-        
-        /**  TODO */
-        private int    numberOfGroups;
-        
-        /**  TODO */
+        /** Statistic value */
+        private int    numberOfEquivalenceClasses;
+        /** Statistic value */
         private int    numberOfOutlyingEquivalenceClasses;
-        
-        /**  TODO */
+        /** Statistic value */
         private int    numberOfOutlyingTuples;
-
+        
         /**
          * Creates a new instance.
          *
@@ -84,7 +80,7 @@ public class HashGroupify implements IHashGroupify {
          * @param numberOfOutlyingEquivalenceClasses
          * @param numberOfOutlyingTuples
          */
-        protected GroupStatistics(double averageEquivalenceClassSize,
+        protected EquivalenceClassStatistics(double averageEquivalenceClassSize,
                                   int maximalEquivalenceClassSize,
                                   int minimalEquivalenceClassSize,
                                   double averageEquivalenceClassSizeIncludingOutliers,
@@ -99,11 +95,11 @@ public class HashGroupify implements IHashGroupify {
             this.averageEquivalenceClassSizeIncludingOutliers = averageEquivalenceClassSizeIncludingOutliers;
             this.maximalEquivalenceClassSizeIncludingOutliers = maximalEquivalenceClassSizeIncludingOutliers;
             this.minimalEquivalenceClassSizeIncludingOutliers = minimalEquivalenceClassSizeIncludingOutliers;
-            this.numberOfGroups = numberOfGroups;
+            this.numberOfEquivalenceClasses = numberOfGroups;
             this.numberOfOutlyingEquivalenceClasses = numberOfOutlyingEquivalenceClasses;
             this.numberOfOutlyingTuples = numberOfOutlyingTuples;
         }
-
+        
         /**
          * Returns the maximal size of an equivalence class.
          *
@@ -112,7 +108,7 @@ public class HashGroupify implements IHashGroupify {
         public double getAverageEquivalenceClassSize() {
             return averageEquivalenceClassSize;
         }
-
+        
         /**
          * Returns the maximal size of an equivalence class. This number takes into account one additional
          * equivalence class containing all outliers
@@ -121,7 +117,7 @@ public class HashGroupify implements IHashGroupify {
         public double getAverageEquivalenceClassSizeIncludingOutliers() {
             return averageEquivalenceClassSizeIncludingOutliers;
         }
-
+        
         /**
          * Returns the maximal size of an equivalence class.
          *
@@ -130,7 +126,7 @@ public class HashGroupify implements IHashGroupify {
         public int getMaximalEquivalenceClassSize() {
             return maximalEquivalenceClassSize;
         }
-
+        
         /**
          * Returns the maximal size of an equivalence class. This number takes into account one additional
          * equivalence class containing all outliers
@@ -139,7 +135,7 @@ public class HashGroupify implements IHashGroupify {
         public int getMaximalEquivalenceClassSizeIncludingOutliers() {
             return maximalEquivalenceClassSizeIncludingOutliers;
         }
-
+        
         /**
          * Returns the minimal size of an equivalence class.
          *
@@ -148,7 +144,7 @@ public class HashGroupify implements IHashGroupify {
         public int getMinimalEquivalenceClassSize() {
             return minimalEquivalenceClassSize;
         }
-
+        
         /**
          * Returns the minimal size of an equivalence class. This number takes into account one additional
          * equivalence class containing all outliers
@@ -157,7 +153,7 @@ public class HashGroupify implements IHashGroupify {
         public int getMinimalEquivalenceClassSizeIncludingOutliers() {
             return minimalEquivalenceClassSizeIncludingOutliers;
         }
-
+        
         /**
          * Returns the number of equivalence classes in the currently selected data
          * representation.
@@ -165,9 +161,9 @@ public class HashGroupify implements IHashGroupify {
          * @return
          */
         public int getNumberOfGroups() {
-            return numberOfGroups;
+            return numberOfEquivalenceClasses;
         }
-
+        
         /**
          * Returns the number of outlying equivalence classes in the currently selected data
          * representation.
@@ -177,7 +173,7 @@ public class HashGroupify implements IHashGroupify {
         public int getNumberOfOutlyingEquivalenceClasses() {
             return numberOfOutlyingEquivalenceClasses;
         }
-
+        
         /**
          * Returns the number of outliers in the currently selected data
          * representation.
@@ -188,58 +184,58 @@ public class HashGroupify implements IHashGroupify {
             return numberOfOutlyingTuples;
         }
     }
-
-    /** Is the result k-anonymous?. */
-    private boolean                             kAnonymous;
-
-    /** Is the result anonymous. */
-    private boolean                             anonymous;
-
-    /** The current outliers. */
-    private int                                 currentOutliers;
-
-    /** Current number of elements. */
-    private int                                 elementCount;
-
+    
+    /** Criteria. */
+    private final PrivacyCriterion[]     classBasedCriteria;
+    
+    /** The current number of outliers. */
+    private int                          currentNumOutliers;
+    
     /** The entry array. */
-    private HashGroupifyEntry[]                 buckets;
-
+    private HashGroupifyEntry[]          hashTableBuckets;
+    
+    /** Current number of elements. */
+    private int                          hashTableElementCount;
+    
     /** The first entry. */
-    private HashGroupifyEntry                   firstEntry;
-
+    private HashGroupifyEntry            hashTableFirstEntry;
+    
     /** The last entry. */
-    private HashGroupifyEntry                   lastEntry;
-
+    private HashGroupifyEntry            hashTableLastEntry;
+    
     /** Load factor. */
-    private final float                         loadFactor = 0.75f;
-
+    private final float                  hashTableLoadFactor = 0.75f;
+    
     /** Maximum number of elements that can be put in this map before having to rehash. */
-    private int                                 threshold;
-
-    /** Allowed tuple outliers. */
-    private final int                           absoluteMaxOutliers;
-
-    /** The parameter k, if k-anonymity is contained in the set of criteria. */
-    private final int                           k;
-
-    /** The research subset, if d-presence is contained in the set of criteria. */
-    private final RowSet                        subset;
-
-    /** True, if the contained d-presence criterion is not inclusion. */
-    private final boolean                       dpresence;
-
-    /** Criteria. */
-    private final PrivacyCriterion[]            classBasedCriteria;
-
-    /** Criteria. */
-    private final SampleBasedCriterion[]        sampleBasedCriteria;
-
-    /** Metric */
-    private final Metric<?>                     metric;
-
+    private int                          hashTableThreshold;
+    
     /** Do we ensure optimality for sample-based criteria */
-    private final boolean                       heuristicForSampleBasedCriteria;
-
+    private final boolean                heuristicForSampleBasedCriteria;
+    
+    /** The parameter k, if k-anonymity is contained in the set of criteria. */
+    private final int                    minimalClassSize;
+    
+    /** Is the result k-anonymous?. */
+    private boolean                      minimalClassSizeFulfilled;
+    
+    /** True, if the contained d-presence criterion is not inclusion. */
+    private final boolean                privacyModelContainsDPresence;
+    
+    /** The research subset, if d-presence is contained in the set of criteria. */
+    private final RowSet                 privacyModelDefinesSubset;
+    
+    /** Is the result anonymous. */
+    private boolean                      privacyModelFulfilled;
+    
+    /** Criteria. */
+    private final SampleBasedCriterion[] sampleBasedCriteria;
+    
+    /** Allowed tuple outliers. */
+    private final int                    suppressionLimit;
+    
+    /** Utility measure */
+    private final Metric<?>              utilityMeasure;
+    
     /**
      * Constructs a new hash groupify operator.
      *
@@ -247,99 +243,122 @@ public class HashGroupify implements IHashGroupify {
      * @param config The config
      */
     public HashGroupify(int capacity, final ARXConfigurationInternal config) {
-
+        
         // Set capacity
         capacity = HashTableUtil.calculateCapacity(capacity);
-        this.elementCount = 0;
-        this.buckets = new HashGroupifyEntry[capacity];
-        this.threshold = HashTableUtil.calculateThreshold(buckets.length, loadFactor);
-
-        this.currentOutliers = 0;
-        this.absoluteMaxOutliers = config.getAbsoluteMaxOutliers();
-        this.metric = config.getMetric();
+        this.hashTableElementCount = 0;
+        this.hashTableBuckets = new HashGroupifyEntry[capacity];
+        this.hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
+        
+        // Set params
+        this.currentNumOutliers = 0;
+        this.suppressionLimit = config.getAbsoluteMaxOutliers();
+        this.utilityMeasure = config.getMetric();
         this.heuristicForSampleBasedCriteria = config.isUseHeuristicForSampleBasedCriteria();
         
         // Extract research subset
         if (config.containsCriterion(DPresence.class)) {
-            this.subset = config.getCriterion(DPresence.class).getSubset().getSet();
+            this.privacyModelDefinesSubset = config.getCriterion(DPresence.class).getSubset().getSet();
         } else {
-            this.subset = null;
+            this.privacyModelDefinesSubset = null;
         }
-
+        
         // Extract criteria
         this.classBasedCriteria = config.getClassBasedCriteriaAsArray();
         this.sampleBasedCriteria = config.getSampleBasedCriteriaAsArray();
-        this.k = config.getMinimalGroupSize();
+        this.minimalClassSize = config.getMinimalGroupSize();
         
-        // Sanity check: by convention, d-presence must be the first criterion 
+        // Sanity check: by convention, d-presence must be the first criterion
         // See analyze() and isAnonymous(Entry) for more details
-        for (int i=1; i<classBasedCriteria.length; i++) {
+        for (int i = 1; i < classBasedCriteria.length; i++) {
             if (classBasedCriteria[i] instanceof DPresence) {
                 throw new RuntimeException("D-Presence must be the first criterion in the array");
             }
         }
         
         // Remember, if (real) d-presence is part of the criteria that must be enforced
-        dpresence = (classBasedCriteria.length > 0 && (classBasedCriteria[0] instanceof DPresence) && !(classBasedCriteria[0] instanceof Inclusion));
+        privacyModelContainsDPresence = (classBasedCriteria.length > 0 && (classBasedCriteria[0] instanceof DPresence) && !(classBasedCriteria[0] instanceof Inclusion));
     }
     
-    @Override
-    public void addAll(int[] key, int representant, int count, int[] sensitive, int pcount) {
-
+    /**
+     * Adds a tuple from the buffer
+     * @param generalized
+     * @param other
+     * @param representative
+     * @param count
+     * @param pcount
+     */
+    public void addFromBuffer(int[] generalized, int[] other, int representative, int count, int pcount) {
+        
         // Add
-        final int hash = HashTableUtil.hashcode(key);
-        final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
-
-        // Is a sensitive attribute provided
-        if (sensitive != null) {
+        final int hash = HashTableUtil.hashcode(generalized);
+        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
+        
+        // Is a other attribute provided
+        if (other != null) {
             if (entry.distributions == null) {
-                entry.distributions = new Distribution[sensitive.length];
+                entry.distributions = new Distribution[other.length];
                 
                 // TODO: Improve!
-                for (int i=0; i<entry.distributions.length; i++){
+                for (int i = 0; i < entry.distributions.length; i++) {
                     entry.distributions[i] = new Distribution();
                 }
             }
-
-            // Only add sensitive value if in research subset
-            if (subset == null || subset.contains(representant)) {
-
+            
+            // Only add other value if in research subset
+            if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(representative)) {
+                
                 // TODO: Improve!
-                for (int i=0; i<entry.distributions.length; i++){
-                    entry.distributions[i].add(sensitive[i]);
+                for (int i = 0; i < entry.distributions.length; i++) {
+                    entry.distributions[i].add(other[i]);
                 }
             }
         }
     }
-
-    @Override
-    public void addGroupify(int[] key, int representant, int count, Distribution[] distributions, int pcount) {
-
+    
+    /**
+     * Adds an entry from another groupify operator
+     * @param generalized
+     * @param distributions
+     * @param representative
+     * @param count
+     * @param pcount
+     */
+    public void addFromGroupify(int[] generalized, Distribution[] distributions, int representative, int count, int pcount) {
+        
         // Add
-        final int hash = HashTableUtil.hashcode(key);
-        final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
-
+        final int hash = HashTableUtil.hashcode(generalized);
+        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
+        
         // Is a distribution provided
         if (distributions != null) {
             if (entry.distributions == null) {
                 entry.distributions = distributions;
             } else {
-
+                
                 // TODO: Improve!
-                for (int i=0; i<entry.distributions.length; i++){
+                for (int i = 0; i < entry.distributions.length; i++) {
                     entry.distributions[i].merge(distributions[i]);
                 }
             }
         }
     }
-
-    @Override
-    public void addSnapshot(int[] key, int representant, int count, int[][] elements, int[][] frequencies, int pcount) {
-
+    
+    /**
+     * Adds a class from a snapshot
+     * @param generalized
+     * @param elements
+     * @param frequencies
+     * @param representative
+     * @param count
+     * @param pcount
+     */
+    public void addFromSnapshot(int[] generalized, int[][] elements, int[][] frequencies, int representative, int count, int pcount) {
+        
         // Add
-        final int hash = HashTableUtil.hashcode(key);
-        final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
-
+        final int hash = HashTableUtil.hashcode(generalized);
+        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
+        
         // Is a distribution provided
         if (elements != null) {
             if (entry.distributions == null) {
@@ -347,44 +366,25 @@ public class HashGroupify implements IHashGroupify {
                 entry.distributions = new Distribution[elements.length];
                 
                 // TODO: Improve!
-                for (int i=0; i<entry.distributions.length; i++){
+                for (int i = 0; i < entry.distributions.length; i++) {
                     entry.distributions[i] = new Distribution(elements[i], frequencies[i]);
                 }
             } else {
-
+                
                 // TODO: Improve!
-                for (int i=0; i<entry.distributions.length; i++){
+                for (int i = 0; i < entry.distributions.length; i++) {
                     entry.distributions[i].merge(elements[i], frequencies[i]);
                 }
             }
         }
     }
-
-    @Override
-    public void analyze(Node transformation, boolean force){
-        if (force) analyzeAll(transformation);
-        else analyzeWithEarlyAbort(transformation);
-    }
-
-    @Override
-    public void clear() {
-        if (elementCount > 0) {
-            this.elementCount = 0;
-            this.currentOutliers = 0;
-            this.firstEntry = null;
-            this.lastEntry = null;
-            HashTableUtil.nullifyArray(buckets);
-        }
-    }
-
-    @Override
-    public HashGroupifyEntry getFirstEntry() {
-        return firstEntry;
-    }
-
-    @Override
-    public GroupStatistics getGroupStatistics() {
-
+    
+    /**
+     * Returns statistics
+     * @return
+     */
+    public EquivalenceClassStatistics getEquivalenceClassStatistics() {
+        
         // Statistics about equivalence classes
         double averageEquivalenceClassSize = 0;
         int averageEquivalenceClassSizeCounter = 0;
@@ -395,87 +395,167 @@ public class HashGroupify implements IHashGroupify {
         int numberOfOutlyingTuples = 0;
         
         // If there is no subset
-        HashGroupifyEntry entry = firstEntry;
+        HashGroupifyEntry entry = hashTableFirstEntry;
         while (entry != null) {
-            if (entry.count > 0){
+            if (entry.count > 0) {
                 numberOfEquivalenceClasses++;
-                if (!entry.isNotOutlier) { 
-                     numberOfOutlyingEquivalenceClasses++;
-                     numberOfOutlyingTuples += entry.count;
+                if (!entry.isNotOutlier) {
+                    numberOfOutlyingEquivalenceClasses++;
+                    numberOfOutlyingTuples += entry.count;
                 } else {
                     averageEquivalenceClassSizeCounter += entry.count;
                     maximalEquivalenceClassSize = Math.max(maximalEquivalenceClassSize, entry.count);
                     minimalEquivalenceClassSize = Math.min(minimalEquivalenceClassSize, entry.count);
-                 }
-             }
-             entry = entry.nextOrdered;
-         }
+                }
+            }
+            entry = entry.nextOrdered;
+        }
         
         // Sanitize
-        if (minimalEquivalenceClassSize == Integer.MAX_VALUE){
+        if (minimalEquivalenceClassSize == Integer.MAX_VALUE) {
             minimalEquivalenceClassSize = 0;
         }
-        if (maximalEquivalenceClassSize == Integer.MIN_VALUE){
+        if (maximalEquivalenceClassSize == Integer.MIN_VALUE) {
             maximalEquivalenceClassSize = 0;
-        } 
-        if (numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses == 0){
+        }
+        if (numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses == 0) {
             averageEquivalenceClassSize = 0;
         } else {
-            averageEquivalenceClassSize = (double) averageEquivalenceClassSizeCounter / 
+            averageEquivalenceClassSize = (double) averageEquivalenceClassSizeCounter /
                                           (double) (numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses);
         }
-         
-         // Statistics including suppression
-         double averageEquivalenceClassSizeAll = averageEquivalenceClassSize;
-         int maximalEquivalenceClassSizeAll = maximalEquivalenceClassSize;
-         int minimalEquivalenceClassSizeAll = minimalEquivalenceClassSize;
-         if (averageEquivalenceClassSize != 0 && numberOfOutlyingTuples > 0){
-             averageEquivalenceClassSizeAll = (double)(averageEquivalenceClassSizeCounter + numberOfOutlyingTuples) /
-                                              (double)(numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses + 1);
-             
-             maximalEquivalenceClassSizeAll = Math.max(maximalEquivalenceClassSize, numberOfOutlyingTuples);
-             minimalEquivalenceClassSizeAll = Math.min(minimalEquivalenceClassSize, numberOfOutlyingTuples);
-         } else {
-             averageEquivalenceClassSizeAll = 0;
-             maximalEquivalenceClassSizeAll = 0;
-             minimalEquivalenceClassSizeAll = 0;
-         }
-         
-         // Return
-         return new GroupStatistics(averageEquivalenceClassSize,
-                                    maximalEquivalenceClassSize,
-                                    minimalEquivalenceClassSize,
-                                    averageEquivalenceClassSizeAll,
-                                    maximalEquivalenceClassSizeAll,
-                                    minimalEquivalenceClassSizeAll,
-                                    numberOfEquivalenceClasses,
-                                    numberOfOutlyingEquivalenceClasses,
-                                    numberOfOutlyingTuples);
-    }
-
-    @Override
-    public boolean isAnonymous() {
-        return anonymous;
-    }
-
-    @Override
-    public boolean isKAnonymous() {
-        return k != Integer.MAX_VALUE && kAnonymous;
+        
+        // Statistics including suppression
+        double averageEquivalenceClassSizeAll = averageEquivalenceClassSize;
+        int maximalEquivalenceClassSizeAll = maximalEquivalenceClassSize;
+        int minimalEquivalenceClassSizeAll = minimalEquivalenceClassSize;
+        if (averageEquivalenceClassSize != 0 && numberOfOutlyingTuples > 0) {
+            averageEquivalenceClassSizeAll = (double) (averageEquivalenceClassSizeCounter + numberOfOutlyingTuples) /
+                                             (double) (numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses + 1);
+            
+            maximalEquivalenceClassSizeAll = Math.max(maximalEquivalenceClassSize, numberOfOutlyingTuples);
+            minimalEquivalenceClassSizeAll = Math.min(minimalEquivalenceClassSize, numberOfOutlyingTuples);
+        } else {
+            averageEquivalenceClassSizeAll = 0;
+            maximalEquivalenceClassSizeAll = 0;
+            minimalEquivalenceClassSizeAll = 0;
+        }
+        
+        // Return
+        return new EquivalenceClassStatistics(averageEquivalenceClassSize,
+                                   maximalEquivalenceClassSize,
+                                   minimalEquivalenceClassSize,
+                                   averageEquivalenceClassSizeAll,
+                                   maximalEquivalenceClassSizeAll,
+                                   minimalEquivalenceClassSizeAll,
+                                   numberOfEquivalenceClasses,
+                                   numberOfOutlyingEquivalenceClasses,
+                                   numberOfOutlyingTuples);
     }
     
-    @Override
-    public void markOutliers(final int[][] data) {
+    /**
+     * Returns the first entry
+     * @return
+     */
+    public HashGroupifyEntry getFirstEquivalenceClass() {
+        return hashTableFirstEntry;
+    }
+    
+    /**
+     * Returns the current size in terms of classes
+     * @return
+     */
+    public int getNumberOfEquivalenceClasses() {
+        return hashTableElementCount;
+    }
+    
+    /**
+     * Returns whether the current state of the dataset fulfills the minimal class-size property
+     * @return
+     */
+    public boolean isMinimalClassSizeFulfilled() {
+        return minimalClassSize != Integer.MAX_VALUE && minimalClassSizeFulfilled;
+    }
+    
+    /**
+     * Returns whether the current state of the dataset fulfills the privacy model
+     * @return
+     */
+    public boolean isPrivacyModelFulfilled() {
+        return privacyModelFulfilled;
+    }
+    
+    /**
+     * Microaggregates all according attributes
+     * @param data
+     * @param start
+     * @param num
+     * @param functions
+     * @param map
+     * @param header
+     * @return
+     */
+    public Data performMicroaggregation(int[][] data,
+                                        int start,
+                                        int num,
+                                        DistributionAggregateFunction[] functions,
+                                        int[] map,
+                                        String[] header) {
         
+        // Prepare result
+        Data result = new Data(new int[data.length][num], header, map, new Dictionary(num));
+
+        // TODO: To improve performance, microaggregation and marking of outliers could be performed in one pass
+        ObjectIntOpenHashMap<Distribution> cache = new ObjectIntOpenHashMap<Distribution>();
         for (int row = 0; row < data.length; row++) {
-            if (subset == null || subset.contains(row)){
+            if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(row)) {
                 final int[] key = data[row];
                 final int hash = HashTableUtil.hashcode(key);
-                final int index = hash & (buckets.length - 1);
-                HashGroupifyEntry m = buckets[index];
+                final int index = hash & (hashTableBuckets.length - 1);
+                HashGroupifyEntry m = hashTableBuckets[index];
                 while ((m != null) && ((m.hashcode != hash) || !equalsIgnoringOutliers(key, m.key))) {
                     m = m.next;
                 }
-                if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before marking outliers!"); }
+                if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before microaggregation!"); }
+                int dimension = 0;
+                result.getArray()[row] = new int[num];
+                for (int i = start; i < start + num; i++) {
+                    if (!cache.containsKey(m.distributions[i])) {
+                        String value = functions[dimension].aggregate(m.distributions[i]);
+                        int code = result.getDictionary().register(dimension, value);
+                        cache.put(m.distributions[i], code);
+                    }
+                    result.getArray()[row][dimension] = cache.get(m.distributions[i]);
+                    dimension++;
+                }
+            }
+        }
+        
+        // Finalize
+        result.getDictionary().finalizeAll();
+        
+        // Returns the result
+        return result;
+    }
+    
+    /**
+     * Marks all outliers in the given (generalized subset of the) input datasets
+     * @param data
+     */
+    public void performSuppression(final int[][] data) {
+        
+        for (int row = 0; row < data.length; row++) {
+            if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(row)) {
+                final int[] key = data[row];
+                final int hash = HashTableUtil.hashcode(key);
+                final int index = hash & (hashTableBuckets.length - 1);
+                HashGroupifyEntry m = hashTableBuckets[index];
+                while ((m != null) && ((m.hashcode != hash) || !equalsIgnoringOutliers(key, m.key))) {
+                    m = m.next;
+                }
+                if (m == null) {
+                    throw new RuntimeException("Invalid state! Groupify the data before marking outliers!");
+                }
                 if (!m.isNotOutlier) {
                     key[0] |= Data.OUTLIER_MASK;
                 }
@@ -484,112 +564,130 @@ public class HashGroupify implements IHashGroupify {
     }
 
     /**
+     * Analyzes the current state
+     * @param transformation
+     * @param force
+     */
+    public void stateAnalyze(Node transformation, boolean force) {
+        if (force) analyzeAll(transformation);
+        else analyzeWithEarlyAbort(transformation);
+    }
+    
+    /**
+     * Clears all entries
+     */
+    public void stateClear() {
+        if (hashTableElementCount > 0) {
+            this.hashTableElementCount = 0;
+            this.currentNumOutliers = 0;
+            this.hashTableFirstEntry = null;
+            this.hashTableLastEntry = null;
+            HashTableUtil.nullifyArray(hashTableBuckets);
+        }
+    }
+    
+    /**
      * This method will reset all flags that indicate that equivalence classes are suppressed.
      */
-    public void resetSuppression() {
-        HashGroupifyEntry entry = firstEntry;
+    public void stateResetSuppression() {
+        HashGroupifyEntry entry = hashTableFirstEntry;
         while (entry != null) {
             entry.isNotOutlier = true;
             entry = entry.nextOrdered;
         }
-        this.currentOutliers = 0;
+        this.currentNumOutliers = 0;
     }
     
-    @Override
-    public int size() {
-        return elementCount;
-    }
-
     /**
      * Internal adder method.
      *
-     * @param key the key
+     * @param generalized the key
      * @param hash the hash
-     * @param representant
+     * @param representative
      * @param count
      * @param pcount
      * @return the hash groupify entry
      */
-    private final HashGroupifyEntry addInternal(final int[] key, final int hash, final int representant, int count, final int pcount) {
-
+    private HashGroupifyEntry addInternal(final int[] generalized, final int hash, final int representative, int count, final int pcount) {
+        
         // Find or create entry
-        int index = hash & (buckets.length - 1);
-        HashGroupifyEntry entry = findEntry(key, index, hash);
+        int index = hash & (hashTableBuckets.length - 1);
+        HashGroupifyEntry entry = findEntry(generalized, index, hash);
         if (entry == null) {
-            if (++elementCount > threshold) {
+            if (++hashTableElementCount > hashTableThreshold) {
                 rehash();
-                index = hash & (buckets.length - 1);
+                index = hash & (hashTableBuckets.length - 1);
             }
-            entry = createEntry(key, index, hash, representant);
+            entry = createEntry(generalized, index, hash, representative);
         }
-
+        
         // If we enforce d-presence and the tuple is not contained in the research subset: set its count to zero
-        count = (subset != null && !subset.contains(representant)) ? 0 : count;
-
+        count = (privacyModelDefinesSubset != null && !privacyModelDefinesSubset.contains(representative)) ? 0 : count;
+        
         // Track size: private table for d-presence, overall table, else
         entry.count += count;
-
+        
         // Indirectly check if we enforce d-presence
-        if (subset != null) {
+        if (privacyModelDefinesSubset != null) {
             
             // Increase size of tuples from public table
             entry.pcount += pcount;
             
             // This is a tuple from the research subset, but the class is not represented by a tuple from the subset.
-            // Or this is a tuple from the subset with a representant that is smaller than the current representant of the tuple (which is also from the subset)
+            // Or this is a tuple from the subset with a representative that is smaller than the current representative of the tuple (which is also from the subset)
             // Reset its representative, which is necessary for rollup / history, because
             // otherwise subset.contains(tupleID) could potentially return false.
-            // Moreover, we *must* always represent classes by its minimal representant to ensure that roll-ups and snapshots can be
+            // Moreover, we *must* always represent classes by its minimal representative to ensure that roll-ups and snapshots can be
             // utilized correctly. This is guaranteed, if there is no research subset, and needs to be enforced explicitly, if there is one.
             //
             // Consider the following scenario
             //
             // 1. Tuple from G1 (Not in subset)
             // 2. Tuple from G2 (Not in subset)
-            // 3. Tuple from G2 <-Representant
-            // 4. Tuple from G1 <-Representant
+            // 3. Tuple from G2 <-Representative
+            // 4. Tuple from G1 <-Representative
             //
             // We assume that G1 and G2 collapse in the next grouping operation.
             //
             // If we iterate over the whole dataset and always choose the last element, the group is represented by tuple 4
-            // If we iterate over a snapshot, G1 will be iterated over before G2 (although it has the larger representant), resetting the representative index 3
+            // If we iterate over a snapshot, G1 will be iterated over before G2 (although it has the larger representative), resetting the representative index 3
             //
             // To prevent this, we always choose the smallest index:
-            entry.representant = (count > 0 && (entry.count == count || entry.representant < representant)) ? representant : entry.representant;
+            entry.representative = (count > 0 && (entry.count == count || entry.representative < representative)) ? representative : entry.representative;
         }
-
+        
         // Compute current total number of outliers, if k-anonymity is contained in the set of criteria
         // TODO: Replace with conditional moves
-        if (entry.count >= k) {
+        if (entry.count >= minimalClassSize) {
             if (!entry.isNotOutlier) {
                 entry.isNotOutlier = true;
-                currentOutliers -= (entry.count - count);
+                currentNumOutliers -= (entry.count - count);
             }
         } else {
-            currentOutliers += count;
+            currentNumOutliers += count;
         }
         
         // Return
         return entry;
     }
-
+    
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
      */
-    private void analyzeAll(Node transformation){
-
+    private void analyzeAll(Node transformation) {
+        
         // We have only checked k-anonymity so far
-        kAnonymous = (currentOutliers <= absoluteMaxOutliers);
+        minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
         
         // Iterate over all classes
         boolean dpresent = true;
-        currentOutliers = 0;
-        HashGroupifyEntry entry = firstEntry;
+        currentNumOutliers = 0;
+        HashGroupifyEntry entry = hashTableFirstEntry;
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isAnonymous(entry);
+            int anonymous = isPrivacyModelFulfilled(entry);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -599,11 +697,11 @@ public class HashGroupify implements IHashGroupify {
                 // Tuples from the public table that have no matching candidates in the private table
                 // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
                 // transformation must be considered to not fulfill the privacy criteria.
-                if (dpresence && entry.count == 0 && anonymous == 1) {
+                if (privacyModelContainsDPresence && entry.count == 0 && anonymous == 1) {
                     dpresent = false;
                 }
                 
-                currentOutliers += entry.count;
+                currentNumOutliers += entry.count;
             }
             
             // We only suppress classes that are contained in the research subset
@@ -614,9 +712,9 @@ public class HashGroupify implements IHashGroupify {
         }
         
         this.analyzeSampleBasedCriteria(transformation, false);
-        this.anonymous = (currentOutliers <= absoluteMaxOutliers) && dpresent;
+        this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit) && dpresent;
     }
-
+    
     /**
      * Analyze sample-based criteria
      * @param transformation
@@ -631,54 +729,54 @@ public class HashGroupify implements IHashGroupify {
         }
         
         // Build a distribution
-        HashGroupifyDistribution distribution = new HashGroupifyDistribution(heuristicForSampleBasedCriteria ? null : metric, 
-                                                                             transformation, 
-                                                                             this.firstEntry);
+        HashGroupifyDistribution distribution = new HashGroupifyDistribution(heuristicForSampleBasedCriteria ? null : utilityMeasure,
+                                                                             transformation,
+                                                                             this.hashTableFirstEntry);
         
         // For each criterion
         for (SampleBasedCriterion criterion : this.sampleBasedCriteria) {
             
             // Enforce
-            criterion.enforce(distribution, earlyAbort ? this.absoluteMaxOutliers : Integer.MAX_VALUE);
+            criterion.enforce(distribution, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
             
             // Early abort
-            this.currentOutliers = distribution.getNumOfSuppressedTuples();
-            if (earlyAbort && currentOutliers > absoluteMaxOutliers) {
+            this.currentNumOutliers = distribution.getNumOfSuppressedTuples();
+            if (earlyAbort && currentNumOutliers > suppressionLimit) {
                 return;
             }
         }
     }
-
+    
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
      */
-    private void analyzeWithEarlyAbort(Node transformation){
+    private void analyzeWithEarlyAbort(Node transformation) {
         
         // We have only checked k-anonymity so far
-        kAnonymous = (currentOutliers <= absoluteMaxOutliers);
+        minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
         
         // Abort early, if only k-anonymity was specified
-        if (classBasedCriteria.length == 0 && sampleBasedCriteria.length == 0) { 
-            anonymous = kAnonymous;
+        if (classBasedCriteria.length == 0 && sampleBasedCriteria.length == 0) {
+            privacyModelFulfilled = minimalClassSizeFulfilled;
             return;
         }
         
         // Abort early, if k-anonymity sub-criterion is not fulfilled
         // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
-        //          for non-anonymous transformations
-        if (k != Integer.MAX_VALUE && !kAnonymous) {
-            anonymous = false;
-            return; 
+        // for non-anonymous transformations
+        if (minimalClassSize != Integer.MAX_VALUE && !minimalClassSizeFulfilled) {
+            privacyModelFulfilled = false;
+            return;
         }
         
         // Iterate over all classes
-        currentOutliers = 0;
-        HashGroupifyEntry entry = firstEntry;
+        currentNumOutliers = 0;
+        HashGroupifyEntry entry = hashTableFirstEntry;
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isAnonymous(entry);
+            int anonymous = isPrivacyModelFulfilled(entry);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -689,18 +787,18 @@ public class HashGroupify implements IHashGroupify {
                 // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
                 // transformation must be considered to not fulfill the privacy criteria.
                 // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
-                //          for non-anonymous transformations
-                if (dpresence && entry.count == 0 && anonymous == 1) {
-                    this.anonymous = false;
+                // for non-anonymous transformations
+                if (privacyModelContainsDPresence && entry.count == 0 && anonymous == 1) {
+                    this.privacyModelFulfilled = false;
                     return;
                 }
-                currentOutliers += entry.count;
+                currentNumOutliers += entry.count;
                 
                 // Break as soon as too many classes are not anonymous
                 // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
-                //          for non-anonymous transformations
-                if (currentOutliers > absoluteMaxOutliers) { 
-                    this.anonymous = false;
+                // for non-anonymous transformations
+                if (currentNumOutliers > suppressionLimit) {
+                    this.privacyModelFulfilled = false;
                     return;
                 }
             }
@@ -713,9 +811,9 @@ public class HashGroupify implements IHashGroupify {
         }
         
         this.analyzeSampleBasedCriteria(transformation, true);
-        this.anonymous = (currentOutliers <= absoluteMaxOutliers);
+        this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
     }
-
+    
     /**
      * Creates a new entry.
      * 
@@ -731,19 +829,19 @@ public class HashGroupify implements IHashGroupify {
      */
     private HashGroupifyEntry createEntry(final int[] key, final int index, final int hash, final int line) {
         final HashGroupifyEntry entry = new HashGroupifyEntry(key, hash);
-        entry.next = buckets[index];
-        entry.representant = line;
-        buckets[index] = entry;
-        if (firstEntry == null) {
-            firstEntry = entry;
-            lastEntry = entry;
+        entry.next = hashTableBuckets[index];
+        entry.representative = line;
+        hashTableBuckets[index] = entry;
+        if (hashTableFirstEntry == null) {
+            hashTableFirstEntry = entry;
+            hashTableLastEntry = entry;
         } else {
-            lastEntry.nextOrdered = entry;
-            lastEntry = entry;
+            hashTableLastEntry.nextOrdered = entry;
+            hashTableLastEntry = entry;
         }
         return entry;
     }
-
+    
     /**
      * TODO: Ugly!.
      *
@@ -753,11 +851,13 @@ public class HashGroupify implements IHashGroupify {
      */
     private boolean equalsIgnoringOutliers(final int[] a, final int[] a2) {
         for (int i = 0; i < a.length; i++) {
-            if (a[i] != (a2[i] & Data.REMOVE_OUTLIER_MASK)) { return false; }
+            if (a[i] != (a2[i] & Data.REMOVE_OUTLIER_MASK)) {
+                return false;
+            }
         }
         return true;
     }
-
+    
     /**
      * Returns the according entry.
      * 
@@ -769,14 +869,14 @@ public class HashGroupify implements IHashGroupify {
      *            the key hash
      * @return the hash groupify entry
      */
-    private final HashGroupifyEntry findEntry(final int[] key, final int index, final int keyHash) {
-        HashGroupifyEntry m = buckets[index];
+    private HashGroupifyEntry findEntry(final int[] key, final int index, final int keyHash) {
+        HashGroupifyEntry m = hashTableBuckets[index];
         while ((m != null) && ((m.hashcode != keyHash) || !HashTableUtil.equals(key, m.key))) {
             m = m.next;
         }
         return m;
     }
-
+    
     /**
      * Checks whether the given entry is anonymous.
      *
@@ -784,16 +884,16 @@ public class HashGroupify implements IHashGroupify {
      * @return
      * @returns -1, if all criteria are fulfilled, 0, if minimal group size is not fulfilled, (index+1) if criteria[index] is not fulfilled
      */
-    private int isAnonymous(HashGroupifyEntry entry) {
-
+    private int isPrivacyModelFulfilled(HashGroupifyEntry entry) {
+        
         // Check minimal group size
-        if (k != Integer.MAX_VALUE && entry.count < k) {
+        if (minimalClassSize != Integer.MAX_VALUE && entry.count < minimalClassSize) {
             return 0;
         }
-
+        
         // Check other criteria
         // Note: The d-presence criterion must be checked first to ensure correct handling of d-presence with tuple suppression.
-        //       This is currently ensured by convention. See ARXConfiguration.getCriteriaAsArray();
+        // This is currently ensured by convention. See ARXConfiguration.getCriteriaAsArray();
         for (int i = 0; i < classBasedCriteria.length; i++) {
             if (!classBasedCriteria[i].isAnonymous(entry)) {
                 return i + 1;
@@ -801,22 +901,22 @@ public class HashGroupify implements IHashGroupify {
         }
         return -1;
     }
-
+    
     /**
      * Rehashes this operator.
      */
     private void rehash() {
-
-        final int length = HashTableUtil.calculateCapacity((buckets.length == 0 ? 1 : buckets.length << 1));
+        
+        final int length = HashTableUtil.calculateCapacity((hashTableBuckets.length == 0 ? 1 : hashTableBuckets.length << 1));
         final HashGroupifyEntry[] newData = new HashGroupifyEntry[length];
-        HashGroupifyEntry entry = firstEntry;
+        HashGroupifyEntry entry = hashTableFirstEntry;
         while (entry != null) {
             final int index = entry.hashcode & (length - 1);
             entry.next = newData[index];
             newData[index] = entry;
             entry = entry.nextOrdered;
         }
-        buckets = newData;
-        threshold = HashTableUtil.calculateThreshold(buckets.length, loadFactor);
+        hashTableBuckets = newData;
+        hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
     }
 }

@@ -23,7 +23,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -125,7 +125,7 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node, IHashGroupify g) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Node node, HashGroupify g) {
         return this.getLowerBoundInternal(node);
     }
 

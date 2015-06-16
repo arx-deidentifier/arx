@@ -21,7 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -59,7 +59,7 @@ public abstract class MetricWeighted<T extends InformationLoss<?>> extends Metri
 
     @Override
     @SuppressWarnings("unchecked")
-    protected T getLowerBoundInternal(final Node node, final IHashGroupify groupify) {
+    protected T getLowerBoundInternal(final Node node, final HashGroupify groupify) {
         return (T)node.getLowerBound();
     }
 

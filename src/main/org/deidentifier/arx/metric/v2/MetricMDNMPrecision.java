@@ -24,7 +24,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -106,12 +106,12 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
         
         int suppressedTuples = 0;
         int unsuppressedTuples = 0;
         
-        HashGroupifyEntry m = g.getFirstEntry();
+        HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             // if (m.count > 0) is given implicitly
             unsuppressedTuples += m.isNotOutlier ? m.count : 0;
@@ -144,7 +144,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
-                                                           IHashGroupify groupify) {
+                                                           HashGroupify groupify) {
        return getLowerBoundInternal(node);
     }
 

@@ -23,9 +23,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionInterval;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionMedian;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionMode;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.io.CSVSyntax;
@@ -37,7 +45,7 @@ import org.deidentifier.arx.io.CSVSyntax;
  * @author Florian Kohlmayer
  */
 public class AttributeType implements Serializable, Cloneable {
-
+    
     /**
      * This class implements a generalization hierarchy.
      *
@@ -55,7 +63,7 @@ public class AttributeType implements Serializable, Cloneable {
          */
         public static class DefaultHierarchy extends Hierarchy {
 
-            /** TODO. */
+            /** SVUID */
             private static final long    serialVersionUID = 7493568420925738049L;
 
             /** The raw data. */
@@ -120,10 +128,10 @@ public class AttributeType implements Serializable, Cloneable {
          */
         static class ArrayHierarchy extends Hierarchy {
 
-            /** TODO. */
+            /** SVUID. */
             private static final long serialVersionUID = 8966189950800782892L;
 
-            /** TODO. */
+            /** Field */
             private final String[][]  hierarchy;
 
             /**
@@ -154,10 +162,10 @@ public class AttributeType implements Serializable, Cloneable {
          */
         static class IterableHierarchy extends Hierarchy {
 
-            /** TODO. */
+            /** SVUID */
             private static final long  serialVersionUID = 5734204406574324342L;
 
-            /** TODO. */
+            /** Field */
             private Iterator<String[]> iterator;
 
             /** The array. */
@@ -198,7 +206,7 @@ public class AttributeType implements Serializable, Cloneable {
             }
         }
 
-        /** TODO. */
+        /** SVUID */
         private static final long serialVersionUID = -4721439386792383385L;
 
         /**
@@ -538,8 +546,241 @@ public class AttributeType implements Serializable, Cloneable {
             output.write(getHierarchy());
         }
     }
+    
+    /**
+     * This class describes a microaggregation function
+     * @author Fabian Prasser
+     */
+    public abstract static class MicroAggregationFunctionDescription implements Serializable {
 
-    /** TODO. */
+        /** SVUID*/
+        private static final long serialVersionUID = -6608355532280843693L;
+
+        /** The required scale*/
+        private final DataScale requiredScale;
+        
+        /** The label*/
+        private final String label;
+        
+        /**
+         * Instantiates a new hierarchy.
+         * @param requiredScale
+         * @param label 
+         */
+        private MicroAggregationFunctionDescription(DataScale requiredScale,
+                                                    String label) {
+            this.requiredScale = requiredScale;
+            this.label = label;
+        }
+        
+        /**
+         * @return the label
+         */
+        public String getLabel() {
+            return label;
+        }
+
+        /**
+         * @return the requiredScale
+         */
+        public DataScale getRequiredScale() {
+            return requiredScale;
+        }
+
+        /**
+         * Creates an instance
+         * @param ignoreMissingData
+         * @return
+         */
+        public abstract MicroAggregationFunction createInstance(boolean ignoreMissingData);
+    }
+
+
+    /**
+     * This class is used to define aggregate functions for microaggregation.
+     * 
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     * @param <T>
+     *
+     */
+    public static class MicroAggregationFunction extends AttributeType implements Serializable {
+
+        /** SVUID */
+        private static final long            serialVersionUID = -7175337291872533713L;
+        
+        /**
+         * Creates a microaggregation function returning the arithmetic mean. Ignores missing data.
+         * @return
+         */
+        public static MicroAggregationFunction createArithmeticMean() {
+            return createArithmeticMean(true);
+        }        
+
+        /**
+         * Creates a microaggregation function returning the arithmetic mean.
+         * 
+         * @param ignoreMissingData Should the function ignore missing data. Default is true.
+         * @return
+         */
+        public static MicroAggregationFunction createArithmeticMean(boolean ignoreMissingData) {
+            return new MicroAggregationFunction(new DistributionAggregateFunctionArithmeticMean(ignoreMissingData),
+                                                DataScale.INTERVAL, "Arithmetric mean");
+        }
+        
+        /**
+         * Creates a microaggregation function using generalization. Ignores missing data.
+         * @return
+         */
+        public static MicroAggregationFunction createGeneralization() {
+            return createGeneralization(true);
+        }
+        
+        /**
+         * Creates a microaggregation function using generalization.
+         * 
+         * @param ignoreMissingData Should the function ignore missing data. Default is true.
+         * @return
+         */
+        public static MicroAggregationFunction createGeneralization(boolean ignoreMissingData) {
+            return new MicroAggregationFunction(new DistributionAggregateFunctionGeneralization(ignoreMissingData),
+                                                DataScale.NOMINAL, "Generalization");
+        }
+
+        /**
+         * Creates a microaggregation function returning intervals. Ignores missing data.
+         * @return
+         */
+        public static MicroAggregationFunction createInterval() {
+            return createInterval(true);
+        }
+        
+        /**
+         * Creates a microaggregation function returning intervals.
+         * 
+         * @param ignoreMissingData Should the function ignore missing data. Default is true.
+         * @return
+         */
+        public static MicroAggregationFunction createInterval(boolean ignoreMissingData) {
+            return new MicroAggregationFunction(new DistributionAggregateFunctionInterval(ignoreMissingData),
+                                                DataScale.ORDINAL, "Interval");
+        }
+        
+        /**
+         * Creates a microaggregation function returning the geometric mean. Ignores missing data.
+         * @return
+         */
+        public static MicroAggregationFunction createGeometricMean() {
+            return createGeometricMean(true);
+        }
+
+        /**
+         * Creates a microaggregation function returning the geometric mean.
+         * 
+         * @param ignoreMissingData Should the function ignore missing data. Default is true.
+         * @return
+         */
+        public static MicroAggregationFunction createGeometricMean(boolean ignoreMissingData) {
+            return new MicroAggregationFunction(new DistributionAggregateFunctionGeometricMean(ignoreMissingData),
+                                                DataScale.INTERVAL, "Geometric mean");
+        }
+        
+        /**
+         * Creates a microaggregation function returning the median. Ignores missing data.
+         * @return
+         */
+        public static MicroAggregationFunction createMedian() {
+            return createMedian(true);
+        }
+
+        /**
+         * Creates a microaggregation function returning the median.
+         * 
+         * @param ignoreMissingData Should the function ignore missing data. Default is true.
+         * @return
+         */
+        public static MicroAggregationFunction createMedian(boolean ignoreMissingData) {
+            return new MicroAggregationFunction(new DistributionAggregateFunctionMedian(ignoreMissingData),
+                                                DataScale.ORDINAL, "Median");
+        }
+        
+        /**
+         * Creates a microaggregation function returning the mode. Ignores missing data.
+         * @return
+         */
+        public static MicroAggregationFunction createMode() {
+            return createMode(true);
+        }
+        
+        /**
+         * Creates a microaggregation function returning the mode.
+         * 
+         * @param ignoreMissingData Should the function ignore missing data. Default is true.
+         * @return
+         */
+        public static MicroAggregationFunction createMode(boolean ignoreMissingData) {
+            return new MicroAggregationFunction(new DistributionAggregateFunctionMode(ignoreMissingData),
+                                                DataScale.NOMINAL, "Mode");
+        }
+        
+        /** The microaggregation function */
+        private final DistributionAggregateFunction function;
+        
+        /** The required scale*/
+        private final DataScale requiredScale;
+        
+        /** The label*/
+        private final String label;
+        
+        /**
+         * Instantiates a new hierarchy.
+         * @param function
+         * @param requiredScale
+         * @param label 
+         */
+        private MicroAggregationFunction(DistributionAggregateFunction function,
+                                         DataScale requiredScale,
+                                         String label) {
+            super(ATTR_TYPE_QI);
+            this.function = function;
+            this.requiredScale = requiredScale;
+            this.label = label;
+        }
+        
+        /**
+         * Returns a label for this function
+         * @return the label
+         */
+        public String getLabel() {
+            return label;
+        }
+
+        /**
+         * Returns the required scale of measure
+         * @return
+         */
+        public DataScale getRequiredScale() {
+            return requiredScale;
+        }
+        
+        /**
+         * Returns whether this is a type-preserving function
+         * @return
+         */
+        public boolean isTypePreserving() {
+            return function.isTypePreserving();
+        }
+
+        /**
+         * Returns the aggregate function.
+         * @return
+         */
+        protected DistributionAggregateFunction getFunction() {
+            return function;
+        }
+    }
+
+    /** SVUID. */
     private static final long   serialVersionUID            = -7358540408016873823L;
 
     /** The shift. */
@@ -617,5 +858,50 @@ public class AttributeType implements Serializable, Cloneable {
      */
     protected int getType() {
         return type;
+    }
+    
+    /**
+     * Lists all available microaggregation functions
+     * @return
+     */
+    public static List<MicroAggregationFunctionDescription> listMicroAggregationFunctions() {
+        return Arrays.asList(new MicroAggregationFunctionDescription[] {
+                new MicroAggregationFunctionDescription(DataScale.INTERVAL, "Arithmetic mean") {
+                    /** SVUID*/ private static final long serialVersionUID = -6625783559253337848L; 
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                        return MicroAggregationFunction.createArithmeticMean(ignoreMissingData);
+                    }
+                },
+                new MicroAggregationFunctionDescription(DataScale.INTERVAL, "Geometric mean") {
+                    /** SVUID */ private static final long serialVersionUID = 1705485004601412223L;
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                        return MicroAggregationFunction.createGeometricMean(ignoreMissingData);
+                    }
+                },
+                new MicroAggregationFunctionDescription(DataScale.ORDINAL, "Median") {
+                    /** SVUID*/ private static final long serialVersionUID = -690899494444878587L; 
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                        return MicroAggregationFunction.createMedian(ignoreMissingData);
+                    }
+                },
+                new MicroAggregationFunctionDescription(DataScale.ORDINAL, "Interval") {
+                    /** SVUID*/ private static final long serialVersionUID = 4266891310821078436L;
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                        return MicroAggregationFunction.createInterval(ignoreMissingData);
+                    }
+                },
+                new MicroAggregationFunctionDescription(DataScale.NOMINAL, "Mode") {
+                    /** SVUID*/ private static final long serialVersionUID = 1803670665142101922L;
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                        return MicroAggregationFunction.createMode(ignoreMissingData);
+                    }
+                },
+                new MicroAggregationFunctionDescription(DataScale.NOMINAL, "Generalization") {
+                    /** SVUID*/ private static final long serialVersionUID = 8001475078517380349L;
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                        return MicroAggregationFunction.createGeneralization(ignoreMissingData);
+                    }
+                }
+        });
     }
 }

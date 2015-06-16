@@ -19,16 +19,16 @@ package org.deidentifier.arx.framework.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
@@ -41,52 +41,90 @@ import com.carrotsearch.hppc.IntOpenHashSet;
  */
 public class DataManager {
 
-    /** The data. */
-    protected final Data                                 dataQI;
+    /**
+     * Internal representation of attribute types. Quasi-identifiers are split
+     * into the ones to which generalization is applied and the ones to which
+     * microaggregation is applied
+     * 
+     * @author Florian Kohlmayer
+     * @author Fabian Prasser
+     * 
+     */
+    public static class AttributeTypeInternal {
+        public static final int IDENTIFYING                       = 3;
+        public static final int INSENSITIVE                       = 2;
+        public static final int QUASI_IDENTIFYING_GENERALIZED     = 0;
+        public static final int QUASI_IDENTIFYING_MICROAGGREGATED = 4;
+        public static final int SENSITIVE                         = 1;
+    }
 
     /** The data. */
-    protected final Data                                 dataSE;
+    private final Data                                 dataAnalyzed;
 
-    /** The data. */
-    protected final Data                                 dataIS;
+    /** The data which is generalized */
+    private final Data                                 dataGeneralized;
 
-    /** The generalization hierarchiesQI. */
-    protected final GeneralizationHierarchy[]            hierarchiesQI;
-
-    /** The sensitive attributes. */
-    protected final Map<String, GeneralizationHierarchy> hierarchiesSE;
-
-    /** The indexes of sensitive attributes. */
-    protected final Map<String, Integer>                 indexesSE;
-
-    /** The hierarchy heights for each QI. */
-    protected final int[]                                hierarchyHeights;
-
-    /** The maximum level for each QI. */
-    protected final int[]                                maxLevels;
-
-    /** The minimum level for each QI. */
-    protected final int[]                                minLevels;
+    /** The data which is insensitive */
+    private final Data                                 dataStatic;
 
     /** The original input header. */
-    protected final String[]                             header;
+    private final String[]                             header;
+
+    /** The generalization hierarchiesQI. */
+    private final GeneralizationHierarchy[]            hierarchiesGeneralized;
+
+    /** The hierarchy heights for each QI. */
+    private final int[]                                hierarchiesHeights;
+
+    /** The sensitive attributes. */
+    private final Map<String, GeneralizationHierarchy> hierarchiesSensitive;
+
+    /** The indexes of sensitive attributes. */
+    private final Map<String, Integer>                 indexesSensitive;
+
+    /** The maximum level for each QI. */
+    private final int[]                                maxLevels;
+
+    /** The microaggregation functions. */
+    private final DistributionAggregateFunction[]      microaggregationFunctions;
+
+    /** Header for microaggregated attributes */
+    private final String[]                             microaggregationHeader;
+
+    /** Map for microaggregated attributes */
+    private final int[]                                microaggregationMap;
+
+    /** The number of microaggregation attributes in the dataDI */
+    private final int                                  microaggregationNumAttributes;
+
+    /** The start index of the microaggregation attributes in the dataDI */
+    private final int                                  microaggregationStartIndex;
+
+    /** The minimum level for each QI. */
+    private final int[]                                minLevels;
 
     /** The research subset, if any. */
-    protected RowSet                           subset     = null;
+    private RowSet                                     subset     = null;
 
     /** The size of the research subset. */
-    protected int                                        subsetSize = 0;
+    private int                                        subsetSize = 0;
 
     /**
      * Creates a new data manager from pre-encoded data.
-     *
+     * 
      * @param header
      * @param data
      * @param dictionary
      * @param definition
      * @param criteria
+     * @param function
      */
-    public DataManager(final String[] header, final int[][] data, final Dictionary dictionary, final DataDefinition definition, final Set<PrivacyCriterion> criteria) {
+    public DataManager(final String[] header,
+                       final int[][] data,
+                       final Dictionary dictionary,
+                       final DataDefinition definition,
+                       final Set<PrivacyCriterion> criteria,
+                       final Map<String, DistributionAggregateFunction> functions) {
 
         // Store research subset
         for (PrivacyCriterion c : criteria) {
@@ -100,86 +138,129 @@ public class DataManager {
         // Store columns for reordering the output
         this.header = header;
 
-        Set<String> id = getIdentifiers(header, definition);
-        Set<String> qi = definition.getQuasiIdentifyingAttributes();
-        Set<String> se = definition.getSensitiveAttributes();
-        Set<String> is = definition.getInsensitiveAttributes();
+        Set<String> attributesGemeralized = definition.getQuasiIdentifiersWithGeneralization();
+        Set<String> attributesSensitive = definition.getSensitiveAttributes();
+        Set<String> attributesMicroaggregated = definition.getQuasiIdentifiersWithMicroaggregation();
+        Set<String> attributesInsensitive = definition.getInsensitiveAttributes();
 
         // Init dictionary
-        final Dictionary dictionaryQI = new Dictionary(qi.size());
-        final Dictionary dictionarySE = new Dictionary(se.size());
-        final Dictionary dictionaryIS = new Dictionary(is.size());
+        final Dictionary dictionaryGeneralized = new Dictionary(attributesGemeralized.size());
+        final Dictionary dictionaryAnalyzed = new Dictionary(attributesSensitive.size() +
+                                                             attributesMicroaggregated.size());
+        final Dictionary dictionaryStatic = new Dictionary(attributesInsensitive.size());
 
         // Init maps for reordering the output
-        final int[] mapQI = new int[dictionaryQI.getNumDimensions()];
-        final int[] mapSE = new int[dictionarySE.getNumDimensions()];
-        final int[] mapIS = new int[dictionaryIS.getNumDimensions()];
+        final int[] mapGeneralized = new int[dictionaryGeneralized.getNumDimensions()];
+        final int[] mapAnalyzed = new int[dictionaryAnalyzed.getNumDimensions()];
+        final int[] mapStatic = new int[dictionaryStatic.getNumDimensions()];
+        this.microaggregationMap = new int[attributesMicroaggregated.size()];
 
         // Indexes
-        int indexQI = 0;
-        int indexSE = 0;
-        int indexIS = 0;
+        this.microaggregationStartIndex = attributesSensitive.size();
+        this.microaggregationNumAttributes = attributesMicroaggregated.size();
+        int indexStatic = 0;
+        int indexGeneralized = 0;
+        int indexAnalyzed = 0;
+        int indexSensitive = 0;
+        int indexMicroaggregated = this.microaggregationStartIndex;
         int counter = 0;
 
-        // Build map
-        final int[] map = new int[header.length];
-        final String[] headerQI = new String[dictionaryQI.getNumDimensions()];
-        final String[] headerSE = new String[dictionarySE.getNumDimensions()];
-        final String[] headerIS = new String[dictionaryIS.getNumDimensions()];
+        // A map for column indices. map[i*2]=attribute type, map[i*2+1]=index
+        // position. */
+        final int[] map = new int[header.length * 2];
+        final String[] headerGH = new String[dictionaryGeneralized.getNumDimensions()];
+        final String[] headerDI = new String[dictionaryAnalyzed.getNumDimensions()];
+        final String[] headerIS = new String[dictionaryStatic.getNumDimensions()];
+        microaggregationHeader = new String[attributesMicroaggregated.size()];
+
         for (final String column : header) {
-            if (qi.contains(column)) {
-                map[counter] = indexQI + 1;
-                mapQI[indexQI] = counter;
-                dictionaryQI.registerAll(indexQI, dictionary, counter);
-                headerQI[indexQI] = header[counter];
-                indexQI++;
-            } else if (is.contains(column)) {
-                map[counter] = indexIS + 1000;
-                mapIS[indexIS] = counter;
-                dictionaryIS.registerAll(indexIS, dictionary, counter);
-                headerIS[indexIS] = header[counter];
-                indexIS++;
-            } else if (!id.contains(column)) {
-                map[counter] = -indexSE - 1;
-                mapSE[indexSE] = counter;
-                dictionarySE.registerAll(indexSE, dictionary, counter);
-                headerSE[indexSE] = header[counter];
-                indexSE++;
+            final int idx = counter * 2;
+            if (attributesGemeralized.contains(column)) {
+                map[idx] = AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED;
+                map[idx + 1] = indexGeneralized;
+                mapGeneralized[indexGeneralized] = counter;
+                dictionaryGeneralized.registerAll(indexGeneralized, dictionary, counter);
+                headerGH[indexGeneralized] = header[counter];
+                indexGeneralized++;
+            } else if (attributesMicroaggregated.contains(column)) {
+                map[idx] = AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED;
+                map[idx + 1] = indexMicroaggregated;
+                mapAnalyzed[indexMicroaggregated] = counter;
+                dictionaryAnalyzed.registerAll(indexMicroaggregated, dictionary, counter);
+                headerDI[indexMicroaggregated] = header[counter];
+                indexMicroaggregated++;
+                microaggregationMap[indexAnalyzed] = counter;
+                microaggregationHeader[indexAnalyzed] = header[counter];
+                indexAnalyzed++;
+            } else if (attributesInsensitive.contains(column)) {
+                map[idx] = AttributeTypeInternal.INSENSITIVE;
+                map[idx + 1] = indexStatic;
+                mapStatic[indexStatic] = counter;
+                dictionaryStatic.registerAll(indexStatic, dictionary, counter);
+                headerIS[indexStatic] = header[counter];
+                indexStatic++;
+            } else if (attributesSensitive.contains(column)) {
+                map[idx] = AttributeTypeInternal.SENSITIVE;
+                map[idx + 1] = indexSensitive;
+                mapAnalyzed[indexSensitive] = counter;
+                dictionaryAnalyzed.registerAll(indexSensitive, dictionary, counter);
+                headerDI[indexSensitive] = header[counter];
+                indexSensitive++;
+            } else {
+                // TODO: CHECK: Changed default? - now all undefined attributes
+                // are identifying! Previously they were sensitive?
+                map[idx] = AttributeTypeInternal.IDENTIFYING;
+                map[idx + 1] = -1;
             }
             counter++;
         }
 
         // encode Data
-        final Data[] ddata = encode(data, map, mapQI, mapSE, mapIS, dictionaryQI, dictionarySE, dictionaryIS, headerQI, headerSE, headerIS);
-        dataQI = ddata[0];
-        dataSE = ddata[1];
-        dataIS = ddata[2];
+        final Data[] ddata = encode(data,
+                                    map,
+                                    mapGeneralized,
+                                    mapAnalyzed,
+                                    mapStatic,
+                                    dictionaryGeneralized,
+                                    dictionaryAnalyzed,
+                                    dictionaryStatic,
+                                    headerGH,
+                                    headerDI,
+                                    headerIS);
+        dataGeneralized = ddata[0];
+        dataAnalyzed = ddata[1];
+        dataStatic = ddata[2];
 
         // Initialize minlevels
-        minLevels = new int[qi.size()];
-        hierarchyHeights = new int[qi.size()];
-        maxLevels = new int[qi.size()];
+        minLevels = new int[attributesGemeralized.size()];
+        hierarchiesHeights = new int[attributesGemeralized.size()];
+        maxLevels = new int[attributesGemeralized.size()];
 
-        // Build qi generalisation hierarchiesQI
-        hierarchiesQI = new GeneralizationHierarchy[qi.size()];
+        // Build hierarchiesQI
+        hierarchiesGeneralized = new GeneralizationHierarchy[attributesGemeralized.size()];
         for (int i = 0; i < header.length; i++) {
-            if (qi.contains(header[i])) {
-                final int dictionaryIndex = map[i] - 1;
-                if ((dictionaryIndex >= 0) && (dictionaryIndex < 999)) {
-                    final String name = header[i];
-
-                    if (definition.getAttributeType(name) instanceof Hierarchy) {
-                        hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, definition.getHierarchy(name), dictionaryIndex, dictionaryQI);
-                    } else {
-                        throw new IllegalStateException("No hierarchy available for attribute ("+header[i]+")");
-                    }
-                    // Initialize hierarchy height and minimum / maximum generalization
-                    hierarchyHeights[dictionaryIndex] = hierarchiesQI[dictionaryIndex].getArray()[0].length;
-                    final Integer minGenLevel = definition.getMinimumGeneralization(name);
-                    minLevels[dictionaryIndex] = minGenLevel == null ? 0 : minGenLevel;
-                    final Integer maxGenLevel = definition.getMaximumGeneralization(name);
-                    maxLevels[dictionaryIndex] = maxGenLevel == null ? hierarchyHeights[dictionaryIndex] - 1 : maxGenLevel;
+            final int idx = i * 2;
+            if (attributesGemeralized.contains(header[i]) &&
+                map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) {
+                final int dictionaryIndex = map[idx + 1];
+                final String name = header[i];
+                if (definition.getHierarchy(name) != null) {
+                    hierarchiesGeneralized[dictionaryIndex] = new GeneralizationHierarchy(name,
+                                                                                          definition.getHierarchy(name),
+                                                                                          dictionaryIndex,
+                                                                                          dictionaryGeneralized);
+                } else {
+                    throw new IllegalStateException("No hierarchy available for attribute (" +
+                                                    header[i] + ")");
                 }
+                // Initialize hierarchy height and minimum / maximum
+                // generalization
+                hierarchiesHeights[dictionaryIndex] = hierarchiesGeneralized[dictionaryIndex].getArray()[0].length;
+                final Integer minGenLevel = definition.getMinimumGeneralization(name);
+                minLevels[dictionaryIndex] = minGenLevel == null ? 0 : minGenLevel;
+                final Integer maxGenLevel = definition.getMaximumGeneralization(name);
+                maxLevels[dictionaryIndex] = maxGenLevel == null ? hierarchiesHeights[dictionaryIndex] - 1
+                        : maxGenLevel;
             }
         }
 
@@ -192,104 +273,116 @@ public class DataManager {
             }
         }
 
-        // Build sa generalisation hierarchies
-        hierarchiesSE = new HashMap<String, GeneralizationHierarchy>();
-        indexesSE = new HashMap<String, Integer>();
+        // Build generalization hierarchies for sensitive attributes
+        hierarchiesSensitive = new HashMap<String, GeneralizationHierarchy>();
+        indexesSensitive = new HashMap<String, Integer>();
         int index = 0;
         for (int i = 0; i < header.length; i++) {
             final String name = header[i];
-            if (sensitiveHierarchies.containsKey(name)) {
-                final int dictionaryIndex = -map[i] - 1;
-                if ((dictionaryIndex >= 0) && (dictionaryIndex < 999)) {
-                    final String[][] hiers = sensitiveHierarchies.get(name);
-                    if (hiers != null) {
-                        hierarchiesSE.put(name, new GeneralizationHierarchy(name, hiers, dictionaryIndex, dictionarySE));
-                    }
-                } else {
-                    throw new RuntimeException("Internal error: Invalid dictionary index!");
+            final int idx = i * 2;
+            if (sensitiveHierarchies.containsKey(name) &&
+                map[idx] == AttributeTypeInternal.SENSITIVE) {
+                final int dictionaryIndex = map[idx + 1];
+                final String[][] hiers = sensitiveHierarchies.get(name);
+                if (hiers != null) {
+                    hierarchiesSensitive.put(name, new GeneralizationHierarchy(name,
+                                                                               hiers,
+                                                                               dictionaryIndex,
+                                                                               dictionaryAnalyzed));
                 }
             }
 
             // Store index for sensitive attributes
-            if (se.contains(header[i])) {
-                indexesSE.put(name, index);
+            if (attributesSensitive.contains(header[i])) {
+                indexesSensitive.put(name, index);
                 index++;
             }
         }
 
+        // Build map with hierarchies for microaggregated attributes
+        Map<String, String[][]> maHierarchies = new HashMap<String, String[][]>();
+        for (String attribute : functions.keySet()) {
+            if (functions.get(attribute) instanceof DistributionAggregateFunctionGeneralization) {
+                maHierarchies.put(attribute, definition.getHierarchy(attribute));
+            }
+        }
+
+        // Build generalization hierarchies for microaggregated attributes
+        Map<String, int[][]> hierarchiesMA = new HashMap<String, int[][]>();
+        index = 0;
+        for (int i = 0; i < header.length; i++) {
+            final String name = header[i];
+            final int idx = i * 2;
+            if (maHierarchies.containsKey(name) &&
+                map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED) {
+                final int dictionaryIndex = map[idx + 1];
+                final String[][] hiers = maHierarchies.get(name);
+                if (hiers != null) {
+                    hierarchiesMA.put(name, new GeneralizationHierarchy(name,
+                                                                        hiers,
+                                                                        dictionaryIndex,
+                                                                        dictionaryAnalyzed).map);
+                }
+            }
+        }
+
         // finalize dictionary
-        dictionaryQI.finalizeAll();
-        dictionarySE.finalizeAll();
-        dictionaryIS.finalizeAll();
+        dictionaryGeneralized.finalizeAll();
+        dictionaryAnalyzed.finalizeAll();
+        dictionaryStatic.finalizeAll();
 
+        // Init microaggregation functions
+        microaggregationFunctions = new DistributionAggregateFunction[attributesMicroaggregated.size()];
+        for (int i = 0; i < header.length; i++) {
+            final int idx = i * 2;
+            if (attributesMicroaggregated.contains(header[i]) &&
+                map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED) {
+                final int dictionaryIndex = map[idx + 1] - microaggregationStartIndex;
+                final String name = header[i];
+                if (definition.getMicroAggregationFunction(name) != null) {
+                    microaggregationFunctions[dictionaryIndex] = functions.get(name);
+                    microaggregationFunctions[dictionaryIndex].initialize(dictionaryAnalyzed.getMapping()[dictionaryIndex +
+                                                                                                          microaggregationStartIndex],
+                                                                          definition.getDataType(name),
+                                                                          hierarchiesMA.get(name));
+                } else {
+                    throw new IllegalStateException("No microaggregation function defined for attribute (" +
+                                                    header[i] + ")");
+                }
+            }
+        }
     }
 
     /**
+     * Returns the input data that will be analyzed.
      * 
-     *
-     * @param dataQI
-     * @param dataSE
-     * @param dataIS
-     * @param hierarchiesQI
-     * @param hierarchiesSE
-     * @param indexesSE
-     * @param hierarchyHeights
-     * @param maxLevels
-     * @param minLevels
-     * @param header
-     */
-    protected DataManager(final Data dataQI,
-                          final Data dataSE,
-                          final Data dataIS,
-                          final GeneralizationHierarchy[] hierarchiesQI,
-                          final Map<String, GeneralizationHierarchy> hierarchiesSE,
-                          final Map<String, Integer> indexesSE,
-                          final int[] hierarchyHeights,
-                          final int[] maxLevels,
-                          final int[] minLevels,
-                          final String[] header) {
-        this.dataQI = dataQI;
-        this.dataSE = dataSE;
-        this.dataIS = dataIS;
-        this.hierarchiesQI = hierarchiesQI;
-        this.hierarchiesSE = hierarchiesSE;
-        this.hierarchyHeights = hierarchyHeights;
-        this.maxLevels = maxLevels;
-        this.minLevels = minLevels;
-        this.indexesSE = indexesSE;
-        this.header = header;
-    }
-
-    /**
-     * Returns the data.
-     *
      * @return the data
      */
-    public Data getDataIS() {
-        return dataIS;
+    public Data getDataAnalyzed() {
+        return dataAnalyzed;
     }
 
     /**
-     * Returns the data.
-     *
+     * Returns the input data that will be generalized.
+     * 
      * @return the data
      */
-    public Data getDataQI() {
-        return dataQI;
+    public Data getDataGeneralized() {
+        return dataGeneralized;
     }
 
     /**
-     * Returns the data.
-     *
+     * Returns the static input data.
+     * 
      * @return the data
      */
-    public Data getDataSE() {
-        return dataSE;
+    public Data getDataStatic() {
+        return dataStatic;
     }
 
     /**
-     * Returns the distribution of the given sensitive attribute in
-     * the original dataset. Required for t-closeness.
+     * Returns the distribution of the given sensitive attribute in the original
+     * dataset. Required for t-closeness.
      * 
      * @param attribute
      * @return distribution
@@ -298,9 +391,9 @@ public class DataManager {
 
         // TODO: Distribution size equals the size of the complete dataset
         // TODO: Good idea?
-        final int index = indexesSE.get(attribute);
-        final int distinct = dataSE.getDictionary().getMapping()[index].length;
-        final int[][] data = dataSE.getArray();
+        final int index = indexesSensitive.get(attribute);
+        final int distinct = dataAnalyzed.getDictionary().getMapping()[index].length;
+        final int[][] data = dataAnalyzed.getArray();
 
         // Initialize counts: iterate over all rows or the subset
         final int[] cardinalities = new int[distinct];
@@ -321,7 +414,7 @@ public class DataManager {
 
     /**
      * The original data header.
-     *
+     * 
      * @return
      */
     public String[] getHeader() {
@@ -334,8 +427,8 @@ public class DataManager {
      * @return
      */
 
-    public int[] getHierachyHeights() {
-        return hierarchyHeights;
+    public int[] getHierachiesHeights() {
+        return hierarchiesHeights;
     }
 
     /**
@@ -344,7 +437,7 @@ public class DataManager {
      * @return the hierarchiesQI
      */
     public GeneralizationHierarchy[] getHierarchies() {
-        return hierarchiesQI;
+        return hierarchiesGeneralized;
     }
 
     /**
@@ -352,7 +445,7 @@ public class DataManager {
      * 
      * @return the maximum level for each QI
      */
-    public int[] getMaxLevels() {
+    public int[] getHierarchiesMaxLevels() {
         return maxLevels;
     }
 
@@ -362,22 +455,68 @@ public class DataManager {
      * @return
      */
 
-    public int[] getMinLevels() {
+    public int[] getHierarchiesMinLevels() {
         return minLevels;
     }
 
     /**
-     * Returns the tree for the given sensitive attribute, if a generalization hierarchy
-     * is associated. Required for t-closeness with hierarchical distance EMD
+     * Returns the microaggregation functions.
+     * 
+     * @return
+     */
+    public DistributionAggregateFunction[] getMicroaggregationFunctions() {
+        return microaggregationFunctions;
+    }
+
+    /**
+     * Returns the header for the according buffer
+     * @return
+     */
+    public String[] getMicroaggregationHeader() {
+        return microaggregationHeader;
+    }
+
+    /**
+     * Returns the map for the according buffer
+     * @return
+     */
+    public int[] getMicroaggregationMap() {
+        return microaggregationMap;
+    }
+
+    /**
+     * Gets the number of attributes to which microaggregation will be applied
+     * in dataAnalyzed.
+     * 
+     * @return
+     */
+    public int getMicroaggregationNumAttributes() {
+        return microaggregationNumAttributes;
+    }
+
+    /**
+     * Gets the start index of the attributes to which microaggregation will be
+     * applied in dataAnalyzed.
+     * 
+     * @return
+     */
+    public int getMicroaggregationStartIndex() {
+        return microaggregationStartIndex;
+    }
+
+    /**
+     * Returns the tree for the given sensitive attribute, if a generalization
+     * hierarchy is associated. Required for t-closeness with hierarchical
+     * distance EMD
      * 
      * @param attribute
      * @return tree
      */
     public int[] getTree(String attribute) {
 
-        final int[][] data = dataSE.getArray();
-        final int index = indexesSE.get(attribute);
-        final int[][] hierarchy = hierarchiesSE.get(attribute).map;
+        final int[][] data = dataAnalyzed.getArray();
+        final int index = indexesSensitive.get(attribute);
+        final int[][] hierarchy = hierarchiesSensitive.get(attribute).map;
         final int totalElementsP = subset == null ? data.length : subsetSize;
         final int height = hierarchy[0].length - 1;
         final int numLeafs = hierarchy.length;
@@ -411,14 +550,14 @@ public class DataManager {
         // Temporary class for nodes
         class TNode {
             IntOpenHashSet children = new IntOpenHashSet();
-            int            offset   = 0;
             int            level    = 0;
+            int            offset   = 0;
         }
 
         final int offsetsExtras = offsetLeafs + numLeafs;
         final IntObjectOpenHashMap<TNode> nodes = new IntObjectOpenHashMap<TNode>();
         final ArrayList<ArrayList<TNode>> levels = new ArrayList<ArrayList<TNode>>();
-        
+
         // Init levels
         for (int i = 0; i < hierarchy[0].length; i++) {
             levels.add(new ArrayList<TNode>());
@@ -456,14 +595,15 @@ public class DataManager {
                     treeList.add(node.children.size());
                     treeList.add(node.level);
 
-                    final int [] keys = node.children.keys;
-                    final boolean [] allocated = node.children.allocated;
-                    for (int i=0; i<allocated.length; i++){
+                    final int[] keys = node.children.keys;
+                    final boolean[] allocated = node.children.allocated;
+                    for (int i = 0; i < allocated.length; i++) {
                         if (allocated[i]) {
-                            treeList.add(node.level==1 ? keys[i] + offsetsExtras : nodes.get(keys[i]).offset);
+                            treeList.add(node.level == 1 ? keys[i] + offsetsExtras
+                                    : nodes.get(keys[i]).offset);
                         }
                     }
-                    
+
                     treeList.add(0); // pos_e
                     treeList.add(0); // neg_e
                 }
@@ -481,96 +621,80 @@ public class DataManager {
 
     /**
      * Encodes the data.
-     *
+     * 
      * @param data
      * @param map
-     * @param mapQI
-     * @param mapSE
-     * @param mapIS
-     * @param dictionaryQI
-     * @param dictionarySE
-     * @param dictionaryIS
-     * @param headerQI
-     * @param headerSE
-     * @param headerIS
+     * @param mapGeneralized
+     * @param mapAnalyzed
+     * @param mapStatic
+     * @param dictionaryGeneralized
+     * @param dictionaryAnalyzed
+     * @param dictionaryStatic
+     * @param headerGeneralized
+     * @param headerAnalyzed
+     * @param headerStatic
      * @return
      */
     private Data[] encode(final int[][] data,
                           final int[] map,
-                          final int[] mapQI,
-                          final int[] mapSE,
-                          final int[] mapIS,
-                          final Dictionary dictionaryQI,
-                          final Dictionary dictionarySE,
-                          final Dictionary dictionaryIS,
-                          final String[] headerQI,
-                          final String[] headerSE,
-                          final String[] headerIS) {
+                          final int[] mapGeneralized,
+                          final int[] mapAnalyzed,
+                          final int[] mapStatic,
+                          final Dictionary dictionaryGeneralized,
+                          final Dictionary dictionaryAnalyzed,
+                          final Dictionary dictionaryStatic,
+                          final String[] headerGeneralized,
+                          final String[] headerAnalyzed,
+                          final String[] headerStatic) {
 
         // Parse the dataset
-        final int[][] valsQI = new int[data.length][];
-        final int[][] valsSE = new int[data.length][];
+        final int[][] valsGH = new int[data.length][];
+        final int[][] valsDI = new int[data.length][];
         final int[][] valsIS = new int[data.length][];
 
         int index = 0;
         for (final int[] tuple : data) {
 
             // Process a tuple
-            final int[] tupleQI = new int[headerQI.length];
-            final int[] tupleSE = new int[headerSE.length];
-            final int[] tupleIS = new int[headerIS.length];
+            final int[] tupleGH = new int[headerGeneralized.length];
+            final int[] tupleDI = new int[headerAnalyzed.length];
+            final int[] tupleIS = new int[headerStatic.length];
 
             for (int i = 0; i < tuple.length; i++) {
-                if (map[i] >= 1000) {
-                    tupleIS[map[i] - 1000] = tuple[i];
-                } else if (map[i] > 0) {
-                    tupleQI[map[i] - 1] = tuple[i];
-                } else if (map[i] < 0) {
-                    tupleSE[-map[i] - 1] = tuple[i];
+                final int idx = i * 2;
+                int aType = map[idx];
+                final int iPos = map[idx + 1];
+                switch (aType) {
+                case AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED:
+                    tupleGH[iPos] = tuple[i];
+                    break;
+                case AttributeTypeInternal.IDENTIFYING:
+                    // Ignore
+                    break;
+                case AttributeTypeInternal.INSENSITIVE:
+                    tupleIS[iPos] = tuple[i];
+                    break;
+                case AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED:
+                    tupleDI[iPos] = tuple[i];
+                    break;
+                case AttributeTypeInternal.SENSITIVE:
+                    tupleDI[iPos] = tuple[i];
+                    break;
                 }
             }
-            valsQI[index] = tupleQI;
+            valsGH[index] = tupleGH;
             valsIS[index] = tupleIS;
-            valsSE[index] = tupleSE;
+            valsDI[index] = tupleDI;
             index++;
         }
 
         // Build data object
-        final Data[] result = { new Data(valsQI, headerQI, mapQI, dictionaryQI), new Data(valsSE, headerSE, mapSE, dictionarySE), new Data(valsIS, headerIS, mapIS, dictionaryIS) };
-        return result;
-    }
-
-    /**
-     * Performs a sanity check and returns all identifying attributes.
-     *
-     * @param columns
-     * @param definition
-     * @return
-     */
-    private Set<String> getIdentifiers(final String[] columns, final DataDefinition definition) {
-
-        Set<String> result = new HashSet<String>();
-        result.addAll(definition.getIdentifyingAttributes());
-
-        final int mappedColumnsCount = definition.getQuasiIdentifyingAttributes().size() + definition.getSensitiveAttributes().size() + definition.getInsensitiveAttributes().size() +
-                                       definition.getIdentifyingAttributes().size();
-
-        // We always treat undefined attributes as identifiers
-        if (mappedColumnsCount < columns.length) {
-            for (int i = 0; i < columns.length; i++) {
-
-                final String attribute = columns[i];
-
-                // Check
-                if (!(definition.getQuasiIdentifyingAttributes().contains(attribute) || definition.getSensitiveAttributes().contains(attribute) || definition.getInsensitiveAttributes()
-                                                                                                                                                             .contains(attribute))) {
-
-                    // Add to identifiers
-                    result.add(attribute);
-                }
-            }
-        }
-
+        final Data[] result = { new Data(valsGH,
+                                         headerGeneralized,
+                                         mapGeneralized,
+                                         dictionaryGeneralized),
+                new Data(valsDI, headerAnalyzed, mapAnalyzed, dictionaryAnalyzed),
+                new Data(valsIS, headerStatic, mapStatic, dictionaryStatic) };
         return result;
     }
 }

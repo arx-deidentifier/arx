@@ -34,18 +34,18 @@ public class Transformer01 extends AbstractTransformer {
      *
      * @param data the data
      * @param hierarchies the hierarchies
-     * @param sensitiveValues
+     * @param otherValues
      * @param dictionarySensValue
      * @param dictionarySensFreq
      * @param config
      */
     public Transformer01(final int[][] data,
                          final GeneralizationHierarchy[] hierarchies,
-                         final int[][] sensitiveValues,
+                         final int[][] otherValues,
                          final IntArrayDictionary dictionarySensValue,
                          final IntArrayDictionary dictionarySensFreq,
                          final ARXConfigurationInternal config) {
-        super(data, hierarchies, sensitiveValues, dictionarySensValue, dictionarySensFreq, config);
+        super(data, hierarchies, otherValues, dictionarySensValue, dictionarySensFreq, config);
     }
 
     /*
@@ -79,8 +79,8 @@ public class Transformer01 extends AbstractTransformer {
 
         while (element != null) {
 
-            intuple = data[element.representant];
-            outtuple = buffer[element.representant];
+            intuple = data[element.representative];
+            outtuple = buffer[element.representative];
             outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
 
             // Call

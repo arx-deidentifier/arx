@@ -40,6 +40,7 @@ import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataType;
@@ -48,6 +49,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
+import org.deidentifier.arx.gui.model.ModelTransformationMode;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.worker.io.Vocabulary;
 import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
@@ -402,48 +404,53 @@ public class WorkerLoad extends Worker<Model> {
                         
                     } else if (atype.equals(AttributeType.INSENSITIVE_ATTRIBUTE.toString())) {
                         definition.setAttributeType(attr, AttributeType.INSENSITIVE_ATTRIBUTE);
-                    } else if (atype.equals(Hierarchy.create().toString())) {
-                        Hierarchy hierarchy = config.getHierarchy(attr);
-                        /*For backwards compatibility*/
-                        if (hierarchy == null){ 
-                            try {
-                                hierarchy = readHierarchy(zip, prefix, ref);
-                            } catch (final IOException e) {
-                                throw new SAXException(e);
-                            }
-                        } 
-                        definition.setAttributeType(attr, hierarchy);
-                        config.setHierarchy(attr, hierarchy); /*For backwards compatibility*/
+                    } else if (atype.equals(AttributeType.QUASI_IDENTIFYING_ATTRIBUTE.toString())) {
                         
-                        int height = hierarchy.getHierarchy().length>0 ?
-                                     hierarchy.getHierarchy()[0].length : 0;
-                        if (min.equals("All")) { //$NON-NLS-1$
-                            config.setMinimumGeneralization(attr, null);
-                            definition.setMinimumGeneralization(attr, 0);
+                        if (config.getTransformationMode(attr) == ModelTransformationMode.MICRO_AGGREGATION) {
+                            MicroAggregationFunction microaggregation = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
+                            definition.setAttributeType(attr, microaggregation);
                         } else {
-                            config.setMinimumGeneralization(attr, Integer.valueOf(min));
-                            definition.setMinimumGeneralization(attr, Integer.valueOf(min));
-                        }
-                        if (max.equals("All")) { //$NON-NLS-1$
-                            config.setMaximumGeneralization(attr, null);
-                            definition.setMaximumGeneralization(attr, height-1);
-                        } else {
-                            config.setMaximumGeneralization(attr, Integer.valueOf(max));
-                            definition.setMaximumGeneralization(attr, Integer.valueOf(max));
-                        }
-
-                        // TODO: For backwards compatibility only
-                        if (vocabulary.getVocabularyVersion().equals("1.0")) { //$NON-NLS-1$
-                            if (config.getMinimumGeneralization(attr) != null &&
-                                config.getMinimumGeneralization(attr).equals(0)){
+                            Hierarchy hierarchy = config.getHierarchy(attr);
+                            /* For backwards compatibility */
+                            if (hierarchy == null) {
+                                try {
+                                    hierarchy = readHierarchy(zip, prefix, ref);
+                                } catch (final IOException e) {
+                                    throw new SAXException(e);
+                                }
+                            }
+                            definition.setAttributeType(attr, hierarchy);
+                            config.setHierarchy(attr, hierarchy); /* For backwards compatibility */
+                            
+                            int height = hierarchy.getHierarchy().length > 0 ?
+                                    hierarchy.getHierarchy()[0].length : 0;
+                            if (min.equals("All")) { //$NON-NLS-1$
                                 config.setMinimumGeneralization(attr, null);
+                                definition.setMinimumGeneralization(attr, 0);
+                            } else {
+                                config.setMinimumGeneralization(attr, Integer.valueOf(min));
+                                definition.setMinimumGeneralization(attr, Integer.valueOf(min));
                             }
-                            if (config.getMaximumGeneralization(attr) != null &&
-                                config.getMaximumGeneralization(attr).equals(height-1)){
+                            if (max.equals("All")) { //$NON-NLS-1$
                                 config.setMaximumGeneralization(attr, null);
+                                definition.setMaximumGeneralization(attr, height - 1);
+                            } else {
+                                config.setMaximumGeneralization(attr, Integer.valueOf(max));
+                                definition.setMaximumGeneralization(attr, Integer.valueOf(max));
+                            }
+                            
+                            // TODO: For backwards compatibility only
+                            if (vocabulary.getVocabularyVersion().equals("1.0")) { //$NON-NLS-1$
+                                if (config.getMinimumGeneralization(attr) != null &&
+                                    config.getMinimumGeneralization(attr).equals(0)) {
+                                    config.setMinimumGeneralization(attr, null);
+                                }
+                                if (config.getMaximumGeneralization(attr) != null &&
+                                    config.getMaximumGeneralization(attr).equals(height - 1)) {
+                                    config.setMaximumGeneralization(attr, null);
+                                }
                             }
                         }
-                        
                     } else {
                         throw new SAXException(Resources.getMessage("WorkerLoad.4")); //$NON-NLS-1$
                     }
@@ -506,7 +513,8 @@ public class WorkerLoad extends Worker<Model> {
                            vocabulary.isFormat(localName) ||
                            vocabulary.isRef(localName) ||
                            vocabulary.isMin(localName) ||
-                           vocabulary.isMax(localName)) {
+                           vocabulary.isMax(localName) ||
+                           vocabulary.isMicroaggregationFunction(localName)) {
                     return true;
                 } else {
                     return false;

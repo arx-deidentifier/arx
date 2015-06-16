@@ -195,6 +195,16 @@ public class Vocabulary_V1 extends Vocabulary {
 	}
 
 	@Override
+    public String getMicroAggregationFunction() {
+        return "microaggregationFunction";
+    }
+
+	@Override
+    public String getMicroAggregationIgnoreMissingData() {
+        return "microaggregationIgnoreMissingData";
+    }
+
+	@Override
 	public String getMin() {
 		return "min"; //$NON-NLS-1$
 	}
@@ -203,23 +213,23 @@ public class Vocabulary_V1 extends Vocabulary {
 	public String getMin2() {
 		return "min"; //$NON-NLS-1$
 	}
-
+	
 	@Override
 	public String getName() {
 		return "name"; //$NON-NLS-1$
 	}
-
+	
 	@Override
 	public String getNode() {
 		return "node"; //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public String getNode2() {
 		return "node"; //$NON-NLS-1$
 	}
-	
-	@Override
+
+    @Override
 	public String getPracticalMonotonicity(){
 		return "practicalMonotonicity"; //$NON-NLS-1$
 	}
@@ -239,7 +249,7 @@ public class Vocabulary_V1 extends Vocabulary {
 		return "protectSensitiveAssociations"; //$NON-NLS-1$
 	}
 
-    @Override
+	@Override
     public String getQuote() {
         return "quote"; //$NON-NLS-1$
     }
@@ -249,12 +259,12 @@ public class Vocabulary_V1 extends Vocabulary {
 		return "ref"; //$NON-NLS-1$
 	}
 
-	@Override
+    @Override
 	public String getRelativeMaxOutliers(){
 		return "relativeMaxOutliers"; //$NON-NLS-1$
 	}
 
-	@Override
+    @Override
 	public String getRemoveOutliers(){
 		return "removeOutliers"; //$NON-NLS-1$
 	}
@@ -269,7 +279,7 @@ public class Vocabulary_V1 extends Vocabulary {
         return "separator"; //$NON-NLS-1$
     }
 
-    @Override
+	@Override
     public String getSnapshotSizeDataset() {
         return "snapshotSizeDataset"; //$NON-NLS-1$
     }
@@ -279,7 +289,7 @@ public class Vocabulary_V1 extends Vocabulary {
         return "snapshotSizeSnapshot"; //$NON-NLS-1$
     }
 
-	@Override
+    @Override
 	public String getSuccessors() {
 		return "successors"; //$NON-NLS-1$
 	}
@@ -288,17 +298,17 @@ public class Vocabulary_V1 extends Vocabulary {
     public String getSuppressedAttributeTypes() {
         return "suppressedAttributeTypes"; //$NON-NLS-1$
     }
-
-    @Override
+    
+	@Override
     public String getSuppressionAlwaysEnabled() {
         return "suppressTuplesInNonAnonymousOutput"; //$NON-NLS-1$
     }
 
-    @Override
+	@Override
     public String getSuppressionString() {
         return "suppressionString"; //$NON-NLS-1$
     }
-    
+
 	@Override
 	public String getTransformation() {
 		return "transformation"; //$NON-NLS-1$
@@ -309,12 +319,12 @@ public class Vocabulary_V1 extends Vocabulary {
 		return "type"; //$NON-NLS-1$
 	}
 
-	@Override
+    @Override
 	public String getVersion() {
 		return "version"; //$NON-NLS-1$
 	}
 
-	@Override
+    @Override
     public String getVocabulary() {
         return "vocabulary"; //$NON-NLS-1$
     }

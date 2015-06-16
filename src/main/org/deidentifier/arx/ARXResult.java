@@ -17,11 +17,14 @@
 
 package org.deidentifier.arx;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
-import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -42,7 +45,7 @@ public class ARXResult {
     private ARXNode                bufferLockedByNode   = null;
 
     /** The node checker. */
-    private final INodeChecker     checker;
+    private final NodeChecker     checker;
 
     /** The config. */
     private final ARXConfiguration config;
@@ -105,12 +108,13 @@ public class ARXResult {
                                                     dataArray,
                                                     dictionary,
                                                     handle.getDefinition(),
-                                                    config.getCriteria());
+                                                    config.getCriteria(),
+                                                    getAggregateFunctions(handle.getDefinition()));
 
         // Update handle
-        ((DataHandleInput)handle).update(manager.getDataQI().getArray(), 
-                                         manager.getDataSE().getArray(),
-                                         manager.getDataIS().getArray());
+        ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
+                                         manager.getDataAnalyzed().getArray(),
+                                         manager.getDataStatic().getArray());
         
         // Lock handle
         ((DataHandleInput)handle).setLocked(true);
@@ -119,10 +123,10 @@ public class ARXResult {
         config.initialize(manager);
 
         // Initialize the metric
-        metric.initialize(definition, manager.getDataQI(), manager.getHierarchies(), config);
+        metric.initialize(definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
         // Create a node checker
-        final INodeChecker checker = new NodeChecker(manager,
+        final NodeChecker checker = new NodeChecker(manager,
                                                      metric,
                                                      config.getInternalConfiguration(),
                                                      historySize,
@@ -140,7 +144,6 @@ public class ARXResult {
         this.duration = time;
     }
     
-    
     /**
      * Creates a new instance.
      *
@@ -154,7 +157,7 @@ public class ARXResult {
      */
     protected ARXResult(DataRegistry registry,
                         DataManager manager,
-                        INodeChecker checker,
+                        NodeChecker checker,
                         DataDefinition definition,
                         ARXConfiguration config,
                         ARXLattice lattice,
@@ -169,6 +172,8 @@ public class ARXResult {
         this.optimalNode = lattice.getOptimum();
         this.duration = duration;
     }
+
+
 
     /**
      * Returns the configuration used.
@@ -213,7 +218,7 @@ public class ARXResult {
     public DataHandle getHandle(ARXNode node) {
         return getOutput(node, false);
     }
-    
+
     /**
      * Returns the lattice.
      *
@@ -285,7 +290,7 @@ public class ARXResult {
         transformation.setTransformation(node.getTransformation(), level);
  
         // Apply the transformation
-        TransformedData information = checker.applyAndSetProperties(transformation);
+        TransformedData information = checker.applyTransformation(transformation);
 
         // Store
         if (!node.isChecked() || node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
@@ -304,14 +309,16 @@ public class ARXResult {
         
         // Clone if needed
         if (fork) {
-            information.buffer = information.buffer.clone(); 
+            information.bufferGeneralized = information.bufferGeneralized.clone(); 
+            information.bufferMicroaggregated = information.bufferMicroaggregated.clone(); 
         }
 
         // Create
         DataHandleOutput result = new DataHandleOutput(this,
                                                        registry,
                                                        manager,
-                                                       information.buffer,
+                                                       information.bufferGeneralized,
+                                                       information.bufferMicroaggregated,
                                                        node,
                                                        new StatisticsEquivalenceClasses(information.statistics),
                                                        definition,
@@ -326,7 +333,7 @@ public class ARXResult {
         // Return
         return result;
     }
-
+    
     /**
      * Returns a handle to the data obtained by applying the optimal transformation. This method allows controlling whether
      * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
@@ -358,6 +365,19 @@ public class ARXResult {
      */
     public boolean isResultAvailable() {
         return optimalNode != null;
+    }
+
+    /**
+     * Returns a map of all microaggregation functions
+     * @param definition
+     * @return
+     */
+    private Map<String, DistributionAggregateFunction> getAggregateFunctions(DataDefinition definition) {
+        Map<String, DistributionAggregateFunction> result = new HashMap<String, DistributionAggregateFunction>();
+        for (String key : definition.getQuasiIdentifiersWithMicroaggregation()) {
+            result.put(key, definition.getMicroAggregationFunction(key).getFunction());
+        }
+        return result;
     }
 
     /**

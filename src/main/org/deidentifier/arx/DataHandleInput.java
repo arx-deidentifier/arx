@@ -41,10 +41,10 @@ public class DataHandleInput extends DataHandle {
     protected Dictionary dictionary = null;
 
     /** The data. */
-    private int[][]      dataQI     = null;
+    private int[][]      dataGH     = null;
 
     /** The data. */
-    private int[][]      dataSE     = null;
+    private int[][]      dataDI     = null;
 
     /** The data. */
     private int[][]      dataIS     = null;
@@ -193,8 +193,8 @@ public class DataHandleInput extends DataHandle {
      */
     protected void doRelease() {
         this.setLocked(false);
-        dataQI = null;
-        dataSE = null;
+        dataGH = null;
+        dataDI = null;
         dataIS = null;
     }
 
@@ -267,8 +267,8 @@ public class DataHandleInput extends DataHandle {
 
         // Swap
         swap(row1, row2, data);
-        if (dataQI != null) swap(row1, row2, dataQI);
-        if (dataSE != null) swap(row1, row2, dataSE);
+        if (dataGH != null) swap(row1, row2, dataGH);
+        if (dataDI != null) swap(row1, row2, dataDI);
         if (dataIS != null) swap(row1, row2, dataIS);
     }
     
@@ -316,13 +316,13 @@ public class DataHandleInput extends DataHandle {
     /**
      * Updates the definition with further data to swap.
      *
-     * @param dataQI
-     * @param dataSE
+     * @param dataGH
+     * @param dataDI
      * @param dataIS
      */
-    protected void update(int[][] dataQI, int[][] dataSE, int[][] dataIS) {
-        this.dataQI = dataQI;
-        this.dataSE = dataSE;
+    protected void update(int[][] dataGH, int[][] dataDI, int[][] dataIS) {
+        this.dataGH = dataGH;
+        this.dataDI = dataDI;
         this.dataIS = dataIS;
     }
 }

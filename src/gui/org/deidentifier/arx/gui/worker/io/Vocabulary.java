@@ -283,6 +283,18 @@ public abstract class Vocabulary {
 	
 	/**
      * 
+     * @return
+     */
+    public abstract String getMicroAggregationFunction();
+
+    /**
+     * 
+     * @return
+     */
+    public abstract String getMicroAggregationIgnoreMissingData();
+    
+	/**
+     * 
      *
      * @return
      */
@@ -315,14 +327,14 @@ public abstract class Vocabulary {
      * @return
      */
 	public abstract String getNode2();
-	
-	/**
+    
+    /**
      * 
      *
      * @return
      */
 	public abstract String getPracticalMonotonicity();
-    
+
     /**
      * 
      *
@@ -343,14 +355,14 @@ public abstract class Vocabulary {
      * @return
      */
 	public abstract String getProtectSensitiveAssociations();
-
+    
+    
     /**
      * 
      *
      * @return
      */
     public abstract String getQuote();
-    
     
     /**
      * 
@@ -414,14 +426,14 @@ public abstract class Vocabulary {
      * @return
      */
     public abstract String getSuppressedAttributeTypes();
-    
+
     /**
      * 
      *
      * @return
      */
     public abstract String getSuppressionAlwaysEnabled();
-
+    
     /**
      * 
      *
@@ -449,21 +461,21 @@ public abstract class Vocabulary {
      * @return
      */
 	public abstract String getVersion();
-    
-    /**
-     * 
-     *
-     * @return
-     */
-	public abstract String getVocabulary();
 
     /**
      * 
      *
      * @return
      */
-    public abstract String getVocabularyVersion();
+	public abstract String getVocabulary();
     
+	/**
+     * 
+     *
+     * @return
+     */
+    public abstract String getVocabularyVersion();
+	
 	/**
      * 
      *
@@ -494,7 +506,7 @@ public abstract class Vocabulary {
      * @return
      */
 	public boolean isAttribute(String value){return value.equals(getAttribute());}
-	
+
 	/**
      * 
      *
@@ -502,7 +514,7 @@ public abstract class Vocabulary {
      * @return
      */
     public boolean isAttributeWeight(String value) {return value.equals(getAttributeWeight());}
-
+	
 	/**
      * 
      *
@@ -656,6 +668,20 @@ public abstract class Vocabulary {
 	public boolean isMetric(String value){return value.equals(getMetric());}
 	
 	/**
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public boolean isMicroaggregationFunction(String value){return value.equals(getMicroAggregationFunction());}
+
+    /**
+     * 
+     * @param value
+     * @return
+     */
+    public boolean isMicroaggregationIgnoreMissingData(String value){return value.equals(getMicroAggregationIgnoreMissingData());}
+    
+	/**
      * 
      *
      * @param value
@@ -743,14 +769,14 @@ public abstract class Vocabulary {
      */
 	public boolean isRemoveOutliers(String value){return value.equals(getRemoveOutliers());}
 	
-	/**
+    /**
      * 
      *
      * @param value
      * @return
      */
 	public boolean isSuccessors(String value){return value.equals(getSuccessors());}
-	
+    
     /**
      * 
      *
@@ -766,7 +792,7 @@ public abstract class Vocabulary {
      * @return
      */
     public boolean isSuppressionAlwaysEnabled(String value) {return value.equals(getSuppressionAlwaysEnabled());}
-    
+
     /**
      * 
      *
@@ -774,7 +800,7 @@ public abstract class Vocabulary {
      * @return
      */
 	public boolean isTransformation(String value){return value.equals(getTransformation());}
-
+    
     /**
      * 
      *
@@ -798,12 +824,12 @@ public abstract class Vocabulary {
      * @return
      */
 	public boolean isVocabulary(String value) { return value.equals(getVocabulary()); }
-    
+
     /**
      * 
      *
      * @param value
      * @return
      */
-    public boolean isWeight(String value) {return value.equals(getWeight());}    
+    public boolean isWeight(String value) {return value.equals(getWeight());}
 }

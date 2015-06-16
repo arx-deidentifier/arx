@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.metric.v2;
 
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
@@ -73,7 +73,7 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
         AbstractILMultiDimensional loss = super.getLowerBoundInternal(node);
         return new ILMultiDimensionalWithBound(loss, loss);
     }

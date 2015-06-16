@@ -25,7 +25,7 @@ import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -128,7 +128,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
         
         double[] result = getInformationLossInternalRaw(node, g);
         
@@ -149,7 +149,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
      * @param g
      * @return
      */
-    protected double[] getInformationLossInternalRaw(final Node node, final IHashGroupify g) {
+    protected double[] getInformationLossInternalRaw(final Node node, final HashGroupify g) {
 
         // Prepare
         int[][][] cardinalities = this.cardinalities.getCardinalities();
@@ -183,12 +183,12 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
-        return this.getInformationLossInternal(node, (IHashGroupify)null).getLowerBound();
+        return this.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
 
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
-                                                               IHashGroupify groupify) {
+                                                               HashGroupify groupify) {
         return this.getLowerBoundInternal(node);
     }
 

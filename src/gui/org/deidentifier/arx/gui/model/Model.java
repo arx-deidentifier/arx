@@ -35,9 +35,11 @@ import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PopulationUniqueness;
@@ -233,7 +235,7 @@ public class Model implements Serializable {
     private Set<ModelRiskBasedCriterion>          riskBasedModel                  = new HashSet<ModelRiskBasedCriterion>();
 
     /* *****************************************
-     * UTILITY METRICS
+     * UTILITY ANALYSIS
      ******************************************/
     /** Configuration. */
     private MetricConfiguration                   metricConfig                    = ARXConfiguration.create().getMetric().getConfiguration();
@@ -243,9 +245,12 @@ public class Model implements Serializable {
     
     /** Summary statistics */
     private Boolean                               useListwiseDeletion             = true;
+
+    /** Utility estimation during anonymization */
+    private Boolean                               useFunctionalHierarchies        = true;
     
     /* *****************************************
-     * RISK-BASED STUFF
+     * RISK ANALYSIS
      ******************************************/
     private Set<String>                           selectedQuasiIdentifiers        = null;
     
@@ -315,29 +320,54 @@ public class Model implements Serializable {
 		config.removeAllCriteria();
 		if (definition == null) return;
 		
-		// Initialie the metric
+		// Initialize the metric
 		config.setMetric(this.getMetricDescription().createInstance(this.getMetricConfiguration()));
 
-		// Initialize definition
+        // Initialize definition
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
+
+            // Reset
+            definition.resetAttributeType(attr);
+            definition.resetHierarchy(attr);
+            definition.resetHierarchyBuilder(attr);
+            definition.resetMaximumGeneralization(attr);
+            definition.resetMicroAggregationFunction(attr);
+            definition.resetMinimumGeneralization(attr);
             
+            // This increases the precision of the Loss utility measure
+            if (this.getUseFunctionalHierarchies() && config.getHierarchyBuilder(attr) != null) {
+                definition.setHierarchy(attr, config.getHierarchyBuilder(attr));
+            } else {
+                definition.setHierarchy(attr, (HierarchyBuilder<?>)null);
+            }
+            
+            // Set hierarchy
             Hierarchy hierarchy = config.getHierarchy(attr);
-            /* Handle non-existent hierarchies*/
-            if (hierarchy == null || hierarchy.getHierarchy()==null) {
-                hierarchy = Hierarchy.create();
-                config.setHierarchy(attr, hierarchy);
+            if (hierarchy != null && hierarchy.getHierarchy() != null) {
+                definition.setHierarchy(attr, hierarchy);
             }
-            Integer min = config.getMinimumGeneralization(attr);
-            Integer max = config.getMaximumGeneralization(attr);
             
-            if (min==null){ min = 0; }
-            if (max==null) {
-                if (hierarchy.getHierarchy().length==0){ max = 0; } 
-                else { max = hierarchy.getHierarchy()[0].length-1; }
+            // Set attribute type
+            definition.setAttributeType(attr, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+            
+            if (config.getTransformationMode(attr) == ModelTransformationMode.MICRO_AGGREGATION) {
+
+                // Prepare for microaggregation
+                MicroAggregationFunction function = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
+                definition.setMicroAggregationFunction(attr, function);
+            } else {
+                
+                // Prepare for generalization
+                definition.setMicroAggregationFunction(attr, null);
+                Integer min = config.getMinimumGeneralization(attr);
+                Integer max = config.getMaximumGeneralization(attr);
+                if (min != null) {
+                    definition.setMinimumGeneralization(attr, min);
+                }
+                if (max != null) {
+                    definition.setMaximumGeneralization(attr, max);
+                }
             }
-            definition.setAttributeType(attr, hierarchy);
-            definition.setMinimumGeneralization(attr, min);
-            definition.setMaximumGeneralization(attr, max);
         }
         
 		if (this.kAnonymityModel != null &&
@@ -779,9 +809,6 @@ public class Model implements Serializable {
             this.riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_AVERAGE_RISK));
             this.riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
             this.riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR));
-            this.riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN));
-            this.riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB));
-            this.riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ));
         }
         return riskBasedModel;
     }
@@ -927,6 +954,19 @@ public class Model implements Serializable {
         return useListwiseDeletion;
     }
 
+    /**
+     * Returns whether functional hierarchies should be used
+     * @return
+     */
+    public Boolean getUseFunctionalHierarchies() {
+        
+        // Backwards compatibility
+        if (useFunctionalHierarchies == null) {
+            useFunctionalHierarchies = true;
+        }
+        return useFunctionalHierarchies;
+    }
+
 	/**
      * Returns the view configuration.
      *
@@ -1044,9 +1084,6 @@ public class Model implements Serializable {
 		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_AVERAGE_RISK));
 		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
 		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR));
-		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN));
-		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB));
-		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ));
 	}
     
     /**
@@ -1398,6 +1435,14 @@ public class Model implements Serializable {
      */
     public void setUseListwiseDeletion(boolean useListwiseDeletion) {
         this.useListwiseDeletion = useListwiseDeletion;
+    }
+
+    /**
+     * Sets whether funtional hierarchies should be used during anonymization to esimtate utility
+     * @param useFunctionalHierarchies
+     */
+    public void setUseFunctionalHierarchies(boolean useFunctionalHierarchies) {
+        this.useFunctionalHierarchies = useFunctionalHierarchies;
     }
     
     /**

@@ -22,7 +22,7 @@ import java.util.Set;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -80,7 +80,7 @@ public class MetricHeight extends MetricDefault {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final HashGroupify g) {
         int level = node.getLevel();
         return new InformationLossDefaultWithBound(level, level);
     }
@@ -92,7 +92,7 @@ public class MetricHeight extends MetricDefault {
 
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
-                                                           IHashGroupify groupify) {
+                                                           HashGroupify groupify) {
         return new InformationLossDefault(node.getLevel());
     }
 
@@ -119,10 +119,10 @@ public class MetricHeight extends MetricDefault {
 
         minHeight = 0;
         maxHeight = 0;
-        Set<String> qis = definition.getQuasiIdentifyingAttributes();
-        for (String qi : qis) {
-            minHeight += definition.getMinimumGeneralization(qi);
-            maxHeight += definition.getMaximumGeneralization(qi);
+        Set<String> genQis = definition.getQuasiIdentifiersWithGeneralization();
+        for (String genQi : genQis) {
+            minHeight += definition.getMinimumGeneralization(genQi);
+            maxHeight += definition.getMaximumGeneralization(genQi);
         }
     }
 }

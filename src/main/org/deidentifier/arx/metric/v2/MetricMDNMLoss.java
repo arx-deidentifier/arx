@@ -28,7 +28,7 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -169,7 +169,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, IHashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupify g) {
         
         // Prepare
         int[] transformation = node.getTransformation();
@@ -178,7 +178,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double[] bound = new double[dimensions];
 
         // Compute NDS and lower bound
-        HashGroupifyEntry m = g.getFirstEntry();
+        HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count>0) {
                 for (int dimension=0; dimension<dimensions; dimension++){
@@ -212,7 +212,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
-                                                               IHashGroupify g) {
+                                                               HashGroupify g) {
         
         // Prepare
         int[] transformation = node.getTransformation();
@@ -220,7 +220,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double[] bound = new double[dimensions];
 
         // Compute lower bound
-        HashGroupifyEntry m = g.getFirstEntry();
+        HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count>0) {
                 for (int dimension=0; dimension<dimensions; dimension++){

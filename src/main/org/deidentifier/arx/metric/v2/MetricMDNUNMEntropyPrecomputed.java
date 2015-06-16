@@ -22,7 +22,7 @@ import java.util.Arrays;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -78,7 +78,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
         
         // Compute non-uniform entropy
         double[] result = super.getInformationLossInternalRaw(node, g);
@@ -94,7 +94,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
 
         // Compute counts for suppressed values in each column 
         // m.count only counts tuples from the research subset
-        HashGroupifyEntry m = g.getFirstEntry();
+        HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (!m.isNotOutlier && m.count > 0) {
                 suppressed += m.count;
@@ -132,13 +132,13 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
 
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
-        return super.getInformationLossInternal(node, (IHashGroupify)null).getLowerBound();
+        return super.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
 
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
-                                                       IHashGroupify groupify) {
-        return super.getInformationLossInternal(node, (IHashGroupify)null).getLowerBound();
+                                                       HashGroupify groupify) {
+        return super.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
 
     @Override

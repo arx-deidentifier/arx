@@ -57,7 +57,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         private static final long                      serialVersionUID = -1658470914184442833L;
 
         /** The description of the data type. */
-        private static final DataTypeDescription<Date> description = new DataTypeDescription<Date>(Date.class, "Date/Time",  true, listDateFormats()){
+        // TODO: This is bogus. Date has an ordinal scale
+        private static final DataTypeDescription<Date> description = new DataTypeDescription<Date>(Date.class, "Date/Time",  DataScale.INTERVAL, true, listDateFormats()){
             private static final long serialVersionUID = -1723392257250720908L;
             @Override public DataType<Date> newInstance() { return DATE; }
             @Override public DataType<Date> newInstance(String format) {return createDate(format);}
@@ -199,10 +200,19 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         }
 
         @Override
+        public Date fromDouble(Double d) {
+            if (d == null) {
+                return null;
+            } else {
+                return new Date(Math.round(d));
+            }
+        }
+
+        @Override
         public DataTypeDescription<Date> getDescription(){
             return description;
         }
-
+        
         @Override
         public String getFormat() {
             return string;
@@ -220,7 +230,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return locale;
             }
         }
-        
+
         @Override
         public Date getMaximum() {
             return new Date(Long.MAX_VALUE);
@@ -280,7 +290,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             long d2 = parse(multiplicator).getTime();
             return format(new Date(d1 * d2));
         }
-
+        
         @Override
         public Date parse(String s) {
             if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
@@ -292,19 +302,28 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
             }
         }
-        
+
         @Override
         public double ratio(Date dividend, Date divisor) {
             long d1 = dividend.getTime();
             long d2 = divisor.getTime();
             return (double)d1 / (double)d2;
         }
-
+        
         @Override
         public Date subtract(Date minuend, Date subtrahend) {
             long d1 = minuend.getTime();
             long d2 = subtrahend.getTime();
             return new Date(d1 - d2);
+        }
+
+        @Override
+        public Double toDouble(Date date) {
+            if (date == null) {
+                return null;
+            } else {
+                return new Long(date.getTime()).doubleValue();
+            }
         }
 
         @Override
@@ -324,7 +343,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         private static final long                        serialVersionUID = 7293446977526103610L;
 
         /** The description of the data type. */
-        private static final DataTypeDescription<Double> description = new DataTypeDescription<Double>(Double.class, "Decimal", true, listDecimalFormats()){
+        private static final DataTypeDescription<Double> description = new DataTypeDescription<Double>(Double.class, "Decimal", DataScale.RATIO, true, listDecimalFormats()){
             private static final long serialVersionUID = -3549629178680030868L;
             @Override public DataType<Double> newInstance() { return DECIMAL; }
             @Override public DataType<Double> newInstance(String format) {return createDecimal(format);}
@@ -469,15 +488,24 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         }
 
         @Override
+        public Double fromDouble(Double d) {
+            if (d == null) {
+                return null;
+            } else {
+                return d;
+            }
+        }
+
+        @Override
         public DataTypeDescription<Double> getDescription(){
             return description;
         }
-
+        
         @Override
         public String getFormat() {
             return string;
         }
-        
+
         /**
          * Returns the locale of the format.
          *
@@ -495,12 +523,12 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public Double getMaximum() {
             return Double.MAX_VALUE;
         }
-
+        
         @Override
         public Double getMinimum() {
             return -Double.MAX_VALUE;
         }
-        
+
         @Override
         public int hashCode() { 
             if (string==null) {
@@ -574,6 +602,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         }
 
         @Override
+        public Double toDouble(Double val) {
+            return val;
+        }
+
+        @Override
         public String toString() {
             return "Decimal";
         }
@@ -590,7 +623,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         private static final long serialVersionUID = -631163546929231044L;
 
         /** The description of the data type. */
-        private static final DataTypeDescription<Long> description = new DataTypeDescription<Long>(Long.class, "Integer", false, new ArrayList<String>()){
+        private static final DataTypeDescription<Long> description = new DataTypeDescription<Long>(Long.class, "Integer", DataScale.RATIO, false, new ArrayList<String>()){
             private static final long serialVersionUID = -4498725217659811835L;
             @Override public DataType<Long> newInstance() { return INTEGER; }
             @Override public DataType<Long> newInstance(String format) {return createInteger(format);}
@@ -731,15 +764,24 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         }
         
         @Override
+        public Long fromDouble(Double d) {
+            if (d == null) {
+                return null;
+            } else {
+                return Math.round(d);
+            }
+        }
+
+        @Override
         public DataTypeDescription<Long> getDescription(){
             return description;
         }
-
+        
         @Override
         public String getFormat() {
             return string;
         }
-        
+
         /**
          * Returns the locale of the format.
          *
@@ -796,12 +838,12 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public Long multiply(Long multiplicand, int multiplicator) {
             return multiplicand * multiplicator;
         }
-
+        
         @Override
         public Long multiply(Long multiplicand, Long multiplicator) {
             return (long)Math.round((double)multiplicand * (double)multiplicator);
         }
-        
+
         @Override
         public String multiply(String multiplicand, String multiplicator) {
             Long d1 = parse(multiplicand);
@@ -829,10 +871,19 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public double ratio(Long dividend, Long divisor) {
             return (double)dividend / (double)divisor;
         }
-
+        
         @Override
         public Long subtract(Long minuend, Long subtrahend) {
             return minuend - subtrahend;
+        }
+
+        @Override
+        public Double toDouble(Long val) {
+            if (val == null) {
+                return null;
+            } else {
+                return val.doubleValue();
+            }
         }
 
         @Override
@@ -855,7 +906,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         private final Map<String, Integer>               order;
 
         /** The description of the data type. */
-        private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "OrderedString", true, new ArrayList<String>()){
+        private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "Ordinal", DataScale.ORDINAL, true, new ArrayList<String>()){
             private static final long serialVersionUID = -6300869938311742699L;
             @Override public DataType<String> newInstance() { return ORDERED_STRING; }
             @Override public DataType<String> newInstance(String format) {return createOrderedString(format);}
@@ -1072,7 +1123,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public String toString() {
-            return "OrderedString";
+            return "Ordinal";
         }
     }
     
@@ -1087,7 +1138,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         private static final long serialVersionUID = 903334212175979691L;
         
         /** The description of the data type. */
-        private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "String", false, new ArrayList<String>()){
+        private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "String", DataScale.NOMINAL, false, new ArrayList<String>()){
             private static final long serialVersionUID = -6679110898204862834L;
             @Override public DataType<String> newInstance() { return STRING; }
             @Override public DataType<String> newInstance(String format) {return STRING;}
@@ -1160,32 +1211,41 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public static abstract class DataTypeDescription<T> implements Serializable {
 
-        /**  SVUID */
+        /** SVUID */
         private static final long serialVersionUID = 6369986224526795419L;
-        
+
         /** The wrapped java class. */
-        private Class<?> clazz;
-        
+        private Class<?>          clazz;
+
         /** If yes, a list of available formats. */
-        private List<String> exampleFormats;
-        
+        private List<String>      exampleFormats;
+
         /** Can the type be parameterized with a format string. */
-        private boolean hasFormat;
-        
+        private boolean           hasFormat;
+
         /** A human readable label. */
-        private String label;
+        private String            label;
+        
+        /** The associated scale of measure*/
+        private DataScale         scale;
         
         /**
          * Internal constructor.
          *
          * @param clazz
          * @param label
+         * @param scale
          * @param hasFormat
          * @param exampleFormats
          */
-        private DataTypeDescription(Class<T> clazz, String label, boolean hasFormat, List<String> exampleFormats) {
+        private DataTypeDescription(Class<T> clazz, 
+                                    String label,
+                                    DataScale scale,
+                                    boolean hasFormat, 
+                                    List<String> exampleFormats) {
             this.clazz = clazz;
             this.label = label;
+            this.scale = scale;
             this.hasFormat = hasFormat;
             this.exampleFormats = exampleFormats;
         }
@@ -1206,6 +1266,10 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         public String getLabel() {
             return label;
+        }
+        
+        public DataScale getScale() {
+            return scale;
         }
         
         /**
@@ -1334,6 +1398,14 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract String format(T t);
 
         /**
+         * Converts a double into a value.
+         *
+         * @param s
+         * @return
+         */
+        public abstract T fromDouble(Double d);
+
+        /**
          * 
          *
          * @return
@@ -1346,14 +1418,14 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public T getMaximum();
-
+        
         /**
          * 
          *
          * @return
          */
         public T getMinimum();
-        
+
         /**
          * 
          *
@@ -1398,7 +1470,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract T multiply(T multiplicand, T multiplicator);
-
+        
         /**
          * 
          *
@@ -1406,7 +1478,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract T parse(String s);
-        
+
         /**
          * 
          *
@@ -1424,6 +1496,14 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract T subtract(T minuend, T subtrahend);
+        
+        /**
+         * Converts a double into a value.
+         *
+         * @param s
+         * @return
+         */
+        public abstract Double toDouble(T t);
     }
 
     /** The string representing the NULL value */

@@ -18,7 +18,7 @@
 package org.deidentifier.arx.framework.lattice;
 
 import org.deidentifier.arx.ARXListener;
-import org.deidentifier.arx.framework.check.INodeChecker;
+import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.metric.InformationLoss;
 
 /**
@@ -109,20 +109,20 @@ public class Lattice {
      * @param node the node
      * @param result the result
      */
-    public void setChecked(Node node, INodeChecker.Result result) {
+    public void setChecked(Node node, NodeChecker.Result result) {
         
         // Set checked
         setProperty(node, Node.PROPERTY_CHECKED);
         
         // Anonymous
-        if (result.anonymous){
+        if (result.privacyModelFulfilled){
             setProperty(node, Node.PROPERTY_ANONYMOUS);
         } else {
             setProperty(node, Node.PROPERTY_NOT_ANONYMOUS);
         }
 
         // k-Anonymous
-        if (result.kAnonymous){
+        if (result.minimalClassSizeFulfilled){
             setProperty(node, Node.PROPERTY_K_ANONYMOUS);
         } else {
             setProperty(node, Node.PROPERTY_NOT_K_ANONYMOUS);

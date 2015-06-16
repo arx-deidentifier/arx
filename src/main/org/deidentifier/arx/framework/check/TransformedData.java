@@ -17,28 +17,37 @@
 
 package org.deidentifier.arx.framework.check;
 
-import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics;
 import org.deidentifier.arx.framework.data.Data;
 
 /**
+ * Helper class to convey buffers.
  * 
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
+ *
  */
 public class TransformedData {
-
-    /**  TODO */
-    public Data buffer;
     
-    /**  TODO */
-    public GroupStatistics statistics;
+    /** The GH buffer */
+    public Data            bufferGeneralized;
+    
+    /** The OT buffer */
+    public Data            bufferMicroaggregated;
+    
+    /** The group statistic */
+    public EquivalenceClassStatistics statistics;
     
     /**
+     * Instantiate the helper object.
      * 
-     *
-     * @param data
+     * @param bufferGH
+     * @param bufferOT
      * @param statistics
      */
-    public TransformedData(Data data, GroupStatistics statistics) {
-        this.buffer = data;
+    public TransformedData(Data bufferGH, Data bufferOT, EquivalenceClassStatistics statistics) {
+        this.bufferGeneralized = bufferGH;
+        this.bufferMicroaggregated = bufferOT;
         this.statistics = statistics;
     }
 }

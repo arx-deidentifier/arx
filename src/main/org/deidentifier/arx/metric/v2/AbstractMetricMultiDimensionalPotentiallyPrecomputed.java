@@ -20,7 +20,7 @@ package org.deidentifier.arx.metric.v2;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -127,7 +127,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
 
     @Override
     protected InformationLossWithBound<AbstractILMultiDimensional>
-            getInformationLossInternal(Node node, IHashGroupify groupify) {
+            getInformationLossInternal(Node node, HashGroupify groupify) {
         return precomputed ? precomputedMetric.getInformationLoss(node, groupify) : 
                              defaultMetric.getInformationLoss(node, groupify);
     }
@@ -139,7 +139,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     }
     
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node, IHashGroupify groupify) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Node node, HashGroupify groupify) {
         return precomputed ? precomputedMetric.getLowerBound(node, groupify) : 
                              defaultMetric.getLowerBound(node, groupify);
     }

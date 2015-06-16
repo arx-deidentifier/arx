@@ -18,17 +18,21 @@
 package org.deidentifier.arx;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
-import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -57,7 +61,7 @@ public class ARXAnonymizer {
         final AbstractAlgorithm algorithm;
 
         /** The checker. */
-        final INodeChecker      checker;
+        final NodeChecker      checker;
 
         /** The lattice. */
         final Lattice           lattice;
@@ -82,7 +86,7 @@ public class ARXAnonymizer {
          * @param time
          */
         Result(final Metric<?> metric,
-               final INodeChecker checker,
+               final NodeChecker checker,
                final Lattice lattice,
                final DataManager manager,
                final AbstractAlgorithm algorithm,
@@ -107,7 +111,7 @@ public class ARXAnonymizer {
 		    // Create lattice
 	        final ARXLattice flattice = new ARXLattice(lattice,
 	                                                   algorithm.getGlobalOptimum(),
-	                                                   manager.getDataQI().getHeader(),
+	                                                   manager.getDataGeneralized().getHeader(),
 	                                                   config.getInternalConfiguration());
 
 			// Create output handle
@@ -181,13 +185,12 @@ public class ARXAnonymizer {
             throw new RuntimeException("This data handle is locked. Please release it first");
         }
         
-        
         if (data.getDefinition().getSensitiveAttributes().size() > 1 && config.isProtectSensitiveAssociations()) {
             throw new UnsupportedOperationException("Currently not supported!");
         }
         
         DataHandle handle = data.getHandle();
-        handle.getDefinition().materialize(handle);
+        handle.getDefinition().materializeHierarchies(handle);
         checkBeforeEncoding(handle, config);
         handle.getRegistry().reset();
         handle.getRegistry().createInputSubset(config);
@@ -312,14 +315,14 @@ public class ARXAnonymizer {
 
         if (config.containsCriterion(KAnonymity.class)){
             KAnonymity c = config.getCriterion(KAnonymity.class);
-            if ((c.getK() > manager.getDataQI().getDataLength()) || (c.getK() < 1)) { 
-                throw new IllegalArgumentException("Parameter k (" + c.getK() + ") musst be positive and less or equal than the number of rows (" + manager.getDataQI().getDataLength()+")"); 
+            if ((c.getK() > manager.getDataGeneralized().getDataLength()) || (c.getK() < 1)) { 
+                throw new IllegalArgumentException("Parameter k (" + c.getK() + ") musst be positive and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
             }
         }
         if (config.containsCriterion(LDiversity.class)){
             for (LDiversity c : config.getCriteria(LDiversity.class)){
-	            if ((c.getL() > manager.getDataQI().getDataLength()) || (c.getL() < 1)) { 
-	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") musst be positive and less or equal than the number of rows (" + manager.getDataQI().getDataLength()+")"); 
+	            if ((c.getL() > manager.getDataGeneralized().getDataLength()) || (c.getL() < 1)) { 
+	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") musst be positive and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
 	            }
             }
         }
@@ -330,9 +333,9 @@ public class ARXAnonymizer {
         }
 
         // check min and max sizes
-        final int[] hierarchyHeights = manager.getHierachyHeights();
-        final int[] minLevels = manager.getMinLevels();
-        final int[] maxLevels = manager.getMaxLevels();
+        final int[] hierarchyHeights = manager.getHierachiesHeights();
+        final int[] minLevels = manager.getHierarchiesMinLevels();
+        final int[] maxLevels = manager.getHierarchiesMaxLevels();
 
         for (int i = 0; i < hierarchyHeights.length; i++) {
             if (minLevels[i] > (hierarchyHeights[i] - 1)) { throw new IllegalArgumentException("Invalid minimum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
@@ -423,16 +426,32 @@ public class ARXAnonymizer {
             }
         }
         
+        for (String attribute : handle.getDefinition().getQuasiIdentifiersWithMicroaggregation()) {
+            MicroAggregationFunction f = (MicroAggregationFunction) definition.getMicroAggregationFunction(attribute);
+            DataType<?> t = definition.getDataType(attribute);
+            if (!t.getDescription().getScale().provides(f.getRequiredScale())) {
+                throw new IllegalArgumentException("Attribute '" + attribute + "' has an aggregation function specified wich needs a datatype with a scale of measure of at least " + f.getRequiredScale());
+            }
+            if (f.getFunction() instanceof DistributionAggregateFunctionGeneralization) {
+                if (definition.getHierarchy(attribute) == null) {
+                    throw new IllegalArgumentException("Attribute '" + attribute + "' has an aggregation function specified wich needs a generalization hierarchy");
+                }
+            }
+        }
+        
         // Perform sanity checks
-        Set<String> qis = definition.getQuasiIdentifyingAttributes();
+        Set<String> genQis = definition.getQuasiIdentifiersWithGeneralization();
         if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() > 1d)) { throw new IllegalArgumentException("Suppression rate " + config.getMaxOutliers() + "must be in [0, 1]"); }
-        if (qis.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier"); }
-        if (qis.size() > maxQuasiIdentifiers) { 
-            throw new IllegalArgumentException("Too many quasi-identifiers (" + qis.size()+"). This restriction is configurable."); 
+        if (genQis.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier with generalization"); }
+        if (genQis.size() > maxQuasiIdentifiers) { 
+            throw new IllegalArgumentException("Too many quasi-identifiers (" + genQis.size()+"). This restriction is configurable."); 
         }
         int transformations = 1;
-        for (String qi : qis) {
-            transformations *= definition.getMaximumGeneralization(qi) - definition.getMinimumGeneralization(qi) + 1;
+        for (String genQi : genQis) {
+            if (definition.getHierarchy(genQi) == null) {
+                throw new IllegalArgumentException("No hierarchy specified for quasi-identifier (" + genQi + ")");
+            }
+            transformations *= definition.getMaximumGeneralization(genQi) - definition.getMinimumGeneralization(genQi) + 1;
         }
         if (transformations > maxTransformations) { 
             throw new IllegalArgumentException("Too many transformations in the search space (" + transformations+ "). This restriction is configurable."); 
@@ -454,8 +473,21 @@ public class ARXAnonymizer {
         final String[] header = ((DataHandleInput) handle).header;
         final int[][] dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria());
+        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria(), getAggregateFunctions(definition));
         return manager;
+    }
+
+    /**
+     * Returns a map of all microaggregation functions
+     * @param definition
+     * @return
+     */
+    private Map<String, DistributionAggregateFunction> getAggregateFunctions(DataDefinition definition) {
+        Map<String, DistributionAggregateFunction> result = new HashMap<String, DistributionAggregateFunction>();
+        for (String key : definition.getQuasiIdentifiersWithMicroaggregation()) {
+            result.put(key, definition.getMicroAggregationFunction(key).getFunction());
+        }
+        return result;
     }
 
     /**
@@ -475,9 +507,9 @@ public class ARXAnonymizer {
         final DataManager manager = prepareDataManager(handle, definition, config);
         
         // Attach arrays to data handle
-        ((DataHandleInput)handle).update(manager.getDataQI().getArray(), 
-                                         manager.getDataSE().getArray(),
-                                         manager.getDataIS().getArray());
+        ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
+                                         manager.getDataAnalyzed().getArray(),
+                                         manager.getDataStatic().getArray());
 
         // Initialize
         config.initialize(manager);
@@ -486,14 +518,14 @@ public class ARXAnonymizer {
         checkAfterEncoding(config, manager);
 
         // Build or clean the lattice
-        Lattice lattice = new LatticeBuilder(manager.getMaxLevels(), manager.getMinLevels()).build();
+        Lattice lattice = new LatticeBuilder(manager.getHierarchiesMaxLevels(), manager.getHierarchiesMinLevels()).build();
         lattice.setListener(listener);
 
         // Build a node checker
-        final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config.getInternalConfiguration(), historySize, snapshotSizeDataset, snapshotSizeSnapshot);
+        final NodeChecker checker = new NodeChecker(manager, config.getMetric(), config.getInternalConfiguration(), historySize, snapshotSizeDataset, snapshotSizeSnapshot);
 
         // Initialize the metric
-        config.getMetric().initialize(definition, manager.getDataQI(), manager.getHierarchies(), config);
+        config.getMetric().initialize(definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
         // Create an algorithm instance
         FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());

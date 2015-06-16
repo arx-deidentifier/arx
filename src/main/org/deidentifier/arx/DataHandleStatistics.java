@@ -18,24 +18,24 @@
 package org.deidentifier.arx;
 
 /**
- * Stupid wrapper class that provides information to StatisticsBuilder.
+ * Wrapper class that provides information to StatisticsBuilder.
  *
  * @author Fabian Prasser
  */
 public class DataHandleStatistics {
 
-    /** Stupid interface */
+    /** Interface */
     public static interface InterruptHandler {
         
-        /** Stupid method*/
+        /** Method*/
         public void checkInterrupt();
     }
     
-    /**  Stupid handle */
+    /**  Handle */
     private DataHandle handle;
     
     /**
-     * Stupid constructor
+     * Constructor
      * @param handle
      */
     protected DataHandleStatistics(DataHandle handle){
@@ -43,7 +43,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * Stupid method
+     * Method
      * @param column
      * @return
      */
@@ -62,7 +62,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * Stupid method
+     * Method
      * @param attribute
      * @return
      */
@@ -71,7 +71,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * Stupid method
+     * Method
      * @return
      */
     public DataDefinition getDefinition() {
@@ -79,7 +79,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * Stupid method
+     * Method
      * @param column
      * @param stop
      * @return
@@ -89,7 +89,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * Stupid method
+     * Method
      * @param attribute
      * @return
      */
@@ -98,7 +98,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * Stupid method
+     * Method
      * @return
      */
     public int getNumColumns() {
@@ -106,7 +106,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * Stupid method
+     * Method
      * @return
      */
     public int getNumRows() {   
@@ -114,7 +114,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * Stupid method
+     * Method
      * @return
      */
     public String getSuppressionString() {
@@ -122,12 +122,21 @@ public class DataHandleStatistics {
     }
 
     /**
-     * Stupid method
+     * Method
      * @param row
      * @param column
      * @return
      */
     public String getValue(int row, int column) {
         return handle.getValue(row, column);
+    }
+    
+    /**
+     * Returns whether the given row is suppressed
+     * @param row
+     * @return
+     */
+    public boolean isSuppressed(int row) {
+        return handle.isOutlier(row);
     }
 }

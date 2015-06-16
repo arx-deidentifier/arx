@@ -130,7 +130,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
             DataTypeDescription<?> description = getDataType(label);
     
             // Open format dialog
-            if (description.getLabel().equals("OrderedString")) { //$NON-NLS-1$
+            if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
                 final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                 final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                 String[] array = controller.actionShowOrderValuesDialog(getShell(), 

@@ -24,7 +24,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
 
@@ -35,24 +37,30 @@ import org.deidentifier.arx.io.ImportConfiguration;
  * @author Florian Kohlmayer
  */
 public class DataDefinition implements Cloneable{
-    
+
     /** Is this data definition locked. */
-    private boolean locked = false;
+    private boolean                                     locked            = false;
 
     /** The mapped attribute types. */
-    private final Map<String, AttributeType>       attributeTypes    = new HashMap<String, AttributeType>();
+    private final Map<String, AttributeType>            attributeTypes    = new HashMap<String, AttributeType>();
 
-    /** The mapped attribute types. */
-    private final Map<String, HierarchyBuilder<?>> builders          = new HashMap<String, HierarchyBuilder<?>>();
+    /** The mapped builders. */
+    private final Map<String, HierarchyBuilder<?>>      builders          = new HashMap<String, HierarchyBuilder<?>>();
+
+    /** The mapped hierchies. */
+    private final Map<String, Hierarchy>                hierarchies       = new HashMap<String, Hierarchy>();
+
+    /** The mapped functions. */
+    private final Map<String, MicroAggregationFunction> functions         = new HashMap<String, MicroAggregationFunction>();
 
     /** The mapped data types. */
-    private final Map<String, DataType<?>>         dataTypes         = new HashMap<String, DataType<?>>();
+    private final Map<String, DataType<?>>              dataTypes         = new HashMap<String, DataType<?>>();
 
     /** The mapped minimum generalization. */
-    private final Map<String, Integer>             minGeneralization = new HashMap<String, Integer>();
+    private final Map<String, Integer>                  minGeneralization = new HashMap<String, Integer>();
 
     /** The mapped maximum generalization. */
-    private final Map<String, Integer>             maxGeneralization = new HashMap<String, Integer>();
+    private final Map<String, Integer>                  maxGeneralization = new HashMap<String, Integer>();
 
     @Override
     public DataDefinition clone() {
@@ -64,6 +72,12 @@ public class DataDefinition implements Cloneable{
         }
         for (final String attr : dataTypes.keySet()) {
             d.dataTypes.put(attr, dataTypes.get(attr).clone());
+        }
+        for (final String attr : hierarchies.keySet()) {
+            d.hierarchies.put(attr, hierarchies.get(attr));
+        }
+        for (final String attr : functions.keySet()) {
+            d.functions.put(attr, functions.get(attr));
         }
         for (final String attr : minGeneralization.keySet()) {
             d.minGeneralization.put(attr, minGeneralization.get(attr));
@@ -110,14 +124,9 @@ public class DataDefinition implements Cloneable{
      * @return
      */
     public String[][] getHierarchy(final String attribute) {
-        checkQuasiIdentifier(attribute);
-        if (!(attributeTypes.get(attribute) instanceof Hierarchy)) {
-            return null;
-        } else {
-            return ((Hierarchy) attributeTypes.get(attribute)).getHierarchy();
-        }
+        Hierarchy hierarchy = hierarchies.get(attribute);
+        return hierarchy == null ? null : hierarchy.getHierarchy();
     }
-    
     /**
      * Returns the associated builder, if any.
      *
@@ -125,7 +134,6 @@ public class DataDefinition implements Cloneable{
      * @return
      */
     public HierarchyBuilder<?> getHierarchyBuilder(final String attribute) {
-        checkQuasiIdentifier(attribute);
         return builders.get(attribute);
     }
     
@@ -135,13 +143,7 @@ public class DataDefinition implements Cloneable{
      * @return
      */
     public Set<String> getIdentifyingAttributes() {
-        final Set<String> result = new HashSet<String>();
-        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
-            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_ID) {
-                result.add(entry.getKey());
-            }
-        }
-        return result;
+        return getAttributesByType(AttributeType.ATTR_TYPE_ID);
     }
     
     /**
@@ -150,13 +152,7 @@ public class DataDefinition implements Cloneable{
      * @return
      */
     public Set<String> getInsensitiveAttributes() {
-        final Set<String> result = new HashSet<String>();
-        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
-            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_IS) {
-                result.add(entry.getKey());
-            }
-        }
-        return result;
+        return getAttributesByType(AttributeType.ATTR_TYPE_IS);
     }
     
     /**
@@ -169,8 +165,8 @@ public class DataDefinition implements Cloneable{
         checkQuasiIdentifier(attribute);
         Integer result = maxGeneralization.get(attribute);
         if (result != null) return result;
-        if (this.attributeTypes.get(attribute) instanceof Hierarchy) {
-            String[][] hierarchy = getHierarchy(attribute);
+        if (this.getHierarchy(attribute) != null) {
+            String[][] hierarchy = this.getHierarchy(attribute);
             if (hierarchy.length == 0 || hierarchy[0] == null) {
                 return 0;
             } else {
@@ -179,6 +175,16 @@ public class DataDefinition implements Cloneable{
         } else {
             throw new IllegalStateException("No materialized hierarchy specified for attribute ("+attribute+")");
         }
+    }
+    
+    /**
+     * Returns the according microaggregation function.
+     * 
+     * @param attribute
+     * @return
+     */
+    public MicroAggregationFunction getMicroAggregationFunction(final String attribute) {
+        return functions.get(attribute);
     }
     
     /**
@@ -192,21 +198,44 @@ public class DataDefinition implements Cloneable{
         Integer result = minGeneralization.get(attribute);
         return result != null ? result : 0;
     }
+    
+    /**
+     * Returns the quasi-identifiers for which generalization is specified.
+     * @return
+     */
+    public Set<String> getQuasiIdentifiersWithGeneralization() {
+        final Set<String> result = new HashSet<String>();
+        for (String attr : getAttributesByType(AttributeType.ATTR_TYPE_QI)) {
+            if (getMicroAggregationFunction(attr) == null) {
+                result.add(attr);
+            }
+        }
+        return result;
+    }
 
+    /**
+     * Returns the quasi-identifiers for which microaggregation is specified.
+     * @return
+     */
+    public Set<String> getQuasiIdentifiersWithMicroaggregation() {
+        final Set<String> result = new HashSet<String>();
+        for (String attr : getAttributesByType(AttributeType.ATTR_TYPE_QI)) {
+            if (getMicroAggregationFunction(attr) != null) {
+                result.add(attr);
+            }
+        }
+        return result;
+    }
+    
     /**
      * Returns the quasi identifying attributes.
      *
      * @return
      */
     public Set<String> getQuasiIdentifyingAttributes() {
-        final Set<String> result = new HashSet<String>();
-        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
-            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_QI) {
-                result.add(entry.getKey());
-            }
-        }
-        return result;
+        return getAttributesByType(AttributeType.ATTR_TYPE_QI);
     }
+    
 
     /**
      * Returns the sensitive attributes.
@@ -214,14 +243,9 @@ public class DataDefinition implements Cloneable{
      * @return
      */
     public Set<String> getSensitiveAttributes() {
-        final Set<String> result = new HashSet<String>();
-        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
-            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_SE) {
-                result.add(entry.getKey());
-            }
-        }
-        return result;
+        return getAttributesByType(AttributeType.ATTR_TYPE_SE);
     }
+    
 
     /**
      * Returns whether a hierarchy is available.
@@ -230,8 +254,7 @@ public class DataDefinition implements Cloneable{
      * @return
      */
     public boolean isHierarchyAvailable(String attribute) {
-        checkQuasiIdentifier(attribute);
-        return attributeTypes.get(attribute) instanceof Hierarchy;
+        return getHierarchy(attribute) != null;
     }
 
     /**
@@ -241,8 +264,7 @@ public class DataDefinition implements Cloneable{
      * @return
      */
     public boolean isHierarchyBuilderAvailable(String attribute) {
-        checkQuasiIdentifier(attribute);
-        return builders.containsKey(attribute);
+        return getHierarchyBuilder(attribute) != null;
     }
 
     /**
@@ -262,7 +284,7 @@ public class DataDefinition implements Cloneable{
      */
     public boolean isMaximumGeneralizationAvailable(String attribute) {
         checkQuasiIdentifier(attribute);
-        return maxGeneralization.containsKey(attribute) || (this.attributeTypes.get(attribute) instanceof Hierarchy);
+        return maxGeneralization.containsKey(attribute) || (this.getHierarchy(attribute) != null);
         
     }
 
@@ -278,6 +300,54 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetMaximumGeneralization(String attr) {
+        this.minGeneralization.remove(attr);
+    }
+
+    /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetMinimumGeneralization(String attr) {
+        this.maxGeneralization.remove(attr);
+    }
+    
+    /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetAttributeType(String attr) {
+        this.attributeTypes.remove(attr);
+    }
+
+    /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetHierarchy(String attr) {
+        this.hierarchies.remove(attr);
+    }
+
+    /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetHierarchyBuilder(String attr) {
+        this.builders.remove(attr);
+    }
+
+    /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetMicroAggregationFunction(String attr) {
+        this.functions.remove(attr);
+    }
+
+    /**
      * Define the type of a given attribute.
      *
      * @param attribute
@@ -289,6 +359,11 @@ public class DataDefinition implements Cloneable{
         checkLocked();
         checkNullArgument(type, "Type");
         attributeTypes.put(attribute, type);
+        if (type instanceof Hierarchy) {
+            this.hierarchies.put(attribute, (Hierarchy)type);
+        } else if (type instanceof MicroAggregationFunction) {
+            this.functions.put(attribute, (MicroAggregationFunction)type);
+        }
     }
 
     /**
@@ -321,6 +396,24 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
+     * Associates the given hierarchy
+     * @param attribute
+     * @param hierarchy
+     */
+    public void setHierarchy(String attribute, Hierarchy hierarchy) {
+        this.hierarchies.put(attribute, hierarchy);
+    }
+
+    /**
+     * Associates the given hierarchy builder
+     * @param attribute
+     * @param builder
+     */
+    public void setHierarchy(String attribute, HierarchyBuilder<?> builder) {
+        this.builders.put(attribute, builder);
+    }
+    
+    /**
      * Define the maximal generalization of a given attribute.
      *
      * @param attribute
@@ -331,6 +424,15 @@ public class DataDefinition implements Cloneable{
         
         checkLocked();
         maxGeneralization.put(attribute, maximum);
+    }
+    
+    /**
+     * Associates the given microaggregation function
+     * @param attribute
+     * @param builder
+     */
+    public void setMicroAggregationFunction(String attribute, MicroAggregationFunction function) {
+        this.functions.put(attribute, function);
     }
 
     /**
@@ -365,7 +467,7 @@ public class DataDefinition implements Cloneable{
     private void checkNullArgument(Object argument, String name) throws IllegalArgumentException {
         if (argument == null) { throw new NullPointerException(name + " must not be null"); }
     }
-    
+
     /**
      * Checks whether the attribute is a quasi-identifier.
      *
@@ -380,14 +482,29 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
+     * Returns attributes by type
+     * @param type
+     * @return
+     */
+    private Set<String> getAttributesByType(int type) {
+        final Set<String> result = new HashSet<String>();
+        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
+            if (entry.getValue().getType() == type) {
+                result.add(entry.getKey());
+            }
+        }
+        return result;
+    }
+
+    /**
      * Materializes all functional hierarchies.
      *
      * @param handle
      */
-    protected void materialize(DataHandle handle) {
+    protected void materializeHierarchies(DataHandle handle) {
         
-        // For each qi
-        for (String qi : this.getQuasiIdentifyingAttributes()) {
+        // For each qi with generalization
+        for (String qi : this.getQuasiIdentifiersWithGeneralization()) {
             
             // If no hierarchy is available
             if (!isHierarchyAvailable(qi)) {
@@ -399,7 +516,7 @@ public class DataDefinition implements Cloneable{
                 if (isHierarchyBuilderAvailable(qi)) {
                     // Compute and store hierarchy
                     try {
-                        this.attributeTypes.put(qi, this.getHierarchyBuilder(qi).build(data));
+                        this.hierarchies.put(qi, this.getHierarchyBuilder(qi).build(data));
                     } catch (Exception e) {
                         throw new IllegalStateException("Error building hierarchy for attribute ("+qi+")", e);
                     }
@@ -409,7 +526,38 @@ public class DataDefinition implements Cloneable{
                     for (int i=0; i<data.length; i++) {
                         hierarchy[i] = new String[]{data[i]};
                     }
-                    this.attributeTypes.put(qi, Hierarchy.create(hierarchy));
+                    this.hierarchies.put(qi, Hierarchy.create(hierarchy));
+                }
+            }
+        }
+
+        // For each qi with microaggregation
+        for (String qi : this.getQuasiIdentifiersWithMicroaggregation()) {
+            
+            if (this.getMicroAggregationFunction(qi).getFunction() instanceof DistributionAggregateFunctionGeneralization) {
+                
+                // If no hierarchy is available
+                if (!isHierarchyAvailable(qi)) {
+                    
+                    // Obtain data
+                    String[] data = handle.getDistinctValues(handle.getColumnIndexOf(qi));
+                    
+                    // If builder is available
+                    if (isHierarchyBuilderAvailable(qi)) {
+                        // Compute and store hierarchy
+                        try {
+                            this.hierarchies.put(qi, this.getHierarchyBuilder(qi).build(data));
+                        } catch (Exception e) {
+                            throw new IllegalStateException("Error building hierarchy for attribute ("+qi+")", e);
+                        }
+                    } else {
+                        // Create empty hierarchy
+                        String[][] hierarchy = new String[data.length][];
+                        for (int i=0; i<data.length; i++) {
+                            hierarchy[i] = new String[]{data[i]};
+                        }
+                        this.hierarchies.put(qi, Hierarchy.create(hierarchy));
+                    }
                 }
             }
         }
@@ -427,7 +575,7 @@ public class DataDefinition implements Cloneable{
             this.setDataType(header[i], config.getColumns().get(i).getDataType());
         }
     }
-    
+
     /**
      * Lock/unlock the definition.
      *

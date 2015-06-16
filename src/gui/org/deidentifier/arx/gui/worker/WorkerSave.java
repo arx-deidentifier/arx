@@ -37,6 +37,7 @@ import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
@@ -351,6 +352,9 @@ public class WorkerSave extends Worker<Model> {
                 	writer.write(vocabulary.getMin(), min==null ? "All" : String.valueOf(min)); //$NON-NLS-1$
                 	writer.write(vocabulary.getMax(), max==null ? "All" : String.valueOf(max)); //$NON-NLS-1$
                 }
+            } else if (t instanceof MicroAggregationFunction) {
+                writer.write(vocabulary.getMicroAggregationFunction(), config.getMicroAggregationFunction(attr).getLabel());
+                writer.write(vocabulary.getMicroAggregationIgnoreMissingData(), config.getMicroAggregationIgnoreMissingData(attr));
             }
             writer.unindent();
 

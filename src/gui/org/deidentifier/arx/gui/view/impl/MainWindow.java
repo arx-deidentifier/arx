@@ -583,13 +583,13 @@ public class MainWindow implements IView {
     /**
      * Shows a dialog for selecting privacy criteria.
      *
-     * @param others
+     * @param criteria
      * @return
      */
-    public ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> others) {
+    public ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> criteria) {
 
         // Dialog
-        final DialogCriterionSelection dialog = new DialogCriterionSelection(controller, shell, others);
+        final DialogCriterionSelection dialog = new DialogCriterionSelection(controller, shell, criteria);
         dialog.create();
         if (dialog.open() != Window.OK) {
             return null;

@@ -36,7 +36,14 @@ import org.deidentifier.arx.examples.Example23;
 import org.deidentifier.arx.examples.Example24;
 import org.deidentifier.arx.examples.Example25;
 import org.deidentifier.arx.examples.Example26;
+import org.deidentifier.arx.examples.Example27;
+import org.deidentifier.arx.examples.Example28;
+import org.deidentifier.arx.examples.Example29;
 import org.deidentifier.arx.examples.Example3;
+import org.deidentifier.arx.examples.Example30;
+import org.deidentifier.arx.examples.Example31;
+import org.deidentifier.arx.examples.Example32;
+import org.deidentifier.arx.examples.Example33;
 import org.deidentifier.arx.examples.Example4;
 import org.deidentifier.arx.examples.Example5;
 import org.deidentifier.arx.examples.Example6;
@@ -278,9 +285,106 @@ public class TestExamples {
      * 
      */
     @Test
+    public void testExample27() {
+        try {
+            Example27.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void testExample28() {
+        try {
+            Example28.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testExample29() {
+        try {
+            Example29.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+    /**
+     * 
+     */
+    @Test
     public void testExample3() {
         try {
             Example3.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testExample30() {
+        try {
+            Example30.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testExample31() {
+        try {
+            Example31.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testExample32() {
+        try {
+            Example32.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    
+    
+    
+    
+    
+
+    /**
+     * 
+     */
+    @Test
+    public void testExample33() {
+        try {
+            Example33.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -299,7 +403,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-    
+
     /**
      * 
      */

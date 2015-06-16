@@ -25,6 +25,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
@@ -37,11 +38,14 @@ import org.eclipse.swt.widgets.Scale;
 public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCriterion>{
 
     /** View */
-    private Scale                   sliderThreshold;
+    private Scale sliderThreshold;
 
     /** View */
-    private Label                   labelThreshold;
+    private Label labelThreshold;
 
+    /** View */
+    private Combo cmbModel;
+    
     /**
      * Creates a new instance.
      *
@@ -49,7 +53,7 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
      * @param model
      */
     public EditorCriterionRiskBased(final Composite parent, 
-                                  final ModelRiskBasedCriterion model) {
+                                    final ModelRiskBasedCriterion model) {
         super(parent, model);
     }
 
@@ -69,12 +73,16 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
      * @return
      */
     protected Composite build(Composite parent) {
+        boolean isPopulation = model.getVariant() == ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR ||
+                               model.getVariant() == ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN ||
+                               model.getVariant() == ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ ||
+                               model.getVariant() == ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB;
 
         // Create input group
         final Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 3;
+        groupInputGridLayout.numColumns = isPopulation ? 5 : 3;
         group.setLayout(groupInputGridLayout);
 
         // Create threshold slider
@@ -101,6 +109,35 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
                 updateThresholdLabel(dmin);
             }
         });
+        
+        if (isPopulation) {
+            
+            Label lblModel = new Label(group, SWT.NONE);
+            lblModel.setText("Model:");
+            
+            cmbModel = new Combo(group, SWT.READ_ONLY);
+            cmbModel.setItems(new String[]{"Dankar", "Pitman", "Zayatz", "SNB"});
+            cmbModel.select(0);
+            cmbModel.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(final SelectionEvent arg0) {
+                    switch(cmbModel.getSelectionIndex()) {
+                        case 0:
+                            model.setVariant(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR);
+                            break;
+                        case 1:
+                            model.setVariant(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN);
+                            break;
+                        case 2:
+                            model.setVariant(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ);
+                            break;
+                        case 3:
+                            model.setVariant(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB);
+                            break;
+                    }
+                }
+            });
+        }
 
         return group;
     }
@@ -111,5 +148,19 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
     protected void parse(ModelRiskBasedCriterion model) {
         updateThresholdLabel(String.valueOf(model.getThreshold()));
         sliderThreshold.setSelection(SWTUtil.doubleToSlider(0, 1d, model.getThreshold()));
+        switch(model.getVariant()) {
+            case ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR:
+                cmbModel.select(0);
+                break;
+            case ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN:
+                cmbModel.select(1);
+                break;
+            case ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ:
+                cmbModel.select(2);
+                break;
+            case ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB:
+                cmbModel.select(3);
+                break;
+        }
     }
 }
