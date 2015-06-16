@@ -51,7 +51,7 @@ public class DataHandleOutput extends DataHandle {
         
         @Override
         public boolean hasNext() {
-            return row < dataGH.getArray().length;
+            return row < outputGeneralized.getArray().length;
         }
         
         @Override
@@ -82,74 +82,51 @@ public class DataHandleOutput extends DataHandle {
             throw new UnsupportedOperationException();
         }
     }
-    
-    /** The current result. */
-    private ARXResult    result;
-    
-    /** The current node. */
-    private ARXNode      node;
-    
+
     /** The data. */
-    protected Data       dataIS;
-    
+    private Data         inputAnalyzed;
+
     /** The data. */
-    protected Data       dataGH;
-    
-    /** The data. */
-    protected Data       dataOT;
-    
-    /** The data. */
-    protected Data       dataDI;
-    
+    private Data         inputStatic;
+
     /** An inverse map to data arrays. */
     private int[][][]    inverseData;
-    
-    /** The start index of the MA attributes in the dataDI */
-    private final int    startIndexMA;
-    
+
     /** An inverse map to dictionaries. */
     private Dictionary[] inverseDictionaries;
-    
+
     /** An inverse map for column indices. map[i*2]=attribute type, map[i*2+1]=index position. */
     private int[]        inverseMap;
-    
+
+    /** The start index of the MA attributes in the dataDI */
+    private final int    microaggregationStartIndex;
+
+    /** The current node. */
+    private ARXNode      node;
+
+    /** The data. */
+    private Data         outputGeneralized;
+
+    /** The data. */
+    private Data         outputMicroaggregated;
+
+    /** The current result. */
+    private ARXResult    result;
+
     /** Suppression handling. */
     private final int    suppressedAttributeTypes;
-    
+
     /** Suppression handling. */
     private final String suppressionString;
-    
-    /**
-     * Instantiates a new handle.
-     *
-     * @param result
-     * @param registry The registry
-     * @param manager The data manager
-     * @param buffer
-     * @param node The underlying transformation
-     * @param statistics Statistics for the dataset
-     * @param definition The data definition
-     * @param config The underlying config
-     */
-    protected DataHandleOutput(final ARXResult result,
-                               final DataRegistry registry,
-                               final DataManager manager,
-                               final Data buffer,
-                               final ARXNode node,
-                               final StatisticsEquivalenceClasses statistics,
-                               final DataDefinition definition,
-                               final ARXConfiguration config) {
-        this(result, registry, manager, buffer, null, node, statistics, definition, config);
-    }
-    
+
     /**
      * Instantiates a new handle.
      * 
      * @param result
      * @param registry
      * @param manager
-     * @param bufferGH
-     * @param bufferOT
+     * @param outputGeneralized
+     * @param outputMicroaggregated
      * @param node
      * @param statistics
      * @param definition
@@ -158,8 +135,8 @@ public class DataHandleOutput extends DataHandle {
     protected DataHandleOutput(final ARXResult result,
                                final DataRegistry registry,
                                final DataManager manager,
-                               final Data bufferGH,
-                               final Data bufferOT,
+                               final Data outputGeneralized,
+                               final Data outputMicroaggregated,
                                final ARXNode node,
                                final StatisticsEquivalenceClasses statistics,
                                final DataDefinition definition,
@@ -177,12 +154,12 @@ public class DataHandleOutput extends DataHandle {
         this.node = node;
         
         // Extract data
-        this.dataGH = bufferGH;
-        this.dataOT = bufferOT;
-        this.dataDI = manager.getDataAnalyzed();
-        this.dataIS = manager.getDataStatic();
+        this.outputGeneralized = outputGeneralized;
+        this.outputMicroaggregated = outputMicroaggregated;
+        this.inputAnalyzed = manager.getDataAnalyzed();
+        this.inputStatic = manager.getDataStatic();
         this.header = manager.getHeader();
-        this.startIndexMA = manager.getMicroaggregationStartIndex();
+        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
         
         // Build map inverse
         this.inverseMap = new int[header.length * 2];
@@ -191,44 +168,44 @@ public class DataHandleOutput extends DataHandle {
             this.inverseMap[i] = AttributeTypeInternal.IDENTIFYING;
             this.inverseMap[i + 1] = -1;
         }
-        for (int i = 0; i < this.dataGH.getMap().length; i++) {
-            final int pos = dataGH.getMap()[i] * 2;
+        for (int i = 0; i < this.outputGeneralized.getMap().length; i++) {
+            final int pos = outputGeneralized.getMap()[i] * 2;
             this.inverseMap[pos] = AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED;
             this.inverseMap[pos + 1] = i;
         }
-        for (int i = 0; i < this.startIndexMA; i++) {
-            final int pos = dataDI.getMap()[i] * 2;
+        for (int i = 0; i < this.microaggregationStartIndex; i++) {
+            final int pos = inputAnalyzed.getMap()[i] * 2;
             this.inverseMap[pos] = AttributeTypeInternal.SENSITIVE;
             this.inverseMap[pos + 1] = i;
         }
         
-        for (int i = 0; i < dataOT.getMap().length; i++) {
-            final int pos = dataOT.getMap()[i] * 2;
+        for (int i = 0; i < outputMicroaggregated.getMap().length; i++) {
+            final int pos = outputMicroaggregated.getMap()[i] * 2;
             this.inverseMap[pos] = AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED;
             this.inverseMap[pos + 1] = i;
         }
         
-        for (int i = 0; i < dataIS.getMap().length; i++) {
-            final int pos = dataIS.getMap()[i] * 2;
+        for (int i = 0; i < inputStatic.getMap().length; i++) {
+            final int pos = inputStatic.getMap()[i] * 2;
             this.inverseMap[pos] = AttributeTypeInternal.INSENSITIVE;
             this.inverseMap[pos + 1] = i;
         }
         
         // Build inverse data array
         this.inverseData = new int[5][][];
-        this.inverseData[AttributeTypeInternal.INSENSITIVE] = this.dataIS.getArray();
-        this.inverseData[AttributeTypeInternal.SENSITIVE] = this.dataDI.getArray();
-        this.inverseData[AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED] = this.dataGH.getArray();
+        this.inverseData[AttributeTypeInternal.INSENSITIVE] = this.inputStatic.getArray();
+        this.inverseData[AttributeTypeInternal.SENSITIVE] = this.inputAnalyzed.getArray();
+        this.inverseData[AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED] = this.outputGeneralized.getArray();
         this.inverseData[AttributeTypeInternal.IDENTIFYING] = null;
-        this.inverseData[AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED] = this.dataOT.getArray();
+        this.inverseData[AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED] = this.outputMicroaggregated.getArray();
         
         // Build inverse dictionary array
         this.inverseDictionaries = new Dictionary[5];
-        this.inverseDictionaries[AttributeTypeInternal.INSENSITIVE] = this.dataIS.getDictionary();
-        this.inverseDictionaries[AttributeTypeInternal.SENSITIVE] = this.dataDI.getDictionary();
-        this.inverseDictionaries[AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED] = this.dataGH.getDictionary();
+        this.inverseDictionaries[AttributeTypeInternal.INSENSITIVE] = this.inputStatic.getDictionary();
+        this.inverseDictionaries[AttributeTypeInternal.SENSITIVE] = this.inputAnalyzed.getDictionary();
+        this.inverseDictionaries[AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED] = this.outputGeneralized.getDictionary();
         this.inverseDictionaries[AttributeTypeInternal.IDENTIFYING] = null;
-        this.inverseDictionaries[AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED] = this.dataOT.getDictionary();
+        this.inverseDictionaries[AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED] = this.outputMicroaggregated.getDictionary();
         
         // Create view
         this.getRegistry().createOutputSubset(node, config, statistics);
@@ -294,7 +271,7 @@ public class DataHandleOutput extends DataHandle {
     @Override
     public int getNumRows() {
         checkRegistry();
-        return dataGH.getDataLength();
+        return outputGeneralized.getDataLength();
     }
     
     /**
@@ -312,7 +289,7 @@ public class DataHandleOutput extends DataHandle {
         // Check
         checkRegistry();
         checkColumn(col);
-        checkRow(row, dataGH.getDataLength());
+        checkRow(row, outputGeneralized.getDataLength());
         
         // Perform
         return internalGetValue(row, col);
@@ -370,10 +347,10 @@ public class DataHandleOutput extends DataHandle {
     protected void doRelease() {
         result.releaseBuffer(this);
         node = null;
-        dataIS = null;
-        dataGH = null;
-        dataDI = null;
-        dataOT = null;
+        inputStatic = null;
+        outputGeneralized = null;
+        inputAnalyzed = null;
+        outputMicroaggregated = null;
         inverseData = null;
         inverseDictionaries = null;
         inverseMap = null;
@@ -395,10 +372,10 @@ public class DataHandleOutput extends DataHandle {
     protected DataType<?>[][] getDataTypeArray() {
         
         DataType<?>[][] dataTypes = new DataType[5][];
-        dataTypes[AttributeTypeInternal.INSENSITIVE] = new DataType[dataIS.getHeader().length];
-        dataTypes[AttributeTypeInternal.SENSITIVE] = new DataType[dataDI.getHeader().length];
-        dataTypes[AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED] = new DataType[dataGH.getHeader().length];
-        dataTypes[AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED] = new DataType[dataOT.getHeader().length];
+        dataTypes[AttributeTypeInternal.INSENSITIVE] = new DataType[inputStatic.getHeader().length];
+        dataTypes[AttributeTypeInternal.SENSITIVE] = new DataType[inputAnalyzed.getHeader().length];
+        dataTypes[AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED] = new DataType[outputGeneralized.getHeader().length];
+        dataTypes[AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED] = new DataType[outputMicroaggregated.getHeader().length];
         dataTypes[AttributeTypeInternal.IDENTIFYING] = null;
         
         for (int i = 0; i < dataTypes.length; i++) {
@@ -408,16 +385,16 @@ public class DataHandleOutput extends DataHandle {
             
             switch (i) {
             case AttributeTypeInternal.INSENSITIVE:
-                header = dataIS.getHeader();
+                header = inputStatic.getHeader();
                 break;
             case AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED:
-                header = dataGH.getHeader();
+                header = outputGeneralized.getHeader();
                 break;
             case AttributeTypeInternal.SENSITIVE:
-                header = dataDI.getHeader();
+                header = inputAnalyzed.getHeader();
                 break;
             case AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED:
-                header = dataOT.getHeader();
+                header = outputMicroaggregated.getHeader();
                 break;
             }
             if (type != null) {
@@ -535,7 +512,7 @@ public class DataHandleOutput extends DataHandle {
             final int[][] data = inverseData[type];
             
             if ((suppressedAttributeTypes & (1 << type)) != 0 &&
-                ((dataGH.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) {
+                ((outputGeneralized.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) {
                 return suppressionString;
             }
             
@@ -552,7 +529,7 @@ public class DataHandleOutput extends DataHandle {
      * @return
      */
     protected boolean internalIsOutlier(final int row) {
-        return ((dataGH.getArray()[row][0] & Data.OUTLIER_MASK) != 0);
+        return ((outputGeneralized.getArray()[row][0] & Data.OUTLIER_MASK) != 0);
     }
     
     @Override
@@ -593,13 +570,15 @@ public class DataHandleOutput extends DataHandle {
      */
     protected void internalSwap(final int row1, final int row2) {
         // Swap GH
-        int[] temp = dataGH.getArray()[row1];
-        dataGH.getArray()[row1] = dataGH.getArray()[row2];
-        dataGH.getArray()[row2] = temp;
+        int[] temp = outputGeneralized.getArray()[row1];
+        outputGeneralized.getArray()[row1] = outputGeneralized.getArray()[row2];
+        outputGeneralized.getArray()[row2] = temp;
         
         // Swap OT
-        temp = dataOT.getArray()[row1];
-        dataOT.getArray()[row1] = dataOT.getArray()[row2];
-        dataOT.getArray()[row2] = temp;
+        if (outputMicroaggregated.getArray().length != 0) {
+            temp = outputMicroaggregated.getArray()[row1];
+            outputMicroaggregated.getArray()[row1] = outputMicroaggregated.getArray()[row2];
+            outputMicroaggregated.getArray()[row2] = temp;
+        }
     }
 }
