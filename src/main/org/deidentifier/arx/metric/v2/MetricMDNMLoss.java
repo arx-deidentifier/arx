@@ -27,11 +27,11 @@ import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
@@ -150,12 +150,12 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
 
         // Init
         double[] result = new double[getDimensions()];
         int dimensions = getDimensions();
-        int[] transformation = node.getTransformation();
+        int[] transformation = node.getGeneralization();
 
         // Compute
         for (int dimension = 0; dimension < dimensions; dimension++) {
@@ -169,10 +169,10 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
         
         // Prepare
-        int[] transformation = node.getTransformation();
+        int[] transformation = node.getGeneralization();
         int dimensions = transformation.length;
         double[] result = new double[dimensions];
         double[] bound = new double[dimensions];
@@ -206,16 +206,16 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
     
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                                HashGroupify g) {
         
         // Prepare
-        int[] transformation = node.getTransformation();
+        int[] transformation = node.getGeneralization();
         int dimensions = transformation.length;
         double[] bound = new double[dimensions];
 

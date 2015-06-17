@@ -19,6 +19,8 @@ package org.deidentifier.arx.algorithm;
 
 import org.deidentifier.arx.framework.lattice.NodeAction;
 
+import de.linearbits.jhpl.PredictiveProperty;
+
 /**
  * This class parameterizes a phase the interwoven two-phase Flash algorithm.
  *
@@ -28,19 +30,19 @@ import org.deidentifier.arx.framework.lattice.NodeAction;
 public class FLASHPhaseConfiguration {
 
     /** A trigger for tagging nodes in this phase. */
-    private final NodeAction triggerTag;
+    private final NodeAction         triggerTag;
 
     /** A trigger for checking nodes in this phase. */
-    private final NodeAction triggerCheck;
+    private final NodeAction         triggerCheck;
 
     /** A trigger for evaluating nodes in this phase. */
-    private final NodeAction triggerEvaluate;
+    private final NodeAction         triggerEvaluate;
 
     /** A trigger for skipping nodes in this phase. */
-    private final NodeAction triggerSkip;
+    private final NodeAction         triggerSkip;
 
     /** The main anonymity property. */
-    private final int        anonymityProperty;
+    private final PredictiveProperty anonymityProperty;
 
     /**
      * Creates a configuration for an active phase.
@@ -51,7 +53,7 @@ public class FLASHPhaseConfiguration {
      * @param triggerEvaluate
      * @param triggerSkip
      */
-    public FLASHPhaseConfiguration(int anonymityProperty,
+    public FLASHPhaseConfiguration(PredictiveProperty anonymityProperty,
                                    NodeAction triggerTag,
                                    NodeAction triggerCheck,
                                    NodeAction triggerEvaluate,
@@ -68,7 +70,7 @@ public class FLASHPhaseConfiguration {
      *
      * @return
      */
-    public int getAnonymityProperty() {
+    public PredictiveProperty getAnonymityProperty() {
         return anonymityProperty;
     }
 

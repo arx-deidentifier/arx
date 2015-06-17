@@ -352,7 +352,7 @@ public class ARXLattice implements Serializable {
             
             // Set properties
             this.headermap = headermap;
-            this.transformation = node.getTransformation();
+            this.transformation = node.getGeneralization();
             this.minInformationLoss = node.getInformationLoss();
             this.maxInformationLoss = node.getInformationLoss();
             this.lowerBound = node.getLowerBound();

@@ -27,8 +27,8 @@ import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
-import org.deidentifier.arx.framework.lattice.Lattice;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.SolutionSpace;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
@@ -92,29 +92,32 @@ public class NodeChecker {
     /** The number of attributes with microaggregation in the data array */
     private final int                             microaggregationNumAttributes;
 
-    /** Map for the microaggregated data subset*/
+    /** Map for the microaggregated data subset */
     private final int[]                           microaggregationMap;
-    
-    /** Header of the microaggregated data subset*/
+
+    /** Header of the microaggregated data subset */
     private final String[]                        microaggregationHeader;
 
     /** The current hash groupify. */
-    protected HashGroupify                        currentGroupify;
-
-    /** The history. */
-    protected History                             history;
+    private HashGroupify                          currentGroupify;
 
     /** The last hash groupify. */
-    protected HashGroupify                        lastGroupify;
+    private HashGroupify                          lastGroupify;
+
+    /** The history. */
+    private final History                         history;
 
     /** The metric. */
-    protected Metric<?>                           metric;
+    private final Metric<?>                       metric;
 
     /** The state machine. */
-    protected StateMachine                        stateMachine;
+    private final StateMachine                    stateMachine;
 
     /** The data transformer. */
-    protected Transformer                         transformer;
+    private final Transformer                     transformer;
+
+    /** The solution space */
+    private final SolutionSpace                   solutionSpace;
 
     /**
      * Creates a new NodeChecker instance.
@@ -125,13 +128,15 @@ public class NodeChecker {
      * @param historyMaxSize The history max size
      * @param snapshotSizeDataset A history threshold
      * @param snapshotSizeSnapshot A history threshold
+     * @param solutionSpace
      */
     public NodeChecker(final DataManager manager,
                        final Metric<?> metric,
                        final ARXConfigurationInternal config,
                        final int historyMaxSize,
                        final double snapshotSizeDataset,
-                       final double snapshotSizeSnapshot) {
+                       final double snapshotSizeSnapshot,
+                       final SolutionSpace solutionSpace) {
         
         // Initialize all operators
         this.metric = metric;
@@ -142,6 +147,7 @@ public class NodeChecker {
         this.microaggregationNumAttributes = manager.getMicroaggregationNumAttributes();
         this.microaggregationMap = manager.getMicroaggregationMap();
         this.microaggregationHeader = manager.getMicroaggregationHeader();
+        this.solutionSpace = solutionSpace;
         
         int initialSize = (int) (manager.getDataGeneralized().getDataLength() * 0.01d);
         IntArrayDictionary dictionarySensValue;
@@ -161,7 +167,8 @@ public class NodeChecker {
                                    snapshotSizeSnapshot,
                                    config,
                                    dictionarySensValue,
-                                   dictionarySensFreq);
+                                   dictionarySensFreq,
+                                   solutionSpace);
         
         this.stateMachine = new StateMachine(history);
         this.currentGroupify = new HashGroupify(initialSize, config);
@@ -179,10 +186,10 @@ public class NodeChecker {
      * @param transformation
      * @return
      */
-    public TransformedData applyTransformation(final Node transformation) {
+    public TransformedData applyTransformation(final Transformation transformation) {
         
         // Apply transition and groupify
-        currentGroupify = transformer.apply(0L, transformation.getTransformation(), currentGroupify);
+        currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
         currentGroupify.stateAnalyze(transformation, true);
         if (!currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
@@ -213,22 +220,27 @@ public class NodeChecker {
             currentGroupify.performSuppression(transformer.getBuffer());
         }
         
-        // Set properties
-        Lattice lattice = new Lattice(new Node[][] { { transformation } }, 0);
-        lattice.setChecked(transformation, new Result(currentGroupify.isPrivacyModelFulfilled(),
-                                                      currentGroupify.isMinimalClassSizeFulfilled(),
-                                                      loss,
-                                                      null));
-        
         // Return the buffer
-        return new TransformedData(generalizedOutput, microaggregatedOutput, currentGroupify.getEquivalenceClassStatistics());
+        return new TransformedData(generalizedOutput, microaggregatedOutput, currentGroupify.getEquivalenceClassStatistics(),
+                                   new Result(currentGroupify.isPrivacyModelFulfilled(), currentGroupify.isMinimalClassSizeFulfilled(), loss, null));
     }
     
-    public NodeChecker.Result check(final Node node) {
+    /**
+     * Checks the given transformation, computes the utility if it fulfills the privacy model
+     * @param node
+     * @return
+     */
+    public NodeChecker.Result check(final Transformation node) {
         return check(node, false);
     }
     
-    public NodeChecker.Result check(final Node node, final boolean forceMeasureInfoLoss) {
+    /**
+     * Checks the given transformation
+     * @param node
+     * @param forceMeasureInfoLoss
+     * @return
+     */
+    public NodeChecker.Result check(final Transformation node, final boolean forceMeasureInfoLoss) {
         
         // If the result is already know, simply return it
         if (node.getData() != null && node.getData() instanceof NodeChecker.Result) {
@@ -237,11 +249,11 @@ public class NodeChecker {
         
         // Store snapshot from last check
         if (stateMachine.getLastNode() != null) {
-            history.store(stateMachine.getLastNode(), currentGroupify, stateMachine.getLastTransition().snapshot);
+            history.store(solutionSpace.getTransformation(stateMachine.getLastNode()), currentGroupify, stateMachine.getLastTransition().snapshot);
         }
         
         // Transition
-        final Transition transition = stateMachine.transition(node);
+        final Transition transition = stateMachine.transition(node.getGeneralization());
         
         // Switch groupifies
         final HashGroupify temp = lastGroupify;
@@ -251,13 +263,13 @@ public class NodeChecker {
         // Apply transition
         switch (transition.type) {
         case UNOPTIMIZED:
-            currentGroupify = transformer.apply(transition.projection, node.getTransformation(), currentGroupify);
+            currentGroupify = transformer.apply(transition.projection, node.getGeneralization(), currentGroupify);
             break;
         case ROLLUP:
-            currentGroupify = transformer.applyRollup(transition.projection, node.getTransformation(), lastGroupify, currentGroupify);
+            currentGroupify = transformer.applyRollup(transition.projection, node.getGeneralization(), lastGroupify, currentGroupify);
             break;
         case SNAPSHOT:
-            currentGroupify = transformer.applySnapshot(transition.projection, node.getTransformation(), currentGroupify, transition.snapshot);
+            currentGroupify = transformer.applySnapshot(transition.projection, node.getGeneralization(), currentGroupify, transition.snapshot);
             break;
         }
         

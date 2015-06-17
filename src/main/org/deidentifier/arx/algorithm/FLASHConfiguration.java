@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.algorithm;
 
+import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.NodeAction;
 
 /**
@@ -31,32 +32,36 @@ public class FLASHConfiguration {
      * Creates a binary-phase only configuration.
      *
      * @param config
-     * @param triggerSnapshotStore
      * @param triggerTagEvent
-     * @param pruneDueToLowerBound
+     * @param storageStrategy
+     * @param pruneWithLowerBounds
+     * qparam anonymityPropertyPredictable
      * @return
      */
     public static FLASHConfiguration createBinaryPhaseConfiguration(FLASHPhaseConfiguration config,
-                                                                    NodeAction triggerSnapshotStore,
                                                                     NodeAction triggerTagEvent,
-                                                                    boolean pruneDueToLowerBound) {
-        return new FLASHConfiguration(config, null, triggerSnapshotStore, triggerTagEvent, pruneDueToLowerBound);
+                                                                    StorageStrategy storageStrategy,
+                                                                    boolean pruneWithLowerBounds,
+                                                                    boolean anonymityPropertyPredictable) {
+        return new FLASHConfiguration(config, null, triggerTagEvent, storageStrategy, pruneWithLowerBounds, anonymityPropertyPredictable);
     }
 
     /**
      * Creates a linear-phase only configuration.
      *
      * @param config
-     * @param triggerSnapshotStore
      * @param triggerTagEvent
-     * @param pruneDueToLowerBound
+     * @param storageStrategy
+     * @param pruneWithLowerBounds
+     * qparam anonymityPropertyPredictable
      * @return
      */
     public static FLASHConfiguration createLinearPhaseConfiguration(FLASHPhaseConfiguration config,
-                                                                    NodeAction triggerSnapshotStore,
                                                                     NodeAction triggerTagEvent,
-                                                                    boolean pruneDueToLowerBound) {
-        return new FLASHConfiguration(null, config, triggerSnapshotStore, triggerTagEvent, pruneDueToLowerBound);
+                                                                    StorageStrategy storageStrategy,
+                                                                    boolean pruneWithLowerBounds,
+                                                                    boolean anonymityPropertyPredictable) {
+        return new FLASHConfiguration(null, config, triggerTagEvent, storageStrategy, pruneWithLowerBounds, anonymityPropertyPredictable);
     }
 
     /**
@@ -64,21 +69,24 @@ public class FLASHConfiguration {
      *
      * @param binaryPhaseConfiguration
      * @param linearPhaseConfiguration
-     * @param triggerSnapshotStore
      * @param triggerTagEvent
-     * @param pruneDueToLowerBound
+     * @param storageStrategy
+     * @param pruneWithLowerBounds
+     * qparam anonymityPropertyPredictable
      * @return
      */
     public static FLASHConfiguration createTwoPhaseConfiguration(FLASHPhaseConfiguration binaryPhaseConfiguration,
                                                                  FLASHPhaseConfiguration linearPhaseConfiguration,
-                                                                 NodeAction triggerSnapshotStore,
                                                                  NodeAction triggerTagEvent,
-                                                                 boolean pruneDueToLowerBound) {
+                                                                 StorageStrategy storageStrategy,
+                                                                 boolean pruneWithLowerBounds,
+                                                                 boolean anonymityPropertyPredictable) {
         return new FLASHConfiguration(binaryPhaseConfiguration,
                                       linearPhaseConfiguration,
-                                      triggerSnapshotStore,
                                       triggerTagEvent,
-                                      pruneDueToLowerBound);
+                                      storageStrategy,
+                                      pruneWithLowerBounds,
+                                      anonymityPropertyPredictable);
     }
 
     /** A configuration for the binary phase. */
@@ -91,30 +99,35 @@ public class FLASHConfiguration {
     private final boolean                 pruneInsufficientUtility;
 
     /** A trigger controlling which transformations are snapshotted. */
-    private final NodeAction              triggerSnapshotStore;
+    private final StorageStrategy         storageStrategy;
 
     /** A trigger firing when a tag event should be triggered. */
     private final NodeAction              triggerTagEvent;
+
+    /** Determines whether the anonymity property is predictable */
+    private final boolean                 anonymityPropertyPredictable;
 
     /**
      * Creates a new configuration for the FLASH algorithm.
      *
      * @param binaryPhaseConfiguration
      * @param linearPhaseConfiguration
-     * @param triggerSnapshotStore
      * @param triggerTagEvent
+     * @param storageStrategy
      * @param pruneDueToLowerBound
      */
     private FLASHConfiguration(FLASHPhaseConfiguration binaryPhaseConfiguration,
                                FLASHPhaseConfiguration linearPhaseConfiguration,
-                               NodeAction triggerSnapshotStore,
                                NodeAction triggerTagEvent,
-                               boolean pruneDueToLowerBound) {
+                               StorageStrategy storageStrategy,
+                               boolean pruneDueToLowerBound,
+                               boolean anonymityPropertyPredictable) {
         this.binaryPhaseConfiguration = binaryPhaseConfiguration;
         this.linearPhaseConfiguration = linearPhaseConfiguration;
-        this.triggerSnapshotStore = triggerSnapshotStore;
+        this.storageStrategy = storageStrategy;
         this.triggerTagEvent = triggerTagEvent;
         this.pruneInsufficientUtility = pruneDueToLowerBound;
+        this.anonymityPropertyPredictable = anonymityPropertyPredictable;
     }
 
     /**
@@ -140,8 +153,8 @@ public class FLASHConfiguration {
      *
      * @return
      */
-    public NodeAction getTriggerSnapshotStore() {
-        return triggerSnapshotStore;
+    public StorageStrategy getSnapshotStorageStrategy() {
+        return storageStrategy;
     }
 
     /**
@@ -178,5 +191,13 @@ public class FLASHConfiguration {
      */
     public boolean isPruneInsufficientUtility() {
         return pruneInsufficientUtility;
+    }
+
+    /**
+     * Returns whether or not the anonymity property is predictable
+     * @return
+     */
+    public boolean isAnonymityPropertyPredicable() {
+        return anonymityPropertyPredictable;
     }
 }

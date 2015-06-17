@@ -18,7 +18,7 @@
 package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
@@ -60,7 +60,7 @@ public class MetricSDDiscernability extends MetricSDNMDiscernability {
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         ILSingleDimensional result = super.getLowerBoundInternal(node, g);
         return new ILSingleDimensionalWithBound(result.getValue(), result.getValue());
     }

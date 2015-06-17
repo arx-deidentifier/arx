@@ -36,8 +36,7 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Lattice;
-import org.deidentifier.arx.framework.lattice.LatticeBuilder;
+import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -63,8 +62,8 @@ public class ARXAnonymizer {
         /** The checker. */
         final NodeChecker      checker;
 
-        /** The lattice. */
-        final Lattice           lattice;
+        /** The solution space. */
+        final SolutionSpace solutionSpace;
 
         /** The data manager. */
         final DataManager       manager;
@@ -80,20 +79,20 @@ public class ARXAnonymizer {
          *
          * @param metric the metric
          * @param checker the checker
-         * @param lattice the lattice
+         * @param lattice the solution space
          * @param manager the manager
          * @param algorithm
          * @param time
          */
         Result(final Metric<?> metric,
                final NodeChecker checker,
-               final Lattice lattice,
+               final SolutionSpace solutionSpace,
                final DataManager manager,
                final AbstractAlgorithm algorithm,
                final long time) {
             this.metric = metric;
             this.checker = checker;
-            this.lattice = lattice;
+            this.solutionSpace = solutionSpace;
             this.manager = manager;
             this.algorithm = algorithm;
             this.time = time;
@@ -109,10 +108,10 @@ public class ARXAnonymizer {
 		public ARXResult asResult(ARXConfiguration config, DataHandle handle) {
 
 		    // Create lattice
-	        final ARXLattice flattice = new ARXLattice(lattice,
-	                                                   algorithm.getGlobalOptimum(),
-	                                                   manager.getDataGeneralized().getHeader(),
-	                                                   config.getInternalConfiguration());
+	        final ARXLattice lattice = new ARXLattice(solutionSpace,
+	                                                  algorithm.getGlobalOptimum(),
+	                                                  manager.getDataGeneralized().getHeader(),
+	                                                  config.getInternalConfiguration());
 
 			// Create output handle
 	        ((DataHandleInput)handle).setLocked(true);
@@ -121,8 +120,9 @@ public class ARXAnonymizer {
                                  this.checker,
                                  handle.getDefinition(),
                                  config,
-                                 flattice,
-                                 System.currentTimeMillis() - time);      
+                                 lattice,
+                                 System.currentTimeMillis() - time,
+                                 solutionSpace);      
 		}
     }
 
@@ -518,18 +518,24 @@ public class ARXAnonymizer {
         checkAfterEncoding(config, manager);
 
         // Build or clean the lattice
-        Lattice lattice = new LatticeBuilder(manager.getHierarchiesMaxLevels(), manager.getHierarchiesMinLevels()).build();
-        lattice.setListener(listener);
+        SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMaxLevels(), manager.getHierarchiesMinLevels());
+        solutionSpace.setListener(listener);
 
         // Build a node checker
-        final NodeChecker checker = new NodeChecker(manager, config.getMetric(), config.getInternalConfiguration(), historySize, snapshotSizeDataset, snapshotSizeSnapshot);
+        final NodeChecker checker = new NodeChecker(manager,
+                                                    config.getMetric(),
+                                                    config.getInternalConfiguration(),
+                                                    historySize,
+                                                    snapshotSizeDataset,
+                                                    snapshotSizeSnapshot,
+                                                    solutionSpace);
 
         // Initialize the metric
         config.getMetric().initialize(definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
         // Create an algorithm instance
-        FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());
-        AbstractAlgorithm algorithm = FLASHAlgorithm.create(lattice, checker, strategy);
+        FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
+        AbstractAlgorithm algorithm = FLASHAlgorithm.create(solutionSpace, checker, strategy);
         
         // Execute
 
@@ -541,6 +547,6 @@ public class ARXAnonymizer {
         checker.getHistory().setSize(0);
         
         // Return the result
-        return new Result(config.getMetric(), checker, lattice, manager, algorithm, time);
+        return new Result(config.getMetric(), checker, solutionSpace, manager, algorithm, time);
     }
 }

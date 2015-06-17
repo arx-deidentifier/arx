@@ -46,7 +46,7 @@ public abstract class NodeAction {
         }
 
         @Override
-        public boolean appliesTo(Node node) {
+        public boolean appliesTo(Transformation node) {
             return trigger.appliesTo(node) && additionalConditionAppliesTo(node);
         }
         
@@ -56,7 +56,7 @@ public abstract class NodeAction {
          * @param node
          * @return
          */
-        protected abstract boolean additionalConditionAppliesTo(Node node);
+        protected abstract boolean additionalConditionAppliesTo(Transformation node);
     }
 
     /**
@@ -80,7 +80,7 @@ public abstract class NodeAction {
         }
 
         @Override
-        public boolean appliesTo(Node node) {
+        public boolean appliesTo(Transformation node) {
             return result;
         }
     }
@@ -106,7 +106,7 @@ public abstract class NodeAction {
         }
 
         @Override
-        public boolean appliesTo(Node node) {
+        public boolean appliesTo(Transformation node) {
             return !trigger.appliesTo(node);
         }
     }
@@ -132,7 +132,7 @@ public abstract class NodeAction {
         }
 
         @Override
-        public boolean appliesTo(Node node) {
+        public boolean appliesTo(Transformation node) {
             return trigger.appliesTo(node) || additionalConditionAppliesTo(node);
         }
         
@@ -142,7 +142,7 @@ public abstract class NodeAction {
          * @param node
          * @return
          */
-        protected abstract boolean additionalConditionAppliesTo(Node node);
+        protected abstract boolean additionalConditionAppliesTo(Transformation node);
     }
     
     /**
@@ -150,7 +150,7 @@ public abstract class NodeAction {
      *
      * @param node
      */
-    public void action(Node node) {
+    public void action(Transformation node) {
         // Empty by design
     }
     
@@ -160,14 +160,14 @@ public abstract class NodeAction {
      * @param node
      * @return
      */
-    public abstract boolean appliesTo(Node node);
+    public abstract boolean appliesTo(Transformation node);
     
     /**
      * Applies the trigger to the given node.
      *
      * @param node
      */
-    public final void apply(Node node){
+    public final void apply(Transformation node){
         if (appliesTo(node)) {
             action(node);
         }

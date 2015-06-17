@@ -24,10 +24,11 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.lattice.NodeAction;
+import org.deidentifier.arx.framework.lattice.SolutionSpace;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * The Class History.
@@ -37,54 +38,66 @@ import org.deidentifier.arx.framework.lattice.NodeAction;
  */
 public class History {
     
-    /** Store only non-anonymous transformations. */
-    public static final NodeAction STORAGE_TRIGGER_NON_ANONYMOUS = new NodeAction(){
-        @Override
-        public boolean appliesTo(Node node) {
-            return node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS);
-        }
-    };
+    /**
+     * Two types of storage strategies for the history
+     * @author Fabian Prasser
+     */
+    public static enum StorageStrategy {
+        ALL,
+        NON_ANONYMOUS
+    }
 
-    /** Store all transformations. */
-    public static final NodeAction STORAGE_TRIGGER_ALL = new NodeAction(){
+    /** The actual buffer. */
+    private MRUCache<MRUCacheEntryMetadata> cache                         = null;
+
+    /** Current configuration. */
+    private final ARXConfigurationInternal  config;
+
+    /** The dictionary for frequencies of the distributions. */
+    private final IntArrayDictionary        dictionarySensFreq;
+
+    /** The dictionary for values of the distributions. */
+    private final IntArrayDictionary        dictionarySensValue;
+
+    /** A map from nodes to snapshots. */
+    private HashMap<Long, int[]>            nodeToSnapshot                = null;
+
+    /** The current requirements. */
+    private final int                       requirements;
+
+    /** The node backing the last returned snapshot. */
+    private MRUCacheEntryMetadata           resultMetadata;
+
+    /** Maximal number of entries. */
+    private int                             size;
+
+    /** The snapshotSizeDataset for the size of entries. */
+    private final long                      snapshotSizeDataset;
+
+    /** The snapshotSizeDataset for the minimum required reduction of a snapshot. */
+    private final double                    snapshotSizeSnapshot;
+
+    /** The solution space */
+    private final SolutionSpace             solutionSpace;
+
+    /** Store the results of all types of transformations. */
+    private final NodeAction STORAGE_TRIGGER_ALL = new NodeAction(){
         @Override
-        public boolean appliesTo(Node node) {
+        public boolean appliesTo(Transformation node) {
             return true;
         }
     };
 
-    /** The actual buffer. */
-    private MRUCache<Node>                   cache                         = null;
-
-    /** Current configuration. */
-    private final ARXConfigurationInternal config;
-
-    /** The dictionary for frequencies of the distributions. */
-    private final IntArrayDictionary         dictionarySensFreq;
-
-    /** The dictionary for values of the distributions. */
-    private final IntArrayDictionary         dictionarySensValue;
-
-    /** Maximal number of entries. */
-    private int                              size;
-
-    /** A map from nodes to snapshots. */
-    private HashMap<Node, int[]>             nodeToSnapshot                = null;
+    /** Store only the results of non-anonymous transformations. */
+    private final NodeAction STORAGE_TRIGGER_NON_ANONYMOUS = new NodeAction(){
+        @Override
+        public boolean appliesTo(Transformation node) {
+            return node.hasProperty(solutionSpace.getPropertyNotAnonymous());
+        }
+    };
 
     /** The current storage strategy. */
-    private NodeAction                       storageTrigger;
-
-    /** The current requirements. */
-    private final int                        requirements;
-
-    /** The node backing the last returned snapshot. */
-    private Node                             resultNode;
-
-    /** The snapshotSizeDataset for the size of entries. */
-    private final long                       snapshotSizeDataset;
-
-    /** The snapshotSizeDataset for the minimum required reduction of a snapshot. */
-    private final double                     snapshotSizeSnapshot;
+    private NodeAction                      storageTrigger;
 
     /**
      * Creates a new history.
@@ -96,6 +109,7 @@ public class History {
      * @param config
      * @param dictionarySensValue
      * @param dictionarySensFreq
+     * @param solutionSpace
      */
     public History(final int rowCount,
                    final int size,
@@ -103,67 +117,61 @@ public class History {
                    final double snapshotSizeSnapshot,
                    final ARXConfigurationInternal config,
                    final IntArrayDictionary dictionarySensValue,
-                   final IntArrayDictionary dictionarySensFreq) {
+                   final IntArrayDictionary dictionarySensFreq,
+                   final SolutionSpace solutionSpace) {
         
         this.snapshotSizeDataset = (long) (rowCount * snapshotSizeDataset);
         this.snapshotSizeSnapshot = snapshotSizeSnapshot;
-        this.cache = new MRUCache<Node>(size);
-        this.nodeToSnapshot = new HashMap<Node, int[]>(size);
+        this.cache = new MRUCache<MRUCacheEntryMetadata>(size);
+        this.nodeToSnapshot = new HashMap<Long, int[]>(size);
         this.size = size;
         this.dictionarySensFreq = dictionarySensFreq;
         this.dictionarySensValue = dictionarySensValue;
         this.config = config;
         this.requirements = config.getRequirements();
         this.storageTrigger = STORAGE_TRIGGER_NON_ANONYMOUS;
+        this.solutionSpace = solutionSpace;
     }
-
+    
     /**
      * Retrieves a snapshot.
      * 
-     * @param node
-     *            the node
-     * @return the int[]
+     * @param transformation
+     * @return snapshot
      */
-    public int[] get(final Node node) {
+    public int[] get(final int[] transformation) {
 
-        int[] rData = null;
-        Node rNode = null;
+        // Init
+        int[] resultSnapshot = null;
+        MRUCacheEntryMetadata resultMetadata = null;
+        int level = solutionSpace.getLevel(transformation);
 
-        // Iterate over nodes with snapshots
-        MRUCacheEntry<Node> entry = cache.getHead();
+        // Search
+        MRUCacheEntry<MRUCacheEntryMetadata> entry = cache.getHead();
         while (entry != null) {
-            final Node cNode = entry.data;
-
-            if (cNode.getLevel() < node.getLevel()) {
-                final int[] cSnapshot = nodeToSnapshot.get(cNode);
-
-                if ((rNode == null) || (cSnapshot.length < rData.length)) {
-
-                    boolean synergetic = true;
-                    for (int i = 0; i < cNode.getTransformation().length; i++) {
-                        if (node.getTransformation()[i] < cNode.getTransformation()[i]) {
-                            synergetic = false;
-                            break;
-                        }
-                    }
-                    if (synergetic) {
-                        rNode = cNode;
-                        rData = cSnapshot;
+            MRUCacheEntryMetadata currentMetadata = entry.data;
+            if (currentMetadata.level < level) {
+                final int[] currentSnapshot = nodeToSnapshot.get(currentMetadata.id);
+                if ((resultMetadata == null) || (currentSnapshot.length < resultSnapshot.length)) {
+                    if (solutionSpace.isParentChildOrEqual(transformation, currentMetadata.transformation)) {
+                        resultMetadata = currentMetadata;
+                        resultSnapshot = currentSnapshot;
                     }
                 }
             }
             entry = entry.next;
         }
 
-        if (rNode != null) {
-            cache.touch(rNode);
+        // Manager
+        if (resultMetadata != null) {
+            cache.touch(resultMetadata);
         }
+        this.resultMetadata = resultMetadata;
 
-        resultNode = rNode;
-
-        return rData;
+        // Return
+        return resultSnapshot;
     }
-    
+
     /**
      * Method needed for benchmarking.
      *
@@ -172,7 +180,7 @@ public class History {
     public IntArrayDictionary getDictionarySensFreq() {
         return dictionarySensFreq;
     }
-
+    
     /**
      * Method needed for benchmarking.
      *
@@ -190,16 +198,16 @@ public class History {
     public NodeAction getStorageTrigger() {
         return storageTrigger;
     }
-    
+
     /**
      * Returns the node backing the last returned snapshot.
      *
      * @return
      */
-    public Node getTransformation() {
-        return resultNode;
+    public int[] getTransformation() {
+        return resultMetadata.transformation;
     }
-
+    
     /**
      * Clears the history.
      */
@@ -208,9 +216,9 @@ public class History {
         this.nodeToSnapshot.clear();
         this.dictionarySensFreq.clear();
         this.dictionarySensValue.clear();
-        this.resultNode = null;
+        this.resultMetadata = null;
     }
-    
+
     /**
      * Sets the size of this history.
      *
@@ -221,14 +229,17 @@ public class History {
     }
     
     /**
-     * Set the storage strategy.
-     *
-     * @param trigger
+     * Sets the storage strategy
+     * @param strategy
      */
-    public void setStorageTrigger(NodeAction trigger) {
-        storageTrigger = trigger;
+    public void setStorageStrategy(StorageStrategy strategy) {
+        if (strategy == StorageStrategy.ALL) {
+            this.storageTrigger = STORAGE_TRIGGER_ALL;
+        } else if (strategy == StorageStrategy.NON_ANONYMOUS) {
+            this.storageTrigger = STORAGE_TRIGGER_NON_ANONYMOUS;
+        }
     }
-
+    
     /**
      * 
      *
@@ -247,7 +258,7 @@ public class History {
      * @param snapshot The snapshot that was previously used, if any
      * @return
      */
-    public boolean store(final Node transformation, final HashGroupify groupify, final int[] snapshot) {
+    public boolean store(final Transformation transformation, final HashGroupify groupify, final int[] snapshot) {
 
         // Early abort if too large, or no space
         if (size == 0 || groupify.getNumberOfEquivalenceClasses() > snapshotSizeDataset) {
@@ -261,8 +272,8 @@ public class History {
         }
         
         // Early abort if conditions are not triggered
-        if (!transformation.hasProperty(Node.PROPERTY_FORCE_SNAPSHOT) && 
-            (transformation.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED) || !storageTrigger.appliesTo(transformation))) {
+        if (!transformation.hasProperty(solutionSpace.getPropertyForceSnapshot()) && 
+            (transformation.hasProperty(solutionSpace.getPropertySuccessorsPruned()) || !storageTrigger.appliesTo(transformation))) {
             return false;
         }
         
@@ -279,8 +290,8 @@ public class History {
 
 
         // assign snapshot and keep reference for cache
-        nodeToSnapshot.put(transformation, data);
-        cache.append(transformation);
+        nodeToSnapshot.put(transformation.getId(), data);
+        cache.append(new MRUCacheEntryMetadata(transformation));
 
         return true;
     }
@@ -290,11 +301,11 @@ public class History {
      */
     private final void cleanUpHistory() {
 
-        final Iterator<Node> it = cache.iterator();
-        while (it.hasNext()) {
-            final Node node = it.next();
-            if (node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
-                it.remove();
+        final Iterator<MRUCacheEntryMetadata> metadata = cache.iterator();
+        while (metadata.hasNext()) {
+            final MRUCacheEntryMetadata node = metadata.next();
+            if (solutionSpace.hasProperty(node.transformation, solutionSpace.getPropertySuccessorsPruned())) {
+                metadata.remove();
                 removeHistoryEntry(node);
             }
         }
@@ -355,10 +366,10 @@ public class History {
     /**
      * Removes a snapshot.
      *
-     * @param node
+     * @param metadata
      */
-    private final void removeHistoryEntry(final Node node) {
-        final int[] snapshot = nodeToSnapshot.remove(node);
+    private final void removeHistoryEntry(final MRUCacheEntryMetadata metadata) {
+        final int[] snapshot = nodeToSnapshot.remove(metadata.id);
 
         switch (requirements) {
         case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
@@ -379,6 +390,5 @@ public class History {
                 }
             }
         }
-
     }
 }

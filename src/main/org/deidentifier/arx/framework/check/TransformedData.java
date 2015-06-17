@@ -38,6 +38,9 @@ public class TransformedData {
     /** The group statistic */
     public EquivalenceClassStatistics statistics;
     
+    /** The properties*/
+    public NodeChecker.Result properties;
+    
     /**
      * Instantiate the helper object.
      * 
@@ -45,9 +48,11 @@ public class TransformedData {
      * @param bufferOT
      * @param statistics
      */
-    public TransformedData(Data bufferGH, Data bufferOT, EquivalenceClassStatistics statistics) {
+    public TransformedData(Data bufferGH, Data bufferOT, EquivalenceClassStatistics statistics,
+                           NodeChecker.Result properties) {
         this.bufferGeneralized = bufferGH;
         this.bufferMicroaggregated = bufferOT;
         this.statistics = statistics;
+        this.properties = properties;
     }
 }

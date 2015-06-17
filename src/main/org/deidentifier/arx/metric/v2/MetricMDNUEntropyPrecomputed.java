@@ -24,11 +24,11 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
@@ -121,14 +121,14 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         double[] result = new double[getDimensions()];
         Arrays.fill(result, entry.count);
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
     
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
         double[] result = getInformationLossInternalRaw(node, g);
         
@@ -149,7 +149,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
      * @param g
      * @return
      */
-    protected double[] getInformationLossInternalRaw(final Node node, final HashGroupify g) {
+    protected double[] getInformationLossInternalRaw(final Transformation node, final HashGroupify g) {
 
         // Prepare
         int[][][] cardinalities = this.cardinalities.getCardinalities();
@@ -159,7 +159,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         for (int column = 0; column < hierarchies.length; column++) {
 
             // Check for cached value
-            final int transformation = node.getTransformation()[column];
+            final int transformation = node.getGeneralization()[column];
             double value = cache[column][transformation];
             if (value == NOT_AVAILABLE) {
                 value = 0d;
@@ -182,12 +182,12 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return this.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                                HashGroupify groupify) {
         return this.getLowerBoundInternal(node);
     }

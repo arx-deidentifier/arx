@@ -27,7 +27,7 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.Dictionary;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
 
 import com.carrotsearch.hppc.ObjectIntOpenHashMap;
@@ -568,7 +568,7 @@ public class HashGroupify {
      * @param transformation
      * @param force
      */
-    public void stateAnalyze(Node transformation, boolean force) {
+    public void stateAnalyze(Transformation transformation, boolean force) {
         if (force) analyzeAll(transformation);
         else analyzeWithEarlyAbort(transformation);
     }
@@ -675,7 +675,7 @@ public class HashGroupify {
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
      */
-    private void analyzeAll(Node transformation) {
+    private void analyzeAll(Transformation transformation) {
         
         // We have only checked k-anonymity so far
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
@@ -721,7 +721,7 @@ public class HashGroupify {
      * @param earlyAbort May we perform an early abort, if we reach the threshold
      * @return
      */
-    private void analyzeSampleBasedCriteria(Node transformation, boolean earlyAbort) {
+    private void analyzeSampleBasedCriteria(Transformation transformation, boolean earlyAbort) {
         
         // Nothing to do
         if (this.sampleBasedCriteria.length == 0) {
@@ -751,7 +751,7 @@ public class HashGroupify {
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
      */
-    private void analyzeWithEarlyAbort(Node transformation) {
+    private void analyzeWithEarlyAbort(Transformation transformation) {
         
         // We have only checked k-anonymity so far
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
