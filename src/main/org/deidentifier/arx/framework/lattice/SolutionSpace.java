@@ -391,6 +391,14 @@ public class SolutionSpace {
     }
 
     /**
+     * Returns all transformations in the solution space
+     * @return
+     */
+    public Iterator<Long> unsafeGetAllTransformations() {
+        return lattice.space().indexIteratorToIdIterator(lattice.unsafe().listAllNodes());
+    }
+
+    /**
      * Returns *all* nodes on the given level. This is an unsafe operation that only performs well for "small" spaces.
      * @param level
      * @return
@@ -453,7 +461,7 @@ public class SolutionSpace {
     protected InformationLoss<?> getLowerBound(long identifier) {
         return lowerBound.getOrDefault(identifier, null);
     }
-
+    
     /**
      * Sets data
      * @param id
@@ -463,6 +471,7 @@ public class SolutionSpace {
         data.put(id, object);
     }
     
+
     /**
      * Sets the information loss
      * @param identifier
@@ -472,7 +481,6 @@ public class SolutionSpace {
         utility.put(identifier, loss);
     }
     
-
     /**
      * Sets the lower bound
      * @param identifier
@@ -481,7 +489,7 @@ public class SolutionSpace {
     protected void setLowerBound(long identifier, InformationLoss<?> loss) {
         lowerBound.put(identifier, loss);
     }
-    
+
     /**
      * Internal method that subtracts the offset
      * @param level

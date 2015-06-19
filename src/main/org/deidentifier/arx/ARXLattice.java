@@ -735,7 +735,13 @@ public class ARXLattice implements Serializable {
         final IntObjectOpenHashMap<List<ARXNode>> levels = new IntObjectOpenHashMap<List<ARXNode>>(); 
         int size = 0;
         int maxlevel = 0;
-        for (Iterator<Long> iterator = solutions.getMaterializedTransformations(); iterator.hasNext();) {
+        
+        
+        // TODO: Use this for results from heuristic searches.
+        // TODO: Utility estimator must be redesigned for this to work
+        // for (Iterator<Long> iterator = solutions.getMaterializedTransformations(); iterator.hasNext();) {
+        for (Iterator<Long> iterator = solutions.unsafeGetAllTransformations(); iterator.hasNext();) {
+            
             Transformation transformation = solutions.getTransformation(iterator.next());
             if (!levels.containsKey(transformation.getLevel())) {
                 levels.put(transformation.getLevel(), new ArrayList<ARXNode>());
@@ -760,7 +766,11 @@ public class ARXLattice implements Serializable {
         }
         
         // Create relationships
-        for (Iterator<Long> iterator = solutions.getMaterializedTransformations(); iterator.hasNext();) {
+
+        // TODO: Use this for results from heuristic searches.
+        // TODO: Utility estimator must be redesigned for this to work
+        // for (Iterator<Long> iterator = solutions.getMaterializedTransformations(); iterator.hasNext();) {
+        for (Iterator<Long> iterator = solutions.unsafeGetAllTransformations(); iterator.hasNext();) {
             final long id = iterator.next();
             final ARXNode fnode = map.get(id);
             
