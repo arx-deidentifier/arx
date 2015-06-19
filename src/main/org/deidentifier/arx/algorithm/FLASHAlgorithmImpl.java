@@ -159,7 +159,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 head = checkPath(path, triggerSkip, queue);
 
                 // Second phase
-                if (config.isLinearPhaseRequired() && (head != null)) {
+                if (config.isLinearPhaseRequired() && (head != -1)) {
 
                     // Run linear search on head
                     linearSearch(head);
