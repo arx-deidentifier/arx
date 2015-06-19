@@ -17,9 +17,9 @@
 
 package org.deidentifier.arx.framework.lattice;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.metric.InformationLoss;
 
@@ -209,6 +209,50 @@ public class Transformation {
         for (long id : list.toArray()) {
             lattice.putProperty(lattice.space().toIndex(id), property);
         }
+    }
+    
+
+    /**
+     * Returns a string representation
+     */
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Transformation {\n");
+        builder.append(" - Solution space: ").append(this.solutionSpace.hashCode()).append("\n");
+        builder.append(" - Index: ").append(Arrays.toString(transformationJHPL)).append("\n");
+        builder.append(" - Id: ").append(id).append("\n");
+        builder.append(" - Generalization: ").append(Arrays.toString(transformationARX)).append("\n");
+        builder.append(" - Level: ").append(level).append("\n");
+        builder.append(" - Properties:\n");
+        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyAnonymous())) {
+            builder.append("   * ANONYMOUS: ").append(solutionSpace.getPropertyAnonymous().getDirection()).append("\n");    
+        }
+        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyNotAnonymous())) {
+            builder.append("   * NOT_ANONYMOUS: ").append(solutionSpace.getPropertyNotAnonymous().getDirection()).append("\n");
+        }
+        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyKAnonymous())) {
+            builder.append("   * K_ANONYMOUS: ").append(solutionSpace.getPropertyKAnonymous().getDirection()).append("\n");
+        }
+        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyNotKAnonymous())) {
+            builder.append("   * NOT_K_ANONYMOUS: ").append(solutionSpace.getPropertyNotKAnonymous().getDirection()).append("\n");
+        }
+        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyChecked())) {
+            builder.append("   * CHECKED: ").append(solutionSpace.getPropertyChecked().getDirection()).append("\n");    
+        }
+        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyForceSnapshot())) {
+            builder.append("   * FORCE_SNAPSHOT: ").append(solutionSpace.getPropertyForceSnapshot().getDirection()).append("\n");
+        }
+        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyInsufficientUtility())) {
+            builder.append("   * INSUFFICIENT_UTILITY: ").append(solutionSpace.getPropertyInsufficientUtility().getDirection()).append("\n");
+        }
+        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertySuccessorsPruned())) {
+            builder.append("   * SUCCESSORS_PRUNED: ").append(solutionSpace.getPropertySuccessorsPruned().getDirection()).append("\n");
+        }
+        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyVisited())) {
+            builder.append("   * VISITED: ").append(solutionSpace.getPropertyVisited().getDirection()).append("\n");
+        }
+        builder.append("}");
+        return builder.toString();
     }
 
     /**
