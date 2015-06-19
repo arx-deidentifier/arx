@@ -228,7 +228,6 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             if (!skip(triggerSkip, transformation)) {
 
                 // Check and tag
-                
                 checkAndTag(transformation, config.getBinaryPhaseConfiguration());
 
                 // Add nodes to queue
