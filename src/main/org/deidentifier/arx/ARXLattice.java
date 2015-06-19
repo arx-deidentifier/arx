@@ -352,39 +352,39 @@ public class ARXLattice implements Serializable {
          * Constructor.
          *
          * @param solutions
-         * @param node
+         * @param transformation
          * @param headermap
          */
         private ARXNode(final SolutionSpace solutions, 
-                        final Transformation node, 
+                        final Transformation transformation, 
                         final Map<String, Integer> headermap) {
             
             // Set properties
             this.headermap = headermap;
-            this.transformation = node.getGeneralization();
-            this.minInformationLoss = node.getInformationLoss();
-            this.maxInformationLoss = node.getInformationLoss();
-            this.lowerBound = node.getLowerBound();
-            this.checked = node.hasProperty(solutions.getPropertyChecked());
+            this.transformation = transformation.getGeneralization();
+            this.minInformationLoss = transformation.getInformationLoss();
+            this.maxInformationLoss = transformation.getInformationLoss();
+            this.lowerBound = transformation.getLowerBound();
+            this.checked = transformation.hasProperty(solutions.getPropertyChecked());
             
             // Transfer anonymity property without uncertainty
-            if (node.hasProperty(solutions.getPropertyChecked())){
-                if (node.hasProperty(solutions.getPropertyAnonymous())) {
+            if (transformation.hasProperty(solutions.getPropertyChecked())){
+                if (transformation.hasProperty(solutions.getPropertyAnonymous())) {
                     this.anonymity = Anonymity.ANONYMOUS;
-                } else if(node.hasProperty(solutions.getPropertyNotAnonymous())) {
+                } else if(transformation.hasProperty(solutions.getPropertyNotAnonymous())) {
                     this.anonymity = Anonymity.NOT_ANONYMOUS;
-                } else {
+                } else {                  
                     throw new IllegalStateException("Missing node information");
                 }
             // This is a node for which the property is unknown
             } else {
-                if (node.hasProperty(solutions.getPropertyAnonymous())) {
+                if (transformation.hasProperty(solutions.getPropertyAnonymous())) {
                     this.anonymity = uncertainty ? Anonymity.PROBABLY_ANONYMOUS : Anonymity.ANONYMOUS;
-                } else if (node.hasProperty(solutions.getPropertyNotAnonymous())) {
+                } else if (transformation.hasProperty(solutions.getPropertyNotAnonymous())) {
                     this.anonymity = uncertainty ? Anonymity.PROBABLY_NOT_ANONYMOUS : Anonymity.NOT_ANONYMOUS;
-                } else if (node.hasProperty(solutions.getPropertyNotKAnonymous())) {
+                } else if (transformation.hasProperty(solutions.getPropertyNotKAnonymous())) {
                     this.anonymity = Anonymity.NOT_ANONYMOUS;
-                } else if (node.hasProperty(solutions.getPropertyInsufficientUtility())) {
+                } else if (transformation.hasProperty(solutions.getPropertyInsufficientUtility())) {
                     this.anonymity = Anonymity.UNKNOWN;
                 } else {
                     throw new IllegalStateException("Missing node information");
@@ -751,7 +751,7 @@ public class ARXLattice implements Serializable {
         }
         this.size = size;
         this.levels = new ARXNode[maxlevel+1][];
-        for (int i = 0; i < this.levels.length - 1; i++) {
+        for (int i = 0; i < this.levels.length; i++) {
             if (levels.containsKey(i)) {
                 this.levels[i] = levels.get(i).toArray(new ARXNode[levels.get(i).size()]);
             } else {
@@ -767,10 +767,16 @@ public class ARXLattice implements Serializable {
             List<ARXNode> successors = new ArrayList<ARXNode>();
             List<ARXNode> predecessors = new ArrayList<ARXNode>();
             for (Iterator<Long> iter1 = solutions.getSuccessors(id); iter1.hasNext();) {
-                successors.add(map.get(iter1.next()));
+                ARXNode node = map.get(iter1.next());
+                if (node != null) {
+                    successors.add(node);
+                }
             }
             for (Iterator<Long> iter2 = solutions.getPredecessors(id); iter2.hasNext();) {
-                predecessors.add(map.get(iter2.next()));
+                ARXNode node = map.get(iter2.next());
+                if (node != null) {
+                    predecessors.add(node);
+                }
             }
             
             fnode.successors = successors.toArray(new ARXNode[successors.size()]);
