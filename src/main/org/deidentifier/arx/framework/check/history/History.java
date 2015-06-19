@@ -205,7 +205,11 @@ public class History {
      * @return
      */
     public int[] getTransformation() {
-        return resultMetadata.transformation;
+        if (resultMetadata == null) {
+            return null;
+        } else {
+            return resultMetadata.transformation;
+        }
     }
     
     /**
