@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import org.deidentifier.arx.algorithm.FLASHPhaseConfiguration.PhaseAnonymityProperty;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.NodeAction;
@@ -209,7 +210,8 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     private int checkPath(List<Integer> path, NodeAction triggerSkip, PriorityQueue<Integer> queue) {
 
         // Obtain anonymity property
-        PredictiveProperty anonymityProperty = config.getBinaryPhaseConfiguration().getAnonymityProperty();
+        PredictiveProperty anonymityProperty = config.getBinaryPhaseConfiguration().getAnonymityProperty() == PhaseAnonymityProperty.ANONYMITY ?
+                                               solutionSpace.getPropertyAnonymous() : solutionSpace.getPropertyKAnonymous();
 
         // Init
         int low = 0;
@@ -250,6 +252,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 high = mid - 1;
             }
         }
+        
         return lastAnonymousIdentifier;
     }
 

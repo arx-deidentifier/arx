@@ -19,8 +19,6 @@ package org.deidentifier.arx.algorithm;
 
 import org.deidentifier.arx.framework.lattice.NodeAction;
 
-import de.linearbits.jhpl.PredictiveProperty;
-
 /**
  * This class parameterizes a phase the interwoven two-phase Flash algorithm.
  *
@@ -30,19 +28,25 @@ import de.linearbits.jhpl.PredictiveProperty;
 public class FLASHPhaseConfiguration {
 
     /** A trigger for tagging nodes in this phase. */
-    private final NodeAction         triggerTag;
+    private final NodeAction             triggerTag;
 
     /** A trigger for checking nodes in this phase. */
-    private final NodeAction         triggerCheck;
+    private final NodeAction             triggerCheck;
 
     /** A trigger for evaluating nodes in this phase. */
-    private final NodeAction         triggerEvaluate;
+    private final NodeAction             triggerEvaluate;
 
     /** A trigger for skipping nodes in this phase. */
-    private final NodeAction         triggerSkip;
+    private final NodeAction             triggerSkip;
 
     /** The main anonymity property. */
-    private final PredictiveProperty anonymityProperty;
+    private final PhaseAnonymityProperty anonymityProperty;
+
+    /** The main anonymity property. */
+    public static enum PhaseAnonymityProperty {
+        K_ANONYMITY,
+        ANONYMITY
+    }
 
     /**
      * Creates a configuration for an active phase.
@@ -53,7 +57,7 @@ public class FLASHPhaseConfiguration {
      * @param triggerEvaluate
      * @param triggerSkip
      */
-    public FLASHPhaseConfiguration(PredictiveProperty anonymityProperty,
+    public FLASHPhaseConfiguration(PhaseAnonymityProperty anonymityProperty,
                                    NodeAction triggerTag,
                                    NodeAction triggerCheck,
                                    NodeAction triggerEvaluate,
@@ -70,7 +74,7 @@ public class FLASHPhaseConfiguration {
      *
      * @return
      */
-    public PredictiveProperty getAnonymityProperty() {
+    public PhaseAnonymityProperty getAnonymityProperty() {
         return anonymityProperty;
     }
 

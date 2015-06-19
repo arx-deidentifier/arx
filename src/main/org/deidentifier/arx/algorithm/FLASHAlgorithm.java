@@ -18,6 +18,7 @@
 package org.deidentifier.arx.algorithm;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
+import org.deidentifier.arx.algorithm.FLASHPhaseConfiguration.PhaseAnonymityProperty;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
@@ -28,8 +29,6 @@ import org.deidentifier.arx.framework.lattice.NodeAction.NodeActionOR;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
-
-import de.linearbits.jhpl.PredictiveProperty;
 
 /**
  * This class provides a static method for instantiating the FLASH algorithm.
@@ -155,7 +154,7 @@ public class FLASHAlgorithm {
                                                     final FLASHStrategy strategy) {
 
         // We focus on the anonymity property
-        PredictiveProperty anonymityProperty = solutionSpace.getPropertyAnonymous();
+        PhaseAnonymityProperty anonymityProperty = PhaseAnonymityProperty.ANONYMITY;
 
         // Skip nodes for which the anonymity property is known
         NodeAction triggerSkip = new NodeAction() {
@@ -229,7 +228,7 @@ public class FLASHAlgorithm {
          */
 
         // We focus on the anonymity property
-        PredictiveProperty binaryAnonymityProperty = solutionSpace.getPropertyAnonymous();
+        PhaseAnonymityProperty binaryAnonymityProperty = PhaseAnonymityProperty.ANONYMITY;
 
         // Skip nodes for which the anonymity property is known
         NodeAction binaryTriggerSkip = new NodeAction() {
@@ -268,7 +267,7 @@ public class FLASHAlgorithm {
          */
 
         // We focus on the anonymity property
-        PredictiveProperty linearAnonymityProperty = solutionSpace.getPropertyAnonymous();
+        PhaseAnonymityProperty linearAnonymityProperty = PhaseAnonymityProperty.ANONYMITY;
 
         // We skip nodes which are not anonymous or which have already been visited during the second phase
         NodeAction linearTriggerSkip = new NodeAction() {
@@ -352,7 +351,7 @@ public class FLASHAlgorithm {
                                                     final FLASHStrategy strategy) {
 
         // We focus on the anonymity property
-        PredictiveProperty anonymityProperty = solutionSpace.getPropertyAnonymous();
+        PhaseAnonymityProperty anonymityProperty = PhaseAnonymityProperty.ANONYMITY;
 
         // We skip nodes for which the anonymity property is known or which have insufficient utility
         NodeAction triggerSkip = new NodeAction() {
@@ -416,7 +415,7 @@ public class FLASHAlgorithm {
                                                     FLASHStrategy strategy) {
 
         // We focus on the anonymity property
-        PredictiveProperty anonymityProperty = solutionSpace.getPropertyAnonymous();
+        PhaseAnonymityProperty anonymityProperty = PhaseAnonymityProperty.ANONYMITY;
 
         // Skip nodes for which the anonymity property is known
         NodeAction triggerSkip = new NodeAction() {
@@ -469,7 +468,7 @@ public class FLASHAlgorithm {
          */
 
         // We focus on the k-anonymity property
-        PredictiveProperty binaryAnonymityProperty = solutionSpace.getPropertyKAnonymous();
+        PhaseAnonymityProperty binaryAnonymityProperty = PhaseAnonymityProperty.K_ANONYMITY;
 
         // Skip nodes for which the k-anonymity property is known or which have insufficient utility
         NodeAction binaryTriggerSkip = new NodeAction() {
@@ -518,7 +517,7 @@ public class FLASHAlgorithm {
          */
 
         // We focus on the anonymity property
-        PredictiveProperty linearAnonymityProperty = solutionSpace.getPropertyAnonymous();
+        PhaseAnonymityProperty linearAnonymityProperty = PhaseAnonymityProperty.ANONYMITY;
 
         // We skip nodes for which the anonymity property is known, which are not k-anonymous,
         // or which have insufficient utility
@@ -607,7 +606,7 @@ public class FLASHAlgorithm {
          */
 
         // We focus on the k-anonymity property
-        PredictiveProperty binaryAnonymityProperty = solutionSpace.getPropertyKAnonymous();
+        PhaseAnonymityProperty binaryAnonymityProperty = PhaseAnonymityProperty.K_ANONYMITY;
 
         // Skip nodes for which the k-anonymity property is known
         NodeAction binaryTriggerSkip = new NodeAction() {
@@ -646,7 +645,7 @@ public class FLASHAlgorithm {
          */
 
         // We focus on the anonymity property
-        PredictiveProperty linearAnonymityProperty = solutionSpace.getPropertyAnonymous();
+        PhaseAnonymityProperty linearAnonymityProperty = PhaseAnonymityProperty.ANONYMITY;
 
         // We skip nodes for which are not k-anonymous and which have not been visited yet in the 2nd phase
         NodeAction linearTriggerSkip = new NodeAction() {
