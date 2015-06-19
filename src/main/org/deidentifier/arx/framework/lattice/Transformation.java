@@ -19,8 +19,11 @@ package org.deidentifier.arx.framework.lattice;
 
 import java.util.Iterator;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.metric.InformationLoss;
+
+import com.carrotsearch.hppc.LongArrayList;
 
 import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
@@ -191,16 +194,20 @@ public class Transformation {
      * @param property
      */
     public void setPropertyToNeighbours(PredictiveProperty property) {
-        Iterator<int[]> neighbors;
+        Iterator<Long> neighbors;
         if (property.getDirection() == Direction.UP) {
-            neighbors = lattice.nodes().listSuccessors(transformationJHPL);
+            neighbors = lattice.space().indexIteratorToIdIterator(lattice.nodes().listSuccessors(transformationJHPL));
         } else if (property.getDirection() == Direction.DOWN) {
-            neighbors = lattice.nodes().listPredecessors(transformationJHPL);
+            neighbors = lattice.space().indexIteratorToIdIterator(lattice.nodes().listPredecessors(transformationJHPL));
         } else {
             return;
         }
+        LongArrayList list = new LongArrayList();
         for (;neighbors.hasNext();) {
-            lattice.putProperty(neighbors.next(), property);
+            list.add(neighbors.next());
+        }
+        for (long id : list.toArray()) {
+            lattice.putProperty(lattice.space().toIndex(id), property);
         }
     }
 
