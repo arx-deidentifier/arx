@@ -94,7 +94,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         }
 
         // Set some triggers
-        solutionSpace.setTagTrigger(config.getTriggerTagEvent());
+        solutionSpace.setListenerTrigger(config.getTriggerTagEvent());
         checker.getHistory().setStorageStrategy(config.getSnapshotStorageStrategy());
 
         // Initialize

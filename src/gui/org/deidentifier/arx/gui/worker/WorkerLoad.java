@@ -34,6 +34,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
@@ -45,6 +46,7 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
+import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
@@ -288,6 +290,7 @@ public class WorkerLoad extends Worker<Model> {
             model.setSelectedNode(outputNode);
             
             // Update model
+            ARXConfiguration arxconfig = model.getOutputConfig().getConfig();
             model.setResult(new ARXResult(config.getInput().getHandle(),
                                           definition,
                                           lattice,
@@ -295,9 +298,10 @@ public class WorkerLoad extends Worker<Model> {
                                           snapshotSizeSnapshot,
                                           snapshotSizeDataset,
                                           metric,
-                                          model.getOutputConfig().getConfig(),
+                                          arxconfig,
                                           optimalNode,
-                                          time));
+                                          time,
+                                          new SolutionSpace(lattice, arxconfig)));
 
             // Create anonymizer
             final ARXAnonymizer f = new ARXAnonymizer();

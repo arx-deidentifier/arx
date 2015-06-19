@@ -17,49 +17,111 @@
 
 package org.deidentifier.arx.framework.lattice;
 
+import java.util.Iterator;
+
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.metric.InformationLoss;
 
+import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
 import de.linearbits.jhpl.PredictiveProperty.Direction;
 
 /**
- * The Class Node.
+ * The class Transformation.
  * 
  * @author Fabian Prasser
- * @author Florian Kohlmayer
  */
 public class Transformation {
 
     /** The id. */
-    private long           id;
-    
-    public long getId() {
-        
-    }
-    
-    public long[] getPredecessors() {
-        
-    }
-    
-    public long[] getSuccessors() {
-        
-    }
-    
-    public InformationLoss<?> getInformationLoss() {
+    private final long                      id;
+
+    /** The lattice */
+    private final Lattice<Integer, Integer> lattice;
+
+    /** The level */
+    private final int                       level;
+
+    /** The solution space */
+    private final SolutionSpace             solutionSpace;
+
+    /** Transformation in ARX's space */
+    private final int[]                     transformationARX;
+
+    /** Transformation in JHPL's space */
+    private final int[]                     transformationJHPL;
+
+    /**
+     * Instantiates a new transformation.
+     * @param transformation In ARX space
+     * @param lattice
+     * @param solutionSpace 
+     */
+    public Transformation(int[] transformation, Lattice<Integer, Integer> lattice, SolutionSpace solutionSpace) {
+        this.lattice = lattice;
+        this.solutionSpace = solutionSpace;
+        this.transformationARX = transformation;
+        this.transformationJHPL = solutionSpace.toJHPL(transformation);
+        this.level = getLevel(transformationARX);
+        this.id = lattice.space().toId(transformationJHPL);
         
     }
 
-    public InformationLoss<?> getLowerBound() {
-        
-    }
-
-    public int[] getGeneralization() {
-        
-    }
-    
+    /**
+     * Returns associated data
+     * @return
+     */
     public Object getData() {
-        
+        return this.solutionSpace.getData(this.id);
+    }
+
+    /**
+     * Returns the generalization
+     * @return
+     */
+    public int[] getGeneralization() {
+        return this.transformationARX;
+    }
+    
+    /**
+     * Returns the id
+     * @return
+     */
+    public long getId() {
+        return id;
+    }
+
+    /**
+     * Returns the information loss
+     * @return
+     */
+    public InformationLoss<?> getInformationLoss() {
+        return solutionSpace.getInformationLoss(this.id);
+    }
+
+    /**
+     * Return level
+     * @return
+     */
+    public int getLevel() {
+        return level;
+    }
+    
+    /**
+     * Returns the lower bound on information loss
+     * @return
+     */
+    public InformationLoss<?> getLowerBound() {
+        return solutionSpace.getLowerBound(this.id);
+    }
+
+    /**
+     * Returns whether this transformation has a given property
+     * @param property
+     * @return
+     */
+    public boolean hasProperty(PredictiveProperty property) {
+        return this.lattice.hasProperty(this.transformationJHPL, property);
     }
 
     /**
@@ -71,58 +133,84 @@ public class Transformation {
     public void setChecked(NodeChecker.Result result) {
         
         // Set checked
-        setProperty(node, Transformation.PROPERTY_CHECKED);
+        this.setProperty(solutionSpace.getPropertyChecked());
         
         // Anonymous
         if (result.privacyModelFulfilled){
-            setProperty(node, Transformation.PROPERTY_ANONYMOUS);
+            this.setProperty(solutionSpace.getPropertyAnonymous());
         } else {
-            setProperty(node, Transformation.PROPERTY_NOT_ANONYMOUS);
+            this.setProperty(solutionSpace.getPropertyNotAnonymous());
         }
 
         // k-Anonymous
         if (result.minimalClassSizeFulfilled){
-            setProperty(node, Transformation.PROPERTY_K_ANONYMOUS);
+            this.setProperty(solutionSpace.getPropertyKAnonymous());
         } else {
-            setProperty(node, Transformation.PROPERTY_NOT_K_ANONYMOUS);
+            this.setProperty(solutionSpace.getPropertyNotKAnonymous());
         }
 
         // Infoloss
-        node.setInformationLoss(result.informationLoss);
-        node.setLowerBound(result.lowerBound);
+        this.setInformationLoss(result.informationLoss);
+        this.setLowerBound(result.lowerBound);
     }
 
-    public int getLevel() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    public void setInformationLoss(InformationLoss<?> informationLoss) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    public void setLowerBound(InformationLoss<?> lowerBound) {
-        // TODO Auto-generated method stub
-        
-    }
-
+    /**
+     * Sets a data
+     * @param object
+     */
     public void setData(Object object) {
-        // TODO Auto-generated method stub
-        
+        this.solutionSpace.setData(this.id, object);
     }
 
-    public boolean hasProperty(PredictiveProperty property) {
-        // TODO Auto-generated method stub
-        return false;
+    /**
+     * Sets the information loss
+     * @param informationLoss
+     */
+    public void setInformationLoss(InformationLoss<?> informationLoss) {
+        this.solutionSpace.setInformationLoss(this.id, informationLoss);
     }
 
+    /**
+     * Sets the lower bound
+     * @param lowerBound
+     */
+    public void setLowerBound(InformationLoss<?> lowerBound) {
+        this.solutionSpace.setLowerBound(this.id, lowerBound);
+    }
+
+    /**
+     * Sets a property
+     * @param property
+     */
     public void setProperty(PredictiveProperty property) {
-        // TODO Auto-generated method stub
-        
+        this.lattice.putProperty(this.transformationJHPL, property);
     }
 
+    /**
+     * Sets the property to all neighbors
+     * @param property
+     */
     public void setPropertyToNeighbours(PredictiveProperty property) {
-        // Excludes the node itself
+        Iterator<int[]> neighbors;
+        if (property.getDirection() == Direction.UP) {
+            neighbors = lattice.nodes().listSuccessors(transformationJHPL);
+        } else if (property.getDirection() == Direction.DOWN) {
+            neighbors = lattice.nodes().listPredecessors(transformationJHPL);
+        } else {
+            return;
+        }
+        for (;neighbors.hasNext();) {
+            lattice.putProperty(neighbors.next(), property);
+        }
+    }
+
+    /**
+     * Returns the sum of all transformation levels;
+     * @param transformation
+     * @return
+     */
+    private int getLevel(int[] transformation) {
+        int level = 0; for (int lvl : transformation) level += lvl;
+        return level;
     }
 }

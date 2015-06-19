@@ -518,7 +518,7 @@ public class ARXAnonymizer {
         checkAfterEncoding(config, manager);
 
         // Build or clean the lattice
-        SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMaxLevels(), manager.getHierarchiesMinLevels());
+        SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
         solutionSpace.setListener(listener);
 
         // Build a node checker

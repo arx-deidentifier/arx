@@ -20,15 +20,21 @@ package org.deidentifier.arx;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
-import org.deidentifier.arx.framework.lattice.Lattice;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.SolutionSpace;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
+
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
+import com.carrotsearch.hppc.LongObjectOpenHashMap;
 
 /**
  * This class implements a representation of the generalization lattice that is
@@ -47,14 +53,14 @@ public class ARXLattice implements Serializable {
      */
     public class Access implements Serializable {
 
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = 6654627605797832468L;
 
-        /**  TODO */
+        /**  Lattice */
         private final ARXLattice  lattice;
 
         /**
-         * 
+         * Constructor
          *
          * @param lattice
          */
@@ -150,19 +156,19 @@ public class ARXLattice implements Serializable {
      */
     public static enum Anonymity {
         
-        /**  TODO */
+        /**  ANONYMOUS */
         ANONYMOUS,
         
-        /**  TODO */
+        /**  NOT_ANONYMOUS */
         NOT_ANONYMOUS,
         
-        /**  TODO */
+        /**  UNKNOWN */
         UNKNOWN,
         
-        /**  TODO */
+        /**  PROBABLY_ANONYMOUS */
         PROBABLY_ANONYMOUS,
         
-        /**  TODO */
+        /**  PROBABLY_NOT_ANONYMOUS */
         PROBABLY_NOT_ANONYMOUS
     }
 
@@ -182,7 +188,7 @@ public class ARXLattice implements Serializable {
          */
         public class Access {
 
-            /**  TODO */
+            /**  Node */
             private final ARXNode node;
 
             /**
@@ -345,10 +351,13 @@ public class ARXLattice implements Serializable {
         /**
          * Constructor.
          *
+         * @param solutions
          * @param node
          * @param headermap
          */
-        private ARXNode(final Node node, final Map<String, Integer> headermap) {
+        private ARXNode(final SolutionSpace solutions, 
+                        final Transformation node, 
+                        final Map<String, Integer> headermap) {
             
             // Set properties
             this.headermap = headermap;
@@ -356,26 +365,26 @@ public class ARXLattice implements Serializable {
             this.minInformationLoss = node.getInformationLoss();
             this.maxInformationLoss = node.getInformationLoss();
             this.lowerBound = node.getLowerBound();
-            this.checked = node.hasProperty(Node.PROPERTY_CHECKED);
+            this.checked = node.hasProperty(solutions.getPropertyChecked());
             
             // Transfer anonymity property without uncertainty
-            if (node.hasProperty(Node.PROPERTY_CHECKED)){
-                if (node.hasProperty(Node.PROPERTY_ANONYMOUS)) {
+            if (node.hasProperty(solutions.getPropertyChecked())){
+                if (node.hasProperty(solutions.getPropertyAnonymous())) {
                     this.anonymity = Anonymity.ANONYMOUS;
-                } else if(node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS)) {
+                } else if(node.hasProperty(solutions.getPropertyNotAnonymous())) {
                     this.anonymity = Anonymity.NOT_ANONYMOUS;
                 } else {
                     throw new IllegalStateException("Missing node information");
                 }
             // This is a node for which the property is unknown
             } else {
-                if (node.hasProperty(Node.PROPERTY_ANONYMOUS)) {
+                if (node.hasProperty(solutions.getPropertyAnonymous())) {
                     this.anonymity = uncertainty ? Anonymity.PROBABLY_ANONYMOUS : Anonymity.ANONYMOUS;
-                } else if (node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS)) {
+                } else if (node.hasProperty(solutions.getPropertyNotAnonymous())) {
                     this.anonymity = uncertainty ? Anonymity.PROBABLY_NOT_ANONYMOUS : Anonymity.NOT_ANONYMOUS;
-                } else if (node.hasProperty(Node.PROPERTY_NOT_K_ANONYMOUS)) {
+                } else if (node.hasProperty(solutions.getPropertyNotKAnonymous())) {
                     this.anonymity = Anonymity.NOT_ANONYMOUS;
-                } else if (node.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
+                } else if (node.hasProperty(solutions.getPropertyInsufficientUtility())) {
                     this.anonymity = Anonymity.UNKNOWN;
                 } else {
                     throw new IllegalStateException("Missing node information");
@@ -582,30 +591,30 @@ public class ARXLattice implements Serializable {
     /**
      * Context for deserialization.
      *
-     * @author kohlmayer
+     * @author Florian Kohlmayer
      */
     public static class LatticeDeserializationContext {
         
-        /**  TODO */
+        /**  Min level */
         public int minLevel = 0;
         
-        /**  TODO */
+        /**  Max level */
         public int maxLevel = 0;
     }
     
     /**
-     * 
+     * For using int arrays as keys in maps
      */
     class IntArrayWrapper {
 
-        /**  TODO */
+        /**  Value */
         private final int[] array;
         
-        /**  TODO */
+        /**  Hash code */
         private final int   hashCode;
 
         /**
-         * 
+         * Constructor
          *
          * @param array
          */
@@ -645,7 +654,7 @@ public class ARXLattice implements Serializable {
     /** Deserialization context. */
     private static LatticeDeserializationContext deserializationContext = new LatticeDeserializationContext();
 
-    /**  TODO */
+    /**  SVUID */
     private static final long     serialVersionUID                  = -8790104959905019184L;
 
     /**
@@ -696,13 +705,13 @@ public class ARXLattice implements Serializable {
     /**
      * Constructor.
      *
-     * @param lattice The lattice to represent
-     * @param globalOptimum
+     * @param solutions The solution space
+     * @param optimum The optimum
      * @param header The header
      * @param config The config
      */
-    ARXLattice(final Lattice lattice,
-               final Node globalOptimum,
+    ARXLattice(final SolutionSpace solutions,
+               final Transformation optimum,
                final String[] header,
                final ARXConfigurationInternal config) {
 
@@ -722,40 +731,55 @@ public class ARXLattice implements Serializable {
         }
 
         // Create nodes
-        final Map<Node, ARXNode> map = new HashMap<Node, ARXNode>();
-        size = lattice.getSize();
-        levels = new ARXNode[lattice.getLevels().length][];
-        for (int i = 0; i < lattice.getLevels().length; i++) {
-            final Node[] level = lattice.getLevels()[i];
-            levels[i] = new ARXNode[level.length];
-            for (int j = 0; j < level.length; j++) {
-                final ARXNode node = new ARXNode(level[j], headermap);
-                if (level[j] == globalOptimum) {
-                    optimum = node;
-                }
-                levels[i][j] = node;
-                map.put(level[j], node);
+        final LongObjectOpenHashMap<ARXNode> map = new LongObjectOpenHashMap<ARXNode>();
+        final IntObjectOpenHashMap<List<ARXNode>> levels = new IntObjectOpenHashMap<List<ARXNode>>(); 
+        int size = 0;
+        int maxlevel = 0;
+        for (Iterator<Long> iterator = solutions.getMaterializedTransformations(); iterator.hasNext();) {
+            Transformation transformation = solutions.getTransformation(iterator.next());
+            if (!levels.containsKey(transformation.getLevel())) {
+                levels.put(transformation.getLevel(), new ArrayList<ARXNode>());
+            }
+            ARXNode node = new ARXNode(solutions, transformation, headermap);
+            size++;
+            map.put(transformation.getId(), node);
+            levels.get(transformation.getLevel()).add(node);
+            if (transformation.getId() == optimum.getId()) {
+                this.optimum = node;
+            }
+            maxlevel = Math.max(maxlevel, transformation.getLevel());
+        }
+        this.size = size;
+        this.levels = new ARXNode[maxlevel+1][];
+        for (int i = 0; i < this.levels.length - 1; i++) {
+            if (levels.containsKey(i)) {
+                this.levels[i] = levels.get(i).toArray(new ARXNode[levels.get(i).size()]);
+            } else {
+                this.levels[i] = new ARXNode[0];
             }
         }
-
+        
         // Create relationships
-        for (final Node[] level : lattice.getLevels()) {
-            for (final Node node : level) {
-                final ARXNode fnode = map.get(node);
-                fnode.successors = new ARXNode[node.getSuccessors().length];
-                fnode.predecessors = new ARXNode[node.getPredecessors().length];
-                for (int i = 0; i < node.getSuccessors().length; i++) {
-                    fnode.successors[i] = map.get(node.getSuccessors()[i]);
-                }
-                for (int i = 0; i < node.getPredecessors().length; i++) {
-                    fnode.predecessors[i] = map.get(node.getPredecessors()[i]);
-                }
+        for (Iterator<Long> iterator = solutions.getMaterializedTransformations(); iterator.hasNext();) {
+            final long id = iterator.next();
+            final ARXNode fnode = map.get(id);
+            
+            List<ARXNode> successors = new ArrayList<ARXNode>();
+            List<ARXNode> predecessors = new ArrayList<ARXNode>();
+            for (Iterator<Long> iter1 = solutions.getSuccessors(id); iter1.hasNext();) {
+                successors.add(map.get(iter1.next()));
             }
+            for (Iterator<Long> iter2 = solutions.getPredecessors(id); iter2.hasNext();) {
+                predecessors.add(map.get(iter2.next()));
+            }
+            
+            fnode.successors = successors.toArray(new ARXNode[successors.size()]);
+            fnode.predecessors = predecessors.toArray(new ARXNode[predecessors.size()]);
         }
-
+        
         // find bottom node
-        outer: for (int i = 0; i < levels.length; i++) {
-            final ARXNode[] level = levels[i];
+        outer: for (int i = 0; i < this.levels.length; i++) {
+            final ARXNode[] level = this.levels[i];
             for (int j = 0; j < level.length; j++) {
                 final ARXNode node = level[j];
                 if (node != null) {
@@ -766,8 +790,8 @@ public class ARXLattice implements Serializable {
         }
 
         // find top node
-        outer: for (int i = levels.length - 1; i >= 0; i--) {
-            final ARXNode[] level = levels[i];
+        outer: for (int i = this.levels.length - 1; i >= 0; i--) {
+            final ARXNode[] level = this.levels[i];
             for (int j = 0; j < level.length; j++) {
                 final ARXNode node = level[j];
                 if (node != null) {
