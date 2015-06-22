@@ -35,6 +35,8 @@ import org.junit.Test;
 
 /**
  * 
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class TestSolutionSpaceClassification extends AbstractTest {
 
