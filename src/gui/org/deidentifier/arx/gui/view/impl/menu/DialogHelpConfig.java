@@ -26,7 +26,7 @@ import org.deidentifier.arx.gui.resources.Resources;
  * @author Fabian Prasser
  */
 public class DialogHelpConfig {
-
+    
     /**
      * An entry in the help dialog.
      *
@@ -34,13 +34,13 @@ public class DialogHelpConfig {
      */
     public static class Entry {
         
-        /**  ID */
+        /** ID */
         public final String id;
         
-        /**  Title */
+        /** Title */
         public final String title;
         
-        /**  URL */
+        /** URL */
         public final String url;
         
         /**
@@ -57,85 +57,107 @@ public class DialogHelpConfig {
         }
     }
     
-    /**  Entries */
+    /** Entries */
     private List<Entry> entries = new ArrayList<Entry>();
     
     /**
      * Creates a new config.
      */
-    public DialogHelpConfig(){
+    public DialogHelpConfig() {
+        
+        final String version = Resources.getVersion();
         
         entries.add(new Entry("id-70", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.0"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1082&content-only=1&css=1")); //$NON-NLS-1$
-
+                              "http://arx.deidentifier.org/help/v" + version + "/perspectives.html")); //$NON-NLS-1$
+        
+        entries.add(new Entry("id-71", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.2"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/perspectives_configuration.html")); //$NON-NLS-1$
+        
+        entries.add(new Entry("id-72", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.3"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/perspectives_exploration.html")); //$NON-NLS-1$
+        
+        entries.add(new Entry("id-73", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.4"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/perspectives_utility.html")); //$NON-NLS-1$
+        
+        entries.add(new Entry("id-74", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.5"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/perspectives_risk.html")); //$NON-NLS-1$
+        
+        entries.add(new Entry("id-75", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.6"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/perspectives_import.html")); //$NON-NLS-1$
+        
         entries.add(new Entry("id-140", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.1"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1055&content-only=1&css=1")); //$NON-NLS-1$
-
+                              "http://arx.deidentifier.org/help/v" + version + "/configuration/inputdata.html")); //$NON-NLS-1$
+        
         entries.add(new Entry("id-3", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.7"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1076&content-only=1&css=1")); //$NON-NLS-1$
-
+                              "http://arx.deidentifier.org/help/v" + version + "/configuration/overview.html")); //$NON-NLS-1$
+        
         entries.add(new Entry("id-1", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.10"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1074&content-only=1&css=1")); //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/configuration/attributes.html")); //$NON-NLS-1$
         
         entries.add(new Entry("id-51", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.13"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=3638&content-only=1&css=1")); //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/configuration/generalization_hierarchies.html")); //$NON-NLS-1$
         
         entries.add(new Entry("id-80", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.16"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1059&content-only=1&css=1")); //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/configuration/criteria.html")); //$NON-NLS-1$
         
         entries.add(new Entry("id-60", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.19"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1061&content-only=1&css=1")); //$NON-NLS-1$
-
+                              "http://arx.deidentifier.org/help/v" + version + "/configuration/general_settings.html")); //$NON-NLS-1$
+        
         entries.add(new Entry("id-40", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.22"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1057&content-only=1&css=1")); //$NON-NLS-1$
-
+                              "http://arx.deidentifier.org/help/v" + version + "/configuration/research_subset.html")); //$NON-NLS-1$
+        
         entries.add(new Entry("id-4", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.25"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1078&content-only=1&css=1")); //$NON-NLS-1$
-
+                              "http://arx.deidentifier.org/help/v" + version + "/exploration/overview.html")); //$NON-NLS-1$
+        
         entries.add(new Entry("id-30", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.28"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1063&content-only=1&css=1")); //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/exploration/solution_space.html")); //$NON-NLS-1$
         
         entries.add(new Entry("id-21", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.31"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1065&content-only=1&css=1")); //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/exploration/filtering.html")); //$NON-NLS-1$
         
         entries.add(new Entry("id-23", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.34"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1067&content-only=1&css=1")); //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/exploration/clipboard.html")); //$NON-NLS-1$
         
         entries.add(new Entry("id-22", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.37"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1069&content-only=1&css=1")); //$NON-NLS-1$
-
+                              "http://arx.deidentifier.org/help/v" + version + "/exploration/properties.html")); //$NON-NLS-1$
+        
         entries.add(new Entry("id-5", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.40"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1080&content-only=1&css=1")); //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/utility/overview.html")); //$NON-NLS-1$
         
         entries.add(new Entry("id-50", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.43"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=1071&content-only=1&css=1")); //$NON-NLS-1$
-
+                              "http://arx.deidentifier.org/help/v" + version + "/utility/visualization.html")); //$NON-NLS-1$
+        
         entries.add(new Entry("id-3000", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.46"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=3797&content-only=1&css=1")); //$NON-NLS-1$
-
+                              "http://arx.deidentifier.org/help/v" + version + "/risk/overview.html")); //$NON-NLS-1$
+        
         entries.add(new Entry("id-3001", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.49"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=3799&content-only=1&css=1")); //$NON-NLS-1$
-
+                              "http://arx.deidentifier.org/help/v" + version + "/risk/equivalence_classes.html")); //$NON-NLS-1$
+        
         entries.add(new Entry("id-3002", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.52"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/?page_id=3801&content-only=1&css=1")); //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/risk/risk_estimates.html")); //$NON-NLS-1$
     }
     
     /**
@@ -143,10 +165,10 @@ public class DialogHelpConfig {
      *
      * @return
      */
-    public List<Entry> getEntries(){
+    public List<Entry> getEntries() {
         return this.entries;
     }
-
+    
     /**
      * Returns the index for a given ID.
      *
@@ -154,14 +176,14 @@ public class DialogHelpConfig {
      * @return
      */
     public int getIndexForId(String id) {
-        for (int i = 0; i < entries.size(); i++){
+        for (int i = 0; i < entries.size(); i++) {
             if (entries.get(i).id.equals(id)) {
                 return i;
             }
         }
         return 0;
     }
-
+    
     /**
      * Returns the index of a given URL.
      *
@@ -169,14 +191,14 @@ public class DialogHelpConfig {
      * @return
      */
     public int getIndexForUrl(String url) {
-        for (int i = 0; i < entries.size(); i++){
+        for (int i = 0; i < entries.size(); i++) {
             if (entries.get(i).url.equals(url)) {
                 return i;
             }
         }
         return -1;
     }
-
+    
     /**
      * Returns the URL for a given index.
      *
