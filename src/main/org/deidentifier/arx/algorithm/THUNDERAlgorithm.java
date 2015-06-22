@@ -25,6 +25,8 @@ import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
+import com.carrotsearch.hppc.LongArrayList;
+
 import de.linearbits.jhpl.PredictiveProperty;
 
 /**
@@ -137,8 +139,13 @@ public class THUNDERAlgorithm extends AbstractAlgorithm{
     */
     private Transformation expand(MinMaxPriorityQueue<Long> queue, Transformation transformation) {
         Transformation result = null;
+        
+        LongArrayList list = new LongArrayList();
         for (Iterator<Long> iter = solutionSpace.getSuccessors(transformation.getIdentifier()); iter.hasNext();) {
-            Transformation successor = solutionSpace.getTransformation(iter.next());
+            list.add(iter.next());
+        }
+        for (long id : list.toArray()) {
+            Transformation successor = solutionSpace.getTransformation(id);
             if (!successor.hasProperty(propertyExpanded)) {
                 assureChecked(successor);
                 queue.add(successor.getIdentifier());
