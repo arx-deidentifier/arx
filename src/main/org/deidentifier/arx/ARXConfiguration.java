@@ -231,7 +231,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private static final long     serialVersionUID              = -6713510386735241964L;
 
     /**
-     * Creates a new config without tuple suppression.
+     * Creates a new configuration without tuple suppression.
      *
      * @return
      */
@@ -240,7 +240,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Creates a new config that allows the given percentage of outliers and
+     * Creates a new configuration that allows the given percentage of outliers and
      * thus implements tuple suppression.
      *
      * @param supp
@@ -251,7 +251,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Creates a new config that allows the given percentage of outliers and
+     * Creates a new configuration that allows the given percentage of outliers and
      * thus implements tuple suppression. Defines the metric for measuring information loss.
      *
      * @param supp
@@ -263,7 +263,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Creates a new config that allows to define the metric for measuring information loss.
+     * Creates a new configuration that allows to define the metric for measuring information loss.
      *
      * @param metric
      * @return
@@ -293,10 +293,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Do we assume practical monotonicity. */
     private boolean                            practicalMonotonicity                 = false;
 
-    /**
-     * Make sure that no information can be derived from associations between
-     * sensitive attributes.
-     */
+    /** Make sure that no information can be derived from associations between sensitive attributes. */
     private boolean                            protectSensitiveAssociations          = false;
 
     /** Relative tuple outliers. */
@@ -309,18 +306,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private int                                snapshotLength;
 
     /**
-     * Defines values of which attribute type are to be replaced by the
-     * suppression string in suppressed tuples.
-     */
+     * Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples. */
     private Integer                            suppressedAttributeTypes              = 1 << AttributeType.ATTR_TYPE_QI;
 
     /** The string with which suppressed values are to be replaced. */
     private String                             suppressionString                     = "*";
 
     /**
-     * Determines whether suppression is applied to the output of anonymous as
-     * well as non-anonymous transformations.
-     */
+     * Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations. */
     private Boolean                            suppressionAlwaysEnabled              = true;
 
     /** TODO: This is a hack and should be removed in future releases. */
@@ -329,11 +322,76 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Are we performing optimal anonymization for sample-based criteria? */
     private boolean                            heuristicSearchForSampleBasedCriteria = false;
 
+    /** Should we use the heuristic search algorithm? */
+    private boolean                            heuristicSearchEnabled                = false;
+
+    /** We will use the heuristic algorithm, if the size of the search space exceeds this threshold */
+    private int                                heuristicSearchThreshold              = 100000;
+
+    /** The heuristic algorithm will terminate after the given time limit */
+    private int                                heuristicSearchTimeLimit              = 30000;
+    
     /**
-     * Creates a new config without tuple suppression.
+     * Creates a new configuration without tuple suppression.
      */
     private ARXConfiguration() {
         this.relMaxOutliers = 0d;
+    }
+    
+    /**
+     * Sets whether ARX will use a heuristic search strategy. The default is false.
+     * @param heuristicSearchEnabled
+     * @return
+     */
+    public void setHeuristicSearchEnabled(boolean heuristicSearchEnabled) {
+        this.heuristicSearchEnabled = heuristicSearchEnabled;
+    }
+    
+    /**
+     * Returns whether ARX will use a heuristic search strategy. The default is false.
+     * @return
+     */
+    public boolean isHeuristicSearchEnabled() {
+        return this.heuristicSearchEnabled;
+    }
+    
+    /**
+     * When the size of the solution space exceeds the given number of transformations,
+     * ARX will use a heuristic search strategy. The default is 100.000.
+     * @param numberOfTransformations
+     * @return
+     */
+    public void setHeuristicSearchThreshold(int numberOfTransformations) {
+        if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
+        this.heuristicSearchThreshold = numberOfTransformations;
+    }
+    
+    /**
+     * When the size of the solution space exceeds the returned number of transformations,
+     * ARX will use a heuristic search strategy. The default is 100.000.
+     * @return
+     */
+    public int getHeuristicSearchThreshold() {
+        return this.heuristicSearchThreshold;
+    }
+    
+    /**
+     * The heuristic search algorithm will terminate after the given number of milliseconds.
+     * The default is 30 seconds.
+     * @param timeInMillis
+     */
+    public void setHeuristicSearchTimeLimit(int timeInMillis) {
+        if (timeInMillis <= 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
+        this.heuristicSearchTimeLimit = timeInMillis;
+    }
+
+    /**
+     * The heuristic search algorithm will terminate after the returned number of milliseconds.
+     * The default is 30 seconds.
+     * @param timeInMillis
+     */
+    public int getHeuristicSearchTimeLimit() {
+        return this.heuristicSearchTimeLimit;
     }
     
     /**
