@@ -16,6 +16,9 @@
  */
 package org.deidentifier.arx.gui.view.impl.common;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.swt.SWT;
@@ -151,7 +154,18 @@ public class ComponentStatus {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout());
         ComponentStatusLabel label = new ComponentStatusLabel(composite, SWT.CENTER);
-        label.setGIF(controller.getResources().getStream("working.gif")); //$NON-NLS-1$
+        InputStream stream = controller.getResources().getStream("working.gif");
+        try {
+            label.setGIF(stream); //$NON-NLS-1$
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    // Ignore silently
+                }
+            }
+        }
         label.setText(Resources.getMessage("ComponentStatus.3")); //$NON-NLS-1$
         if (provider != null) {
             label.setProgressProvider(provider);
