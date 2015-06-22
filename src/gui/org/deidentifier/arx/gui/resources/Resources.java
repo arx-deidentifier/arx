@@ -216,10 +216,18 @@ public class Resources {
      */
     public Image getImage(final String name) {
         if (shell.isDisposed()) return null;
-        Image image = null;
+        
         InputStream imageStream = this.getClass().getResourceAsStream(name);
         try {
-            image = new Image(shell.getDisplay(), imageStream);
+            final Image image = new Image(shell.getDisplay(), imageStream);
+            shell.getDisplay().addListener(SWT.Dispose, new Listener() {
+                public void handleEvent(Event arg0) {
+                    if (image != null && !image.isDisposed()) {
+                        image.dispose();
+                    }
+                }
+            });
+            return image;
         } finally {
             if (imageStream != null) {
                 try {
@@ -229,7 +237,6 @@ public class Resources {
                 }
             }
         }
-        return image;
     }
 
     /**

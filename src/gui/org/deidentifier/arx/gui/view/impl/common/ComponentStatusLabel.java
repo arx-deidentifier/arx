@@ -446,7 +446,7 @@ public class ComponentStatusLabel extends Canvas {
         if (loader.data[0] != null) this.image = new Image(this.getDisplay(), loader.data[0]);
 
         if (loader.data.length > 1) {
-            thread = new ComponentStatusLabelGIFHandler(this, loader);
+            thread = new ComponentStatusLabelGIFHandler(this, loader, this.getDisplay());
             thread.run();
         }
 

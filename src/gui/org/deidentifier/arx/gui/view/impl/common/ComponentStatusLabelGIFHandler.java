@@ -16,9 +16,13 @@
  */
 package org.deidentifier.arx.gui.view.impl.common;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * Handler for GIFs
@@ -35,16 +39,20 @@ class ComponentStatusLabelGIFHandler implements Runnable {
     private ImageLoader loader      = null;
     
     /**  Field */
-    private boolean     stop        = false;
+    private boolean                    stop        = false;
+    
+    /** Field */
+    private Display                    display;
 
     /**
      * Creates a new instance
      * @param loader
      * @param componentStatusLabel TODO
      */
-    public ComponentStatusLabelGIFHandler(ComponentStatusLabel componentStatusLabel, ImageLoader loader) {
+    public ComponentStatusLabelGIFHandler(ComponentStatusLabel componentStatusLabel, ImageLoader loader, Display display) {
         statusLabel = componentStatusLabel;
         this.loader = loader;
+        this.display = display;
     }
     
     @Override
@@ -55,6 +63,13 @@ class ComponentStatusLabelGIFHandler implements Runnable {
             if (!statusLabel.image.isDisposed()) statusLabel.image.dispose();
             ImageData nextFrameData = loader.data[imageNumber];
             statusLabel.image = new Image(statusLabel.getDisplay(), nextFrameData);
+            display.addListener(SWT.Dispose, new Listener() {
+                public void handleEvent(Event arg0) {
+                    if (statusLabel.image != null && !statusLabel.image.isDisposed()) {
+                        statusLabel.image.dispose();
+                    }
+                }
+            });
             statusLabel.redraw();
             if (!stop) {
                 statusLabel.getDisplay().timerExec(delayTime * 10, this);
