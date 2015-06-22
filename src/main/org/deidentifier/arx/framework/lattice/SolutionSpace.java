@@ -85,7 +85,7 @@ public class SolutionSpace {
                                                                                                            Direction.NONE);
 
     /** Trigger that fires a change event */
-    private NodeAction                                trigger;
+    private DependentAction                                trigger;
 
     /** Information loss */
     private LongObjectOpenHashMap<InformationLoss<?>> utility                     = new LongObjectOpenHashMap<InformationLoss<?>>();
@@ -400,7 +400,7 @@ public class SolutionSpace {
      *
      * @param trigger
      */
-    public void setListenerTrigger(NodeAction trigger){
+    public void setListenerTrigger(DependentAction trigger){
         this.trigger = trigger;
 //      if (this.listener != null && !transformation.hasProperty(Transformation.PROPERTY_EVENT_FIRED)){
 //      if (trigger == null || trigger.appliesTo(transformation)) {

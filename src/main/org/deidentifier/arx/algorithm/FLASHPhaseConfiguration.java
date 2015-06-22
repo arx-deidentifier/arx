@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.algorithm;
 
-import org.deidentifier.arx.framework.lattice.NodeAction;
+import org.deidentifier.arx.framework.lattice.DependentAction;
 
 /**
  * This class parameterizes a phase the interwoven two-phase Flash algorithm.
@@ -28,16 +28,16 @@ import org.deidentifier.arx.framework.lattice.NodeAction;
 public class FLASHPhaseConfiguration {
 
     /** A trigger for tagging nodes in this phase. */
-    private final NodeAction             triggerTag;
+    private final DependentAction             triggerTag;
 
     /** A trigger for checking nodes in this phase. */
-    private final NodeAction             triggerCheck;
+    private final DependentAction             triggerCheck;
 
     /** A trigger for evaluating nodes in this phase. */
-    private final NodeAction             triggerEvaluate;
+    private final DependentAction             triggerEvaluate;
 
     /** A trigger for skipping nodes in this phase. */
-    private final NodeAction             triggerSkip;
+    private final DependentAction             triggerSkip;
 
     /** The main anonymity property. */
     private final PhaseAnonymityProperty anonymityProperty;
@@ -58,10 +58,10 @@ public class FLASHPhaseConfiguration {
      * @param triggerSkip
      */
     public FLASHPhaseConfiguration(PhaseAnonymityProperty anonymityProperty,
-                                   NodeAction triggerTag,
-                                   NodeAction triggerCheck,
-                                   NodeAction triggerEvaluate,
-                                   NodeAction triggerSkip) {
+                                   DependentAction triggerTag,
+                                   DependentAction triggerCheck,
+                                   DependentAction triggerEvaluate,
+                                   DependentAction triggerSkip) {
         this.anonymityProperty = anonymityProperty;
         this.triggerTag = triggerTag;
         this.triggerCheck = triggerCheck;
@@ -83,7 +83,7 @@ public class FLASHPhaseConfiguration {
      *
      * @return
      */
-    public NodeAction getTriggerCheck() {
+    public DependentAction getTriggerCheck() {
         return triggerCheck;
     }
 
@@ -92,7 +92,7 @@ public class FLASHPhaseConfiguration {
      *
      * @return
      */
-    public NodeAction getTriggerEvaluate() {
+    public DependentAction getTriggerEvaluate() {
         return triggerEvaluate;
     }
 
@@ -101,7 +101,7 @@ public class FLASHPhaseConfiguration {
      *
      * @return
      */
-    public NodeAction getTriggerSkip() {
+    public DependentAction getTriggerSkip() {
         return triggerSkip;
     }
 
@@ -110,7 +110,7 @@ public class FLASHPhaseConfiguration {
      *
      * @return
      */
-    public NodeAction getTriggerTag() {
+    public DependentAction getTriggerTag() {
         return triggerTag;
     }
 }

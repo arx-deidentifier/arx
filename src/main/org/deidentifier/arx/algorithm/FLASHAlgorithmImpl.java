@@ -26,7 +26,7 @@ import java.util.PriorityQueue;
 import org.deidentifier.arx.algorithm.FLASHPhaseConfiguration.PhaseAnonymityProperty;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
-import org.deidentifier.arx.framework.lattice.NodeAction;
+import org.deidentifier.arx.framework.lattice.DependentAction;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -143,7 +143,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     private void binarySearch(int start, PriorityQueue<Integer> queue) {
 
         // Obtain node action
-        NodeAction triggerSkip = config.getBinaryPhaseConfiguration().getTriggerSkip();
+        DependentAction triggerSkip = config.getBinaryPhaseConfiguration().getTriggerSkip();
 
         // Add to queue
         queue.add(start);
@@ -207,7 +207,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param queue
      * @return
      */
-    private int checkPath(List<Integer> path, NodeAction triggerSkip, PriorityQueue<Integer> queue) {
+    private int checkPath(List<Integer> path, DependentAction triggerSkip, PriorityQueue<Integer> queue) {
 
         // Obtain anonymity property
         PredictiveProperty anonymityProperty = config.getBinaryPhaseConfiguration().getAnonymityProperty() == PhaseAnonymityProperty.ANONYMITY ?
@@ -263,7 +263,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param triggerSkip All nodes to which this trigger applies will be skipped
      * @return The path as a list
      */
-    private List<Integer> findPath(Integer current, NodeAction triggerSkip) {
+    private List<Integer> findPath(Integer current, DependentAction triggerSkip) {
         List<Integer> path = new ArrayList<Integer>();
         path.add(current);
         boolean found = true;
@@ -289,7 +289,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param triggerSkip The trigger to be used for limiting the number of nodes to be sorted
      * @return A sorted array of nodes remaining on this level
      */
-    private int[] getSortedUnprocessedNodes(int level, NodeAction triggerSkip) {
+    private int[] getSortedUnprocessedNodes(int level, DependentAction triggerSkip) {
 
         // Create
         List<Integer> result = new ArrayList<Integer>();
@@ -317,7 +317,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     private void linearSearch(int start) {
 
         // Obtain node action
-        NodeAction triggerSkip = config.getLinearPhaseConfiguration().getTriggerSkip();
+        DependentAction triggerSkip = config.getLinearPhaseConfiguration().getTriggerSkip();
 
         // Skip this node
         Transformation transformation = solutionSpace.getTransformation(start);
@@ -420,7 +420,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param identifier
      * @return
      */
-    private boolean skip(NodeAction trigger, Transformation transformation) {
+    private boolean skip(DependentAction trigger, Transformation transformation) {
 
         // If the trigger applies, skip
         if (trigger.appliesTo(transformation)) {

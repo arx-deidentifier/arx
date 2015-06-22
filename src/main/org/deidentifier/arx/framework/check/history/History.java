@@ -26,7 +26,7 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.lattice.NodeAction;
+import org.deidentifier.arx.framework.lattice.DependentAction;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
@@ -81,7 +81,7 @@ public class History {
     private final SolutionSpace             solutionSpace;
 
     /** Store the results of all types of transformations. */
-    private final NodeAction STORAGE_TRIGGER_ALL = new NodeAction(){
+    private final DependentAction STORAGE_TRIGGER_ALL = new DependentAction(){
         @Override
         public boolean appliesTo(Transformation node) {
             return true;
@@ -89,7 +89,7 @@ public class History {
     };
 
     /** Store only the results of non-anonymous transformations. */
-    private final NodeAction STORAGE_TRIGGER_NON_ANONYMOUS = new NodeAction(){
+    private final DependentAction STORAGE_TRIGGER_NON_ANONYMOUS = new DependentAction(){
         @Override
         public boolean appliesTo(Transformation node) {
             return node.hasProperty(solutionSpace.getPropertyNotAnonymous());
@@ -97,7 +97,7 @@ public class History {
     };
 
     /** The current storage strategy. */
-    private NodeAction                      storageTrigger;
+    private DependentAction                      storageTrigger;
 
     /**
      * Creates a new history.
@@ -195,7 +195,7 @@ public class History {
      *
      * @return
      */
-    public NodeAction getStorageTrigger() {
+    public DependentAction getStorageTrigger() {
         return storageTrigger;
     }
 
