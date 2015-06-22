@@ -293,7 +293,7 @@ public class DialogProperties implements IDialog {
      */
     private void createTabSearch(PreferencesDialog window) {
         window.addCategory(Resources.getMessage("PropertyDialog.130"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-visualization.png")); //$NON-NLS-1$
+                           controller.getResources().getImage("settings-search.png")); //$NON-NLS-1$
         
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.131"), 0, Integer.MAX_VALUE, 100000) { //$NON-NLS-1$
             protected Integer getValue() { return model.getInputConfig().getHeuristicSearchThreshold(); }
