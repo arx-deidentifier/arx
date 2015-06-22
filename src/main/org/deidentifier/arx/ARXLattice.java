@@ -750,7 +750,7 @@ public class ARXLattice implements Serializable {
             size++;
             map.put(transformation.getId(), node);
             levels.get(transformation.getLevel()).add(node);
-            if (transformation.getId() == optimum.getId()) {
+            if (optimum != null && transformation.getId() == optimum.getId()) {
                 this.optimum = node;
             }
             maxlevel = Math.max(maxlevel, transformation.getLevel());
