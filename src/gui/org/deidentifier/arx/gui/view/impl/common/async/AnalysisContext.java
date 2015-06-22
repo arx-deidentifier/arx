@@ -18,7 +18,6 @@
 package org.deidentifier.arx.gui.view.impl.common.async;
 
 import org.deidentifier.arx.ARXPopulationModel;
-import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
@@ -110,12 +109,13 @@ public class AnalysisContext {
         	return null;
         }
         
-        // First, check hierarchies for QIs
-        AttributeType type = model.getOutputDefinition().getAttributeType(attribute);
-        if (type instanceof Hierarchy){
-            return (Hierarchy)type;
+        // First, check hierarchies for attribute
+        Hierarchy hierarchy = model.getOutputDefinition().getHierarchyObject(attribute);
+        if (hierarchy != null){
+            return hierarchy;
         }
         
+        // TODO: Superfluous?
         // Second, check for hierarchies associated with t-closeness
         for (HierarchicalDistanceTCloseness t : context.config.getCriteria(HierarchicalDistanceTCloseness.class)){
             if (t.getAttribute().equals(attribute)) {

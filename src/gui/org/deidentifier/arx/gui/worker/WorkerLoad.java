@@ -405,22 +405,30 @@ public class WorkerLoad extends Worker<Model> {
                     } else if (atype.equals(AttributeType.INSENSITIVE_ATTRIBUTE.toString())) {
                         definition.setAttributeType(attr, AttributeType.INSENSITIVE_ATTRIBUTE);
                     } else if (atype.equals(AttributeType.QUASI_IDENTIFYING_ATTRIBUTE.toString())) {
+                        definition.setAttributeType(attr, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
                         
                         if (config.getTransformationMode(attr) == ModelTransformationMode.MICRO_AGGREGATION) {
                             MicroAggregationFunction microaggregation = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
-                            definition.setAttributeType(attr, microaggregation);
-                        } else {
-                            Hierarchy hierarchy = config.getHierarchy(attr);
-                            /* For backwards compatibility */
-                            if (hierarchy == null) {
+                            definition.setMicroAggregationFunction(attr, microaggregation);
+                        }
+                        
+                        Hierarchy hierarchy = config.getHierarchy(attr);
+                        /* For backwards compatibility */
+                        if (hierarchy == null) {
+                            // Check if a hierarchy is defined in the XML file
+                            if (ref != null) {
                                 try {
                                     hierarchy = readHierarchy(zip, prefix, ref);
                                 } catch (final IOException e) {
                                     throw new SAXException(e);
                                 }
                             }
-                            definition.setAttributeType(attr, hierarchy);
+                        }
+                        
+                        // Only if a hierarchy has been defined
+                        if (hierarchy != null) {
                             config.setHierarchy(attr, hierarchy); /* For backwards compatibility */
+                            definition.setHierarchy(attr, hierarchy);
                             
                             int height = hierarchy.getHierarchy().length > 0 ?
                                     hierarchy.getHierarchy()[0].length : 0;
@@ -486,6 +494,12 @@ public class WorkerLoad extends Worker<Model> {
                 } else if (vocabulary.isMax(localName)) {
                     max = payload;
                     return true;
+                } else if (vocabulary.isMicroaggregationFunction(localName)) {
+                    // Ignore
+                    return true;
+                } else if (vocabulary.isMicroaggregationIgnoreMissingData(localName)) {
+                    // Ignore
+                    return true;
                 } else {
                     return false;
                 }
@@ -514,7 +528,8 @@ public class WorkerLoad extends Worker<Model> {
                            vocabulary.isRef(localName) ||
                            vocabulary.isMin(localName) ||
                            vocabulary.isMax(localName) ||
-                           vocabulary.isMicroaggregationFunction(localName)) {
+                           vocabulary.isMicroaggregationFunction(localName) ||
+                           vocabulary.isMicroaggregationIgnoreMissingData(localName)) {
                     return true;
                 } else {
                     return false;

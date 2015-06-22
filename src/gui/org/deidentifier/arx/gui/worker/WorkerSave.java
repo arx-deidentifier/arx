@@ -37,7 +37,6 @@ import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
@@ -343,19 +342,22 @@ public class WorkerSave extends Worker<Model> {
                 }
             }
             
-            if (t instanceof Hierarchy || 
-                (t == AttributeType.SENSITIVE_ATTRIBUTE && config.getHierarchy(attr)!=null)) {
-            	writer.write(vocabulary.getRef(), "hierarchies/" + toFileName(attr) + ".csv"); //$NON-NLS-1$ //$NON-NLS-2$
-                if (t instanceof Hierarchy){
-                    Integer min = config.getMinimumGeneralization(attr);
-                    Integer max = config.getMaximumGeneralization(attr);
-                	writer.write(vocabulary.getMin(), min==null ? "All" : String.valueOf(min)); //$NON-NLS-1$
-                	writer.write(vocabulary.getMax(), max==null ? "All" : String.valueOf(max)); //$NON-NLS-1$
-                }
-            } else if (t instanceof MicroAggregationFunction) {
+            // Do we have a hierarchy
+            if (definition.getHierarchy(attr) != null && definition.getHierarchy(attr).length != 0 &&
+                definition.getHierarchy(attr)[0].length != 0) {
+                writer.write(vocabulary.getRef(), "hierarchies/" + toFileName(attr) + ".csv"); //$NON-NLS-1$ //$NON-NLS-2$
+                Integer min = config.getMinimumGeneralization(attr);
+                Integer max = config.getMaximumGeneralization(attr);
+                writer.write(vocabulary.getMin(), min == null ? "All" : String.valueOf(min)); //$NON-NLS-1$
+                writer.write(vocabulary.getMax(), max == null ? "All" : String.valueOf(max)); //$NON-NLS-1$
+            }
+            
+            // Do we have a microaggregate function
+            if (definition.getMicroAggregationFunction(attr) != null) {
                 writer.write(vocabulary.getMicroAggregationFunction(), config.getMicroAggregationFunction(attr).getLabel());
                 writer.write(vocabulary.getMicroAggregationIgnoreMissingData(), config.getMicroAggregationIgnoreMissingData(attr));
             }
+
             writer.unindent();
 
         }

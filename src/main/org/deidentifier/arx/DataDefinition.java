@@ -118,7 +118,7 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Returns the according hierarchy.
+     * Returns the according hierarchy as String array.
      *
      * @param attribute
      * @return
@@ -127,6 +127,17 @@ public class DataDefinition implements Cloneable{
         Hierarchy hierarchy = hierarchies.get(attribute);
         return hierarchy == null ? null : hierarchy.getHierarchy();
     }
+    
+    /**
+     * Returns the according hierarchy object.
+     *
+     * @param attribute
+     * @return
+     */
+    public Hierarchy getHierarchyObject(final String attribute) {
+        return hierarchies.get(attribute);
+    }
+    
     /**
      * Returns the associated builder, if any.
      *
