@@ -1012,7 +1012,7 @@ public class Model implements Serializable {
      * @return
      */
 	public boolean isQuasiIdentifierSelected() {
-		return (getInputDefinition().getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
+		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
 	}
 
     /**

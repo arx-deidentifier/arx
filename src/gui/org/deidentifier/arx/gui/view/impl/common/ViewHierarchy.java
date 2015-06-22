@@ -105,60 +105,60 @@ public class ViewHierarchy implements IView {
             return 1;
         }
     }
-                               
+    
     /** Controller. */
-    private Controller          controller;
+    private Controller     controller;
     
     /** Widget. */
-    private Composite           base;
+    private Composite      base;
     
     /** Widget. */
-    private ComponentTable      table     = null;
+    private ComponentTable table     = null;
     
     /** Model. */
-    private final String        attribute;
+    private final String   attribute;
     
     /** Model. */
-    private Model               model;
+    private Model          model;
     
     /** Model. */
-    private String[][]          hierarchy = new String[][] { new String[] {} };
+    private String[][]     hierarchy = new String[][] { new String[] {} };
     
     /** Model. */
-    private boolean             editable  = true;
+    private boolean        editable  = true;
     
     /** Menu. */
-    private Menu                menu      = null;
+    private Menu           menu      = null;
     
     /** Item. */
-    private MenuItem            itemInsertRow;
+    private MenuItem       itemInsertRow;
     
     /** Item. */
-    private MenuItem            itemDeleteRow;
+    private MenuItem       itemDeleteRow;
     
     /** Item. */
-    private MenuItem            itemInsertColumn;
+    private MenuItem       itemInsertColumn;
     
     /** Item. */
-    private MenuItem            itemDeleteColumn;
+    private MenuItem       itemDeleteColumn;
     
     /** Item. */
-    private MenuItem            itemMoveRowUp;
+    private MenuItem       itemMoveRowUp;
     
     /** Item. */
-    private MenuItem            itemMoveRowDown;
+    private MenuItem       itemMoveRowDown;
     
     /** Item. */
-    private MenuItem            itemEditItem;
+    private MenuItem       itemEditItem;
     
     /** Item. */
-    private MenuItem            itemRenameItem;
+    private MenuItem       itemRenameItem;
     
     /** Item. */
-    private MenuItem            itemClear;
+    private MenuItem       itemClear;
     
     /** Item. */
-    private MenuItem            itemInitialize;
+    private MenuItem       itemInitialize;
     
     /**
      * Constructor for non-editable views.
@@ -748,8 +748,14 @@ public class ViewHierarchy implements IView {
         if (model == null || model.getInputConfig() == null) {
             return;
         }
-        Hierarchy h = Hierarchy.create(hierarchy);
-        model.getInputConfig().setHierarchy(attribute, h);
+        
+        Hierarchy h = null;
+        if (hierarchy == null) {
+            model.getInputConfig().removeHierarchy(attribute);
+        } else {
+            h = Hierarchy.create(hierarchy);
+            model.getInputConfig().setHierarchy(attribute, h);
+        }
         controller.update(new ModelEvent(this, ModelPart.HIERARCHY, h));
     }
 }

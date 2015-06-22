@@ -68,7 +68,7 @@ public class ViewAttributeDefinition implements IView {
     private static final AttributeType[] COMBO1_TYPES  = new AttributeType[] {
                                                                AttributeType.INSENSITIVE_ATTRIBUTE,
                                                                AttributeType.SENSITIVE_ATTRIBUTE,
-                                                               null,
+                                                               AttributeType.QUASI_IDENTIFYING_ATTRIBUTE,
                                                                AttributeType.IDENTIFYING_ATTRIBUTE };
     
     /** Resource */
@@ -681,9 +681,6 @@ public class ViewAttributeDefinition implements IView {
      */
     private void updateAttributeType() {
         AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-        if (type instanceof Hierarchy) {
-            type = null;
-        }
         for (int i = 0; i < COMBO1_TYPES.length; i++) {
             if (type == COMBO1_TYPES[i]) {
                 cmbType.select(i);
@@ -743,7 +740,7 @@ public class ViewAttributeDefinition implements IView {
      */
     private void updateIcon() {
         AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-        if (type instanceof Hierarchy) {
+        if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
             tabItem.setImage(IMAGE_QUASI_IDENTIFYING);
         } else if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
             tabItem.setImage(IMAGE_INSENSITIVE);

@@ -146,15 +146,26 @@ public class Resources {
      * @return
      */
     private static final Image getImage(Display display, String resource){
-        final Image image = new Image(display, Resources.class.getResourceAsStream(resource));
-        display.addListener(SWT.Dispose, new Listener(){
-            public void handleEvent(Event arg0) {
-                if (image != null && !image.isDisposed()) {
-                    image.dispose();
+        InputStream stream = Resources.class.getResourceAsStream(resource);
+        try {
+            final Image image = new Image(display, stream);
+            display.addListener(SWT.Dispose, new Listener() {
+                public void handleEvent(Event arg0) {
+                    if (image != null && !image.isDisposed()) {
+                        image.dispose();
+                    }
+                }
+            });
+            return image;
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    // Ignore silently
                 }
             }
-        });
-        return image;
+        }
     }
 
     /** Logger. */
@@ -205,8 +216,27 @@ public class Resources {
      */
     public Image getImage(final String name) {
         if (shell.isDisposed()) return null;
-        return new Image(shell.getDisplay(), this.getClass()
-                                                 .getResourceAsStream(name));
+        
+        InputStream imageStream = this.getClass().getResourceAsStream(name);
+        try {
+            final Image image = new Image(shell.getDisplay(), imageStream);
+            shell.getDisplay().addListener(SWT.Dispose, new Listener() {
+                public void handleEvent(Event arg0) {
+                    if (image != null && !image.isDisposed()) {
+                        image.dispose();
+                    }
+                }
+            });
+            return image;
+        } finally {
+            if (imageStream != null) {
+                try {
+                    imageStream.close();
+                } catch (IOException e) {
+                    // Ignore silently
+                }
+            }
+        }
     }
 
     /**
