@@ -90,7 +90,7 @@ public class Transformation {
      * Returns the id
      * @return
      */
-    public long getId() {
+    public long getIdentifier() {
         return id;
     }
 

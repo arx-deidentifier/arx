@@ -80,6 +80,9 @@ public class SolutionSpace {
     /** Static property */
     private final PredictiveProperty                  propertyVisited             = new PredictiveProperty("Visited",
                                                                                                            Direction.NONE);
+    /** Static property */
+    private final PredictiveProperty                  propertyExpanded             = new PredictiveProperty("Expanded",
+                                                                                                           Direction.NONE);
 
     /** Trigger that fires a change event */
     private NodeAction                                trigger;
@@ -194,6 +197,14 @@ public class SolutionSpace {
     }
 
     /**
+     * Property for expanded transformation
+     * @return
+     */
+    public PredictiveProperty getPropertyExpanded() {
+        return this.propertyExpanded;
+    }
+
+    /**
      * Returns a property
      * @return
      */
@@ -273,7 +284,7 @@ public class SolutionSpace {
     public Transformation getTop() {
         return getTransformation(fromJHPL(lattice.nodes().getTop()));
     }
-
+    
     /**
      * Returns a wrapper object with access to all properties about the transformation
      * @param transformation
@@ -290,6 +301,15 @@ public class SolutionSpace {
      */
     public Transformation getTransformation(long identifier) {
         return getTransformation(fromJHPL(lattice.space().toIndex(identifier)));
+    }
+
+    /**
+     * Returns the utility of the transformation with the given identifier
+     * @param identifier
+     * @return
+     */
+    public InformationLoss<?> getUtility(long identifier) {
+        return utility.getOrDefault(identifier, null);
     }
     
     /**
@@ -352,7 +372,7 @@ public class SolutionSpace {
         }
         return true;
     }
-    
+
     /**
      * Makes the anonymity property predictable
      * @param predictable
@@ -389,7 +409,7 @@ public class SolutionSpace {
 //      }
 //  }
     }
-
+    
     /**
      * Returns all transformations in the solution space
      * @return
@@ -452,7 +472,7 @@ public class SolutionSpace {
     protected InformationLoss<?> getInformationLoss(long identifier) {
         return utility.getOrDefault(identifier, null);
     }
-
+    
     /**
      * Returns the lower bound
      * @param identifier
@@ -462,6 +482,7 @@ public class SolutionSpace {
         return lowerBound.getOrDefault(identifier, null);
     }
     
+
     /**
      * Sets data
      * @param id
@@ -471,7 +492,6 @@ public class SolutionSpace {
         data.put(id, object);
     }
     
-
     /**
      * Sets the information loss
      * @param identifier
@@ -480,7 +500,7 @@ public class SolutionSpace {
     protected void setInformationLoss(long identifier, InformationLoss<?> loss) {
         utility.put(identifier, loss);
     }
-    
+
     /**
      * Sets the lower bound
      * @param identifier

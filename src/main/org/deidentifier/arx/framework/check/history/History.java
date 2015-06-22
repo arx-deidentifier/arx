@@ -294,7 +294,7 @@ public class History {
 
 
         // assign snapshot and keep reference for cache
-        nodeToSnapshot.put(transformation.getId(), data);
+        nodeToSnapshot.put(transformation.getIdentifier(), data);
         cache.append(new MRUCacheEntryMetadata(transformation));
 
         return true;

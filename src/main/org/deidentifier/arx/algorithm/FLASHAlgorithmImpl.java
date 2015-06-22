@@ -366,7 +366,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // If we haven't yet found an optimum, we simply add the node to the list of pruning candidates
         if (optimalTransformation == null) {
-            potentiallyInsufficientUtility.add((int)node.getId());
+            potentiallyInsufficientUtility.add((int)node.getIdentifier());
             return;
         }
 
@@ -382,7 +382,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 node.setProperty(solutionSpace.getPropertySuccessorsPruned());
                 // Else, we store it as a future pruning candidate
             } else {
-                potentiallyInsufficientUtility.add((int)node.getId());
+                potentiallyInsufficientUtility.add((int)node.getIdentifier());
             }
 
             // If the current node is our new optimum, we check all candidates
@@ -408,7 +408,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
             // The current optimum is a future pruning candidate
             if (!node.hasProperty(solutionSpace.getPropertySuccessorsPruned())) {
-                potentiallyInsufficientUtility.add((int)node.getId());
+                potentiallyInsufficientUtility.add((int)node.getIdentifier());
             }
         }
     }

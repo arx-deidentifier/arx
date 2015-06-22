@@ -39,6 +39,6 @@ public class MRUCacheEntryMetadata {
     public MRUCacheEntryMetadata(Transformation transformation) {
         this.transformation = transformation.getGeneralization().clone();
         this.level = transformation.getLevel();
-        this.id = transformation.getId();
+        this.id = transformation.getIdentifier();
     }
 }
