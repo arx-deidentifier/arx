@@ -93,7 +93,9 @@ public class THUNDERAlgorithm extends AbstractAlgorithm{
         queue.add(bottom.getIdentifier());
         Transformation next;
         int step = 0;
-        while ((next = solutionSpace.getTransformation(queue.poll())) != null) {
+        Long nextId;
+        while ((nextId = queue.poll()) != null) {
+            next = solutionSpace.getTransformation(nextId);
             if (!prune(next)) {
                 step++;
                 if (step % stepping == 0) {
