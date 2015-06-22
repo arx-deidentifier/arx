@@ -190,6 +190,22 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getHeuristicSearchThreshold()
+     */
+    public int getHeuristicSearchThreshold() {
+        return config.getHeuristicSearchThreshold();
+    }
+    
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getHeuristicSearchTimeLimit()
+     */
+    public int getHeuristicSearchTimeLimit() {
+        return config.getHeuristicSearchTimeLimit();
+    }
+    
+    /**
      * Returns the set of all assigned hierarchies.
      *
      * @return
@@ -198,6 +214,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         return this.hierarchies;
     }
     
+
     /**
      * Returns the assigned hierarchy, if any. Else null.
      *
@@ -218,14 +235,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (hierarchyBuilders == null) return null;
         else return hierarchyBuilders.get(attr);
     }
-    
+
     /**
      * @return the input
      */
     public Data getInput() {
         return input;
     }
-    
+
     /**
      * Maximum generalization.
      *
@@ -238,7 +255,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         return this.max.get(attribute);
     }
-    
+
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -247,7 +264,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public Metric<?> getMetric() {
         return config.getMetric();
     }
-    
+
     /**
      * Returns the microaggregation function.
      *
@@ -260,7 +277,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         return this.microAggregationFunctions.get(attribute);
     }
-    
+
     /**
      * Returns the associated handling of missing data
      * @param attribute
@@ -277,7 +294,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
             return ignore;
         }
     }
-    
+
     /**
      * Minimum generalization.
      *
@@ -365,6 +382,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
      */
     public boolean isHeuristicForSampleBasedCriteria() {
         return config.isUseHeuristicSearchForSampleBasedCriteria();
+    }
+    
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#isHeuristicSearchEnabled()
+     */
+    public boolean isHeuristicSearchEnabled() {
+        return config.isHeuristicSearchEnabled();
     }
     
     /**
@@ -479,6 +504,30 @@ public class ModelConfiguration implements Serializable, Cloneable {
      */
     public void setHeuristicForSampleBasedCriteria(boolean value) {
         config.setUseHeuristicSearchForSampleBasedCriteria(value);
+    }
+    
+    /**
+     * @param heuristicSearchEnabled
+     * @see org.deidentifier.arx.ARXConfiguration#setHeuristicSearchEnabled(boolean)
+     */
+    public void setHeuristicSearchEnabled(boolean heuristicSearchEnabled) {
+        config.setHeuristicSearchEnabled(heuristicSearchEnabled);
+    }
+    
+    /**
+     * @param numberOfTransformations
+     * @see org.deidentifier.arx.ARXConfiguration#setHeuristicSearchThreshold(int)
+     */
+    public void setHeuristicSearchThreshold(int numberOfTransformations) {
+        config.setHeuristicSearchThreshold(numberOfTransformations);
+    }
+    
+    /**
+     * @param timeInMillis
+     * @see org.deidentifier.arx.ARXConfiguration#setHeuristicSearchTimeLimit(int)
+     */
+    public void setHeuristicSearchTimeLimit(int timeInMillis) {
+        config.setHeuristicSearchTimeLimit(timeInMillis);
     }
     
     /**

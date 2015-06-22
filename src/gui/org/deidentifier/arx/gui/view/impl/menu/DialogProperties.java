@@ -76,6 +76,7 @@ public class DialogProperties implements IDialog {
         this.createTabVisualization(this.dialog);
         this.createTabUtility(this.dialog);
         this.createTabRisk(this.dialog);
+        this.createTabSearch(this.dialog);
         this.createTabSolver(this.dialog);
     }
 
@@ -286,6 +287,27 @@ public class DialogProperties implements IDialog {
             protected void setValue(Object t) { model.setMaxNodesInViewer((Integer)t); }});
     }
 
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabSearch(PreferencesDialog window) {
+        window.addCategory(Resources.getMessage("PropertyDialog.130"), //$NON-NLS-1$
+                           controller.getResources().getImage("settings-visualization.png")); //$NON-NLS-1$
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.131"), 0, Integer.MAX_VALUE, 100000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getInputConfig().getHeuristicSearchThreshold(); }
+            protected void setValue(Object t) { model.getInputConfig().setHeuristicSearchThreshold((Integer)t); }});
+
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.132"), false) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getInputConfig().isHeuristicSearchEnabled(); }
+            protected void setValue(Object t) { model.getInputConfig().setHeuristicSearchEnabled((Boolean)t); }});
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.133"), 0, Integer.MAX_VALUE, 30000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getInputConfig().getHeuristicSearchTimeLimit(); }
+            protected void setValue(Object t) { model.getInputConfig().setHeuristicSearchTimeLimit((Integer)t); }});
+    }
+    
     /**
      * Returns a list of available locales
      * @return

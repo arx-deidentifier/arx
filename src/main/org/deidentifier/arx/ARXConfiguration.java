@@ -326,72 +326,16 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private boolean                            heuristicSearchEnabled                = false;
 
     /** We will use the heuristic algorithm, if the size of the search space exceeds this threshold */
-    private int                                heuristicSearchThreshold              = 100000;
+    private Integer                            heuristicSearchThreshold              = 100000;
 
     /** The heuristic algorithm will terminate after the given time limit */
-    private int                                heuristicSearchTimeLimit              = 30000;
-    
+    private Integer                            heuristicSearchTimeLimit              = 30000;
+
     /**
      * Creates a new configuration without tuple suppression.
      */
     private ARXConfiguration() {
         this.relMaxOutliers = 0d;
-    }
-    
-    /**
-     * Sets whether ARX will use a heuristic search strategy. The default is false.
-     * @param heuristicSearchEnabled
-     * @return
-     */
-    public void setHeuristicSearchEnabled(boolean heuristicSearchEnabled) {
-        this.heuristicSearchEnabled = heuristicSearchEnabled;
-    }
-    
-    /**
-     * Returns whether ARX will use a heuristic search strategy. The default is false.
-     * @return
-     */
-    public boolean isHeuristicSearchEnabled() {
-        return this.heuristicSearchEnabled;
-    }
-    
-    /**
-     * When the size of the solution space exceeds the given number of transformations,
-     * ARX will use a heuristic search strategy. The default is 100.000.
-     * @param numberOfTransformations
-     * @return
-     */
-    public void setHeuristicSearchThreshold(int numberOfTransformations) {
-        if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
-        this.heuristicSearchThreshold = numberOfTransformations;
-    }
-    
-    /**
-     * When the size of the solution space exceeds the returned number of transformations,
-     * ARX will use a heuristic search strategy. The default is 100.000.
-     * @return
-     */
-    public int getHeuristicSearchThreshold() {
-        return this.heuristicSearchThreshold;
-    }
-    
-    /**
-     * The heuristic search algorithm will terminate after the given number of milliseconds.
-     * The default is 30 seconds.
-     * @param timeInMillis
-     */
-    public void setHeuristicSearchTimeLimit(int timeInMillis) {
-        if (timeInMillis <= 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
-        this.heuristicSearchTimeLimit = timeInMillis;
-    }
-
-    /**
-     * The heuristic search algorithm will terminate after the returned number of milliseconds.
-     * The default is 30 seconds.
-     * @param timeInMillis
-     */
-    public int getHeuristicSearchTimeLimit() {
-        return this.heuristicSearchTimeLimit;
     }
     
     /**
@@ -404,7 +348,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (supp < 0d || supp >= 1d) { throw new NullPointerException("Suppression must be >=0 and <1"); }
         this.relMaxOutliers = supp;
     }
-  
+    
     /**
      * Creates a new config that allows the given percentage of outliers and
      * thus implements tuple suppression. Defines the metric for measuring information loss.
@@ -445,7 +389,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         criteria.add(c);
         return this;
     }
-
+    
     /**
      * Clones this config.
      *
@@ -505,7 +449,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (value == null) return 0.5d;
         else return value;
     }
-    
+  
     /**
      * Returns all configured attribute weights. For attributes which are not a key in this
      * set the default attribute weight will be assumed by ARX. This default value is 
@@ -574,6 +518,30 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * When the size of the solution space exceeds the returned number of transformations,
+     * ARX will use a heuristic search strategy. The default is 100.000.
+     * @return
+     */
+    public int getHeuristicSearchThreshold() {
+        if (this.heuristicSearchThreshold == null) {
+            this.heuristicSearchThreshold = 100000;
+        }
+        return this.heuristicSearchThreshold;
+    }
+    
+    /**
+     * The heuristic search algorithm will terminate after the returned number of milliseconds.
+     * The default is 30 seconds.
+     * @param timeInMillis
+     */
+    public int getHeuristicSearchTimeLimit() {
+        if (this.heuristicSearchTimeLimit == null) {
+            this.heuristicSearchTimeLimit = 30000;
+        }
+        return this.heuristicSearchTimeLimit;
+    }
+    
+    /**
      * Returns the maximum number of allowed outliers.
      *
      * @return
@@ -581,7 +549,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public final double getMaxOutliers() {
         return relMaxOutliers;
     }
-
+    
     /**
      * Returns the metric used for measuring information loss.
      *
@@ -590,7 +558,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public Metric<?> getMetric() {
         return this.metric;
     }
-
+    
     /**
      * Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.
      * @return
@@ -630,6 +598,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         // Yes
         return true;
+    }
+
+    /**
+     * Returns whether ARX will use a heuristic search strategy. The default is false.
+     * @return
+     */
+    public boolean isHeuristicSearchEnabled() {
+        return this.heuristicSearchEnabled;
     }
 
     /**
@@ -727,6 +703,36 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.attributeWeights = new HashMap<String, Double>();
         }
         this.attributeWeights.put(attribute, weight);
+    }
+
+    /**
+     * Sets whether ARX will use a heuristic search strategy. The default is false.
+     * @param heuristicSearchEnabled
+     * @return
+     */
+    public void setHeuristicSearchEnabled(boolean heuristicSearchEnabled) {
+        this.heuristicSearchEnabled = heuristicSearchEnabled;
+    }
+
+    /**
+     * When the size of the solution space exceeds the given number of transformations,
+     * ARX will use a heuristic search strategy. The default is 100.000.
+     * @param numberOfTransformations
+     * @return
+     */
+    public void setHeuristicSearchThreshold(int numberOfTransformations) {
+        if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
+        this.heuristicSearchThreshold = numberOfTransformations;
+    }
+
+    /**
+     * The heuristic search algorithm will terminate after the given number of milliseconds.
+     * The default is 30 seconds.
+     * @param timeInMillis
+     */
+    public void setHeuristicSearchTimeLimit(int timeInMillis) {
+        if (timeInMillis <= 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
+        this.heuristicSearchTimeLimit = timeInMillis;
     }
 
     /**
