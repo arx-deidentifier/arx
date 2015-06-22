@@ -55,7 +55,7 @@ public class THUNDERAlgorithm extends AbstractAlgorithm{
     * @param checker
     * @param timeLimit
     */
-    protected THUNDERAlgorithm(SolutionSpace space, NodeChecker checker, int timeLimit) {
+    private THUNDERAlgorithm(SolutionSpace space, NodeChecker checker, int timeLimit) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         int stepping = space.getTop().getLevel();
@@ -173,5 +173,18 @@ public class THUNDERAlgorithm extends AbstractAlgorithm{
             if (metricMonotonic) prune = transformation.getInformationLoss().compareTo(getGlobalOptimum().getInformationLoss()) >= 0;
         }
         return (prune || transformation.hasProperty(propertyExpanded));
+    }
+
+    /**
+     * Creates a new instance
+     * @param solutionSpace
+     * @param checker
+     * @param timeLimit
+     * @return
+     */
+    public static AbstractAlgorithm create(SolutionSpace solutionSpace,
+                                           NodeChecker checker,
+                                           int timeLimit) {
+        return new THUNDERAlgorithm(solutionSpace, checker, timeLimit);
     }
 }

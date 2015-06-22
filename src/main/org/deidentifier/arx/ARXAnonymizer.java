@@ -27,6 +27,7 @@ import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
+import org.deidentifier.arx.algorithm.THUNDERAlgorithm;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
@@ -499,7 +500,7 @@ public class ARXAnonymizer {
      * @return
      * @throws IOException
      */
-    protected Result anonymizeInternal(final DataHandle handle,
+    private Result anonymizeInternal(final DataHandle handle,
                                        final DataDefinition definition,
                                        final ARXConfiguration config) throws IOException {
 
@@ -534,8 +535,10 @@ public class ARXAnonymizer {
         config.getMetric().initialize(definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
         // Create an algorithm instance
-        FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
-        AbstractAlgorithm algorithm = FLASHAlgorithm.create(solutionSpace, checker, strategy);
+        AbstractAlgorithm algorithm = getAlgorithm(config,
+                                                   manager,
+                                                   solutionSpace,
+                                                   checker);
         
         // Execute
 
@@ -548,5 +551,28 @@ public class ARXAnonymizer {
         
         // Return the result
         return new Result(config.getMetric(), checker, solutionSpace, manager, algorithm, time);
+    }
+
+    /**
+     * Returns an algorithm for the given problem instance
+     * @param config
+     * @param manager
+     * @param solutionSpace
+     * @param checker
+     * @return
+     */
+    public AbstractAlgorithm getAlgorithm(final ARXConfiguration config,
+                                          final DataManager manager,
+                                          final SolutionSpace solutionSpace,
+                                          final NodeChecker checker) {
+        
+        if (config.isHeuristicSearchEnabled() ||
+            solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
+            return THUNDERAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit());
+            
+        } else {
+            FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
+            return FLASHAlgorithm.create(solutionSpace, checker, strategy);
+        }
     }
 }

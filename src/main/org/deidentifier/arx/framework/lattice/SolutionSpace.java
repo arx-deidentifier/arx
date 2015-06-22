@@ -261,13 +261,13 @@ public class SolutionSpace {
     }
 
     /**
-     * Returns the number of transformations for which information has been materialized in the space
+     * Returns the overall number of transformations in the solution space
      * @return
      */
     public long getSize() {
         return lattice.numNodes();
     }
-
+    
     /**
      * Returns all successors of the transformation with the given identifier
      * @param identifier
