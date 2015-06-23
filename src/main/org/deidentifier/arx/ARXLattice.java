@@ -843,6 +843,15 @@ public class ARXLattice implements Serializable {
         estimateInformationLoss();
     }
 
+    /**
+     * Access fields of this class.
+     *
+     * @return
+     */
+    public Access access() {
+        return access;
+    }
+
     public void createRelationships(final SolutionSpace solutions,
                                     final LongObjectOpenHashMap<ARXNode> map,
                                     final long id) {
@@ -868,15 +877,6 @@ public class ARXLattice implements Serializable {
     }
 
     /**
-     * Access fields of this class.
-     *
-     * @return
-     */
-    public Access access() {
-        return access;
-    }
-
-    /**
      * Returns the bottom node.
      *
      * @return
@@ -885,14 +885,6 @@ public class ARXLattice implements Serializable {
         return bottom;
     }
     
-    /**
-     * Is there a unique
-     * @return
-     */
-    public boolean isComplete() {
-        return this.complete;
-    }
-
     /**
      * Returns the levels of the generalization lattice.
      *
@@ -925,7 +917,7 @@ public class ARXLattice implements Serializable {
         }
         return this.minimumInformationLoss;
     }
-    
+
     /**
      * Returns the number of nodes.
      *
@@ -934,7 +926,7 @@ public class ARXLattice implements Serializable {
     public int getSize() {
         return size;
     }
-
+    
     /**
      * Returns the top node.
      *
@@ -942,6 +934,14 @@ public class ARXLattice implements Serializable {
      */
     public ARXNode getTop() {
         return top;
+    }
+
+    /**
+     * Is there a unique
+     * @return
+     */
+    public boolean isComplete() {
+        return this.complete;
     }
     
     /**
