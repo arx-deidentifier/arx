@@ -299,6 +299,7 @@ public class ARXResult {
         // Apply the transformation
         final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
         TransformedData information = checker.applyTransformation(transformation);
+        transformation.setChecked(information.properties);
 
         // Store
         if (!node.isChecked() || node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
