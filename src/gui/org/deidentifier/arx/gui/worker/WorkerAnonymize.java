@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.worker;
 import java.lang.reflect.InvocationTargetException;
 
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.model.Model;
@@ -33,16 +34,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class WorkerAnonymize extends Worker<ARXResult> {
 
-	/** The model. */
-    private final Model      model;
+    /** The model. */
+    private final Model model;
+
+    /** Heuristic flag */
+    private final int   timeLimit;
 
     /**
      * Creates a new instance.
      *
      * @param model
+     * @param heuristicSearch 
      */
-    public WorkerAnonymize(final Model model) {
+    public WorkerAnonymize(final Model model, int timeLimit) {
         this.model = model;
+        this.timeLimit = timeLimit;
     }
 
     @Override
@@ -76,12 +82,25 @@ public class WorkerAnonymize extends Worker<ARXResult> {
             }
         });
 
+        // Remember user-defined settings
+        ARXConfiguration config = model.getInputConfig().getConfig();
+        boolean heuristicSearchEnabled = config.isHeuristicSearchEnabled();
+        int heuristicSearchTimeLimit = config.getHeuristicSearchTimeLimit();
+        
         // Perform all tasks
         try {
             
-            // Anonymize
+            // Release
             model.getInputConfig().getInput().getHandle().release();
-        	result = anonymizer.anonymize(model.getInputConfig().getInput(), model.getInputConfig().getConfig());
+            
+            // Temporarily overwrite user-defined settings
+            if (timeLimit > 0) {
+                config.setHeuristicSearchEnabled(true);
+                config.setHeuristicSearchTimeLimit(timeLimit);
+            }
+            
+            // Anonymize
+        	result = anonymizer.anonymize(model.getInputConfig().getInput(), config);
 
             // Apply optimal transformation, if any
             arg0.beginTask(Resources.getMessage("WorkerAnonymize.3"), 10); //$NON-NLS-1$
@@ -96,6 +115,10 @@ public class WorkerAnonymize extends Worker<ARXResult> {
             error = e;
             arg0.done();
             return;
+        } finally {
+            // Reset to user-defined settings
+            config.setHeuristicSearchEnabled(heuristicSearchEnabled);
+            config.setHeuristicSearchTimeLimit(heuristicSearchTimeLimit);
         }
     }
 }

@@ -83,6 +83,7 @@ import org.deidentifier.arx.gui.worker.WorkerTransform;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.ImportConfiguration;
 import org.deidentifier.arx.io.ImportConfigurationCSV;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -484,8 +485,9 @@ public class Controller implements IView {
 
     /**
      * Starts the anonymization.
+     * @param heuristicSearch 
      */
-    public void actionMenuEditAnonymize() {
+    public void actionMenuEditAnonymize(boolean heuristicSearch) {
 
         if (model == null) {
             main.showInfoDialog(main.getShell(),
@@ -507,10 +509,32 @@ public class Controller implements IView {
             return;
         }
 
+        // Reset
         actionMenuEditReset();
+        
+        // Query for execution time
+        int timeLimit = 0;
+        if (heuristicSearch) {
+            String output = this.actionShowInputDialog(main.getShell(), 
+                                                       "Heuristic anonymization", 
+                                                       "The heuristic anonymization process will terminate after a user-defined " +
+                                                       "time limit. Please enter a time limit in seconds:", "0.5",
+                                                       new IInputValidator(){
+                                                        public String isValid(String arg0) {
+                                                            // TODO: Ugly hack
+                                                            try { 
+                                                                double val = Double.parseDouble(arg0); 
+                                                                return val>0d ? null : "Please enter a positive value"; 
+                                                            } catch (Exception e) {
+                                                                return "Please enter a decimal value";
+                                                            }
+                                                        }
+            });
+            timeLimit = Double.valueOf(Double.valueOf(output) * 1000d).intValue();
+        }
 
         // Run the worker
-        final WorkerAnonymize worker = new WorkerAnonymize(model);
+        final WorkerAnonymize worker = new WorkerAnonymize(model, timeLimit);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
 
         // Show errors
@@ -1295,6 +1319,22 @@ public class Controller implements IView {
         return main.showInputDialog(shell, header, text, initial);
     }
 
+    /**
+     * Shows an input dialog.
+     *
+     * @param shell
+     * @param header
+     * @param text
+     * @param initial
+     * @return
+     */
+    public String actionShowInputDialog(final Shell shell,
+                                        final String header,
+                                        final String text,
+                                        final String initial,
+                                        final IInputValidator validator) {
+        return main.showInputDialog(shell, header, text, initial, validator);
+    }
     /**
      * Shows a "open file" dialog.
      *
