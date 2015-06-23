@@ -25,7 +25,6 @@ import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.DependentAction;
 import org.deidentifier.arx.framework.lattice.DependentAction.NodeActionConstant;
 import org.deidentifier.arx.framework.lattice.DependentAction.NodeActionInverse;
-import org.deidentifier.arx.framework.lattice.DependentAction.NodeActionOR;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
@@ -188,12 +187,6 @@ public class FLASHAlgorithm {
         // No evaluation
         DependentAction triggerEvaluate = new NodeActionConstant(false);
         DependentAction triggerCheck = new NodeActionInverse(triggerSkip);
-        DependentAction triggerFireEvent = new NodeActionOR(triggerSkip) {
-            @Override
-            protected boolean additionalConditionAppliesTo(Transformation node) {
-                return node.hasProperty(solutionSpace.getPropertySuccessorsPruned());
-            }
-        };
 
         // Only one binary phase
         // Deactivate pruning due to lower bound as it increases number of checks needed
@@ -202,7 +195,6 @@ public class FLASHAlgorithm {
                                                                                                                   triggerCheck,
                                                                                                                   triggerEvaluate,
                                                                                                                   triggerSkip),
-                                                                                      triggerFireEvent,
                                                                                       StorageStrategy.NON_ANONYMOUS,
                                                                                       false,
                                                                                       true);
@@ -311,14 +303,6 @@ public class FLASHAlgorithm {
             }
         };
 
-        // Fire event
-        DependentAction triggerFireEvent = new NodeActionOR(linearTriggerSkip) {
-            @Override
-            protected boolean additionalConditionAppliesTo(Transformation node) {
-                return node.hasProperty(solutionSpace.getPropertySuccessorsPruned());
-            }
-        };
-
         // Two interwoven phases
         FLASHConfiguration config = FLASHConfiguration.createTwoPhaseConfiguration(new FLASHPhaseConfiguration(binaryAnonymityProperty,
                                                                                                                binaryTriggerTag,
@@ -330,7 +314,6 @@ public class FLASHAlgorithm {
                                                                                                                linearTriggerCheck,
                                                                                                                linearTriggerEvaluate,
                                                                                                                linearTriggerSkip),
-                                                                                   triggerFireEvent,
                                                                                    StorageStrategy.ALL,
                                                                                    true,
                                                                                    true);
@@ -366,12 +349,6 @@ public class FLASHAlgorithm {
         // No evaluation
         DependentAction triggerEvaluate = new NodeActionConstant(false);
         DependentAction triggerCheck = new NodeActionInverse(triggerSkip);
-        DependentAction triggerFireEvent = new NodeActionOR(triggerSkip) {
-            @Override
-            protected boolean additionalConditionAppliesTo(Transformation node) {
-                return node.hasProperty(solutionSpace.getPropertySuccessorsPruned());
-            }
-        };
 
         // We predictively tag nodes with insufficient utility because of the monotonic metric
         DependentAction triggerTag = new DependentAction() {
@@ -394,7 +371,6 @@ public class FLASHAlgorithm {
                                                                                                                   triggerCheck,
                                                                                                                   triggerEvaluate,
                                                                                                                   triggerSkip),
-                                                                                      triggerFireEvent,
                                                                                       StorageStrategy.ALL,
                                                                                       true,
                                                                                       false);
@@ -430,12 +406,6 @@ public class FLASHAlgorithm {
         DependentAction triggerEvaluate = new NodeActionConstant(false);
         DependentAction triggerCheck = new NodeActionInverse(triggerSkip);
         DependentAction triggerTag = new NodeActionConstant(false);
-        DependentAction triggerFireEvent = new NodeActionOR(triggerSkip) {
-            @Override
-            protected boolean additionalConditionAppliesTo(Transformation node) {
-                return node.hasProperty(solutionSpace.getPropertySuccessorsPruned());
-            }
-        };
 
         // Only one linear phase
         FLASHConfiguration config = FLASHConfiguration.createLinearPhaseConfiguration(new FLASHPhaseConfiguration(anonymityProperty,
@@ -443,7 +413,6 @@ public class FLASHAlgorithm {
                                                                                                                   triggerCheck,
                                                                                                                   triggerEvaluate,
                                                                                                                   triggerSkip),
-                                                                                      triggerFireEvent,
                                                                                       StorageStrategy.ALL,
                                                                                       true,
                                                                                       false);
@@ -562,14 +531,6 @@ public class FLASHAlgorithm {
             }
         };
 
-        // Fire event
-        DependentAction triggerFireEvent = new NodeActionOR(linearTriggerSkip) {
-            @Override
-            protected boolean additionalConditionAppliesTo(Transformation node) {
-                return node.hasProperty(solutionSpace.getPropertySuccessorsPruned());
-            }
-        };
-
         // Two interwoven phases
         FLASHConfiguration config = FLASHConfiguration.createTwoPhaseConfiguration(new FLASHPhaseConfiguration(binaryAnonymityProperty,
                                                                                                                binaryTriggerTag,
@@ -581,7 +542,6 @@ public class FLASHAlgorithm {
                                                                                                                linearTriggerCheck,
                                                                                                                linearTriggerEvaluate,
                                                                                                                linearTriggerSkip),
-                                                                                   triggerFireEvent,
                                                                                    StorageStrategy.ALL,
                                                                                    true,
                                                                                    false);
@@ -681,14 +641,6 @@ public class FLASHAlgorithm {
             }
         };
 
-        // Fire event
-        DependentAction triggerFireEvent = new NodeActionOR(linearTriggerSkip) {
-            @Override
-            protected boolean additionalConditionAppliesTo(Transformation node) {
-                return node.hasProperty(solutionSpace.getPropertySuccessorsPruned());
-            }
-        };
-
         // Two interwoven phases
         FLASHConfiguration config = FLASHConfiguration.createTwoPhaseConfiguration(new FLASHPhaseConfiguration(binaryAnonymityProperty,
                                                                                                                binaryTriggerTag,
@@ -700,7 +652,6 @@ public class FLASHAlgorithm {
                                                                                                                linearTriggerCheck,
                                                                                                                linearTriggerEvaluate,
                                                                                                                linearTriggerSkip),
-                                                                                   triggerFireEvent,
                                                                                    StorageStrategy.ALL,
                                                                                    true,
                                                                                    false);

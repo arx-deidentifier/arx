@@ -54,9 +54,11 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     /** The strategy. */
     private final FLASHStrategy        strategy;
 
-    /**
-     * List of nodes that may be used for pruning transformations with insufficient utility. */
+    /** List of nodes that may be used for pruning transformations with insufficient utility. */
     private final List<Integer>        potentiallyInsufficientUtility;
+
+    /** The number of checked transformations */
+    private int                        checked = 0;
 
     /**
      * Creates a new instance.
@@ -75,6 +77,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         if (solutionSpace.getSize() > Integer.MAX_VALUE) {
             throw new IllegalArgumentException();
         }
+        this.checked = 0;
         this.solutionSpace.setAnonymityPropertyPredictable(config.isAnonymityPropertyPredicable());
         this.strategy = strategy;
         this.sortedSuccessors = new int[(int)solutionSpace.getSize()][];
@@ -95,7 +98,6 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         }
 
         // Set some triggers
-        solutionSpace.setListenerTrigger(config.getTriggerTagEvent());
         checker.getHistory().setStorageStrategy(config.getSnapshotStorageStrategy());
 
         // Initialize
@@ -187,6 +189,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             }
         } else if (configuration.getTriggerCheck().appliesTo(transformation)) {
             transformation.setChecked(checker.check(transformation));
+            listener.progress((double)++checked / (double)solutionSpace.getSize());
         }
 
         // Store optimum

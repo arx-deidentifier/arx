@@ -23,7 +23,6 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
-import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.InformationLoss;
 
@@ -43,14 +42,13 @@ public class SolutionSpace {
     private LongObjectOpenHashMap<Object>             data                        = new LongObjectOpenHashMap<Object>();
     /** The backing JHPL lattice */
     private final Lattice<Integer, Integer>           lattice;
-    /** Listener */
-    private ARXListener                               listener;
     /** Information loss */
     private LongObjectOpenHashMap<InformationLoss<?>> lowerBound                  = new LongObjectOpenHashMap<InformationLoss<?>>();
     /** The offsets for indices */
     private final int[]                               offsetIndices;
     /** The offset the level */
     private final int                                 offsetLevel;
+    
     /** Potentially changing property */
     private PredictiveProperty                        propertyAnonymous           = new PredictiveProperty("Anonymous",
                                                                                                            Direction.NONE);
@@ -83,9 +81,6 @@ public class SolutionSpace {
     /** Static property */
     private final PredictiveProperty                  propertyExpanded             = new PredictiveProperty("Expanded",
                                                                                                            Direction.NONE);
-
-    /** Trigger that fires a change event */
-    private DependentAction                           trigger;
 
     /** Information loss */
     private LongObjectOpenHashMap<InformationLoss<?>> utility                     = new LongObjectOpenHashMap<InformationLoss<?>>();
@@ -387,29 +382,6 @@ public class SolutionSpace {
         }
     }
 
-    /**
-     * Sets a listener
-     * @param listener
-     */
-    public void setListener(ARXListener listener) {
-        this.listener = listener;
-    }
-
-    /**
-     * When this trigger executed, a tagged event will be fired.
-     *
-     * @param trigger
-     */
-    public void setListenerTrigger(DependentAction trigger){
-        this.trigger = trigger;
-//      if (this.listener != null && !transformation.hasProperty(Transformation.PROPERTY_EVENT_FIRED)){
-//      if (trigger == null || trigger.appliesTo(transformation)) {
-//          transformation.setProperty(Transformation.PROPERTY_EVENT_FIRED);
-//          this.listener.nodeTagged(size);
-//      }
-//  }
-    }
-    
     /**
      * Returns all transformations in the solution space
      * @return

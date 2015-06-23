@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.algorithm;
 
+import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
@@ -37,6 +38,9 @@ public abstract class AbstractAlgorithm {
 
     /** The optimal information loss. */
     private InformationLoss<?> optimalInformationLoss = null;
+
+    /** The listener */
+    protected ARXListener      listener               = null;
 
     /** A node checker. */
     protected NodeChecker      checker                = null;
@@ -63,6 +67,14 @@ public abstract class AbstractAlgorithm {
      */
     public Transformation getGlobalOptimum() {
         return globalOptimum;
+    }
+
+    /**
+     * Sets a listener
+     * @param listener
+     */
+    public void setListener(ARXListener listener) {
+        this.listener = listener;
     }
 
     /**
@@ -107,4 +119,5 @@ public abstract class AbstractAlgorithm {
             optimalInformationLoss = transformation.getInformationLoss();
         }
     }
+
 }

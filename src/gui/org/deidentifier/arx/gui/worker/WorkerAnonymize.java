@@ -63,20 +63,14 @@ public class WorkerAnonymize extends Worker<ARXResult> {
 
         // Update the progress bar
         anonymizer.setListener(new ARXListener() {
-            int count = 0;
             int previous = 0;
-            public void nodeTagged(final int searchSpaceSize) {
+            public void progress(final double progress) {
                 if (arg0.isCanceled()) { 
                     throw new RuntimeException(Resources.getMessage("WorkerAnonymize.1")); //$NON-NLS-1$ 
                 } 
-                if (count==0) {
-                    arg0.worked(10);
-                }
-                
-                count++;
-                int progress = (int) ((double)count / (double) searchSpaceSize * 100d);
-                if (progress != previous) {
-                    previous = progress;
+                int current = (int)(Math.round(progress * 100d)); 
+                if (current != previous) {
+                    previous = current;
                     arg0.worked(1);
                 }
             }

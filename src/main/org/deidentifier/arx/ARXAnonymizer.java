@@ -522,7 +522,6 @@ public class ARXAnonymizer {
 
         // Build or clean the lattice
         SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
-        solutionSpace.setListener(listener);
 
         // Build a node checker
         final NodeChecker checker = new NodeChecker(manager,
@@ -541,6 +540,8 @@ public class ARXAnonymizer {
                                                    manager,
                                                    solutionSpace,
                                                    checker);
+        algorithm.setListener(listener);
+
         
         // Execute
 

@@ -18,7 +18,6 @@
 package org.deidentifier.arx.algorithm;
 
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
-import org.deidentifier.arx.framework.lattice.DependentAction;
 
 /**
  * This class parameterizes a phase the interwoven two-phase Flash algorithm.
@@ -32,36 +31,32 @@ public class FLASHConfiguration {
      * Creates a binary-phase only configuration.
      *
      * @param config
-     * @param triggerTagEvent
      * @param storageStrategy
      * @param pruneWithLowerBounds
-     * qparam anonymityPropertyPredictable
+     * @param anonymityPropertyPredictable
      * @return
      */
     public static FLASHConfiguration createBinaryPhaseConfiguration(FLASHPhaseConfiguration config,
-                                                                    DependentAction triggerTagEvent,
                                                                     StorageStrategy storageStrategy,
                                                                     boolean pruneWithLowerBounds,
                                                                     boolean anonymityPropertyPredictable) {
-        return new FLASHConfiguration(config, null, triggerTagEvent, storageStrategy, pruneWithLowerBounds, anonymityPropertyPredictable);
+        return new FLASHConfiguration(config, null, storageStrategy, pruneWithLowerBounds, anonymityPropertyPredictable);
     }
 
     /**
      * Creates a linear-phase only configuration.
      *
      * @param config
-     * @param triggerTagEvent
      * @param storageStrategy
      * @param pruneWithLowerBounds
-     * qparam anonymityPropertyPredictable
+     * @param anonymityPropertyPredictable
      * @return
      */
     public static FLASHConfiguration createLinearPhaseConfiguration(FLASHPhaseConfiguration config,
-                                                                    DependentAction triggerTagEvent,
                                                                     StorageStrategy storageStrategy,
                                                                     boolean pruneWithLowerBounds,
                                                                     boolean anonymityPropertyPredictable) {
-        return new FLASHConfiguration(null, config, triggerTagEvent, storageStrategy, pruneWithLowerBounds, anonymityPropertyPredictable);
+        return new FLASHConfiguration(null, config, storageStrategy, pruneWithLowerBounds, anonymityPropertyPredictable);
     }
 
     /**
@@ -69,21 +64,18 @@ public class FLASHConfiguration {
      *
      * @param binaryPhaseConfiguration
      * @param linearPhaseConfiguration
-     * @param triggerTagEvent
      * @param storageStrategy
      * @param pruneWithLowerBounds
-     * qparam anonymityPropertyPredictable
+     * @param anonymityPropertyPredictable
      * @return
      */
     public static FLASHConfiguration createTwoPhaseConfiguration(FLASHPhaseConfiguration binaryPhaseConfiguration,
                                                                  FLASHPhaseConfiguration linearPhaseConfiguration,
-                                                                 DependentAction triggerTagEvent,
                                                                  StorageStrategy storageStrategy,
                                                                  boolean pruneWithLowerBounds,
                                                                  boolean anonymityPropertyPredictable) {
         return new FLASHConfiguration(binaryPhaseConfiguration,
                                       linearPhaseConfiguration,
-                                      triggerTagEvent,
                                       storageStrategy,
                                       pruneWithLowerBounds,
                                       anonymityPropertyPredictable);
@@ -101,9 +93,6 @@ public class FLASHConfiguration {
     /** A trigger controlling which transformations are snapshotted. */
     private final StorageStrategy         storageStrategy;
 
-    /** A trigger firing when a tag event should be triggered. */
-    private final DependentAction              triggerTagEvent;
-
     /** Determines whether the anonymity property is predictable */
     private final boolean                 anonymityPropertyPredictable;
 
@@ -112,20 +101,17 @@ public class FLASHConfiguration {
      *
      * @param binaryPhaseConfiguration
      * @param linearPhaseConfiguration
-     * @param triggerTagEvent
      * @param storageStrategy
      * @param pruneDueToLowerBound
      */
     private FLASHConfiguration(FLASHPhaseConfiguration binaryPhaseConfiguration,
                                FLASHPhaseConfiguration linearPhaseConfiguration,
-                               DependentAction triggerTagEvent,
                                StorageStrategy storageStrategy,
                                boolean pruneDueToLowerBound,
                                boolean anonymityPropertyPredictable) {
         this.binaryPhaseConfiguration = binaryPhaseConfiguration;
         this.linearPhaseConfiguration = linearPhaseConfiguration;
         this.storageStrategy = storageStrategy;
-        this.triggerTagEvent = triggerTagEvent;
         this.pruneInsufficientUtility = pruneDueToLowerBound;
         this.anonymityPropertyPredictable = anonymityPropertyPredictable;
     }
@@ -155,15 +141,6 @@ public class FLASHConfiguration {
      */
     public StorageStrategy getSnapshotStorageStrategy() {
         return storageStrategy;
-    }
-
-    /**
-     * Getter: A trigger firing when a tag event should be triggered on the lattice.
-     *
-     * @return
-     */
-    public DependentAction getTriggerTagEvent() {
-        return triggerTagEvent;
     }
 
     /**

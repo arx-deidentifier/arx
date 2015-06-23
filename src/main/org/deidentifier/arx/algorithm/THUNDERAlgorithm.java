@@ -76,6 +76,7 @@ public class THUNDERAlgorithm extends AbstractAlgorithm{
         if (!transformation.hasProperty(propertyChecked)) {
             transformation.setChecked(checker.check(transformation));
             trackOptimum(transformation);
+            listener.progress((double)(System.currentTimeMillis() - timeStart) / (double)timeLimit);
         }
     }
 
