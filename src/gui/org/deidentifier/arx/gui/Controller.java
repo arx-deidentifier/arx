@@ -1125,13 +1125,6 @@ public class Controller implements IView {
         }
 
         // Update subsets of the model
-        if (tempSelectedNode != null) {
-            model.setSelectedNode(tempSelectedNode);
-            update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
-            this.actionApplySelectedTransformation();
-        }
-
-        // Update subsets of the model
         if (tempNodeFilter != null) {
             model.setNodeFilter(tempNodeFilter);
             update(new ModelEvent(this, ModelPart.FILTER, tempNodeFilter));
@@ -1197,6 +1190,13 @@ public class Controller implements IView {
             update(new ModelEvent(this,
                                   ModelPart.SELECTED_VIEW_CONFIG,
                                   model.getOutput()));
+        }
+
+        // Update subsets of the model
+        if (tempSelectedNode != null) {
+            model.setSelectedNode(tempSelectedNode);
+            update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
+            this.actionApplySelectedTransformation();
         }
 
         // We just loaded the model, so there are no changes
