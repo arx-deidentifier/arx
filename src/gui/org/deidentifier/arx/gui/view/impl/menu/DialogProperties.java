@@ -71,9 +71,9 @@ public class DialogProperties implements IDialog {
         this.dialog = new PreferencesDialog(parent, Resources.getMessage("DialogProperties.0"), Resources.getMessage("DialogProperties.1")); //$NON-NLS-1$ //$NON-NLS-2$
         this.createTabProject(this.dialog);
         this.createTabIOSettings(this.dialog);
-        this.createTabTransformation(this.dialog);
         this.createTabInternals(this.dialog);
         this.createTabVisualization(this.dialog);
+        this.createTabTransformation(this.dialog);
         this.createTabUtility(this.dialog);
         this.createTabRisk(this.dialog);
         this.createTabSearch(this.dialog);
