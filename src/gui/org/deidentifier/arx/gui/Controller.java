@@ -509,30 +509,33 @@ public class Controller implements IView {
             return;
         }
 
-        // Reset
-        actionMenuEditReset();
-        
         // Query for execution time
         int timeLimit = 0;
         if (heuristicSearch) {
             String output = this.actionShowInputDialog(main.getShell(), 
-                                                       "Heuristic anonymization", 
-                                                       "The heuristic anonymization process will terminate after a user-defined " +
-                                                       "time limit. Please enter a time limit in seconds:", "0.5",
+                                                       Resources.getMessage("Controller.38"),  //$NON-NLS-1$
+                                                       Resources.getMessage("Controller.79") + //$NON-NLS-1$
+                                                       Resources.getMessage("Controller.80"), "0.5", //$NON-NLS-1$ //$NON-NLS-2$
                                                        new IInputValidator(){
                                                         public String isValid(String arg0) {
                                                             // TODO: Ugly hack
                                                             try { 
                                                                 double val = Double.parseDouble(arg0); 
-                                                                return val>0d ? null : "Please enter a positive value"; 
+                                                                return val>0d ? null : Resources.getMessage("Controller.98");  //$NON-NLS-1$
                                                             } catch (Exception e) {
-                                                                return "Please enter a decimal value";
+                                                                return Resources.getMessage("Controller.99"); //$NON-NLS-1$
                                                             }
                                                         }
             });
+            if (output == null) {
+                return;
+            }
             timeLimit = Double.valueOf(Double.valueOf(output) * 1000d).intValue();
         }
 
+        // Reset
+        actionMenuEditReset();
+        
         // Run the worker
         final WorkerAnonymize worker = new WorkerAnonymize(model, timeLimit);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
