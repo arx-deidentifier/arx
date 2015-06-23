@@ -28,18 +28,18 @@ import org.deidentifier.arx.framework.data.Data;
  *
  */
 public class TransformedData {
-    
+
     /** The GH buffer */
-    public Data            bufferGeneralized;
-    
+    public Data                       bufferGeneralized;
+
     /** The OT buffer */
-    public Data            bufferMicroaggregated;
-    
+    public Data                       bufferMicroaggregated;
+
     /** The group statistic */
     public EquivalenceClassStatistics statistics;
-    
-    /** The properties*/
-    public NodeChecker.Result properties;
+
+    /** The properties */
+    public NodeChecker.Result         properties;
     
     /**
      * Instantiate the helper object.
