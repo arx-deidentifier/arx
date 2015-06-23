@@ -144,9 +144,6 @@ public class ARXAnonymizer {
     /** The maximal number of QIs that can be processed. */
     private int         maxQuasiIdentifiers  = Integer.MAX_VALUE;
 
-    /** The maximal size of the search space that can be processed. */
-    private int         maxTransformations   = 200000;
-
 
     /**
      * Creates a new anonymizer with the default configuration.
@@ -239,15 +236,6 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Returns the maximal size of the search space.
-     *
-     * @return
-     */
-    public int getMaxTransformations() {
-        return maxTransformations;
-    }
-
-    /**
      * Sets the maximum number of snapshots allowed to store in the history.
      * 
      * @param historySize
@@ -297,15 +285,6 @@ public class ARXAnonymizer {
      */
     public void setMaxQuasiIdentifiers(int maxQuasiIdentifiers) {
         this.maxQuasiIdentifiers = maxQuasiIdentifiers;
-    }
-
-    /**
-     * Sets the maximal size of the search space. Set to Integer.MAX_VALUE to disable the 
-     * restriction. Default is 200,000.
-     * @param maxTransformations
-     */
-    public void setMaxTransformations(int maxTransformations) {
-        this.maxTransformations = maxTransformations;
     }
 
     /**
@@ -448,16 +427,6 @@ public class ARXAnonymizer {
         if (genQis.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier with generalization"); }
         if (genQis.size() > maxQuasiIdentifiers) { 
             throw new IllegalArgumentException("Too many quasi-identifiers (" + genQis.size()+"). This restriction is configurable."); 
-        }
-        int transformations = 1;
-        for (String genQi : genQis) {
-            if (definition.getHierarchy(genQi) == null) {
-                throw new IllegalArgumentException("No hierarchy specified for quasi-identifier (" + genQi + ")");
-            }
-            transformations *= definition.getMaximumGeneralization(genQi) - definition.getMinimumGeneralization(genQi) + 1;
-        }
-        if (transformations > maxTransformations) { 
-            throw new IllegalArgumentException("Too many transformations in the search space (" + transformations+ "). This restriction is configurable."); 
         }
     }
 
