@@ -753,14 +753,8 @@ public class ARXLattice implements Serializable {
         final IntObjectOpenHashMap<List<ARXNode>> levels = new IntObjectOpenHashMap<List<ARXNode>>(); 
         int size = 0;
         int maxlevel = 0;
-        
-        Iterator<Long> iterator;
-        if (complete) {
-            iterator = solutions.unsafeGetAllTransformations();
-        } else {
-            iterator = solutions.getMaterializedTransformations();
-        }
-        for (; iterator.hasNext();) {
+        for (Iterator<Long> iterator = complete ? solutions.unsafeGetAllTransformations() : 
+                                                  solutions.getMaterializedTransformations(); iterator.hasNext();) {
             
             Transformation transformation = solutions.getTransformation(iterator.next());
             if (!levels.containsKey(transformation.getLevel())) {
@@ -812,32 +806,13 @@ public class ARXLattice implements Serializable {
         }
         
         // Create relationships
-        if (complete) {
-            iterator = solutions.unsafeGetAllTransformations();
-        } else {
-            iterator = solutions.getMaterializedTransformations();
+        for (Iterator<Long> iterator = complete ? solutions.unsafeGetAllTransformations() : 
+                                                  solutions.getMaterializedTransformations(); iterator.hasNext();) {
+            createRelationships(solutions, map, iterator.next());
         }
-        for (; iterator.hasNext();) {
-            final long id = iterator.next();
-            final ARXNode fnode = map.get(id);
-            
-            List<ARXNode> successors = new ArrayList<ARXNode>();
-            List<ARXNode> predecessors = new ArrayList<ARXNode>();
-            for (Iterator<Long> iter1 = solutions.getSuccessors(id); iter1.hasNext();) {
-                ARXNode node = map.get(iter1.next());
-                if (node != null) {
-                    successors.add(node);
-                }
-            }
-            for (Iterator<Long> iter2 = solutions.getPredecessors(id); iter2.hasNext();) {
-                ARXNode node = map.get(iter2.next());
-                if (node != null) {
-                    predecessors.add(node);
-                }
-            }
-            
-            fnode.successors = successors.toArray(new ARXNode[successors.size()]);
-            fnode.predecessors = predecessors.toArray(new ARXNode[predecessors.size()]);
+        if (!complete) {
+            createRelationships(solutions, map, solutions.getTop().getIdentifier());
+            createRelationships(solutions, map, solutions.getBottom().getIdentifier());
         }
         
         // find bottom node
@@ -866,6 +841,30 @@ public class ARXLattice implements Serializable {
 
         // Estimate information loss of all nodes
         estimateInformationLoss();
+    }
+
+    public void createRelationships(final SolutionSpace solutions,
+                                    final LongObjectOpenHashMap<ARXNode> map,
+                                    final long id) {
+        final ARXNode fnode = map.get(id);
+        
+        List<ARXNode> successors = new ArrayList<ARXNode>();
+        List<ARXNode> predecessors = new ArrayList<ARXNode>();
+        for (Iterator<Long> iter1 = solutions.getSuccessors(id); iter1.hasNext();) {
+            ARXNode node = map.get(iter1.next());
+            if (node != null) {
+                successors.add(node);
+            }
+        }
+        for (Iterator<Long> iter2 = solutions.getPredecessors(id); iter2.hasNext();) {
+            ARXNode node = map.get(iter2.next());
+            if (node != null) {
+                predecessors.add(node);
+            }
+        }
+        
+        fnode.successors = successors.toArray(new ARXNode[successors.size()]);
+        fnode.predecessors = predecessors.toArray(new ARXNode[predecessors.size()]);
     }
 
     /**
