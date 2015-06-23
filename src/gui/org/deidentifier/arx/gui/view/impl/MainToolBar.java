@@ -62,37 +62,37 @@ public class MainToolBar extends AbstractMenu {
      * Helper class including some statistics.
      */
     private static class SearchSpaceStatistics {
-        
+
         /** Count. */
-        private final int numTransformationsInSearchSpace;
-        
+        private final long    numTransformationsInSearchSpace;
+
         /** Count. */
-        private final int numTransformationsPruned;
-        
+        private final int     numMaterializedTransformations;
+
         /** Count. */
-        private final int numTransformationsAnonymous;
-        
+        private final int     numTransformationsPruned;
+
         /** Count. */
-        private final int numTransformationsNotAnonymous;
-        
+        private final int     numTransformationsAnonymous;
+
         /** Count. */
-        private final int numTransformationsProbablyAnonymous;
-        
+        private final int     numTransformationsNotAnonymous;
+
         /** Count. */
-        private final int numTransformationsProbablyNotAnonymous;
-        
+        private final int     numTransformationsProbablyAnonymous;
+
         /** Count. */
-        private final int numTransformationsAnonymityUnknown;
-        
+        private final int     numTransformationsProbablyNotAnonymous;
+
         /** Count. */
-        private final int numTransformationsInfolossAvailable;
-        
-        /** Heuristic*/
-        private final boolean complete;
-        
+        private final int     numTransformationsAnonymityUnknown;
+
+        /** Count. */
+        private final int     numTransformationsInfolossAvailable;
+
         /** Time in seconds. */
-        private final double executionTime;
-        
+        private final double  executionTime;
+
         /** Optimal transformation. */
         private final ARXNode optimum;
         
@@ -138,7 +138,8 @@ public class MainToolBar extends AbstractMenu {
             
             // Store
             this.executionTime = (double)result.getTime() / 1000d;
-            this.numTransformationsInSearchSpace = lattice.getSize();
+            this.numTransformationsInSearchSpace = lattice.getVirtualSize();
+            this.numMaterializedTransformations = lattice.getSize();
             this.numTransformationsPruned = pruned;
             this.numTransformationsAnonymous = anonymous;
             this.numTransformationsNotAnonymous = notAnonymous;
@@ -147,7 +148,6 @@ public class MainToolBar extends AbstractMenu {
             this.numTransformationsProbablyNotAnonymous = probablyNotAnonymous;
             this.numTransformationsInfolossAvailable = infolossAvailable;
             this.optimum = result.getGlobalOptimum();
-            this.complete = result.getLattice().isComplete();
         }
 
         @Override
@@ -156,7 +156,10 @@ public class MainToolBar extends AbstractMenu {
             // Prepare
             DecimalFormat format = new DecimalFormat("#########0.000"); //$NON-NLS-1$
             double prunedPercentage = (double) this.numTransformationsPruned /
-                                      (double) this.numTransformationsInSearchSpace * 100d;
+                                      (double) this.numMaterializedTransformations * 100d;
+            
+            double materializedPercentage = (double) this.numMaterializedTransformations /
+                                            (double) this.numTransformationsInSearchSpace * 100d;
 
             // Render statistics about the solution space
             StringBuilder sb = new StringBuilder();
@@ -164,16 +167,22 @@ public class MainToolBar extends AbstractMenu {
             sb.append(Resources.getMessage("MainToolBar.2")) //$NON-NLS-1$
               .append(this.numTransformationsInSearchSpace)
               .append("\n"); //$NON-NLS-1$
+            
+            sb.append(Resources.getMessage("MainToolBar.41")) //$NON-NLS-1$
+            .append(this.numMaterializedTransformations);
+            sb.append(" [") //$NON-NLS-1$
+            .append(format.format(materializedPercentage))
+            .append("%]\n"); //$NON-NLS-1$
+            
             sb.append(Resources.getMessage("MainToolBar.12")) //$NON-NLS-1$
               .append(this.numTransformationsPruned);
             sb.append(" [") //$NON-NLS-1$
               .append(format.format(prunedPercentage))
               .append("%]\n"); //$NON-NLS-1$
+            
             sb.append(Resources.getMessage("MainToolBar.18")) //$NON-NLS-1$
               .append(format.format(this.executionTime))
               .append("s\n"); //$NON-NLS-1$
-            sb.append(Resources.getMessage("MainToolBar.40")) //$NON-NLS-1$
-            .append(complete); //$NON-NLS-1$
             
             if (this.numTransformationsAnonymous != 0 ||
                 this.numTransformationsNotAnonymous != 0 ||

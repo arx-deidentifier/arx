@@ -696,6 +696,9 @@ public class ARXLattice implements Serializable {
     /** The number of nodes. */
     private int                   size;
 
+    /** The virtual size */
+    private Long                  virtualSize;
+
     /** The top node. */
     private transient ARXNode     top;
 
@@ -736,6 +739,7 @@ public class ARXLattice implements Serializable {
         this.monotonicNonAnonymous = metric.isMonotonic() || !config.isSuppressionAlwaysEnabled();
         this.monotonicAnonymous = metric.isMonotonic() || config.getAbsoluteMaxOutliers() == 0;
         this.complete = complete;
+        this.virtualSize = solutions.getSize();
  
         // Set this flag to true, if practical monotonicity is being assumed
         this.uncertainty = config.isPracticalMonotonicity() && config.getMaxOutliers()!=0d &&
@@ -925,6 +929,14 @@ public class ARXLattice implements Serializable {
      */
     public int getSize() {
         return size;
+    }
+    
+    /**
+     * Returns the virtual size of the solution space
+     * @return
+     */
+    public long getVirtualSize() {
+        return virtualSize != null ? virtualSize : size;
     }
     
     /**
