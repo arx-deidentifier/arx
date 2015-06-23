@@ -26,6 +26,7 @@ import java.util.Set;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
+import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.THUNDERAlgorithm;
 import org.deidentifier.arx.criteria.KAnonymity;
@@ -61,19 +62,19 @@ public class ARXAnonymizer {
         final AbstractAlgorithm algorithm;
 
         /** The checker. */
-        final NodeChecker      checker;
+        final NodeChecker       checker;
 
         /** The solution space. */
-        final SolutionSpace solutionSpace;
+        final SolutionSpace     solutionSpace;
 
         /** The data manager. */
         final DataManager       manager;
 
         /** The metric. */
         final Metric<?>         metric;
-        
+
         /** The time. */
-        final long              time;  
+        final long              time;
 
         /**
          * Creates a new instance.
@@ -110,6 +111,7 @@ public class ARXAnonymizer {
 
 		    // Create lattice
 	        final ARXLattice lattice = new ARXLattice(solutionSpace,
+	                                                  (algorithm instanceof FLASHAlgorithmImpl),
 	                                                  algorithm.getGlobalOptimum(),
 	                                                  manager.getDataGeneralized().getHeader(),
 	                                                  config.getInternalConfiguration());

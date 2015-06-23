@@ -690,6 +690,9 @@ public class ARXLattice implements Serializable {
     /** Is practical monotonicity being assumed. */
     private boolean               uncertainty;
 
+    /** Is this the result of an optimal algorithm */
+    private Boolean               complete;
+
     /** Monotonicity of information loss. */
     private boolean               monotonicAnonymous;
     
@@ -706,11 +709,13 @@ public class ARXLattice implements Serializable {
      * Constructor.
      *
      * @param solutions The solution space
+     * @param complete Is the solution space characterized by an optimal algorithm
      * @param optimum The optimum
      * @param header The header
      * @param config The config
      */
     ARXLattice(final SolutionSpace solutions,
+               final boolean complete,
                final Transformation optimum,
                final String[] header,
                final ARXConfigurationInternal config) {
@@ -718,6 +723,7 @@ public class ARXLattice implements Serializable {
         this.metric = config.getMetric();
         this.monotonicNonAnonymous = metric.isMonotonic() || !config.isSuppressionAlwaysEnabled();
         this.monotonicAnonymous = metric.isMonotonic() || config.getAbsoluteMaxOutliers() == 0;
+        this.complete = complete;
  
         // Set this flag to true, if practical monotonicity is being assumed
         this.uncertainty = config.isPracticalMonotonicity() && config.getMaxOutliers()!=0d &&
@@ -736,25 +742,53 @@ public class ARXLattice implements Serializable {
         int size = 0;
         int maxlevel = 0;
         
-        
-        // TODO: Use this for results from heuristic searches.
-        // TODO: Utility estimator must be redesigned for this to work
-        // for (Iterator<Long> iterator = solutions.getMaterializedTransformations(); iterator.hasNext();) {
-        for (Iterator<Long> iterator = solutions.unsafeGetAllTransformations(); iterator.hasNext();) {
+        Iterator<Long> iterator;
+        if (complete) {
+            iterator = solutions.unsafeGetAllTransformations();
+        } else {
+            iterator = solutions.getMaterializedTransformations();
+        }
+        for (; iterator.hasNext();) {
             
             Transformation transformation = solutions.getTransformation(iterator.next());
             if (!levels.containsKey(transformation.getLevel())) {
                 levels.put(transformation.getLevel(), new ArrayList<ARXNode>());
             }
             ARXNode node = new ARXNode(solutions, transformation, headermap);
-            size++;
             map.put(transformation.getIdentifier(), node);
             levels.get(transformation.getLevel()).add(node);
             if (optimum != null && transformation.getIdentifier() == optimum.getIdentifier()) {
                 this.optimum = node;
             }
             maxlevel = Math.max(maxlevel, transformation.getLevel());
+            size++;
         }
+        
+        // Make sure that bottom and top are in the resulting solution space
+        if (!complete) {
+            Transformation top = solutions.getTop();
+            Transformation bottom = solutions.getBottom();
+            if (!map.containsKey(top.getIdentifier())) {
+                if (!levels.containsKey(top.getLevel())) {
+                    levels.put(top.getLevel(), new ArrayList<ARXNode>());
+                }
+                ARXNode node = new ARXNode(solutions, top, headermap);
+                map.put(top.getIdentifier(), node);
+                levels.get(top.getLevel()).add(node);
+                maxlevel = top.getLevel();
+                size++;
+            }
+            if (!map.containsKey(bottom.getIdentifier())) {
+                if (!levels.containsKey(bottom.getLevel())) {
+                    levels.put(bottom.getLevel(), new ArrayList<ARXNode>());
+                }
+                ARXNode node = new ARXNode(solutions, bottom, headermap);
+                map.put(bottom.getIdentifier(), node);
+                levels.get(bottom.getLevel()).add(node);
+                size++;
+            }
+        }
+        
         this.size = size;
         this.levels = new ARXNode[maxlevel+1][];
         for (int i = 0; i < this.levels.length; i++) {
@@ -766,11 +800,12 @@ public class ARXLattice implements Serializable {
         }
         
         // Create relationships
-
-        // TODO: Use this for results from heuristic searches.
-        // TODO: Utility estimator must be redesigned for this to work
-        // for (Iterator<Long> iterator = solutions.getMaterializedTransformations(); iterator.hasNext();) {
-        for (Iterator<Long> iterator = solutions.unsafeGetAllTransformations(); iterator.hasNext();) {
+        if (complete) {
+            iterator = solutions.unsafeGetAllTransformations();
+        } else {
+            iterator = solutions.getMaterializedTransformations();
+        }
+        for (; iterator.hasNext();) {
             final long id = iterator.next();
             final ARXNode fnode = map.get(id);
             
@@ -837,6 +872,14 @@ public class ARXLattice implements Serializable {
      */
     public ARXNode getBottom() {
         return bottom;
+    }
+    
+    /**
+     * Is there a unique
+     * @return
+     */
+    public boolean isComplete() {
+        return this.complete;
     }
 
     /**
@@ -917,19 +960,41 @@ public class ARXLattice implements Serializable {
         this.metric = Metric.createMetric(this.metric, 
                                           getDeserializationContext().minLevel, 
                                           getDeserializationContext().maxLevel);
+        
+        // Set flag, if necessary
+        if (complete == null) {
+            complete = true;
+        }
     }
 
 
     /**
      * This method triggers the estimation of the information loss of all nodes
      * in the lattice regardless of whether they have been checked for anonymity
-     * or not.
+     * or not. Additionally, it computes global upper and lower bounds on utility
      */
     protected void estimateInformationLoss() {
-        UtilityEstimator estimator = new UtilityEstimator(this, metric, monotonicAnonymous, monotonicNonAnonymous);
-        estimator.estimate();
-        this.minimumInformationLoss = estimator.getGlobalMinimum();
-        this.maximumInformationLoss = estimator.getGlobalMaximum();
+        if (complete) {
+            UtilityEstimator estimator = new UtilityEstimator(this, metric, monotonicAnonymous, monotonicNonAnonymous);
+            estimator.estimate();
+            this.minimumInformationLoss = estimator.getGlobalMinimum();
+            this.maximumInformationLoss = estimator.getGlobalMaximum();
+        } else {
+            this.minimumInformationLoss = null;
+            this.maximumInformationLoss = null;
+            for (ARXNode[] level : this.levels) {
+                for (ARXNode node : level) {
+                    this.minimumInformationLoss = this.minimumInformationLoss == null ? node.getMinimumInformationLoss() : this.minimumInformationLoss;
+                    this.maximumInformationLoss = this.maximumInformationLoss == null ? node.getMaximumInformationLoss() : this.maximumInformationLoss;
+                    if (this.minimumInformationLoss.compareTo(node.getMinimumInformationLoss()) > 0) {
+                        this.minimumInformationLoss = node.getMinimumInformationLoss().clone();
+                    }
+                    if (this.maximumInformationLoss.compareTo(node.getMaximumInformationLoss()) < 0) {
+                        this.maximumInformationLoss = node.getMaximumInformationLoss().clone();
+                    }
+                }
+            }
+        }
     }
     
 

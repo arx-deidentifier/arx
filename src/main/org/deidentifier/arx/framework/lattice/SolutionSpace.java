@@ -85,7 +85,7 @@ public class SolutionSpace {
                                                                                                            Direction.NONE);
 
     /** Trigger that fires a change event */
-    private DependentAction                                trigger;
+    private DependentAction                           trigger;
 
     /** Information loss */
     private LongObjectOpenHashMap<InformationLoss<?>> utility                     = new LongObjectOpenHashMap<InformationLoss<?>>();
