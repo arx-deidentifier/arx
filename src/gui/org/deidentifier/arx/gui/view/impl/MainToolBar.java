@@ -87,6 +87,9 @@ public class MainToolBar extends AbstractMenu {
         /** Count. */
         private final int numTransformationsInfolossAvailable;
         
+        /** Heuristic*/
+        private final boolean complete;
+        
         /** Time in seconds. */
         private final double executionTime;
         
@@ -144,6 +147,7 @@ public class MainToolBar extends AbstractMenu {
             this.numTransformationsProbablyNotAnonymous = probablyNotAnonymous;
             this.numTransformationsInfolossAvailable = infolossAvailable;
             this.optimum = result.getGlobalOptimum();
+            this.complete = result.getLattice().isComplete();
         }
 
         @Override
@@ -167,7 +171,9 @@ public class MainToolBar extends AbstractMenu {
               .append("%]\n"); //$NON-NLS-1$
             sb.append(Resources.getMessage("MainToolBar.18")) //$NON-NLS-1$
               .append(format.format(this.executionTime))
-              .append("s"); //$NON-NLS-1$
+              .append("s\n"); //$NON-NLS-1$
+            sb.append(Resources.getMessage("MainToolBar.40")) //$NON-NLS-1$
+            .append(complete); //$NON-NLS-1$
             
             if (this.numTransformationsAnonymous != 0 ||
                 this.numTransformationsNotAnonymous != 0 ||
