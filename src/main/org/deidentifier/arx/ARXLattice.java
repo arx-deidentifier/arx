@@ -374,7 +374,13 @@ public class ARXLattice implements Serializable {
                 } else if(transformation.hasProperty(solutions.getPropertyNotAnonymous())) {
                     this.anonymity = Anonymity.NOT_ANONYMOUS;
                 } else {                  
-                    throw new IllegalStateException("Missing node information");
+                    if (!complete) {
+                        this.anonymity = Anonymity.UNKNOWN;
+                        this.maxInformationLoss = metric.createMaxInformationLoss();
+                        this.minInformationLoss = metric.createMinInformationLoss();
+                    } else {
+                        throw new IllegalStateException("Missing information about transformations");
+                    }
                 }
             // This is a node for which the property is unknown
             } else {
@@ -387,7 +393,13 @@ public class ARXLattice implements Serializable {
                 } else if (transformation.hasProperty(solutions.getPropertyInsufficientUtility())) {
                     this.anonymity = Anonymity.UNKNOWN;
                 } else {
-                    throw new IllegalStateException("Missing node information");
+                    if (!complete) {
+                        this.anonymity = Anonymity.UNKNOWN;
+                        this.maxInformationLoss = metric.createMaxInformationLoss();
+                        this.minInformationLoss = metric.createMinInformationLoss();
+                    } else {
+                        throw new IllegalStateException("Missing information about transformations");
+                    }
                 }
             }
         }
