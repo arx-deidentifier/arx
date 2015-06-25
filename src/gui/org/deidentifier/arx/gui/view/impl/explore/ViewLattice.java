@@ -98,9 +98,7 @@ public class ViewLattice extends ViewSolutionSpace {
         /**  Path */
         private final transient Path path;
         
-        /**
-         * 
-         *
+        /** Constructor
          * @param path
          */
         public SerializablePath(Path path){
@@ -108,7 +106,7 @@ public class ViewLattice extends ViewSolutionSpace {
         }
         
         /**
-         * 
+         * Dispose
          */
         public void dispose(){
             if (!this.path.isDisposed()) {
@@ -117,8 +115,7 @@ public class ViewLattice extends ViewSolutionSpace {
         }
         
         /**
-         * 
-         *
+         * Returns the path
          * @return
          */
         public Path getPath(){
