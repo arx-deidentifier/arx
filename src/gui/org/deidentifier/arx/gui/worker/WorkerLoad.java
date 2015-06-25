@@ -289,8 +289,11 @@ public class WorkerLoad extends Worker<Model> {
             }
             model.setSelectedNode(outputNode);
             
-            // Update model
+            // Create solution space
             ARXConfiguration arxconfig = model.getOutputConfig().getConfig();
+            SolutionSpace solutions = new SolutionSpace(lattice, arxconfig);
+            
+            // Update model
             model.setResult(new ARXResult(config.getInput().getHandle(),
                                           definition,
                                           lattice,
@@ -301,7 +304,13 @@ public class WorkerLoad extends Worker<Model> {
                                           arxconfig,
                                           optimalNode,
                                           time,
-                                          new SolutionSpace(lattice, arxconfig)));
+                                          solutions));
+            
+            // Update lattice
+            ARXLattice lattice = model.getResult().getLattice();
+            if (lattice != null) {
+                lattice.access().setSolutionSpace(solutions);
+            }
 
             // Create anonymizer
             final ARXAnonymizer f = new ARXAnonymizer();

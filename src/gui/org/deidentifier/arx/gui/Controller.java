@@ -426,6 +426,14 @@ public class Controller implements IView {
     }
 
     /**
+     * Expand action
+     * @param transformation
+     */
+    public void actionExpand(ARXNode transformation) {
+        model.getResult().getLattice().expand(transformation);
+    }
+
+    /**
      * Find and replace action
      */
     public void actionFindReplace() {
@@ -1321,7 +1329,6 @@ public class Controller implements IView {
                                         final String initial) {
         return main.showInputDialog(shell, header, text, initial);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1338,6 +1345,7 @@ public class Controller implements IView {
                                         final IInputValidator validator) {
         return main.showInputDialog(shell, header, text, initial, validator);
     }
+
     /**
      * Shows a "open file" dialog.
      *
@@ -1509,7 +1517,7 @@ public class Controller implements IView {
         }
         listeners.get(target).add(listener);
     }
-
+    
     @Override
     public void dispose() {
         for (final Set<IView> listeners : getListeners().values()) {
@@ -1518,7 +1526,7 @@ public class Controller implements IView {
             }
         }
     }
-    
+
     /**
      * Returns debug data.
      *

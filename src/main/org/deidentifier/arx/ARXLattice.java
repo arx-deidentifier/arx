@@ -151,6 +151,14 @@ public class ARXLattice implements Serializable {
         public void setUncertainty(final boolean uncertainty) {
             lattice.uncertainty = uncertainty;
         }
+
+        /**
+         * Updates the solution space
+         * @param solutions
+         */
+        public void setSolutionSpace(SolutionSpace solutions) {
+            lattice.solutionSpace = solutions;
+        }
     }
 
     /**
@@ -696,49 +704,49 @@ public class ARXLattice implements Serializable {
     }
 
     /** The accessor. */
-    private final Access                  access                 = new Access(this);
+    private final Access            access                 = new Access(this);
 
     /** The bottom node. */
-    private transient ARXNode             bottom;
+    private transient ARXNode       bottom;
 
     /** The levels in the lattice. */
-    private transient ARXNode[][]         levels;
+    private transient ARXNode[][]   levels;
 
     /** Metric. */
-    private Metric<?>                     metric;
+    private Metric<?>               metric;
 
     /** The optimum. */
-    private transient ARXNode             optimum;
+    private transient ARXNode       optimum;
 
     /** The number of nodes. */
-    private int                           size;
+    private int                     size;
 
     /** The virtual size */
-    private Long                          virtualSize;
+    private Long                    virtualSize;
 
     /** The top node. */
-    private transient ARXNode             top;
+    private transient ARXNode       top;
 
     /** Is practical monotonicity being assumed. */
-    private boolean                       uncertainty;
+    private boolean                 uncertainty;
 
     /** Is this the result of an optimal algorithm */
-    private Boolean                       complete;
+    private Boolean                 complete;
 
     /** Monotonicity of information loss. */
-    private boolean                       monotonicAnonymous;
+    private boolean                 monotonicAnonymous;
 
     /** Monotonicity of information loss. */
-    private boolean                       monotonicNonAnonymous;
+    private boolean                 monotonicNonAnonymous;
 
     /** Minimum loss in the lattice. */
-    private InformationLoss<?>            minimumInformationLoss = null;
+    private InformationLoss<?>      minimumInformationLoss = null;
 
     /** Maximum loss in the lattice. */
-    private InformationLoss<?>            maximumInformationLoss = null;
+    private InformationLoss<?>      maximumInformationLoss = null;
 
     /** The solution space */
-    private final transient SolutionSpace solutionSpace;
+    private transient SolutionSpace solutionSpace;
 
     /**
      * Constructor.
