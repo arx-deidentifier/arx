@@ -341,25 +341,33 @@ public class ARXLattice implements Serializable {
         /** The transformation. */
         private int[]                transformation;
 
+        /** The underlying lattice */
+        private final ARXLattice     lattice;
+
         /**
          * Internal constructor for deserialization.
+         * 
+         * @param lattice
          */
-        public ARXNode() {
-            // Empty by design
+        public ARXNode(ARXLattice lattice) {
+            this.lattice = lattice;
         }
 
         /**
          * Constructor.
          *
+         * @param lattice
          * @param solutions
          * @param transformation
          * @param headermap
          */
-        private ARXNode(final SolutionSpace solutions, 
+        private ARXNode(final ARXLattice lattice,
+                        final SolutionSpace solutions, 
                         final Transformation transformation, 
                         final Map<String, Integer> headermap) {
             
             // Set properties
+            this.lattice = lattice;
             this.headermap = headermap;
             this.transformation = transformation.getGeneralization();
             this.minInformationLoss = transformation.getInformationLoss();
@@ -411,6 +419,13 @@ public class ARXLattice implements Serializable {
          */
         public Access access() {
             return access;
+        }
+        
+        /**
+         * Materializes any non-materialized predecessors and successors
+         */
+        public void expand() {
+            this.lattice.expand(this);
         }
 
         /**
@@ -764,7 +779,7 @@ public class ARXLattice implements Serializable {
             if (!levels.containsKey(transformation.getLevel())) {
                 levels.put(transformation.getLevel(), new ArrayList<ARXNode>());
             }
-            ARXNode node = new ARXNode(solutions, transformation, headermap);
+            ARXNode node = new ARXNode(this, solutions, transformation, headermap);
             map.put(transformation.getIdentifier(), node);
             levels.get(transformation.getLevel()).add(node);
             if (optimum != null && transformation.getIdentifier() == optimum.getIdentifier()) {
@@ -782,7 +797,7 @@ public class ARXLattice implements Serializable {
                 if (!levels.containsKey(top.getLevel())) {
                     levels.put(top.getLevel(), new ArrayList<ARXNode>());
                 }
-                ARXNode node = new ARXNode(solutions, top, headermap);
+                ARXNode node = new ARXNode(this, solutions, top, headermap);
                 map.put(top.getIdentifier(), node);
                 levels.get(top.getLevel()).add(node);
                 maxlevel = top.getLevel();
@@ -792,7 +807,7 @@ public class ARXLattice implements Serializable {
                 if (!levels.containsKey(bottom.getLevel())) {
                     levels.put(bottom.getLevel(), new ArrayList<ARXNode>());
                 }
-                ARXNode node = new ARXNode(solutions, bottom, headermap);
+                ARXNode node = new ARXNode(this, solutions, bottom, headermap);
                 map.put(bottom.getIdentifier(), node);
                 levels.get(bottom.getLevel()).add(node);
                 size++;
@@ -898,6 +913,16 @@ public class ARXLattice implements Serializable {
         return levels;
     }
 
+    /**
+     * Materializes any non-materialized predecessors and successors
+     */
+    public void expand(ARXNode node) {
+        if (this.isComplete()) {
+            return;
+        }
+        // TODO
+    }
+    
     /**
      * Returns the maximal information loss.
      *

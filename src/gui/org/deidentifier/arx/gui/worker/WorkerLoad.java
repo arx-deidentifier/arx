@@ -689,7 +689,7 @@ public class WorkerLoad extends Worker<Model> {
                     vocabulary.isMin2(localName)) {
                         return true;
                 } else if (vocabulary.isNode2(localName)) {
-                    final ARXNode node = lattice.new ARXNode();
+                    final ARXNode node = lattice.new ARXNode(lattice);
                     node.access().setAnonymity(anonymity);
                     node.access().setChecked(checked);
                     node.access().setTransformation(transformation);
