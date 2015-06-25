@@ -91,7 +91,7 @@ public class DialogProperties implements IDialog {
     private void createTabInternals(PreferencesDialog window) {
         
         window.addCategory(Resources.getMessage("PropertyDialog.16"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-internals.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-internals.png")); //$NON-NLS-1$
         
         window.addGroup(Resources.getMessage("DialogProperties.2")); //$NON-NLS-1$
         
@@ -133,7 +133,7 @@ public class DialogProperties implements IDialog {
     private void createTabProject(PreferencesDialog window) {
         
         window.addCategory(Resources.getMessage("PropertyDialog.3"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-project.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-project.png")); //$NON-NLS-1$
         
         window.addGroup(Resources.getMessage("DialogProperties.5")); //$NON-NLS-1$
         
@@ -176,7 +176,7 @@ public class DialogProperties implements IDialog {
     private void createTabRisk(PreferencesDialog window) {
 
         window.addCategory(Resources.getMessage("PropertyDialog.40"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-risk.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-risk.png")); //$NON-NLS-1$
         
         window.addGroup(Resources.getMessage("DialogProperties.7")); //$NON-NLS-1$
         
@@ -218,7 +218,7 @@ public class DialogProperties implements IDialog {
      */
     private void createTabSearch(PreferencesDialog window) {
         window.addCategory(Resources.getMessage("PropertyDialog.130"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-search.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-search.png")); //$NON-NLS-1$
         
         window.addGroup(Resources.getMessage("DialogProperties.9")); //$NON-NLS-1$
         
@@ -248,7 +248,7 @@ public class DialogProperties implements IDialog {
     private void createTabTransformation(PreferencesDialog window) {
        
         window.addCategory(Resources.getMessage("PropertyDialog.10"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-transformation.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-transformation.png")); //$NON-NLS-1$
 
         window.addGroup(Resources.getMessage("DialogProperties.11")); //$NON-NLS-1$
         
@@ -276,7 +276,7 @@ public class DialogProperties implements IDialog {
     private void createTabUtility(PreferencesDialog window) {
 
         window.addCategory(Resources.getMessage("PropertyDialog.60"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-utility.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-utility.png")); //$NON-NLS-1$
         
         window.addGroup(Resources.getMessage("DialogProperties.12")); //$NON-NLS-1$
         

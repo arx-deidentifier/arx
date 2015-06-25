@@ -64,13 +64,7 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
     
     /**  TODO */
     private ModelExplicitCriterion       selection  = null;
-    
-    /**  TODO */
-    private Image                        symbolL    = null;
-    
-    /**  TODO */
-    private Image                        symbolT    = null;
-    
+
     /**  TODO */
     private Controller                   controller = null;
 
@@ -91,8 +85,6 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
 
     @Override
     public boolean close() {
-        if (symbolL != null) symbolL.dispose();
-        if (symbolT != null) symbolT.dispose();
         return super.close();
     }
 
@@ -164,8 +156,8 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
         TableColumn column3 = new TableColumn(table, SWT.NONE);
         column3.setText(Resources.getMessage("CriterionSelectionDialog.3")); //$NON-NLS-1$
         
-        this.symbolL = controller.getResources().getImage("symbol_l.png"); //$NON-NLS-1$
-        this.symbolT = controller.getResources().getImage("symbol_t.png"); //$NON-NLS-1$
+        Image symbolL = controller.getResources().getManagedImage("symbol_l.png"); //$NON-NLS-1$
+        Image symbolT = controller.getResources().getManagedImage("symbol_t.png"); //$NON-NLS-1$
         
         for (ModelExplicitCriterion c : elements) {
 

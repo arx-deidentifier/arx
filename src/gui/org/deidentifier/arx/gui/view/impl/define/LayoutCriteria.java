@@ -65,7 +65,7 @@ public class LayoutCriteria implements ILayout {
 
         ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-80"); //$NON-NLS-1$
         bar.add(Resources.getMessage("CriterionDefinitionView.80"),  //$NON-NLS-1$
-                controller.getResources().getImage("add.png"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("add.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -73,7 +73,7 @@ public class LayoutCriteria implements ILayout {
                     }
                 });
         bar.add(Resources.getMessage("CriterionDefinitionView.59"),  //$NON-NLS-1$
-                controller.getResources().getImage("remove.png"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("remove.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -81,7 +81,7 @@ public class LayoutCriteria implements ILayout {
                     }
                 });
         bar.add(Resources.getMessage("CriterionDefinitionView.82"),  //$NON-NLS-1$
-                controller.getResources().getImage("edit.png"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("edit.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -90,7 +90,7 @@ public class LayoutCriteria implements ILayout {
                 });
 
         bar.add(Resources.getMessage("CriterionDefinitionView.57"),  //$NON-NLS-1$
-                controller.getResources().getImage("bullet_arrow_up.png"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("bullet_arrow_up.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -99,7 +99,7 @@ public class LayoutCriteria implements ILayout {
                 });
         
         bar.add(Resources.getMessage("CriterionDefinitionView.58"),  //$NON-NLS-1$
-                controller.getResources().getImage("bullet_arrow_down.png"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("bullet_arrow_down.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {

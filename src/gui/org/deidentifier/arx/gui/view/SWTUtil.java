@@ -231,7 +231,7 @@ public class SWTUtil {
         ToolBar toolbar = new ToolBar(tabFolder, SWT.FLAT);
         tabFolder.setTopRight( toolbar, SWT.RIGHT );
         ToolItem item = new ToolItem( toolbar, SWT.PUSH );
-        item.setImage(controller.getResources().getImage("help.png"));  //$NON-NLS-1$
+        item.setImage(controller.getResources().getManagedImage("help.png"));  //$NON-NLS-1$
         item.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
         createDisabledImage(item);
         int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;

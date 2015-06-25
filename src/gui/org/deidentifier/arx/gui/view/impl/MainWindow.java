@@ -146,13 +146,13 @@ public class MainWindow implements IView {
         root.setLayoutData(SWTUtil.createFillGridData());
 
         // Create the subviews
-        Composite item1 = root.createItem(Resources.getMessage("MainWindow.2"), controller.getResources().getImage("perspective_define.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        Composite item1 = root.createItem(Resources.getMessage("MainWindow.2"), controller.getResources().getManagedImage("perspective_define.png")); //$NON-NLS-1$ //$NON-NLS-2$
         new LayoutDefinition(item1, controller);
-        Composite item2 = root.createItem(Resources.getMessage("MainWindow.3"), controller.getResources().getImage("perspective_explore.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        Composite item2 = root.createItem(Resources.getMessage("MainWindow.3"), controller.getResources().getManagedImage("perspective_explore.png")); //$NON-NLS-1$ //$NON-NLS-2$
         this.layoutExplore = new LayoutExplore(item2, controller);
-        Composite item3 = root.createItem(Resources.getMessage("MainWindow.1"), controller.getResources().getImage("perspective_analyze.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        Composite item3 = root.createItem(Resources.getMessage("MainWindow.1"), controller.getResources().getManagedImage("perspective_analyze.png")); //$NON-NLS-1$ //$NON-NLS-2$
         new LayoutUtility(item3, controller);
-        Composite item4 = root.createItem(Resources.getMessage("MainWindow.4"), controller.getResources().getImage("perspective_risk.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        Composite item4 = root.createItem(Resources.getMessage("MainWindow.4"), controller.getResources().getManagedImage("perspective_risk.png")); //$NON-NLS-1$ //$NON-NLS-2$
         new LayoutRisks(item4, controller);
 
         // Hack to update visualizations
@@ -631,7 +631,7 @@ public class MainWindow implements IView {
         List<MainMenuItem> items = new ArrayList<MainMenuItem>();
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.21"), //$NON-NLS-1$
-                                   controller.getResources().getImage("edit_anonymize.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_anonymize.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuEditAnonymize(false); }
             public boolean isEnabled(Model model) { 
@@ -640,7 +640,7 @@ public class MainWindow implements IView {
         });
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.40"), //$NON-NLS-1$
-                                   controller.getResources().getImage("edit_anonymize_heuristic.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_anonymize_heuristic.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuEditAnonymize(true); }
             public boolean isEnabled(Model model) { 
@@ -649,7 +649,7 @@ public class MainWindow implements IView {
         });
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.39"), //$NON-NLS-1$
-                                   controller.getResources().getImage("cross.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("cross.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuEditReset(); }
             public boolean isEnabled(Model model) { 
@@ -660,7 +660,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.23"), //$NON-NLS-1$
-                                   controller.getResources().getImage("edit_create_hierarchy.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuEditCreateHierarchy(); }
             public boolean isEnabled(Model model) { 
@@ -671,7 +671,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.30"), //$NON-NLS-1$
-                                   controller.getResources().getImage("edit_find_replace.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_find_replace.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { controller.actionFindReplace(); }
             public boolean isEnabled(Model model) { 
@@ -680,7 +680,7 @@ public class MainWindow implements IView {
         });
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.31"), //$NON-NLS-1$
-                                   controller.getResources().getImage("edit_audit_trail.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_audit_trail.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { controller.actionShowAuditTrail(); }
             public boolean isEnabled(Model model) { 
@@ -693,7 +693,7 @@ public class MainWindow implements IView {
         List<MainMenuItem> subset = new ArrayList<MainMenuItem>();
 
         subset.add(new MainMenuItem(Resources.getMessage("SubsetDefinitionView.1"), //$NON-NLS-1$
-                                   controller.getResources().getImage("page_white.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("page_white.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { controller.actionSubsetNone(); }
             public boolean isEnabled(Model model) { 
@@ -702,7 +702,7 @@ public class MainWindow implements IView {
         });
         
         subset.add(new MainMenuItem(Resources.getMessage("SubsetDefinitionView.2"), //$NON-NLS-1$
-                                   controller.getResources().getImage("page_white_text.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("page_white_text.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { controller.actionSubsetAll(); }
             public boolean isEnabled(Model model) { 
@@ -711,7 +711,7 @@ public class MainWindow implements IView {
         });
         
         subset.add(new MainMenuItem(Resources.getMessage("SubsetDefinitionView.3"), //$NON-NLS-1$
-                                   controller.getResources().getImage("disk.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("disk.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { controller.actionSubsetFile(); }
             public boolean isEnabled(Model model) { 
@@ -720,7 +720,7 @@ public class MainWindow implements IView {
         });
         
         subset.add(new MainMenuItem(Resources.getMessage("SubsetDefinitionView.4"), //$NON-NLS-1$
-                                   controller.getResources().getImage("find.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("find.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { controller.actionSubsetQuery(); }
             public boolean isEnabled(Model model) { 
@@ -737,7 +737,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.37"), //$NON-NLS-1$
-                                   controller.getResources().getImage("apply.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("apply.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionApplySelectedTransformation(); }
             public boolean isEnabled(Model model) { 
@@ -748,7 +748,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuSeparator());
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.25"), //$NON-NLS-1$
-                                   controller.getResources().getImage("edit_settings.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_settings.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuEditSettings(); }
             public boolean isEnabled(Model model) { 
@@ -774,7 +774,7 @@ public class MainWindow implements IView {
         List<MainMenuItem> items = new ArrayList<MainMenuItem>();
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.27"), //$NON-NLS-1$
-                                   controller.getResources().getImage("help.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("help.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuHelpHelp(); }
             public boolean isEnabled(Model model) { return true; }
@@ -783,7 +783,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuSeparator());
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.29"), //$NON-NLS-1$
-                                   controller.getResources().getImage("information.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { controller.actionMenuHelpAbout(); }
             public boolean isEnabled(Model model) { return true; }
@@ -792,7 +792,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.32"), //$NON-NLS-1$
-                                   controller.getResources().getImage("information.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { controller.actionMenuHelpDebug(); }
             public boolean isEnabled(Model model) { 
@@ -833,7 +833,7 @@ public class MainWindow implements IView {
         List<MainMenuItem> items = new ArrayList<MainMenuItem>();
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.3"), //$NON-NLS-1$
-                                   controller.getResources().getImage("file_new.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_new.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuFileNew(); }
             public boolean isEnabled(Model model) { return true; }
@@ -842,21 +842,21 @@ public class MainWindow implements IView {
         items.add(new MainMenuSeparator());
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.5"), //$NON-NLS-1$
-                                   controller.getResources().getImage("file_load.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_load.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuFileOpen(); }
             public boolean isEnabled(Model model) { return true; }
         });
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.4"), //$NON-NLS-1$
-                                   controller.getResources().getImage("file_save.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_save.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuFileSave(); }
             public boolean isEnabled(Model model) { return model != null; }
         });
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.9"), //$NON-NLS-1$
-                                   controller.getResources().getImage("file_save_as.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_save_as.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuFileSaveAs(); }
             public boolean isEnabled(Model model) { return model != null; }
@@ -865,14 +865,14 @@ public class MainWindow implements IView {
         items.add(new MainMenuSeparator());
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.11"), //$NON-NLS-1$
-                                   controller.getResources().getImage("file_import_data.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_import_data.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuFileImportData(); }
             public boolean isEnabled(Model model) { return model != null && model.getPerspective() == Perspective.CONFIGURATION; }
         });
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.13"), //$NON-NLS-1$
-                                   controller.getResources().getImage("file_export_data.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_export_data.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuFileExportData(); }
             public boolean isEnabled(Model model) { 
@@ -883,7 +883,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.15"), //$NON-NLS-1$
-                                   controller.getResources().getImage("file_import_hierarchy.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_import_hierarchy.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuFileImportHierarchy(); }
             public boolean isEnabled(Model model) { 
@@ -892,7 +892,7 @@ public class MainWindow implements IView {
         });
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.17"), //$NON-NLS-1$
-                                   controller.getResources().getImage("file_export_hierarchy.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_export_hierarchy.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuFileExportHierarchy(); }
             public boolean isEnabled(Model model) { 
@@ -903,7 +903,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.19"), //$NON-NLS-1$
-                                   controller.getResources().getImage("exit.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("exit.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { controller.actionMenuFileExit(); }
             public boolean isEnabled(Model model) { 
@@ -928,7 +928,7 @@ public class MainWindow implements IView {
         List<MainMenuItem> items = new ArrayList<MainMenuItem>();
         
         items.add(new MainMenuItem(Resources.getMessage("MainWindow.2"), //$NON-NLS-1$
-                                   controller.getResources().getImage("perspective_define.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("perspective_define.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { 
                 root.setSelection(0);
@@ -939,7 +939,7 @@ public class MainWindow implements IView {
         });
         
         items.add(new MainMenuItem(Resources.getMessage("MainWindow.3"), //$NON-NLS-1$
-                                   controller.getResources().getImage("perspective_explore.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("perspective_explore.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { 
                 root.setSelection(1);
@@ -950,7 +950,7 @@ public class MainWindow implements IView {
         });
 
         items.add(new MainMenuItem(Resources.getMessage("MainWindow.1"), //$NON-NLS-1$
-                                   controller.getResources().getImage("perspective_analyze.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("perspective_analyze.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { 
                 root.setSelection(2);
@@ -961,7 +961,7 @@ public class MainWindow implements IView {
         });
 
         items.add(new MainMenuItem(Resources.getMessage("MainWindow.4"), //$NON-NLS-1$
-                                   controller.getResources().getImage("perspective_risk.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("perspective_risk.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { 
                 root.setSelection(3);
@@ -974,7 +974,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.0"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                   controller.getResources().getImage("explore_lattice.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("explore_lattice.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { 
                 layoutExplore.showLattice(); 
@@ -989,7 +989,7 @@ public class MainWindow implements IView {
         });
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.2"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                   controller.getResources().getImage("explore_list.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("explore_list.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { 
                 layoutExplore.showList();
@@ -1004,7 +1004,7 @@ public class MainWindow implements IView {
         });
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.3"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                   controller.getResources().getImage("explore_tiles.png"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("explore_tiles.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { 
                 layoutExplore.showTiles(); 

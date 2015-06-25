@@ -615,7 +615,7 @@ public class ImportWizardPageColumns extends WizardPage {
         btnUp.setText(Resources.getMessage("ImportWizardPageColumns.20")); //$NON-NLS-1$
         btnUp.setImage(wizardImport.getController()
                                    .getResources()
-                                   .getImage("arrow_up.png")); //$NON-NLS-1$
+                                   .getManagedImage("arrow_up.png")); //$NON-NLS-1$
         btnUp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
         btnUp.setEnabled(false);
         btnUp.addSelectionListener(new SelectionAdapter() {
@@ -645,7 +645,7 @@ public class ImportWizardPageColumns extends WizardPage {
         btnDown.setText(Resources.getMessage("ImportWizardPageColumns.22")); //$NON-NLS-1$
         btnDown.setImage(wizardImport.getController()
                                      .getResources()
-                                     .getImage("arrow_down.png")); //$NON-NLS-1$
+                                     .getManagedImage("arrow_down.png")); //$NON-NLS-1$
         btnDown.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
         btnDown.setEnabled(false);
         btnDown.addSelectionListener(new SelectionAdapter() {

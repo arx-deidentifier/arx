@@ -239,7 +239,7 @@ public class Resources {
      * @param name
      * @return
      */
-    public Image getImage(final String name) {
+    private Image getImage(final String name) {
         if (shell.isDisposed()) return null;
         
         InputStream imageStream = this.getClass().getResourceAsStream(name);

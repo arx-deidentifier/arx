@@ -55,9 +55,8 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
     public DataTableColumnHeaderConfiguration(DataTableContext context) {
         this.context = context;
         this.font = context.getFont();
-        // TODO: Dispose properly, and look for similar cases
-        IMAGE_COL_BACK   = context.getController().getResources().getImage("column_header_bg.png"); //$NON-NLS-1$
-        IMAGE_COL_SELECT = context.getController().getResources().getImage("selected_column_header_bg.png"); //$NON-NLS-1$
+        IMAGE_COL_BACK   = context.getController().getResources().getManagedImage("column_header_bg.png"); //$NON-NLS-1$
+        IMAGE_COL_SELECT = context.getController().getResources().getManagedImage("selected_column_header_bg.png"); //$NON-NLS-1$
     }
 
     @Override

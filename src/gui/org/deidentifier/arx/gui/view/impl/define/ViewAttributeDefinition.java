@@ -137,10 +137,10 @@ public class ViewAttributeDefinition implements IView {
                                    final Controller controller) {
         
         // Load images
-        IMAGE_INSENSITIVE = controller.getResources().getImage("bullet_green.png"); //$NON-NLS-1$
-        IMAGE_SENSITIVE = controller.getResources().getImage("bullet_purple.png"); //$NON-NLS-1$
-        IMAGE_QUASI_IDENTIFYING = controller.getResources().getImage("bullet_yellow.png"); //$NON-NLS-1$
-        IMAGE_IDENTIFYING = controller.getResources().getImage("bullet_red.png"); //$NON-NLS-1$
+        IMAGE_INSENSITIVE = controller.getResources().getManagedImage("bullet_green.png"); //$NON-NLS-1$
+        IMAGE_SENSITIVE = controller.getResources().getManagedImage("bullet_purple.png"); //$NON-NLS-1$
+        IMAGE_QUASI_IDENTIFYING = controller.getResources().getManagedImage("bullet_yellow.png"); //$NON-NLS-1$
+        IMAGE_IDENTIFYING = controller.getResources().getManagedImage("bullet_red.png"); //$NON-NLS-1$
         
         // Register
         this.controller = controller;
@@ -324,12 +324,6 @@ public class ViewAttributeDefinition implements IView {
         // Dispose views
         controller.removeListener(this);
         viewGeneralization.dispose();
-        
-        // Dispose images
-        IMAGE_INSENSITIVE.dispose();
-        IMAGE_SENSITIVE.dispose();
-        IMAGE_QUASI_IDENTIFYING.dispose();
-        IMAGE_IDENTIFYING.dispose();
     }
     
     @Override

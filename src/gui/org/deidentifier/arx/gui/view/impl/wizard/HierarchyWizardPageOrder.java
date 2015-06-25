@@ -234,7 +234,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         
         final Button up = new Button(composite, SWT.NONE);
         up.setText(Resources.getMessage("HierarchyWizardPageOrder.3")); //$NON-NLS-1$
-        up.setImage(controller.getResources().getImage("arrow_up.png")); //$NON-NLS-1$
+        up.setImage(controller.getResources().getManagedImage("arrow_up.png")); //$NON-NLS-1$
         up.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         up.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -245,7 +245,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
 
         final Button down = new Button(composite, SWT.NONE);
         down.setText(Resources.getMessage("HierarchyWizardPageOrder.5")); //$NON-NLS-1$
-        down.setImage(controller.getResources().getImage("arrow_down.png")); //$NON-NLS-1$
+        down.setImage(controller.getResources().getManagedImage("arrow_down.png")); //$NON-NLS-1$
         down.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         down.addSelectionListener(new SelectionAdapter() {
             @Override

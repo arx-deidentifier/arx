@@ -25,8 +25,6 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
@@ -97,8 +95,8 @@ public class ComponentFilterTable {
                                 Controller controller, 
                                 List<String> properties) {
         
-        IMAGE_ENABLED = controller.getResources().getImage("tick.png"); //$NON-NLS-1$
-        IMAGE_DISABLED = controller.getResources().getImage("cross.png"); //$NON-NLS-1$
+        IMAGE_ENABLED = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
+        IMAGE_DISABLED = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
         
         this.listeners = new ArrayList<SelectionListener>();
         this.selected = new HashMap<String, Map<String, Boolean>>();
@@ -140,13 +138,6 @@ public class ComponentFilterTable {
                                 !selected);
                     fireSelectionEvent();
                 }
-            }
-        });
-        
-        table.addDisposeListener(new DisposeListener(){
-            public void widgetDisposed(DisposeEvent arg0) {
-                IMAGE_ENABLED.dispose();
-                IMAGE_DISABLED.dispose();
             }
         });
     }

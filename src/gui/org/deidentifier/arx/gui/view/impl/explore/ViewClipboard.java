@@ -59,18 +59,6 @@ public class ViewClipboard implements IView {
     /** Identifier for key in the nodes' attribute maps. */
     private static final int        NODE_COMMENT = 111;
     
-    /** Image. */
-    private final Image             IMAGE_DOWN;
-    
-    /** Image. */
-    private final Image             IMAGE_UP;
-    
-    /** Image. */
-    private final Image             IMAGE_SORT;
-    
-    /** Image. */
-    private final Image             IMAGE_REMOVE;
-
     /** Component. */
     private final Table             table;
     
@@ -100,10 +88,10 @@ public class ViewClipboard implements IView {
      */
     public ViewClipboard(final Composite parent, final Controller controller) {
 
-        IMAGE_DOWN = controller.getResources().getImage("arrow_down.png"); //$NON-NLS-1$
-        IMAGE_UP = controller.getResources().getImage("arrow_up.png");//$NON-NLS-1$
-        IMAGE_SORT = controller.getResources().getImage("table_sort.png");//$NON-NLS-1$
-        IMAGE_REMOVE = controller.getResources().getImage("delete.png");//$NON-NLS-1$
+        Image imageDown = controller.getResources().getManagedImage("arrow_down.png"); //$NON-NLS-1$
+        Image imageUp = controller.getResources().getManagedImage("arrow_up.png");//$NON-NLS-1$
+        Image imageSort = controller.getResources().getManagedImage("table_sort.png");//$NON-NLS-1$
+        Image imageRemove = controller.getResources().getManagedImage("delete.png");//$NON-NLS-1$
 
         // Listen
         controller.addListener(ModelPart.CLIPBOARD, this);
@@ -112,22 +100,22 @@ public class ViewClipboard implements IView {
         this.controller = controller;
 
         ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-23"); //$NON-NLS-1$
-        bar.add(Resources.getMessage("ViewClipboard.0"), IMAGE_REMOVE, new Runnable(){ //$NON-NLS-1$
+        bar.add(Resources.getMessage("ViewClipboard.0"), imageRemove, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionRemove();
             }
         });
-        bar.add(Resources.getMessage("ViewClipboard.1"), IMAGE_UP, new Runnable(){ //$NON-NLS-1$
+        bar.add(Resources.getMessage("ViewClipboard.1"), imageUp, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionUp();
             }
         });
-        bar.add(Resources.getMessage("ViewClipboard.2"), IMAGE_DOWN, new Runnable(){ //$NON-NLS-1$
+        bar.add(Resources.getMessage("ViewClipboard.2"), imageDown, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionDown();
             }
         });
-        bar.add(Resources.getMessage("ViewClipboard.3"), IMAGE_SORT, new Runnable(){ //$NON-NLS-1$
+        bar.add(Resources.getMessage("ViewClipboard.3"), imageSort, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionSort();
             }
@@ -206,10 +194,6 @@ public class ViewClipboard implements IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
-        IMAGE_DOWN.dispose();
-        IMAGE_UP.dispose();
-        IMAGE_SORT.dispose();
-        IMAGE_REMOVE.dispose();
     }
 
     @Override

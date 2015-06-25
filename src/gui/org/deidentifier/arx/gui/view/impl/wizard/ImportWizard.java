@@ -102,7 +102,7 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
 
         setWindowTitle(Resources.getMessage("ImportWizard.0")); //$NON-NLS-1$
         this.setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(controller.getResources()
-                                                                           .getImage("import.png"))); //$NON-NLS-1$
+                                                                           .getManagedImage("import.png"))); //$NON-NLS-1$
         this.data = new ImportWizardModel(model);
         this.controller = controller;
         this.model = model;

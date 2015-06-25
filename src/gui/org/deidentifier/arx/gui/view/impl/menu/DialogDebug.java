@@ -61,13 +61,11 @@ public class DialogDebug extends TitleAreaDialog implements IDialog {
     public DialogDebug(final Shell parentShell, final Controller controller) {
         super(parentShell);
         this.controller = controller;
-        this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
+        this.image = controller.getResources().getManagedImage("logo_small.png"); //$NON-NLS-1$
     }
 
     @Override
     public boolean close() {
-        if (image != null)
-            image.dispose();
         return super.close();
     }
 
