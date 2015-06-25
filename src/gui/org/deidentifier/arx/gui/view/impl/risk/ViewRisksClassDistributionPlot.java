@@ -142,7 +142,15 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
         // Update font
         FontData[] fd = chart.getFont().getFontData();
         fd[0].setHeight(8);
-        chart.setFont(new Font(chart.getDisplay(), fd[0]));
+        final Font font = new Font(chart.getDisplay(), fd[0]);
+        chart.setFont(font);
+        chart.addDisposeListener(new DisposeListener(){
+            public void widgetDisposed(DisposeEvent arg0) {
+                if (font != null && !font.isDisposed()) {
+                    font.dispose();
+                }
+            } 
+        });
         
         // Update title
         ITitle graphTitle = chart.getTitle();
@@ -161,11 +169,13 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
             r = r>0 ? r : 0;
             r = g>0 ? g : 0;
             r = b>0 ? b : 0;
-            final Color c2 = new Color(chart.getDisplay(), r, g, b);
-            chart.setBackground(c2);
+            final Color background = new Color(chart.getDisplay(), r, g, b);
+            chart.setBackground(background);
             chart.addDisposeListener(new DisposeListener(){
                 public void widgetDisposed(DisposeEvent arg0) {
-                    c2.dispose();
+                    if (background != null && !background.isDisposed()) {
+                        background.dispose();
+                    }
                 } 
             });
         }

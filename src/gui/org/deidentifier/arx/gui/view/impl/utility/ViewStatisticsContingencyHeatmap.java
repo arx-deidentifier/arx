@@ -21,6 +21,8 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -80,7 +82,15 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
             FontData[] fd = font.getFontData();
             if (fd != null && fd.length>0){
                 fd[0].setHeight(8);
-                jhc.setFont(new Font(jhc.getDisplay(), fd[0]));
+                final Font _font = new Font(jhc.getDisplay(), fd[0]);
+                jhc.setFont(_font);
+                parent.addDisposeListener(new DisposeListener(){
+                    public void widgetDisposed(DisposeEvent arg0) {
+                        if (_font != null && !_font.isDisposed()) {
+                            _font.dispose();
+                        }
+                    }
+                });
             }
         }
         

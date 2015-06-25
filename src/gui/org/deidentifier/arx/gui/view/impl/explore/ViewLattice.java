@@ -127,10 +127,13 @@ public class ViewLattice extends ViewSolutionSpace {
     }
 
     /** Color. */
-    private static final Color         COLOR_BLACK             = GUIHelper.getColor(0, 0, 0);
-    
+    private static final Color        COLOR_BLACK             = GUIHelper.getColor(0, 0, 0);
+
     /** Color. */
-    private static final Color         COLOR_LIGHT_GRAY        = GUIHelper.getColor(211, 211, 211);
+    private static final Color        COLOR_LIGHT_GRAY        = GUIHelper.getColor(211, 211, 211);
+
+    /** Color. */
+    private static final Color        COLOR_LINE              = GUIHelper.getColor(200, 200, 200);
 
     /** Attribute constant. */
     private static final int          ATTRIBUTE_CENTER        = 4;
@@ -388,13 +391,12 @@ public class ViewLattice extends ViewSolutionSpace {
     private void drawConnections(GC g) {
         
         // Prepare
-        Color color = getLineColor(nodeWidth);
         Set<ARXNode> done = new HashSet<ARXNode>();
         int[] clip = new int[4];
 
         // Set style
         g.setLineWidth(STROKE_WIDTH_CONNECTION);
-        g.setForeground(color);
+        g.setForeground(COLOR_LINE);
 
         // For each node
         for (List<ARXNode> level : lattice) {
@@ -427,11 +429,6 @@ public class ViewLattice extends ViewSolutionSpace {
                 // Add to set of already processed nodes
                 done.add(node1);
             }
-        }
-        
-        // Dispose color
-        if (color != null && !color.isDisposed()) {
-            color.dispose();
         }
     }
 
@@ -555,16 +552,6 @@ public class ViewLattice extends ViewSolutionSpace {
         int yy = y + height / 2 - extent.y / 2;
         gc.drawText(text, xx, yy, true);
         gc.setClipping(0, 0, size.x, size.y);
-    }
-
-    /**
-     * Returns a line color for drawing the connections.
-     *
-     * @param nodeWidth
-     * @return
-     */
-    private Color getLineColor(double nodeWidth) {
-        return new Color(canvas.getDisplay(), 200, 200, 200);
     }
 
     /**
