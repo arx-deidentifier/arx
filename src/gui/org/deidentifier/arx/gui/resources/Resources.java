@@ -21,6 +21,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -29,6 +32,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -41,34 +46,37 @@ import org.eclipse.swt.widgets.Shell;
  * @author Fabian Prasser
  */
 public class Resources {
-
+    
     /** Messages */
     private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
-    
+                                                                                                                                   
     /** The splash. */
     private static Image                splash          = null;
     
     /** The iconset. */
     private static Image[]              iconset         = null;
-
+    
+    /** The image cache */
+    private final Map<String, Image>    imageCache;
+    
     /**
      * Returns the logo.
      *
      * @param display
      * @return
      */
-	public static Image[] getIconSet(Display display) {
-	    
-	    if (iconset == null){
-    	    int[] sizes = new int[]{16,24,32,48,64,96,128,256};
-    	    iconset = new Image[sizes.length];
-    	    int idx = 0;
-    	    for (int size : sizes){
-    	        iconset[idx++] = getImage(display, "logo_"+size+".png"); //$NON-NLS-1$ //$NON-NLS-2$
-    	    }
-	    }
-	    return iconset;
-	}
+    public static Image[] getIconSet(Display display) {
+        
+        if (iconset == null) {
+            int[] sizes = new int[] { 16, 24, 32, 48, 64, 96, 128, 256 };
+            iconset = new Image[sizes.length];
+            int idx = 0;
+            for (int size : sizes) {
+                iconset[idx++] = getImage(display, "logo_" + size + ".png"); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        }
+        return iconset;
+    }
     
     /**
      * Reads the content from the file license.txt located in the package org.deidentifier.arx.gui.resources and
@@ -100,7 +108,7 @@ public class Resources {
         }
         return content;
     }
-
+    
     /**
      * 
      * Returns the associated message
@@ -116,7 +124,7 @@ public class Resources {
             return '!' + key + '!';
         }
     }
-
+    
     /**
      * Returns the splash image.
      *
@@ -129,7 +137,7 @@ public class Resources {
         }
         return splash;
     }
-
+    
     /**
      * Returns the version.
      *
@@ -138,14 +146,14 @@ public class Resources {
     public static String getVersion() {
         return Resources.getMessage("Resources.0"); //$NON-NLS-1$;
     }
-
+    
     /**
      * Loads an image. Adds a dispose listener that disposes the image when the display is disposed
      * @param display
      * @param resource
      * @return
      */
-    private static final Image getImage(Display display, String resource){
+    private static final Image getImage(Display display, String resource) {
         InputStream stream = Resources.class.getResourceAsStream(resource);
         try {
             final Image image = new Image(display, stream);
@@ -167,12 +175,12 @@ public class Resources {
             }
         }
     }
-
+    
     /** Logger. */
-    private final Logger                logger          = Logger.getRootLogger();
+    private final Logger logger = Logger.getRootLogger();
     
     /** Shell. */
-    private final Shell                 shell;
+    private final Shell  shell;
     
     /**
      * Creates a new instance.
@@ -180,7 +188,7 @@ public class Resources {
      * @param shell
      */
     public Resources(final Shell shell) {
-
+        
         this.shell = shell;
         
         // Release config
@@ -188,8 +196,25 @@ public class Resources {
         ConsoleAppender consoleAppender = new ConsoleAppender(layout);
         logger.addAppender(consoleAppender);
         logger.setLevel(Level.OFF);
+        
+        this.imageCache = new HashMap<String, Image>();
+        this.shell.addDisposeListener(new DisposeListener() {
+            @Override
+            public void widgetDisposed(DisposeEvent paramDisposeEvent) {
+                if (imageCache != null) {
+                    for (Entry<String, Image> entry : imageCache.entrySet()) {
+                        Image image = entry.getValue();
+                        if (image != null && !image.isDisposed()) {
+                            image.dispose();
+                        }
+                    }
+                    imageCache.clear();
+                }
+            }
+        });
+        
     }
-
+    
     /**
      * Returns the display.
      *
@@ -198,7 +223,7 @@ public class Resources {
     public Display getDisplay() {
         return shell.getDisplay();
     }
-
+    
     /**
      * Returns the size of the gradient used in heatmaps.
      *
@@ -207,7 +232,7 @@ public class Resources {
     public int getGradientLength() {
         return 256;
     }
-
+    
     /**
      * Returns an image.
      *
@@ -238,7 +263,25 @@ public class Resources {
             }
         }
     }
-
+    
+    /**
+     * Returns an image. Do not dispose the image.
+     *
+     * @param name
+     * @return
+     */
+    public Image getManagedImage(final String name) {
+        if (shell.isDisposed()) return null;
+        
+        if (imageCache.containsKey(name)) {
+            return imageCache.get(name);
+        } else {
+            Image image = getImage(name);
+            imageCache.put(name, image);
+            return image;
+        }
+    }
+    
     /**
      * Returns the logger.
      *
@@ -247,7 +290,7 @@ public class Resources {
     public Logger getLogger() {
         return logger;
     }
-
+    
     /**
      * Returns the shell.
      *
@@ -256,7 +299,7 @@ public class Resources {
     public Shell getShell() {
         return shell;
     }
-
+    
     /**
      * Returns a stream.
      *
