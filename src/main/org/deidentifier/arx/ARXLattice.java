@@ -971,6 +971,11 @@ public class ARXLattice implements Serializable {
                 list.add(node);
             }
             
+            // Add remaining
+            while (index < nodes.size()) {
+                list.add(nodes.get(index++));
+            }
+            
             // Convert
             this.levels[level] = list.toArray(new ARXNode[list.size()]);
         }
