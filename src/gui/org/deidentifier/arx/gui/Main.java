@@ -53,7 +53,16 @@ public class Main {
      *
      * @param args
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) {
+        main(null, args);
+    }
+
+    /**
+     * Main entry point.
+     *
+     * @param args
+     */
+    public static void main(Display display, final String[] args) {
 
         try {
             // Make fall-back toolkit look like the native UI
@@ -68,7 +77,9 @@ public class Main {
         try {
             
             // Display
-            Display display = new Display();
+            if (display == null) {
+                display = new Display();
+            }
             
             // Monitor
             Monitor monitor = getMonitor(display);

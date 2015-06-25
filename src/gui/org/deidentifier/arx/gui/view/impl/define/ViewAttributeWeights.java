@@ -34,6 +34,8 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -68,6 +70,12 @@ public class ViewAttributeWeights implements IView {
     
     /** Misc. */
     private final DecimalFormat format     = new DecimalFormat("0.000"); //$NON-NLS-1$
+    
+    /** Color profile*/
+    private final KnobColorProfile defaultColorProfile;
+    
+    /** Color profile*/
+    private final KnobColorProfile focusedColorProfile;
 
     /**
      * Creates a new instance.
@@ -83,9 +91,24 @@ public class ViewAttributeWeights implements IView {
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.INPUT, this);
         
+        // Color profiles
+        this.defaultColorProfile = KnobColorProfile.createDefaultSystemProfile(parent.getDisplay());
+        this.focusedColorProfile = KnobColorProfile.createFocusedBlueRedProfile(parent.getDisplay());
+        
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).margins(3, 3).create());
         this.root.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).margins(0, 0).create());
+        this.root.addDisposeListener(new DisposeListener() {
+            @Override
+            public void widgetDisposed(DisposeEvent arg0) {
+                if (defaultColorProfile != null && !defaultColorProfile.isDisposed()) {
+                    defaultColorProfile.dispose();
+                }
+                if (focusedColorProfile != null && !focusedColorProfile.isDisposed()) {
+                    focusedColorProfile.dispose();
+                }
+            }
+        });
         
         root.pack();
     }
@@ -184,8 +207,8 @@ public class ViewAttributeWeights implements IView {
                 for(int i=0; i<qis.size(); i++){
                     Knob<Double> knob = new Knob<Double>(composites.get(i), SWT.NULL, new KnobRange.Double(0d, 1d));
                     knob.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).align(SWT.CENTER, SWT.CENTER).hint(30, 30).create());
-                    knob.setDefaultColorProfile(KnobColorProfile.createDefaultSystemProfile(root.getDisplay()));
-                    knob.setFocusedColorProfile(KnobColorProfile.createFocusedBlueRedProfile(root.getDisplay()));
+                    knob.setDefaultColorProfile(defaultColorProfile);
+                    knob.setFocusedColorProfile(focusedColorProfile);
                     knobs.add(knob);
                 }
 
