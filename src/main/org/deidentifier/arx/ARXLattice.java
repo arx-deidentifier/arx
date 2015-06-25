@@ -23,9 +23,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
@@ -677,16 +679,16 @@ public class ARXLattice implements Serializable {
         }
 
     }
-    
+
     /** Deserialization context. */
     private static LatticeDeserializationContext deserializationContext = new LatticeDeserializationContext();
 
-    /**  SVUID */
-    private static final long     serialVersionUID                  = -8790104959905019184L;
+    /** SVUID */
+    private static final long                    serialVersionUID       = -8790104959905019184L;
 
     /**
      * Returns the deserialization context.
-     *
+     * 
      * @return
      */
     public static LatticeDeserializationContext getDeserializationContext() {
@@ -694,46 +696,49 @@ public class ARXLattice implements Serializable {
     }
 
     /** The accessor. */
-    private final Access          access                            = new Access(this);
+    private final Access                  access                 = new Access(this);
 
     /** The bottom node. */
-    private transient ARXNode     bottom;
+    private transient ARXNode             bottom;
 
     /** The levels in the lattice. */
-    private transient ARXNode[][] levels;
+    private transient ARXNode[][]         levels;
 
     /** Metric. */
-    private Metric<?>             metric;
+    private Metric<?>                     metric;
 
     /** The optimum. */
-    private transient ARXNode     optimum;
+    private transient ARXNode             optimum;
 
     /** The number of nodes. */
-    private int                   size;
+    private int                           size;
 
     /** The virtual size */
-    private Long                  virtualSize;
+    private Long                          virtualSize;
 
     /** The top node. */
-    private transient ARXNode     top;
+    private transient ARXNode             top;
 
     /** Is practical monotonicity being assumed. */
-    private boolean               uncertainty;
+    private boolean                       uncertainty;
 
     /** Is this the result of an optimal algorithm */
-    private Boolean               complete;
+    private Boolean                       complete;
 
     /** Monotonicity of information loss. */
-    private boolean               monotonicAnonymous;
-    
+    private boolean                       monotonicAnonymous;
+
     /** Monotonicity of information loss. */
-    private boolean               monotonicNonAnonymous;
+    private boolean                       monotonicNonAnonymous;
 
     /** Minimum loss in the lattice. */
-    private InformationLoss<?>    minimumInformationLoss            = null;
+    private InformationLoss<?>            minimumInformationLoss = null;
 
     /** Maximum loss in the lattice. */
-    private InformationLoss<?>    maximumInformationLoss            = null;
+    private InformationLoss<?>            maximumInformationLoss = null;
+
+    /** The solution space */
+    private final transient SolutionSpace solutionSpace;
 
     /**
      * Constructor.
@@ -750,6 +755,7 @@ public class ARXLattice implements Serializable {
                final String[] header,
                final ARXConfigurationInternal config) {
 
+        this.solutionSpace = solutions;
         this.metric = config.getMetric();
         this.monotonicNonAnonymous = metric.isMonotonic() || !config.isSuppressionAlwaysEnabled();
         this.monotonicAnonymous = metric.isMonotonic() || config.getAbsoluteMaxOutliers() == 0;
@@ -871,28 +877,83 @@ public class ARXLattice implements Serializable {
         return access;
     }
 
-    public void createRelationships(final SolutionSpace solutions,
-                                    final LongObjectOpenHashMap<ARXNode> map,
-                                    final long id) {
-        final ARXNode fnode = map.get(id);
+    /**
+     * Materializes any non-materialized predecessors and successors
+     */
+    public void expand(ARXNode node) {
         
-        List<ARXNode> successors = new ArrayList<ARXNode>();
-        List<ARXNode> predecessors = new ArrayList<ARXNode>();
-        for (Iterator<Long> iter1 = solutions.getSuccessors(id); iter1.hasNext();) {
-            ARXNode node = map.get(iter1.next());
-            if (node != null) {
-                successors.add(node);
+        // Break
+        if (this.isComplete()) {
+            return;
+        }
+ 
+        // Initialize
+        int[] indices = node.getTransformation();
+        Transformation transformation = solutionSpace.getTransformation(indices);
+        
+        // Collect neighbors
+        List<Long> neighbors = new ArrayList<Long>();
+        for (Iterator<Long> iter = solutionSpace.getPredecessors(transformation.getIdentifier()); iter.hasNext();) {
+            neighbors.add(iter.next());
+        }
+        for (Iterator<Long> iter = solutionSpace.getSuccessors(transformation.getIdentifier()); iter.hasNext();) {
+            neighbors.add(iter.next());
+        }
+
+        // Find already materialized and missing neighbors
+        Map<String, Integer> headermap = null;
+        LongObjectOpenHashMap<ARXNode> map = new LongObjectOpenHashMap<ARXNode>();
+        Map<Long, ARXNode> existing = new HashMap<Long, ARXNode>();
+        Set<Long> missing = new HashSet<Long>();
+        missing.addAll(neighbors);
+        for (ARXNode[] level : this.levels) {
+            for (ARXNode candidate : level) {
+                Long id = solutionSpace.getTransformation(candidate.getTransformation()).getIdentifier();
+                map.put(id, candidate);
+                if (headermap == null) {
+                    headermap = candidate.headermap;
+                }
+                if (missing.contains(id)) {
+                    existing.put(id, candidate);
+                }
             }
         }
-        for (Iterator<Long> iter2 = solutions.getPredecessors(id); iter2.hasNext();) {
-            ARXNode node = map.get(iter2.next());
-            if (node != null) {
-                predecessors.add(node);
-            }
+        missing.removeAll(existing.keySet());
+        
+        // Materialize missing nodes
+        Set<Integer> levels = new HashSet<Integer>();
+        for (long id : missing) {
+            transformation = solutionSpace.getTransformation(id);
+            ARXNode arxnode = new ARXNode(this, solutionSpace, transformation, headermap);
+            map.put(id, arxnode);
+            levels.add(transformation.getLevel());
         }
         
-        fnode.successors = successors.toArray(new ARXNode[successors.size()]);
-        fnode.predecessors = predecessors.toArray(new ARXNode[predecessors.size()]);
+        // Insert missing nodes into level Arrays
+        for (int level : levels) {
+            List<ARXNode> newLevel = new ArrayList<ARXNode>();
+            newLevel.addAll(Arrays.asList(this.levels[level]));
+            for (long id : missing) {
+                ARXNode arxnode = map.get(id);
+                if (arxnode.getTotalGeneralizationLevel() == level) {
+                    int index = 0;
+                    while (index < newLevel.size() && compareLexicographically(newLevel.get(index), arxnode) < 0 ) {
+                        index++;
+                    }
+                    // Subtract
+                    index = index == 0 ? 0 : index - 1;
+                    
+                    // Add
+                    newLevel.add(index, arxnode);
+                }
+            }
+            this.levels[level] = newLevel.toArray(new ARXNode[newLevel.size()]);
+        }
+        
+        // Build relationships from/to missing nodes
+        for (long id : missing) {
+            this.createExpandedRelationships(solutionSpace, map, id);
+        }
     }
 
     /**
@@ -903,7 +964,7 @@ public class ARXLattice implements Serializable {
     public ARXNode getBottom() {
         return bottom;
     }
-    
+
     /**
      * Returns the levels of the generalization lattice.
      *
@@ -911,16 +972,6 @@ public class ARXLattice implements Serializable {
      */
     public ARXNode[][] getLevels() {
         return levels;
-    }
-
-    /**
-     * Materializes any non-materialized predecessors and successors
-     */
-    public void expand(ARXNode node) {
-        if (this.isComplete()) {
-            return;
-        }
-        // TODO
     }
     
     /**
@@ -946,7 +997,7 @@ public class ARXLattice implements Serializable {
         }
         return this.minimumInformationLoss;
     }
-
+    
     /**
      * Returns the number of nodes.
      *
@@ -955,15 +1006,7 @@ public class ARXLattice implements Serializable {
     public int getSize() {
         return size;
     }
-    
-    /**
-     * Returns the virtual size of the solution space
-     * @return
-     */
-    public long getVirtualSize() {
-        return virtualSize != null ? virtualSize : size;
-    }
-    
+
     /**
      * Returns the top node.
      *
@@ -974,6 +1017,14 @@ public class ARXLattice implements Serializable {
     }
 
     /**
+     * Returns the virtual size of the solution space
+     * @return
+     */
+    public long getVirtualSize() {
+        return virtualSize != null ? virtualSize : size;
+    }
+    
+    /**
      * Is there a unique
      * @return
      */
@@ -981,6 +1032,123 @@ public class ARXLattice implements Serializable {
         return this.complete;
     }
     
+    /**
+     * Compares the transformations of two nodes lexicographically
+     * @param first
+     * @param second
+     * @return
+     */
+    private int compareLexicographically(ARXNode first, ARXNode second) {
+        int[] firstArray = first.getTransformation();
+        int[] secondArray = second.getTransformation();
+        for (int i = 0; i < firstArray.length; i++) {
+            if (firstArray[i] < secondArray[i]) {
+                return -1;
+            } else if (firstArray[i] > secondArray[i]) {
+                return +1;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Creates all relationships from the 
+     * @param solutions
+     * @param map
+     * @param id
+     */
+    private void createExpandedRelationships(final SolutionSpace solutions,
+                                             final LongObjectOpenHashMap<ARXNode> map,
+                                             final long id) {
+        
+        // Obtain given node
+        final ARXNode center = map.get(id);
+        
+        // Collect materialized successors and predecessors
+        List<ARXNode> successors = new ArrayList<ARXNode>();
+        List<ARXNode> predecessors = new ArrayList<ARXNode>();
+        for (Iterator<Long> iter1 = solutions.getSuccessors(id); iter1.hasNext();) {
+            ARXNode node = map.get(iter1.next());
+            if (node != null) {
+                successors.add(node);
+            }
+        }
+        for (Iterator<Long> iter2 = solutions.getPredecessors(id); iter2.hasNext();) {
+            ARXNode node = map.get(iter2.next());
+            if (node != null) {
+                predecessors.add(node);
+            }
+        }
+        
+        // Add successors and predecessors to given node
+        center.successors = successors.toArray(new ARXNode[successors.size()]);
+        center.predecessors = predecessors.toArray(new ARXNode[predecessors.size()]);
+        
+        // Update predecessors
+        for (ARXNode node : predecessors) {
+            
+           List<ARXNode> nodeSuccessors = new ArrayList<ARXNode>();
+           nodeSuccessors.addAll(Arrays.asList(node.successors));
+           int index = 0;
+           while (index < nodeSuccessors.size() && compareLexicographically(nodeSuccessors.get(index), center) < 0 ) {
+               index++;
+           }
+           // Subtract
+           index = index == 0 ? 0 : index - 1;
+           nodeSuccessors.add(index, center);
+           
+           // Add and update
+           node.successors = nodeSuccessors.toArray(new ARXNode[nodeSuccessors.size()]); 
+        }
+        
+
+        // Update successors
+        for (ARXNode node : successors) {
+            
+           List<ARXNode> nodePredecessors = new ArrayList<ARXNode>();
+           nodePredecessors.addAll(Arrays.asList(node.predecessors));
+           int index = 0;
+           while (index < nodePredecessors.size() && compareLexicographically(nodePredecessors.get(index), center) < 0 ) {
+               index++;
+           }
+           // Subtract
+           index = index == 0 ? 0 : index - 1;
+           
+           // Add and update
+           nodePredecessors.add(index, center);
+           node.predecessors = nodePredecessors.toArray(new ARXNode[nodePredecessors.size()]); 
+        }
+    }
+
+    /**
+     * Creates all relationships from the 
+     * @param solutions
+     * @param map
+     * @param id
+     */
+    private void createRelationships(final SolutionSpace solutions,
+                                     final LongObjectOpenHashMap<ARXNode> map,
+                                     final long id) {
+        final ARXNode fnode = map.get(id);
+        
+        List<ARXNode> successors = new ArrayList<ARXNode>();
+        List<ARXNode> predecessors = new ArrayList<ARXNode>();
+        for (Iterator<Long> iter1 = solutions.getSuccessors(id); iter1.hasNext();) {
+            ARXNode node = map.get(iter1.next());
+            if (node != null) {
+                successors.add(node);
+            }
+        }
+        for (Iterator<Long> iter2 = solutions.getPredecessors(id); iter2.hasNext();) {
+            ARXNode node = map.get(iter2.next());
+            if (node != null) {
+                predecessors.add(node);
+            }
+        }
+        
+        fnode.successors = successors.toArray(new ARXNode[successors.size()]);
+        fnode.predecessors = predecessors.toArray(new ARXNode[predecessors.size()]);
+    }
     /**
      * De-serialization.
      *
