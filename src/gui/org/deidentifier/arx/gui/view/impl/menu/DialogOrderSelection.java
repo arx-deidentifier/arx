@@ -95,7 +95,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                                 final Controller controller) {
         super(parentShell);
         this.controller = controller;
-        this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
+        this.image = controller.getResources().getManagedImage("logo_small.png"); //$NON-NLS-1$
         this.elements = elements.clone();
         this.type = type;
         this.locale = locale;
@@ -103,8 +103,6 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
 
     @Override
     public boolean close() {
-        if (image != null)
-            image.dispose();
         return super.close();
     }
 
@@ -388,7 +386,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
 
         final Button up = new Button(bottom2, SWT.NONE);
         up.setText(Resources.getMessage("HierarchyWizardPageOrder.3")); //$NON-NLS-1$
-        up.setImage(controller.getResources().getImage("arrow_up.png")); //$NON-NLS-1$
+        up.setImage(controller.getResources().getManagedImage("arrow_up.png")); //$NON-NLS-1$
         up.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         up.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -399,7 +397,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
 
         final Button down = new Button(bottom2, SWT.NONE);
         down.setText(Resources.getMessage("HierarchyWizardPageOrder.5")); //$NON-NLS-1$
-        down.setImage(controller.getResources().getImage("arrow_down.png")); //$NON-NLS-1$
+        down.setImage(controller.getResources().getManagedImage("arrow_down.png")); //$NON-NLS-1$
         down.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         down.addSelectionListener(new SelectionAdapter() {
             @Override

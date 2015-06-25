@@ -108,12 +108,12 @@ public abstract class ViewData implements IView {
         this.controller = controller;
         
         // Load images
-        IMAGE_INSENSITIVE       = controller.getResources().getImage("bullet_green.png");   //$NON-NLS-1$
-        IMAGE_SENSITIVE         = controller.getResources().getImage("bullet_purple.png");  //$NON-NLS-1$
-        IMAGE_QUASI_IDENTIFYING = controller.getResources().getImage("bullet_yellow.png");  //$NON-NLS-1$
-        IMAGE_IDENTIFYING       = controller.getResources().getImage("bullet_red.png");     //$NON-NLS-1$
-        IMAGE_ASCENDING         = controller.getResources().getImage("sort_ascending.png"); //$NON-NLS-1$
-        IMAGE_DESCENDING        = controller.getResources().getImage("sort_descending.png");//$NON-NLS-1$
+        IMAGE_INSENSITIVE       = controller.getResources().getManagedImage("bullet_green.png");   //$NON-NLS-1$
+        IMAGE_SENSITIVE         = controller.getResources().getManagedImage("bullet_purple.png");  //$NON-NLS-1$
+        IMAGE_QUASI_IDENTIFYING = controller.getResources().getManagedImage("bullet_yellow.png");  //$NON-NLS-1$
+        IMAGE_IDENTIFYING       = controller.getResources().getManagedImage("bullet_red.png");     //$NON-NLS-1$
+        IMAGE_ASCENDING         = controller.getResources().getManagedImage("sort_ascending.png"); //$NON-NLS-1$
+        IMAGE_DESCENDING        = controller.getResources().getManagedImage("sort_descending.png");//$NON-NLS-1$
 
         // Create title bar
         ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-140"); //$NON-NLS-1$
@@ -136,7 +136,7 @@ public abstract class ViewData implements IView {
                     }
                 });
         bar.add(Resources.getMessage("DataView.2"), //$NON-NLS-1$ 
-                controller.getResources().getImage("sort_groups.png"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("sort_groups.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -144,7 +144,7 @@ public abstract class ViewData implements IView {
                     }
                 });
         bar.add(Resources.getMessage("DataView.3"), //$NON-NLS-1$ 
-                controller.getResources().getImage("sort_subset.png"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("sort_subset.png"), //$NON-NLS-1$
                 true,
                 new Runnable() {
                     @Override
@@ -198,12 +198,6 @@ public abstract class ViewData implements IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
-        IMAGE_INSENSITIVE.dispose();
-        IMAGE_SENSITIVE.dispose();
-        IMAGE_QUASI_IDENTIFYING.dispose();
-        IMAGE_IDENTIFYING.dispose();
-        IMAGE_ASCENDING.dispose();
-        IMAGE_DESCENDING.dispose();
         table.dispose();
     }
     

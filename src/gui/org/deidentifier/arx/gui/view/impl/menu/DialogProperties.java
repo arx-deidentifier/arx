@@ -93,7 +93,7 @@ public class DialogProperties implements IDialog {
     private void createTabInternals(PreferencesDialog window) {
         
         window.addCategory(Resources.getMessage("PropertyDialog.16"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-internals.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-internals.png")); //$NON-NLS-1$
         
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.17"), 0, 1000000, 200) { //$NON-NLS-1$
             protected Integer getValue() { return model.getHistorySize(); }
@@ -124,7 +124,7 @@ public class DialogProperties implements IDialog {
     private void createTabIOSettings(PreferencesDialog window) {
         
         window.addCategory(Resources.getMessage("PropertyDialog.34"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-io.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-io.png")); //$NON-NLS-1$
      
         window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.35"), ';') { //$NON-NLS-1$
             protected String getValue() { return String.valueOf(model.getCSVSyntax().getDelimiter()); }
@@ -151,7 +151,7 @@ public class DialogProperties implements IDialog {
     private void createTabProject(PreferencesDialog window) {
         
         window.addCategory(Resources.getMessage("PropertyDialog.3"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-project.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-project.png")); //$NON-NLS-1$
           
         window.addPreference(new PreferenceString(Resources.getMessage("PropertyDialog.4")) { //$NON-NLS-1$
             protected String getValue() { return model.getName(); }
@@ -173,7 +173,7 @@ public class DialogProperties implements IDialog {
     private void createTabUtility(PreferencesDialog window) {
 
         window.addCategory(Resources.getMessage("PropertyDialog.60"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-utility.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-utility.png")); //$NON-NLS-1$
         
         window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.61")) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getUseListwiseDeletion(); }
@@ -192,7 +192,7 @@ public class DialogProperties implements IDialog {
     private void createTabRisk(PreferencesDialog window) {
 
         window.addCategory(Resources.getMessage("PropertyDialog.40"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-risk.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-risk.png")); //$NON-NLS-1$
         
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.43"), 1, 10, 10) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getMaxQiSize(); }
@@ -215,7 +215,7 @@ public class DialogProperties implements IDialog {
     private void createTabSolver(PreferencesDialog window) {
 
         window.addCategory(Resources.getMessage("PropertyDialog.55"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-solver.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-solver.png")); //$NON-NLS-1$
         
         window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.50"), 1.0e-12, 1d, 1.0e-6) { //$NON-NLS-1$
             protected Double getValue() { return model.getRiskModel().getSolverConfiguration().getAccuracy(); }
@@ -246,7 +246,7 @@ public class DialogProperties implements IDialog {
     private void createTabTransformation(PreferencesDialog window) {
        
         window.addCategory(Resources.getMessage("PropertyDialog.10"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-transformation.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-transformation.png")); //$NON-NLS-1$
 
         window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.11"), true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isSuppressionAlwaysEnabled(); }
@@ -275,7 +275,7 @@ public class DialogProperties implements IDialog {
      */
     private void createTabVisualization(PreferencesDialog window) {
         window.addCategory(Resources.getMessage("PropertyDialog.22"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings-visualization.png")); //$NON-NLS-1$
+                           controller.getResources().getManagedImage("settings-visualization.png")); //$NON-NLS-1$
         
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.23"), 0, 10000, 100) { //$NON-NLS-1$
             protected Integer getValue() { return model.getInitialNodesInViewer(); }

@@ -48,8 +48,8 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
      */
     public DataTableRowHeaderConfiguration(DataTableContext context) {
         this.font = context.getFont();
-        IMAGE_ROW_BACK   = context.getController().getResources().getImage("row_header_bg.png");         //$NON-NLS-1$
-        IMAGE_ROW_SELECT = context.getController().getResources().getImage("selected_row_header_bg.png"); //$NON-NLS-1$
+        IMAGE_ROW_BACK   = context.getController().getResources().getManagedImage("row_header_bg.png");         //$NON-NLS-1$
+        IMAGE_ROW_SELECT = context.getController().getResources().getManagedImage("selected_row_header_bg.png"); //$NON-NLS-1$
         final TextPainter txtPainter = new TextPainter(false, false);
         final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter, IMAGE_ROW_BACK, null);
         cellPainter = bgImagePainter;

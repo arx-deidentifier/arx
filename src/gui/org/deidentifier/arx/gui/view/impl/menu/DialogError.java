@@ -64,13 +64,11 @@ public class DialogError extends TitleAreaDialog implements IDialog {
         super(parentShell);
         this.message = message;
         this.error = error;
-        this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
+        this.image = controller.getResources().getManagedImage("logo_small.png"); //$NON-NLS-1$
     }
 
     @Override
     public boolean close() {
-        if (image != null)
-            image.dispose();
         return super.close();
     }
 

@@ -80,8 +80,8 @@ public class LayoutRisksAbstract implements ILayout, IView {
         this.isInput = input;
         this.isTop = top;
         this.controller = controller;
-        this.imageEnabled = controller.getResources().getImage("tick.png"); //$NON-NLS-1$
-        this.imageDisabled = controller.getResources().getImage("cross.png"); //$NON-NLS-1$
+        this.imageEnabled = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
+        this.imageDisabled = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
         
         controller.addListener(ModelPart.OUTPUT, this);
         controller.addListener(ModelPart.INPUT, this);
@@ -92,7 +92,7 @@ public class LayoutRisksAbstract implements ILayout, IView {
         
         if (isTop) {
             bar.add(Resources.getMessage("DataView.3"), //$NON-NLS-1$ 
-                    controller.getResources().getImage("sort_subset.png"), //$NON-NLS-1$
+                    controller.getResources().getManagedImage("sort_subset.png"), //$NON-NLS-1$
                     true,
                     new Runnable() {
                         @Override
@@ -140,8 +140,6 @@ public class LayoutRisksAbstract implements ILayout, IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
-        if (!imageEnabled.isDisposed()) imageEnabled.dispose();
-        if (!imageDisabled.isDisposed()) imageDisabled.dispose();
     }
 
     /**

@@ -68,12 +68,6 @@ public class ViewFilter implements IView {
     /** Scale update interval. */
     private static final int     SCALE_UPDATE_INTERVAL = 100;
 
-    /** Image. */
-    private final Image          IMG_RESET;
-
-    /** Image. */
-    private final Image          IMG_OPTIMUM;
-
     /** Widget. */
     private Composite            root;
 
@@ -126,17 +120,17 @@ public class ViewFilter implements IView {
         this.controller.addListener(ModelPart.FILTER, this);
 
         // Images
-        IMG_RESET = controller.getResources().getImage("arrow_refresh.png"); //$NON-NLS-1$
-        IMG_OPTIMUM = controller.getResources().getImage("bullet_yellow.png"); //$NON-NLS-1$
+        Image imageReset = controller.getResources().getManagedImage("arrow_refresh.png"); //$NON-NLS-1$
+        Image imageOptimum = controller.getResources().getManagedImage("bullet_yellow.png"); //$NON-NLS-1$
 
         // Bar
         ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-21"); //$NON-NLS-1$
-        bar.add(Resources.getMessage("ViewFilter.0"), IMG_OPTIMUM, new Runnable(){ //$NON-NLS-1$
+        bar.add(Resources.getMessage("ViewFilter.0"), imageOptimum, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionShowOptimum();
             }
         });
-        bar.add(Resources.getMessage("ViewFilter.1"), IMG_RESET, new Runnable(){ //$NON-NLS-1$
+        bar.add(Resources.getMessage("ViewFilter.1"), imageReset, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionReset();
             }
@@ -178,8 +172,6 @@ public class ViewFilter implements IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
-        IMG_RESET.dispose();
-        IMG_OPTIMUM.dispose();
     }
     
     @Override

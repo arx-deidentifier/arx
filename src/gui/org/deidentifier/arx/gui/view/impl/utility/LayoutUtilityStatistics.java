@@ -88,8 +88,8 @@ public class LayoutUtilityStatistics implements ILayout, IView {
                             final ModelPart target,
                             final ModelPart reset) {
 
-        this.enabled = controller.getResources().getImage("tick.png"); //$NON-NLS-1$
-        this.disabled = controller.getResources().getImage("cross.png"); //$NON-NLS-1$
+        this.enabled = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
+        this.disabled = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
         this.controller = controller;
         
         controller.addListener(ModelPart.MODEL, this);
@@ -145,8 +145,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
 
     @Override
     public void dispose() {
-        this.enabled.dispose();
-        this.disabled.dispose();
+        // Empty by design
     }
 
     /**

@@ -185,7 +185,7 @@ public abstract class ViewSolutionSpace implements IView {
         
         this.label = new CLabel(this.secondary, SWT.NONE);
         this.label.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, true).minSize(400, 200).create());
-        this.label.setImage(controller.getResources().getImage("warning.png")); //$NON-NLS-1$
+        this.label.setImage(controller.getResources().getManagedImage("warning.png")); //$NON-NLS-1$
         this.label.setText(""); //$NON-NLS-1$
         this.label.setAlignment(SWT.LEFT);
         

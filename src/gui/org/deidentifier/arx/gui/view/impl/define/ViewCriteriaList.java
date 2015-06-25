@@ -98,11 +98,11 @@ public class ViewCriteriaList implements IView {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         this.layout = layoutCriteria;
         
-        this.symbolL = controller.getResources().getImage("symbol_l.png"); //$NON-NLS-1$
-        this.symbolT = controller.getResources().getImage("symbol_t.png"); //$NON-NLS-1$
-        this.symbolK = controller.getResources().getImage("symbol_k.png"); //$NON-NLS-1$
-        this.symbolD = controller.getResources().getImage("symbol_d.png"); //$NON-NLS-1$
-        this.symbolR = controller.getResources().getImage("symbol_r.png"); //$NON-NLS-1$
+        this.symbolL = controller.getResources().getManagedImage("symbol_l.png"); //$NON-NLS-1$
+        this.symbolT = controller.getResources().getManagedImage("symbol_t.png"); //$NON-NLS-1$
+        this.symbolK = controller.getResources().getManagedImage("symbol_k.png"); //$NON-NLS-1$
+        this.symbolD = controller.getResources().getManagedImage("symbol_d.png"); //$NON-NLS-1$
+        this.symbolR = controller.getResources().getManagedImage("symbol_r.png"); //$NON-NLS-1$
         
         this.root = parent;
         this.table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -188,11 +188,6 @@ public class ViewCriteriaList implements IView {
     @Override
     public void dispose() {
         this.controller.removeListener(this);
-        this.symbolL.dispose();
-        this.symbolT.dispose();
-        this.symbolK.dispose();
-        this.symbolD.dispose();
-        this.symbolR.dispose();
     }
 
     /**

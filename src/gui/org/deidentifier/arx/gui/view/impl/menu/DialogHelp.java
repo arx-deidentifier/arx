@@ -78,13 +78,11 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
     public DialogHelp(final Shell parentShell, final Controller controller, final String id) {
         super(parentShell);
         this.id = id;
-        this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
+        this.image = controller.getResources().getManagedImage("logo_small.png"); //$NON-NLS-1$
     }
 
     @Override
     public boolean close() {
-        if (image != null)
-            image.dispose();
         return super.close();
     }
 

@@ -61,21 +61,21 @@ public class LayoutExplore implements ILayout {
         
         // Lattice
         Composite item1 = folder.createItem(Resources.getMessage("ExploreView.0"), //$NON-NLS-1$ 
-                                            controller.getResources().getImage("explore_lattice.png")); //$NON-NLS-1$
+                                            controller.getResources().getManagedImage("explore_lattice.png")); //$NON-NLS-1$
         
         item1.setLayoutData(SWTUtil.createFillGridData());
         new ViewLattice(item1, controller);
         
         // List
         Composite item2 = folder.createItem(Resources.getMessage("ExploreView.2"), //$NON-NLS-1$ 
-                                            controller.getResources().getImage("explore_list.png")); //$NON-NLS-1$
+                                            controller.getResources().getManagedImage("explore_list.png")); //$NON-NLS-1$
         
         item2.setLayoutData(SWTUtil.createFillGridData());
         new ViewList(item2, controller);
 
         // Tiles
         Composite item3 = folder.createItem(Resources.getMessage("ExploreView.3"), //$NON-NLS-1$ 
-                                            controller.getResources().getImage("explore_tiles.png")); //$NON-NLS-1$
+                                            controller.getResources().getManagedImage("explore_tiles.png")); //$NON-NLS-1$
         
         item3.setLayoutData(SWTUtil.createFillGridData());
         new ViewTiles(item3, controller);

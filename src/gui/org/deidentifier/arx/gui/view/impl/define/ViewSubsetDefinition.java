@@ -139,7 +139,7 @@ public class ViewSubsetDefinition implements IView{
 
         ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-40"); //$NON-NLS-1$
         bar.add(Resources.getMessage("SubsetDefinitionView.1"),  //$NON-NLS-1$
-                controller.getResources().getImage("page_white.png"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("page_white.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -147,7 +147,7 @@ public class ViewSubsetDefinition implements IView{
                     }
                 });
         bar.add(Resources.getMessage("SubsetDefinitionView.2"),  //$NON-NLS-1$
-                controller.getResources().getImage("page_white_text.png"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("page_white_text.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -155,7 +155,7 @@ public class ViewSubsetDefinition implements IView{
                     }
                 });
         bar.add(Resources.getMessage("SubsetDefinitionView.3"),  //$NON-NLS-1$
-                controller.getResources().getImage("disk.png"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("disk.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
@@ -163,7 +163,7 @@ public class ViewSubsetDefinition implements IView{
                     }
                 });
         bar.add(Resources.getMessage("SubsetDefinitionView.4"),  //$NON-NLS-1$
-                controller.getResources().getImage("find.png"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("find.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
