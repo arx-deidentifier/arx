@@ -25,7 +25,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceCla
  */
 public class StatisticsEquivalenceClasses {
 
-    /**  TODO */
+    /**  Backing class */
     private EquivalenceClassStatistics groupStatistics;
     
     /**
@@ -36,7 +36,7 @@ public class StatisticsEquivalenceClasses {
     public StatisticsEquivalenceClasses(EquivalenceClassStatistics groupStatistics) {
         this.groupStatistics = groupStatistics;
     }
-
+    
     /**
      * Returns the maximal size of an equivalence class.
      *
@@ -64,7 +64,6 @@ public class StatisticsEquivalenceClasses {
         return groupStatistics.getMaximalEquivalenceClassSize();
     }
 
-
     /**
      * Returns the maximal size of an equivalence class.
      * This number takes into account one additional equivalence class containing all outliers
@@ -73,6 +72,7 @@ public class StatisticsEquivalenceClasses {
     public int getMaximalEquivalenceClassSizeIncludingOutliers(){
         return groupStatistics.getMaximalEquivalenceClassSizeIncludingOutliers();
     }
+
 
     /**
      * Returns the minimal size of an equivalence class.
@@ -98,8 +98,8 @@ public class StatisticsEquivalenceClasses {
      *
      * @return
      */
-    public int getNumberOfGroups() {
-        return groupStatistics.getNumberOfGroups();
+    public int getNumberOfEquivalenceClasses() {
+        return groupStatistics.getNumberOfEquivalenceClasses();
     }
 
     /**
@@ -121,4 +121,31 @@ public class StatisticsEquivalenceClasses {
     public int getNumberOfOutlyingTuples() {
         return groupStatistics.getNumberOfOutlyingTuples();
     }
+
+    /**
+     * Returns statistics for the subset, if any
+     * @return
+     */
+    public StatisticsEquivalenceClasses getSubsetStatistics() {
+        if (groupStatistics.getSubsetStatistics() != null) {
+            return new StatisticsEquivalenceClasses(groupStatistics.getSubsetStatistics());
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "EquivalenceClassStatistics {\n- Average equivalence class size = " + getAverageEquivalenceClassSize() + "\n" +
+               "- Average equivalence class size (including outliers) = " + getAverageEquivalenceClassSizeIncludingOutliers() + "\n" +
+               "- Maximal equivalence class size = " + getMaximalEquivalenceClassSize() + "\n" +
+               "- Maximal equivalence class size (including outliers) = " + getMaximalEquivalenceClassSizeIncludingOutliers() + "\n" +
+               "- Minimal equivalence class size = " + getMinimalEquivalenceClassSize() + "\n" +
+               "- Minimal equivalence class size (including outliers) =" + getMinimalEquivalenceClassSizeIncludingOutliers() + "\n" +
+               "- Number of equivalence classes = " + getNumberOfEquivalenceClasses() + "\n" +
+               "- Number of outlying equivalence classes = " + getNumberOfOutlyingEquivalenceClasses() + "\n" +
+               "- Number of outlying tuples = " + getNumberOfOutlyingTuples() + "\n}";
+    }
+    
+    
 }

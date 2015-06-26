@@ -221,7 +221,7 @@ public class ViewPropertiesOutput extends ViewProperties {
         // TODO: This is because of subset views. Provide statistics as well!
         if (statistics != null) {
             new Property(Resources.getMessage("PropertiesView.41"), new String[] { String.valueOf(statistics.getNumberOfOutlyingTuples()) }); //$NON-NLS-1$
-            new Property(Resources.getMessage("PropertiesView.42"), new String[] { String.valueOf(statistics.getNumberOfGroups()) }); //$NON-NLS-1$
+            new Property(Resources.getMessage("PropertiesView.42"), new String[] { String.valueOf(statistics.getNumberOfEquivalenceClasses()) }); //$NON-NLS-1$
             new Property(Resources.getMessage("PropertiesView.43"), new String[] { String.valueOf(statistics.getNumberOfOutlyingEquivalenceClasses()) }); //$NON-NLS-1$
             new Property(Resources.getMessage("PropertiesView.110"), new String[] { String.valueOf(statistics.getMinimalEquivalenceClassSize()) + " (" + String.valueOf(statistics.getMinimalEquivalenceClassSizeIncludingOutliers()) + ")"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             new Property(Resources.getMessage("PropertiesView.111"), new String[] { String.valueOf(statistics.getMaximalEquivalenceClassSize()) + " (" + String.valueOf(statistics.getMaximalEquivalenceClassSizeIncludingOutliers()) + ")"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
