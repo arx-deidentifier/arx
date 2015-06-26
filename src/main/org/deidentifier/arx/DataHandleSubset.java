@@ -116,6 +116,12 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
+    public boolean isOutlier(int row) {
+        checkRegistry();
+        return super.isOutlier(this.subset.getArray()[row]);
+    }
+
+    @Override
     public Iterator<String[]> iterator() {
         checkRegistry();
         return new Iterator<String[]>() {
