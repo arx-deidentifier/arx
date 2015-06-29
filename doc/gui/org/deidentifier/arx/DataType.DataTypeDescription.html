@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>DataType.DataTypeDescription (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
@@ -139,32 +139,36 @@ implements java.io.Serializable</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataScale.html" title="enum in org.deidentifier.arx">DataScale</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html#getScale()">getScale</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.Class&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html#getWrappedClass()">getWrappedClass</a></strong>()</code>
 <div class="block">Returns the wrapped java class.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html#hasFormat()">hasFormat</a></strong>()</code>
 <div class="block">Returns whether the type be parameterized with a format string.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html" title="type parameter in DataType.DataTypeDescription">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html#newInstance()">newInstance</a></strong>()</code>
 <div class="block">Creates a new instance with default format string and default locale.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html" title="type parameter in DataType.DataTypeDescription">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html#newInstance(java.lang.String)">newInstance</a></strong>(java.lang.String&nbsp;format)</code>
 <div class="block">Creates a new instance with the given format string and default locale.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html" title="type parameter in DataType.DataTypeDescription">T</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html#newInstance(java.lang.String,%20java.util.Locale)">newInstance</a></strong>(java.lang.String&nbsp;format,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html#newInstance(java.lang.String, java.util.Locale)">newInstance</a></strong>(java.lang.String&nbsp;format,
            java.util.Locale&nbsp;locale)</code>
 <div class="block">Creates a new instance with the given format string and the given locale.</div>
 </td>
@@ -211,6 +215,15 @@ implements java.io.Serializable</pre>
 <pre>public&nbsp;java.lang.String&nbsp;getLabel()</pre>
 <div class="block">Returns a human readable label.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getScale()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getScale</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/DataScale.html" title="enum in org.deidentifier.arx">DataScale</a>&nbsp;getScale()</pre>
 </li>
 </ul>
 <a name="getWrappedClass()">

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>ViewStatistics (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
@@ -99,7 +99,7 @@
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsContingencyHeatmap.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsContingencyHeatmap</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsContingencyTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsContingencyTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionHistogram.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsDistributionHistogram</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsDistributionTable</a></dd>
+<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsContingencyHeatmap.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsContingencyHeatmap</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsContingencyTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsContingencyTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionHistogram.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsDistributionHistogram</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsDistributionTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsSummaryTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsSummaryTable</a></dd>
 </dl>
 <hr>
 <br>
@@ -146,7 +146,7 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#ViewStatistics(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewStatistics</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#ViewStatistics(org.eclipse.swt.widgets.Composite, org.deidentifier.arx.gui.Controller, org.deidentifier.arx.gui.model.ModelEvent.ModelPart, org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewStatistics</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
               <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
               <a href="../../../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
               <a href="../../../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;reset)</code>
@@ -197,30 +197,36 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getModel()">getModel</a></strong>()</code>
+<div class="block">Returns the model</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#reset()">reset</a></strong>()</code>
 <div class="block">Resets the view.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#setStatusDone()">setStatusDone</a></strong>()</code>
 <div class="block">Status update.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#setStatusEmpty()">setStatusEmpty</a></strong>()</code>
 <div class="block">Status empty.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#setStatusWorking()">setStatusWorking</a></strong>()</code>
 <div class="block">Status working.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelEvent.html" title="class in org.deidentifier.arx.gui.model">ModelEvent</a>&nbsp;event)</code>
 <div class="block">Updates the view.</div>
@@ -378,6 +384,17 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <pre>protected abstract&nbsp;void&nbsp;doUpdate(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="type parameter in ViewStatistics">T</a>&nbsp;context)</pre>
 <div class="block">Implement this to update.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>context</code> - </dd></dl>
+</li>
+</ul>
+<a name="getModel()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getModel</h4>
+<pre>protected&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;getModel()</pre>
+<div class="block">Returns the model</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="setStatusDone()">

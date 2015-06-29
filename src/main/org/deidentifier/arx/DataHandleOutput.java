@@ -208,7 +208,7 @@ public class DataHandleOutput extends DataHandle {
         this.inverseDictionaries[AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED] = this.outputMicroaggregated.getDictionary();
         
         // Create view
-        this.getRegistry().createOutputSubset(node, config, statistics);
+        this.getRegistry().createOutputSubset(node, config, statistics.getSubsetStatistics());
         
         // Obtain data types
         this.dataTypes = getDataTypeArray();

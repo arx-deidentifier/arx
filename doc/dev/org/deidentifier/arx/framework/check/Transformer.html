@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>Transformer (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
@@ -116,21 +116,9 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected int[][]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#buffer">buffer</a></strong></code>
-<div class="block">The buffer.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#config">config</a></strong></code>
 <div class="block">The config.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected int[][]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#data">data</a></strong></code>
-<div class="block">The data.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -158,6 +146,18 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected int[][]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#inputAnalyzed">inputAnalyzed</a></strong></code>
+<div class="block">Other attribute values.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected int[][]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#inputGeneralized">inputGeneralized</a></strong></code>
+<div class="block">The data.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/framework/check/transformer/AbstractTransformer.html" title="class in org.deidentifier.arx.framework.check.transformer">AbstractTransformer</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#instances">instances</a></strong></code>
 <div class="block">The instances.</div>
@@ -165,8 +165,8 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected int[][]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#sensitive">sensitive</a></strong></code>
-<div class="block">Sensitive attribute values.</div>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#outputGeneralized">outputGeneralized</a></strong></code>
+<div class="block">The buffer.</div>
 </td>
 </tr>
 </table>
@@ -184,9 +184,9 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#Transformer(int[][],%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20int[][],%20org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal,%20org.deidentifier.arx.framework.check.distribution.IntArrayDictionary,%20org.deidentifier.arx.framework.check.distribution.IntArrayDictionary)">Transformer</a></strong>(int[][]&nbsp;data,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#Transformer(int[][], int[][], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary)">Transformer</a></strong>(int[][]&nbsp;inputGeneralized,
+           int[][]&nbsp;inputAnalyzed,
            <a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchies,
-           int[][]&nbsp;sensitive,
            <a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;config,
            <a href="../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensValue,
            <a href="../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensFreq)</code>
@@ -209,38 +209,38 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#apply(long,%20int[],%20org.deidentifier.arx.framework.check.groupify.IHashGroupify)">apply</a></strong>(long&nbsp;projection,
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#apply(long, int[], org.deidentifier.arx.framework.check.groupify.HashGroupify)">apply</a></strong>(long&nbsp;projection,
      int[]&nbsp;transformation,
-     <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;target)</code>
+     <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;target)</code>
 <div class="block">Apply.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#applyInternal(long,%20int[],%20org.deidentifier.arx.framework.check.groupify.IHashGroupify,%20org.deidentifier.arx.framework.check.groupify.IHashGroupify,%20int[],%20org.deidentifier.arx.framework.check.StateMachine.TransitionType)">applyInternal</a></strong>(long&nbsp;projection,
+<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#applyInternal(long, int[], org.deidentifier.arx.framework.check.groupify.HashGroupify, org.deidentifier.arx.framework.check.groupify.HashGroupify, int[], org.deidentifier.arx.framework.check.StateMachine.TransitionType)">applyInternal</a></strong>(long&nbsp;projection,
              int[]&nbsp;state,
-             <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;source,
-             <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;target,
+             <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;source,
+             <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;target,
              int[]&nbsp;snapshot,
              <a href="../../../../../org/deidentifier/arx/framework/check/StateMachine.TransitionType.html" title="enum in org.deidentifier.arx.framework.check">StateMachine.TransitionType</a>&nbsp;transition)</code>
 <div class="block">Apply internal.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#applyRollup(long,%20int[],%20org.deidentifier.arx.framework.check.groupify.IHashGroupify,%20org.deidentifier.arx.framework.check.groupify.IHashGroupify)">applyRollup</a></strong>(long&nbsp;projection,
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#applyRollup(long, int[], org.deidentifier.arx.framework.check.groupify.HashGroupify, org.deidentifier.arx.framework.check.groupify.HashGroupify)">applyRollup</a></strong>(long&nbsp;projection,
            int[]&nbsp;state,
-           <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;source,
-           <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;target)</code>
+           <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;source,
+           <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;target)</code>
 <div class="block">Apply rollup.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#applySnapshot(long,%20int[],%20org.deidentifier.arx.framework.check.groupify.IHashGroupify,%20int[])">applySnapshot</a></strong>(long&nbsp;projection,
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/Transformer.html#applySnapshot(long, int[], org.deidentifier.arx.framework.check.groupify.HashGroupify, int[])">applySnapshot</a></strong>(long&nbsp;projection,
              int[]&nbsp;state,
-             <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;target,
+             <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;target,
              int[]&nbsp;snapshot)</code>
 <div class="block">Apply snapshot.</div>
 </td>
@@ -279,26 +279,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="buffer">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>buffer</h4>
-<pre>protected&nbsp;int[][] buffer</pre>
-<div class="block">The buffer.</div>
-</li>
-</ul>
-<a name="sensitive">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>sensitive</h4>
-<pre>protected&nbsp;int[][] sensitive</pre>
-<div class="block">Sensitive attribute values.</div>
-</li>
-</ul>
 <a name="config">
 <!--   -->
 </a>
@@ -307,16 +287,6 @@ extends java.lang.Object</pre>
 <h4>config</h4>
 <pre>protected final&nbsp;<a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a> config</pre>
 <div class="block">The config.</div>
-</li>
-</ul>
-<a name="data">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>data</h4>
-<pre>protected final&nbsp;int[][] data</pre>
-<div class="block">The data.</div>
 </li>
 </ul>
 <a name="dictionarySensFreq">
@@ -359,14 +329,44 @@ extends java.lang.Object</pre>
 <div class="block">The hierarchies.</div>
 </li>
 </ul>
+<a name="inputAnalyzed">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>inputAnalyzed</h4>
+<pre>protected&nbsp;int[][] inputAnalyzed</pre>
+<div class="block">Other attribute values.</div>
+</li>
+</ul>
+<a name="inputGeneralized">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>inputGeneralized</h4>
+<pre>protected final&nbsp;int[][] inputGeneralized</pre>
+<div class="block">The data.</div>
+</li>
+</ul>
 <a name="instances">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>instances</h4>
 <pre>protected final&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/transformer/AbstractTransformer.html" title="class in org.deidentifier.arx.framework.check.transformer">AbstractTransformer</a>[] instances</pre>
 <div class="block">The instances.</div>
+</li>
+</ul>
+<a name="outputGeneralized">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>outputGeneralized</h4>
+<pre>protected&nbsp;int[][] outputGeneralized</pre>
+<div class="block">The buffer.</div>
 </li>
 </ul>
 </li>
@@ -377,20 +377,20 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="Transformer(int[][], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[][], org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary)">
+<a name="Transformer(int[][], int[][], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Transformer</h4>
-<pre>public&nbsp;Transformer(int[][]&nbsp;data,
+<pre>public&nbsp;Transformer(int[][]&nbsp;inputGeneralized,
+           int[][]&nbsp;inputAnalyzed,
            <a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchies,
-           int[][]&nbsp;sensitive,
            <a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;config,
            <a href="../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensValue,
            <a href="../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensFreq)</pre>
 <div class="block">Instantiates a new transformer.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>hierarchies</code> - </dd><dd><code>sensitive</code> - </dd><dd><code>config</code> - </dd><dd><code>dictionarySensValue</code> - </dd><dd><code>dictionarySensFreq</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>inputGeneralized</code> - </dd><dd><code>inputAnalyzed</code> - </dd><dd><code>hierarchies</code> - </dd><dd><code>config</code> - </dd><dd><code>dictionarySensValue</code> - </dd><dd><code>dictionarySensFreq</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -401,45 +401,45 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="apply(long, int[], org.deidentifier.arx.framework.check.groupify.IHashGroupify)">
+<a name="apply(long, int[], org.deidentifier.arx.framework.check.groupify.HashGroupify)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>apply</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;apply(long&nbsp;projection,
-                  int[]&nbsp;transformation,
-                  <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;target)</pre>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;apply(long&nbsp;projection,
+                 int[]&nbsp;transformation,
+                 <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;target)</pre>
 <div class="block">Apply.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>projection</code> - the projection</dd><dd><code>transformation</code> - the transformation</dd><dd><code>target</code> - the target</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the hash groupify</dd></dl>
 </li>
 </ul>
-<a name="applyRollup(long, int[], org.deidentifier.arx.framework.check.groupify.IHashGroupify, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">
+<a name="applyRollup(long, int[], org.deidentifier.arx.framework.check.groupify.HashGroupify, org.deidentifier.arx.framework.check.groupify.HashGroupify)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>applyRollup</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;applyRollup(long&nbsp;projection,
-                        int[]&nbsp;state,
-                        <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;source,
-                        <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;target)</pre>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;applyRollup(long&nbsp;projection,
+                       int[]&nbsp;state,
+                       <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;source,
+                       <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;target)</pre>
 <div class="block">Apply rollup.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>projection</code> - the projection</dd><dd><code>state</code> - the state</dd><dd><code>source</code> - the source</dd><dd><code>target</code> - the target</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the hash groupify</dd></dl>
 </li>
 </ul>
-<a name="applySnapshot(long, int[], org.deidentifier.arx.framework.check.groupify.IHashGroupify, int[])">
+<a name="applySnapshot(long, int[], org.deidentifier.arx.framework.check.groupify.HashGroupify, int[])">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>applySnapshot</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;applySnapshot(long&nbsp;projection,
-                          int[]&nbsp;state,
-                          <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;target,
-                          int[]&nbsp;snapshot)</pre>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;applySnapshot(long&nbsp;projection,
+                         int[]&nbsp;state,
+                         <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;target,
+                         int[]&nbsp;snapshot)</pre>
 <div class="block">Apply snapshot.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>projection</code> - the projection</dd><dd><code>state</code> - the state</dd><dd><code>target</code> - the target</dd><dd><code>snapshot</code> - the snapshot</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the hash groupify</dd></dl>
@@ -456,18 +456,18 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the buffer</dd></dl>
 </li>
 </ul>
-<a name="applyInternal(long, int[], org.deidentifier.arx.framework.check.groupify.IHashGroupify, org.deidentifier.arx.framework.check.groupify.IHashGroupify, int[], org.deidentifier.arx.framework.check.StateMachine.TransitionType)">
+<a name="applyInternal(long, int[], org.deidentifier.arx.framework.check.groupify.HashGroupify, org.deidentifier.arx.framework.check.groupify.HashGroupify, int[], org.deidentifier.arx.framework.check.StateMachine.TransitionType)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>applyInternal</h4>
-<pre>protected&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;applyInternal(long&nbsp;projection,
-                          int[]&nbsp;state,
-                          <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;source,
-                          <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;target,
-                          int[]&nbsp;snapshot,
-                          <a href="../../../../../org/deidentifier/arx/framework/check/StateMachine.TransitionType.html" title="enum in org.deidentifier.arx.framework.check">StateMachine.TransitionType</a>&nbsp;transition)</pre>
+<pre>protected&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;applyInternal(long&nbsp;projection,
+                         int[]&nbsp;state,
+                         <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;source,
+                         <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;target,
+                         int[]&nbsp;snapshot,
+                         <a href="../../../../../org/deidentifier/arx/framework/check/StateMachine.TransitionType.html" title="enum in org.deidentifier.arx.framework.check">StateMachine.TransitionType</a>&nbsp;transition)</pre>
 <div class="block">Apply internal.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>projection</code> - the projection</dd><dd><code>state</code> - the state</dd><dd><code>source</code> - the source</dd><dd><code>target</code> - the target</dd><dd><code>snapshot</code> - the snapshot</dd><dd><code>transition</code> - the transition</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the hash groupify</dd></dl>

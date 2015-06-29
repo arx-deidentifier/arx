@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>DataManager (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.AttributeTypeInternal.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?org/deidentifier/arx/framework/data/DataManager.html" target="_top">Frames</a></li>
@@ -59,14 +59,14 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
@@ -103,88 +103,22 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<!-- ======== NESTED CLASS SUMMARY ======== -->
 <ul class="blockList">
-<li class="blockList"><a name="field_summary">
+<li class="blockList"><a name="nested_class_summary">
 <!--   -->
 </a>
-<h3>Field Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
-<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<h3>Nested Class Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Field and Description</th>
+<th class="colLast" scope="col">Class and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#dataIS">dataIS</a></strong></code>
-<div class="block">The data.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#dataQI">dataQI</a></strong></code>
-<div class="block">The data.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#dataSE">dataSE</a></strong></code>
-<div class="block">The data.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected java.lang.String[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#header">header</a></strong></code>
-<div class="block">The original input header.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#hierarchiesQI">hierarchiesQI</a></strong></code>
-<div class="block">The generalization hierarchiesQI.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#hierarchiesSE">hierarchiesSE</a></strong></code>
-<div class="block">The sensitive attributes.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#hierarchyHeights">hierarchyHeights</a></strong></code>
-<div class="block">The hierarchy heights for each QI.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected java.util.Map&lt;java.lang.String,java.lang.Integer&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#indexesSE">indexesSE</a></strong></code>
-<div class="block">The indexes of sensitive attributes.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#maxLevels">maxLevels</a></strong></code>
-<div class="block">The maximum level for each QI.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#minLevels">minLevels</a></strong></code>
-<div class="block">The minimum level for each QI.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#subset">subset</a></strong></code>
-<div class="block">The research subset, if any.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected int</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#subsetSize">subsetSize</a></strong></code>
-<div class="block">The size of the research subset.</div>
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.AttributeTypeInternal.html" title="class in org.deidentifier.arx.framework.data">DataManager.AttributeTypeInternal</a></strong></code>
+<div class="block">Internal representation of attribute types.</div>
 </td>
 </tr>
 </table>
@@ -199,29 +133,15 @@ extends java.lang.Object</pre>
 <table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
-<th class="colFirst" scope="col">Modifier</th>
-<th class="colLast" scope="col">Constructor and Description</th>
+<th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected </code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#DataManager(org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20java.util.Map,%20java.util.Map,%20int[],%20int[],%20int[],%20java.lang.String[])">DataManager</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataQI,
-           <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataSE,
-           <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataIS,
-           <a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchiesQI,
-           java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>&gt;&nbsp;hierarchiesSE,
-           java.util.Map&lt;java.lang.String,java.lang.Integer&gt;&nbsp;indexesSE,
-           int[]&nbsp;hierarchyHeights,
-           int[]&nbsp;maxLevels,
-           int[]&nbsp;minLevels,
-           java.lang.String[]&nbsp;header)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#DataManager(java.lang.String[],%20int[][],%20org.deidentifier.arx.framework.data.Dictionary,%20org.deidentifier.arx.DataDefinition,%20java.util.Set)">DataManager</a></strong>(java.lang.String[]&nbsp;header,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#DataManager(java.lang.String[], int[][], org.deidentifier.arx.framework.data.Dictionary, org.deidentifier.arx.DataDefinition, java.util.Set, java.util.Map)">DataManager</a></strong>(java.lang.String[]&nbsp;header,
            int[][]&nbsp;data,
            <a href="../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;dictionary,
            <a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
-           java.util.Set&lt;<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;criteria)</code>
+           java.util.Set&lt;<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;criteria,
+           java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>&gt;&nbsp;functions)</code>
 <div class="block">Creates a new data manager from pre-encoded data.</div>
 </td>
 </tr>
@@ -242,27 +162,27 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDataIS()">getDataIS</a></strong>()</code>
-<div class="block">Returns the data.</div>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDataAnalyzed()">getDataAnalyzed</a></strong>()</code>
+<div class="block">Returns the input data that will be analyzed.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDataQI()">getDataQI</a></strong>()</code>
-<div class="block">Returns the data.</div>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDataGeneralized()">getDataGeneralized</a></strong>()</code>
+<div class="block">Returns the input data that will be generalized.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDataSE()">getDataSE</a></strong>()</code>
-<div class="block">Returns the data.</div>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDataStatic()">getDataStatic</a></strong>()</code>
+<div class="block">Returns the static input data.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>double[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDistribution(java.lang.String)">getDistribution</a></strong>(java.lang.String&nbsp;attribute)</code>
-<div class="block">Returns the distribution of the given sensitive attribute in
- the original dataset.</div>
+<div class="block">Returns the distribution of the given sensitive attribute in the original
+ dataset.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -273,7 +193,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getHierachyHeights()">getHierachyHeights</a></strong>()</code>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getHierachiesHeights()">getHierachiesHeights</a></strong>()</code>
 <div class="block">Returns the heights of the hierarchiesQI.</div>
 </td>
 </tr>
@@ -285,21 +205,53 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getMaxLevels()">getMaxLevels</a></strong>()</code>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getHierarchiesMaxLevels()">getHierarchiesMaxLevels</a></strong>()</code>
 <div class="block">Returns the maximum levels for the generalizaiton.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getMinLevels()">getMinLevels</a></strong>()</code>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getHierarchiesMinLevels()">getHierarchiesMinLevels</a></strong>()</code>
 <div class="block">Returns the minimum levels for the generalizations.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getMicroaggregationFunctions()">getMicroaggregationFunctions</a></strong>()</code>
+<div class="block">Returns the microaggregation functions.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getMicroaggregationHeader()">getMicroaggregationHeader</a></strong>()</code>
+<div class="block">Returns the header for the according buffer</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getMicroaggregationMap()">getMicroaggregationMap</a></strong>()</code>
+<div class="block">Returns the map for the according buffer</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getMicroaggregationNumAttributes()">getMicroaggregationNumAttributes</a></strong>()</code>
+<div class="block">Gets the number of attributes to which microaggregation will be applied
+ in dataAnalyzed.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getMicroaggregationStartIndex()">getMicroaggregationStartIndex</a></strong>()</code>
+<div class="block">Gets the start index of the attributes to which microaggregation will be
+ applied in dataAnalyzed.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getTree(java.lang.String)">getTree</a></strong>(java.lang.String&nbsp;attribute)</code>
-<div class="block">Returns the tree for the given sensitive attribute, if a generalization hierarchy
- is associated.</div>
+<div class="block">Returns the tree for the given sensitive attribute, if a generalization
+ hierarchy is associated.</div>
 </td>
 </tr>
 </table>
@@ -318,172 +270,26 @@ extends java.lang.Object</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
-<!-- ============ FIELD DETAIL =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field_detail">
-<!--   -->
-</a>
-<h3>Field Detail</h3>
-<a name="dataQI">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>dataQI</h4>
-<pre>protected final&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a> dataQI</pre>
-<div class="block">The data.</div>
-</li>
-</ul>
-<a name="dataSE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>dataSE</h4>
-<pre>protected final&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a> dataSE</pre>
-<div class="block">The data.</div>
-</li>
-</ul>
-<a name="dataIS">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>dataIS</h4>
-<pre>protected final&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a> dataIS</pre>
-<div class="block">The data.</div>
-</li>
-</ul>
-<a name="hierarchiesQI">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>hierarchiesQI</h4>
-<pre>protected final&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[] hierarchiesQI</pre>
-<div class="block">The generalization hierarchiesQI.</div>
-</li>
-</ul>
-<a name="hierarchiesSE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>hierarchiesSE</h4>
-<pre>protected final&nbsp;java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>&gt; hierarchiesSE</pre>
-<div class="block">The sensitive attributes.</div>
-</li>
-</ul>
-<a name="indexesSE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>indexesSE</h4>
-<pre>protected final&nbsp;java.util.Map&lt;java.lang.String,java.lang.Integer&gt; indexesSE</pre>
-<div class="block">The indexes of sensitive attributes.</div>
-</li>
-</ul>
-<a name="hierarchyHeights">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>hierarchyHeights</h4>
-<pre>protected final&nbsp;int[] hierarchyHeights</pre>
-<div class="block">The hierarchy heights for each QI.</div>
-</li>
-</ul>
-<a name="maxLevels">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>maxLevels</h4>
-<pre>protected final&nbsp;int[] maxLevels</pre>
-<div class="block">The maximum level for each QI.</div>
-</li>
-</ul>
-<a name="minLevels">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>minLevels</h4>
-<pre>protected final&nbsp;int[] minLevels</pre>
-<div class="block">The minimum level for each QI.</div>
-</li>
-</ul>
-<a name="header">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>header</h4>
-<pre>protected final&nbsp;java.lang.String[] header</pre>
-<div class="block">The original input header.</div>
-</li>
-</ul>
-<a name="subset">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>subset</h4>
-<pre>protected&nbsp;<a href="../../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a> subset</pre>
-<div class="block">The research subset, if any.</div>
-</li>
-</ul>
-<a name="subsetSize">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>subsetSize</h4>
-<pre>protected&nbsp;int subsetSize</pre>
-<div class="block">The size of the research subset.</div>
-</li>
-</ul>
-</li>
-</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_detail">
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="DataManager(java.lang.String[], int[][], org.deidentifier.arx.framework.data.Dictionary, org.deidentifier.arx.DataDefinition, java.util.Set)">
+<a name="DataManager(java.lang.String[], int[][], org.deidentifier.arx.framework.data.Dictionary, org.deidentifier.arx.DataDefinition, java.util.Set, java.util.Map)">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>DataManager</h4>
 <pre>public&nbsp;DataManager(java.lang.String[]&nbsp;header,
            int[][]&nbsp;data,
            <a href="../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;dictionary,
            <a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
-           java.util.Set&lt;<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;criteria)</pre>
+           java.util.Set&lt;<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;criteria,
+           java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>&gt;&nbsp;functions)</pre>
 <div class="block">Creates a new data manager from pre-encoded data.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>header</code> - </dd><dd><code>data</code> - </dd><dd><code>dictionary</code> - </dd><dd><code>definition</code> - </dd><dd><code>criteria</code> - </dd></dl>
-</li>
-</ul>
-<a name="DataManager(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], java.util.Map, java.util.Map, int[], int[], int[], java.lang.String[])">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>DataManager</h4>
-<pre>protected&nbsp;DataManager(<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataQI,
-           <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataSE,
-           <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataIS,
-           <a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchiesQI,
-           java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>&gt;&nbsp;hierarchiesSE,
-           java.util.Map&lt;java.lang.String,java.lang.Integer&gt;&nbsp;indexesSE,
-           int[]&nbsp;hierarchyHeights,
-           int[]&nbsp;maxLevels,
-           int[]&nbsp;minLevels,
-           java.lang.String[]&nbsp;header)</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>dataQI</code> - </dd><dd><code>dataSE</code> - </dd><dd><code>dataIS</code> - </dd><dd><code>hierarchiesQI</code> - </dd><dd><code>hierarchiesSE</code> - </dd><dd><code>indexesSE</code> - </dd><dd><code>hierarchyHeights</code> - </dd><dd><code>maxLevels</code> - </dd><dd><code>minLevels</code> - </dd><dd><code>header</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>header</code> - </dd><dd><code>data</code> - </dd><dd><code>dictionary</code> - </dd><dd><code>definition</code> - </dd><dd><code>criteria</code> - </dd><dd><code>function</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -494,36 +300,36 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getDataIS()">
+<a name="getDataAnalyzed()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getDataIS</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;getDataIS()</pre>
-<div class="block">Returns the data.</div>
+<h4>getDataAnalyzed</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;getDataAnalyzed()</pre>
+<div class="block">Returns the input data that will be analyzed.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the data</dd></dl>
 </li>
 </ul>
-<a name="getDataQI()">
+<a name="getDataGeneralized()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getDataQI</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;getDataQI()</pre>
-<div class="block">Returns the data.</div>
+<h4>getDataGeneralized</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;getDataGeneralized()</pre>
+<div class="block">Returns the input data that will be generalized.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the data</dd></dl>
 </li>
 </ul>
-<a name="getDataSE()">
+<a name="getDataStatic()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getDataSE</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;getDataSE()</pre>
-<div class="block">Returns the data.</div>
+<h4>getDataStatic</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;getDataStatic()</pre>
+<div class="block">Returns the static input data.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the data</dd></dl>
 </li>
 </ul>
@@ -534,8 +340,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getDistribution</h4>
 <pre>public&nbsp;double[]&nbsp;getDistribution(java.lang.String&nbsp;attribute)</pre>
-<div class="block">Returns the distribution of the given sensitive attribute in
- the original dataset. Required for t-closeness.</div>
+<div class="block">Returns the distribution of the given sensitive attribute in the original
+ dataset. Required for t-closeness.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd>distribution</dd></dl>
 </li>
@@ -551,13 +357,13 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getHierachyHeights()">
+<a name="getHierachiesHeights()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getHierachyHeights</h4>
-<pre>public&nbsp;int[]&nbsp;getHierachyHeights()</pre>
+<h4>getHierachiesHeights</h4>
+<pre>public&nbsp;int[]&nbsp;getHierachiesHeights()</pre>
 <div class="block">Returns the heights of the hierarchiesQI.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -573,25 +379,82 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the hierarchiesQI</dd></dl>
 </li>
 </ul>
-<a name="getMaxLevels()">
+<a name="getHierarchiesMaxLevels()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getMaxLevels</h4>
-<pre>public&nbsp;int[]&nbsp;getMaxLevels()</pre>
+<h4>getHierarchiesMaxLevels</h4>
+<pre>public&nbsp;int[]&nbsp;getHierarchiesMaxLevels()</pre>
 <div class="block">Returns the maximum levels for the generalizaiton.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the maximum level for each QI</dd></dl>
 </li>
 </ul>
-<a name="getMinLevels()">
+<a name="getHierarchiesMinLevels()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getMinLevels</h4>
-<pre>public&nbsp;int[]&nbsp;getMinLevels()</pre>
+<h4>getHierarchiesMinLevels</h4>
+<pre>public&nbsp;int[]&nbsp;getHierarchiesMinLevels()</pre>
 <div class="block">Returns the minimum levels for the generalizations.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getMicroaggregationFunctions()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMicroaggregationFunctions</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;getMicroaggregationFunctions()</pre>
+<div class="block">Returns the microaggregation functions.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getMicroaggregationHeader()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMicroaggregationHeader</h4>
+<pre>public&nbsp;java.lang.String[]&nbsp;getMicroaggregationHeader()</pre>
+<div class="block">Returns the header for the according buffer</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getMicroaggregationMap()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMicroaggregationMap</h4>
+<pre>public&nbsp;int[]&nbsp;getMicroaggregationMap()</pre>
+<div class="block">Returns the map for the according buffer</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getMicroaggregationNumAttributes()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMicroaggregationNumAttributes</h4>
+<pre>public&nbsp;int&nbsp;getMicroaggregationNumAttributes()</pre>
+<div class="block">Gets the number of attributes to which microaggregation will be applied
+ in dataAnalyzed.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getMicroaggregationStartIndex()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMicroaggregationStartIndex</h4>
+<pre>public&nbsp;int&nbsp;getMicroaggregationStartIndex()</pre>
+<div class="block">Gets the start index of the attributes to which microaggregation will be
+ applied in dataAnalyzed.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -602,8 +465,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getTree</h4>
 <pre>public&nbsp;int[]&nbsp;getTree(java.lang.String&nbsp;attribute)</pre>
-<div class="block">Returns the tree for the given sensitive attribute, if a generalization hierarchy
- is associated. Required for t-closeness with hierarchical distance EMD</div>
+<div class="block">Returns the tree for the given sensitive attribute, if a generalization
+ hierarchy is associated. Required for t-closeness with hierarchical
+ distance EMD</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd>tree</dd></dl>
 </li>
@@ -635,7 +499,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.AttributeTypeInternal.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?org/deidentifier/arx/framework/data/DataManager.html" target="_top">Frames</a></li>
@@ -659,14 +523,14 @@ extends java.lang.Object</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>

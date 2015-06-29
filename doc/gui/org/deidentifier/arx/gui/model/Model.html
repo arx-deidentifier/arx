@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>Model (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
@@ -142,7 +142,7 @@ implements java.io.Serializable</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#Model(java.lang.String,%20java.lang.String,%20java.util.Locale)">Model</a></strong>(java.lang.String&nbsp;name,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#Model(java.lang.String, java.lang.String, java.util.Locale)">Model</a></strong>(java.lang.String&nbsp;name,
      java.lang.String&nbsp;description,
      java.util.Locale&nbsp;locale)</code>
 <div class="block">Creates a new instance.</div>
@@ -469,6 +469,18 @@ implements java.io.Serializable</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>java.lang.Boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getUseFunctionalHierarchies()">getUseFunctionalHierarchies</a></strong>()</code>
+<div class="block">Returns whether functional hierarchies should be used</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.Boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getUseListwiseDeletion()">getUseListwiseDeletion</a></strong>()</code>
+<div class="block">Returns whether list-wise deletion is used for summary statistics</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelViewConfig.html" title="class in org.deidentifier.arx.gui.model">ModelViewConfig</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getViewConfig()">getViewConfig</a></strong>()</code>
 <div class="block">Returns the view configuration.</div>
@@ -626,7 +638,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setOutput(org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.ARXLattice.ARXNode)">setOutput</a></strong>(<a href="../../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;output,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setOutput(org.deidentifier.arx.DataHandle, org.deidentifier.arx.ARXLattice.ARXNode)">setOutput</a></strong>(<a href="../../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;output,
          <a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node)</code>
 <div class="block">Sets the current output.</div>
 </td>
@@ -715,6 +727,18 @@ implements java.io.Serializable</pre>
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setUnmodified()">setUnmodified</a></strong>()</code>
 <div class="block">Marks this model as unmodified.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setUseFunctionalHierarchies(boolean)">setUseFunctionalHierarchies</a></strong>(boolean&nbsp;useFunctionalHierarchies)</code>
+<div class="block">Sets whether funtional hierarchies should be used during anonymization to esimtate utility</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setUseListwiseDeletion(boolean)">setUseListwiseDeletion</a></strong>(boolean&nbsp;useListwiseDeletion)</code>
+<div class="block">Sets whether list-wise deletion should be used for summary statistics</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -1332,6 +1356,28 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getUseListwiseDeletion()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUseListwiseDeletion</h4>
+<pre>public&nbsp;java.lang.Boolean&nbsp;getUseListwiseDeletion()</pre>
+<div class="block">Returns whether list-wise deletion is used for summary statistics</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getUseFunctionalHierarchies()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUseFunctionalHierarchies</h4>
+<pre>public&nbsp;java.lang.Boolean&nbsp;getUseFunctionalHierarchies()</pre>
+<div class="block">Returns whether functional hierarchies should be used</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getViewConfig()">
 <!--   -->
 </a>
@@ -1784,6 +1830,28 @@ implements java.io.Serializable</pre>
 <h4>setUnmodified</h4>
 <pre>public&nbsp;void&nbsp;setUnmodified()</pre>
 <div class="block">Marks this model as unmodified.</div>
+</li>
+</ul>
+<a name="setUseListwiseDeletion(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setUseListwiseDeletion</h4>
+<pre>public&nbsp;void&nbsp;setUseListwiseDeletion(boolean&nbsp;useListwiseDeletion)</pre>
+<div class="block">Sets whether list-wise deletion should be used for summary statistics</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>useListwiseDeletion</code> - </dd></dl>
+</li>
+</ul>
+<a name="setUseFunctionalHierarchies(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setUseFunctionalHierarchies</h4>
+<pre>public&nbsp;void&nbsp;setUseFunctionalHierarchies(boolean&nbsp;useFunctionalHierarchies)</pre>
+<div class="block">Sets whether funtional hierarchies should be used during anonymization to esimtate utility</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>useFunctionalHierarchies</code> - </dd></dl>
 </li>
 </ul>
 <a name="setViewConfig(org.deidentifier.arx.gui.model.ModelViewConfig)">
