@@ -28,7 +28,7 @@ import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
-import org.deidentifier.arx.algorithm.THUNDERAlgorithm;
+import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
@@ -540,7 +540,7 @@ public class ARXAnonymizer {
         
         if (config.isHeuristicSearchEnabled() ||
             solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
-            return THUNDERAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit());
+            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit());
             
         } else {
             FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());

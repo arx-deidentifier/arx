@@ -36,7 +36,7 @@ import de.linearbits.jhpl.PredictiveProperty;
  * @author Johanna Eicher
  * @author Helmut Spengler
  */
-public class THUNDERAlgorithm extends AbstractAlgorithm{
+public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
 
     /** The maximal size of the priority queue */
     private static final int         MAX_QUEUE_SIZE = 50000;
@@ -57,7 +57,7 @@ public class THUNDERAlgorithm extends AbstractAlgorithm{
     * @param checker
     * @param timeLimit
     */
-    private THUNDERAlgorithm(SolutionSpace space, NodeChecker checker, int timeLimit) {
+    private LIGHTNINGAlgorithm(SolutionSpace space, NodeChecker checker, int timeLimit) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         int stepping = space.getTop().getLevel();
@@ -195,6 +195,6 @@ public class THUNDERAlgorithm extends AbstractAlgorithm{
     public static AbstractAlgorithm create(SolutionSpace solutionSpace,
                                            NodeChecker checker,
                                            int timeLimit) {
-        return new THUNDERAlgorithm(solutionSpace, checker, timeLimit);
+        return new LIGHTNINGAlgorithm(solutionSpace, checker, timeLimit);
     }
 }
