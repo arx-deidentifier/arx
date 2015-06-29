@@ -4,7 +4,7 @@
     <description>Builds, tests, and runs the project.</description>
 
     <!-- defines the version number -->
-    <property name="arx.version" value="3.1.0" />
+    <property name="arx.version" value="3.2.0" />
 
 
     <!-- defines the to be included libraries -->
@@ -28,7 +28,6 @@
         	<filename name="**/jhpl-0.0.1.jar" />
         </or>
     </fileset>
-
 
     <fileset id="gui.jars" dir="lib">
         <or>
