@@ -54,16 +54,6 @@ public class DataHandleSubset extends DataHandle {
         this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), eqStatistics);
     }
 
-    /**
-     * Creates a new handle that represents the research subset.
-     *
-     * @param source
-     * @param subset
-     */
-    protected DataHandleSubset(DataHandle source, DataSubset subset){
-        this(source, subset, null);
-    }
-
     @Override
     public String getAttributeName(int col) {
         checkRegistry();
@@ -113,6 +103,12 @@ public class DataHandleSubset extends DataHandle {
     public DataHandle getView(){
         checkRegistry();
         return this;
+    }
+
+    @Override
+    public boolean isOutlier(int row) {
+        checkRegistry();
+        return super.isOutlier(this.subset.getArray()[row]);
     }
 
     @Override
