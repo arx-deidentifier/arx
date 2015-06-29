@@ -94,7 +94,7 @@
 <li class="blockList">
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../org/deidentifier/arx/algorithm/FLASHAlgorithmImpl.html" title="class in org.deidentifier.arx.algorithm">FLASHAlgorithmImpl</a>, <a href="../../../../org/deidentifier/arx/algorithm/THUNDERAlgorithm.html" title="class in org.deidentifier.arx.algorithm">THUNDERAlgorithm</a></dd>
+<dd><a href="../../../../org/deidentifier/arx/algorithm/FLASHAlgorithmImpl.html" title="class in org.deidentifier.arx.algorithm">FLASHAlgorithmImpl</a>, <a href="../../../../org/deidentifier/arx/algorithm/LIGHTNINGAlgorithm.html" title="class in org.deidentifier.arx.algorithm">LIGHTNINGAlgorithm</a></dd>
 </dl>
 <hr>
 <br>
@@ -126,12 +126,6 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#listener">listener</a></strong></code>
-<div class="block">The listener</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#solutionSpace">solutionSpace</a></strong></code>
 <div class="block">The lattice.</div>
@@ -189,18 +183,24 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#progress(double)">progress</a></strong>(double&nbsp;progress)</code>
+<div class="block">Propagate progress to listeners</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#setListener(org.deidentifier.arx.ARXListener)">setListener</a></strong>(<a href="../../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
 <div class="block">Sets a listener</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#trackOptimum(org.deidentifier.arx.framework.lattice.Transformation)">trackOptimum</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation)</code>
 <div class="block">Keeps track of the global optimum.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#traverse()">traverse</a></strong>()</code>
 <div class="block">Implement this method in order to provide a new algorithm.</div>
@@ -228,16 +228,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="listener">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>listener</h4>
-<pre>protected&nbsp;<a href="../../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a> listener</pre>
-<div class="block">The listener</div>
-</li>
-</ul>
 <a name="checker">
 <!--   -->
 </a>
@@ -329,6 +319,17 @@ extends java.lang.Object</pre>
  used for estimating minimum and maximum information
  loss for tagged nodes.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd></dl>
+</li>
+</ul>
+<a name="progress(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>progress</h4>
+<pre>protected&nbsp;void&nbsp;progress(double&nbsp;progress)</pre>
+<div class="block">Propagate progress to listeners</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>progress</code> - </dd></dl>
 </li>
 </ul>
 <a name="trackOptimum(org.deidentifier.arx.framework.lattice.Transformation)">
