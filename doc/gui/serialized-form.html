@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>Serialized Form (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="stylesheet.css" title="Style">
@@ -375,6 +375,67 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="org.deidentifier.arx.AttributeType.MicroAggregationFunction">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/AttributeType.MicroAggregationFunction.html" title="class in org.deidentifier.arx">org.deidentifier.arx.AttributeType.MicroAggregationFunction</a> extends <a href="org/deidentifier/arx/AttributeType.html" title="class in org.deidentifier.arx">AttributeType</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-7175337291872533713L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>function</h4>
+<pre>org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction function</pre>
+<div class="block">The microaggregation function</div>
+</li>
+<li class="blockList">
+<h4>requiredScale</h4>
+<pre><a href="org/deidentifier/arx/DataScale.html" title="enum in org.deidentifier.arx">DataScale</a> requiredScale</pre>
+<div class="block">The required scale</div>
+</li>
+<li class="blockListLast">
+<h4>label</h4>
+<pre>java.lang.String label</pre>
+<div class="block">The label</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/AttributeType.MicroAggregationFunctionDescription.html" title="class in org.deidentifier.arx">org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-6608355532280843693L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>requiredScale</h4>
+<pre><a href="org/deidentifier/arx/DataScale.html" title="enum in org.deidentifier.arx">DataScale</a> requiredScale</pre>
+<div class="block">The required scale</div>
+</li>
+<li class="blockListLast">
+<h4>label</h4>
+<pre>java.lang.String label</pre>
+<div class="block">The label</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="org.deidentifier.arx.DataSubset">
 <!--   -->
 </a>
@@ -572,10 +633,15 @@
 <pre>boolean hasFormat</pre>
 <div class="block">Can the type be parameterized with a format string.</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>label</h4>
 <pre>java.lang.String label</pre>
 <div class="block">A human readable label.</div>
+</li>
+<li class="blockListLast">
+<h4>scale</h4>
+<pre><a href="org/deidentifier/arx/DataScale.html" title="enum in org.deidentifier.arx">DataScale</a> scale</pre>
+<div class="block">The associated scale of measure</div>
 </li>
 </ul>
 </li>
@@ -1789,6 +1855,16 @@
 <pre><a href="org/deidentifier/arx/metric/MetricDescription.html" title="class in org.deidentifier.arx.metric">MetricDescription</a> metricDescription</pre>
 <div class="block">Description.</div>
 </li>
+<li class="blockList">
+<h4>useListwiseDeletion</h4>
+<pre>java.lang.Boolean useListwiseDeletion</pre>
+<div class="block">Summary statistics</div>
+</li>
+<li class="blockList">
+<h4>useFunctionalHierarchies</h4>
+<pre>java.lang.Boolean useFunctionalHierarchies</pre>
+<div class="block">Utility estimation during anonymization</div>
+</li>
 <li class="blockListLast">
 <h4>selectedQuasiIdentifiers</h4>
 <pre>java.util.Set&lt;E&gt; selectedQuasiIdentifiers</pre>
@@ -1877,6 +1953,21 @@
 <h4>hierarchies</h4>
 <pre>java.util.Map&lt;K,V&gt; hierarchies</pre>
 <div class="block">The associated hierarchies.</div>
+</li>
+<li class="blockList">
+<h4>microAggregationFunctions</h4>
+<pre>java.util.Map&lt;K,V&gt; microAggregationFunctions</pre>
+<div class="block">The associated microaggregation functions.</div>
+</li>
+<li class="blockList">
+<h4>microAggregationIgnoreMissingData</h4>
+<pre>java.util.Map&lt;K,V&gt; microAggregationIgnoreMissingData</pre>
+<div class="block">The associated handling of null values.</div>
+</li>
+<li class="blockList">
+<h4>transformationModes</h4>
+<pre>java.util.Map&lt;K,V&gt; transformationModes</pre>
+<div class="block">The associated mode</div>
 </li>
 <li class="blockList">
 <h4>researchSubset</h4>

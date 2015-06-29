@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>TransformedData (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
@@ -96,6 +96,7 @@
 <br>
 <pre>public class <span class="strong">TransformedData</span>
 extends java.lang.Object</pre>
+<div class="block">Helper class to convey buffers.</div>
 </li>
 </ul>
 </div>
@@ -116,14 +117,20 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html#buffer">buffer</a></strong></code>
-<div class="block">TODO</div>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html#bufferGeneralized">bufferGeneralized</a></strong></code>
+<div class="block">The GH buffer</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.GroupStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.GroupStatistics</a></code></td>
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html#bufferMicroaggregated">bufferMicroaggregated</a></strong></code>
+<div class="block">The OT buffer</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html#statistics">statistics</a></strong></code>
-<div class="block">TODO</div>
+<div class="block">The group statistic</div>
 </td>
 </tr>
 </table>
@@ -141,8 +148,11 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html#TransformedData(org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics)">TransformedData</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;data,
-               <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.GroupStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.GroupStatistics</a>&nbsp;statistics)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html#TransformedData(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics)">TransformedData</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;bufferGH,
+               <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;bufferOT,
+               <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a>&nbsp;statistics)</code>
+<div class="block">Instantiate the helper object.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -174,14 +184,24 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="buffer">
+<a name="bufferGeneralized">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>buffer</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a> buffer</pre>
-<div class="block">TODO</div>
+<h4>bufferGeneralized</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a> bufferGeneralized</pre>
+<div class="block">The GH buffer</div>
+</li>
+</ul>
+<a name="bufferMicroaggregated">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>bufferMicroaggregated</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a> bufferMicroaggregated</pre>
+<div class="block">The OT buffer</div>
 </li>
 </ul>
 <a name="statistics">
@@ -190,8 +210,8 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>statistics</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.GroupStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.GroupStatistics</a> statistics</pre>
-<div class="block">TODO</div>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a> statistics</pre>
+<div class="block">The group statistic</div>
 </li>
 </ul>
 </li>
@@ -202,15 +222,17 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="TransformedData(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics)">
+<a name="TransformedData(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>TransformedData</h4>
-<pre>public&nbsp;TransformedData(<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;data,
-               <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.GroupStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.GroupStatistics</a>&nbsp;statistics)</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>statistics</code> - </dd></dl>
+<pre>public&nbsp;TransformedData(<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;bufferGH,
+               <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;bufferOT,
+               <a href="../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a>&nbsp;statistics)</pre>
+<div class="block">Instantiate the helper object.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>bufferGH</code> - </dd><dd><code>bufferOT</code> - </dd><dd><code>statistics</code> - </dd></dl>
 </li>
 </ul>
 </li>

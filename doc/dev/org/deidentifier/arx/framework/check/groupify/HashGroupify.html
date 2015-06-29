@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>HashGroupify (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li>Prev Class</li>
-<li><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.GroupStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?org/deidentifier/arx/framework/check/groupify/HashGroupify.html" target="_top">Frames</a></li>
@@ -92,15 +92,10 @@
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="strong">HashGroupify</span>
-extends java.lang.Object
-implements <a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></pre>
+extends java.lang.Object</pre>
 <div class="block">A hash groupify operator. It implements a hash table with chaining and keeps
  track of additional properties per equivalence class</div>
 </li>
@@ -123,8 +118,8 @@ implements <a href="../../../../../../org/deidentifier/arx/framework/check/group
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.GroupStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.GroupStatistics</a></strong></code>
-<div class="block">Statistics about the groups, excluding outliers.</div>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></strong></code>
+<div class="block">Statistics about the equivalence classes, excluding outliers.</div>
 </td>
 </tr>
 </table>
@@ -142,7 +137,7 @@ implements <a href="../../../../../../org/deidentifier/arx/framework/check/group
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#HashGroupify(int,%20org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal)">HashGroupify</a></strong>(int&nbsp;capacity,
+<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#HashGroupify(int, org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal)">HashGroupify</a></strong>(int&nbsp;capacity,
             <a href="../../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;config)</code>
 <div class="block">Constructs a new hash groupify operator.</div>
 </td>
@@ -164,88 +159,99 @@ implements <a href="../../../../../../org/deidentifier/arx/framework/check/group
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#addAll(int[],%20int,%20int,%20int[],%20int)">addAll</a></strong>(int[]&nbsp;key,
-      int&nbsp;representant,
-      int&nbsp;count,
-      int[]&nbsp;sensitive,
-      int&nbsp;pcount)</code>
-<div class="block">Generic adder for all combinations of criteria in mode transform ALL.</div>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#addFromBuffer(int[], int[], int, int, int)">addFromBuffer</a></strong>(int[]&nbsp;generalized,
+             int[]&nbsp;other,
+             int&nbsp;representative,
+             int&nbsp;count,
+             int&nbsp;pcount)</code>
+<div class="block">Adds a tuple from the buffer</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#addGroupify(int[],%20int,%20int,%20org.deidentifier.arx.framework.check.distribution.Distribution[],%20int)">addGroupify</a></strong>(int[]&nbsp;key,
-           int&nbsp;representant,
-           int&nbsp;count,
-           <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>[]&nbsp;distributions,
-           int&nbsp;pcount)</code>
-<div class="block">Generic adder for all combinations of criteria in mode transform GROUPIFY.</div>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#addFromGroupify(int[], org.deidentifier.arx.framework.check.distribution.Distribution[], int, int, int)">addFromGroupify</a></strong>(int[]&nbsp;generalized,
+               <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>[]&nbsp;distributions,
+               int&nbsp;representative,
+               int&nbsp;count,
+               int&nbsp;pcount)</code>
+<div class="block">Adds an entry from another groupify operator</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#addSnapshot(int[],%20int,%20int,%20int[][],%20int[][],%20int)">addSnapshot</a></strong>(int[]&nbsp;key,
-           int&nbsp;representant,
-           int&nbsp;count,
-           int[][]&nbsp;elements,
-           int[][]&nbsp;frequencies,
-           int&nbsp;pcount)</code>
-<div class="block">Generic adder for all combinations of criteria in mode transform SNAPSHOT.</div>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#addFromSnapshot(int[], int[][], int[][], int, int, int)">addFromSnapshot</a></strong>(int[]&nbsp;generalized,
+               int[][]&nbsp;elements,
+               int[][]&nbsp;frequencies,
+               int&nbsp;representative,
+               int&nbsp;count,
+               int&nbsp;pcount)</code>
+<div class="block">Adds a class from a snapshot</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#analyze(org.deidentifier.arx.framework.lattice.Node,%20boolean)">analyze</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation,
-       boolean&nbsp;force)</code>
-<div class="block">Computes the anonymity properties and suppressed tuples etc.</div>
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getEquivalenceClassStatistics()">getEquivalenceClassStatistics</a></strong>()</code>
+<div class="block">Returns statistics</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#clear()">clear</a></strong>()</code>
-<div class="block">Clear.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getFirstEntry()">getFirstEntry</a></strong>()</code>
-<div class="block">Gets the first entry.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.GroupStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.GroupStatistics</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getGroupStatistics()">getGroupStatistics</a></strong>()</code>
-<div class="block">Returns statistics about the groups.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#isAnonymous()">isAnonymous</a></strong>()</code>
-<div class="block">Are all defined privacy criteria fulfilled by this transformation, given the specified limit on suppressed tuples.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#isKAnonymous()">isKAnonymous</a></strong>()</code>
-<div class="block">Is the current transformation k-anonymous.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#markOutliers(int[][])">markOutliers</a></strong>(int[][]&nbsp;data)</code>
-<div class="block">Marks all outliers.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#resetSuppression()">resetSuppression</a></strong>()</code>
-<div class="block">This method will reset all flags that indicate that equivalence classes are suppressed.</div>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getFirstEquivalenceClass()">getFirstEquivalenceClass</a></strong>()</code>
+<div class="block">Returns the first entry</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#size()">size</a></strong>()</code>
-<div class="block">Size.</div>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getNumberOfEquivalenceClasses()">getNumberOfEquivalenceClasses</a></strong>()</code>
+<div class="block">Returns the current size in terms of classes</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#isMinimalClassSizeFulfilled()">isMinimalClassSizeFulfilled</a></strong>()</code>
+<div class="block">Returns whether the current state of the dataset fulfills the minimal class-size property</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#isPrivacyModelFulfilled()">isPrivacyModelFulfilled</a></strong>()</code>
+<div class="block">Returns whether the current state of the dataset fulfills the privacy model</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[])">performMicroaggregation</a></strong>(int[][]&nbsp;data,
+                       int&nbsp;start,
+                       int&nbsp;num,
+                       <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;functions,
+                       int[]&nbsp;map,
+                       java.lang.String[]&nbsp;header)</code>
+<div class="block">Microaggregates all according attributes</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performSuppression(int[][])">performSuppression</a></strong>(int[][]&nbsp;data)</code>
+<div class="block">Marks all outliers in the given (generalized subset of the) input datasets</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#stateAnalyze(org.deidentifier.arx.framework.lattice.Node, boolean)">stateAnalyze</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation,
+            boolean&nbsp;force)</code>
+<div class="block">Analyzes the current state</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#stateClear()">stateClear</a></strong>()</code>
+<div class="block">Clears all entries</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#stateResetSuppression()">stateResetSuppression</a></strong>()</code>
+<div class="block">This method will reset all flags that indicate that equivalence classes are suppressed.</div>
 </td>
 </tr>
 </table>
@@ -290,202 +296,165 @@ implements <a href="../../../../../../org/deidentifier/arx/framework/check/group
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="addAll(int[], int, int, int[], int)">
+<a name="addFromBuffer(int[], int[], int, int, int)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>addAll</h4>
-<pre>public&nbsp;void&nbsp;addAll(int[]&nbsp;key,
-          int&nbsp;representant,
-          int&nbsp;count,
-          int[]&nbsp;sensitive,
-          int&nbsp;pcount)</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#addAll(int[],%20int,%20int,%20int[],%20int)">IHashGroupify</a></code></strong></div>
-<div class="block">Generic adder for all combinations of criteria in mode transform ALL.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#addAll(int[],%20int,%20int,%20int[],%20int)">addAll</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
-</dl>
+<h4>addFromBuffer</h4>
+<pre>public&nbsp;void&nbsp;addFromBuffer(int[]&nbsp;generalized,
+                 int[]&nbsp;other,
+                 int&nbsp;representative,
+                 int&nbsp;count,
+                 int&nbsp;pcount)</pre>
+<div class="block">Adds a tuple from the buffer</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>generalized</code> - </dd><dd><code>other</code> - </dd><dd><code>representative</code> - </dd><dd><code>count</code> - </dd><dd><code>pcount</code> - </dd></dl>
 </li>
 </ul>
-<a name="addGroupify(int[], int, int, org.deidentifier.arx.framework.check.distribution.Distribution[], int)">
+<a name="addFromGroupify(int[], org.deidentifier.arx.framework.check.distribution.Distribution[], int, int, int)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>addGroupify</h4>
-<pre>public&nbsp;void&nbsp;addGroupify(int[]&nbsp;key,
-               int&nbsp;representant,
-               int&nbsp;count,
-               <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>[]&nbsp;distributions,
-               int&nbsp;pcount)</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#addGroupify(int[],%20int,%20int,%20org.deidentifier.arx.framework.check.distribution.Distribution[],%20int)">IHashGroupify</a></code></strong></div>
-<div class="block">Generic adder for all combinations of criteria in mode transform GROUPIFY.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#addGroupify(int[],%20int,%20int,%20org.deidentifier.arx.framework.check.distribution.Distribution[],%20int)">addGroupify</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
-</dl>
+<h4>addFromGroupify</h4>
+<pre>public&nbsp;void&nbsp;addFromGroupify(int[]&nbsp;generalized,
+                   <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>[]&nbsp;distributions,
+                   int&nbsp;representative,
+                   int&nbsp;count,
+                   int&nbsp;pcount)</pre>
+<div class="block">Adds an entry from another groupify operator</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>generalized</code> - </dd><dd><code>distributions</code> - </dd><dd><code>representative</code> - </dd><dd><code>count</code> - </dd><dd><code>pcount</code> - </dd></dl>
 </li>
 </ul>
-<a name="addSnapshot(int[], int, int, int[][], int[][], int)">
+<a name="addFromSnapshot(int[], int[][], int[][], int, int, int)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>addSnapshot</h4>
-<pre>public&nbsp;void&nbsp;addSnapshot(int[]&nbsp;key,
-               int&nbsp;representant,
-               int&nbsp;count,
-               int[][]&nbsp;elements,
-               int[][]&nbsp;frequencies,
-               int&nbsp;pcount)</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#addSnapshot(int[],%20int,%20int,%20int[][],%20int[][],%20int)">IHashGroupify</a></code></strong></div>
-<div class="block">Generic adder for all combinations of criteria in mode transform SNAPSHOT.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#addSnapshot(int[],%20int,%20int,%20int[][],%20int[][],%20int)">addSnapshot</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
-</dl>
+<h4>addFromSnapshot</h4>
+<pre>public&nbsp;void&nbsp;addFromSnapshot(int[]&nbsp;generalized,
+                   int[][]&nbsp;elements,
+                   int[][]&nbsp;frequencies,
+                   int&nbsp;representative,
+                   int&nbsp;count,
+                   int&nbsp;pcount)</pre>
+<div class="block">Adds a class from a snapshot</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>generalized</code> - </dd><dd><code>elements</code> - </dd><dd><code>frequencies</code> - </dd><dd><code>representative</code> - </dd><dd><code>count</code> - </dd><dd><code>pcount</code> - </dd></dl>
 </li>
 </ul>
-<a name="analyze(org.deidentifier.arx.framework.lattice.Node, boolean)">
+<a name="getEquivalenceClassStatistics()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>analyze</h4>
-<pre>public&nbsp;void&nbsp;analyze(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation,
-           boolean&nbsp;force)</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#analyze(org.deidentifier.arx.framework.lattice.Node,%20boolean)">IHashGroupify</a></code></strong></div>
-<div class="block">Computes the anonymity properties and suppressed tuples etc. Must be called
- when all tuples have been passed to the operator. When the flag is set to true
- the method will make sure that all equivalence classes that do not fulfill all
- privacy criteria are marked for suppression. If the flag is set to false,
- the operator may perform an early abort, which may lead to an inconsistent classification
- of equivalence classes.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#analyze(org.deidentifier.arx.framework.lattice.Node,%20boolean)">analyze</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
-</dl>
+<h4>getEquivalenceClassStatistics</h4>
+<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a>&nbsp;getEquivalenceClassStatistics()</pre>
+<div class="block">Returns statistics</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="clear()">
+<a name="getFirstEquivalenceClass()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>clear</h4>
-<pre>public&nbsp;void&nbsp;clear()</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#clear()">IHashGroupify</a></code></strong></div>
-<div class="block">Clear.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#clear()">clear</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
-</dl>
+<h4>getFirstEquivalenceClass</h4>
+<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;getFirstEquivalenceClass()</pre>
+<div class="block">Returns the first entry</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getFirstEntry()">
+<a name="getNumberOfEquivalenceClasses()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getFirstEntry</h4>
-<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;getFirstEntry()</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#getFirstEntry()">IHashGroupify</a></code></strong></div>
-<div class="block">Gets the first entry.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#getFirstEntry()">getFirstEntry</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the first entry</dd></dl>
+<h4>getNumberOfEquivalenceClasses</h4>
+<pre>public&nbsp;int&nbsp;getNumberOfEquivalenceClasses()</pre>
+<div class="block">Returns the current size in terms of classes</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getGroupStatistics()">
+<a name="isMinimalClassSizeFulfilled()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getGroupStatistics</h4>
-<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.GroupStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.GroupStatistics</a>&nbsp;getGroupStatistics()</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#getGroupStatistics()">IHashGroupify</a></code></strong></div>
-<div class="block">Returns statistics about the groups.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#getGroupStatistics()">getGroupStatistics</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
+<h4>isMinimalClassSizeFulfilled</h4>
+<pre>public&nbsp;boolean&nbsp;isMinimalClassSizeFulfilled()</pre>
+<div class="block">Returns whether the current state of the dataset fulfills the minimal class-size property</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isPrivacyModelFulfilled()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isPrivacyModelFulfilled</h4>
+<pre>public&nbsp;boolean&nbsp;isPrivacyModelFulfilled()</pre>
+<div class="block">Returns whether the current state of the dataset fulfills the privacy model</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>performMicroaggregation</h4>
+<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;performMicroaggregation(int[][]&nbsp;data,
+                           int&nbsp;start,
+                           int&nbsp;num,
+                           <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;functions,
+                           int[]&nbsp;map,
+                           java.lang.String[]&nbsp;header)</pre>
+<div class="block">Microaggregates all according attributes</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>start</code> - </dd><dd><code>num</code> - </dd><dd><code>functions</code> - </dd><dd><code>map</code> - </dd><dd><code>header</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="isAnonymous()">
+<a name="performSuppression(int[][])">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>isAnonymous</h4>
-<pre>public&nbsp;boolean&nbsp;isAnonymous()</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#isAnonymous()">IHashGroupify</a></code></strong></div>
-<div class="block">Are all defined privacy criteria fulfilled by this transformation, given the specified limit on suppressed tuples.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#isAnonymous()">isAnonymous</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>true, if successful</dd></dl>
+<h4>performSuppression</h4>
+<pre>public&nbsp;void&nbsp;performSuppression(int[][]&nbsp;data)</pre>
+<div class="block">Marks all outliers in the given (generalized subset of the) input datasets</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd></dl>
 </li>
 </ul>
-<a name="isKAnonymous()">
+<a name="stateAnalyze(org.deidentifier.arx.framework.lattice.Node, boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>isKAnonymous</h4>
-<pre>public&nbsp;boolean&nbsp;isKAnonymous()</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#isKAnonymous()">IHashGroupify</a></code></strong></div>
-<div class="block">Is the current transformation k-anonymous. Always returns true, if no k-anonymity (sub-)criterion was specified</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#isKAnonymous()">isKAnonymous</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<h4>stateAnalyze</h4>
+<pre>public&nbsp;void&nbsp;stateAnalyze(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation,
+                boolean&nbsp;force)</pre>
+<div class="block">Analyzes the current state</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd><dd><code>force</code> - </dd></dl>
 </li>
 </ul>
-<a name="markOutliers(int[][])">
+<a name="stateClear()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>markOutliers</h4>
-<pre>public&nbsp;void&nbsp;markOutliers(int[][]&nbsp;data)</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#markOutliers(int[][])">IHashGroupify</a></code></strong></div>
-<div class="block">Marks all outliers.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#markOutliers(int[][])">markOutliers</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
-</dl>
+<h4>stateClear</h4>
+<pre>public&nbsp;void&nbsp;stateClear()</pre>
+<div class="block">Clears all entries</div>
 </li>
 </ul>
-<a name="resetSuppression()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>resetSuppression</h4>
-<pre>public&nbsp;void&nbsp;resetSuppression()</pre>
-<div class="block">This method will reset all flags that indicate that equivalence classes are suppressed.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#resetSuppression()">resetSuppression</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="size()">
+<a name="stateResetSuppression()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>size</h4>
-<pre>public&nbsp;int&nbsp;size()</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#size()">IHashGroupify</a></code></strong></div>
-<div class="block">Size.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html#size()">size</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the int</dd></dl>
+<h4>stateResetSuppression</h4>
+<pre>public&nbsp;void&nbsp;stateResetSuppression()</pre>
+<div class="block">This method will reset all flags that indicate that equivalence classes are suppressed.</div>
 </li>
 </ul>
 </li>
@@ -515,7 +484,7 @@ implements <a href="../../../../../../org/deidentifier/arx/framework/check/group
 <div class="subNav">
 <ul class="navList">
 <li>Prev Class</li>
-<li><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.GroupStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?org/deidentifier/arx/framework/check/groupify/HashGroupify.html" target="_top">Frames</a></li>
