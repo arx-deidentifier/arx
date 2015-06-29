@@ -121,7 +121,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected </code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#HashGroupify.EquivalenceClassStatistics(double, int, int, double, int, int, int, int, int)">HashGroupify.EquivalenceClassStatistics</a></strong>(double&nbsp;averageEquivalenceClassSize,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#HashGroupify.EquivalenceClassStatistics(double, int, int, double, int, int, int, int, int, org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics)">HashGroupify.EquivalenceClassStatistics</a></strong>(double&nbsp;averageEquivalenceClassSize,
                                        int&nbsp;maximalEquivalenceClassSize,
                                        int&nbsp;minimalEquivalenceClassSize,
                                        double&nbsp;averageEquivalenceClassSizeIncludingOutliers,
@@ -129,7 +129,8 @@ extends java.lang.Object</pre>
                                        int&nbsp;minimalEquivalenceClassSizeIncludingOutliers,
                                        int&nbsp;numberOfGroups,
                                        int&nbsp;numberOfOutlyingEquivalenceClasses,
-                                       int&nbsp;numberOfOutlyingTuples)</code>
+                                       int&nbsp;numberOfOutlyingTuples,
+                                       <a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a>&nbsp;viewStatistics)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
@@ -186,7 +187,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getNumberOfGroups()">getNumberOfGroups</a></strong>()</code>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getNumberOfEquivalenceClasses()">getNumberOfEquivalenceClasses</a></strong>()</code>
 <div class="block">Returns the number of equivalence classes in the currently selected data
  representation.</div>
 </td>
@@ -203,6 +204,12 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getNumberOfOutlyingTuples()">getNumberOfOutlyingTuples</a></strong>()</code>
 <div class="block">Returns the number of outliers in the currently selected data
  representation.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getSubsetStatistics()">getSubsetStatistics</a></strong>()</code>
+<div class="block">Returns the statistics of the subset, if any</div>
 </td>
 </tr>
 </table>
@@ -227,7 +234,7 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="HashGroupify.EquivalenceClassStatistics(double, int, int, double, int, int, int, int, int)">
+<a name="HashGroupify.EquivalenceClassStatistics(double, int, int, double, int, int, int, int, int, org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -241,9 +248,10 @@ extends java.lang.Object</pre>
                                        int&nbsp;minimalEquivalenceClassSizeIncludingOutliers,
                                        int&nbsp;numberOfGroups,
                                        int&nbsp;numberOfOutlyingEquivalenceClasses,
-                                       int&nbsp;numberOfOutlyingTuples)</pre>
+                                       int&nbsp;numberOfOutlyingTuples,
+                                       <a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a>&nbsp;viewStatistics)</pre>
 <div class="block">Creates a new instance.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>averageEquivalenceClassSize</code> - </dd><dd><code>maximalEquivalenceClassSize</code> - </dd><dd><code>minimalEquivalenceClassSize</code> - </dd><dd><code>averageEquivalenceClassSizeIncludingOutliers</code> - </dd><dd><code>maximalEquivalenceClassSizeIncludingOutliers</code> - </dd><dd><code>minimalEquivalenceClassSizeIncludingOutliers</code> - </dd><dd><code>numberOfGroups</code> - </dd><dd><code>numberOfOutlyingEquivalenceClasses</code> - </dd><dd><code>numberOfOutlyingTuples</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>averageEquivalenceClassSize</code> - </dd><dd><code>maximalEquivalenceClassSize</code> - </dd><dd><code>minimalEquivalenceClassSize</code> - </dd><dd><code>averageEquivalenceClassSizeIncludingOutliers</code> - </dd><dd><code>maximalEquivalenceClassSizeIncludingOutliers</code> - </dd><dd><code>minimalEquivalenceClassSizeIncludingOutliers</code> - </dd><dd><code>numberOfGroups</code> - </dd><dd><code>numberOfOutlyingEquivalenceClasses</code> - </dd><dd><code>numberOfOutlyingTuples</code> - </dd><dd><code>viewStatistics</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -254,6 +262,17 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getSubsetStatistics()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSubsetStatistics</h4>
+<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a>&nbsp;getSubsetStatistics()</pre>
+<div class="block">Returns the statistics of the subset, if any</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getAverageEquivalenceClassSize()">
 <!--   -->
 </a>
@@ -323,13 +342,13 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getNumberOfGroups()">
+<a name="getNumberOfEquivalenceClasses()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getNumberOfGroups</h4>
-<pre>public&nbsp;int&nbsp;getNumberOfGroups()</pre>
+<h4>getNumberOfEquivalenceClasses</h4>
+<pre>public&nbsp;int&nbsp;getNumberOfEquivalenceClasses()</pre>
 <div class="block">Returns the number of equivalence classes in the currently selected data
  representation.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>

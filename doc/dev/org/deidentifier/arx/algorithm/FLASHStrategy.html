@@ -34,8 +34,8 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" title="class in org.deidentifier.arx.algorithm"><span class="strong">Prev Class</span></a></li>
-<li>Next Class</li>
+<li><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.PhaseAnonymityProperty.html" title="enum in org.deidentifier.arx.algorithm"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/algorithm/MinMaxPriorityQueue.html" title="class in org.deidentifier.arx.algorithm"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?org/deidentifier/arx/algorithm/FLASHStrategy.html" target="_top">Frames</a></li>
@@ -94,13 +94,13 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>java.util.Comparator&lt;<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&gt;</dd>
+<dd>java.util.Comparator&lt;java.lang.Integer&gt;</dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="strong">FLASHStrategy</span>
 extends java.lang.Object
-implements java.util.Comparator&lt;<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&gt;</pre>
+implements java.util.Comparator&lt;java.lang.Integer&gt;</pre>
 <div class="block">This class implements the general strategy of the ARX algorithm.</div>
 </li>
 </ul>
@@ -120,8 +120,8 @@ implements java.util.Comparator&lt;<a href="../../../../org/deidentifier/arx/fra
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHStrategy.html#FLASHStrategy(org.deidentifier.arx.framework.lattice.Lattice, org.deidentifier.arx.framework.data.GeneralizationHierarchy[])">FLASHStrategy</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/Lattice.html" title="class in org.deidentifier.arx.framework.lattice">Lattice</a>&nbsp;lattice,
-             <a href="../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hier)</code>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHStrategy.html#FLASHStrategy(org.deidentifier.arx.framework.lattice.SolutionSpace, org.deidentifier.arx.framework.data.GeneralizationHierarchy[])">FLASHStrategy</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace,
+             <a href="../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchies)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
@@ -142,9 +142,9 @@ implements java.util.Comparator&lt;<a href="../../../../org/deidentifier/arx/fra
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHStrategy.html#compare(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.lattice.Node)">compare</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;n1,
-       <a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;n2)</code>
-<div class="block">Compares nodea according to their criteria.</div>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHStrategy.html#compare(java.lang.Integer, java.lang.Integer)">compare</a></strong>(java.lang.Integer&nbsp;n1,
+       java.lang.Integer&nbsp;n2)</code>
+<div class="block">Compares transformation according to their criteria.</div>
 </td>
 </tr>
 </table>
@@ -176,16 +176,16 @@ implements java.util.Comparator&lt;<a href="../../../../org/deidentifier/arx/fra
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="FLASHStrategy(org.deidentifier.arx.framework.lattice.Lattice, org.deidentifier.arx.framework.data.GeneralizationHierarchy[])">
+<a name="FLASHStrategy(org.deidentifier.arx.framework.lattice.SolutionSpace, org.deidentifier.arx.framework.data.GeneralizationHierarchy[])">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>FLASHStrategy</h4>
-<pre>public&nbsp;FLASHStrategy(<a href="../../../../org/deidentifier/arx/framework/lattice/Lattice.html" title="class in org.deidentifier.arx.framework.lattice">Lattice</a>&nbsp;lattice,
-             <a href="../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hier)</pre>
+<pre>public&nbsp;FLASHStrategy(<a href="../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace,
+             <a href="../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchies)</pre>
 <div class="block">Creates a new instance.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>lattice</code> - the lattice</dd><dd><code>hier</code> - the hier</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>solutionSpace</code> - the solution space</dd><dd><code>hierarchies</code> - the hierarchies</dd></dl>
 </li>
 </ul>
 </li>
@@ -196,18 +196,18 @@ implements java.util.Comparator&lt;<a href="../../../../org/deidentifier/arx/fra
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="compare(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.lattice.Node)">
+<a name="compare(java.lang.Integer, java.lang.Integer)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>compare</h4>
-<pre>public&nbsp;int&nbsp;compare(<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;n1,
-          <a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;n2)</pre>
-<div class="block">Compares nodea according to their criteria.</div>
+<pre>public&nbsp;int&nbsp;compare(java.lang.Integer&nbsp;n1,
+          java.lang.Integer&nbsp;n2)</pre>
+<div class="block">Compares transformation according to their criteria.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code>compare</code>&nbsp;in interface&nbsp;<code>java.util.Comparator&lt;<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&gt;</code></dd>
+<dd><code>compare</code>&nbsp;in interface&nbsp;<code>java.util.Comparator&lt;java.lang.Integer&gt;</code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>n1</code> - the n1</dd><dd><code>n2</code> - the n2</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the int</dd></dl>
 </li>
@@ -238,8 +238,8 @@ implements java.util.Comparator&lt;<a href="../../../../org/deidentifier/arx/fra
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" title="class in org.deidentifier.arx.algorithm"><span class="strong">Prev Class</span></a></li>
-<li>Next Class</li>
+<li><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.PhaseAnonymityProperty.html" title="enum in org.deidentifier.arx.algorithm"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/algorithm/MinMaxPriorityQueue.html" title="class in org.deidentifier.arx.algorithm"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?org/deidentifier/arx/algorithm/FLASHStrategy.html" target="_top">Frames</a></li>

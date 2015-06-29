@@ -150,11 +150,12 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected org.deidentifier.arx.ARXAnonymizer.Result</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#anonymizeInternal(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">anonymizeInternal</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
-                 <a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
-                 <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
-<div class="block">Reset a previous lattice and run the algorithm .</div>
+<td class="colFirst"><code><a href="../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html" title="class in org.deidentifier.arx.algorithm">AbstractAlgorithm</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#getAlgorithm(org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.lattice.SolutionSpace, org.deidentifier.arx.framework.check.NodeChecker)">getAlgorithm</a></strong>(<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
+            <a href="../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
+            <a href="../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace,
+            <a href="../../../org/deidentifier/arx/framework/check/NodeChecker.html" title="class in org.deidentifier.arx.framework.check">NodeChecker</a>&nbsp;checker)</code>
+<div class="block">Returns an algorithm for the given problem instance</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -182,45 +183,33 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#getMaxTransformations()">getMaxTransformations</a></strong>()</code>
-<div class="block">Returns the maximal size of the search space.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setHistorySize(int)">setHistorySize</a></strong>(int&nbsp;historySize)</code>
 <div class="block">Sets the maximum number of snapshots allowed to store in the history.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setListener(org.deidentifier.arx.ARXListener)">setListener</a></strong>(<a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
 <div class="block">Sets a listener.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaximumSnapshotSizeDataset(double)">setMaximumSnapshotSizeDataset</a></strong>(double&nbsp;snapshotSize)</code>
 <div class="block">Sets the maximum size of a snapshot relative to the dataset size.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaximumSnapshotSizeSnapshot(double)">setMaximumSnapshotSizeSnapshot</a></strong>(double&nbsp;snapshotSizeSnapshot)</code>
 <div class="block">Sets the maximum size of a snapshot relative to the previous snapshot.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaxQuasiIdentifiers(int)">setMaxQuasiIdentifiers</a></strong>(int&nbsp;maxQuasiIdentifiers)</code>
 <div class="block">Sets the maximal number of quasi-identifiers.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaxTransformations(int)">setMaxTransformations</a></strong>(int&nbsp;maxTransformations)</code>
-<div class="block">Sets the maximal size of the search space.</div>
 </td>
 </tr>
 </table>
@@ -337,17 +326,6 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getMaxTransformations()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getMaxTransformations</h4>
-<pre>public&nbsp;int&nbsp;getMaxTransformations()</pre>
-<div class="block">Returns the maximal size of the search space.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="setHistorySize(int)">
 <!--   -->
 </a>
@@ -404,33 +382,19 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>maxQuasiIdentifiers</code> - </dd></dl>
 </li>
 </ul>
-<a name="setMaxTransformations(int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setMaxTransformations</h4>
-<pre>public&nbsp;void&nbsp;setMaxTransformations(int&nbsp;maxTransformations)</pre>
-<div class="block">Sets the maximal size of the search space. Set to Integer.MAX_VALUE to disable the 
- restriction. Default is 200,000.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>maxTransformations</code> - </dd></dl>
-</li>
-</ul>
-<a name="anonymizeInternal(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">
+<a name="getAlgorithm(org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.lattice.SolutionSpace, org.deidentifier.arx.framework.check.NodeChecker)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>anonymizeInternal</h4>
-<pre>protected&nbsp;org.deidentifier.arx.ARXAnonymizer.Result&nbsp;anonymizeInternal(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
-                                                          <a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
-                                                          <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)
-                                                               throws java.io.IOException</pre>
-<div class="block">Reset a previous lattice and run the algorithm .</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>definition</code> - </dd><dd><code>config</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<h4>getAlgorithm</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html" title="class in org.deidentifier.arx.algorithm">AbstractAlgorithm</a>&nbsp;getAlgorithm(<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
+                             <a href="../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
+                             <a href="../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace,
+                             <a href="../../../org/deidentifier/arx/framework/check/NodeChecker.html" title="class in org.deidentifier.arx.framework.check">NodeChecker</a>&nbsp;checker)</pre>
+<div class="block">Returns an algorithm for the given problem instance</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>config</code> - </dd><dd><code>manager</code> - </dd><dd><code>solutionSpace</code> - </dd><dd><code>checker</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

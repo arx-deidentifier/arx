@@ -349,27 +349,27 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a>&lt;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLoss</a></strong>(org.deidentifier.arx.framework.lattice.Node&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLoss</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
                   org.deidentifier.arx.framework.check.groupify.HashGroupify&nbsp;groupify)</code>
 <div class="block">Evaluates the metric for the given node.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a>&lt;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLoss</a></strong>(org.deidentifier.arx.framework.lattice.Node&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLoss</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
                   org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry&nbsp;entry)</code>
 <div class="block">Returns the information loss that would be induced by suppressing the given entry.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Node)">getLowerBound</a></strong>(org.deidentifier.arx.framework.lattice.Node&nbsp;node)</code>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBound</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node)</code>
 <div class="block">Returns a lower bound for the information loss for the given node.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBound</a></strong>(org.deidentifier.arx.framework.lattice.Node&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBound</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
              org.deidentifier.arx.framework.check.groupify.HashGroupify&nbsp;groupify)</code>
 <div class="block">Returns a lower bound for the information loss for the given node.</div>
 </td>
@@ -896,13 +896,13 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getInformationLoss(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">
+<a name="getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getInformationLoss</h4>
-<pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a>&lt;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&gt;&nbsp;getInformationLoss(org.deidentifier.arx.framework.lattice.Node&nbsp;node,
+<pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a>&lt;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&gt;&nbsp;getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
                                              org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry&nbsp;entry)</pre>
 <div class="block">Returns the information loss that would be induced by suppressing the given entry. The loss
  is not necessarily consistent with the loss that is computed by 
@@ -912,26 +912,26 @@ implements java.io.Serializable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getInformationLoss(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">
+<a name="getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getInformationLoss</h4>
-<pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a>&lt;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&gt;&nbsp;getInformationLoss(org.deidentifier.arx.framework.lattice.Node&nbsp;node,
+<pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a>&lt;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&gt;&nbsp;getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
                                              org.deidentifier.arx.framework.check.groupify.HashGroupify&nbsp;groupify)</pre>
 <div class="block">Evaluates the metric for the given node.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - The node for which to compute the information loss</dd><dd><code>groupify</code> - The groupify operator of the previous check</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the information loss</dd></dl>
 </li>
 </ul>
-<a name="getLowerBound(org.deidentifier.arx.framework.lattice.Node)">
+<a name="getLowerBound(org.deidentifier.arx.framework.lattice.Transformation)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getLowerBound</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&nbsp;getLowerBound(org.deidentifier.arx.framework.lattice.Node&nbsp;node)</pre>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&nbsp;getLowerBound(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node)</pre>
 <div class="block">Returns a lower bound for the information loss for the given node. 
  This can be used to expose the results of monotonic shares of a metric,
  which can significantly speed-up the anonymization process. If no
@@ -940,13 +940,13 @@ implements java.io.Serializable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getLowerBound(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">
+<a name="getLowerBound(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getLowerBound</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&nbsp;getLowerBound(org.deidentifier.arx.framework.lattice.Node&nbsp;node,
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&nbsp;getLowerBound(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
               org.deidentifier.arx.framework.check.groupify.HashGroupify&nbsp;groupify)</pre>
 <div class="block">Returns a lower bound for the information loss for the given node.
  This can be used to expose the results of monotonic shares of a metric,

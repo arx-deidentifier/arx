@@ -94,7 +94,7 @@
 <li class="blockList">
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../org/deidentifier/arx/algorithm/FLASHAlgorithmImpl.html" title="class in org.deidentifier.arx.algorithm">FLASHAlgorithmImpl</a></dd>
+<dd><a href="../../../../org/deidentifier/arx/algorithm/FLASHAlgorithmImpl.html" title="class in org.deidentifier.arx.algorithm">FLASHAlgorithmImpl</a>, <a href="../../../../org/deidentifier/arx/algorithm/THUNDERAlgorithm.html" title="class in org.deidentifier.arx.algorithm">THUNDERAlgorithm</a></dd>
 </dl>
 <hr>
 <br>
@@ -126,8 +126,14 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/framework/lattice/Lattice.html" title="class in org.deidentifier.arx.framework.lattice">Lattice</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#lattice">lattice</a></strong></code>
+<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#listener">listener</a></strong></code>
+<div class="block">The listener</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#solutionSpace">solutionSpace</a></strong></code>
 <div class="block">The lattice.</div>
 </td>
 </tr>
@@ -148,7 +154,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected </code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#AbstractAlgorithm(org.deidentifier.arx.framework.lattice.Lattice, org.deidentifier.arx.framework.check.NodeChecker)">AbstractAlgorithm</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/Lattice.html" title="class in org.deidentifier.arx.framework.lattice">Lattice</a>&nbsp;lattice,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#AbstractAlgorithm(org.deidentifier.arx.framework.lattice.SolutionSpace, org.deidentifier.arx.framework.check.NodeChecker)">AbstractAlgorithm</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace,
                  <a href="../../../../org/deidentifier/arx/framework/check/NodeChecker.html" title="class in org.deidentifier.arx.framework.check">NodeChecker</a>&nbsp;checker)</code>
 <div class="block">Walks the lattice.</div>
 </td>
@@ -170,27 +176,27 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#computeUtilityForMonotonicMetrics(org.deidentifier.arx.framework.lattice.Node)">computeUtilityForMonotonicMetrics</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node)</code>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#computeUtilityForMonotonicMetrics(org.deidentifier.arx.framework.lattice.Transformation)">computeUtilityForMonotonicMetrics</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation)</code>
 <div class="block">Determine information loss of the given node if it can be
  used for estimating minimum and maximum information
  loss for tagged nodes.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.util.List&lt;<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#getAllAnonymousNodes()">getAllAnonymousNodes</a></strong>()</code>
-<div class="block">Returns a list of all anonymous nodes in the lattice.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a></code></td>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#getGlobalOptimum()">getGlobalOptimum</a></strong>()</code>
 <div class="block">Returns the global optimum.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#setListener(org.deidentifier.arx.ARXListener)">setListener</a></strong>(<a href="../../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
+<div class="block">Sets a listener</div>
+</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#trackOptimum(org.deidentifier.arx.framework.lattice.Node)">trackOptimum</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node)</code>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#trackOptimum(org.deidentifier.arx.framework.lattice.Transformation)">trackOptimum</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation)</code>
 <div class="block">Keeps track of the global optimum.</div>
 </td>
 </tr>
@@ -222,6 +228,16 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
+<a name="listener">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>listener</h4>
+<pre>protected&nbsp;<a href="../../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a> listener</pre>
+<div class="block">The listener</div>
+</li>
+</ul>
 <a name="checker">
 <!--   -->
 </a>
@@ -232,13 +248,13 @@ extends java.lang.Object</pre>
 <div class="block">A node checker.</div>
 </li>
 </ul>
-<a name="lattice">
+<a name="solutionSpace">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>lattice</h4>
-<pre>protected&nbsp;<a href="../../../../org/deidentifier/arx/framework/lattice/Lattice.html" title="class in org.deidentifier.arx.framework.lattice">Lattice</a> lattice</pre>
+<h4>solutionSpace</h4>
+<pre>protected&nbsp;<a href="../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a> solutionSpace</pre>
 <div class="block">The lattice.</div>
 </li>
 </ul>
@@ -250,16 +266,16 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="AbstractAlgorithm(org.deidentifier.arx.framework.lattice.Lattice, org.deidentifier.arx.framework.check.NodeChecker)">
+<a name="AbstractAlgorithm(org.deidentifier.arx.framework.lattice.SolutionSpace, org.deidentifier.arx.framework.check.NodeChecker)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>AbstractAlgorithm</h4>
-<pre>protected&nbsp;AbstractAlgorithm(<a href="../../../../org/deidentifier/arx/framework/lattice/Lattice.html" title="class in org.deidentifier.arx.framework.lattice">Lattice</a>&nbsp;lattice,
+<pre>protected&nbsp;AbstractAlgorithm(<a href="../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace,
                  <a href="../../../../org/deidentifier/arx/framework/check/NodeChecker.html" title="class in org.deidentifier.arx.framework.check">NodeChecker</a>&nbsp;checker)</pre>
 <div class="block">Walks the lattice.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>lattice</code> - The lattice</dd><dd><code>checker</code> - The checker</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>solutionSpace</code> - The solution space</dd><dd><code>checker</code> - The checker</dd></dl>
 </li>
 </ul>
 </li>
@@ -270,26 +286,26 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getAllAnonymousNodes()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAllAnonymousNodes</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&gt;&nbsp;getAllAnonymousNodes()</pre>
-<div class="block">Returns a list of all anonymous nodes in the lattice.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the all anonymous nodes</dd></dl>
-</li>
-</ul>
 <a name="getGlobalOptimum()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getGlobalOptimum</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;getGlobalOptimum()</pre>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;getGlobalOptimum()</pre>
 <div class="block">Returns the global optimum.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="setListener(org.deidentifier.arx.ARXListener)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setListener</h4>
+<pre>public&nbsp;void&nbsp;setListener(<a href="../../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</pre>
+<div class="block">Sets a listener</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>listener</code> - </dd></dl>
 </li>
 </ul>
 <a name="traverse()">
@@ -302,28 +318,28 @@ extends java.lang.Object</pre>
 <div class="block">Implement this method in order to provide a new algorithm.</div>
 </li>
 </ul>
-<a name="computeUtilityForMonotonicMetrics(org.deidentifier.arx.framework.lattice.Node)">
+<a name="computeUtilityForMonotonicMetrics(org.deidentifier.arx.framework.lattice.Transformation)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>computeUtilityForMonotonicMetrics</h4>
-<pre>protected&nbsp;void&nbsp;computeUtilityForMonotonicMetrics(<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node)</pre>
+<pre>protected&nbsp;void&nbsp;computeUtilityForMonotonicMetrics(<a href="../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation)</pre>
 <div class="block">Determine information loss of the given node if it can be
  used for estimating minimum and maximum information
  loss for tagged nodes.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd></dl>
 </li>
 </ul>
-<a name="trackOptimum(org.deidentifier.arx.framework.lattice.Node)">
+<a name="trackOptimum(org.deidentifier.arx.framework.lattice.Transformation)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>trackOptimum</h4>
-<pre>protected&nbsp;void&nbsp;trackOptimum(<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node)</pre>
+<pre>protected&nbsp;void&nbsp;trackOptimum(<a href="../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation)</pre>
 <div class="block">Keeps track of the global optimum.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd></dl>
 </li>
 </ul>
 </li>

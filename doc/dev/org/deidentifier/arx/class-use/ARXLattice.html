@@ -79,6 +79,12 @@
 <div class="block">This package provides the public API for the ARX anonymization framework.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="#org.deidentifier.arx.framework.lattice">org.deidentifier.arx.framework.lattice</a></td>
+<td class="colLast">
+<div class="block">This package provides the internal generalization lattice</div>
+</td>
+</tr>
 </tbody>
 </table>
 </li>
@@ -110,10 +116,17 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXLattice.Access.html#ARXLattice.Access(org.deidentifier.arx.ARXLattice)">ARXLattice.Access</a></strong>(<a href="../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXLattice.Access.html#ARXLattice.Access(org.deidentifier.arx.ARXLattice)">ARXLattice.Access</a></strong>(<a href="../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice)</code>
+<div class="block">Constructor</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXLattice, int, double, double, org.deidentifier.arx.metric.Metric, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice.ARXNode, long)">ARXResult</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXLattice.ARXNode.html#ARXLattice.ARXNode(org.deidentifier.arx.ARXLattice)">ARXLattice.ARXNode</a></strong>(<a href="../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice)</code>
+<div class="block">Internal constructor for deserialization.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXLattice, int, double, double, org.deidentifier.arx.metric.Metric, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice.ARXNode, long, org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
          <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
          <a href="../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
          int&nbsp;historySize,
@@ -122,19 +135,40 @@
          <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric,
          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
          <a href="../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;optimum,
-         long&nbsp;time)</code>
+         long&nbsp;time,
+         <a href="../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace)</code>
 <div class="block">Internal constructor for deserialization.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.check.NodeChecker, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice, long)">ARXResult</a></strong>(org.deidentifier.arx.DataRegistry&nbsp;registry,
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.check.NodeChecker, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice, long, org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult</a></strong>(org.deidentifier.arx.DataRegistry&nbsp;registry,
          <a href="../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
          <a href="../../../../org/deidentifier/arx/framework/check/NodeChecker.html" title="class in org.deidentifier.arx.framework.check">NodeChecker</a>&nbsp;checker,
          <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
          <a href="../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
-         long&nbsp;duration)</code>
+         long&nbsp;duration,
+         <a href="../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace)</code>
 <div class="block">Creates a new instance.</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.framework.lattice">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a> in <a href="../../../../org/deidentifier/arx/framework/lattice/package-summary.html">org.deidentifier.arx.framework.lattice</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing constructors, and an explanation">
+<caption><span>Constructors in <a href="../../../../org/deidentifier/arx/framework/lattice/package-summary.html">org.deidentifier.arx.framework.lattice</a> with parameters of type <a href="../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#SolutionSpace(org.deidentifier.arx.ARXLattice, org.deidentifier.arx.ARXConfiguration)">SolutionSpace</a></strong>(<a href="../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
+             <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
+<div class="block">For de-serialization</div>
 </td>
 </tr>
 </tbody>

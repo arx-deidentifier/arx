@@ -216,13 +216,33 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">Node.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html#getInformationLoss()">getInformationLoss</a></strong>()</code>
-<div class="block">Returns the information loss.</div>
+<td class="colLast"><span class="strong">Transformation.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html#getInformationLoss()">getInformationLoss</a></strong>()</code>
+<div class="block">Returns the information loss</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
+<td class="colLast"><span class="strong">SolutionSpace.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getInformationLoss(long)">getInformationLoss</a></strong>(long&nbsp;identifier)</code>
+<div class="block">Returns the information loss</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">Node.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html#getLowerBound()">getLowerBound</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">Transformation.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html#getLowerBound()">getLowerBound</a></strong>()</code>
+<div class="block">Returns the lower bound on information loss</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
+<td class="colLast"><span class="strong">SolutionSpace.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getLowerBound(long)">getLowerBound</a></strong>(long&nbsp;identifier)</code>
+<div class="block">Returns the lower bound</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
+<td class="colLast"><span class="strong">SolutionSpace.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getUtility(long)">getUtility</a></strong>(long&nbsp;identifier)</code>
+<div class="block">Returns the utility of the transformation with the given identifier</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -234,29 +254,29 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><span class="strong">Node.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html#setInformationLoss(org.deidentifier.arx.metric.InformationLoss)">setInformationLoss</a></strong>(<a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;informationLoss)</code>
-<div class="block">Sets the information loss.</div>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">Transformation.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html#setInformationLoss(org.deidentifier.arx.metric.InformationLoss)">setInformationLoss</a></strong>(<a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;informationLoss)</code>
+<div class="block">Sets the information loss</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">Lattice.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#setInformationLoss(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.metric.InformationLoss)">setInformationLoss</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
-                  <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;informationLoss)</code>
-<div class="block">Sets the information loss.</div>
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><span class="strong">SolutionSpace.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#setInformationLoss(long, org.deidentifier.arx.metric.InformationLoss)">setInformationLoss</a></strong>(long&nbsp;identifier,
+                  <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;loss)</code>
+<div class="block">Sets the information loss</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><span class="strong">Node.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html#setLowerBound(org.deidentifier.arx.metric.InformationLoss)">setLowerBound</a></strong>(<a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;lowerBound)</code>
-<div class="block">Sets the information loss.</div>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">Transformation.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html#setLowerBound(org.deidentifier.arx.metric.InformationLoss)">setLowerBound</a></strong>(<a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;lowerBound)</code>
+<div class="block">Sets the lower bound</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">Lattice.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#setLowerBound(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.metric.InformationLoss)">setLowerBound</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
-             <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;lowerBound)</code>
-<div class="block">Sets the lower bound.</div>
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><span class="strong">SolutionSpace.</span><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#setLowerBound(long, org.deidentifier.arx.metric.InformationLoss)">setLowerBound</a></strong>(long&nbsp;identifier,
+             <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;loss)</code>
+<div class="block">Sets the lower bound</div>
 </td>
 </tr>
 </tbody>

@@ -196,13 +196,13 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#create()">create</a></strong>()</code>
-<div class="block">Creates a new config without tuple suppression.</div>
+<div class="block">Creates a new configuration without tuple suppression.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#create(double)">create</a></strong>(double&nbsp;suppressionLimit)</code>
-<div class="block">Creates a new config that allows the given percentage of outliers and
+<div class="block">Creates a new configuration that allows the given percentage of outliers and
  thus implements tuple suppression.</div>
 </td>
 </tr>
@@ -210,14 +210,14 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#create(double, org.deidentifier.arx.metric.Metric)">create</a></strong>(double&nbsp;suppressionLimit,
       <a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</code>
-<div class="block">Creates a new config that allows the given percentage of outliers and
+<div class="block">Creates a new configuration that allows the given percentage of outliers and
  thus implements tuple suppression.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#create(org.deidentifier.arx.metric.Metric)">create</a></strong>(<a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</code>
-<div class="block">Creates a new config that allows to define the metric for measuring information loss.</div>
+<div class="block">Creates a new configuration that allows to define the metric for measuring information loss.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -260,6 +260,19 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <td class="colFirst"><code>&lt;T extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>T</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getCriterion(java.lang.Class)">getCriterion</a></strong>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>
 <div class="block">Returns an instance of the class, if any.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getHeuristicSearchThreshold()">getHeuristicSearchThreshold</a></strong>()</code>
+<div class="block">When the size of the solution space exceeds the returned number of transformations,
+ ARX will use a heuristic search strategy.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getHeuristicSearchTimeLimit()">getHeuristicSearchTimeLimit</a></strong>()</code>
+<div class="block">The heuristic search algorithm will terminate after the returned number of milliseconds.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -337,59 +350,84 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isHeuristicSearchEnabled()">isHeuristicSearchEnabled</a></strong>()</code>
+<div class="block">Returns whether ARX will use a heuristic search strategy.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isPracticalMonotonicity()">isPracticalMonotonicity</a></strong>()</code>
 <div class="block">Is practical monotonicity assumed.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isProtectSensitiveAssociations()">isProtectSensitiveAssociations</a></strong>()</code>
 <div class="block">Returns, whether the anonymizer should take associations between sensitive attributes into account.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isSuppressionAlwaysEnabled()">isSuppressionAlwaysEnabled</a></strong>()</code>
 <div class="block">Returns whether suppression is applied to the output of anonymous as well as non-anonymous transformations.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isUseHeuristicSearchForSampleBasedCriteria()">isUseHeuristicSearchForSampleBasedCriteria</a></strong>()</code>
 <div class="block">Do we guarantee optimality for sample-based criteria?</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#removeCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">removeCriterion</a></strong>(<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;arg)</code>
 <div class="block">Removes the given criterion.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#requires(int)">requires</a></strong>(int&nbsp;requirement)</code>
 <div class="block">Convenience method for checking the requirements.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeTypeSuppressed(org.deidentifier.arx.AttributeType, boolean)">setAttributeTypeSuppressed</a></strong>(<a href="../../../org/deidentifier/arx/AttributeType.html" title="class in org.deidentifier.arx">AttributeType</a>&nbsp;type,
                           boolean&nbsp;enabled)</code>
 <div class="block">Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeWeight(java.lang.String, double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
                   double&nbsp;weight)</code>
 <div class="block">Sets the weight for the given attribute.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeWeight(java.lang.String, java.lang.Double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
                   java.lang.Double&nbsp;weight)</code>
 <div class="block">Sets the weight for the given attribute.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setHeuristicSearchEnabled(boolean)">setHeuristicSearchEnabled</a></strong>(boolean&nbsp;heuristicSearchEnabled)</code>
+<div class="block">Sets whether ARX will use a heuristic search strategy.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setHeuristicSearchThreshold(int)">setHeuristicSearchThreshold</a></strong>(int&nbsp;numberOfTransformations)</code>
+<div class="block">When the size of the solution space exceeds the given number of transformations,
+ ARX will use a heuristic search strategy.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setHeuristicSearchTimeLimit(int)">setHeuristicSearchTimeLimit</a></strong>(int&nbsp;timeInMillis)</code>
+<div class="block">The heuristic search algorithm will terminate after the given number of milliseconds.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -505,7 +543,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;create()</pre>
-<div class="block">Creates a new config without tuple suppression.</div>
+<div class="block">Creates a new configuration without tuple suppression.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -516,7 +554,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;create(double&nbsp;suppressionLimit)</pre>
-<div class="block">Creates a new config that allows the given percentage of outliers and
+<div class="block">Creates a new configuration that allows the given percentage of outliers and
  thus implements tuple suppression.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>suppressionLimit</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
@@ -530,7 +568,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;create(double&nbsp;suppressionLimit,
                       <a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</pre>
-<div class="block">Creates a new config that allows the given percentage of outliers and
+<div class="block">Creates a new configuration that allows the given percentage of outliers and
  thus implements tuple suppression. Defines the metric for measuring information loss.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>suppressionLimit</code> - </dd><dd><code>metric</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
@@ -543,7 +581,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;create(<a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</pre>
-<div class="block">Creates a new config that allows to define the metric for measuring information loss.</div>
+<div class="block">Creates a new configuration that allows to define the metric for measuring information loss.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>metric</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -646,6 +684,30 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getHeuristicSearchThreshold()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getHeuristicSearchThreshold</h4>
+<pre>public&nbsp;int&nbsp;getHeuristicSearchThreshold()</pre>
+<div class="block">When the size of the solution space exceeds the returned number of transformations,
+ ARX will use a heuristic search strategy. The default is 100.000.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getHeuristicSearchTimeLimit()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getHeuristicSearchTimeLimit</h4>
+<pre>public&nbsp;int&nbsp;getHeuristicSearchTimeLimit()</pre>
+<div class="block">The heuristic search algorithm will terminate after the returned number of milliseconds.
+ The default is 30 seconds.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>timeInMillis</code> - </dd></dl>
+</li>
+</ul>
 <a name="getMaxOutliers()">
 <!--   -->
 </a>
@@ -700,6 +762,17 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>isCriterionMonotonic</h4>
 <pre>public final&nbsp;boolean&nbsp;isCriterionMonotonic()</pre>
 <div class="block">Determines whether the anonymity criterion is montonic.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isHeuristicSearchEnabled()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isHeuristicSearchEnabled</h4>
+<pre>public&nbsp;boolean&nbsp;isHeuristicSearchEnabled()</pre>
+<div class="block">Returns whether ARX will use a heuristic search strategy. The default is false.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -795,6 +868,41 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
                       java.lang.Double&nbsp;weight)</pre>
 <div class="block">Sets the weight for the given attribute.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd><dd><code>weight</code> - </dd></dl>
+</li>
+</ul>
+<a name="setHeuristicSearchEnabled(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setHeuristicSearchEnabled</h4>
+<pre>public&nbsp;void&nbsp;setHeuristicSearchEnabled(boolean&nbsp;heuristicSearchEnabled)</pre>
+<div class="block">Sets whether ARX will use a heuristic search strategy. The default is false.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>heuristicSearchEnabled</code> - </dd></dl>
+</li>
+</ul>
+<a name="setHeuristicSearchThreshold(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setHeuristicSearchThreshold</h4>
+<pre>public&nbsp;void&nbsp;setHeuristicSearchThreshold(int&nbsp;numberOfTransformations)</pre>
+<div class="block">When the size of the solution space exceeds the given number of transformations,
+ ARX will use a heuristic search strategy. The default is 100.000.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>numberOfTransformations</code> - </dd></dl>
+</li>
+</ul>
+<a name="setHeuristicSearchTimeLimit(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setHeuristicSearchTimeLimit</h4>
+<pre>public&nbsp;void&nbsp;setHeuristicSearchTimeLimit(int&nbsp;timeInMillis)</pre>
+<div class="block">The heuristic search algorithm will terminate after the given number of milliseconds.
+ The default is 30 seconds.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>timeInMillis</code> - </dd></dl>
 </li>
 </ul>
 <a name="setMaxOutliers(double)">

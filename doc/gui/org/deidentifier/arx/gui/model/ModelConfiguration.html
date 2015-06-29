@@ -197,6 +197,14 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#getHeuristicSearchThreshold()">getHeuristicSearchThreshold</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#getHeuristicSearchTimeLimit()">getHeuristicSearchTimeLimit</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#getHierarchies()">getHierarchies</a></strong>()</code>
 <div class="block">Returns the set of all assigned hierarchies.</div>
@@ -287,71 +295,87 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#isHeuristicSearchEnabled()">isHeuristicSearchEnabled</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#isModified()">isModified</a></strong>()</code>
 <div class="block">Has the config been modified.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#isPracticalMonotonicity()">isPracticalMonotonicity</a></strong>()</code>
 <div class="block">Delegates to an instance of ARXConfiguration.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#isProtectSensitiveAssociations()">isProtectSensitiveAssociations</a></strong>()</code>
 <div class="block">Protect sensitive associations.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#isSuppressionAlwaysEnabled()">isSuppressionAlwaysEnabled</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#removeAllCriteria()">removeAllCriteria</a></strong>()</code>
 <div class="block">Removes all criteria.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#removeCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">removeCriterion</a></strong>(<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;c)</code>
 <div class="block">Delegates to an instance of ARXConfiguration.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#removeHierarchy(java.lang.String)">removeHierarchy</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Removes a hierarchy.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#removeHierarchyBuilder(java.lang.String)">removeHierarchyBuilder</a></strong>(java.lang.String&nbsp;attr)</code>
 <div class="block">Removes the builder for the given attribute.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setAllowedOutliers(double)">setAllowedOutliers</a></strong>(double&nbsp;supp)</code>
 <div class="block">Delegates to an instance of ARXConfiguration.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setAttributeTypeSuppressed(org.deidentifier.arx.AttributeType, boolean)">setAttributeTypeSuppressed</a></strong>(<a href="../../../../../org/deidentifier/arx/AttributeType.html" title="class in org.deidentifier.arx">AttributeType</a>&nbsp;type,
                           boolean&nbsp;enabled)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setAttributeWeight(java.lang.String, java.lang.Double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
                   java.lang.Double&nbsp;weight)</code>
 <div class="block">Sets the according attribute weight.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setHeuristicForSampleBasedCriteria(boolean)">setHeuristicForSampleBasedCriteria</a></strong>(boolean&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setHeuristicSearchEnabled(boolean)">setHeuristicSearchEnabled</a></strong>(boolean&nbsp;heuristicSearchEnabled)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setHeuristicSearchThreshold(int)">setHeuristicSearchThreshold</a></strong>(int&nbsp;numberOfTransformations)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setHeuristicSearchTimeLimit(int)">setHeuristicSearchTimeLimit</a></strong>(int&nbsp;timeInMillis)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -607,6 +631,26 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getHeuristicSearchThreshold()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getHeuristicSearchThreshold</h4>
+<pre>public&nbsp;int&nbsp;getHeuristicSearchThreshold()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#getHeuristicSearchThreshold()"><code>ARXConfiguration.getHeuristicSearchThreshold()</code></a></dd></dl>
+</li>
+</ul>
+<a name="getHeuristicSearchTimeLimit()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getHeuristicSearchTimeLimit</h4>
+<pre>public&nbsp;int&nbsp;getHeuristicSearchTimeLimit()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#getHeuristicSearchTimeLimit()"><code>ARXConfiguration.getHeuristicSearchTimeLimit()</code></a></dd></dl>
+</li>
+</ul>
 <a name="getHierarchies()">
 <!--   -->
 </a>
@@ -789,6 +833,16 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#isUseHeuristicSearchForSampleBasedCriteria()"><code>ARXConfiguration.isUseHeuristicSearchForSampleBasedCriteria()</code></a></dd></dl>
 </li>
 </ul>
+<a name="isHeuristicSearchEnabled()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isHeuristicSearchEnabled</h4>
+<pre>public&nbsp;boolean&nbsp;isHeuristicSearchEnabled()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#isHeuristicSearchEnabled()"><code>ARXConfiguration.isHeuristicSearchEnabled()</code></a></dd></dl>
+</li>
+</ul>
 <a name="isModified()">
 <!--   -->
 </a>
@@ -918,6 +972,36 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>setHeuristicForSampleBasedCriteria</h4>
 <pre>public&nbsp;void&nbsp;setHeuristicForSampleBasedCriteria(boolean&nbsp;value)</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - </dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#setUseHeuristicSearchForSampleBasedCriteria(boolean)"><code>ARXConfiguration.setUseHeuristicSearchForSampleBasedCriteria(boolean)</code></a></dd></dl>
+</li>
+</ul>
+<a name="setHeuristicSearchEnabled(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setHeuristicSearchEnabled</h4>
+<pre>public&nbsp;void&nbsp;setHeuristicSearchEnabled(boolean&nbsp;heuristicSearchEnabled)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>heuristicSearchEnabled</code> - </dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#setHeuristicSearchEnabled(boolean)"><code>ARXConfiguration.setHeuristicSearchEnabled(boolean)</code></a></dd></dl>
+</li>
+</ul>
+<a name="setHeuristicSearchThreshold(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setHeuristicSearchThreshold</h4>
+<pre>public&nbsp;void&nbsp;setHeuristicSearchThreshold(int&nbsp;numberOfTransformations)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>numberOfTransformations</code> - </dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#setHeuristicSearchThreshold(int)"><code>ARXConfiguration.setHeuristicSearchThreshold(int)</code></a></dd></dl>
+</li>
+</ul>
+<a name="setHeuristicSearchTimeLimit(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setHeuristicSearchTimeLimit</h4>
+<pre>public&nbsp;void&nbsp;setHeuristicSearchTimeLimit(int&nbsp;timeInMillis)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>timeInMillis</code> - </dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#setHeuristicSearchTimeLimit(int)"><code>ARXConfiguration.setHeuristicSearchTimeLimit(int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="setHierarchy(java.lang.String, org.deidentifier.arx.AttributeType.Hierarchy)">

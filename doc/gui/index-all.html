@@ -194,11 +194,15 @@
 <dd>
 <div class="block">Toggles the "subset" option.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/Controller.html#actionExpand(org.deidentifier.arx.ARXLattice.ARXNode)">actionExpand(ARXLattice.ARXNode)</a></span> - Method in class org.deidentifier.arx.gui.<a href="./org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></dt>
+<dd>
+<div class="block">Expand action</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/Controller.html#actionFindReplace()">actionFindReplace()</a></span> - Method in class org.deidentifier.arx.gui.<a href="./org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></dt>
 <dd>
 <div class="block">Find and replace action</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/gui/Controller.html#actionMenuEditAnonymize()">actionMenuEditAnonymize()</a></span> - Method in class org.deidentifier.arx.gui.<a href="./org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/Controller.html#actionMenuEditAnonymize(boolean)">actionMenuEditAnonymize(boolean)</a></span> - Method in class org.deidentifier.arx.gui.<a href="./org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></dt>
 <dd>
 <div class="block">Starts the anonymization.</div>
 </dd>
@@ -322,6 +326,10 @@
 <div class="block">Shows an info dialog.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/Controller.html#actionShowInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String)">actionShowInputDialog(Shell, String, String, String)</a></span> - Method in class org.deidentifier.arx.gui.<a href="./org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></dt>
+<dd>
+<div class="block">Shows an input dialog.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/Controller.html#actionShowInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String, org.eclipse.jface.dialogs.IInputValidator)">actionShowInputDialog(Shell, String, String, String, IInputValidator)</a></span> - Method in class org.deidentifier.arx.gui.<a href="./org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></dt>
 <dd>
 <div class="block">Shows an input dialog.</div>
 </dd>
@@ -785,10 +793,6 @@
 <dd>
 <div class="block">Performs data anonymization.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/ARXAnonymizer.html#anonymizeInternal(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">anonymizeInternal(DataHandle, DataDefinition, ARXConfiguration)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a></dt>
-<dd>
-<div class="block">Reset a previous lattice and run the algorithm .</div>
-</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/worker/io/FileBuilder.html#append(java.lang.String)">append(String)</a></span> - Method in class org.deidentifier.arx.gui.worker.io.<a href="./org/deidentifier/arx/gui/worker/io/FileBuilder.html" title="class in org.deidentifier.arx.gui.worker.io">FileBuilder</a></dt>
 <dd>
 <div class="block">Append a string.</div>
@@ -832,14 +836,16 @@
 <div class="block">The internal accessor class.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.Access.html#ARXLattice.Access(org.deidentifier.arx.ARXLattice)">ARXLattice.Access(ARXLattice)</a></span> - Constructor for class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Constructor</div>
+</dd>
 <dt><a href="./org/deidentifier/arx/ARXLattice.Anonymity.html" title="enum in org.deidentifier.arx"><span class="strong">ARXLattice.Anonymity</span></a> - Enum in <a href="./org/deidentifier/arx/package-summary.html">org.deidentifier.arx</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx"><span class="strong">ARXLattice.ARXNode</span></a> - Class in <a href="./org/deidentifier/arx/package-summary.html">org.deidentifier.arx</a></dt>
 <dd>
 <div class="block">A node in the lattice.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.ARXNode.html#ARXLattice.ARXNode()">ARXLattice.ARXNode()</a></span> - Constructor for class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.ARXNode.html#ARXLattice.ARXNode(org.deidentifier.arx.ARXLattice)">ARXLattice.ARXNode(ARXLattice)</a></span> - Constructor for class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a></dt>
 <dd>
 <div class="block">Internal constructor for deserialization.</div>
 </dd>
@@ -883,11 +889,11 @@
 <dd>
 <div class="block">Encapsulates the results of an execution of the ARX algorithm.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXLattice, int, double, double, org.deidentifier.arx.metric.Metric, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice.ARXNode, long)">ARXResult(DataHandle, DataDefinition, ARXLattice, int, double, double, Metric&lt;?&gt;, ARXConfiguration, ARXLattice.ARXNode, long)</a></span> - Constructor for class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXLattice, int, double, double, org.deidentifier.arx.metric.Metric, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice.ARXNode, long, org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult(DataHandle, DataDefinition, ARXLattice, int, double, double, Metric&lt;?&gt;, ARXConfiguration, ARXLattice.ARXNode, long, SolutionSpace)</a></span> - Constructor for class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
 <dd>
 <div class="block">Internal constructor for deserialization.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.check.NodeChecker, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice, long)">ARXResult(DataRegistry, DataManager, NodeChecker, DataDefinition, ARXConfiguration, ARXLattice, long)</a></span> - Constructor for class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.check.NodeChecker, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice, long, org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult(DataRegistry, DataManager, NodeChecker, DataDefinition, ARXConfiguration, ARXLattice, long, SolutionSpace)</a></span> - Constructor for class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
 <dd>
 <div class="block">Creates a new instance.</div>
 </dd>
@@ -1685,21 +1691,21 @@
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#create()">create()</a></span> - Static method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
 <dd>
-<div class="block">Creates a new config without tuple suppression.</div>
+<div class="block">Creates a new configuration without tuple suppression.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#create(double)">create(double)</a></span> - Static method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
 <dd>
-<div class="block">Creates a new config that allows the given percentage of outliers and
+<div class="block">Creates a new configuration that allows the given percentage of outliers and
  thus implements tuple suppression.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#create(double, org.deidentifier.arx.metric.Metric)">create(double, Metric&lt;?&gt;)</a></span> - Static method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
 <dd>
-<div class="block">Creates a new config that allows the given percentage of outliers and
+<div class="block">Creates a new configuration that allows the given percentage of outliers and
  thus implements tuple suppression.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#create(org.deidentifier.arx.metric.Metric)">create(Metric&lt;?&gt;)</a></span> - Static method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
 <dd>
-<div class="block">Creates a new config that allows to define the metric for measuring information loss.</div>
+<div class="block">Creates a new configuration that allows to define the metric for measuring information loss.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXPopulationModel.html#create(double)">create(double)</a></span> - Static method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a></dt>
 <dd>
@@ -3085,10 +3091,6 @@
 <dd>
 <div class="block">Creates a new handle that represents the research subset.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleSubset.html#DataHandleSubset(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataSubset)">DataHandleSubset(DataHandle, DataSubset)</a></span> - Constructor for class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
-<dd>
-<div class="block">Creates a new handle that represents the research subset.</div>
-</dd>
 <dt><a href="./org/deidentifier/arx/gui/view/impl/common/table/DataProviderWrapped.html" title="class in org.deidentifier.arx.gui.view.impl.common.table"><span class="strong">DataProviderWrapped</span></a> - Class in <a href="./org/deidentifier/arx/gui/view/impl/common/table/package-summary.html">org.deidentifier.arx.gui.view.impl.common.table</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/table/DataProviderWrapped.html#DataProviderWrapped()">DataProviderWrapped()</a></span> - Constructor for class org.deidentifier.arx.gui.view.impl.common.table.<a href="./org/deidentifier/arx/gui/view/impl/common/table/DataProviderWrapped.html" title="class in org.deidentifier.arx.gui.view.impl.common.table">DataProviderWrapped</a></dt>
@@ -3963,6 +3965,14 @@
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/explore/ViewTiles.html#eventResultChanged(org.deidentifier.arx.ARXResult)">eventResultChanged(ARXResult)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.explore.<a href="./org/deidentifier/arx/gui/view/impl/explore/ViewTiles.html" title="class in org.deidentifier.arx.gui.view.impl.explore">ViewTiles</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.ARXNode.html#expand()">expand()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a></dt>
+<dd>
+<div class="block">Materializes any non-materialized predecessors and successors</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.html#expand(org.deidentifier.arx.ARXLattice.ARXNode)">expand(ARXLattice.ARXNode)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a></dt>
+<dd>
+<div class="block">Materializes any non-materialized predecessors and successors</div>
+</dd>
 <dt><a href="./org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria"><span class="strong">ExplicitPrivacyCriterion</span></a> - Class in <a href="./org/deidentifier/arx/criteria/package-summary.html">org.deidentifier.arx.criteria</a></dt>
 <dd>
 <div class="block">A privacy criterion that is explicitly bound to a sensitive attribute.</div>
@@ -4121,6 +4131,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html#getAggregateFunction()">getAggregateFunction()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensionalPotentiallyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXAnonymizer.html#getAlgorithm(org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.lattice.SolutionSpace, org.deidentifier.arx.framework.check.NodeChecker)">getAlgorithm(ARXConfiguration, DataManager, SolutionSpace, NodeChecker)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a></dt>
+<dd>
+<div class="block">Returns an algorithm for the given problem instance</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/io/ImportColumn.html#getAliasName()">getAliasName()</a></span> - Method in class org.deidentifier.arx.io.<a href="./org/deidentifier/arx/io/ImportColumn.html" title="class in org.deidentifier.arx.io">ImportColumn</a></dt>
 <dd>
 <div class="block">Gets the alias name.</div>
@@ -5354,6 +5368,19 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricPrecision.html#getHeights()">getHeights()</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricPrecision.html" title="class in org.deidentifier.arx.metric">MetricPrecision</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#getHeuristicSearchThreshold()">getHeuristicSearchThreshold()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">When the size of the solution space exceeds the returned number of transformations,
+ ARX will use a heuristic search strategy.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html#getHeuristicSearchThreshold()">getHeuristicSearchThreshold()</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#getHeuristicSearchTimeLimit()">getHeuristicSearchTimeLimit()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">The heuristic search algorithm will terminate after the returned number of milliseconds.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html#getHeuristicSearchTimeLimit()">getHeuristicSearchTimeLimit()</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html#getHierarchies()">getHierarchies()</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a></dt>
 <dd>
 <div class="block">Returns the set of all assigned hierarchies.</div>
@@ -5509,95 +5536,95 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/InformationLossWithBound.html#getInformationLoss()">getInformationLoss()</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLoss(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLoss(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Returns the information loss that would be induced by suppressing the given entry.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLoss(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLoss(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Evaluates the metric for the given node.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Returns the information loss that would be induced by suppressing the given entry.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Evaluates the metric for the given node.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricAECS.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricAECS.html" title="class in org.deidentifier.arx.metric">MetricAECS</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricAECS.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricAECS.html" title="class in org.deidentifier.arx.metric">MetricAECS</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricAECS.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricAECS.html" title="class in org.deidentifier.arx.metric">MetricAECS</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricAECS.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricAECS.html" title="class in org.deidentifier.arx.metric">MetricAECS</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDM.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDM.html" title="class in org.deidentifier.arx.metric">MetricDM</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDM.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDM.html" title="class in org.deidentifier.arx.metric">MetricDM</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDM.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDM.html" title="class in org.deidentifier.arx.metric">MetricDM</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDM.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDM.html" title="class in org.deidentifier.arx.metric">MetricDM</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDMStar.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDMStar.html" title="class in org.deidentifier.arx.metric">MetricDMStar</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDMStar.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDMStar.html" title="class in org.deidentifier.arx.metric">MetricDMStar</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDMStar.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDMStar.html" title="class in org.deidentifier.arx.metric">MetricDMStar</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDMStar.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDMStar.html" title="class in org.deidentifier.arx.metric">MetricDMStar</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricEntropy.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricEntropy.html" title="class in org.deidentifier.arx.metric">MetricEntropy</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricEntropy.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricEntropy.html" title="class in org.deidentifier.arx.metric">MetricEntropy</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricEntropy.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricEntropy.html" title="class in org.deidentifier.arx.metric">MetricEntropy</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricEntropy.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricEntropy.html" title="class in org.deidentifier.arx.metric">MetricEntropy</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricHeight.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricHeight.html" title="class in org.deidentifier.arx.metric">MetricHeight</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricHeight.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricHeight.html" title="class in org.deidentifier.arx.metric">MetricHeight</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricHeight.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricHeight.html" title="class in org.deidentifier.arx.metric">MetricHeight</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricHeight.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricHeight.html" title="class in org.deidentifier.arx.metric">MetricHeight</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMEntropy.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMEntropy.html" title="class in org.deidentifier.arx.metric">MetricNMEntropy</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMEntropy.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMEntropy.html" title="class in org.deidentifier.arx.metric">MetricNMEntropy</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMPrecision.html" title="class in org.deidentifier.arx.metric">MetricNMPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMPrecision.html" title="class in org.deidentifier.arx.metric">MetricNMPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMPrecision.html" title="class in org.deidentifier.arx.metric">MetricNMPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMPrecision.html" title="class in org.deidentifier.arx.metric">MetricNMPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricPrecision.html" title="class in org.deidentifier.arx.metric">MetricPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricPrecision.html" title="class in org.deidentifier.arx.metric">MetricPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricPrecision.html" title="class in org.deidentifier.arx.metric">MetricPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricPrecision.html" title="class in org.deidentifier.arx.metric">MetricPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricStatic.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricStatic.html" title="class in org.deidentifier.arx.metric">MetricStatic</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricStatic.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricStatic.html" title="class in org.deidentifier.arx.metric">MetricStatic</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricStatic.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricStatic.html" title="class in org.deidentifier.arx.metric">MetricStatic</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricStatic.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricStatic.html" title="class in org.deidentifier.arx.metric">MetricStatic</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensionalPotentiallyPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensionalPotentiallyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensionalPotentiallyPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensionalPotentiallyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html" title="class in org.deidentifier.arx.metric.v2">MetricMDHeight</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html" title="class in org.deidentifier.arx.metric.v2">MetricMDHeight</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html" title="class in org.deidentifier.arx.metric.v2">MetricMDHeight</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html" title="class in org.deidentifier.arx.metric.v2">MetricMDHeight</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLoss</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLoss</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLoss</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLoss</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMEntropyPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMEntropyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDPrecision.html" title="class in org.deidentifier.arx.metric.v2">MetricMDPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDPrecision.html" title="class in org.deidentifier.arx.metric.v2">MetricMDPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html" title="class in org.deidentifier.arx.metric.v2">MetricMDStatic</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html" title="class in org.deidentifier.arx.metric.v2">MetricMDStatic</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html" title="class in org.deidentifier.arx.metric.v2">MetricMDStatic</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html" title="class in org.deidentifier.arx.metric.v2">MetricMDStatic</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html" title="class in org.deidentifier.arx.metric.v2">MetricSDAECS</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html" title="class in org.deidentifier.arx.metric.v2">MetricSDAECS</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html" title="class in org.deidentifier.arx.metric.v2">MetricSDAECS</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html" title="class in org.deidentifier.arx.metric.v2">MetricSDAECS</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDDiscernability.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDDiscernability.html" title="class in org.deidentifier.arx.metric.v2">MetricSDDiscernability</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDDiscernability.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDDiscernability.html" title="class in org.deidentifier.arx.metric.v2">MetricSDDiscernability</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMDiscernability</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMDiscernability</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMDiscernability</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMDiscernability</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#getInformationLossInternalRaw(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternalRaw(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#getInformationLossInternalRaw(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternalRaw(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/Model.html#getInitialNodesInViewer()">getInitialNodesInViewer()</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a></dt>
 <dd>
@@ -5857,109 +5884,109 @@
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/InformationLossWithBound.html#getLowerBound()">getLowerBound()</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Node)">getLowerBound(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBound(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Returns a lower bound for the information loss for the given node.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBound(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBound(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Returns a lower bound for the information loss for the given node.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Returns a lower bound for the information loss for the given node.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Returns a lower bound for the information loss for the given node.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricAECS.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricAECS.html" title="class in org.deidentifier.arx.metric">MetricAECS</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricAECS.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricAECS.html" title="class in org.deidentifier.arx.metric">MetricAECS</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricAECS.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricAECS.html" title="class in org.deidentifier.arx.metric">MetricAECS</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricAECS.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricAECS.html" title="class in org.deidentifier.arx.metric">MetricAECS</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDefault.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDefault.html" title="class in org.deidentifier.arx.metric">MetricDefault</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDefault.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDefault.html" title="class in org.deidentifier.arx.metric">MetricDefault</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDefault.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDefault.html" title="class in org.deidentifier.arx.metric">MetricDefault</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDefault.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDefault.html" title="class in org.deidentifier.arx.metric">MetricDefault</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDM.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDM.html" title="class in org.deidentifier.arx.metric">MetricDM</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDM.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDM.html" title="class in org.deidentifier.arx.metric">MetricDM</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDM.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDM.html" title="class in org.deidentifier.arx.metric">MetricDM</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDM.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDM.html" title="class in org.deidentifier.arx.metric">MetricDM</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDMStar.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDMStar.html" title="class in org.deidentifier.arx.metric">MetricDMStar</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDMStar.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDMStar.html" title="class in org.deidentifier.arx.metric">MetricDMStar</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDMStar.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDMStar.html" title="class in org.deidentifier.arx.metric">MetricDMStar</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDMStar.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDMStar.html" title="class in org.deidentifier.arx.metric">MetricDMStar</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricEntropy.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricEntropy.html" title="class in org.deidentifier.arx.metric">MetricEntropy</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricEntropy.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricEntropy.html" title="class in org.deidentifier.arx.metric">MetricEntropy</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricEntropy.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricEntropy.html" title="class in org.deidentifier.arx.metric">MetricEntropy</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricEntropy.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricEntropy.html" title="class in org.deidentifier.arx.metric">MetricEntropy</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricHeight.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricHeight.html" title="class in org.deidentifier.arx.metric">MetricHeight</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricHeight.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricHeight.html" title="class in org.deidentifier.arx.metric">MetricHeight</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricHeight.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricHeight.html" title="class in org.deidentifier.arx.metric">MetricHeight</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricHeight.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricHeight.html" title="class in org.deidentifier.arx.metric">MetricHeight</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMEntropy.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMEntropy.html" title="class in org.deidentifier.arx.metric">MetricNMEntropy</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMEntropy.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMEntropy.html" title="class in org.deidentifier.arx.metric">MetricNMEntropy</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMEntropy.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMEntropy.html" title="class in org.deidentifier.arx.metric">MetricNMEntropy</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMEntropy.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMEntropy.html" title="class in org.deidentifier.arx.metric">MetricNMEntropy</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMPrecision.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMPrecision.html" title="class in org.deidentifier.arx.metric">MetricNMPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMPrecision.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMPrecision.html" title="class in org.deidentifier.arx.metric">MetricNMPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMPrecision.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMPrecision.html" title="class in org.deidentifier.arx.metric">MetricNMPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricNMPrecision.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricNMPrecision.html" title="class in org.deidentifier.arx.metric">MetricNMPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricPrecision.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricPrecision.html" title="class in org.deidentifier.arx.metric">MetricPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricPrecision.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricPrecision.html" title="class in org.deidentifier.arx.metric">MetricPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricPrecision.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricPrecision.html" title="class in org.deidentifier.arx.metric">MetricPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricPrecision.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricPrecision.html" title="class in org.deidentifier.arx.metric">MetricPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricStatic.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricStatic.html" title="class in org.deidentifier.arx.metric">MetricStatic</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricStatic.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricStatic.html" title="class in org.deidentifier.arx.metric">MetricStatic</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricStatic.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricStatic.html" title="class in org.deidentifier.arx.metric">MetricStatic</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricStatic.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricStatic.html" title="class in org.deidentifier.arx.metric">MetricStatic</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricWeighted.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricWeighted.html" title="class in org.deidentifier.arx.metric">MetricWeighted</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricWeighted.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricWeighted.html" title="class in org.deidentifier.arx.metric">MetricWeighted</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricWeighted.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricWeighted.html" title="class in org.deidentifier.arx.metric">MetricWeighted</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricWeighted.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricWeighted.html" title="class in org.deidentifier.arx.metric">MetricWeighted</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensionalPotentiallyPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensionalPotentiallyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensionalPotentiallyPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensionalPotentiallyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html" title="class in org.deidentifier.arx.metric.v2">MetricMDHeight</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html" title="class in org.deidentifier.arx.metric.v2">MetricMDHeight</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html" title="class in org.deidentifier.arx.metric.v2">MetricMDHeight</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDHeight.html" title="class in org.deidentifier.arx.metric.v2">MetricMDHeight</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLoss</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLoss</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLoss</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLoss</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMLossPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMLossPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLossPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMLossPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMLossPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLossPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMLossPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMLossPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLossPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMLossPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMLossPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLossPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMPrecision</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMPrecision</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropy.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropy.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropy</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropy.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropy.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropy</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropy.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropy.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMEntropy</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropy.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropy.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMEntropy</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMEntropyPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMEntropyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMEntropyPrecomputed</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMEntropyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html" title="class in org.deidentifier.arx.metric.v2">MetricMDStatic</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html" title="class in org.deidentifier.arx.metric.v2">MetricMDStatic</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html" title="class in org.deidentifier.arx.metric.v2">MetricMDStatic</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDStatic.html" title="class in org.deidentifier.arx.metric.v2">MetricMDStatic</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html" title="class in org.deidentifier.arx.metric.v2">MetricSDAECS</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html" title="class in org.deidentifier.arx.metric.v2">MetricSDAECS</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html" title="class in org.deidentifier.arx.metric.v2">MetricSDAECS</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDAECS.html" title="class in org.deidentifier.arx.metric.v2">MetricSDAECS</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal(Node)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMDiscernability</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMDiscernability</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMDiscernability</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMDiscernability</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#getLowerRange()">getLowerRange()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased</a></dt>
 <dd>
@@ -6079,10 +6106,6 @@
 <dd>
 <div class="block">Gets the snapshot size.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/Model.html#getMaxNodesInLattice()">getMaxNodesInLattice()</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a></dt>
-<dd>
-<div class="block">Returns the maximal size of the lattice.</div>
-</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/worker/io/Vocabulary.html#getMaxNodesInLattice()">getMaxNodesInLattice()</a></span> - Method in class org.deidentifier.arx.gui.worker.io.<a href="./org/deidentifier/arx/gui/worker/io/Vocabulary.html" title="class in org.deidentifier.arx.gui.worker.io">Vocabulary</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/worker/io/Vocabulary_V1.html#getMaxNodesInLattice()">getMaxNodesInLattice()</a></span> - Method in class org.deidentifier.arx.gui.worker.io.<a href="./org/deidentifier/arx/gui/worker/io/Vocabulary_V1.html" title="class in org.deidentifier.arx.gui.worker.io">Vocabulary_V1</a></dt>
@@ -6109,10 +6132,6 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXAnonymizer.html#getMaxQuasiIdentifiers()">getMaxQuasiIdentifiers()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a></dt>
 <dd>
 <div class="block">Returns the maximal number of quasi-identifiers.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/ARXAnonymizer.html#getMaxTransformations()">getMaxTransformations()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a></dt>
-<dd>
-<div class="block">Returns the maximal size of the search space.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html#getMaxValueLength()">getMaxValueLength()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderRedactionBased</a></dt>
 <dd>
@@ -6361,7 +6380,7 @@
  This uses the JDBC connection <a href="./org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getJdbcConnection()"><code>ImportWizardModel.getJdbcConnection()</code></a> to determine the number of
  columns for given table.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfGroups()">getNumberOfGroups()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfEquivalenceClasses()">getNumberOfEquivalenceClasses()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
 <dd>
 <div class="block">Returns the number of equivalence classes in the currently selected data
  representation.</div>
@@ -7327,6 +7346,10 @@
 <dd>
 <div class="block">Returns the origin of the subset.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getSubsetStatistics()">getSubsetStatistics()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
+<dd>
+<div class="block">Returns statistics for the subset, if any</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.ARXNode.html#getSuccessors()">getSuccessors()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a></dt>
 <dd>
 <div class="block">The successors.</div>
@@ -7647,6 +7670,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/risk/ViewRisksPlotUniquenessEstimates.html#getViewType()">getViewType()</a></span> - Method in class org.deidentifier.arx.gui.view.impl.risk.<a href="./org/deidentifier/arx/gui/view/impl/risk/ViewRisksPlotUniquenessEstimates.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksPlotUniquenessEstimates</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.html#getVirtualSize()">getVirtualSize()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a></dt>
+<dd>
+<div class="block">Returns the virtual size of the solution space</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/worker/io/Vocabulary.html#getVocabulary()">getVocabulary()</a></span> - Method in class org.deidentifier.arx.gui.worker.io.<a href="./org/deidentifier/arx/gui/worker/io/Vocabulary.html" title="class in org.deidentifier.arx.gui.worker.io">Vocabulary</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/worker/io/Vocabulary_V1.html#getVocabulary()">getVocabulary()</a></span> - Method in class org.deidentifier.arx.gui.worker.io.<a href="./org/deidentifier/arx/gui/worker/io/Vocabulary_V1.html" title="class in org.deidentifier.arx.gui.worker.io">Vocabulary_V1</a></dt>
@@ -9093,6 +9120,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/table/CTConfiguration.html#isColumnSelectionEnabled()">isColumnSelectionEnabled()</a></span> - Method in class org.deidentifier.arx.gui.view.impl.common.table.<a href="./org/deidentifier/arx/gui/view/impl/common/table/CTConfiguration.html" title="class in org.deidentifier.arx.gui.view.impl.common.table">CTConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.html#isComplete()">isComplete()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a></dt>
+<dd>
+<div class="block">Is there a unique</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/worker/io/Vocabulary.html#isConfig(java.lang.String)">isConfig(String)</a></span> - Method in class org.deidentifier.arx.gui.worker.io.<a href="./org/deidentifier/arx/gui/worker/io/Vocabulary.html" title="class in org.deidentifier.arx.gui.worker.io">Vocabulary</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDescription.html#isConfigurableCodingModelSupported()">isConfigurableCodingModelSupported()</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDescription.html" title="class in org.deidentifier.arx.metric">MetricDescription</a></dt>
@@ -9178,6 +9209,12 @@
 <div class="block">Returns whether the following measure is available: geometric mean</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html#isHeuristicForSampleBasedCriteria()">isHeuristicForSampleBasedCriteria()</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#isHeuristicSearchEnabled()">isHeuristicSearchEnabled()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">Returns whether ARX will use a heuristic search strategy.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html#isHeuristicSearchEnabled()">isHeuristicSearchEnabled()</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataDefinition.html#isHierarchyAvailable(java.lang.String)">isHierarchyAvailable(String)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></dt>
 <dd>
@@ -9346,6 +9383,8 @@
  data transformation.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleInput.html#isOutlier(int)">isOutlier(int)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleInput.html" title="class in org.deidentifier.arx">DataHandleInput</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleSubset.html#isOutlier(int)">isOutlier(int)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Interval.html#isOutOfBound()">isOutOfBound()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Interval.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased.Interval</a></dt>
 <dd>
@@ -9999,7 +10038,7 @@
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.LatticeDeserializationContext.html#maxLevel">maxLevel</a></span> - Variable in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.LatticeDeserializationContext.html" title="class in org.deidentifier.arx">ARXLattice.LatticeDeserializationContext</a></dt>
 <dd>
-<div class="block">TODO</div>
+<div class="block">Max level</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html#merge(java.util.List, org.deidentifier.arx.aggregates.AggregateFunction)">merge(List&lt;HierarchyBuilderOrderBased&lt;T&gt;.CloseElements&lt;T&gt;&gt;, AggregateFunction&lt;T&gt;)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderOrderBased.CloseElements</a></dt>
 <dd>&nbsp;</dd>
@@ -10368,7 +10407,7 @@
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.LatticeDeserializationContext.html#minLevel">minLevel</a></span> - Variable in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.LatticeDeserializationContext.html" title="class in org.deidentifier.arx">ARXLattice.LatticeDeserializationContext</a></dt>
 <dd>
-<div class="block">TODO</div>
+<div class="block">Min level</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/criteria/LDiversity.html#minSize">minSize</a></span> - Variable in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/LDiversity.html" title="class in org.deidentifier.arx.criteria">LDiversity</a></dt>
 <dd>
@@ -10660,10 +10699,6 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataHandle.html#node">node</a></span> - Variable in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
 <dd>
 <div class="block">The node.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/ARXListener.html#nodeTagged(int)">nodeTagged(int)</a></span> - Method in interface org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a></dt>
-<dd>
-<div class="block">Is called when a node has been processed.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardEditorRenderer.html#NORMAL_BACKGROUND">NORMAL_BACKGROUND</a></span> - Static variable in class org.deidentifier.arx.gui.view.impl.wizard.<a href="./org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardEditorRenderer.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">HierarchyWizardEditorRenderer</a></dt>
 <dd>
@@ -10973,6 +11008,10 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html#PrivacyCriterion(boolean)">PrivacyCriterion(boolean)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></dt>
 <dd>
 <div class="block">Instantiates a new criterion.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXListener.html#progress(double)">progress(double)</a></span> - Method in interface org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a></dt>
+<dd>
+<div class="block">Reports a progress value in [0, 1]</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html#property">property</a></span> - Variable in class org.deidentifier.arx.gui.view.impl.utility.<a href="./org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewProperties.Property</a></dt>
 <dd>
@@ -11948,6 +11987,25 @@
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html#setHeuristicForSampleBasedCriteria(boolean)">setHeuristicForSampleBasedCriteria(boolean)</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#setHeuristicSearchEnabled(boolean)">setHeuristicSearchEnabled(boolean)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">Sets whether ARX will use a heuristic search strategy.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html#setHeuristicSearchEnabled(boolean)">setHeuristicSearchEnabled(boolean)</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#setHeuristicSearchThreshold(int)">setHeuristicSearchThreshold(int)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">When the size of the solution space exceeds the given number of transformations,
+ ARX will use a heuristic search strategy.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html#setHeuristicSearchThreshold(int)">setHeuristicSearchThreshold(int)</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#setHeuristicSearchTimeLimit(int)">setHeuristicSearchTimeLimit(int)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">The heuristic search algorithm will terminate after the given number of milliseconds.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html#setHeuristicSearchTimeLimit(int)">setHeuristicSearchTimeLimit(int)</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataDefinition.html#setHierarchy(java.lang.String, org.deidentifier.arx.AttributeType.Hierarchy)">setHierarchy(String, AttributeType.Hierarchy)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></dt>
 <dd>
 <div class="block">Associates the given hierarchy</div>
@@ -12128,10 +12186,6 @@
 <dd>
 <div class="block">Sets the maximum size of a snapshot relative to the previous snapshot.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/Model.html#setMaxNodesInLattice(int)">setMaxNodesInLattice(int)</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a></dt>
-<dd>
-<div class="block">Sets the according parameter.</div>
-</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/Model.html#setMaxNodesInViewer(int)">setMaxNodesInViewer(int)</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a></dt>
 <dd>
 <div class="block">Sets the according parameter.</div>
@@ -12146,10 +12200,6 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXAnonymizer.html#setMaxQuasiIdentifiers(int)">setMaxQuasiIdentifiers(int)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a></dt>
 <dd>
 <div class="block">Sets the maximal number of quasi-identifiers.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/ARXAnonymizer.html#setMaxTransformations(int)">setMaxTransformations(int)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a></dt>
-<dd>
-<div class="block">Sets the maximal size of the search space.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelRedaction.html#setMaxValueLength(java.lang.Integer)">setMaxValueLength(Integer)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.wizard.<a href="./org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelRedaction.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">HierarchyWizardModelRedaction</a></dt>
 <dd>&nbsp;</dd>
@@ -12426,6 +12476,10 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/Model.html#setSnapshotSizeSnapshot(double)">setSnapshotSizeSnapshot(double)</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a></dt>
 <dd>
 <div class="block">Sets the according parameter.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.Access.html#setSolutionSpace(org.deidentifier.arx.framework.lattice.SolutionSpace)">setSolutionSpace(SolutionSpace)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
+<dd>
+<div class="block">Updates the solution space</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/ModelViewConfig.html#setSortOrder(boolean)">setSortOrder(boolean)</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/ModelViewConfig.html" title="class in org.deidentifier.arx.gui.model">ModelViewConfig</a></dt>
 <dd>
@@ -12728,6 +12782,10 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/MainWindow.html#showInfoDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String)">showInfoDialog(Shell, String, String)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.<a href="./org/deidentifier/arx/gui/view/impl/MainWindow.html" title="class in org.deidentifier.arx.gui.view.impl">MainWindow</a></dt>
 <dd>
 <div class="block">Shows an info dialog.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/MainWindow.html#showInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String, org.eclipse.jface.dialogs.IInputValidator)">showInputDialog(Shell, String, String, String, IInputValidator)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.<a href="./org/deidentifier/arx/gui/view/impl/MainWindow.html" title="class in org.deidentifier.arx.gui.view.impl">MainWindow</a></dt>
+<dd>
+<div class="block">Shows an input dialog.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/MainWindow.html#showInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String)">showInputDialog(Shell, String, String, String)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.<a href="./org/deidentifier/arx/gui/view/impl/MainWindow.html" title="class in org.deidentifier.arx.gui.view.impl">MainWindow</a></dt>
 <dd>
@@ -13065,6 +13123,8 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Interval.html#toString()">toString()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Interval.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased.Interval</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Range.html#toString()">toString()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Range.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased.Range</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#toString()">toString()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsSummary.html#toString()">toString()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsSummary.html" title="class in org.deidentifier.arx.aggregates">StatisticsSummary</a></dt>
 <dd>&nbsp;</dd>
@@ -13993,7 +14053,7 @@ the order they are declared.</div>
 <dd>
 <div class="block">This worker performs the anonymization process.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/gui/worker/WorkerAnonymize.html#WorkerAnonymize(org.deidentifier.arx.gui.model.Model)">WorkerAnonymize(Model)</a></span> - Constructor for class org.deidentifier.arx.gui.worker.<a href="./org/deidentifier/arx/gui/worker/WorkerAnonymize.html" title="class in org.deidentifier.arx.gui.worker">WorkerAnonymize</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/worker/WorkerAnonymize.html#WorkerAnonymize(org.deidentifier.arx.gui.model.Model, int)">WorkerAnonymize(Model, int)</a></span> - Constructor for class org.deidentifier.arx.gui.worker.<a href="./org/deidentifier/arx/gui/worker/WorkerAnonymize.html" title="class in org.deidentifier.arx.gui.worker">WorkerAnonymize</a></dt>
 <dd>
 <div class="block">Creates a new instance.</div>
 </dd>
