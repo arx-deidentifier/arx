@@ -40,7 +40,7 @@ public abstract class AbstractAlgorithm {
     private InformationLoss<?> optimalInformationLoss = null;
 
     /** The listener */
-    protected ARXListener      listener               = null;
+    private ARXListener      listener               = null;
 
     /** A node checker. */
     protected NodeChecker      checker                = null;
@@ -76,7 +76,7 @@ public abstract class AbstractAlgorithm {
     public void setListener(ARXListener listener) {
         this.listener = listener;
     }
-
+    
     /**
      * Implement this method in order to provide a new algorithm.
      */
@@ -102,6 +102,16 @@ public abstract class AbstractAlgorithm {
             } else {
                 transformation.setChecked(checker.check(transformation, true));
             }
+        }
+    }
+
+    /**
+     * Propagate progress to listeners
+     * @param progress
+     */
+    protected void progress(double progress) {
+        if (this.listener != null) {
+            this.listener.progress(progress);
         }
     }
 

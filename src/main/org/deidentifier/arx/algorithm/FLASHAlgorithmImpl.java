@@ -189,7 +189,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             }
         } else if (configuration.getTriggerCheck().appliesTo(transformation)) {
             transformation.setChecked(checker.check(transformation));
-            listener.progress((double)++checked / (double)solutionSpace.getSize());
+            progress((double)++checked / (double)solutionSpace.getSize());
         }
 
         // Store optimum

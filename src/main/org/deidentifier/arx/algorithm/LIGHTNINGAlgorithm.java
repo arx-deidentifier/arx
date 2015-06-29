@@ -66,6 +66,9 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         this.propertyExpanded = space.getPropertyExpanded();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
         this.timeLimit = timeLimit;
+        if (timeLimit <= 0) { 
+            throw new IllegalArgumentException("Invalid time limit. Must be greater than zero."); 
+        }
     }
     
     /**
@@ -76,7 +79,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         if (!transformation.hasProperty(propertyChecked)) {
             transformation.setChecked(checker.check(transformation, true));
             trackOptimum(transformation);
-            listener.progress((double)(System.currentTimeMillis() - timeStart) / (double)timeLimit);
+            progress((double)(System.currentTimeMillis() - timeStart) / (double)timeLimit);
         }
     }
 
