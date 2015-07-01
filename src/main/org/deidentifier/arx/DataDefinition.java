@@ -129,16 +129,6 @@ public class DataDefinition implements Cloneable{
     }
     
     /**
-     * Returns the according hierarchy object.
-     *
-     * @param attribute
-     * @return
-     */
-    public Hierarchy getHierarchyObject(final String attribute) {
-        return hierarchies.get(attribute);
-    }
-    
-    /**
      * Returns the associated builder, if any.
      *
      * @param attribute
@@ -146,6 +136,16 @@ public class DataDefinition implements Cloneable{
      */
     public HierarchyBuilder<?> getHierarchyBuilder(final String attribute) {
         return builders.get(attribute);
+    }
+    
+    /**
+     * Returns the according hierarchy object.
+     *
+     * @param attribute
+     * @return
+     */
+    public Hierarchy getHierarchyObject(final String attribute) {
+        return hierarchies.get(attribute);
     }
     
     /**
@@ -311,21 +311,28 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Resets the according setting
-     * @param attr
+     * Reads all settings from the given definition
+     * @param definition
      */
-    public void resetMaximumGeneralization(String attr) {
-        this.minGeneralization.remove(attr);
+    public void read(DataDefinition other) {
+
+        // Clone and copy stuff
+        this.attributeTypes.clear();
+        this.attributeTypes.putAll(other.attributeTypes);
+        this.builders.clear();
+        this.builders.putAll(other.builders);
+        this.hierarchies.clear();
+        this.hierarchies.putAll(other.hierarchies);
+        this.functions.clear();
+        this.functions.putAll(other.functions);
+        this.dataTypes.clear();
+        this.dataTypes.putAll(other.dataTypes);
+        this.minGeneralization.clear();
+        this.minGeneralization.putAll(other.minGeneralization);
+        this.maxGeneralization.clear();
+        this.maxGeneralization.putAll(other.maxGeneralization);
     }
 
-    /**
-     * Resets the according setting
-     * @param attr
-     */
-    public void resetMinimumGeneralization(String attr) {
-        this.maxGeneralization.remove(attr);
-    }
-    
     /**
      * Resets the according setting
      * @param attr
@@ -333,7 +340,7 @@ public class DataDefinition implements Cloneable{
     public void resetAttributeType(String attr) {
         this.attributeTypes.remove(attr);
     }
-
+    
     /**
      * Resets the according setting
      * @param attr
@@ -354,8 +361,24 @@ public class DataDefinition implements Cloneable{
      * Resets the according setting
      * @param attr
      */
+    public void resetMaximumGeneralization(String attr) {
+        this.minGeneralization.remove(attr);
+    }
+
+    /**
+     * Resets the according setting
+     * @param attr
+     */
     public void resetMicroAggregationFunction(String attr) {
         this.functions.remove(attr);
+    }
+
+    /**
+     * Resets the according setting
+     * @param attr
+     */
+    public void resetMinimumGeneralization(String attr) {
+        this.maxGeneralization.remove(attr);
     }
 
     /**
@@ -414,7 +437,7 @@ public class DataDefinition implements Cloneable{
     public void setHierarchy(String attribute, Hierarchy hierarchy) {
         this.hierarchies.put(attribute, hierarchy);
     }
-
+    
     /**
      * Associates the given hierarchy builder
      * @param attribute
@@ -436,7 +459,7 @@ public class DataDefinition implements Cloneable{
         checkLocked();
         maxGeneralization.put(attribute, maximum);
     }
-    
+
     /**
      * Associates the given microaggregation function
      * @param attribute
@@ -458,7 +481,7 @@ public class DataDefinition implements Cloneable{
         checkLocked();
         minGeneralization.put(attribute, minimum);
     }
-
+    
     /**
      * Checks whether this handle is locked.
      *
@@ -467,7 +490,7 @@ public class DataDefinition implements Cloneable{
     private void checkLocked() throws IllegalStateException{
         if (locked) {throw new IllegalStateException("This definition is currently locked");}
     }
-    
+
     /**
      * Checks whether the argument is null.
      *
@@ -586,7 +609,7 @@ public class DataDefinition implements Cloneable{
             this.setDataType(header[i], config.getColumns().get(i).getDataType());
         }
     }
-
+    
     /**
      * Lock/unlock the definition.
      *

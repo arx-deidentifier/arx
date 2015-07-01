@@ -761,7 +761,7 @@ public class ViewAttributeDefinition implements IView {
         minItems.add(ITEM_ALL);
         int length = 0;
         Hierarchy hierarchy = model.getInputConfig().getHierarchy(attribute);
-        if (!(hierarchy == null || hierarchy.getHierarchy() == null || hierarchy.getHierarchy()[0] == null || hierarchy.getHierarchy()[0].length == 0)) {
+        if (!(hierarchy == null || hierarchy.getHierarchy() == null || hierarchy.getHierarchy().length == 0 || hierarchy.getHierarchy()[0] == null || hierarchy.getHierarchy()[0].length == 0)) {
             length = hierarchy.getHierarchy()[0].length;
         }
         for (int i = 0; i < length; i++) {
