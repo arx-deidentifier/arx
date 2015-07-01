@@ -172,7 +172,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfGroups()">getNumberOfGroups</a></strong>()</code>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfEquivalenceClasses()">getNumberOfEquivalenceClasses</a></strong>()</code>
 <div class="block">Returns the number of equivalence classes in the currently selected data
  representation.</div>
 </td>
@@ -191,13 +191,23 @@ extends java.lang.Object</pre>
  representation.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getSubsetStatistics()">getSubsetStatistics</a></strong>()</code>
+<div class="block">Returns statistics for the subset, if any</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#toString()">toString</a></strong>()</code>&nbsp;</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>equals, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -301,13 +311,13 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getNumberOfGroups()">
+<a name="getNumberOfEquivalenceClasses()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getNumberOfGroups</h4>
-<pre>public&nbsp;int&nbsp;getNumberOfGroups()</pre>
+<h4>getNumberOfEquivalenceClasses</h4>
+<pre>public&nbsp;int&nbsp;getNumberOfEquivalenceClasses()</pre>
 <div class="block">Returns the number of equivalence classes in the currently selected data
  representation.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
@@ -328,13 +338,37 @@ extends java.lang.Object</pre>
 <a name="getNumberOfOutlyingTuples()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getNumberOfOutlyingTuples</h4>
 <pre>public&nbsp;int&nbsp;getNumberOfOutlyingTuples()</pre>
 <div class="block">Returns the number of outliers in the currently selected data
  representation.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getSubsetStatistics()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSubsetStatistics</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a>&nbsp;getSubsetStatistics()</pre>
+<div class="block">Returns statistics for the subset, if any</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="toString()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
 </li>
 </ul>
 </li>
