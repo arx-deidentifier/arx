@@ -566,7 +566,7 @@ public class DataManager {
         // Build nodes
         for (int i = 0; i < hierarchy[0].length; i++) {
             for (int j = 0; j < hierarchy.length; j++) {
-                final int nodeID = hierarchy[j][i];
+                final int nodeID = hierarchy[j][i] + i * hierarchy.length;
                 TNode curNode = null;
 
                 if (!nodes.containsKey(nodeID)) {
@@ -580,7 +580,7 @@ public class DataManager {
                 }
 
                 if (i > 0) { // first add child
-                    curNode.children.add(hierarchy[j][i - 1]);
+                    curNode.children.add(hierarchy[j][i - 1] + (i - 1) * hierarchy.length);
                 }
             }
         }
