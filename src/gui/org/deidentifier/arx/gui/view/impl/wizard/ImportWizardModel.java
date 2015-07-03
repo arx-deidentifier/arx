@@ -259,7 +259,7 @@ public char getCsvQuote() {
             columnIndex = ((ImportColumnJDBC) column.getColumn()).getIndex();
         }
         
-        return data.getHandle().getMatchingDataTypes(columnIndex, locale, Math.ulp(0d));
+        return data.getHandle().getMatchingDataTypes(columnIndex, locale, 0d);
     }
     
     /**
