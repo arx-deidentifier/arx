@@ -250,8 +250,8 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         textDomainSize.setText(model.getDomainSize() == null ? "" : String.valueOf(model.getDomainSize())); //$NON-NLS-1$
         buttonLeftAlign.setSelection(model.getAlignmentOrder() == Order.LEFT_TO_RIGHT);
         buttonRightAlign.setSelection(model.getAlignmentOrder() == Order.RIGHT_TO_LEFT);
-        buttonLeftRedact.setSelection(model.getAlignmentOrder() == Order.LEFT_TO_RIGHT);
-        buttonRightRedact.setSelection(model.getAlignmentOrder() == Order.RIGHT_TO_LEFT);
+        buttonLeftRedact.setSelection(model.getRedactionOrder() == Order.LEFT_TO_RIGHT);
+        buttonRightRedact.setSelection(model.getRedactionOrder() == Order.RIGHT_TO_LEFT);
         comboPaddingChar.select(indexOf(comboPaddingChar, model.getPaddingCharacter()));
         comboRedactionChar.select(indexOf(comboRedactionChar, model.getRedactionCharacter()));
     }
