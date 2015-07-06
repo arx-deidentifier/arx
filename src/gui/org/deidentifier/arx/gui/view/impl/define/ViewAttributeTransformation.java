@@ -275,7 +275,12 @@ public class ViewAttributeTransformation implements IView {
     
     @Override
     public void reset() {
-        updateMinMax();
+        if (cmbType != null && cmbType.getItemCount() != 0) cmbType.select(0);
+        if (cmbMode != null && cmbMode.getItemCount() != 0) cmbMode.select(0);
+        if (cmbMin != null && cmbMin.getItemCount() != 0) cmbMin.select(0);
+        if (cmbMax != null && cmbMax.getItemCount() != 0) cmbMax.select(cmbMax.getItemCount() - 1);
+        if (cmbFunction != null && cmbFunction.getItemCount() != 0) cmbFunction.select(0);
+        if (hierarchy != null) hierarchy.setHierarchy(null);
         SWTUtil.disable(root);
     }
     
@@ -535,6 +540,10 @@ public class ViewAttributeTransformation implements IView {
      * Update the attribute type.
      */
     private void updateAttributeType() {
+        if (model == null || model.getInputConfig() == null || model.getInputDefinition() == null) {
+            cmbType.setEnabled(false);
+            return;
+        }
         AttributeType type = model.getInputDefinition().getAttributeType(attribute);
         for (int i = 0; i < COMBO1_TYPES.length; i++) {
             if (type == COMBO1_TYPES[i]) {
@@ -548,7 +557,7 @@ public class ViewAttributeTransformation implements IView {
      * Update function
      */
     private void updateFunction() {
-        if (model != null && model.getInputConfig() != null) {
+        if (model != null && model.getInputConfig() != null && model.getInputDefinition() != null) {
             DataScale scale = model.getInputDefinition().getDataType(attribute).getDescription().getScale();
             List<String> functions = new ArrayList<String>();
             for (MicroAggregationFunctionDescription function : FUNCTIONS) {
@@ -575,7 +584,9 @@ public class ViewAttributeTransformation implements IView {
     private void updateMinMax() {
         
         // Check whether min & max are still ok
-        if (model == null || model.getInputConfig() == null || cmbMin == null || cmbMin.isDisposed()) {
+        if (model == null || model.getInputConfig() == null || cmbMin == null || cmbMin.isDisposed() || model.getInputConfig().getInput() == null) {
+            cmbMin.setEnabled(false);
+            cmbMax.setEnabled(false);
             return;
         }
         
@@ -624,6 +635,12 @@ public class ViewAttributeTransformation implements IView {
      * Update mode
      */
     private void updateMode() {
+        
+        if (model == null || model.getInputConfig() == null || model.getInputDefinition() == null) {
+            stack.setLayer(0);
+            cmbMode.setEnabled(false);
+            return;
+        }
         
         if (model.getInputDefinition().getQuasiIdentifyingAttributes().contains(attribute) &&
             model != null && model.getInputConfig() != null) {
