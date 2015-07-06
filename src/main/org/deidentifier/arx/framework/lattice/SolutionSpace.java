@@ -193,15 +193,6 @@ public class SolutionSpace {
         for (Iterator<Long> iter = lattice.space().indexIteratorToIdIterator(lattice.nodes().listPredecessors(lattice.space().toIndex(identifier))); iter.hasNext();) {
             result.add(iter.next());
         }
-        int lower = 0;
-        int upper = result.size() - 1;
-        while (lower < upper) {
-            long temp = result.get(lower);
-            result.set(lower, result.get(upper));
-            result.set(upper, temp);
-            lower++;
-            upper--;
-        }
         return result;
     }
     
