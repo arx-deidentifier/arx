@@ -37,6 +37,8 @@ import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 
+import cern.colt.list.LongArrayList;
+
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.LongObjectOpenHashMap;
 
@@ -909,18 +911,17 @@ public class ARXLattice implements Serializable {
         Transformation transformation = solutions.getTransformation(indices);
         
         // Collect neighbors
-        List<Long> neighbors = new ArrayList<Long>();
-        for (Iterator<Long> iter = solutions.getPredecessors(transformation.getIdentifier()); iter.hasNext();) {
-            neighbors.add(iter.next());
-        }
-        for (Iterator<Long> iter = solutions.getSuccessors(transformation.getIdentifier()); iter.hasNext();) {
-            neighbors.add(iter.next());
-        }
+        LongArrayList neighbors = solutions.getPredecessors(transformation.getIdentifier());
+        LongArrayList successors = solutions.getSuccessors(transformation.getIdentifier());
+        neighbors.addAllOfFromTo(successors, 0, successors.size() - 1);
 
         // Find missing neighbors and initialize variables
         Map<String, Integer>            headermap = null;
         LongObjectOpenHashMap<ARXNode>  map = new LongObjectOpenHashMap<ARXNode>();
-        Set<Long>                       missing = new HashSet<Long>(neighbors);
+        Set<Long>                       missing = new HashSet<Long>();
+        for (int i = 0; i < neighbors.size(); i++) {
+            missing.add(neighbors.getQuick(i));
+        }
         for (ARXNode[] level : this.levels) {
             for (ARXNode node : level) {
                 headermap = headermap != null ? headermap : node.headermap;
@@ -1100,14 +1101,18 @@ public class ARXLattice implements Serializable {
         // Collect materialized successors and predecessors
         List<ARXNode> successors = new ArrayList<ARXNode>();
         List<ARXNode> predecessors = new ArrayList<ARXNode>();
-        for (Iterator<Long> iter1 = solutions.getSuccessors(id); iter1.hasNext();) {
-            ARXNode node = map.get(iter1.next());
+        
+        LongArrayList list1 = solutions.getSuccessors(id);
+        for (int i = 0; i < list1.size(); i++) {
+            ARXNode node = map.get(list1.getQuick(i));
             if (node != null) {
                 successors.add(node);
             }
         }
-        for (Iterator<Long> iter2 = solutions.getPredecessors(id); iter2.hasNext();) {
-            ARXNode node = map.get(iter2.next());
+
+        LongArrayList list2 = solutions.getPredecessors(id);
+        for (int i = 0; i < list2.size(); i++) {
+            ARXNode node = map.get(list2.getQuick(i));
             if (node != null) {
                 predecessors.add(node);
             }
@@ -1166,14 +1171,18 @@ public class ARXLattice implements Serializable {
         
         List<ARXNode> successors = new ArrayList<ARXNode>();
         List<ARXNode> predecessors = new ArrayList<ARXNode>();
-        for (Iterator<Long> iter1 = solutions.getSuccessors(id); iter1.hasNext();) {
-            ARXNode node = map.get(iter1.next());
+        
+        LongArrayList list1 = solutions.getSuccessors(id);
+        for (int i = 0; i < list1.size(); i++) {
+            ARXNode node = map.get(list1.getQuick(i));
             if (node != null) {
                 successors.add(node);
             }
         }
-        for (Iterator<Long> iter2 = solutions.getPredecessors(id); iter2.hasNext();) {
-            ARXNode node = map.get(iter2.next());
+
+        LongArrayList list2 = solutions.getPredecessors(id);
+        for (int i = 0; i < list2.size(); i++) {
+            ARXNode node = map.get(list2.getQuick(i));
             if (node != null) {
                 predecessors.add(node);
             }

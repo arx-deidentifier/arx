@@ -35,6 +35,7 @@ import org.deidentifier.arx.metric.InformationLossWithBound;
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
+import cern.colt.list.LongArrayList;
 import de.linearbits.jhpl.PredictiveProperty;
 
 /**
@@ -88,7 +89,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
     @Override
     public void traverse() {
-
+        
         // Determine configuration for the outer loop
         FLASHPhaseConfiguration outerLoopConfiguration;
         if (config.isBinaryPhaseRequired()) {
@@ -496,13 +497,10 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     private int[] getSortedSuccessors(final int transformation) {
         
         if (sortedSuccessors[transformation] == null) {
-            List<Long> list = new ArrayList<Long>();
-            for (Iterator<Long> iter = solutionSpace.getSuccessors(transformation); iter.hasNext();){
-                list.add(iter.next());
-            }
+            LongArrayList list = solutionSpace.getSuccessors(transformation);
             int[] result = new int[list.size()];
-            for (int i=0; i<result.length; i++) {
-                result[i] = list.get(i).intValue();
+            for (int i=0; i<list.size(); i++) {
+                result[i] = (int)list.getQuick(i);
             }
             sort(result);
             sortedSuccessors[transformation] = result;

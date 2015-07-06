@@ -18,15 +18,13 @@
 package org.deidentifier.arx.algorithm;
 
 import java.util.Comparator;
-import java.util.Iterator;
 
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
-import com.carrotsearch.hppc.LongArrayList;
-
+import cern.colt.list.LongArrayList;
 import de.linearbits.jhpl.PredictiveProperty;
 
 /**
@@ -145,12 +143,10 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     */
     private Transformation expand(MinMaxPriorityQueue<Long> queue, Transformation transformation) {
         Transformation result = null;
-        
-        LongArrayList list = new LongArrayList();
-        for (Iterator<Long> iter = solutionSpace.getSuccessors(transformation.getIdentifier()); iter.hasNext();) {
-            list.add(iter.next());
-        }
-        for (long id : list.toArray()) {
+
+        LongArrayList list = solutionSpace.getSuccessors(transformation.getIdentifier());
+        for (int i = 0; i < list.size(); i++) {
+            long id = list.getQuick(i);
             Transformation successor = solutionSpace.getTransformation(id);
             if (!successor.hasProperty(propertyExpanded)) {
                 assureChecked(successor);

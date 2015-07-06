@@ -26,6 +26,8 @@ import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.InformationLoss;
 
+import cern.colt.list.LongArrayList;
+
 import com.carrotsearch.hppc.LongObjectOpenHashMap;
 
 import de.linearbits.jhpl.Lattice;
@@ -118,7 +120,9 @@ public class SolutionSpace {
     public SolutionSpace(int[] minLevels, int[] maxLevels) {
         
         // Create offsets
-        this.offsetIndices = minLevels.clone();
+        minLevels = reverse(minLevels);
+        maxLevels = reverse(maxLevels);
+        this.offsetIndices = reverse(minLevels);
         int lvl = 0; for (int i : offsetIndices) lvl+=i;
         this.offsetLevel = lvl;
         
@@ -134,6 +138,19 @@ public class SolutionSpace {
             elements[i] = element;
         }
         this.lattice = new Lattice<Integer, Integer>(elements);
+    }
+    
+    /**
+     * Reverses the given array
+     * @param input
+     * @return
+     */
+    private int[] reverse(int[] input) {
+        int[] result = new int[input.length];
+        for (int i = 0; i < input.length; i++) {
+            result[i] = input[input.length - i - 1];
+        }
+        return result;
     }
     
     /**
@@ -170,8 +187,22 @@ public class SolutionSpace {
      * @param transformation
      * @return
      */
-    public Iterator<Long> getPredecessors(long transformation) {
-        return lattice.space().indexIteratorToIdIterator(lattice.nodes().listPredecessors(lattice.space().toIndex(transformation)));
+    public LongArrayList getPredecessors(long identifier) {
+        
+        LongArrayList result = new LongArrayList();
+        for (Iterator<Long> iter = lattice.space().indexIteratorToIdIterator(lattice.nodes().listPredecessors(lattice.space().toIndex(identifier))); iter.hasNext();) {
+            result.add(iter.next());
+        }
+        int lower = 0;
+        int upper = result.size() - 1;
+        while (lower < upper) {
+            long temp = result.get(lower);
+            result.set(lower, result.get(upper));
+            result.set(upper, temp);
+            lower++;
+            upper--;
+        }
+        return result;
     }
     
 
@@ -268,8 +299,21 @@ public class SolutionSpace {
      * @param identifier
      * @return
      */
-    public Iterator<Long> getSuccessors(long identifier) {
-        return lattice.space().indexIteratorToIdIterator(lattice.nodes().listSuccessors(lattice.space().toIndex(identifier)));
+    public LongArrayList getSuccessors(long identifier) {
+        LongArrayList result = new LongArrayList();
+        for (Iterator<Long> iter = lattice.space().indexIteratorToIdIterator(lattice.nodes().listSuccessors(lattice.space().toIndex(identifier))); iter.hasNext();) {
+            result.add(iter.next());
+        }
+        int lower = 0;
+        int upper = result.size() - 1;
+        while (lower < upper) {
+            long temp = result.get(lower);
+            result.set(lower, result.get(upper));
+            result.set(upper, temp);
+            lower++;
+            upper--;
+        }
+        return result;
     }
 
     /**
@@ -420,9 +464,9 @@ public class SolutionSpace {
      * @return
      */
     protected int[] fromJHPL(int[] transformation) {
-        int[] result = transformation.clone();
+        int[] result = new int[transformation.length];
         for (int i=0; i<result.length; i++) {
-            result[i]+=offsetIndices[i];
+            result[i] = transformation[transformation.length - i - 1] += offsetIndices[transformation.length - i - 1];
         }
         return result;
     }
@@ -497,9 +541,9 @@ public class SolutionSpace {
      * @return
      */
     protected int[] toJHPL(int[] transformation) {
-        int[] result = transformation.clone();
+        int[] result = new int[transformation.length];
         for (int i=0; i<result.length; i++) {
-            result[i]-=offsetIndices[i];
+            result[i]=transformation[transformation.length - i - 1] - offsetIndices[transformation.length - i - 1];
         }
         return result;
     }
