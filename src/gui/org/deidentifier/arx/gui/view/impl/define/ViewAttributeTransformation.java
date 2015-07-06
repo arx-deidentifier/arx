@@ -275,12 +275,12 @@ public class ViewAttributeTransformation implements IView {
     
     @Override
     public void reset() {
+        if (stack != null) stack.setLayer(0);
         if (cmbType != null && cmbType.getItemCount() != 0) cmbType.select(0);
         if (cmbMode != null && cmbMode.getItemCount() != 0) cmbMode.select(0);
         if (cmbMin != null && cmbMin.getItemCount() != 0) cmbMin.select(0);
         if (cmbMax != null && cmbMax.getItemCount() != 0) cmbMax.select(cmbMax.getItemCount() - 1);
         if (cmbFunction != null && cmbFunction.getItemCount() != 0) cmbFunction.select(0);
-        if (hierarchy != null) hierarchy.setHierarchy(null);
         SWTUtil.disable(root);
     }
     
@@ -499,7 +499,7 @@ public class ViewAttributeTransformation implements IView {
      */
     private void actionTransformationModeChanged() {
         if (model == null || model.getInputConfig() == null) {
-            return;
+            reset();
         }
         if (cmbMode.getSelectionIndex() == 0) {
             model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.GENERALIZATION);
@@ -541,7 +541,7 @@ public class ViewAttributeTransformation implements IView {
      */
     private void updateAttributeType() {
         if (model == null || model.getInputConfig() == null || model.getInputDefinition() == null) {
-            cmbType.setEnabled(false);
+            reset();
             return;
         }
         AttributeType type = model.getInputDefinition().getAttributeType(attribute);
@@ -585,8 +585,7 @@ public class ViewAttributeTransformation implements IView {
         
         // Check whether min & max are still ok
         if (model == null || model.getInputConfig() == null || cmbMin == null || cmbMin.isDisposed() || model.getInputConfig().getInput() == null) {
-            cmbMin.setEnabled(false);
-            cmbMax.setEnabled(false);
+            reset();
             return;
         }
         
@@ -637,8 +636,7 @@ public class ViewAttributeTransformation implements IView {
     private void updateMode() {
         
         if (model == null || model.getInputConfig() == null || model.getInputDefinition() == null) {
-            stack.setLayer(0);
-            cmbMode.setEnabled(false);
+            reset();
             return;
         }
         
