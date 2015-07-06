@@ -472,7 +472,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param array
      */
     private void sort(final int[] array) {
-        GenericSorting.quickSort(0, array.length, new IntComparator(){
+        GenericSorting.mergeSort(0, array.length, new IntComparator(){
             @Override
             public int compare(int arg0, int arg1) {
                 return strategy.compare(array[arg0], array[arg1]);
