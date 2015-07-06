@@ -248,6 +248,9 @@ public class MainToolBar extends AbstractMenu {
     private ToolBar              toolbar;
 
     /** Widget. */
+    private Label                labelAttribute;
+    
+    /** Widget. */
     private Label                labelTransformations;
 
     /** Widget. */
@@ -313,6 +316,13 @@ public class MainToolBar extends AbstractMenu {
             layout();
             toolbar.setRedraw(true);
         }
+        if (labelAttribute != null) {
+            toolbar.setRedraw(false);
+            labelAttribute.setText(""); //$NON-NLS-1$
+            labelAttribute.pack();
+            layout();
+            toolbar.setRedraw(true);
+        }
     }
     
     @Override
@@ -375,8 +385,30 @@ public class MainToolBar extends AbstractMenu {
                 
                 toolbar.setRedraw(true);
             }
-        } else if (event.part == ModelPart.MODEL) {
+        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+            String attribute = (String)event.data;
+
+            // Update label
+            toolbar.setRedraw(false);
+            labelAttribute.setText(Resources.getMessage("MainToolBar.50") + trim(attribute)); //$NON-NLS-1$
+            labelAttribute.pack();
+            layout();
+            toolbar.setRedraw(true);
+        }  else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
+        }
+    }
+
+    /**
+     * Trims the given string to 20 characters
+     * @param attribute
+     * @return
+     */
+    private String trim(String attribute) {
+        if (attribute.length() > 20) {
+            return attribute.substring(0, 20) + "...";
+        } else {
+            return attribute;
         }
     }
 
@@ -447,6 +479,9 @@ public class MainToolBar extends AbstractMenu {
         infoItem.setControl(infoComposite);
         infoComposite.setLayout(null);
 
+        labelAttribute = new Label(infoComposite, SWT.SINGLE | SWT.READ_ONLY);
+        labelAttribute.setText(Resources.getMessage("MainToolBar.33")); //$NON-NLS-1$
+        labelAttribute.pack();        
         labelTransformations = new Label(infoComposite, SWT.SINGLE | SWT.READ_ONLY);
         labelTransformations.setText(Resources.getMessage("MainToolBar.33")); //$NON-NLS-1$
         labelTransformations.pack();
@@ -521,6 +556,13 @@ public class MainToolBar extends AbstractMenu {
         labelTransformations.setLocation(locationX, locationY);
         if (locationX < 0) labelTransformations.setVisible(false);
         else labelTransformations.setVisible(true);
+        
+
+        // Layout label
+        locationX -= labelAttribute.getSize().x + OFFSET;
+        labelAttribute.setLocation(locationX, locationY);
+        if (locationX < 0) labelAttribute.setVisible(false);
+        else labelAttribute.setVisible(true);
                 
         // Redraw
         toolbar.setRedraw(true);
