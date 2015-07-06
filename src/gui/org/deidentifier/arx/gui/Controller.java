@@ -1448,6 +1448,17 @@ public class Controller implements IView {
     }
 
     /**
+     * Shows a question dialog.
+     *
+     * @param header
+     * @param text
+     * @return
+     */
+    public boolean actionShowQuestionDialog(final String header,
+                                            final String text) {
+        return main.showQuestionDialog(this.main.getShell(), header, text);
+    }
+    /**
      * Internal method for showing a "save file" dialog.
      *
      * @param shell

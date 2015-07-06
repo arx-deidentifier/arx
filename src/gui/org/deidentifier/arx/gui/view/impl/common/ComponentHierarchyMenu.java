@@ -142,9 +142,10 @@ public class ComponentHierarchyMenu implements IView {
         itemInsertRow = new MenuItem(menu, SWT.NONE);
         itemInsertRow.setText(Resources.getMessage("HierarchyView.7")); //$NON-NLS-1$
         itemInsertRow.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                hierarchy.actionInsertRow();
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    hierarchy.actionInsertRow();
+                }
             }
         });
         
@@ -152,9 +153,10 @@ public class ComponentHierarchyMenu implements IView {
         itemDeleteRow = new MenuItem(menu, SWT.NONE);
         itemDeleteRow.setText(Resources.getMessage("HierarchyView.8")); //$NON-NLS-1$
         itemDeleteRow.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                hierarchy.actionDeleteRow();
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    hierarchy.actionDeleteRow();
+                }
             }
         });
         
@@ -165,9 +167,10 @@ public class ComponentHierarchyMenu implements IView {
         itemInsertColumn = new MenuItem(menu, SWT.NONE);
         itemInsertColumn.setText(Resources.getMessage("HierarchyView.9")); //$NON-NLS-1$
         itemInsertColumn.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                hierarchy.actionInsertColumn();
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    hierarchy.actionInsertColumn();
+                }
             }
         });
         
@@ -175,9 +178,10 @@ public class ComponentHierarchyMenu implements IView {
         itemDeleteColumn = new MenuItem(menu, SWT.NONE);
         itemDeleteColumn.setText(Resources.getMessage("HierarchyView.10")); //$NON-NLS-1$
         itemDeleteColumn.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                hierarchy.actionDeleteColumn();
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    hierarchy.actionDeleteColumn();
+                }
             }
         });
         
@@ -188,9 +192,10 @@ public class ComponentHierarchyMenu implements IView {
         itemMoveRowUp = new MenuItem(menu, SWT.NONE);
         itemMoveRowUp.setText(Resources.getMessage("HierarchyView.11")); //$NON-NLS-1$
         itemMoveRowUp.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                hierarchy.actionMoveRowUp();
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    hierarchy.actionMoveRowUp();
+                }
             }
         });
         
@@ -198,9 +203,10 @@ public class ComponentHierarchyMenu implements IView {
         itemMoveRowDown = new MenuItem(menu, SWT.NONE);
         itemMoveRowDown.setText(Resources.getMessage("HierarchyView.12")); //$NON-NLS-1$
         itemMoveRowDown.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                hierarchy.actionMoveRowDown();
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    hierarchy.actionMoveRowDown();
+                }
             }
         });
         
@@ -211,11 +217,12 @@ public class ComponentHierarchyMenu implements IView {
         itemEditItem = new MenuItem(menu, SWT.NONE);
         itemEditItem.setText(Resources.getMessage("HierarchyView.18")); //$NON-NLS-1$
         itemEditItem.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                String value = getUserValue();
-                if (value != null) {
-                    hierarchy.actionEditItem(value);
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    String value = getUserValue();
+                    if (value != null) {
+                        hierarchy.actionEditItem(value);
+                    }
                 }
             }
         });
@@ -224,14 +231,14 @@ public class ComponentHierarchyMenu implements IView {
         itemRenameItem = new MenuItem(menu, SWT.NONE);
         itemRenameItem.setText(Resources.getMessage("HierarchyView.15")); //$NON-NLS-1$
         itemRenameItem.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                String value = getUserValue();
-                if (value != null) {
-                    hierarchy.actionRenameItem(value);
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    String value = getUserValue();
+                    if (value != null) {
+                        hierarchy.actionRenameItem(value);
+                    }
                 }
             }
-
         });
         
         // Separator
@@ -241,9 +248,10 @@ public class ComponentHierarchyMenu implements IView {
         itemClear = new MenuItem(menu, SWT.NONE);
         itemClear.setText(Resources.getMessage("HierarchyView.16")); //$NON-NLS-1$
         itemClear.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                hierarchy.actionClear();
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    hierarchy.actionClear();
+                }
             }
         });
         
@@ -251,14 +259,15 @@ public class ComponentHierarchyMenu implements IView {
         itemInitialize = new MenuItem(menu, SWT.NONE);
         itemInitialize.setText(Resources.getMessage("HierarchyView.19")); //$NON-NLS-1$
         itemInitialize.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                if (hierarchy.isRowSelected() || hierarchy.isColumnSelected() ||
-                    hierarchy.isCellSelected() || model == null || model.getInputConfig() == null ||
-                    model.getInputConfig().getInput() == null ||
-                    model.getSelectedAttribute() == null) { return; }
-
-                controller.actionMenuEditInitializeHierarchy();
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    if (hierarchy.isRowSelected() || hierarchy.isColumnSelected() ||
+                        hierarchy.isCellSelected() || model == null || model.getInputConfig() == null ||
+                        model.getInputConfig().getInput() == null ||
+                        model.getSelectedAttribute() == null) { return; }
+    
+                    controller.actionMenuEditInitializeHierarchy();
+                }
             }
         });
     }
@@ -274,7 +283,6 @@ public class ComponentHierarchyMenu implements IView {
                                                 Resources.getMessage("HierarchyView.13"), //$NON-NLS-1$
                                                 Resources.getMessage("HierarchyView.14"), current); //$NON-NLS-1$
     }
-
 
     /**
      * Mouse down action.
@@ -306,5 +314,22 @@ public class ComponentHierarchyMenu implements IView {
         // Show
         this.menu.setLocation(point);
         this.menu.setVisible(true);
+    }
+
+    /**
+     * Checks and asks users whether functional hierarchies should be removed
+     * @return
+     */
+    private boolean check() {
+        if (model != null && model.getInputConfig() != null && model.getSelectedAttribute() != null) {
+            if (model.getInputConfig().getHierarchyBuilder(model.getSelectedAttribute()) != null) {
+                return controller.actionShowQuestionDialog(Resources.getMessage("HierarchyView.20"),  //$NON-NLS-1$
+                                                                   Resources.getMessage("HierarchyView.21")); //$NON-NLS-1$
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
     }
 }

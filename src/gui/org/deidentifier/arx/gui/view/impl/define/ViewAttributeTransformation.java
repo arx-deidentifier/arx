@@ -437,6 +437,9 @@ public class ViewAttributeTransformation implements IView {
             model.getInputConfig().setHierarchy(attribute, hierarchy);
         }
         
+        // Remove functional hierarchy
+        model.getInputConfig().removeHierarchyBuilder(attribute);
+        
         // Fire event
         controller.update(new ModelEvent(ViewAttributeTransformation.this, ModelPart.HIERARCHY, hierarchy));
     }
