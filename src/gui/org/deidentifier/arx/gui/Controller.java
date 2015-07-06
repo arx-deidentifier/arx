@@ -508,7 +508,7 @@ public class Controller implements IView {
     /**
      * Initializes the hierarchy for the currently selected attribute
      */
-    public void actionInitializeHierarchy() {
+    public void actionMenuEditInitializeHierarchy() {
 
         // Check
         if (model == null ||

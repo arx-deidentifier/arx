@@ -659,6 +659,15 @@ public class MainWindow implements IView {
         
         items.add(new MainMenuSeparator());
 
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.41"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuEditInitializeHierarchy(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+        
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.23"), //$NON-NLS-1$
                                    controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
                                    true) {

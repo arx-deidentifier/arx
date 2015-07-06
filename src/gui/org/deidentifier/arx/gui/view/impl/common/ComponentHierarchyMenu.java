@@ -258,7 +258,7 @@ public class ComponentHierarchyMenu implements IView {
                     model.getInputConfig().getInput() == null ||
                     model.getSelectedAttribute() == null) { return; }
 
-                controller.actionInitializeHierarchy();
+                controller.actionMenuEditInitializeHierarchy();
             }
         });
     }
