@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.common;
 
-import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -255,45 +253,15 @@ public class ComponentHierarchyMenu implements IView {
         itemInitialize.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                Hierarchy initial = getInitialHierarchy();
-                if (initial != null) {
-                    hierarchy.setHierarchy(initial);
-                }
+                if (hierarchy.isRowSelected() || hierarchy.isColumnSelected() ||
+                    hierarchy.isCellSelected() || model == null || model.getInputConfig() == null ||
+                    model.getInputConfig().getInput() == null ||
+                    model.getSelectedAttribute() == null) { return; }
+
+                controller.actionInitializeHierarchy();
             }
         });
     }
-
-
-    /**
-     * Returns an initial hierarchy containing the distinct values
-     * @return
-     */
-    private Hierarchy getInitialHierarchy() {
-
-        // Check
-        if (hierarchy.isRowSelected() || hierarchy.isColumnSelected() || hierarchy.isCellSelected() ||
-            model == null ||
-            model.getInputConfig() == null ||
-            model.getInputConfig().getInput() == null ||
-            model.getSelectedAttribute() == null) {
-            return null;
-        }
-        
-        // Obtain values
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-        int index = handle.getColumnIndexOf(model.getSelectedAttribute());
-        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
-        
-        // Create hierarchy
-        String[][] hierarchy = new String[values.length][0];
-        for (int i = 0; i < values.length; i++) {
-            hierarchy[i] = new String[] { values[i] };
-        }
-        
-        // Return
-        return Hierarchy.create(hierarchy);
-    }
-
 
     /**
      * Queries the user for a new value

@@ -415,7 +415,6 @@ public class ComponentHierarchy {
     public void setHierarchy(final Hierarchy hierarchy) {
         this.hierarchy = (hierarchy == null ? null : hierarchy.getHierarchy());
         this.table.refresh();
-        this.triggerChangedEvent();
     }
 
     /**

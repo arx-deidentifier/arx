@@ -506,6 +506,36 @@ public class Controller implements IView {
     }
 
     /**
+     * Initializes the hierarchy for the currently selected attribute
+     */
+    public void actionInitializeHierarchy() {
+
+        // Check
+        if (model == null ||
+            model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null ||
+            model.getSelectedAttribute() == null) {
+            return;
+        }
+        
+        // Obtain values
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int index = handle.getColumnIndexOf(model.getSelectedAttribute());
+        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
+        
+        // Create hierarchy
+        String[][] array = new String[values.length][0];
+        for (int i = 0; i < values.length; i++) {
+            array[i] = new String[] { values[i] };
+        }
+        
+        // Update
+        Hierarchy hierarchy = Hierarchy.create(array);
+        this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
+        this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+    }
+
+    /**
      * Starts the anonymization.
      * @param heuristicSearch 
      */
@@ -1327,7 +1357,6 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1343,6 +1372,7 @@ public class Controller implements IView {
                                         final String initial) {
         return main.showInputDialog(shell, header, text, initial);
     }
+
     /**
      * Shows an input dialog.
      *
@@ -1518,7 +1548,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.70")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-
+    
     /**
      * Registers a listener at the controller.
      *
@@ -1531,7 +1561,7 @@ public class Controller implements IView {
         }
         listeners.get(target).add(listener);
     }
-    
+
     @Override
     public void dispose() {
         for (final Set<IView> listeners : getListeners().values()) {
