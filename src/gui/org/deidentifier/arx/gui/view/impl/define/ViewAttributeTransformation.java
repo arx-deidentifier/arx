@@ -342,17 +342,14 @@ public class ViewAttributeTransformation implements IView {
      * Attribute type changed
      */
     private void actionAttributeTypeChanged() {
-        if ((cmbType.getSelectionIndex() != -1) &&
-            (attribute != null)) {
-            if ((model != null) &&
-                (model.getInputConfig().getInput() != null)) {
+        if ((cmbType.getSelectionIndex() != -1) && (attribute != null)) {
+            if ((model != null) && (model.getInputConfig().getInput() != null)) {
                 final AttributeType type = COMBO1_TYPES[cmbType.getSelectionIndex()];
                 final DataDefinition definition = model.getInputDefinition();
                 
                 // Handle QIs
                 if (type == null) {
-                    definition.setAttributeType(attribute,
-                                                Hierarchy.create());
+                    definition.setAttributeType(attribute, Hierarchy.create());
                 } else {
                     definition.setAttributeType(attribute, type);
                 }
@@ -640,8 +637,7 @@ public class ViewAttributeTransformation implements IView {
             return;
         }
         
-        if (model.getInputDefinition().getQuasiIdentifyingAttributes().contains(attribute) &&
-            model != null && model.getInputConfig() != null) {
+        if (model.getInputDefinition().getQuasiIdentifyingAttributes().contains(attribute) && model != null && model.getInputConfig() != null) {
             
             if (model.getInputConfig().getTransformationMode(attribute) == ModelTransformationMode.GENERALIZATION) {
                 stack.setLayer(0);
@@ -651,6 +647,7 @@ public class ViewAttributeTransformation implements IView {
                 cmbMode.select(1);
             }
         } else {
+            cmbMode.select(0);
             stack.setLayer(0);
         }
     }
