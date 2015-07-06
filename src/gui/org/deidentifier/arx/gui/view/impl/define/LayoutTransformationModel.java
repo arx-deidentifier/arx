@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @author Fabian Prasser
  */
-public class LayoutTransformationSettings implements ILayout, IView {
+public class LayoutTransformationModel implements ILayout, IView {
 
     /** Controller. */
     private final Controller      controller;
@@ -63,7 +63,7 @@ public class LayoutTransformationSettings implements ILayout, IView {
      * @param parent
      * @param controller
      */
-    public LayoutTransformationSettings(final Composite parent,
+    public LayoutTransformationModel(final Composite parent,
                                         final Controller controller) {
 
         this.controller = controller;

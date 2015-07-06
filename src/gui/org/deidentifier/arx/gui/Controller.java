@@ -478,6 +478,20 @@ public class Controller implements IView {
                     }
                 }
             }
+
+            // Replace in input hierarchy
+            if (model.getInputConfig() != null) {
+                Hierarchy hierarchy = model.getInputConfig().getHierarchy(model.getSelectedAttribute());
+                if (hierarchy != null) {
+                    for (String[] array : hierarchy.getHierarchy()) {
+                        for (int i=0; i<array.length; i++) {
+                            if (array[i].equals(pair.getFirst())) {
+                                array[i] = pair.getSecond();
+                            }
+                        }
+                    }
+                }
+            }
             
             // Fire event
             ModelAuditTrailEntry entry = ModelAuditTrailEntry.createfindReplaceEntry( model.getSelectedAttribute(), 

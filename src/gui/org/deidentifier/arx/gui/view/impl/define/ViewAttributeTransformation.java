@@ -18,20 +18,13 @@
 package org.deidentifier.arx.gui.view.impl.define;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataScale;
-import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.DataType.ARXOrderedString;
-import org.deidentifier.arx.DataType.DataTypeDescription;
-import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -41,28 +34,27 @@ import org.deidentifier.arx.gui.model.ModelTransformationMode;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.common.ComponentHierarchy;
+import org.deidentifier.arx.gui.view.impl.common.ComponentHierarchyMenu;
 import org.deidentifier.arx.gui.view.impl.common.ComponentMultiStack;
-import org.deidentifier.arx.gui.view.impl.common.ViewHierarchy;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 /**
  * This view displays basic attribute information.
  * 
  * @author Fabian Prasser
  */
-public class ViewAttributeDefinition implements IView {
+public class ViewAttributeTransformation implements IView {
     
     /** Resource */
     private static final AttributeType[] COMBO1_TYPES  = new AttributeType[] {
@@ -77,21 +69,12 @@ public class ViewAttributeDefinition implements IView {
                                                         Resources.getMessage("AttributeDefinitionView.1"), //$NON-NLS-1$
                                                         Resources.getMessage("AttributeDefinitionView.2"), //$NON-NLS-1$
                                                         Resources.getMessage("AttributeDefinitionView.3") }; //$NON-NLS-1$
-    
+
     /** Resource */
-    private static final List<MicroAggregationFunctionDescription> FUNCTIONS = AttributeType.listMicroAggregationFunctions(); 
+    private static final List<MicroAggregationFunctionDescription> FUNCTIONS     = AttributeType.listMicroAggregationFunctions();
 
     /** Resource. */
     private static final String                                    ITEM_ALL      = Resources.getMessage("HierarchyView.0");      //$NON-NLS-1$
-    
-    /** Resource */
-    private final Image                                            IMAGE_IDENTIFYING;
-    /** Resource */
-    private final Image                                            IMAGE_INSENSITIVE;
-    /** Resource */
-    private final Image                                            IMAGE_QUASI_IDENTIFYING;
-    /** Resource */
-    private final Image                                            IMAGE_SENSITIVE;
 
     /** Model */
     private String                                                 attribute     = null;
@@ -101,12 +84,6 @@ public class ViewAttributeDefinition implements IView {
     /** Controller */
     private final Controller                                       controller;
 
-    /** Widget */
-    private final Combo                                            cmbDataType;
-    /** Widget */
-    private final Text                                             txtDataType;
-    /** Widget */
-    private final CTabItem                                         tabItem;
     /** Widget */
     private final Combo                                            cmbType;
     /** Widget */
@@ -120,10 +97,13 @@ public class ViewAttributeDefinition implements IView {
     /** Widget. */
     private final Combo                                            cmbMax;
     /** Widget. */
-    private final ComponentMultiStack                              transformationStack;
-    
+    private final ComponentMultiStack                              stack;
     /** View */
-    private final ViewHierarchy                                    viewGeneralization;
+    private final Composite                                        root;
+    /** View */
+    private final ComponentHierarchyMenu                           menu;
+    /** View */
+    private final ComponentHierarchy                               hierarchy;
 
     /**
      * Constructor.
@@ -132,43 +112,30 @@ public class ViewAttributeDefinition implements IView {
      * @param attribute
      * @param controller
      */
-    public ViewAttributeDefinition(final CTabFolder parent,
-                                   final String attribute,
+    public ViewAttributeTransformation(final Composite parent,
                                    final Controller controller) {
-        
-        // Load images
-        IMAGE_INSENSITIVE = controller.getResources().getManagedImage("bullet_green.png"); //$NON-NLS-1$
-        IMAGE_SENSITIVE = controller.getResources().getManagedImage("bullet_purple.png"); //$NON-NLS-1$
-        IMAGE_QUASI_IDENTIFYING = controller.getResources().getManagedImage("bullet_yellow.png"); //$NON-NLS-1$
-        IMAGE_IDENTIFYING = controller.getResources().getManagedImage("bullet_red.png"); //$NON-NLS-1$
         
         // Register
         this.controller = controller;
-        this.attribute = attribute;
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.INPUT, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         this.controller.addListener(ModelPart.DATA_TYPE, this);
         this.controller.addListener(ModelPart.HIERARCHY, this);
-        
-        // Create input group
-        tabItem = new CTabItem(parent, SWT.NULL);
-        tabItem.setText(attribute);
-        tabItem.setShowClose(false);
-        tabItem.setImage(IMAGE_INSENSITIVE);
+        this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         
         // Group
-        Composite group = new Composite(parent, SWT.NULL);
-        group.setLayoutData(SWTUtil.createFillGridData());
+        root = new Composite(parent, SWT.NULL);
+        root.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
         groupInputGridLayout.numColumns = 1;
-        group.setLayout(groupInputGridLayout);
+        root.setLayout(groupInputGridLayout);
         
         // Group
-        final Composite innerGroup = new Composite(group, SWT.NULL);
+        final Composite innerGroup = new Composite(root, SWT.NULL);
         innerGroup.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout typeInputGridLayout = new GridLayout();
-        typeInputGridLayout.numColumns = 6;
+        typeInputGridLayout.numColumns = 4;
         innerGroup.setLayout(typeInputGridLayout);
         
         // Combo for attribute type
@@ -185,27 +152,6 @@ public class ViewAttributeDefinition implements IView {
             }
         });
         
-        // Combo for data type
-        final Label kLabel2 = new Label(innerGroup, SWT.PUSH);
-        kLabel2.setText(Resources.getMessage("AttributeDefinitionView.8")); //$NON-NLS-1$
-        cmbDataType = new Combo(innerGroup, SWT.READ_ONLY);
-        cmbDataType.setLayoutData(SWTUtil.createFillGridData());
-        cmbDataType.setItems(getDataTypes());
-        cmbDataType.select(getIndexOfDataType(DataType.STRING));
-        cmbDataType.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                actionDataTypeChanged();
-            }
-        });
-        
-        final Label kLabel3 = new Label(innerGroup, SWT.PUSH);
-        kLabel3.setText(Resources.getMessage("AttributeDefinitionView.10")); //$NON-NLS-1$
-        txtDataType = new Text(innerGroup, SWT.READ_ONLY | SWT.BORDER);
-        txtDataType.setLayoutData(SWTUtil.createFillGridData());
-        txtDataType.setEditable(false);
-        txtDataType.setText(""); //$NON-NLS-1$
-
         // Add combo for mode
         final Label fLabel2 = new Label(innerGroup, SWT.PUSH);
         fLabel2.setText(Resources.getMessage("ViewMicoaggregation.4")); //$NON-NLS-1$
@@ -222,10 +168,10 @@ public class ViewAttributeDefinition implements IView {
         });
         
         // Create multistack
-        transformationStack = new ComponentMultiStack(innerGroup);
+        stack = new ComponentMultiStack(innerGroup);
         
         // First column
-        Composite first = transformationStack.create(SWTUtil.createGridData());
+        Composite first = stack.create(SWTUtil.createGridData());
         Composite compositeLabelMin = new Composite(first, SWT.NONE);
         GridLayout compositeLabelMinLayout = new GridLayout();
         compositeLabelMinLayout.numColumns = 1;
@@ -246,7 +192,7 @@ public class ViewAttributeDefinition implements IView {
         labelFunction.setText(Resources.getMessage("ViewMicoaggregation.0")); //$NON-NLS-1$
 
         // Second column
-        Composite second = transformationStack.create(SWTUtil.createFillHorizontallyGridData());
+        Composite second = stack.create(SWTUtil.createFillHorizontallyGridData());
         this.cmbMin = new Combo(second, SWT.READ_ONLY);
         this.cmbMin.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.cmbMin.addSelectionListener(new SelectionAdapter() {
@@ -265,7 +211,7 @@ public class ViewAttributeDefinition implements IView {
         });
 
         // Third column
-        Composite third = transformationStack.create(SWTUtil.createGridData());
+        Composite third = stack.create(SWTUtil.createGridData());
         Composite compositelabelMax = new Composite(third, SWT.NONE);
         GridLayout compositelabelMaxLayout = new GridLayout();
         compositelabelMaxLayout.numColumns = 1;
@@ -286,7 +232,7 @@ public class ViewAttributeDefinition implements IView {
         labelMissing.setText(Resources.getMessage("ViewMicoaggregation.7")); //$NON-NLS-1$
 
         // Fourth column
-        Composite fourth = transformationStack.create(SWTUtil.createFillHorizontallyGridData());
+        Composite fourth = stack.create(SWTUtil.createFillHorizontallyGridData());
         this.cmbMax = new Combo(fourth, SWT.READ_ONLY);
         this.cmbMax.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.cmbMax.addSelectionListener(new SelectionAdapter() {
@@ -309,63 +255,84 @@ public class ViewAttributeDefinition implements IView {
         });
         
         // Collect info about children in stack
-        transformationStack.pack();
+        stack.pack();
+        stack.setLayer(0);
           
         // Editor hierarchy
-        viewGeneralization = new ViewHierarchy(group, attribute, controller);
-
-        // Attach to tab
-        tabItem.setControl(group);
+        this.hierarchy = new ComponentHierarchy(root, new ModifyListener(){
+            @Override public void modifyText(ModifyEvent arg0) {
+                actionHierarchyChanged((Hierarchy)arg0.data);
+            }
+        });
+        this.menu = new ComponentHierarchyMenu(hierarchy, controller);
     }
     
     @Override
     public void dispose() {
-        
-        // Dispose views
         controller.removeListener(this);
-        viewGeneralization.dispose();
+        menu.dispose();
     }
     
     @Override
     public void reset() {
-        txtDataType.setText(""); //$NON-NLS-1$
         updateMinMax();
+        SWTUtil.disable(root);
     }
     
     @Override
     public void update(final ModelEvent event) {
-        if (event.part == ModelPart.MODEL) {
+        if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+            if (model != null) {
+                SWTUtil.enable(root);
+                attribute = model.getSelectedAttribute();
+                updateAttributeType();
+                updateFunction();
+                updateMode();
+                updateMinMax();
+                hierarchy.setHierarchy(getHierarchy());
+            }
+        } else if (event.part == ModelPart.MODEL) {
+            SWTUtil.enable(root);
             model = (Model) event.data;
+            attribute = model.getSelectedAttribute();
             updateAttributeType();
-            updateDataType();
             updateFunction();
             updateMode();
             updateMinMax();
-            viewGeneralization.update(event);
+            hierarchy.setHierarchy(getHierarchy());
         } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+            SWTUtil.enable(root);
             final String attr = (String) event.data;
             if (attr.equals(attribute)) {
                 updateAttributeType();
-                updateDataType();
-                updateIcon();
             }
         } else if (event.part == ModelPart.HIERARCHY) {
-            // TODO: Attribute should be associated with the event
+            SWTUtil.enable(root);
             if (attribute.equals(model.getSelectedAttribute())) {
+                hierarchy.setHierarchy(getHierarchy());
                 updateMinMax();
             }
         } else if (event.part == ModelPart.INPUT) {
+            SWTUtil.enable(root);
+            attribute = model.getSelectedAttribute();
             updateAttributeType();
-            updateDataType();
             updateMode();
             updateMinMax();
-            viewGeneralization.update(event);
+            hierarchy.setHierarchy(getHierarchy());
         } else if (event.part == ModelPart.DATA_TYPE) {
-            updateFunction();
-            updateMode();
+            SWTUtil.enable(root);
+            if (attribute.equals(model.getSelectedAttribute())) {
+                updateFunction();
+                updateMode();
+            }
+        } else if (event.part == ModelPart.ATTRIBUTE_VALUE) {
+            SWTUtil.enable(root);
+            if (attribute.equals(model.getSelectedAttribute())) {
+                hierarchy.setHierarchy(getHierarchy());
+            }
         }
     }
-    
+
     /**
      * Attribute type changed
      */
@@ -419,8 +386,6 @@ public class ViewAttributeDefinition implements IView {
                     
                 }
                 
-                // Update icon
-                updateIcon();
                 // Update mode
                 updateMode();
                 
@@ -440,67 +405,6 @@ public class ViewAttributeDefinition implements IView {
     }
     
     /**
-     * Data type changed
-     */
-    private void actionDataTypeChanged() {
-        if ((cmbDataType.getSelectionIndex() != -1) &&
-            (attribute != null)) {
-            if ((model != null) &&
-                (model.getInputConfig().getInput() != null)) {
-                
-                // Obtain type
-                String label = cmbDataType.getItem(cmbDataType.getSelectionIndex());
-                DataTypeDescription<?> description = getDataType(label);
-                DataType<?> type;
-                
-                // Open format dialog
-                if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
-                    final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
-                    final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                    String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
-                                                                            text1, text2, DataType.STRING,
-                                                                            model.getLocale(), getValuesAsArray());
-                    if (array == null) {
-                        type = DataType.STRING;
-                    } else {
-                        try {
-                            type = DataType.createOrderedString(array);
-                            if (!isValidDataType(type, getValuesAsList())) {
-                                type = DataType.STRING;
-                            }
-                        } catch (Exception e) {
-                            controller.actionShowInfoDialog(controller.getResources().getShell(),
-                                                            Resources.getMessage("ViewAttributeDefinition.1"), Resources.getMessage("ViewAttributeDefinition.2") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
-                            type = DataType.STRING;
-                        }
-                    }
-                } else if (description.hasFormat()) {
-                    final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
-                    final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                    final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
-                                                                                 text1, text2, model.getLocale(), description, getValuesAsList());
-                    if (format == null) {
-                        type = DataType.STRING;
-                    } else {
-                        type = description.newInstance(format, model.getLocale());
-                    }
-                } else {
-                    type = description.newInstance();
-                    if (!isValidDataType(type, getValuesAsList())) {
-                        type = DataType.STRING;
-                    }
-                }
-                
-                // Set and update
-                model.getInputDefinition().setDataType(attribute, type);
-                updateFunction();
-                updateDataType();
-                controller.update(new ModelEvent(this, ModelPart.DATA_TYPE, attribute));
-            }
-        }
-    }
-    
-    /**
      * Function changed
      */
     private void actionFunctionChanged() {
@@ -509,6 +413,32 @@ public class ViewAttributeDefinition implements IView {
             model.getInputConfig().setMicroAggregationFunction(attribute, getMicroAggregationFunction(function));
         }
     }
+
+    /**
+     * Called when the hierarchy changes
+     * @param hierarchy
+     */
+    private void actionHierarchyChanged(Hierarchy hierarchy) {
+        
+        // Check
+        if (model == null || model.getInputConfig() == null) {
+            return;
+        }
+        
+        // Update view
+        updateMinMax();
+        
+        // Update model
+        if (hierarchy == null) {
+            model.getInputConfig().removeHierarchy(attribute);
+        } else {
+            model.getInputConfig().setHierarchy(attribute, hierarchy);
+        }
+        
+        // Fire event
+        controller.update(new ModelEvent(ViewAttributeTransformation.this, ModelPart.HIERARCHY, hierarchy));
+    }
+    
     
     /**
      * Updates the max generalization level.
@@ -529,7 +459,7 @@ public class ViewAttributeDefinition implements IView {
         }
         return false;
     }
-
+    
     /**
      * Updates the min generalization level.
      *
@@ -558,7 +488,7 @@ public class ViewAttributeDefinition implements IView {
             model.getInputConfig().setMicroAggregationIgnoreMissingData(attribute, btnMissing.getSelection());
         }
     }
-    
+
     /**
      * Transformation mode changed
      */
@@ -568,56 +498,22 @@ public class ViewAttributeDefinition implements IView {
         }
         if (cmbMode.getSelectionIndex() == 0) {
             model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.GENERALIZATION);
-            transformationStack.setLayer(0);
+            stack.setLayer(0);
         } else {
             model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.MICRO_AGGREGATION);
-            transformationStack.setLayer(1);
+            stack.setLayer(1);
         }
     }
     
     /**
-     * Returns a description for the given label.
-     *
-     * @param label
+     * Returns the current hierarchy
      * @return
      */
-    private DataTypeDescription<?> getDataType(String label) {
-        for (DataTypeDescription<?> desc : DataType.list()) {
-            if (label.equals(desc.getLabel())) {
-                return desc;
-            }
+    private Hierarchy getHierarchy() {
+        if (model == null || model.getSelectedAttribute() == null || model.getInputConfig() == null) {
+            return null;
         }
-        throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.5") + label); //$NON-NLS-1$
-    }
-    
-    /**
-     * Returns the labels of all available data types.
-     *
-     * @return
-     */
-    private String[] getDataTypes() {
-        List<String> list = new ArrayList<String>();
-        for (DataTypeDescription<?> desc : DataType.list()) {
-            list.add(desc.getLabel());
-        }
-        return list.toArray(new String[list.size()]);
-    }
-    
-    /**
-     * Returns the index of a given data type.
-     *
-     * @param type
-     * @return
-     */
-    private int getIndexOfDataType(DataType<?> type) {
-        int idx = 0;
-        for (DataTypeDescription<?> desc : DataType.list()) {
-            if (desc.getLabel().equals(type.getDescription().getLabel())) {
-                return idx;
-            }
-            idx++;
-        }
-        throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.6") + type.getDescription().getLabel()); //$NON-NLS-1$
+        return model.getInputConfig().getHierarchy(model.getSelectedAttribute());
     }
     
     /**
@@ -635,41 +531,6 @@ public class ViewAttributeDefinition implements IView {
     }
     
     /**
-     * Create an array of the values in the column for this attribute.
-     *
-     * @return
-     */
-    private String[] getValuesAsArray() {
-        final DataHandle h = model.getInputConfig().getInput().getHandle();
-        return h.getStatistics().getDistinctValues(h.getColumnIndexOf(attribute));
-    }
-    
-    /**
-     * Create a collection of the values in the column for this attribute.
-     *
-     * @return
-     */
-    private Collection<String> getValuesAsList() {
-        return Arrays.asList(getValuesAsArray());
-    }
-    
-    /**
-     * Checks whether the data type is valid.
-     *
-     * @param type
-     * @param values
-     * @return
-     */
-    private boolean isValidDataType(DataType<?> type, Collection<String> values) {
-        for (String value : values) {
-            if (!type.isValid(value)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * 
      * Update the attribute type.
      */
@@ -680,27 +541,6 @@ public class ViewAttributeDefinition implements IView {
                 cmbType.select(i);
                 break;
             }
-        }
-    }
-    
-    /**
-     * Update the data type.
-     */
-    private void updateDataType() {
-        
-        DataType<?> dtype = model.getInputDefinition().getDataType(attribute);
-        cmbDataType.select(getIndexOfDataType(dtype));
-        
-        if (!(dtype instanceof ARXOrderedString) && dtype.getDescription().hasFormat()) {
-            DataTypeWithFormat dtwf = (DataTypeWithFormat) dtype;
-            String format = dtwf.getFormat();
-            if (format == null) {
-                txtDataType.setText(Resources.getMessage("ViewAttributeDefinition.7")); //$NON-NLS-1$
-            } else {
-                txtDataType.setText(format);
-            }
-        } else {
-            txtDataType.setText(Resources.getMessage("ViewAttributeDefinition.8")); //$NON-NLS-1$
         }
     }
     
@@ -726,22 +566,6 @@ public class ViewAttributeDefinition implements IView {
                 this.model.getInputConfig().setMicroAggregationFunction(attribute, getMicroAggregationFunction(functions.get(index)));
             }
             this.btnMissing.setSelection(this.model.getInputConfig().getMicroAggregationIgnoreMissingData(attribute));
-        }
-    }
-
-    /**
-     * Update the column icon.
-     */
-    private void updateIcon() {
-        AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-        if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
-            tabItem.setImage(IMAGE_QUASI_IDENTIFYING);
-        } else if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
-            tabItem.setImage(IMAGE_INSENSITIVE);
-        } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-            tabItem.setImage(IMAGE_SENSITIVE);
-        } else if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-            tabItem.setImage(IMAGE_IDENTIFYING);
         }
     }
 
@@ -805,14 +629,14 @@ public class ViewAttributeDefinition implements IView {
             model != null && model.getInputConfig() != null) {
             
             if (model.getInputConfig().getTransformationMode(attribute) == ModelTransformationMode.GENERALIZATION) {
-                transformationStack.setLayer(0);
+                stack.setLayer(0);
                 cmbMode.select(0);
             } else {
-                transformationStack.setLayer(1);
+                stack.setLayer(1);
                 cmbMode.select(1);
             }
         } else {
-            transformationStack.setLayer(0);
+            stack.setLayer(0);
         }
     }
 }
