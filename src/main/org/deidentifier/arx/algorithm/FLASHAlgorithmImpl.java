@@ -102,7 +102,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         checker.getHistory().setStorageStrategy(config.getSnapshotStorageStrategy());
 
         // Initialize
-        PriorityQueue<Integer> queue = new PriorityQueue<Integer>(solutionSpace.getTop().getLevel(), strategy);
+        PriorityQueue<Integer> queue = new PriorityQueue<Integer>(solutionSpace.getTop().getLevel() + 1, strategy);
         Transformation bottom = solutionSpace.getBottom();
         Transformation top = solutionSpace.getTop();
 
