@@ -47,10 +47,10 @@ public class NodeChecker {
     public static class Result {
         
         /** Overall anonymity. */
-        public final boolean privacyModelFulfilled;
+        public final Boolean privacyModelFulfilled;
         
         /** k-Anonymity sub-criterion. */
-        public final boolean minimalClassSizeFulfilled;
+        public final Boolean minimalClassSizeFulfilled;
         
         /** Information loss. */
         public final InformationLoss<?> informationLoss;
@@ -66,8 +66,8 @@ public class NodeChecker {
          * @param infoLoss
          * @param lowerBound
          */
-        Result(boolean privacyModelFulfilled,
-               boolean minimalClassSizeFulfilled,
+        Result(Boolean privacyModelFulfilled,
+               Boolean minimalClassSizeFulfilled,
                InformationLoss<?> infoLoss,
                InformationLoss<?> lowerBound) {
             this.privacyModelFulfilled = privacyModelFulfilled;
@@ -119,6 +119,9 @@ public class NodeChecker {
     /** The solution space */
     private final SolutionSpace                   solutionSpace;
 
+    /** Is a minimal class size required */
+    private final boolean                         minimalClassSizeRequired;
+
     /**
      * Creates a new NodeChecker instance.
      * 
@@ -148,6 +151,7 @@ public class NodeChecker {
         this.microaggregationMap = manager.getMicroaggregationMap();
         this.microaggregationHeader = manager.getMicroaggregationHeader();
         this.solutionSpace = solutionSpace;
+        this.minimalClassSizeRequired = config.getMinimalGroupSize() != Integer.MAX_VALUE;
         
         int initialSize = (int) (manager.getDataGeneralized().getDataLength() * 0.01d);
         IntArrayDictionary dictionarySensValue;
@@ -222,7 +226,9 @@ public class NodeChecker {
         
         // Return the buffer
         return new TransformedData(generalizedOutput, microaggregatedOutput, currentGroupify.getEquivalenceClassStatistics(),
-                                   new Result(currentGroupify.isPrivacyModelFulfilled(), currentGroupify.isMinimalClassSizeFulfilled(), loss, null));
+                                   new Result(currentGroupify.isPrivacyModelFulfilled(), 
+                                              minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null, 
+                                              loss, null));
     }
     
     /**
@@ -287,7 +293,7 @@ public class NodeChecker {
         
         // Return result;
         return new NodeChecker.Result(currentGroupify.isPrivacyModelFulfilled(),
-                                      currentGroupify.isMinimalClassSizeFulfilled(),
+                                      minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
                                       loss,
                                       bound);
     }

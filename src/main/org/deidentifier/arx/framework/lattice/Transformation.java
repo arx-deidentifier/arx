@@ -146,10 +146,12 @@ public class Transformation {
         }
 
         // k-Anonymous
-        if (result.minimalClassSizeFulfilled){
-            this.setProperty(solutionSpace.getPropertyKAnonymous());
-        } else {
-            this.setProperty(solutionSpace.getPropertyNotKAnonymous());
+        if (result.minimalClassSizeFulfilled != null) {
+            if (result.minimalClassSizeFulfilled){
+                this.setProperty(solutionSpace.getPropertyKAnonymous());
+            } else {
+                this.setProperty(solutionSpace.getPropertyNotKAnonymous());
+            }
         }
 
         // Infoloss
