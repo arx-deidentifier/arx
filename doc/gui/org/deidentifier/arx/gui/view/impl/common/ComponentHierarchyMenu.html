@@ -2,13 +2,13 @@
 <!-- NewPage -->
 <html lang="de">
 <head>
-<title>LayoutTransformationSettings (ARX GUI Documentation)</title>
+<title>ComponentHierarchyMenu (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
 </head>
 <body>
 <script type="text/javascript"><!--
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="LayoutTransformationSettings (ARX GUI Documentation)";
+        parent.document.title="ComponentHierarchyMenu (ARX GUI Documentation)";
     }
 //-->
 </script>
@@ -25,7 +25,7 @@
 <li><a href="../../../../../../../overview-summary.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
-<li><a href="class-use/LayoutTransformationSettings.html">Use</a></li>
+<li><a href="class-use/ComponentHierarchyMenu.html">Use</a></li>
 <li><a href="package-tree.html">Tree</a></li>
 <li><a href="../../../../../../../deprecated-list.html">Deprecated</a></li>
 <li><a href="../../../../../../../index-all.html">Index</a></li>
@@ -34,12 +34,12 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/define/LayoutDefinition.html" title="class in org.deidentifier.arx.gui.view.impl.define"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/define/ViewAttributeDefinition.html" title="class in org.deidentifier.arx.gui.view.impl.define"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentHierarchy.html" title="class in org.deidentifier.arx.gui.view.impl.common"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentMultiStack.html" title="class in org.deidentifier.arx.gui.view.impl.common"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/define/LayoutTransformationSettings.html" target="_top">Frames</a></li>
-<li><a href="LayoutTransformationSettings.html" target="_top">No Frames</a></li>
+<li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/common/ComponentHierarchyMenu.html" target="_top">Frames</a></li>
+<li><a href="ComponentHierarchyMenu.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
 <li><a href="../../../../../../../allclasses-noframe.html">All Classes</a></li>
@@ -77,15 +77,15 @@
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">org.deidentifier.arx.gui.view.impl.define</div>
-<h2 title="Class LayoutTransformationSettings" class="title">Class LayoutTransformationSettings</h2>
+<div class="subTitle">org.deidentifier.arx.gui.view.impl.common</div>
+<h2 title="Class ComponentHierarchyMenu" class="title">Class ComponentHierarchyMenu</h2>
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>org.deidentifier.arx.gui.view.impl.define.LayoutTransformationSettings</li>
+<li>org.deidentifier.arx.gui.view.impl.common.ComponentHierarchyMenu</li>
 </ul>
 </li>
 </ul>
@@ -94,14 +94,15 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayout.html" title="interface in org.deidentifier.arx.gui.view.def">ILayout</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></dd>
+<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></dd>
 </dl>
 <hr>
 <br>
-<pre>public class <span class="strong">LayoutTransformationSettings</span>
+<pre>public class <span class="strong">ComponentHierarchyMenu</span>
 extends java.lang.Object
-implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayout.html" title="interface in org.deidentifier.arx.gui.view.def">ILayout</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></pre>
-<div class="block">This layout manages views for general settings regarding data transformation.</div>
+implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></pre>
+<div class="block">This class implements an a menu for the editor for generalization hierarchies. It is partly
+ based upon code implemented by Ledian Xhani and Ljubomir Dshevlekov.</div>
 </li>
 </ul>
 </div>
@@ -120,9 +121,9 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayo
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/define/LayoutTransformationSettings.html#LayoutTransformationSettings(org.eclipse.swt.widgets.Composite, org.deidentifier.arx.gui.Controller)">LayoutTransformationSettings</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
-                            <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
-<div class="block">Creates a new instance.</div>
+<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentHierarchyMenu.html#ComponentHierarchyMenu(org.deidentifier.arx.gui.view.impl.common.ComponentHierarchy, org.deidentifier.arx.gui.Controller)">ComponentHierarchyMenu</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentHierarchy.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentHierarchy</a>&nbsp;hierarchy,
+                      <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
+<div class="block">Creates a new instance</div>
 </td>
 </tr>
 </table>
@@ -142,19 +143,19 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayo
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/define/LayoutTransformationSettings.html#dispose()">dispose</a></strong>()</code>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentHierarchyMenu.html#dispose()">dispose</a></strong>()</code>
 <div class="block">Disposes the view.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/define/LayoutTransformationSettings.html#reset()">reset</a></strong>()</code>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentHierarchyMenu.html#reset()">reset</a></strong>()</code>
 <div class="block">Resets the view.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/define/LayoutTransformationSettings.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelEvent.html" title="class in org.deidentifier.arx.gui.model">ModelEvent</a>&nbsp;event)</code>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentHierarchyMenu.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelEvent.html" title="class in org.deidentifier.arx.gui.model">ModelEvent</a>&nbsp;event)</code>
 <div class="block">Updates the view.</div>
 </td>
 </tr>
@@ -180,16 +181,16 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayo
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="LayoutTransformationSettings(org.eclipse.swt.widgets.Composite, org.deidentifier.arx.gui.Controller)">
+<a name="ComponentHierarchyMenu(org.deidentifier.arx.gui.view.impl.common.ComponentHierarchy, org.deidentifier.arx.gui.Controller)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>LayoutTransformationSettings</h4>
-<pre>public&nbsp;LayoutTransformationSettings(org.eclipse.swt.widgets.Composite&nbsp;parent,
-                            <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</pre>
-<div class="block">Creates a new instance.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>controller</code> - </dd></dl>
+<h4>ComponentHierarchyMenu</h4>
+<pre>public&nbsp;ComponentHierarchyMenu(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentHierarchy.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentHierarchy</a>&nbsp;hierarchy,
+                      <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</pre>
+<div class="block">Creates a new instance</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>hierarchy</code> - </dd><dd><code>controller</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -262,7 +263,7 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayo
 <li><a href="../../../../../../../overview-summary.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
-<li><a href="class-use/LayoutTransformationSettings.html">Use</a></li>
+<li><a href="class-use/ComponentHierarchyMenu.html">Use</a></li>
 <li><a href="package-tree.html">Tree</a></li>
 <li><a href="../../../../../../../deprecated-list.html">Deprecated</a></li>
 <li><a href="../../../../../../../index-all.html">Index</a></li>
@@ -271,12 +272,12 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayo
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/define/LayoutDefinition.html" title="class in org.deidentifier.arx.gui.view.impl.define"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/define/ViewAttributeDefinition.html" title="class in org.deidentifier.arx.gui.view.impl.define"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentHierarchy.html" title="class in org.deidentifier.arx.gui.view.impl.common"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentMultiStack.html" title="class in org.deidentifier.arx.gui.view.impl.common"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/define/LayoutTransformationSettings.html" target="_top">Frames</a></li>
-<li><a href="LayoutTransformationSettings.html" target="_top">No Frames</a></li>
+<li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/common/ComponentHierarchyMenu.html" target="_top">Frames</a></li>
+<li><a href="ComponentHierarchyMenu.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
 <li><a href="../../../../../../../allclasses-noframe.html">All Classes</a></li>

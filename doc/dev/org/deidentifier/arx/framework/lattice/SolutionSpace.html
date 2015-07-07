@@ -184,8 +184,8 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.util.Iterator&lt;java.lang.Long&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPredecessors(long)">getPredecessors</a></strong>(long&nbsp;transformation)</code>
+<td class="colFirst"><code>cern.colt.list.LongArrayList</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPredecessors(long)">getPredecessors</a></strong>(long&nbsp;identifier)</code>
 <div class="block">Returns all predeccessors of the transformation with the given identifier</div>
 </td>
 </tr>
@@ -256,7 +256,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.util.Iterator&lt;java.lang.Long&gt;</code></td>
+<td class="colFirst"><code>cern.colt.list.LongArrayList</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getSuccessors(long)">getSuccessors</a></strong>(long&nbsp;identifier)</code>
 <div class="block">Returns all successors of the transformation with the given identifier</div>
 </td>
@@ -458,7 +458,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getPredecessors</h4>
-<pre>public&nbsp;java.util.Iterator&lt;java.lang.Long&gt;&nbsp;getPredecessors(long&nbsp;transformation)</pre>
+<pre>public&nbsp;cern.colt.list.LongArrayList&nbsp;getPredecessors(long&nbsp;identifier)</pre>
 <div class="block">Returns all predeccessors of the transformation with the given identifier</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
@@ -591,7 +591,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSuccessors</h4>
-<pre>public&nbsp;java.util.Iterator&lt;java.lang.Long&gt;&nbsp;getSuccessors(long&nbsp;identifier)</pre>
+<pre>public&nbsp;cern.colt.list.LongArrayList&nbsp;getSuccessors(long&nbsp;identifier)</pre>
 <div class="block">Returns all successors of the transformation with the given identifier</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>identifier</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
