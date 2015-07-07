@@ -27,6 +27,7 @@ import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataScale;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelAuditTrailEntry.AuditTrailEntryFindReplace;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
@@ -120,6 +121,7 @@ public class ViewAttributeTransformation implements IView {
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.INPUT, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
         this.controller.addListener(ModelPart.DATA_TYPE, this);
         this.controller.addListener(ModelPart.HIERARCHY, this);
         this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
@@ -316,6 +318,12 @@ public class ViewAttributeTransformation implements IView {
             if (attribute.equals(model.getSelectedAttribute())) {
                 hierarchy.setHierarchy(getHierarchy());
                 updateMinMax();
+            }
+        } else if (event.part == ModelPart.ATTRIBUTE_VALUE) {
+            SWTUtil.enable(root);
+            AuditTrailEntryFindReplace entry = (AuditTrailEntryFindReplace)event.data;
+            if (entry.getAttribute().equals(attribute)) {
+                hierarchy.setHierarchy(getHierarchy());
             }
         } else if (event.part == ModelPart.INPUT) {
             SWTUtil.enable(root);
