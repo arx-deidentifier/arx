@@ -1,11 +1,5 @@
 package org.deidentifier.arx.gui;
 
-/*
- * Copyright (c) 2000, 2002 IBM Corp. All rights reserved.
- * This file is made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- */
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -13,20 +7,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -34,166 +21,38 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
+/**
+ * Code based on: https://www.eclipse.org/articles/swt-design-2/sleak.htm
+ *
+ */
 public class DebugResourceLeaks {
-    Display  display;
-    Shell    shell;
-    List     list;
-    Canvas   canvas;
-    Button   start, stop, check, analyze;
-    Text     text;
-    Label    label;
     
-    Object[] oldObjects = new Object[0];
-    Error[]  oldErrors  = new Error[0];
-    Object[] objects    = new Object[0];
-    Error[]  errors     = new Error[0];
-    
-    public void open() {
-        display = Display.getCurrent();
-        shell = new Shell(display);
-        shell.setText("S-Leak");
-        list = new List(shell, SWT.BORDER | SWT.V_SCROLL);
-        list.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event event) {
-                refreshObject();
-            }
-        });
-        text = new Text(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        canvas = new Canvas(shell, SWT.BORDER);
-        canvas.addListener(SWT.Paint, new Listener() {
-            public void handleEvent(Event event) {
-                paintCanvas(event);
-            }
-        });
-        check = new Button(shell, SWT.CHECK);
-        check.setText("Stack");
-        check.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                toggleStackTrace();
-            }
-        });
-        start = new Button(shell, SWT.PUSH);
-        start.setText("Snap");
-        start.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event event) {
-                refreshAll();
-            }
-        });
-        stop = new Button(shell, SWT.PUSH);
-        stop.setText("Diff");
-        stop.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event event) {
-                refreshDifference();
-            }
-        });
-        
-        analyze = new Button(shell, SWT.PUSH);
-        analyze.setText("Analyze");
-        analyze.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event event) {
-                analyze();
-            }
-        });
-        label = new Label(shell, SWT.BORDER);
-        label.setText("0 object(s)");
-        shell.addListener(SWT.Resize, new Listener() {
-            public void handleEvent(Event e) {
-                layout();
-            }
-        });
-        check.setSelection(false);
-        text.setVisible(false);
-        Point size = shell.getSize();
-        shell.setSize(size.x / 2, size.y / 2);
-        shell.open();
+    public static void main(String[] args) {
+        DebugResourceLeaks sleak = new DebugResourceLeaks();
+        Display display = sleak.open();
+        Main.main(display, new String[0]);
     }
     
-    void refreshLabel() {
-        @SuppressWarnings("unused")
-        int colors = 0, cursors = 0, fonts = 0, gcs = 0, images = 0, regions = 0;
-        for (int i = 0; i < objects.length; i++) {
-            Object object = objects[i];
-            if (object instanceof Color) colors++;
-            if (object instanceof Cursor) cursors++;
-            if (object instanceof Font) fonts++;
-            if (object instanceof GC) gcs++;
-            if (object instanceof Image) images++;
-            if (object instanceof Region) regions++;
-        }
-        String string = "";
-        if (colors != 0) string += colors + " Color(s)\n";
-        if (cursors != 0) string += cursors + " Cursor(s)\n";
-        if (fonts != 0) string += fonts + " Font(s)\n";
-        if (gcs != 0) string += gcs + " GC(s)\n";
-        if (images != 0) string += images + " Image(s)\n";
-        /* Currently regions are not counted. */
-        // if (regions != 0) string += regions + " Region(s)\n";
-        if (string.length() != 0) {
-            string = string.substring(0, string.length() - 1);
-        }
-        label.setText(string);
-    }
+    private Display display;
     
-    void analyze() {
-        refreshAll();
-        
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<Object, Integer> mapIDX = new HashMap<Object, Integer>();
-        final Map<Object, Integer> mapTimes = new HashMap<Object, Integer>();
-        
-        for (int i = 0; i < objects.length; i++) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            PrintStream s = new PrintStream(stream);
-            errors[i].printStackTrace(s);
-            String stackTrace = stream.toString();
-            if (!map.containsKey(stackTrace)) {
-                map.put(stackTrace, objects[i]);
-                mapIDX.put(objects[i], i);
-                mapTimes.put(objects[i], 1);
-            } else {
-                Object object = map.get(stackTrace);
-                mapTimes.put(object, mapTimes.get(object) + 1);
-            }
-        }
-        
-        final Object[] equalObjects = new Object[map.size()];
-        final Error[] equalErrors = new Error[map.size()];
-        
-        int idx = 0;
-        for (Entry<String, Object> entry : map.entrySet()) {
-            equalObjects[idx++] = entry.getValue();
-        }
-        
-        Arrays.sort(equalObjects, new Comparator<Object>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                return mapTimes.get(o2) - mapTimes.get(o1);
-            }
-        });
-        
-        for (int i = 0; i < equalErrors.length; i++) {
-            equalErrors[i] = errors[mapIDX.get(equalObjects[i])];
-        }
-        
-        check.setSelection(true);
-        list.removeAll();
-        text.setText("");
-        canvas.redraw();
-        for (int i = 0; i < equalObjects.length; i++) {
-            list.add(objectName(equalObjects[i]) + "(" + mapTimes.get(equalObjects[i]) + ")");
-        }
-        
-        objects = equalObjects;
-        errors = equalErrors;
-        
-        refreshLabel();
-        layout();
-        
-    }
+    private Shell shell;
     
-    void refreshDifference() {
+    private Label objectStatistics;
+    private Label objectStackTrace;
+    
+    private List listNewObjects;
+    private List listEqualObjects;
+    
+    private Object[] newObjects;
+    
+    private Error[] newErrors;
+    
+    private Object[] equalObjects;
+    
+    private Error[] equalErrors;
+    
+    private void collectAll() {
         DeviceData info = display.getDeviceData();
         if (!info.tracking) {
             MessageBox dialog = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
@@ -201,164 +60,161 @@ public class DebugResourceLeaks {
             dialog.setMessage("Warning: Device is not tracking resource allocation");
             dialog.open();
         }
-        Object[] newObjects = info.objects;
-        Error[] newErrors = info.errors;
-        Object[] diffObjects = new Object[newObjects.length];
-        Error[] diffErrors = new Error[newErrors.length];
-        int count = 0;
-        for (int i = 0; i < newObjects.length; i++) {
-            int index = 0;
-            while (index < oldObjects.length) {
-                if (newObjects[i] == oldObjects[index]) break;
-                index++;
-            }
-            if (index == oldObjects.length) {
-                diffObjects[count] = newObjects[i];
-                diffErrors[count] = newErrors[i];
-                count++;
-            }
-        }
-        objects = new Object[count];
-        errors = new Error[count];
-        System.arraycopy(diffObjects, 0, objects, 0, count);
-        System.arraycopy(diffErrors, 0, errors, 0, count);
-        list.removeAll();
-        text.setText("");
-        canvas.redraw();
-        for (int i = 0; i < objects.length; i++) {
-            list.add(objectName(objects[i]));
-        }
-        refreshLabel();
-        layout();
-    }
-    
-    String objectName(Object object) {
-        String string = object.toString();
-        int index = string.lastIndexOf('.');
-        if (index == -1) return string;
-        return string.substring(index + 1, string.length());
-    }
-    
-    void toggleStackTrace() {
-        refreshObject();
-        layout();
-    }
-    
-    void paintCanvas(Event event) {
-        canvas.setCursor(null);
-        int index = list.getSelectionIndex();
-        if (index == -1) return;
-        GC gc = event.gc;
-        Object object = objects[index];
-        if (object instanceof Color) {
-            if (((Color) object).isDisposed()) return;
-            gc.setBackground((Color) object);
-            gc.fillRectangle(canvas.getClientArea());
-            return;
-        }
-        if (object instanceof Cursor) {
-            if (((Cursor) object).isDisposed()) return;
-            canvas.setCursor((Cursor) object);
-            return;
-        }
-        if (object instanceof Font) {
-            if (((Font) object).isDisposed()) return;
-            gc.setFont((Font) object);
-            FontData[] array = gc.getFont().getFontData();
-            String string = "";
-            String lf = text.getLineDelimiter();
-            for (int i = 0; i < array.length; i++) {
-                FontData data = array[i];
-                String style = "NORMAL";
-                int bits = data.getStyle();
-                if (bits != 0) {
-                    if ((bits & SWT.BOLD) != 0) style = "BOLD ";
-                    if ((bits & SWT.ITALIC) != 0) style += "ITALIC";
-                }
-                string += data.getName() + " " + data.getHeight() + " " + style + lf;
-            }
-            gc.drawString(string, 0, 0);
-            return;
-        }
-        // NOTHING TO DRAW FOR GC
-        // if (object instanceof GC) {
-        // return;
-        // }
-        if (object instanceof Image) {
-            if (((Image) object).isDisposed()) return;
-            gc.drawImage((Image) object, 0, 0);
-            return;
-        }
-        if (object instanceof Region) {
-            if (((Region) object).isDisposed()) return;
-            String string = ((Region) object).getBounds().toString();
-            gc.drawString(string, 0, 0);
-            return;
-        }
-    }
-    
-    void refreshObject() {
-        int index = list.getSelectionIndex();
-        if (index == -1) return;
-        if (check.getSelection()) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            PrintStream s = new PrintStream(stream);
-            errors[index].printStackTrace(s);
-            text.setText(stream.toString());
-            text.setVisible(true);
-            canvas.setVisible(false);
-        } else {
-            canvas.setVisible(true);
-            text.setVisible(false);
-            canvas.redraw();
-        }
-    }
-    
-    void refreshAll() {
-        oldObjects = new Object[0];
-        oldErrors = new Error[0];
-        refreshDifference();
-        oldObjects = objects;
-        oldErrors = errors;
-    }
-    
-    void layout() {
-        Rectangle rect = shell.getClientArea();
-        @SuppressWarnings("unused")
-        String[] strings = new String[objects.length];
-        int width = 0;
-        String[] items = list.getItems();
-        GC gc = new GC(list);
-        for (int i = 0; i < objects.length; i++) {
-            width = Math.max(width, gc.stringExtent(items[i]).x);
-        }
-        gc.dispose();
-        Point size1 = start.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        Point size2 = stop.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        Point size5 = analyze.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        Point size3 = check.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        Point size4 = label.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        width = Math.max(size1.x, Math.max(size2.x, Math.max(size3.x, Math.max(size5.x, width))));
-        width = Math.max(64, Math.max(size4.x, list.computeSize(width, SWT.DEFAULT).x));
-        start.setBounds(0, 0, width, size1.y);
-        stop.setBounds(0, size1.y, width, size2.y);
-        analyze.setBounds(0, size1.y + size2.y, width, size5.y);
+        newObjects = info.objects;
+        newErrors = info.errors;
         
-        check.setBounds(0, size1.y + size2.y + size5.y, width, size3.y);
-        label.setBounds(0, rect.height - size4.y, width, size4.y);
-        int height = size1.y + size2.y + size3.y + size5.y;
-        list.setBounds(0, height, width, rect.height - height - size4.y);
-        text.setBounds(width, 0, rect.width - width, rect.height);
-        canvas.setBounds(width, 0, rect.width - width, rect.height);
+        Map<String, Integer> objectTypesTimes = new TreeMap<String, Integer>();
+        Map<String, Object> objectSameStackTrace = new HashMap<String, Object>();
+        final Map<Object, Integer> objectSameStackTraceTimes = new HashMap<Object, Integer>();
+        Map<Object, Integer> objectSameStackTraceIDX = new HashMap<Object, Integer>();
+        
+        for (int i = 0; i < newObjects.length; i++) {
+            String className = newObjects[i].getClass().getSimpleName();
+            Integer count = objectTypesTimes.get(className);
+            if (count == null) {
+                objectTypesTimes.put(className, 1);
+            } else {
+                objectTypesTimes.put(className, count + 1);
+            }
+            
+            String stackTrace = getStackTrace(newErrors[i]);
+            if (!objectSameStackTrace.containsKey(stackTrace)) {
+                objectSameStackTrace.put(stackTrace, newObjects[i]);
+                objectSameStackTraceTimes.put(newObjects[i], 1);
+                objectSameStackTraceIDX.put(newObjects[i], i);
+            } else {
+                Object object = objectSameStackTrace.get(stackTrace);
+                objectSameStackTraceTimes.put(object, objectSameStackTraceTimes.get(object) + 1);
+            }
+        }
+        
+        equalObjects = new Object[objectSameStackTrace.size()];
+        equalErrors = new Error[objectSameStackTrace.size()];
+        
+        int idx = 0;
+        for (Entry<String, Object> entry : objectSameStackTrace.entrySet()) {
+            equalObjects[idx++] = entry.getValue();
+        }
+        
+        Arrays.sort(equalObjects, new Comparator<Object>() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                return objectSameStackTraceTimes.get(o2) - objectSameStackTraceTimes.get(o1);
+            }
+        });
+        
+        for (int i = 0; i < equalErrors.length; i++) {
+            equalErrors[i] = newErrors[objectSameStackTraceIDX.get(equalObjects[i])];
+        }
+        
+        StringBuilder statistics = new StringBuilder();
+        
+        for (Entry<String, Integer> entry : objectTypesTimes.entrySet()) {
+            statistics.append(entry.getKey());
+            statistics.append(": ");
+            statistics.append(entry.getValue());
+            statistics.append("\n");
+        }
+        statistics.append("Total: ");
+        statistics.append(newObjects.length);
+        statistics.append("\n");
+        
+        // Display
+        listNewObjects.removeAll();
+        for (int i = 0; i < newObjects.length; i++) {
+            listNewObjects.add(newObjects[i].getClass().getSimpleName() + "(" + newObjects[i].hashCode() + ")");
+        }
+        
+        listEqualObjects.removeAll();
+        for (int i = 0; i < equalObjects.length; i++) {
+            listEqualObjects.add(equalObjects[i].getClass().getSimpleName() + "(" + equalObjects[i].hashCode() + ")" + "[" + objectSameStackTraceTimes.get(equalObjects[i]) + "x]");
+        }
+        
+        objectStatistics.setText(statistics.toString());
     }
     
-    public static void main(String[] args) {
+    private String getStackTrace(Error error) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        PrintStream s = new PrintStream(stream);
+        error.printStackTrace(s);
+        return stream.toString();
+    }
+    
+    private Display open() {
         DeviceData data = new DeviceData();
         data.tracking = true;
         Display display = new Display(data);
-        DebugResourceLeaks sleak = new DebugResourceLeaks();
-        sleak.open();
-        Main.main(display, new String[0]);
+        
+        this.display = display;
+        shell = new Shell(display);
+        
+        shell.setText("Resources");
+        
+        shell.setLayout(SWTUtil.createGridLayout(2));
+        
+        Button collect = new Button(shell, SWT.PUSH);
+        collect.setText("Collect data");
+        collect.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                collectAll();
+            }
+        });
+        
+        final GridData d = new GridData();
+        d.grabExcessHorizontalSpace = true;
+        d.horizontalSpan = 2;
+        collect.setLayoutData(d);
+        
+        listNewObjects = new List(shell, SWT.BORDER | SWT.V_SCROLL);
+        listNewObjects.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                selectObject();
+            }
+        });
+        listNewObjects.setLayoutData(SWTUtil.createFillGridData());
+        
+        listEqualObjects = new List(shell, SWT.BORDER | SWT.V_SCROLL);
+        listEqualObjects.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                selectEqualObject();
+            }
+        });
+        listEqualObjects.setLayoutData(SWTUtil.createFillGridData());
+        
+        objectStackTrace = new Label(shell, SWT.BORDER);
+        objectStackTrace.setText("");
+        objectStackTrace.setLayoutData(SWTUtil.createFillGridData());
+        
+        objectStatistics = new Label(shell, SWT.BORDER);
+        objectStatistics.setText("0 object(s)");
+        objectStatistics.setLayoutData(SWTUtil.createFillGridData());
+        
+        shell.open();
+        
+        return display;
+    }
+    
+    private void selectEqualObject() {
+        int index = listEqualObjects.getSelectionIndex();
+        if (index == -1) {
+            return;
+        }
+        
+        objectStackTrace.setText(getStackTrace(equalErrors[index]));
+        objectStackTrace.setVisible(true);
+    }
+    
+    private void selectObject() {
+        int index = listNewObjects.getSelectionIndex();
+        if (index == -1) {
+            return;
+        }
+        
+        objectStackTrace.setText(getStackTrace(newErrors[index]));
+        objectStackTrace.setVisible(true);
     }
     
 }
