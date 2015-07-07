@@ -2,8 +2,6 @@ package org.deidentifier.arx.gui;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,6 +19,10 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+
+import cern.colt.GenericSorting;
+import cern.colt.Swapper;
+import cern.colt.function.IntComparator;
 
 /**
  * Code based on: https://www.eclipse.org/articles/swt-design-2/sleak.htm
@@ -64,9 +66,8 @@ public class DebugResourceLeaks {
         newErrors = info.errors;
         
         Map<String, Integer> objectTypesTimes = new TreeMap<String, Integer>();
-        Map<String, Object> objectSameStackTrace = new HashMap<String, Object>();
-        final Map<Object, Integer> objectSameStackTraceTimes = new HashMap<Object, Integer>();
-        Map<Object, Integer> objectSameStackTraceIDX = new HashMap<Object, Integer>();
+        Map<String, Integer> objectSameStackTrace = new HashMap<String, Integer>();
+        final Map<Integer, Integer> objectSameStackTraceTimes = new HashMap<Integer, Integer>();
         
         for (int i = 0; i < newObjects.length; i++) {
             String className = newObjects[i].getClass().getSimpleName();
@@ -79,33 +80,54 @@ public class DebugResourceLeaks {
             
             String stackTrace = getStackTrace(newErrors[i]);
             if (!objectSameStackTrace.containsKey(stackTrace)) {
-                objectSameStackTrace.put(stackTrace, newObjects[i]);
-                objectSameStackTraceTimes.put(newObjects[i], 1);
-                objectSameStackTraceIDX.put(newObjects[i], i);
+                objectSameStackTrace.put(stackTrace, i);
+                objectSameStackTraceTimes.put(i, 1);
             } else {
-                Object object = objectSameStackTrace.get(stackTrace);
-                objectSameStackTraceTimes.put(object, objectSameStackTraceTimes.get(object) + 1);
+                Integer objectIDX = objectSameStackTrace.get(stackTrace);
+                objectSameStackTraceTimes.put(objectIDX, objectSameStackTraceTimes.get(objectIDX) + 1);
             }
         }
         
         equalObjects = new Object[objectSameStackTrace.size()];
         equalErrors = new Error[objectSameStackTrace.size()];
+        final int[] equalOccurrence = new int[objectSameStackTrace.size()];
         
         int idx = 0;
-        for (Entry<String, Object> entry : objectSameStackTrace.entrySet()) {
-            equalObjects[idx++] = entry.getValue();
+        for (Entry<String, Integer> entry : objectSameStackTrace.entrySet()) {
+            equalObjects[idx] = newObjects[entry.getValue()];
+            equalErrors[idx] = newErrors[entry.getValue()];
+            equalOccurrence[idx] = objectSameStackTraceTimes.get(entry.getValue());
+            idx++;
         }
         
-        Arrays.sort(equalObjects, new Comparator<Object>() {
+        final IntComparator c = new IntComparator() {
             @Override
-            public int compare(Object o1, Object o2) {
-                return objectSameStackTraceTimes.get(o2) - objectSameStackTraceTimes.get(o1);
+            public int compare(final int arg0, final int arg1) {
+                return equalOccurrence[arg1] - equalOccurrence[arg0];
             }
-        });
+        };
+        final Swapper s = new Swapper() {
+            @Override
+            public void swap(final int arg0, final int arg1) {
+                // Swap objects
+                Object tempObject = equalObjects[arg0];
+                equalObjects[arg0] = equalObjects[arg1];
+                equalObjects[arg1] = tempObject;
+                
+                // Swap errors
+                Error tempError = equalErrors[arg0];
+                equalErrors[arg0] = equalErrors[arg1];
+                equalErrors[arg1] = tempError;
+                
+                // Swap occurrences
+                int tempOccurence = equalOccurrence[arg0];
+                equalOccurrence[arg0] = equalOccurrence[arg1];
+                equalOccurrence[arg1] = tempOccurence;
+            }
+        };
         
-        for (int i = 0; i < equalErrors.length; i++) {
-            equalErrors[i] = newErrors[objectSameStackTraceIDX.get(equalObjects[i])];
-        }
+        // No need to swap and rebuild the subset views
+        GenericSorting.mergeSort(0, equalObjects.length, c, s);
         
         StringBuilder statistics = new StringBuilder();
         
@@ -127,7 +149,7 @@ public class DebugResourceLeaks {
         
         listEqualObjects.removeAll();
         for (int i = 0; i < equalObjects.length; i++) {
-            listEqualObjects.add(equalObjects[i].getClass().getSimpleName() + "(" + equalObjects[i].hashCode() + ")" + "[" + objectSameStackTraceTimes.get(equalObjects[i]) + "x]");
+            listEqualObjects.add(equalObjects[i].getClass().getSimpleName() + "(" + equalObjects[i].hashCode() + ")" + "[" + equalOccurrence[i] + "x]");
         }
         
         objectStatistics.setText(statistics.toString());
