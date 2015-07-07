@@ -168,19 +168,12 @@ public class FLASHAlgorithm {
         DependentAction triggerTag = new DependentAction() {
             @Override
             public void action(Transformation node) {
-                if (node.hasProperty(solutionSpace.getPropertyAnonymous())) {
-                    node.setPropertyToNeighbours(solutionSpace.getPropertyAnonymous());
-                    node.setPropertyToNeighbours(solutionSpace.getPropertySuccessorsPruned());
-                    node.setProperty( solutionSpace.getPropertySuccessorsPruned());
-                } else {
-                    node.setPropertyToNeighbours(solutionSpace.getPropertyNotAnonymous());
-                }
+                node.setProperty(solutionSpace.getPropertySuccessorsPruned()); 
             }
 
             @Override
             public boolean appliesTo(Transformation node) {
-                return node.hasProperty(solutionSpace.getPropertyAnonymous()) ||
-                       node.hasProperty(solutionSpace.getPropertyNotAnonymous());
+                return node.hasProperty(solutionSpace.getPropertyAnonymous());
             }
         };
 
@@ -235,17 +228,12 @@ public class FLASHAlgorithm {
         DependentAction binaryTriggerTag = new DependentAction() {
             @Override
             public void action(Transformation node) {
-                if (node.hasProperty(solutionSpace.getPropertyAnonymous())) {
-                    node.setPropertyToNeighbours(solutionSpace.getPropertyAnonymous());
-                } else {
-                    node.setPropertyToNeighbours(solutionSpace.getPropertyNotAnonymous());
-                }
+                // Empty by design
             }
 
             @Override
             public boolean appliesTo(Transformation node) {
-                return node.hasProperty(solutionSpace.getPropertyAnonymous()) ||
-                       node.hasProperty(solutionSpace.getPropertyNotAnonymous());
+                return false; // Empty trigger
             }
         };
 
@@ -355,7 +343,6 @@ public class FLASHAlgorithm {
             @Override
             public void action(Transformation node) {
                 node.setPropertyToNeighbours(solutionSpace.getPropertyInsufficientUtility());
-                node.setPropertyToNeighbours(solutionSpace.getPropertySuccessorsPruned());
                 node.setProperty(solutionSpace.getPropertySuccessorsPruned());
             }
 
@@ -453,26 +440,15 @@ public class FLASHAlgorithm {
         DependentAction binaryTriggerTag = new DependentAction() {
             @Override
             public void action(Transformation node) {
-                // Tag k-anonymity
-                if (node.hasProperty(solutionSpace.getPropertyKAnonymous())) {
-                    node.setPropertyToNeighbours(solutionSpace.getPropertyKAnonymous());
-                } else {
-                    node.setPropertyToNeighbours(solutionSpace.getPropertyNotKAnonymous());
-                }
 
                 // Tag insufficient utility
-                if (node.hasProperty(solutionSpace.getPropertyAnonymous())) {
-                    node.setPropertyToNeighbours(solutionSpace.getPropertyInsufficientUtility());
-                    node.setPropertyToNeighbours(solutionSpace.getPropertySuccessorsPruned());
-                    node.setProperty(solutionSpace.getPropertySuccessorsPruned());
-                }
+                node.setPropertyToNeighbours(solutionSpace.getPropertyInsufficientUtility());
+                node.setProperty(solutionSpace.getPropertySuccessorsPruned());
             }
 
             @Override
             public boolean appliesTo(Transformation node) {
-                return node.hasProperty(solutionSpace.getPropertyKAnonymous()) ||
-                       node.hasProperty(solutionSpace.getPropertyNotKAnonymous()) ||
-                       node.hasProperty(solutionSpace.getPropertyAnonymous());
+                return node.hasProperty(solutionSpace.getPropertyAnonymous());
             }
         };
 
@@ -520,7 +496,6 @@ public class FLASHAlgorithm {
                 node.setProperty(solutionSpace.getPropertyVisited());
                 if (node.hasProperty(solutionSpace.getPropertyAnonymous())) {
                     node.setPropertyToNeighbours(solutionSpace.getPropertyInsufficientUtility());
-                    node.setPropertyToNeighbours(solutionSpace.getPropertySuccessorsPruned());
                     node.setProperty(solutionSpace.getPropertySuccessorsPruned());
                 }
             }
@@ -581,17 +556,12 @@ public class FLASHAlgorithm {
         DependentAction binaryTriggerTag = new DependentAction() {
             @Override
             public void action(Transformation node) {
-                if (node.hasProperty(solutionSpace.getPropertyKAnonymous())) {
-                    node.setPropertyToNeighbours(solutionSpace.getPropertyKAnonymous());
-                } else {
-                    node.setPropertyToNeighbours(solutionSpace.getPropertyNotKAnonymous());
-                }
+                // Empty by design
             }
 
             @Override
             public boolean appliesTo(Transformation node) {
-                return node.hasProperty(solutionSpace.getPropertyKAnonymous()) ||
-                       node.hasProperty(solutionSpace.getPropertyNotKAnonymous());
+                return false; // Empty trigger
             }
         };
 
