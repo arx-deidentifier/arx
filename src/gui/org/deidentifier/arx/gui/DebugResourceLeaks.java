@@ -53,11 +53,11 @@ public class DebugResourceLeaks {
     
     private Shell shell;
     
-    private Label objectStatistics;
-    private Label objectStackTrace;
+    private Label resourceStatistics;
+    private Label resourceStackTrace;
     
-    private List listNewObjects;
-    private List listEqualObjects;
+    private List listResources;
+    private List listResourcesSameStackTrace;
     
     private Resource[] resources;
     private Resource[] resourcesSameStackTrace;
@@ -134,17 +134,17 @@ public class DebugResourceLeaks {
         statistics.append("\n");
         
         // Display
-        listNewObjects.removeAll();
+        listResources.removeAll();
         for (int i = 0; i < resources.length; i++) {
-            listNewObjects.add(resources[i].resource.getClass().getSimpleName() + "(" + resources[i].resource.hashCode() + ")");
+            listResources.add(resources[i].resource.getClass().getSimpleName() + "(" + resources[i].resource.hashCode() + ")");
         }
         
-        listEqualObjects.removeAll();
+        listResourcesSameStackTrace.removeAll();
         for (int i = 0; i < resourcesSameStackTrace.length; i++) {
-            listEqualObjects.add(resourcesSameStackTrace[i].resource.getClass().getSimpleName() + "(" + resourcesSameStackTrace[i].resource.hashCode() + ")" + "[" + resourcesSameStackTrace[i].occurrences + "x]");
+            listResourcesSameStackTrace.add(resourcesSameStackTrace[i].resource.getClass().getSimpleName() + "(" + resourcesSameStackTrace[i].resource.hashCode() + ")" + "[" + resourcesSameStackTrace[i].occurrences + "x]");
         }
         
-        objectStatistics.setText(statistics.toString());
+        resourceStatistics.setText(statistics.toString());
     }
     
     private String getStackTrace(Error error) {
@@ -180,31 +180,31 @@ public class DebugResourceLeaks {
         d.horizontalSpan = 2;
         collect.setLayoutData(d);
         
-        listNewObjects = new List(shell, SWT.BORDER | SWT.V_SCROLL);
-        listNewObjects.addListener(SWT.Selection, new Listener() {
+        listResources = new List(shell, SWT.BORDER | SWT.V_SCROLL);
+        listResources.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 selectObject();
             }
         });
-        listNewObjects.setLayoutData(SWTUtil.createFillGridData());
+        listResources.setLayoutData(SWTUtil.createFillGridData());
         
-        listEqualObjects = new List(shell, SWT.BORDER | SWT.V_SCROLL);
-        listEqualObjects.addListener(SWT.Selection, new Listener() {
+        listResourcesSameStackTrace = new List(shell, SWT.BORDER | SWT.V_SCROLL);
+        listResourcesSameStackTrace.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 selectEqualObject();
             }
         });
-        listEqualObjects.setLayoutData(SWTUtil.createFillGridData());
+        listResourcesSameStackTrace.setLayoutData(SWTUtil.createFillGridData());
         
-        objectStackTrace = new Label(shell, SWT.BORDER);
-        objectStackTrace.setText("");
-        objectStackTrace.setLayoutData(SWTUtil.createFillGridData());
+        resourceStackTrace = new Label(shell, SWT.BORDER);
+        resourceStackTrace.setText("");
+        resourceStackTrace.setLayoutData(SWTUtil.createFillGridData());
         
-        objectStatistics = new Label(shell, SWT.BORDER);
-        objectStatistics.setText("0 object(s)");
-        objectStatistics.setLayoutData(SWTUtil.createFillGridData());
+        resourceStatistics = new Label(shell, SWT.BORDER);
+        resourceStatistics.setText("0 object(s)");
+        resourceStatistics.setLayoutData(SWTUtil.createFillGridData());
         
         shell.open();
         
@@ -212,23 +212,23 @@ public class DebugResourceLeaks {
     }
     
     private void selectEqualObject() {
-        int index = listEqualObjects.getSelectionIndex();
+        int index = listResourcesSameStackTrace.getSelectionIndex();
         if (index == -1) {
             return;
         }
         
-        objectStackTrace.setText(getStackTrace(resourcesSameStackTrace[index].error));
-        objectStackTrace.setVisible(true);
+        resourceStackTrace.setText(getStackTrace(resourcesSameStackTrace[index].error));
+        resourceStackTrace.setVisible(true);
     }
     
     private void selectObject() {
-        int index = listNewObjects.getSelectionIndex();
+        int index = listResources.getSelectionIndex();
         if (index == -1) {
             return;
         }
         
-        objectStackTrace.setText(getStackTrace(resources[index].error));
-        objectStackTrace.setVisible(true);
+        resourceStackTrace.setText(getStackTrace(resources[index].error));
+        resourceStackTrace.setVisible(true);
     }
     
 }
