@@ -77,12 +77,13 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(values1, contingency.values1));
         assertTrue(Arrays.equals(values2, contingency.values2));
         
-        frequencies = new double[][] {  { 1, 1, 0.14285714285714285 },
-                                        { 2, 2, 0.14285714285714285 },
-                                        { 1, 3, 0.14285714285714285 },
-                                        { 0, 0, 0.14285714285714285 },
-                                        { 3, 3, 0.2857142857142857 },
-                                        { 0, 3, 0.14285714285714285 } };
+        frequencies = new double[][] {
+                                       { 0, 0, 0.14285714285714285 },
+                                       { 1, 1, 0.14285714285714285 },
+                                       { 2, 2, 0.14285714285714285 },
+                                       { 3, 3, 0.2857142857142857 },
+                                       { 1, 3, 0.14285714285714285 },
+                                       { 0, 3, 0.14285714285714285 } };
                 
         assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
 
@@ -96,9 +97,10 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(values1, contingency.values1));
         assertTrue(Arrays.equals(values2, contingency.values2));
         
-        frequencies = new double[][] {  { 1, 1, 0.42857142857142855 },
-                                        { 0, 1, 0.2857142857142857 },
-                                        { 0, 0, 0.2857142857142857 } };
+        frequencies = new double[][] {
+                                       { 0, 0, 0.2857142857142857 },
+                                       { 1, 1, 0.42857142857142855 },
+                                       { 0, 1, 0.2857142857142857 } };
           
         assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
     }
@@ -143,8 +145,9 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(values1, contingency.values1));
         assertTrue(Arrays.equals(values2, contingency.values2));
         
-        frequencies = new double[][] {  { 1, 1, 0.5 },
-                                        { 0, 0, 0.5 } };
+        frequencies = new double[][] {
+                                       { 0, 0, 0.5 },
+                                       { 1, 1, 0.5 } };
                 
         assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
 
