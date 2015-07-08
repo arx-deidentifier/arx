@@ -44,7 +44,7 @@ import org.junit.Test;
  * @author Florian Kohlmayer
  */
 public abstract class TestUtilityMetricsPrecomputationAbstract extends AbstractTest {
-
+    
     /**
      * Represents a test case.
      *
@@ -52,22 +52,22 @@ public abstract class TestUtilityMetricsPrecomputationAbstract extends AbstractT
      * @author Florian Kohlmayer
      */
     public static class ARXUtilityMetricsTestCase {
-
-        /**  TODO */
+        
+        /** TODO */
         public ARXConfiguration config;
         
-        /**  TODO */
-        public String           dataset;
+        /** TODO */
+        public String dataset;
         
-        /**  TODO */
-        public String           sensitiveAttribute;
+        /** TODO */
+        public String sensitiveAttribute;
         
-        /**  TODO */
-        public Metric<?>        m1;
+        /** TODO */
+        public Metric<?> m1;
         
-        /**  TODO */
-        public Metric<?>        m2;
-
+        /** TODO */
+        public Metric<?> m2;
+        
         /**
          * Creates a new instance.
          *
@@ -88,7 +88,7 @@ public abstract class TestUtilityMetricsPrecomputationAbstract extends AbstractT
             this.m1 = m1;
             this.m2 = m2;
         }
-
+        
         /**
          * Returns a string description.
          *
@@ -109,14 +109,14 @@ public abstract class TestUtilityMetricsPrecomputationAbstract extends AbstractT
             builder.append("}");
             return builder.toString();
         }
-
+        
         @Override
         public String toString() {
             return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
                    config.isPracticalMonotonicity();
         }
     }
-
+    
     /**
      * Returns the data object for the test case.
      *
@@ -125,9 +125,9 @@ public abstract class TestUtilityMetricsPrecomputationAbstract extends AbstractT
      * @throws IOException
      */
     public static Data getDataObject(final ARXUtilityMetricsTestCase testCase) throws IOException {
-
+        
         final Data data = Data.create(testCase.dataset, ';');
-
+        
         // Read generalization hierachies
         final FilenameFilter hierarchyFilter = new FilenameFilter() {
             @Override
@@ -140,18 +140,18 @@ public abstract class TestUtilityMetricsPrecomputationAbstract extends AbstractT
                 }
             }
         };
-
+        
         final File testDir = new File(testCase.dataset.substring(0, testCase.dataset.lastIndexOf("/")));
         final File[] genHierFiles = testDir.listFiles(hierarchyFilter);
         final Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
-
+        
         for (final File file : genHierFiles) {
             final Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
-
+                
                 final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
                 final String attributeName = matcher.group(1);
-
+                
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
                 } else { // sensitive attribute
@@ -159,16 +159,16 @@ public abstract class TestUtilityMetricsPrecomputationAbstract extends AbstractT
                         data.getDefinition().setAttributeType(attributeName, AttributeType.SENSITIVE_ATTRIBUTE);
                     }
                 }
-
+                
             }
         }
-
+        
         return data;
     }
-
+    
     /** The test case. */
     protected final ARXUtilityMetricsTestCase testcase;
-
+    
     /**
      * Creates a new instance.
      *
@@ -177,13 +177,13 @@ public abstract class TestUtilityMetricsPrecomputationAbstract extends AbstractT
     public TestUtilityMetricsPrecomputationAbstract(final ARXUtilityMetricsTestCase testCase) {
         this.testcase = testCase;
     }
-
+    
     @Override
     @Before
     public void setUp() {
         // Empty by design
     }
-
+    
     /**
      * 
      *
@@ -191,28 +191,28 @@ public abstract class TestUtilityMetricsPrecomputationAbstract extends AbstractT
      */
     @Test
     public void test() throws IOException {
-
+        
         // Anonymize
-
+        
         ARXConfiguration testcaseconfig = testcase.config;
-
+        
         // Metric 1
         testcaseconfig.setMetric(testcase.m1);
         Data data1 = getDataObject(testcase);
         ARXAnonymizer anonymizer1 = new ARXAnonymizer();
         ARXResult result1 = anonymizer1.anonymize(data1, testcaseconfig);
-
+        
         // Metric 2
         testcaseconfig.setMetric(testcase.m2);
         Data data2 = getDataObject(testcase);
         ARXAnonymizer anonymizer2 = new ARXAnonymizer();
         ARXResult result2 = anonymizer2.anonymize(data2, testcaseconfig);
-
+        
         String loss1 = result1.getGlobalOptimum().getMaximumInformationLoss().toString();
         String loss2 = result2.getGlobalOptimum().getMaximumInformationLoss().toString();
-
+        
         assertEquals("Metric value differs", loss1, loss2);
-
+        
         // Map<String, ARXNode> result1nodesmap = new HashMap<String, ARXNode>();
         //
         // for (ARXNode[] level : result1.getLattice().getLevels()) {

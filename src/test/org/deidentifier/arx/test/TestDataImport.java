@@ -34,7 +34,7 @@ import cern.colt.Arrays;
  * @author Fabian Prasser
  */
 public class TestDataImport extends AbstractTest {
-
+    
     /**
      * Test
      *
@@ -48,7 +48,7 @@ public class TestDataImport extends AbstractTest {
         List<String[]> result = new ArrayList<String[]>();
         while (iter.hasNext()) {
             result.add(iter.next());
-            System.out.println(Arrays.toString(result.get(result.size()-1)));
+            System.out.println(Arrays.toString(result.get(result.size() - 1)));
         }
     }
 }

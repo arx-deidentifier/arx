@@ -30,40 +30,40 @@ import org.junit.Before;
  * 
  */
 public abstract class AbstractTest extends TestCase {
-
+    
     /**
      * 
      */
     public static enum TestMetric {
         
-        /**  TODO */
+        /** TODO */
         DMSTAR,
-        
-        /**  TODO */
+                                   
+                                   /** TODO */
         DM,
-        
-        /**  TODO */
+                                   
+                                   /** TODO */
         HEIGHT,
-        
-        /**  TODO */
+                                   
+                                   /** TODO */
         PREC,
-        
-        /**  TODO */
+                                   
+                                   /** TODO */
         ENTROPY,
-        
-        /**  TODO */
+                                   
+                                   /** TODO */
         NMENTROPY
     }
-
-    /**  TODO */
+    
+    /** TODO */
     protected DataProvider provider = null;
-
+    
     @Override
     @Before
     public void setUp() {
         provider = new DataProvider();
     }
-
+    
     /**
      * 
      *
@@ -94,7 +94,7 @@ public abstract class AbstractTest extends TestCase {
         }
         return metric;
     }
-
+    
     /**
      * 
      *
@@ -108,7 +108,7 @@ public abstract class AbstractTest extends TestCase {
         }
         return list.toArray(new String[list.size()][]);
     }
-
+    
     /**
      * 
      *
@@ -116,7 +116,7 @@ public abstract class AbstractTest extends TestCase {
      */
     protected void printArray(final String[][] array) {
         System.out.print("{");
-
+        
         for (int j = 0; j < array.length; j++) {
             final String[] strings = array[j];
             System.out.print("{");
@@ -137,7 +137,7 @@ public abstract class AbstractTest extends TestCase {
         }
         System.out.print("}");
     }
-
+    
     /**
      * 
      *
