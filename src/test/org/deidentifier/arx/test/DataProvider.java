@@ -29,39 +29,39 @@ import org.deidentifier.arx.Data.DefaultData;
  * @author Florian Kohlmayer
  */
 public class DataProvider {
-
-    /**  TODO */
-    protected DefaultData          data;
     
-    /**  TODO */
-    protected DefaultHierarchy     age;
+    /** TODO */
+    protected DefaultData data;
     
-    /**  TODO */
+    /** TODO */
+    protected DefaultHierarchy age;
+    
+    /** TODO */
     private final DefaultHierarchy ageWrong;
     
-    /**  TODO */
+    /** TODO */
     private final DefaultHierarchy gender;
     
-    /**  TODO */
+    /** TODO */
     private final DefaultHierarchy zipcode;
-
-    /**  TODO */
+    
+    /** TODO */
     private final DefaultHierarchy ageOne;
     
-    /**  TODO */
+    /** TODO */
     private final DefaultHierarchy genderOne;
     
-    /**  TODO */
+    /** TODO */
     private final DefaultHierarchy zipcodeOne;
-
-    /**  TODO */
+    
+    /** TODO */
     private final DefaultHierarchy ageMissing;
-
+    
     /**
      * Init.
      */
     public DataProvider() {
-
+        
         // Define data
         data = Data.create();
         data.add("age", "gender", "zipcode");
@@ -72,56 +72,56 @@ public class DataProvider {
         data.add("34", "female", "81931");
         data.add("70", "male", "81931");
         data.add("45", "male", "81931");
-
+        
         // Define hierarchies
         age = Hierarchy.create();
         age.add("34", "<50", "*");
         age.add("45", "<50", "*");
         age.add("66", ">=50", "*");
         age.add("70", ">=50", "*");
-
+        
         // Define hierarchies
         ageWrong = Hierarchy.create();
         ageWrong.add("34", "30-40", "30-69", "*");
         ageWrong.add("45", "40-50", "30-69", "*");
         ageWrong.add("66", "70-80", "30-69", "*");
         ageWrong.add("70", "70-80", "70+", "*");
-
+        
         gender = Hierarchy.create();
         gender.add("male", "*");
         gender.add("female", "*");
-
+        
         // Only excerpts for readability
         zipcode = Hierarchy.create();
         zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
         zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
         zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
         zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
-
+        
         // Define hierarchies with height one
         ageOne = Hierarchy.create();
         ageOne.add("34");
         ageOne.add("45");
         ageOne.add("66");
         ageOne.add("70");
-
+        
         genderOne = Hierarchy.create();
         genderOne.add("male");
         genderOne.add("female");
-
+        
         zipcodeOne = Hierarchy.create();
         zipcodeOne.add("81667");
         zipcodeOne.add("81675");
         zipcodeOne.add("81925");
         zipcodeOne.add("81931");
-
+        
         // Define hierarchies
         ageMissing = Hierarchy.create();
         ageMissing.add("34", "<50", "*");
         ageMissing.add("45", "<50", "*");
         ageMissing.add("70", ">=50", "*");
     }
-
+    
     /**
      * Returns a standard data definition.
      */
@@ -131,7 +131,7 @@ public class DataProvider {
         data.getDefinition().setAttributeType("gender", gender);
         data.getDefinition().setAttributeType("zipcode", zipcode);
     }
-
+    
     /**
      * Returns a standard data definition.
      */
@@ -141,7 +141,7 @@ public class DataProvider {
         data.getDefinition().setAttributeType("gender", gender);
         data.getDefinition().setAttributeType("zipcode", zipcode);
     }
-
+    
     /**
      * Returns a standard data definition.
      */
@@ -151,7 +151,7 @@ public class DataProvider {
         data.getDefinition().setAttributeType("gender", genderOne);
         data.getDefinition().setAttributeType("zipcode", zipcodeOne);
     }
-
+    
     /**
      * Returns a standard data definition.
      */
@@ -161,28 +161,28 @@ public class DataProvider {
         data.getDefinition().setAttributeType("gender", gender);
         data.getDefinition().setAttributeType("zipcode", zipcode);
     }
-
+    
     /**
      * @return the age
      */
     public DefaultHierarchy getAge() {
         return age;
     }
-
+    
     /**
      * @return the data
      */
     public DefaultData getData() {
         return data;
     }
-
+    
     /**
      * @return the gender
      */
     public DefaultHierarchy getGender() {
         return gender;
     }
-
+    
     /**
      * @return the zipcode
      */

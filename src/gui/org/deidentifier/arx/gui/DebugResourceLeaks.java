@@ -2,6 +2,8 @@ package org.deidentifier.arx.gui;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,15 +22,26 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-import cern.colt.GenericSorting;
-import cern.colt.Swapper;
-import cern.colt.function.IntComparator;
-
 /**
  * Code based on: https://www.eclipse.org/articles/swt-design-2/sleak.htm
  *
  */
 public class DebugResourceLeaks {
+    
+    class Resource {
+        Object resource;
+        Error  error;
+        int    occurrences;
+        
+        @Override
+        protected Resource clone() {
+            Resource resource = new Resource();
+            resource.error = error;
+            resource.resource = this.resource;
+            resource.occurrences = occurrences;
+            return resource;
+        }
+    }
     
     public static void main(String[] args) {
         DebugResourceLeaks sleak = new DebugResourceLeaks();
@@ -40,19 +53,14 @@ public class DebugResourceLeaks {
     
     private Shell shell;
     
-    private Label objectStatistics;
-    private Label objectStackTrace;
+    private Label resourceStatistics;
+    private Label resourceStackTrace;
     
-    private List listNewObjects;
-    private List listEqualObjects;
+    private List listResources;
+    private List listResourcesSameStackTrace;
     
-    private Object[] newObjects;
-    
-    private Error[] newErrors;
-    
-    private Object[] equalObjects;
-    
-    private Error[] equalErrors;
+    private Resource[] resources;
+    private Resource[] resourcesSameStackTrace;
     
     private void collectAll() {
         DeviceData info = display.getDeviceData();
@@ -62,15 +70,25 @@ public class DebugResourceLeaks {
             dialog.setMessage("Warning: Device is not tracking resource allocation");
             dialog.open();
         }
-        newObjects = info.objects;
-        newErrors = info.errors;
+        
+        Object[] objects = info.objects;
+        Error[] errors = info.errors;
+        
+        resources = new Resource[objects.length];
+        for (int i = 0; i < resources.length; i++) {
+            
+            Resource resource = new Resource();
+            resource.error = errors[i];
+            resource.resource = objects[i];
+            resource.occurrences = 1;
+            resources[i] = resource;
+        }
         
         Map<String, Integer> objectTypesTimes = new TreeMap<String, Integer>();
-        Map<String, Integer> objectSameStackTrace = new HashMap<String, Integer>();
-        final Map<Integer, Integer> objectSameStackTraceTimes = new HashMap<Integer, Integer>();
+        Map<String, Resource> objectSameStackTrace = new HashMap<String, Resource>();
         
-        for (int i = 0; i < newObjects.length; i++) {
-            String className = newObjects[i].getClass().getSimpleName();
+        for (int i = 0; i < resources.length; i++) {
+            String className = resources[i].resource.getClass().getSimpleName();
             Integer count = objectTypesTimes.get(className);
             if (count == null) {
                 objectTypesTimes.put(className, 1);
@@ -78,56 +96,30 @@ public class DebugResourceLeaks {
                 objectTypesTimes.put(className, count + 1);
             }
             
-            String stackTrace = getStackTrace(newErrors[i]);
+            String stackTrace = getStackTrace(resources[i].error);
             if (!objectSameStackTrace.containsKey(stackTrace)) {
-                objectSameStackTrace.put(stackTrace, i);
-                objectSameStackTraceTimes.put(i, 1);
+                Resource resource = resources[i].clone();
+                resource.occurrences = 1;
+                objectSameStackTrace.put(stackTrace, resource);
             } else {
-                Integer objectIDX = objectSameStackTrace.get(stackTrace);
-                objectSameStackTraceTimes.put(objectIDX, objectSameStackTraceTimes.get(objectIDX) + 1);
+                Resource resource = objectSameStackTrace.get(stackTrace);
+                resource.occurrences++;
             }
         }
         
-        equalObjects = new Object[objectSameStackTrace.size()];
-        equalErrors = new Error[objectSameStackTrace.size()];
-        final int[] equalOccurrence = new int[objectSameStackTrace.size()];
-        
+        resourcesSameStackTrace = new Resource[objectSameStackTrace.size()];
         int idx = 0;
-        for (Entry<String, Integer> entry : objectSameStackTrace.entrySet()) {
-            equalObjects[idx] = newObjects[entry.getValue()];
-            equalErrors[idx] = newErrors[entry.getValue()];
-            equalOccurrence[idx] = objectSameStackTraceTimes.get(entry.getValue());
+        for (Entry<String, Resource> entry : objectSameStackTrace.entrySet()) {
+            resourcesSameStackTrace[idx] = entry.getValue();
             idx++;
         }
         
-        final IntComparator c = new IntComparator() {
+        Arrays.sort(resourcesSameStackTrace, new Comparator<Resource>() {
             @Override
-            public int compare(final int arg0, final int arg1) {
-                return equalOccurrence[arg1] - equalOccurrence[arg0];
+            public int compare(Resource o1, Resource o2) {
+                return o2.occurrences - o1.occurrences;
             }
-        };
-        final Swapper s = new Swapper() {
-            @Override
-            public void swap(final int arg0, final int arg1) {
-                // Swap objects
-                Object tempObject = equalObjects[arg0];
-                equalObjects[arg0] = equalObjects[arg1];
-                equalObjects[arg1] = tempObject;
-                
-                // Swap errors
-                Error tempError = equalErrors[arg0];
-                equalErrors[arg0] = equalErrors[arg1];
-                equalErrors[arg1] = tempError;
-                
-                // Swap occurrences
-                int tempOccurence = equalOccurrence[arg0];
-                equalOccurrence[arg0] = equalOccurrence[arg1];
-                equalOccurrence[arg1] = tempOccurence;
-            }
-        };
-        
-        // No need to swap and rebuild the subset views
-        GenericSorting.mergeSort(0, equalObjects.length, c, s);
+        });
         
         StringBuilder statistics = new StringBuilder();
         
@@ -138,21 +130,21 @@ public class DebugResourceLeaks {
             statistics.append("\n");
         }
         statistics.append("Total: ");
-        statistics.append(newObjects.length);
+        statistics.append(resources.length);
         statistics.append("\n");
         
         // Display
-        listNewObjects.removeAll();
-        for (int i = 0; i < newObjects.length; i++) {
-            listNewObjects.add(newObjects[i].getClass().getSimpleName() + "(" + newObjects[i].hashCode() + ")");
+        listResources.removeAll();
+        for (int i = 0; i < resources.length; i++) {
+            listResources.add(resources[i].resource.getClass().getSimpleName() + "(" + resources[i].resource.hashCode() + ")");
         }
         
-        listEqualObjects.removeAll();
-        for (int i = 0; i < equalObjects.length; i++) {
-            listEqualObjects.add(equalObjects[i].getClass().getSimpleName() + "(" + equalObjects[i].hashCode() + ")" + "[" + equalOccurrence[i] + "x]");
+        listResourcesSameStackTrace.removeAll();
+        for (int i = 0; i < resourcesSameStackTrace.length; i++) {
+            listResourcesSameStackTrace.add(resourcesSameStackTrace[i].resource.getClass().getSimpleName() + "(" + resourcesSameStackTrace[i].resource.hashCode() + ")" + "[" + resourcesSameStackTrace[i].occurrences + "x]");
         }
         
-        objectStatistics.setText(statistics.toString());
+        resourceStatistics.setText(statistics.toString());
     }
     
     private String getStackTrace(Error error) {
@@ -188,31 +180,31 @@ public class DebugResourceLeaks {
         d.horizontalSpan = 2;
         collect.setLayoutData(d);
         
-        listNewObjects = new List(shell, SWT.BORDER | SWT.V_SCROLL);
-        listNewObjects.addListener(SWT.Selection, new Listener() {
+        listResources = new List(shell, SWT.BORDER | SWT.V_SCROLL);
+        listResources.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 selectObject();
             }
         });
-        listNewObjects.setLayoutData(SWTUtil.createFillGridData());
+        listResources.setLayoutData(SWTUtil.createFillGridData());
         
-        listEqualObjects = new List(shell, SWT.BORDER | SWT.V_SCROLL);
-        listEqualObjects.addListener(SWT.Selection, new Listener() {
+        listResourcesSameStackTrace = new List(shell, SWT.BORDER | SWT.V_SCROLL);
+        listResourcesSameStackTrace.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 selectEqualObject();
             }
         });
-        listEqualObjects.setLayoutData(SWTUtil.createFillGridData());
+        listResourcesSameStackTrace.setLayoutData(SWTUtil.createFillGridData());
         
-        objectStackTrace = new Label(shell, SWT.BORDER);
-        objectStackTrace.setText("");
-        objectStackTrace.setLayoutData(SWTUtil.createFillGridData());
+        resourceStackTrace = new Label(shell, SWT.BORDER);
+        resourceStackTrace.setText("");
+        resourceStackTrace.setLayoutData(SWTUtil.createFillGridData());
         
-        objectStatistics = new Label(shell, SWT.BORDER);
-        objectStatistics.setText("0 object(s)");
-        objectStatistics.setLayoutData(SWTUtil.createFillGridData());
+        resourceStatistics = new Label(shell, SWT.BORDER);
+        resourceStatistics.setText("0 object(s)");
+        resourceStatistics.setLayoutData(SWTUtil.createFillGridData());
         
         shell.open();
         
@@ -220,23 +212,23 @@ public class DebugResourceLeaks {
     }
     
     private void selectEqualObject() {
-        int index = listEqualObjects.getSelectionIndex();
+        int index = listResourcesSameStackTrace.getSelectionIndex();
         if (index == -1) {
             return;
         }
         
-        objectStackTrace.setText(getStackTrace(equalErrors[index]));
-        objectStackTrace.setVisible(true);
+        resourceStackTrace.setText(getStackTrace(resourcesSameStackTrace[index].error));
+        resourceStackTrace.setVisible(true);
     }
     
     private void selectObject() {
-        int index = listNewObjects.getSelectionIndex();
+        int index = listResources.getSelectionIndex();
         if (index == -1) {
             return;
         }
         
-        objectStackTrace.setText(getStackTrace(newErrors[index]));
-        objectStackTrace.setVisible(true);
+        resourceStackTrace.setText(getStackTrace(resources[index].error));
+        resourceStackTrace.setVisible(true);
     }
     
 }

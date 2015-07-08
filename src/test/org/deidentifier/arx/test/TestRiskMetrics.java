@@ -45,7 +45,7 @@ import org.junit.Test;
  * @author Florian Kohlmayer
  */
 public class TestRiskMetrics extends TestCase {
-
+    
     /**
      * Returns the data object for a given dataset
      *
@@ -54,9 +54,9 @@ public class TestRiskMetrics extends TestCase {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private static Data getDataObject(final String dataset) throws IOException {
-
+        
         final Data data = Data.create(dataset, ';');
-
+        
         // Read generalization hierachies
         final FilenameFilter hierarchyFilter = new FilenameFilter() {
             @Override
@@ -68,27 +68,27 @@ public class TestRiskMetrics extends TestCase {
                 }
             }
         };
-
+        
         final File testDir = new File(dataset.substring(0, dataset.lastIndexOf("/")));
         final File[] genHierFiles = testDir.listFiles(hierarchyFilter);
         final Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
-
+        
         for (final File file : genHierFiles) {
             final Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
-
+                
                 final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
                 final String attributeName = matcher.group(1);
-
+                
                 // use all found attribute hierarchies as qis
                 data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
-
+                
             }
         }
-
+        
         return data;
     }
-
+    
     /**
      * Test average risk using the example dataset.
      */
@@ -98,13 +98,13 @@ public class TestRiskMetrics extends TestCase {
         provider.createDataDefinition();
         // Risk before anonymization
         double risk = provider.getData().getHandle().getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedReidentificationRisk().getAverageRisk();
-        assertTrue("Is: "+risk, risk == 1.0d);
-
+        assertTrue("Is: " + risk, risk == 1.0d);
+        
         // Risk after anonymization
         risk = getAnonymizedData(provider.getData()).getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedReidentificationRisk().getAverageRisk();
-        assertTrue("Is: "+risk, risk == 0.42857142857142855);
+        assertTrue("Is: " + risk, risk == 0.42857142857142855);
     }
-
+    
     /**
      * Test average risk using the adult dataset.
      *
@@ -121,7 +121,7 @@ public class TestRiskMetrics extends TestCase {
         risk = getAnonymizedData(data).getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedReidentificationRisk().getAverageRisk();
         assertTrue("Is: " + risk, risk == 0.001922949406538028);
     }
-
+    
     /**
      * Test decision rule using the test dataset.
      */
@@ -155,7 +155,7 @@ public class TestRiskMetrics extends TestCase {
         populationUniqueness = outHandle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk().getFractionOfUniqueTuplesDankar();
         assertTrue("Is: " + populationUniqueness, compareUniqueness(populationUniqueness, 0) == 0);
     }
-
+    
     /**
      * Test decision rule using the adult dataset.
      *
@@ -163,17 +163,18 @@ public class TestRiskMetrics extends TestCase {
      */
     @Test
     public void testDecisionRule2() throws IOException {
-
+        
         Data data = getDataObject("../arx-data/data-junit/adult.csv");
         DataHandle handle = data.getHandle();
-
+        
         RiskModelPopulationUniqueness model = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk();
         double sampleUniqueness = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedUniquenessRisk().getFractionOfUniqueTuples();
         double populationUniqueness = model.getFractionOfUniqueTuplesDankar();
         
         if (model.getPopulationUniquenessModel() == PopulationUniquenessModel.PITMAN) {
             assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, 0.27684993883653597) == 0);
-        } else if (model.getPopulationUniquenessModel() == PopulationUniquenessModel.ZAYATZ) {
+        } else
+            if (model.getPopulationUniquenessModel() == PopulationUniquenessModel.ZAYATZ) {
             assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, 0.3207402393466189) == 0);
         } else {
             fail("Unexpected convergence of SNB");
@@ -203,9 +204,9 @@ public class TestRiskMetrics extends TestCase {
      * @return
      */
     private int compareUniqueness(double val1, double val2) {
-        return Integer.compare((int)(val1 * 10000d), (int)(val2 * 10000d));
+        return Integer.compare((int) (val1 * 10000d), (int) (val2 * 10000d));
     }
-
+    
     /**
      * Test highest individual risk using the test dataset.
      */
@@ -215,11 +216,11 @@ public class TestRiskMetrics extends TestCase {
         provider.createDataDefinition();
         // Risk before anonymization
         assertTrue(provider.getData().getHandle().getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedReidentificationRisk().getHighestRisk() == 1.0d);
-
+        
         // Risk after anonymization
         assertTrue(getAnonymizedData(provider.getData()).getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedReidentificationRisk().getHighestRisk() == 0.5d);
     }
-
+    
     /**
      * Test highest individual risk using the adult dataset.
      *
@@ -230,11 +231,11 @@ public class TestRiskMetrics extends TestCase {
         Data data = getDataObject("../arx-data/data-junit/adult.csv");
         // Risk before anonymization
         assertTrue(data.getHandle().getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedReidentificationRisk().getHighestRisk() == 1.0d);
-
+        
         // Risk after anonymization
         assertTrue(getAnonymizedData(data).getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedReidentificationRisk().getHighestRisk() == 0.5d);
     }
-
+    
     /**
      * 2-Anonymizes the given data. No suppression allowed.
      *
@@ -246,7 +247,7 @@ public class TestRiskMetrics extends TestCase {
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
-
+        
         ARXResult result = null;
         try {
             result = anonymizer.anonymize(data, config);

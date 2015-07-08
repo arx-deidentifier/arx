@@ -35,7 +35,7 @@ import org.junit.Test;
  * @author Florian Kohlmayer
  */
 public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAbstract {
-
+    
     /**
      * Creates a new instance.
      *
@@ -44,10 +44,10 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     public TestUtilityEstimationAbstract(final ARXUtilityMetricsTestCase testcase) {
         super(testcase);
     }
-
+    
     @Test
     public void test() throws IOException {
-
+        
         // Anonymize
         Data data = getDataObject(testcase);
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -62,7 +62,7 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
         result = anonymizer.anonymize(data, testcase.config);
         checkResult(testcase, result);
     }
-
+    
     /**
      * Tests all estimates within a lattice.
      *
@@ -71,11 +71,11 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     private void checkLattice(ARXLattice lattice) {
         for (ARXNode[] level : lattice.getLevels()) {
             for (ARXNode node : level) {
-                assertTrue("Min > max", compareWithTolerance(node.getMinimumInformationLoss(), node.getMaximumInformationLoss())<=0);
+                assertTrue("Min > max", compareWithTolerance(node.getMinimumInformationLoss(), node.getMaximumInformationLoss()) <= 0);
             }
         }
     }
-
+    
     /**
      * Tests the result.
      *
@@ -83,14 +83,14 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
      * @param result
      */
     private void checkResult(ARXUtilityMetricsTestCase testcase, ARXResult result) {
-
+        
         // First check the initial estimates
         checkLattice(result.getLattice());
-
+        
         // Test estimates after checking some transformations
         for (ARXNode[] level : result.getLattice().getLevels()) {
             for (ARXNode node : level) {
-
+                
                 String label = Arrays.toString(node.getTransformation());
                 if (testcase.informationLoss.containsKey(label)) {
                     if (compareWithTolerance(node.getMaximumInformationLoss(), node.getMinimumInformationLoss()) != 0) {
@@ -105,7 +105,7 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
             }
         }
     }
-
+    
     /**
      * Applies and checks a transformation.
      *
@@ -117,11 +117,11 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
         InformationLoss<?> min = node.getMinimumInformationLoss();
         InformationLoss<?> max = node.getMaximumInformationLoss();
         result.getOutput(node, false);
-        assertTrue("Min != max", compareWithTolerance(node.getMinimumInformationLoss(), node.getMaximumInformationLoss())==0);
-        assertTrue("Actual < min", compareWithTolerance(min, node.getMaximumInformationLoss())<=0);
-        assertTrue("Actual > max", compareWithTolerance(max, node.getMaximumInformationLoss())>=0);
+        assertTrue("Min != max", compareWithTolerance(node.getMinimumInformationLoss(), node.getMaximumInformationLoss()) == 0);
+        assertTrue("Actual < min", compareWithTolerance(min, node.getMaximumInformationLoss()) <= 0);
+        assertTrue("Actual > max", compareWithTolerance(max, node.getMaximumInformationLoss()) >= 0);
     }
-
+    
     /**
      * Compares double for "equality" with a tolerance of 1 ulp.
      *
@@ -141,8 +141,10 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
      * @return
      */
     private int compareWithTolerance(double d1, double d2) {
-        if (closeEnough(d1, d2)) return 0;
-        else return Double.compare(d1, d2);
+        if (closeEnough(d1, d2))
+            return 0;
+        else
+            return Double.compare(d1, d2);
     }
     
     /**
@@ -171,6 +173,6 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
      * @return
      */
     private boolean isNumeric(String str) {
-      return str.matches("-?\\d+(\\.\\d+)?");
+        return str.matches("-?\\d+(\\.\\d+)?");
     }
 }
