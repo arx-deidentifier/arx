@@ -212,6 +212,26 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
     }
     
     /**
+     * Transforms it into a string representation.
+     *
+     * @param classification
+     * @return
+     */
+    public static String getClassification(int[] classification) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Classification {\n");
+        builder.append(" Transformations: ").append(classification[0]).append("\n");
+        builder.append(" Checked: ").append(classification[1]).append("\n");
+        builder.append(" Anonymous: ").append(classification[2]).append("\n");
+        builder.append(" Non-anonymous: ").append(classification[3]).append("\n");
+        builder.append(" Probably anonymous: ").append(classification[4]).append("\n");
+        builder.append(" Probably non-anonymous: ").append(classification[5]).append("\n");
+        builder.append(" Utility available: ").append(classification[6]).append("\n");
+        builder.append("}");
+        return builder.toString();
+    }
+
+    /**
      * Returns the data object for the test case.
      *
      * @param testCase
@@ -381,26 +401,5 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             criterion = "Non-monotonic";
         }
         return criterion + " criteria with " + metric + " metric";
-    }
-    
-    /**
-     * Transforms it into a string representation.
-     *
-     * @param classification
-     * @return
-     */
-    @SuppressWarnings("unused")
-    private String getClassification(int[] classification) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Classification {\n");
-        builder.append(" Transformations: ").append(classification[0]).append("\n");
-        builder.append(" Checked: ").append(classification[1]).append("\n");
-        builder.append(" Anonymous: ").append(classification[2]).append("\n");
-        builder.append(" Non-anonymous: ").append(classification[3]).append("\n");
-        builder.append(" Probably anonymous: ").append(classification[4]).append("\n");
-        builder.append(" Probably non-anonymous: ").append(classification[5]).append("\n");
-        builder.append(" Utility available: ").append(classification[6]).append("\n");
-        builder.append("}");
-        return builder.toString();
     }
 }
