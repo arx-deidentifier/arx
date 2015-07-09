@@ -61,11 +61,11 @@ public abstract class TestExecutionTimeAbstract extends TestAnonymizationAbstrac
 
         // Repeat
         long time = System.currentTimeMillis();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             data.getHandle().release();
             anonymizer.anonymize(data, testCase.config);
         }
-        time = (System.currentTimeMillis() - time) / 5;
+        time = (System.currentTimeMillis() - time) / 10;
         
         System.out.println("Experiment:");
         System.out.println(" - Dataset: " + testCase.dataset);
