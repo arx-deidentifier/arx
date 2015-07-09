@@ -145,8 +145,7 @@ public class DataManager {
 
         // Init dictionary
         final Dictionary dictionaryGeneralized = new Dictionary(attributesGemeralized.size());
-        final Dictionary dictionaryAnalyzed = new Dictionary(attributesSensitive.size() +
-                                                             attributesMicroaggregated.size());
+        final Dictionary dictionaryAnalyzed = new Dictionary(attributesSensitive.size() + attributesMicroaggregated.size());
         final Dictionary dictionaryStatic = new Dictionary(attributesInsensitive.size());
 
         // Init maps for reordering the output
@@ -341,8 +340,7 @@ public class DataManager {
                 final String name = header[i];
                 if (definition.getMicroAggregationFunction(name) != null) {
                     microaggregationFunctions[dictionaryIndex] = functions.get(name);
-                    microaggregationFunctions[dictionaryIndex].initialize(dictionaryAnalyzed.getMapping()[dictionaryIndex +
-                                                                                                          microaggregationStartIndex],
+                    microaggregationFunctions[dictionaryIndex].initialize(dictionaryAnalyzed.getMapping()[dictionaryIndex + microaggregationStartIndex],
                                                                           definition.getDataType(name),
                                                                           hierarchiesMA.get(name));
                 } else {
@@ -649,17 +647,17 @@ public class DataManager {
                           final String[] headerStatic) {
 
         // Parse the dataset
-        final int[][] valsGH = new int[data.length][];
-        final int[][] valsDI = new int[data.length][];
-        final int[][] valsIS = new int[data.length][];
+        final int[][] valsGH = headerGeneralized.length == 0 ? null : new int[data.length][];
+        final int[][] valsDI = headerAnalyzed.length == 0 ? null : new int[data.length][];
+        final int[][] valsIS = headerStatic.length == 0 ? null : new int[data.length][];
 
         int index = 0;
         for (final int[] tuple : data) {
 
             // Process a tuple
-            final int[] tupleGH = new int[headerGeneralized.length];
-            final int[] tupleDI = new int[headerAnalyzed.length];
-            final int[] tupleIS = new int[headerStatic.length];
+            final int[] tupleGH = headerGeneralized.length == 0 ? null : new int[headerGeneralized.length];
+            final int[] tupleDI = headerAnalyzed.length == 0 ? null : new int[headerAnalyzed.length];
+            final int[] tupleIS = headerStatic.length == 0 ? null : new int[headerStatic.length];
 
             for (int i = 0; i < tuple.length; i++) {
                 final int idx = i * 2;
@@ -683,9 +681,9 @@ public class DataManager {
                     break;
                 }
             }
-            valsGH[index] = tupleGH;
-            valsIS[index] = tupleIS;
-            valsDI[index] = tupleDI;
+            if (valsGH != null) valsGH[index] = tupleGH;
+            if (valsIS != null) valsIS[index] = tupleIS;
+            if (valsDI != null) valsDI[index] = tupleDI;
             index++;
         }
 

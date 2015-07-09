@@ -856,7 +856,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         
         // Requirements for microaggregation
-        if (manager.getDataAnalyzed() != null) {
+        if (manager.getDataAnalyzed().getArray() != null) {
             this.requirements |= ARXConfiguration.REQUIREMENT_DISTRIBUTION;
         }
 
