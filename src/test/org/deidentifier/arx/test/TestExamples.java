@@ -57,7 +57,7 @@ import org.junit.Test;
  * 
  */
 public class TestExamples {
-
+    
     /**
      * 
      */
@@ -70,7 +70,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -83,7 +83,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -96,7 +96,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -109,7 +109,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -122,7 +122,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -135,7 +135,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -148,7 +148,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -161,7 +161,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -174,7 +174,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      *
@@ -189,7 +189,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -202,7 +202,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -215,7 +215,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -228,7 +228,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -241,7 +241,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -254,7 +254,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -267,7 +267,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -280,7 +280,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -293,7 +293,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -371,13 +371,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
     
-    
-    
-    
-    
-
     /**
      * 
      */
@@ -390,7 +384,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */
@@ -403,7 +397,7 @@ public class TestExamples {
             Assert.fail();
         }
     }
-
+    
     /**
      * 
      */

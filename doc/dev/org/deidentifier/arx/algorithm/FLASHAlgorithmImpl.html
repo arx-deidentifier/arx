@@ -132,7 +132,7 @@ extends <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.ht
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;org.deidentifier.arx.algorithm.<a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html" title="class in org.deidentifier.arx.algorithm">AbstractAlgorithm</a></h3>
-<code><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#checker">checker</a>, <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#lattice">lattice</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#checker">checker</a>, <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#solutionSpace">solutionSpace</a></code></li>
 </ul>
 </li>
 </ul>
@@ -148,7 +148,7 @@ extends <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.ht
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHAlgorithmImpl.html#FLASHAlgorithmImpl(org.deidentifier.arx.framework.lattice.Lattice,%20org.deidentifier.arx.framework.check.NodeChecker,%20org.deidentifier.arx.algorithm.FLASHStrategy,%20org.deidentifier.arx.algorithm.FLASHConfiguration)">FLASHAlgorithmImpl</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/Lattice.html" title="class in org.deidentifier.arx.framework.lattice">Lattice</a>&nbsp;lattice,
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHAlgorithmImpl.html#FLASHAlgorithmImpl(org.deidentifier.arx.framework.lattice.SolutionSpace, org.deidentifier.arx.framework.check.NodeChecker, org.deidentifier.arx.algorithm.FLASHStrategy, org.deidentifier.arx.algorithm.FLASHConfiguration)">FLASHAlgorithmImpl</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace,
                   <a href="../../../../org/deidentifier/arx/framework/check/NodeChecker.html" title="class in org.deidentifier.arx.framework.check">NodeChecker</a>&nbsp;checker,
                   <a href="../../../../org/deidentifier/arx/algorithm/FLASHStrategy.html" title="class in org.deidentifier.arx.algorithm">FLASHStrategy</a>&nbsp;strategy,
                   <a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHConfiguration</a>&nbsp;config)</code>
@@ -182,7 +182,7 @@ extends <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.ht
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.algorithm.<a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html" title="class in org.deidentifier.arx.algorithm">AbstractAlgorithm</a></h3>
-<code><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#computeUtilityForMonotonicMetrics(org.deidentifier.arx.framework.lattice.Node)">computeUtilityForMonotonicMetrics</a>, <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#getAllAnonymousNodes()">getAllAnonymousNodes</a>, <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#getGlobalOptimum()">getGlobalOptimum</a>, <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#trackOptimum(org.deidentifier.arx.framework.lattice.Node)">trackOptimum</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#computeUtilityForMonotonicMetrics(org.deidentifier.arx.framework.lattice.Transformation)">computeUtilityForMonotonicMetrics</a>, <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#getGlobalOptimum()">getGlobalOptimum</a>, <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#progress(double)">progress</a>, <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#setListener(org.deidentifier.arx.ARXListener)">setListener</a>, <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html#trackOptimum(org.deidentifier.arx.framework.lattice.Transformation)">trackOptimum</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -223,18 +223,18 @@ extends <a href="../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.ht
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="FLASHAlgorithmImpl(org.deidentifier.arx.framework.lattice.Lattice, org.deidentifier.arx.framework.check.NodeChecker, org.deidentifier.arx.algorithm.FLASHStrategy, org.deidentifier.arx.algorithm.FLASHConfiguration)">
+<a name="FLASHAlgorithmImpl(org.deidentifier.arx.framework.lattice.SolutionSpace, org.deidentifier.arx.framework.check.NodeChecker, org.deidentifier.arx.algorithm.FLASHStrategy, org.deidentifier.arx.algorithm.FLASHConfiguration)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>FLASHAlgorithmImpl</h4>
-<pre>public&nbsp;FLASHAlgorithmImpl(<a href="../../../../org/deidentifier/arx/framework/lattice/Lattice.html" title="class in org.deidentifier.arx.framework.lattice">Lattice</a>&nbsp;lattice,
+<pre>public&nbsp;FLASHAlgorithmImpl(<a href="../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace,
                   <a href="../../../../org/deidentifier/arx/framework/check/NodeChecker.html" title="class in org.deidentifier.arx.framework.check">NodeChecker</a>&nbsp;checker,
                   <a href="../../../../org/deidentifier/arx/algorithm/FLASHStrategy.html" title="class in org.deidentifier.arx.algorithm">FLASHStrategy</a>&nbsp;strategy,
                   <a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHConfiguration</a>&nbsp;config)</pre>
 <div class="block">Creates a new instance.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>lattice</code> - </dd><dd><code>checker</code> - </dd><dd><code>strategy</code> - </dd><dd><code>config</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>solutionSpace</code> - </dd><dd><code>checker</code> - </dd><dd><code>strategy</code> - </dd><dd><code>config</code> - </dd></dl>
 </li>
 </ul>
 </li>

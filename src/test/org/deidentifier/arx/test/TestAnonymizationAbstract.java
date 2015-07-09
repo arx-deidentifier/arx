@@ -46,7 +46,7 @@ import org.junit.Test;
  * @author Florian Kohlmayer
  */
 public abstract class TestAnonymizationAbstract extends AbstractTest {
-
+    
     /**
      * Represents a test case.
      *
@@ -54,28 +54,28 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
      * @author Florian Kohlmayer
      */
     public static class ARXAnonymizationTestCase {
-
-        /**  TODO */
+        
+        /** TODO */
         public ARXConfiguration config;
         
-        /**  TODO */
-        public String           dataset;
+        /** TODO */
+        public String dataset;
         
-        /**  TODO */
-        public String           sensitiveAttribute;
+        /** TODO */
+        public String sensitiveAttribute;
         
-        /**  TODO */
-        public String           optimalInformationLoss;
+        /** TODO */
+        public String optimalInformationLoss;
         
-        /**  TODO */
-        public int[]            optimalTransformation;
+        /** TODO */
+        public int[] optimalTransformation;
         
-        /**  TODO */
-        public boolean          practical;
+        /** TODO */
+        public boolean practical;
         
-        /**  TODO */
-        public int[]            statistics;
-
+        /** TODO */
+        public int[] statistics;
+        
         /**
          * Creates a new instance.
          *
@@ -92,7 +92,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
                                         final boolean practical) {
             this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, null);
         }
-
+        
         /**
          * Creates a new instance.
          *
@@ -111,7 +111,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
                                         int[] statistics) {
             this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, statistics);
         }
-
+        
         /**
          * Creates a new instance.
          *
@@ -130,7 +130,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
                                         final boolean practical) {
             this(config, sensitiveAttribute, dataset, optimalInformationLoss, optimalTransformation, practical, null);
         }
-
+        
         /**
          * Creates a new instance.
          *
@@ -157,7 +157,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             this.practical = practical;
             this.statistics = statistics;
         }
-
+        
         /**
          * Creates a new instance.
          *
@@ -176,7 +176,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
                                         final boolean practical) {
             this(config, sensitiveAttribute, dataset, optimalInformationLoss, optimalTransformation, practical, null);
         }
-
+        
         /**
          * Creates a new instance.
          *
@@ -203,14 +203,14 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             this.practical = practical;
             this.statistics = statistics;
         }
-
+        
         @Override
         public String toString() {
             return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
                    config.isPracticalMonotonicity();
         }
     }
-
+    
     /**
      * Transforms it into a string representation.
      *
@@ -239,9 +239,9 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
      * @throws IOException
      */
     public static Data getDataObject(final ARXAnonymizationTestCase testCase) throws IOException {
-
+        
         final Data data = Data.create(testCase.dataset, ';');
-
+        
         // Read generalization hierachies
         final FilenameFilter hierarchyFilter = new FilenameFilter() {
             @Override
@@ -254,18 +254,18 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
                 }
             }
         };
-
+        
         final File testDir = new File(testCase.dataset.substring(0, testCase.dataset.lastIndexOf("/")));
         final File[] genHierFiles = testDir.listFiles(hierarchyFilter);
         final Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
-
+        
         for (final File file : genHierFiles) {
             final Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
-
+                
                 final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
                 final String attributeName = matcher.group(1);
-
+                
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
                 } else { // sensitive attribute
@@ -273,16 +273,16 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
                         data.getDefinition().setAttributeType(attributeName, AttributeType.SENSITIVE_ATTRIBUTE);
                     }
                 }
-
+                
             }
         }
-
+        
         return data;
     }
-
+    
     /** The test case. */
     protected final ARXAnonymizationTestCase testCase;
-
+    
     /**
      * Creates a new instance.
      *
@@ -291,14 +291,14 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
     public TestAnonymizationAbstract(final ARXAnonymizationTestCase testCase) {
         this.testCase = testCase;
     }
-
+    
     @Override
     @Before
     public void setUp() {
         // Empty by design
         // We also intentionally don't call super.setUp()
     }
-
+    
     /**
      * 
      *
@@ -306,28 +306,28 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
      */
     @Test
     public void test() throws IOException {
-
+        
         final Data data = getDataObject(testCase);
-
+        
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         testCase.config.setPracticalMonotonicity(testCase.practical);
-
+        
         ARXResult result = anonymizer.anonymize(data, testCase.config);
-
+        
         // check if no solution
         if (testCase.optimalTransformation == null) {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
-
+            
             String lossActual = result.getGlobalOptimum().getMaximumInformationLoss().toString();
             String lossExpected = testCase.optimalInformationLoss;
-
+            
             assertEquals(testCase.dataset + "-should: " + lossExpected + " is: " +
                          lossActual + "(" + result.getGlobalOptimum().getMinimumInformationLoss().toString() + ")",
                          lossExpected,
                          lossActual);
-
+                         
             if (!Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation)) {
                 System.err.println("Note: Information loss equals, but the optimum differs:");
                 System.err.println("Should: " + Arrays.toString(testCase.optimalTransformation) + " is: " +
@@ -335,9 +335,9 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
                 System.err.println("Test case: " + testCase.toString());
             }
         }
-
+        
         if (testCase.statistics != null) {
-
+            
             // Collect statistics
             int[] statistics = new int[7];
             for (ARXNode[] level : result.getLattice().getLevels()) {
@@ -363,7 +363,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
                     }
                 }
             }
-
+            
             // Compare
             String algorithmConfiguration = getAlgorithmConfiguration(testCase.config);
             assertEquals(algorithmConfiguration + ". Mismatch: number of transformations", testCase.statistics[0], statistics[0]);
@@ -375,7 +375,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             assertEquals(algorithmConfiguration + ". Mismatch: number of transformations with utility available", testCase.statistics[6], statistics[6]);
         }
     }
-
+    
     /**
      * Returns the configuration of FLASH.
      *
@@ -383,7 +383,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
      * @return
      */
     private String getAlgorithmConfiguration(ARXConfiguration config) {
-
+        
         final String metric;
         if (config.getMetric().isMonotonic() || config.getMaxOutliers() == 0d || config.isPracticalMonotonicity()) {
             metric = "monotonic";
@@ -393,8 +393,9 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         final String criterion;
         if (config.isCriterionMonotonic() || config.isPracticalMonotonicity()) {
             criterion = "Fully-monotonic";
-        } else if (!config.isCriterionMonotonic() &&
-                   (config.containsCriterion(KAnonymity.class) || config.containsCriterion(LDiversity.class))) {
+        } else
+            if (!config.isCriterionMonotonic() &&
+                (config.containsCriterion(KAnonymity.class) || config.containsCriterion(LDiversity.class))) {
             criterion = "Partially-monotonic";
         } else {
             criterion = "Non-monotonic";

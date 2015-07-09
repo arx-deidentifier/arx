@@ -473,16 +473,28 @@ public class MainWindow implements IView {
      * @param header
      * @param text
      * @param initial
+     * @param validator
      * @return
      */
-    public String showInputDialog(final Shell shell, final String header, final String text, final String initial) {
-
-        final InputDialog dlg = new InputDialog(shell, header, text, initial, null);
+    public String showInputDialog(final Shell shell, final String header, final String text, final String initial, final IInputValidator validator) {
+        final InputDialog dlg = new InputDialog(shell, header, text, initial, validator);
         if (dlg.open() == Window.OK) {
             return dlg.getValue();
         } else {
             return null;
         }
+    }
+    /**
+     * Shows an input dialog.
+     *
+     * @param shell
+     * @param header
+     * @param text
+     * @param initial
+     * @return
+     */
+    public String showInputDialog(final Shell shell, final String header, final String text, final String initial) {
+        return showInputDialog(shell, header, text, initial, null);
     }
 
     /**
@@ -621,7 +633,16 @@ public class MainWindow implements IView {
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.21"), //$NON-NLS-1$
                                    controller.getResources().getManagedImage("edit_anonymize.png"), //$NON-NLS-1$
                                    true) {
-            public void action(Controller controller) { controller.actionMenuEditAnonymize(); }
+            public void action(Controller controller) { controller.actionMenuEditAnonymize(false); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.40"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_anonymize_heuristic.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuEditAnonymize(true); }
             public boolean isEnabled(Model model) { 
                 return model != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
@@ -638,6 +659,15 @@ public class MainWindow implements IView {
         
         items.add(new MainMenuSeparator());
 
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.41"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuEditInitializeHierarchy(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+        
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.23"), //$NON-NLS-1$
                                    controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
                                    true) {

@@ -157,6 +157,7 @@ public abstract class ViewSolutionSpace implements IView {
         controller.addListener(ModelPart.FILTER, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.RESULT, this);
+        controller.addListener(ModelPart.EXPAND, this);
 
         // Store
         this.parent = parent;
@@ -239,6 +240,10 @@ public abstract class ViewSolutionSpace implements IView {
             if (model!=null && !isTooLarge(model.getResult(), (ModelNodeFilter) event.data, model.getMaxNodesInViewer())) {
                 eventFilterChanged(model.getResult(), (ModelNodeFilter) event.data);
             }
+        } else if (event.part == ModelPart.EXPAND) {
+            if (model!=null && !isTooLarge(model.getResult(), model.getNodeFilter(), model.getMaxNodesInViewer())) {
+                eventFilterChanged(model.getResult(), model.getNodeFilter());
+            }
         }
     }
     
@@ -269,6 +274,19 @@ public abstract class ViewSolutionSpace implements IView {
                 model.setSelectedNode(selectedNode);
                 controller.update(new ModelEvent(ViewSolutionSpace.this, ModelPart.SELECTED_NODE, selectedNode));
                 actionRedraw();
+            }
+        });
+
+        MenuItem item3 = new MenuItem(menu, SWT.NONE);
+        item3.setText(Resources.getMessage("LatticeView.11")); //$NON-NLS-1$
+        item3.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                model.setSelectedNode(selectedNode);
+                controller.update(new ModelEvent(ViewSolutionSpace.this, ModelPart.SELECTED_NODE, selectedNode));
+                controller.actionExpand(selectedNode);
+                controller.update(new ModelEvent(ViewSolutionSpace.this, ModelPart.EXPAND, selectedNode));
+                eventFilterChanged(model.getResult(), model.getNodeFilter());
             }
         });
     }

@@ -138,16 +138,16 @@ public class TestMicroaggregation extends AbstractTest {
         
         final String[][] resultArray = resultToArray(result);
         
-        final String[][] expectedArray =
-        { { "age", "gender", "zipcode" },
-                { "54", "male", "81***" },
-                { "50", "female", "81***" },
-                { "54", "male", "81***" },
-                { "50", "female", "81***" },
-                { "50", "female", "81***" },
-                { "54", "male", "81***" },
-                { "54", "male", "81***" } };
-        
+        final String[][] expectedArray = {
+                                           { "age", "gender", "zipcode" },
+                                           { "54", "male", "81***" },
+                                           { "50", "female", "81***" },
+                                           { "54", "male", "81***" },
+                                           { "50", "female", "81***" },
+                                           { "50", "female", "81***" },
+                                           { "54", "male", "81***" },
+                                           { "54", "male", "81***" } };
+                                           
         assertTrue(Arrays.deepEquals(resultArray, expectedArray));
     }
     
@@ -174,16 +174,16 @@ public class TestMicroaggregation extends AbstractTest {
         
         final String[][] resultArray = resultToArray(result);
         
-        final String[][] expectedArray =
-        { { "age", "gender", "zipcode" },
-                { "52", "male", "81***" },
-                { "47", "female", "81***" },
-                { "52", "male", "81***" },
-                { "47", "female", "81***" },
-                { "47", "female", "81***" },
-                { "52", "male", "81***" },
-                { "52", "male", "81***" } };
-        
+        final String[][] expectedArray = {
+                                           { "age", "gender", "zipcode" },
+                                           { "52", "male", "81***" },
+                                           { "47", "female", "81***" },
+                                           { "52", "male", "81***" },
+                                           { "47", "female", "81***" },
+                                           { "47", "female", "81***" },
+                                           { "52", "male", "81***" },
+                                           { "52", "male", "81***" } };
+                                           
         assertTrue(Arrays.deepEquals(resultArray, expectedArray));
     }
 }

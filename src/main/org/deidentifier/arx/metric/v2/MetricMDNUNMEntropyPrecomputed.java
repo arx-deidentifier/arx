@@ -21,11 +21,11 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
@@ -78,7 +78,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
         // Compute non-uniform entropy
         double[] result = super.getInformationLossInternalRaw(node, g);
@@ -87,7 +87,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         
         // Compute loss induced by suppression
         double suppressed = 0;
-        final IntIntOpenHashMap[] original = new IntIntOpenHashMap[node.getTransformation().length];
+        final IntIntOpenHashMap[] original = new IntIntOpenHashMap[node.getGeneralization().length];
         for (int i = 0; i < original.length; i++) {
             original[i] = new IntIntOpenHashMap();
         }
@@ -131,12 +131,12 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return super.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                        HashGroupify groupify) {
         return super.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }

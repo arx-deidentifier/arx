@@ -19,11 +19,11 @@ package org.deidentifier.arx.metric;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 
@@ -58,7 +58,7 @@ public class MetricNMEntropy extends MetricEntropy {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final HashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
 
         // Obtain "standard" value
         final InformationLossDefault originalInfoLossDefault = node.getLowerBound() != null ? (InformationLossDefault)node.getLowerBound() :
@@ -68,7 +68,7 @@ public class MetricNMEntropy extends MetricEntropy {
         double originalInfoLoss = originalInfoLossDefault.getValue();
         double suppressedTuples = 0;
         double additionalInfoLoss = 0;
-        final IntIntOpenHashMap[] original = new IntIntOpenHashMap[node.getTransformation().length];
+        final IntIntOpenHashMap[] original = new IntIntOpenHashMap[node.getGeneralization().length];
         for (int i = 0; i < original.length; i++) {
             original[i] = new IntIntOpenHashMap();
         }
@@ -104,12 +104,12 @@ public class MetricNMEntropy extends MetricEntropy {
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Node node) {
+    protected InformationLossDefault getLowerBoundInternal(Transformation node) {
         return super.getInformationLossInternal(node, (HashGroupify)null).getInformationLoss();
     }
     
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Node node,
+    protected InformationLossDefault getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
         return getLowerBoundInternal(node);
     }

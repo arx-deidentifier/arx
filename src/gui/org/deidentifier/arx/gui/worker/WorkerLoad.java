@@ -34,6 +34,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
@@ -45,6 +46,7 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
+import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
@@ -287,6 +289,10 @@ public class WorkerLoad extends Worker<Model> {
             }
             model.setSelectedNode(outputNode);
             
+            // Create solution space
+            ARXConfiguration arxconfig = model.getOutputConfig().getConfig();
+            SolutionSpace solutions = new SolutionSpace(lattice, arxconfig);
+            
             // Update model
             model.setResult(new ARXResult(config.getInput().getHandle(),
                                           definition,
@@ -295,9 +301,16 @@ public class WorkerLoad extends Worker<Model> {
                                           snapshotSizeSnapshot,
                                           snapshotSizeDataset,
                                           metric,
-                                          model.getOutputConfig().getConfig(),
+                                          arxconfig,
                                           optimalNode,
-                                          time));
+                                          time,
+                                          solutions));
+            
+            // Update lattice
+            ARXLattice lattice = model.getResult().getLattice();
+            if (lattice != null) {
+                lattice.access().setSolutionSpace(solutions);
+            }
 
             // Create anonymizer
             final ARXAnonymizer f = new ARXAnonymizer();
@@ -685,7 +698,7 @@ public class WorkerLoad extends Worker<Model> {
                     vocabulary.isMin2(localName)) {
                         return true;
                 } else if (vocabulary.isNode2(localName)) {
-                    final ARXNode node = lattice.new ARXNode();
+                    final ARXNode node = lattice.new ARXNode(lattice);
                     node.access().setAnonymity(anonymity);
                     node.access().setChecked(checked);
                     node.access().setTransformation(transformation);

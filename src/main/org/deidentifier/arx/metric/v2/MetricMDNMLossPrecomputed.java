@@ -26,7 +26,7 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
@@ -88,10 +88,10 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
 
         // Prepare
-        int[] transformation = node.getTransformation();
+        int[] transformation = node.getGeneralization();
         int dimensions = transformation.length;
         double[] bound = new double[dimensions];
         DomainShare[] shares = super.getShares();
@@ -104,7 +104,7 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
         for (int column = 0; column < cardinalities.length; column++) {
 
             // Check for cached value
-            int level = node.getTransformation()[column];
+            int level = node.getGeneralization()[column];
             int[][] cardinality = cardinalities[column];
             int[] values = this.values[column][level];
             
@@ -125,7 +125,7 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node, HashGroupify g) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node, HashGroupify g) {
         return this.getLowerBoundInternal(node);
     }
 

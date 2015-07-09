@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html" title="class in org.deidentifier.arx.algorithm"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../org/deidentifier/arx/algorithm/FLASHStrategy.html" title="class in org.deidentifier.arx.algorithm"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.PhaseAnonymityProperty.html" title="enum in org.deidentifier.arx.algorithm"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" target="_top">Frames</a></li>
@@ -59,7 +59,7 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
@@ -103,6 +103,27 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested_class_summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.PhaseAnonymityProperty.html" title="enum in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration.PhaseAnonymityProperty</a></strong></code>
+<div class="block">The main anonymity property.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_summary">
@@ -115,11 +136,11 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html#FLASHPhaseConfiguration(int,%20org.deidentifier.arx.framework.lattice.NodeAction,%20org.deidentifier.arx.framework.lattice.NodeAction,%20org.deidentifier.arx.framework.lattice.NodeAction,%20org.deidentifier.arx.framework.lattice.NodeAction)">FLASHPhaseConfiguration</a></strong>(int&nbsp;anonymityProperty,
-                       <a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;triggerTag,
-                       <a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;triggerCheck,
-                       <a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;triggerEvaluate,
-                       <a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;triggerSkip)</code>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html#FLASHPhaseConfiguration(org.deidentifier.arx.algorithm.FLASHPhaseConfiguration.PhaseAnonymityProperty, org.deidentifier.arx.framework.lattice.DependentAction, org.deidentifier.arx.framework.lattice.DependentAction, org.deidentifier.arx.framework.lattice.DependentAction, org.deidentifier.arx.framework.lattice.DependentAction)">FLASHPhaseConfiguration</a></strong>(<a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.PhaseAnonymityProperty.html" title="enum in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration.PhaseAnonymityProperty</a>&nbsp;anonymityProperty,
+                       <a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;triggerTag,
+                       <a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;triggerCheck,
+                       <a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;triggerEvaluate,
+                       <a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;triggerSkip)</code>
 <div class="block">Creates a configuration for an active phase.</div>
 </td>
 </tr>
@@ -139,31 +160,31 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>int</code></td>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.PhaseAnonymityProperty.html" title="enum in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration.PhaseAnonymityProperty</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html#getAnonymityProperty()">getAnonymityProperty</a></strong>()</code>
 <div class="block">Getter: The main anonymity property.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a></code></td>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html#getTriggerCheck()">getTriggerCheck</a></strong>()</code>
 <div class="block">Getter: A trigger for checking nodes in this phase.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a></code></td>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html#getTriggerEvaluate()">getTriggerEvaluate</a></strong>()</code>
 <div class="block">Getter: A trigger for evaluating nodes in this phase.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a></code></td>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html#getTriggerSkip()">getTriggerSkip</a></strong>()</code>
 <div class="block">Getter: A trigger for skipping nodes in this phase.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a></code></td>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html#getTriggerTag()">getTriggerTag</a></strong>()</code>
 <div class="block">Getter: A trigger for tagging nodes in this phase.</div>
 </td>
@@ -190,17 +211,17 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="FLASHPhaseConfiguration(int, org.deidentifier.arx.framework.lattice.NodeAction, org.deidentifier.arx.framework.lattice.NodeAction, org.deidentifier.arx.framework.lattice.NodeAction, org.deidentifier.arx.framework.lattice.NodeAction)">
+<a name="FLASHPhaseConfiguration(org.deidentifier.arx.algorithm.FLASHPhaseConfiguration.PhaseAnonymityProperty, org.deidentifier.arx.framework.lattice.DependentAction, org.deidentifier.arx.framework.lattice.DependentAction, org.deidentifier.arx.framework.lattice.DependentAction, org.deidentifier.arx.framework.lattice.DependentAction)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>FLASHPhaseConfiguration</h4>
-<pre>public&nbsp;FLASHPhaseConfiguration(int&nbsp;anonymityProperty,
-                       <a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;triggerTag,
-                       <a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;triggerCheck,
-                       <a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;triggerEvaluate,
-                       <a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;triggerSkip)</pre>
+<pre>public&nbsp;FLASHPhaseConfiguration(<a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.PhaseAnonymityProperty.html" title="enum in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration.PhaseAnonymityProperty</a>&nbsp;anonymityProperty,
+                       <a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;triggerTag,
+                       <a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;triggerCheck,
+                       <a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;triggerEvaluate,
+                       <a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;triggerSkip)</pre>
 <div class="block">Creates a configuration for an active phase.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>anonymityProperty</code> - </dd><dd><code>triggerTag</code> - </dd><dd><code>triggerCheck</code> - </dd><dd><code>triggerEvaluate</code> - </dd><dd><code>triggerSkip</code> - </dd></dl>
 </li>
@@ -219,7 +240,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getAnonymityProperty</h4>
-<pre>public&nbsp;int&nbsp;getAnonymityProperty()</pre>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.PhaseAnonymityProperty.html" title="enum in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration.PhaseAnonymityProperty</a>&nbsp;getAnonymityProperty()</pre>
 <div class="block">Getter: The main anonymity property.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -230,7 +251,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getTriggerCheck</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;getTriggerCheck()</pre>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;getTriggerCheck()</pre>
 <div class="block">Getter: A trigger for checking nodes in this phase.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -241,7 +262,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getTriggerEvaluate</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;getTriggerEvaluate()</pre>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;getTriggerEvaluate()</pre>
 <div class="block">Getter: A trigger for evaluating nodes in this phase.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -252,7 +273,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getTriggerSkip</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;getTriggerSkip()</pre>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;getTriggerSkip()</pre>
 <div class="block">Getter: A trigger for skipping nodes in this phase.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -263,7 +284,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>getTriggerTag</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;getTriggerTag()</pre>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;getTriggerTag()</pre>
 <div class="block">Getter: A trigger for tagging nodes in this phase.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -295,7 +316,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html" title="class in org.deidentifier.arx.algorithm"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../org/deidentifier/arx/algorithm/FLASHStrategy.html" title="class in org.deidentifier.arx.algorithm"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.PhaseAnonymityProperty.html" title="enum in org.deidentifier.arx.algorithm"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" target="_top">Frames</a></li>
@@ -319,7 +340,7 @@ extends java.lang.Object</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>

@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.metric.v2;
 
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 
@@ -75,7 +75,7 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
 }

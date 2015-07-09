@@ -116,28 +116,28 @@
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.html#create()">create</a></strong>()</code>
-<div class="block">Creates a new config without tuple suppression.</div>
+<div class="block">Creates a new configuration without tuple suppression.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.html#create(double)">create</a></strong>(double&nbsp;suppressionLimit)</code>
-<div class="block">Creates a new config that allows the given percentage of outliers and
+<div class="block">Creates a new configuration that allows the given percentage of outliers and
  thus implements tuple suppression.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
-<td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.html#create(double,%20org.deidentifier.arx.metric.Metric)">create</a></strong>(double&nbsp;suppressionLimit,
+<td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.html#create(double, org.deidentifier.arx.metric.Metric)">create</a></strong>(double&nbsp;suppressionLimit,
       <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</code>
-<div class="block">Creates a new config that allows the given percentage of outliers and
+<div class="block">Creates a new configuration that allows the given percentage of outliers and
  thus implements tuple suppression.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.html#create(org.deidentifier.arx.metric.Metric)">create</a></strong>(<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</code>
-<div class="block">Creates a new config that allows to define the metric for measuring information loss.</div>
+<div class="block">Creates a new configuration that allows to define the metric for measuring information loss.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -157,12 +157,21 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></code></td>
-<td class="colLast"><span class="strong">ARXAnonymizer.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXAnonymizer.html#anonymize(org.deidentifier.arx.Data,%20org.deidentifier.arx.ARXConfiguration)">anonymize</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
+<td class="colLast"><span class="strong">ARXAnonymizer.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXAnonymizer.html#anonymize(org.deidentifier.arx.Data, org.deidentifier.arx.ARXConfiguration)">anonymize</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
 <div class="block">Performs data anonymization.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>org.deidentifier.arx.algorithm.AbstractAlgorithm</code></td>
+<td class="colLast"><span class="strong">ARXAnonymizer.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXAnonymizer.html#getAlgorithm(org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.lattice.SolutionSpace, org.deidentifier.arx.framework.check.NodeChecker)">getAlgorithm</a></strong>(<a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
+            org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+            org.deidentifier.arx.framework.lattice.SolutionSpace&nbsp;solutionSpace,
+            org.deidentifier.arx.framework.check.NodeChecker&nbsp;checker)</code>
+<div class="block">Returns an algorithm for the given problem instance</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><span class="strong">ARXLattice.Access.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXLattice.Access.html#setMonotonicity(org.deidentifier.arx.ARXConfiguration)">setMonotonicity</a></strong>(<a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>&nbsp;</td>
 </tr>
@@ -175,7 +184,7 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.ARXLattice,%20int,%20double,%20double,%20org.deidentifier.arx.metric.Metric,%20org.deidentifier.arx.ARXConfiguration,%20org.deidentifier.arx.ARXLattice.ARXNode,%20long)">ARXResult</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXLattice, int, double, double, org.deidentifier.arx.metric.Metric, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice.ARXNode, long, org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
          <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
          <a href="../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
          int&nbsp;historySize,
@@ -184,7 +193,8 @@
          <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric,
          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
          <a href="../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;optimum,
-         long&nbsp;time)</code>
+         long&nbsp;time,
+         org.deidentifier.arx.framework.lattice.SolutionSpace&nbsp;solutionSpace)</code>
 <div class="block">Internal constructor for deserialization.</div>
 </td>
 </tr>
@@ -204,7 +214,7 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">Metric.</span><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initialize(org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(<a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+<td class="colLast"><span class="strong">Metric.</span><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initialize(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(<a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
           org.deidentifier.arx.framework.data.Data&nbsp;input,
           org.deidentifier.arx.framework.data.GeneralizationHierarchy[]&nbsp;hierarchies,
           <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>

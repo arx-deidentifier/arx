@@ -19,11 +19,11 @@ package org.deidentifier.arx.metric;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * This class provides an implementation of a monotonic weighted precision metric.
@@ -79,15 +79,15 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final HashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
 
         double result = 0;
-        final int[] transformation = node.getTransformation();
+        final int[] transformation = node.getGeneralization();
         for (int i = 0; i < transformation.length; i++) {
             double weight = weights != null ? weights[i] : 1d;
             double level = (double) transformation[i];
@@ -98,12 +98,12 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Node node) {
+    protected InformationLossDefault getLowerBoundInternal(Transformation node) {
         return this.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Node node,
+    protected InformationLossDefault getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
         return getLowerBoundInternal(node);
     }

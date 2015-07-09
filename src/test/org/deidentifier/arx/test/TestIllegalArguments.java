@@ -36,13 +36,13 @@ import org.junit.Test;
  * @author Florian Kohlmayer
  */
 public class TestIllegalArguments extends AbstractTest {
-
+    
     @Override
     @Before
     public void setUp() {
         super.setUp();
     }
-
+    
     /**
      * 
      *
@@ -53,7 +53,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final Data data = Data.create();
-
+            
             data.getDefinition()
                 .setAttributeType("age", AttributeType.IDENTIFYING_ATTRIBUTE);
             final ARXConfiguration config = ARXConfiguration.create();
@@ -65,9 +65,9 @@ public class TestIllegalArguments extends AbstractTest {
             return;
         }
         Assert.fail();
-
+        
     }
-
+    
     /**
      * 
      *
@@ -75,11 +75,11 @@ public class TestIllegalArguments extends AbstractTest {
      */
     @Test
     public void testEmptyDatasetWithoutAttributeDefinition() throws IOException {
-
+        
         try {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final Data data = Data.create();
-
+            
             final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(1.2d);
@@ -90,7 +90,7 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      *
@@ -98,7 +98,7 @@ public class TestIllegalArguments extends AbstractTest {
      */
     @Test
     public void testEmptyDefinition() throws IOException {
-
+        
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         try {
             final ARXConfiguration config = ARXConfiguration.create();
@@ -111,7 +111,7 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      *
@@ -119,7 +119,7 @@ public class TestIllegalArguments extends AbstractTest {
      */
     @Test
     public void testEmptyHierarchy() throws IOException {
-
+        
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final Data data = provider.getData();
         data.getDefinition().setAttributeType("age", Hierarchy.create());
@@ -134,13 +134,13 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      */
     @Test
     public void testHistorySize() {
-
+        
         try {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             anonymizer.setHistorySize(-1);
@@ -149,7 +149,7 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      *
@@ -158,9 +158,9 @@ public class TestIllegalArguments extends AbstractTest {
     @Test
     public void testInvalidHierarchies() throws IOException {
         provider.createWrongDataDefinition();
-
+        
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-
+        
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
@@ -172,7 +172,7 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      *
@@ -180,9 +180,9 @@ public class TestIllegalArguments extends AbstractTest {
      */
     @Test
     public void testKRangeNegative() throws IOException {
-
+        
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-
+        
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(-1));
@@ -194,7 +194,7 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      *
@@ -202,9 +202,9 @@ public class TestIllegalArguments extends AbstractTest {
      */
     @Test
     public void testKRangeTooLarge() throws IOException {
-
+        
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-
+        
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(8));
@@ -215,7 +215,7 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      *
@@ -223,9 +223,9 @@ public class TestIllegalArguments extends AbstractTest {
      */
     @Test
     public void testKRangeZero() throws IOException {
-
+        
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-
+        
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(0));
@@ -236,7 +236,7 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      *
@@ -244,9 +244,9 @@ public class TestIllegalArguments extends AbstractTest {
      */
     @Test
     public void testMaxOutliersEqualsOne() throws IOException {
-
+        
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-
+        
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
@@ -257,7 +257,7 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      *
@@ -265,9 +265,9 @@ public class TestIllegalArguments extends AbstractTest {
      */
     @Test
     public void testMaxOutliersNegative() throws IOException {
-
+        
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-
+        
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
@@ -278,7 +278,7 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      *
@@ -286,9 +286,9 @@ public class TestIllegalArguments extends AbstractTest {
      */
     @Test
     public void testMaxOutliersTooLarge() throws IOException {
-
+        
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-
+        
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
@@ -299,13 +299,13 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      */
     @Test
     public void testMetric() {
-
+        
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.setMetric(null);
@@ -314,7 +314,7 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      *
@@ -324,9 +324,9 @@ public class TestIllegalArguments extends AbstractTest {
     public void testMissingHierarchyValue() throws IOException {
         provider.createDataDefinitionMissing();
         final Data data = provider.getData();
-
+        
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-
+        
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
@@ -337,7 +337,7 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      *
@@ -348,7 +348,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final Data data = provider.getData();
-            data.getDefinition().setAttributeType("age", (AttributeType)null);
+            data.getDefinition().setAttributeType("age", (AttributeType) null);
             final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(1.2d);
@@ -358,13 +358,13 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      */
     @Test
     public void testSnapshotSizeNegative() {
-
+        
         try {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             anonymizer.setMaximumSnapshotSizeDataset(-1);
@@ -373,13 +373,13 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      */
     @Test
     public void testSnapshotSizeTooLarge() {
-
+        
         try {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             anonymizer.setMaximumSnapshotSizeDataset(1.01d);
@@ -388,13 +388,13 @@ public class TestIllegalArguments extends AbstractTest {
         }
         Assert.fail();
     }
-
+    
     /**
      * 
      */
     @Test
     public void testSnapshotSizeZero() {
-
+        
         try {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             anonymizer.setMaximumSnapshotSizeDataset(0);

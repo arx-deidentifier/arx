@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li>Prev Class</li>
-<li><a href="../../../../../../org/deidentifier/arx/framework/check/history/MRUCache.html" title="class in org.deidentifier.arx.framework.check.history"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.StorageStrategy.html" title="enum in org.deidentifier.arx.framework.check.history"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?org/deidentifier/arx/framework/check/history/History.html" target="_top">Frames</a></li>
@@ -59,14 +59,14 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
@@ -103,28 +103,22 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<!-- ======== NESTED CLASS SUMMARY ======== -->
 <ul class="blockList">
-<li class="blockList"><a name="field_summary">
+<li class="blockList"><a name="nested_class_summary">
 <!--   -->
 </a>
-<h3>Field Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
-<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<h3>Nested Class Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Field and Description</th>
+<th class="colLast" scope="col">Class and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.html#STORAGE_TRIGGER_ALL">STORAGE_TRIGGER_ALL</a></strong></code>
-<div class="block">Store all transformations.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.html#STORAGE_TRIGGER_NON_ANONYMOUS">STORAGE_TRIGGER_NON_ANONYMOUS</a></strong></code>
-<div class="block">Store only non-anonymous transformations.</div>
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.StorageStrategy.html" title="enum in org.deidentifier.arx.framework.check.history">History.StorageStrategy</a></strong></code>
+<div class="block">Two types of storage strategies for the history</div>
 </td>
 </tr>
 </table>
@@ -142,13 +136,14 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.html#History(int,%20int,%20double,%20double,%20org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal,%20org.deidentifier.arx.framework.check.distribution.IntArrayDictionary,%20org.deidentifier.arx.framework.check.distribution.IntArrayDictionary)">History</a></strong>(int&nbsp;rowCount,
+<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.html#History(int, int, double, double, org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary, org.deidentifier.arx.framework.lattice.SolutionSpace)">History</a></strong>(int&nbsp;rowCount,
        int&nbsp;size,
        double&nbsp;snapshotSizeDataset,
        double&nbsp;snapshotSizeSnapshot,
        <a href="../../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;config,
        <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensValue,
-       <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensFreq)</code>
+       <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensFreq,
+       <a href="../../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace)</code>
 <div class="block">Creates a new history.</div>
 </td>
 </tr>
@@ -169,7 +164,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.html#get(org.deidentifier.arx.framework.lattice.Node)">get</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node)</code>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.html#get(int[])">get</a></strong>(int[]&nbsp;transformation)</code>
 <div class="block">Retrieves a snapshot.</div>
 </td>
 </tr>
@@ -186,13 +181,13 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a></code></td>
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.html#getStorageTrigger()">getStorageTrigger</a></strong>()</code>
 <div class="block">Returns the current storage strategy.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a></code></td>
+<td class="colFirst"><code>int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.html#getTransformation()">getTransformation</a></strong>()</code>
 <div class="block">Returns the node backing the last returned snapshot.</div>
 </td>
@@ -211,8 +206,8 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.html#setStorageTrigger(org.deidentifier.arx.framework.lattice.NodeAction)">setStorageTrigger</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;trigger)</code>
-<div class="block">Set the storage strategy.</div>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.html#setStorageStrategy(org.deidentifier.arx.framework.check.history.History.StorageStrategy)">setStorageStrategy</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/check/history/History.StorageStrategy.html" title="enum in org.deidentifier.arx.framework.check.history">History.StorageStrategy</a>&nbsp;strategy)</code>
+<div class="block">Sets the storage strategy</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -221,7 +216,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.html#store(org.deidentifier.arx.framework.lattice.Node,%20org.deidentifier.arx.framework.check.groupify.HashGroupify,%20int[])">store</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.html#store(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify, int[])">store</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
      <a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;groupify,
      int[]&nbsp;snapshot)</code>
 <div class="block">Stores a snapshot in the buffer.</div>
@@ -243,41 +238,13 @@ extends java.lang.Object</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
-<!-- ============ FIELD DETAIL =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field_detail">
-<!--   -->
-</a>
-<h3>Field Detail</h3>
-<a name="STORAGE_TRIGGER_NON_ANONYMOUS">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>STORAGE_TRIGGER_NON_ANONYMOUS</h4>
-<pre>public static final&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a> STORAGE_TRIGGER_NON_ANONYMOUS</pre>
-<div class="block">Store only non-anonymous transformations.</div>
-</li>
-</ul>
-<a name="STORAGE_TRIGGER_ALL">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>STORAGE_TRIGGER_ALL</h4>
-<pre>public static final&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a> STORAGE_TRIGGER_ALL</pre>
-<div class="block">Store all transformations.</div>
-</li>
-</ul>
-</li>
-</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_detail">
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="History(int, int, double, double, org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary)">
+<a name="History(int, int, double, double, org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary, org.deidentifier.arx.framework.lattice.SolutionSpace)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -289,9 +256,10 @@ extends java.lang.Object</pre>
        double&nbsp;snapshotSizeSnapshot,
        <a href="../../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;config,
        <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensValue,
-       <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensFreq)</pre>
+       <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensFreq,
+       <a href="../../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace)</pre>
 <div class="block">Creates a new history.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rowCount</code> - the row count</dd><dd><code>size</code> - the max size</dd><dd><code>snapshotSizeDataset</code> - the snapshotSizeDataset</dd><dd><code>snapshotSizeSnapshot</code> - </dd><dd><code>config</code> - </dd><dd><code>dictionarySensValue</code> - </dd><dd><code>dictionarySensFreq</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rowCount</code> - the row count</dd><dd><code>size</code> - the max size</dd><dd><code>snapshotSizeDataset</code> - the snapshotSizeDataset</dd><dd><code>snapshotSizeSnapshot</code> - </dd><dd><code>config</code> - </dd><dd><code>dictionarySensValue</code> - </dd><dd><code>dictionarySensFreq</code> - </dd><dd><code>solutionSpace</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -302,16 +270,16 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="get(org.deidentifier.arx.framework.lattice.Node)">
+<a name="get(int[])">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>get</h4>
-<pre>public&nbsp;int[]&nbsp;get(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node)</pre>
+<pre>public&nbsp;int[]&nbsp;get(int[]&nbsp;transformation)</pre>
 <div class="block">Retrieves a snapshot.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - the node</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the int[]</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd>snapshot</dd></dl>
 </li>
 </ul>
 <a name="getDictionarySensFreq()">
@@ -342,7 +310,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getStorageTrigger</h4>
-<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;getStorageTrigger()</pre>
+<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/lattice/DependentAction.html" title="class in org.deidentifier.arx.framework.lattice">DependentAction</a>&nbsp;getStorageTrigger()</pre>
 <div class="block">Returns the current storage strategy.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -353,7 +321,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getTransformation</h4>
-<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;getTransformation()</pre>
+<pre>public&nbsp;int[]&nbsp;getTransformation()</pre>
 <div class="block">Returns the node backing the last returned snapshot.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -379,15 +347,15 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>size</code> - </dd></dl>
 </li>
 </ul>
-<a name="setStorageTrigger(org.deidentifier.arx.framework.lattice.NodeAction)">
+<a name="setStorageStrategy(org.deidentifier.arx.framework.check.history.History.StorageStrategy)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setStorageTrigger</h4>
-<pre>public&nbsp;void&nbsp;setStorageTrigger(<a href="../../../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;trigger)</pre>
-<div class="block">Set the storage strategy.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>trigger</code> - </dd></dl>
+<h4>setStorageStrategy</h4>
+<pre>public&nbsp;void&nbsp;setStorageStrategy(<a href="../../../../../../org/deidentifier/arx/framework/check/history/History.StorageStrategy.html" title="enum in org.deidentifier.arx.framework.check.history">History.StorageStrategy</a>&nbsp;strategy)</pre>
+<div class="block">Sets the storage strategy</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>strategy</code> - </dd></dl>
 </li>
 </ul>
 <a name="size()">
@@ -400,13 +368,13 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="store(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify, int[])">
+<a name="store(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify, int[])">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>store</h4>
-<pre>public&nbsp;boolean&nbsp;store(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;transformation,
+<pre>public&nbsp;boolean&nbsp;store(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
             <a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;groupify,
             int[]&nbsp;snapshot)</pre>
 <div class="block">Stores a snapshot in the buffer.</div>
@@ -441,7 +409,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li>Prev Class</li>
-<li><a href="../../../../../../org/deidentifier/arx/framework/check/history/MRUCache.html" title="class in org.deidentifier.arx.framework.check.history"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../org/deidentifier/arx/framework/check/history/History.StorageStrategy.html" title="enum in org.deidentifier.arx.framework.check.history"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?org/deidentifier/arx/framework/check/history/History.html" target="_top">Frames</a></li>
@@ -465,14 +433,14 @@ extends java.lang.Object</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>

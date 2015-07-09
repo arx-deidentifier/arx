@@ -116,6 +116,15 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/algorithm/AbstractAlgorithm.html" title="class in org.deidentifier.arx.algorithm">AbstractAlgorithm</a></code></td>
+<td class="colLast"><span class="strong">ARXAnonymizer.</span><code><strong><a href="../../../../../../org/deidentifier/arx/ARXAnonymizer.html#getAlgorithm(org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.lattice.SolutionSpace, org.deidentifier.arx.framework.check.NodeChecker)">getAlgorithm</a></strong>(<a href="../../../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
+            <a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
+            <a href="../../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace,
+            <a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.html" title="class in org.deidentifier.arx.framework.check">NodeChecker</a>&nbsp;checker)</code>
+<div class="block">Returns an algorithm for the given problem instance</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../../org/deidentifier/arx/ARXConfiguration.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>
 <div class="block">Initializes the configuration.</div>
@@ -130,18 +139,19 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataRegistry,%20org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.framework.check.NodeChecker,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.ARXConfiguration,%20org.deidentifier.arx.ARXLattice,%20long)">ARXResult</a></strong>(org.deidentifier.arx.DataRegistry&nbsp;registry,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.check.NodeChecker, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice, long, org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult</a></strong>(org.deidentifier.arx.DataRegistry&nbsp;registry,
          <a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
          <a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.html" title="class in org.deidentifier.arx.framework.check">NodeChecker</a>&nbsp;checker,
          <a href="../../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
          <a href="../../../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
          <a href="../../../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
-         long&nbsp;duration)</code>
+         long&nbsp;duration,
+         <a href="../../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/DataHandleOutput.html#DataHandleOutput(org.deidentifier.arx.ARXResult,%20org.deidentifier.arx.DataRegistry,%20org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.ARXLattice.ARXNode,%20org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.ARXConfiguration)">DataHandleOutput</a></strong>(<a href="../../../../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a>&nbsp;result,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/DataHandleOutput.html#DataHandleOutput(org.deidentifier.arx.ARXResult, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">DataHandleOutput</a></strong>(<a href="../../../../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a>&nbsp;result,
                 org.deidentifier.arx.DataRegistry&nbsp;registry,
                 <a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
                 <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;outputGeneralized,
@@ -207,12 +217,13 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#NodeChecker(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.metric.Metric,%20org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal,%20int,%20double,%20double)">NodeChecker</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#NodeChecker(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.metric.Metric, org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal, int, double, double, org.deidentifier.arx.framework.lattice.SolutionSpace)">NodeChecker</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
            <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric,
            <a href="../../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;config,
            int&nbsp;historyMaxSize,
            double&nbsp;snapshotSizeDataset,
-           double&nbsp;snapshotSizeSnapshot)</code>
+           double&nbsp;snapshotSizeSnapshot,
+           <a href="../../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace)</code>
 <div class="block">Creates a new NodeChecker instance.</div>
 </td>
 </tr>

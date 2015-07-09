@@ -249,7 +249,6 @@ public class WorkerSave extends Worker<Model> {
         writer.write(vocabulary.getSnapshotSizeDataset(), model.getSnapshotSizeDataset());
         writer.write(vocabulary.getSnapshotSizeSnapshot(), model.getSnapshotSizeSnapshot());
         writer.write(vocabulary.getInitialNodesInViewer(), model.getInitialNodesInViewer());
-        writer.write(vocabulary.getMaxNodesInLattice(), model.getMaxNodesInLattice());
         writer.write(vocabulary.getMaxNodesInViewer(), model.getMaxNodesInViewer());
         writer.write(vocabulary.getSelectedAttribute(), model.getSelectedAttribute());
         writer.write(vocabulary.getInputBytes(), model.getInputBytes());

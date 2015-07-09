@@ -201,20 +201,32 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionFindReplace()">actionFindReplace</a></strong>()</code>
-<div class="block">Find and replace action</div>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionExpand(org.deidentifier.arx.ARXLattice.ARXNode)">actionExpand</a></strong>(<a href="../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;transformation)</code>
+<div class="block">Expand action</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionMenuEditAnonymize()">actionMenuEditAnonymize</a></strong>()</code>
-<div class="block">Starts the anonymization.</div>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionFindReplace()">actionFindReplace</a></strong>()</code>
+<div class="block">Find and replace action</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionMenuEditAnonymize(boolean)">actionMenuEditAnonymize</a></strong>(boolean&nbsp;heuristicSearch)</code>
+<div class="block">Starts the anonymization.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionMenuEditCreateHierarchy()">actionMenuEditCreateHierarchy</a></strong>()</code>
 <div class="block">Starts the wizard.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionMenuEditInitializeHierarchy()">actionMenuEditInitializeHierarchy</a></strong>()</code>
+<div class="block">Initializes the hierarchy for the currently selected attribute</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -315,7 +327,7 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowErrorDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.Throwable)">actionShowErrorDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowErrorDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.Throwable)">actionShowErrorDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                      java.lang.String&nbsp;text,
                      java.lang.Throwable&nbsp;t)</code>
 <div class="block">Shows an error dialog.</div>
@@ -323,7 +335,7 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowFormatInputDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String,%20java.util.Locale,%20org.deidentifier.arx.DataType.DataTypeDescription,%20java.util.Collection)">actionShowFormatInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowFormatInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.util.Locale, org.deidentifier.arx.DataType.DataTypeDescription, java.util.Collection)">actionShowFormatInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                            java.lang.String&nbsp;title,
                            java.lang.String&nbsp;text,
                            java.util.Locale&nbsp;locale,
@@ -334,7 +346,7 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowFormatInputDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String,%20java.util.Locale,%20org.deidentifier.arx.DataType.DataTypeDescription,%20java.lang.String[])">actionShowFormatInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowFormatInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.util.Locale, org.deidentifier.arx.DataType.DataTypeDescription, java.lang.String[])">actionShowFormatInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                            java.lang.String&nbsp;title,
                            java.lang.String&nbsp;text,
                            java.util.Locale&nbsp;locale,
@@ -345,7 +357,7 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowFormatInputDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String,%20java.lang.String,%20java.util.Locale,%20org.deidentifier.arx.DataType.DataTypeDescription,%20java.util.Collection)">actionShowFormatInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowFormatInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String, java.util.Locale, org.deidentifier.arx.DataType.DataTypeDescription, java.util.Collection)">actionShowFormatInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                            java.lang.String&nbsp;title,
                            java.lang.String&nbsp;text,
                            java.lang.String&nbsp;preselected,
@@ -363,7 +375,7 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowInfoDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String)">actionShowInfoDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowInfoDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String)">actionShowInfoDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                     java.lang.String&nbsp;header,
                     java.lang.String&nbsp;text)</code>
 <div class="block">Shows an info dialog.</div>
@@ -371,7 +383,7 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowInputDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String,%20java.lang.String)">actionShowInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String)">actionShowInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                      java.lang.String&nbsp;header,
                      java.lang.String&nbsp;text,
                      java.lang.String&nbsp;initial)</code>
@@ -380,14 +392,24 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowOpenFileDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String)">actionShowOpenFileDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String, org.eclipse.jface.dialogs.IInputValidator)">actionShowInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+                     java.lang.String&nbsp;header,
+                     java.lang.String&nbsp;text,
+                     java.lang.String&nbsp;initial,
+                     org.eclipse.jface.dialogs.IInputValidator&nbsp;validator)</code>
+<div class="block">Shows an input dialog.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowOpenFileDialog(org.eclipse.swt.widgets.Shell, java.lang.String)">actionShowOpenFileDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                         java.lang.String&nbsp;filter)</code>
 <div class="block">Shows a "open file" dialog.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowOrderValuesDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType,%20java.util.Locale,%20java.lang.String[])">actionShowOrderValuesDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowOrderValuesDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, org.deidentifier.arx.DataType, java.util.Locale, java.lang.String[])">actionShowOrderValuesDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                            java.lang.String&nbsp;title,
                            java.lang.String&nbsp;text,
                            <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type,
@@ -396,24 +418,31 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 <div class="block">Shows an input dialog for ordering data items.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowProgressDialog(java.lang.String,%20org.deidentifier.arx.gui.worker.Worker)">actionShowProgressDialog</a></strong>(java.lang.String&nbsp;text,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowProgressDialog(java.lang.String, org.deidentifier.arx.gui.worker.Worker)">actionShowProgressDialog</a></strong>(java.lang.String&nbsp;text,
                         <a href="../../../../org/deidentifier/arx/gui/worker/Worker.html" title="class in org.deidentifier.arx.gui.worker">Worker</a>&lt;?&gt;&nbsp;worker)</code>
 <div class="block">Shows a progress dialog.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowQuestionDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String)">actionShowQuestionDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+                        java.lang.String&nbsp;header,
+                        java.lang.String&nbsp;text)</code>
+<div class="block">Shows a question dialog.</div>
+</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowQuestionDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String)">actionShowQuestionDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
-                        java.lang.String&nbsp;header,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowQuestionDialog(java.lang.String, java.lang.String)">actionShowQuestionDialog</a></strong>(java.lang.String&nbsp;header,
                         java.lang.String&nbsp;text)</code>
 <div class="block">Shows a question dialog.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowSaveFileDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String)">actionShowSaveFileDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#actionShowSaveFileDialog(org.eclipse.swt.widgets.Shell, java.lang.String)">actionShowSaveFileDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                         java.lang.String&nbsp;filter)</code>
 <div class="block">Internal method for showing a "save file" dialog.</div>
 </td>
@@ -444,7 +473,7 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#addListener(org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.view.def.IView)">addListener</a></strong>(<a href="../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/gui/Controller.html#addListener(org.deidentifier.arx.gui.model.ModelEvent.ModelPart, org.deidentifier.arx.gui.view.def.IView)">addListener</a></strong>(<a href="../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
            <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a>&nbsp;listener)</code>
 <div class="block">Registers a listener at the controller.</div>
 </td>
@@ -637,6 +666,17 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 <div class="block">Toggles the "subset" option.</div>
 </li>
 </ul>
+<a name="actionExpand(org.deidentifier.arx.ARXLattice.ARXNode)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>actionExpand</h4>
+<pre>public&nbsp;void&nbsp;actionExpand(<a href="../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;transformation)</pre>
+<div class="block">Expand action</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd></dl>
+</li>
+</ul>
 <a name="actionFindReplace()">
 <!--   -->
 </a>
@@ -647,14 +687,25 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 <div class="block">Find and replace action</div>
 </li>
 </ul>
-<a name="actionMenuEditAnonymize()">
+<a name="actionMenuEditInitializeHierarchy()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>actionMenuEditInitializeHierarchy</h4>
+<pre>public&nbsp;void&nbsp;actionMenuEditInitializeHierarchy()</pre>
+<div class="block">Initializes the hierarchy for the currently selected attribute</div>
+</li>
+</ul>
+<a name="actionMenuEditAnonymize(boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>actionMenuEditAnonymize</h4>
-<pre>public&nbsp;void&nbsp;actionMenuEditAnonymize()</pre>
+<pre>public&nbsp;void&nbsp;actionMenuEditAnonymize(boolean&nbsp;heuristicSearch)</pre>
 <div class="block">Starts the anonymization.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>heuristicSearch</code> - </dd></dl>
 </li>
 </ul>
 <a name="actionMenuEditCreateHierarchy()">
@@ -932,6 +983,22 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="actionShowInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String, org.eclipse.jface.dialogs.IInputValidator)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>actionShowInputDialog</h4>
+<pre>public&nbsp;java.lang.String&nbsp;actionShowInputDialog(org.eclipse.swt.widgets.Shell&nbsp;shell,
+                                     java.lang.String&nbsp;header,
+                                     java.lang.String&nbsp;text,
+                                     java.lang.String&nbsp;initial,
+                                     org.eclipse.jface.dialogs.IInputValidator&nbsp;validator)</pre>
+<div class="block">Shows an input dialog.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>shell</code> - </dd><dd><code>header</code> - </dd><dd><code>text</code> - </dd><dd><code>initial</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="actionShowOpenFileDialog(org.eclipse.swt.widgets.Shell, java.lang.String)">
 <!--   -->
 </a>
@@ -985,6 +1052,19 @@ implements <a href="../../../../org/deidentifier/arx/gui/view/def/IView.html" ti
                                java.lang.String&nbsp;text)</pre>
 <div class="block">Shows a question dialog.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>shell</code> - </dd><dd><code>header</code> - </dd><dd><code>text</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="actionShowQuestionDialog(java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>actionShowQuestionDialog</h4>
+<pre>public&nbsp;boolean&nbsp;actionShowQuestionDialog(java.lang.String&nbsp;header,
+                               java.lang.String&nbsp;text)</pre>
+<div class="block">Shows a question dialog.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>header</code> - </dd><dd><code>text</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

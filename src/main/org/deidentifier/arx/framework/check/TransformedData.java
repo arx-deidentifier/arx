@@ -28,15 +28,18 @@ import org.deidentifier.arx.framework.data.Data;
  *
  */
 public class TransformedData {
-    
+
     /** The GH buffer */
-    public Data            bufferGeneralized;
-    
+    public Data                       bufferGeneralized;
+
     /** The OT buffer */
-    public Data            bufferMicroaggregated;
-    
+    public Data                       bufferMicroaggregated;
+
     /** The group statistic */
     public EquivalenceClassStatistics statistics;
+
+    /** The properties */
+    public NodeChecker.Result         properties;
     
     /**
      * Instantiate the helper object.
@@ -45,9 +48,11 @@ public class TransformedData {
      * @param bufferOT
      * @param statistics
      */
-    public TransformedData(Data bufferGH, Data bufferOT, EquivalenceClassStatistics statistics) {
+    public TransformedData(Data bufferGH, Data bufferOT, EquivalenceClassStatistics statistics,
+                           NodeChecker.Result properties) {
         this.bufferGeneralized = bufferGH;
         this.bufferMicroaggregated = bufferOT;
         this.statistics = statistics;
+        this.properties = properties;
     }
 }
