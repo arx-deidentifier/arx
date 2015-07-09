@@ -21,6 +21,9 @@ import java.io.IOException;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.junit.Test;
@@ -57,23 +60,56 @@ public abstract class TestExecutionTimeAbstract extends TestAnonymizationAbstrac
         testCase.config.setPracticalMonotonicity(testCase.practical);
 
         // Warm up
-        anonymizer.anonymize(data, testCase.config);
-
-        // Repeat
-        long time = System.currentTimeMillis();
-        for (int i = 0; i < 10; i++) {
-            data.getHandle().release();
-            anonymizer.anonymize(data, testCase.config);
-        }
-        time = (System.currentTimeMillis() - time) / 10;
-        
         System.out.println("Experiment:");
         System.out.println(" - Dataset: " + testCase.dataset);
         System.out.println(" - Utility measure: " + testCase.config.getMetric().toString());
         System.out.println(" - Practical monotonicity: " + testCase.practical);
         System.out.println(" - Suppression limit: " + testCase.config.getMaxOutliers());
         System.out.println(" - Privacy model: " + getPrivacyModel(testCase.config));
-        System.out.println(" - Anonymization performed in: " + time + " [ms]");
+        System.out.println(" - Performing experiment:");
+        System.out.println("   * Warmup");
+        long time = System.currentTimeMillis();
+        ARXResult result = anonymizer.anonymize(data, testCase.config);
+        System.out.println("   * Performed in: " + (System.currentTimeMillis() - time) + " [ms]");
+
+        // Collect statistics
+        int[] statistics = new int[7];
+        for (ARXNode[] level : result.getLattice().getLevels()) {
+            for (ARXNode arxNode : level) {
+                statistics[0]++;
+                if (arxNode.isChecked()) {
+                    statistics[1]++;
+                }
+                if (arxNode.getAnonymity() == Anonymity.ANONYMOUS) {
+                    statistics[2]++;
+                }
+                if (arxNode.getAnonymity() == Anonymity.NOT_ANONYMOUS) {
+                    statistics[3]++;
+                }
+                if (arxNode.getAnonymity() == Anonymity.PROBABLY_ANONYMOUS) {
+                    statistics[4]++;
+                }
+                if (arxNode.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
+                    statistics[5]++;
+                }
+                if (arxNode.getMaximumInformationLoss() == arxNode.getMinimumInformationLoss()) {
+                    statistics[6]++;
+                }
+            }
+        }
+        System.out.println(getClassification(statistics));
+        
+        // Repeat
+        time = System.currentTimeMillis();
+        for (int i = 0; i < 10; i++) {
+            System.out.println("   * Repetition " + (i + 1) + " of 10");
+            data.getHandle().release();
+            result = anonymizer.anonymize(data, testCase.config);
+        }
+        time = (System.currentTimeMillis() - time) / 10;
+
+
+        System.out.println("     -> Anonymization performed in: " + time + " [ms]");
     }
 
     /**
