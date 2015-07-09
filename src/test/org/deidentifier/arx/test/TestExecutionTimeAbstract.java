@@ -69,6 +69,7 @@ public abstract class TestExecutionTimeAbstract extends TestAnonymizationAbstrac
         
         System.out.println("Experiment:");
         System.out.println(" - Dataset: " + testCase.dataset);
+        System.out.println(" - Utility measure: " + testCase.config.getMetric().toString());
         System.out.println(" - Practical monotonicity: " + testCase.practical);
         System.out.println(" - Suppression limit: " + testCase.config.getMaxOutliers());
         System.out.println(" - Privacy model: " + getPrivacyModel(testCase.config));
