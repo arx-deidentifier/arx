@@ -83,7 +83,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     @Override
     public void traverse() {
         timeStart = System.currentTimeMillis();
-        PriorityQueue<Long> queue = new PriorityQueue<Long>(5000, new Comparator<Long>() {
+        PriorityQueue<Long> queue = new PriorityQueue<Long>(stepping, new Comparator<Long>() {
             @Override
             public int compare(Long arg0, Long arg1) {
                 return solutionSpace.getUtility(arg0).compareTo(solutionSpace.getUtility(arg1));
