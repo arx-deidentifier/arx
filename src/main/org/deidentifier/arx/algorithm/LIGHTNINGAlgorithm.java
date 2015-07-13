@@ -18,6 +18,7 @@
 package org.deidentifier.arx.algorithm;
 
 import java.util.Comparator;
+import java.util.PriorityQueue;
 
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
@@ -36,8 +37,6 @@ import de.linearbits.jhpl.PredictiveProperty;
  */
 public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
 
-    /** The maximal size of the priority queue */
-    private static final int         MAX_QUEUE_SIZE = 50000;
     /** Property */
     private final PredictiveProperty propertyChecked;
     /** Property */
@@ -84,7 +83,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     @Override
     public void traverse() {
         timeStart = System.currentTimeMillis();
-        MinMaxPriorityQueue<Long> queue = new MinMaxPriorityQueue<Long>(MAX_QUEUE_SIZE, new Comparator<Long>() {
+        PriorityQueue<Long> queue = new PriorityQueue<Long>(5000, new Comparator<Long>() {
             @Override
             public int compare(Long arg0, Long arg1) {
                 return solutionSpace.getUtility(arg0).compareTo(solutionSpace.getUtility(arg1));
@@ -125,7 +124,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @param queue
     * @param transformation
     */
-    private void dfs(MinMaxPriorityQueue<Long> queue, Transformation transformation) {
+    private void dfs(PriorityQueue<Long> queue, Transformation transformation) {
         if (getTime() > timeLimit) {
             return;
         }
@@ -141,7 +140,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @param transformation
     * @return
     */
-    private Transformation expand(MinMaxPriorityQueue<Long> queue, Transformation transformation) {
+    private Transformation expand(PriorityQueue<Long> queue, Transformation transformation) {
         Transformation result = null;
 
         LongArrayList list = solutionSpace.getSuccessors(transformation.getIdentifier());
@@ -157,9 +156,6 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
             }
             if (getTime() > timeLimit) {
                 return null;
-            }
-            while (queue.size() > MAX_QUEUE_SIZE) {
-                queue.removeTail();
             }
         }
         transformation.setProperty(propertyExpanded);
