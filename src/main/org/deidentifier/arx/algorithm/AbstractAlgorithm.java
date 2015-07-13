@@ -18,6 +18,7 @@
 package org.deidentifier.arx.algorithm;
 
 import org.deidentifier.arx.ARXListener;
+import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
@@ -90,9 +91,8 @@ public abstract class AbstractAlgorithm {
      * @param transformation
      */
     protected void computeUtilityForMonotonicMetrics(Transformation transformation) {
-        if ((checker.getMetric().isMonotonic() ||
-            (checker.getConfiguration().getMaxOutliers() == 0d)) &&
-            (transformation.getInformationLoss() == null)) {
+        if (checker.getConfiguration().getMonotonicityOfUtility() == Monotonicity.FULL &&
+            transformation.getInformationLoss() == null) {
 
             // Independent evaluation or check
             if (checker.getMetric().isIndependent()) {
