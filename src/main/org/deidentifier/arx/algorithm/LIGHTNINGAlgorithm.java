@@ -179,7 +179,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         // Depending on monotony of metric we choose to compare either IL or monotonic subset with the global optimum
         boolean prune = false;
         if (getGlobalOptimum() != null) {
-            if (metricMonotonic) prune = transformation.getInformationLoss().compareTo(getGlobalOptimum().getInformationLoss()) >= 0;
+            if (metricMonotonic) prune = transformation.getLowerBound().compareTo(getGlobalOptimum().getInformationLoss()) >= 0;
         }
         return (prune || transformation.hasProperty(propertyExpanded));
     }
