@@ -32,7 +32,6 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.io.CSVHierarchyInput;
@@ -383,23 +382,6 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
      * @return
      */
     private String getAlgorithmConfiguration(ARXConfiguration config) {
-        
-        final String metric;
-        if (config.getMetric().isMonotonic() || config.getMaxOutliers() == 0d || config.isPracticalMonotonicity()) {
-            metric = "monotonic";
-        } else {
-            metric = "non-monotonic";
-        }
-        final String criterion;
-        if (config.isCriterionMonotonic() || config.isPracticalMonotonicity()) {
-            criterion = "Fully-monotonic";
-        } else
-            if (!config.isCriterionMonotonic() &&
-                (config.containsCriterion(KAnonymity.class) || config.containsCriterion(LDiversity.class))) {
-            criterion = "Partially-monotonic";
-        } else {
-            criterion = "Non-monotonic";
-        }
-        return criterion + " criteria with " + metric + " metric";
+        return config.getMonotonicityOfPrivacy() + " monotonicity of privacy with " + config.getMonotonicityOfUtility() + " monotonicity of utility";
     }
 }

@@ -97,7 +97,7 @@ public class PopulationUniqueness extends RiskBasedCriterion{
                                                PopulationUniquenessModel statisticalModel, 
                                                ARXPopulationModel populationModel,
                                                ARXSolverConfiguration config){
-        super(false, riskThreshold);
+        super(false, statisticalModel == PopulationUniquenessModel.ZAYATZ, riskThreshold);
         this.statisticalModel = statisticalModel;
         this.populationModel = populationModel.clone();
         this.solverConfig = config;

@@ -20,10 +20,10 @@ package org.deidentifier.arx.framework.lattice;
 import java.util.Iterator;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
-import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.InformationLoss;
 
 import cern.colt.list.LongArrayList;
@@ -439,14 +439,7 @@ public class SolutionSpace {
      * @param config
      */
     private void setMonotonicity(ARXConfiguration config) {
-
-        // Determine whether the overall set of criteria is monotonic
-        for (PrivacyCriterion criterion : config.getCriteria()) {
-            if (!(criterion.isMonotonic() || (config.getMaxOutliers() == 0d) || config.isPracticalMonotonicity())) {
-                setAnonymityPropertyPredictable(false);
-            }
-        }
-        setAnonymityPropertyPredictable(true);
+        setAnonymityPropertyPredictable(config.getMonotonicityOfPrivacy() == Monotonicity.FULL);
     }
 
     /**

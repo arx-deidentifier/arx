@@ -18,8 +18,8 @@
 package org.deidentifier.arx.algorithm;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
+import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.algorithm.FLASHPhaseConfiguration.PhaseAnonymityProperty;
-import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.DependentAction;
@@ -27,7 +27,6 @@ import org.deidentifier.arx.framework.lattice.DependentAction.NodeActionConstant
 import org.deidentifier.arx.framework.lattice.DependentAction.NodeActionInverse;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
-import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class provides a static method for instantiating the FLASH algorithm.
@@ -36,21 +35,6 @@ import org.deidentifier.arx.metric.Metric;
  * @author Florian Kohlmayer
  */
 public class FLASHAlgorithm {
-
-    /**
-     * Monotonicity.
-     */
-    private static enum Monotonicity {
-        
-        /**  Fully monotonic */
-        FULL,
-        
-        /**  Partially monotonic */
-        PARTIAL,
-        
-        /**  Non-monotonic */
-        NONE
-    }
 
     /**
      * Creates a new instance of the FLASH algorithm.
@@ -66,74 +50,48 @@ public class FLASHAlgorithm {
 
         // Init
         ARXConfigurationInternal config = checker.getConfiguration();
-        Metric<?> metric = checker.getMetric();
-
-        // NOTE:
-        // - If we assume practical monotonicity then we assume
-        // monotonicity for both criterion AND metric
-        // - Without suppression we assume monotonicity for all criteria
-        // - Without suppression we assume monotonicity for all metrics
-
-        // Determine monotonicity of metric
-        Monotonicity monotonicityMetric;
-        if (metric.isMonotonic() || (config.getMaxOutliers() == 0d) || config.isPracticalMonotonicity()) {
-            monotonicityMetric = Monotonicity.FULL;
-        } else {
-            monotonicityMetric = Monotonicity.NONE;
-        }
-
-        // First, determine whether the overall set of criteria is monotonic
-        Monotonicity monotonicityCriteria = Monotonicity.FULL;
-        for (PrivacyCriterion criterion : config.getCriteria()) {
-            if (!(criterion.isMonotonic() || (config.getMaxOutliers() == 0d) || config.isPracticalMonotonicity())) {
-                if (config.getMinimalGroupSize() != Integer.MAX_VALUE) {
-                    monotonicityCriteria = Monotonicity.PARTIAL;
-                } else {
-                    monotonicityCriteria = Monotonicity.NONE;
-                }
-                break;
-            }
-        }
+        Monotonicity monotonicityOfUtility = config.getMonotonicityOfUtility();
+        Monotonicity monotonicityOfPrivacy = config.getMonotonicityOfPrivacy();
 
         // ******************************
         // CASE 1
         // ******************************
-        if ((monotonicityCriteria == Monotonicity.FULL) && (monotonicityMetric == Monotonicity.FULL)) {
+        if ((monotonicityOfPrivacy == Monotonicity.FULL) && (monotonicityOfUtility == Monotonicity.FULL)) {
             return createFullFull(solutionSpace, checker, strategy);
         }
 
         // ******************************
         // CASE 2
         // ******************************
-        if ((monotonicityCriteria == Monotonicity.FULL) && (monotonicityMetric == Monotonicity.NONE)) {
+        if ((monotonicityOfPrivacy == Monotonicity.FULL) && (monotonicityOfUtility == Monotonicity.NONE)) {
             return createFullNone(solutionSpace, checker, strategy);
         }
 
         // ******************************
         // CASE 3
         // ******************************
-        if ((monotonicityCriteria == Monotonicity.PARTIAL) && (monotonicityMetric == Monotonicity.FULL)) {
+        if ((monotonicityOfPrivacy == Monotonicity.PARTIAL) && (monotonicityOfUtility == Monotonicity.FULL)) {
             return createPartialFull(solutionSpace, checker, strategy);
         }
 
         // ******************************
         // CASE 4
         // ******************************
-        if ((monotonicityCriteria == Monotonicity.PARTIAL) && (monotonicityMetric == Monotonicity.NONE)) {
+        if ((monotonicityOfPrivacy == Monotonicity.PARTIAL) && (monotonicityOfUtility == Monotonicity.NONE)) {
             return createPartialNone(solutionSpace, checker, strategy);
         }
 
         // ******************************
         // CASE 5
         // ******************************
-        if ((monotonicityCriteria == Monotonicity.NONE) && (monotonicityMetric == Monotonicity.FULL)) {
+        if ((monotonicityOfPrivacy == Monotonicity.NONE) && (monotonicityOfUtility == Monotonicity.FULL)) {
             return createNoneFull(solutionSpace, checker, strategy);
         }
 
         // ******************************
         // CASE 6
         // ******************************
-        if ((monotonicityCriteria == Monotonicity.NONE) && (monotonicityMetric == Monotonicity.NONE)) {
+        if ((monotonicityOfPrivacy == Monotonicity.NONE) && (monotonicityOfUtility == Monotonicity.NONE)) {
             return createNoneNone(solutionSpace, checker, strategy);
         }
 
@@ -141,7 +99,7 @@ public class FLASHAlgorithm {
     }
 
     /**
-     * Semantics of method name: monotonicity of criteria + monotonicity of metric.
+     * Semantics of method name: monotonicity of privacy + monotonicity of utility.
      *
      * @param solutionSpace
      * @param checker
@@ -196,7 +154,7 @@ public class FLASHAlgorithm {
     }
 
     /**
-     * Semantics of method name: monotonicity of criteria + monotonicity of metric.
+     * Semantics of method name: monotonicity of privacy + monotonicity of utility.
      *
      * @param solutionSpace
      * @param checker
@@ -310,7 +268,7 @@ public class FLASHAlgorithm {
     }
 
     /**
-     * Semantics of method name: monotonicity of criteria + monotonicity of metric.
+     * Semantics of method name: monotonicity of privacy + monotonicity of utility.
      *
      * @param solutionSpace
      * @param checker
@@ -366,7 +324,7 @@ public class FLASHAlgorithm {
     }
 
     /**
-     * Semantics of method name: monotonicity of criteria + monotonicity of metric.
+     * Semantics of method name: monotonicity of privacy + monotonicity of utility.
      *
      * @param solutionSpace
      * @param checker
@@ -408,7 +366,7 @@ public class FLASHAlgorithm {
     }
 
     /**
-     * Semantics of method name: monotonicity of criteria + monotonicity of metric.
+     * Semantics of method name: monotonicity of privacy + monotonicity of utility.
      *
      * @param solutionSpace
      * @param checker
@@ -525,7 +483,7 @@ public class FLASHAlgorithm {
     }
 
     /**
-     * Semantics of method name: monotonicity of criteria + monotonicity of metric.
+     * Semantics of method name: monotonicity of privacy + monotonicity of utility.
      *
      * @param solutionSpace
      * @param checker

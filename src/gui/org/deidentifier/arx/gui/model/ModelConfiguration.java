@@ -368,15 +368,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Delegates to an instance of ARXConfiguration.
-     *
-     * @return
-     */
-    public boolean isCriterionMonotonic() {
-        return config.isCriterionMonotonic();
-    }
-    
-    /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#isUseHeuristicSearchForSampleBasedCriteria()
      */

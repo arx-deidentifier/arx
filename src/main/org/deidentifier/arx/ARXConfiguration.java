@@ -78,7 +78,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         public final int getAbsoluteMaxOutliers() {
             return config.getAbsoluteMaxOutliers();
         }
-        
+
         /**
          * Returns all class-based criteria (except k-anonymity) as an array. 
          * Only used internally. If k-anonymity is included the minimal
@@ -96,7 +96,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         public Set<PrivacyCriterion> getCriteria() {
             return config.getCriteria();
         }
-
+        
         /**
          * 
          *
@@ -126,7 +126,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         public Metric<?> getMetric() {
             return config.getMetric();
         }
-        
+
         /**
          * Returns the minimal size of an equivalence class induced by the contained criteria.
          * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
@@ -134,6 +134,22 @@ public class ARXConfiguration implements Serializable, Cloneable {
          */
         public int getMinimalGroupSize() {
             return config.getMinimalGroupSize();
+        }
+
+        /**
+         * Returns a monotonicity property
+         * @return
+         */
+        public Monotonicity getMonotonicityOfPrivacy() {
+            return config.getMonotonicityOfPrivacy();
+        }
+        
+        /**
+         * Returns a monotonicity property
+         * @return
+         */
+        public Monotonicity getMonotonicityOfUtility() {
+            return config.getMonotonicityOfUtility();
         }
 
         /**
@@ -172,15 +188,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         /**
-         * Determines whether the anonymity criterion is montonic.
-         *
-         * @return
-         */
-        public boolean isCriterionMonotonic() {
-            return config.isCriterionMonotonic();
-        }
-
-        /**
          * Is practical monotonicity assumed.
          *
          * @return
@@ -216,6 +223,21 @@ public class ARXConfiguration implements Serializable, Cloneable {
         public boolean requires(int requirement) {
             return config.requires(requirement);
         }
+    }
+
+    /**
+     * Monotonicity.
+     */
+    public static enum Monotonicity {
+        
+        /**  Fully monotonic */
+        FULL,
+        
+        /**  Partially monotonic */
+        PARTIAL,
+        
+        /**  Non-monotonic */
+        NONE
     }
 
     /** Do the criteria require a counter per equivalence class. */
@@ -560,6 +582,58 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * Returns whether the privacy model is monotonic
+     * @return
+     */
+    public Monotonicity getMonotonicityOfPrivacy() {
+        
+        // Practical monotonicity
+        if (this.isPracticalMonotonicity()) {
+            return Monotonicity.FULL;
+        }
+        
+        // Without suppression
+        if (this.getMaxOutliers() == 0d) {
+            for (PrivacyCriterion criterion : this.getCriteria()) {
+                if (!criterion.isMonotonicWithSuppression() || 
+                    !criterion.isMonotonicWithGeneralization()) {
+                    if (this.getMinimalGroupSize() != Integer.MAX_VALUE) {
+                        return Monotonicity.PARTIAL;
+                    } else {
+                        return Monotonicity.NONE;
+                    }
+                }
+            }
+        // With suppression
+        } else {
+            for (PrivacyCriterion criterion : this.getCriteria()) {
+                if (!criterion.isMonotonicWithGeneralization()) {
+                    if (this.getMinimalGroupSize() != Integer.MAX_VALUE) {
+                        return Monotonicity.PARTIAL;
+                    } else {
+                        return Monotonicity.NONE;
+                    }
+                }
+            }
+        }
+        
+        // Full
+        return Monotonicity.FULL;
+    }
+    
+    /**
+     * Returns whether the utility measure is monotonic
+     * @return
+     */
+    public Monotonicity getMonotonicityOfUtility() {
+        if (metric.isMonotonic() || (this.getMaxOutliers() == 0d) || this.isPracticalMonotonicity()) {
+            return Monotonicity.FULL;
+        }  else {
+            return Monotonicity.NONE;
+        }
+    }
+    
+    /**
      * Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.
      * @return
      */
@@ -582,22 +656,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
             suppressedAttributeTypes = 1 << AttributeType.ATTR_TYPE_QI;
         }
         return (suppressedAttributeTypes & (1 << type.getType())) != 0;
-    }
-
-    /**
-     * Determines whether the anonymity criterion is montonic.
-     *
-     * @return
-     */
-    public final boolean isCriterionMonotonic() {
-
-        if (relMaxOutliers == 0d) { return true; }
-
-        for (PrivacyCriterion c : criteria) {
-            if (!c.isMonotonic()) return false;
-        }
-        // Yes
-        return true;
     }
 
     /**

@@ -36,7 +36,7 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
      * @param riskThreshold
      */
     public AverageReidentificationRisk(double riskThreshold){
-        super(true, riskThreshold);
+        super(true, true, riskThreshold);
     }
 
     @Override
