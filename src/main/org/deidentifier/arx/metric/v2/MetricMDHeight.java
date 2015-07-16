@@ -24,6 +24,7 @@ import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
@@ -117,11 +118,12 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected void initializeInternal(DataDefinition definition,
-                                      Data input,
-                                      GeneralizationHierarchy[] hierarchies,
-                                      ARXConfiguration config) {
-        super.initializeInternal(definition, input, hierarchies, config);
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
+        super.initializeInternal(manager, definition, input, hierarchies, config);
         
         // Min and max
         double[] min = new double[hierarchies.length];

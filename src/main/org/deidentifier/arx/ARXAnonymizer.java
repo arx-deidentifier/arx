@@ -502,7 +502,7 @@ public class ARXAnonymizer {
                                                     solutionSpace);
 
         // Initialize the metric
-        config.getMetric().initialize(definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
+        config.getMetric().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
         // Create an algorithm instance
         AbstractAlgorithm algorithm = getAlgorithm(config,

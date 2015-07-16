@@ -129,7 +129,7 @@ public class ARXResult {
         config.initialize(manager);
 
         // Initialize the metric
-        metric.initialize(definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
+        metric.initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
         // Create a node checker
         final NodeChecker checker = new NodeChecker(manager,

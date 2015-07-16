@@ -30,6 +30,7 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
@@ -253,13 +254,14 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void initializeInternal(final DataDefinition definition,
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
                                       final Data input, 
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
         
         // Prepare weights
-        super.initializeInternal(definition, input, hierarchies, config);
+        super.initializeInternal(manager, definition, input, hierarchies, config);
 
         // Compute domain shares
         this.shares = new DomainShare[hierarchies.length];

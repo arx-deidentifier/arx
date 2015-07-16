@@ -22,6 +22,7 @@ import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -163,7 +164,8 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     }
     
     @Override
-    protected void initializeInternal(final DataDefinition definition,
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
                                       final Data input, 
                                       final GeneralizationHierarchy[] ahierarchies, 
                                       final ARXConfiguration config) {
@@ -179,9 +181,9 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         }
         
         if (precomputed) {
-            precomputedMetric.initializeInternal(definition, input, ahierarchies, config);
+            precomputedMetric.initializeInternal(manager, definition, input, ahierarchies, config);
         } else {
-            defaultMetric.initializeInternal(definition, input, ahierarchies, config);
+            defaultMetric.initializeInternal(manager, definition, input, ahierarchies, config);
         }
     }
     

@@ -27,6 +27,7 @@ import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.AbstractILMultiDimensional;
@@ -798,13 +799,14 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     /**
      * Initializes the metric.
      *
+     * @param manager
      * @param definition
      * @param input
      * @param hierarchies
      * @param config
      */
-    public final void initialize(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
-        initializeInternal(definition, input, hierarchies, config);
+    public final void initialize(final DataManager manager, final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
+        initializeInternal(manager, definition, input, hierarchies, config);
     }
 
     /**
@@ -905,12 +907,17 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     /**
      * Implement this to initialize the metric.
      *
+     * @param manager
      * @param definition
      * @param input
      * @param hierarchies
      * @param config
      */
-    protected abstract void initializeInternal(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config);
+    protected abstract void initializeInternal(final DataManager manager,
+                                               final DataDefinition definition, 
+                                               final Data input, 
+                                               final GeneralizationHierarchy[] hierarchies, 
+                                               final ARXConfiguration config);
 
     /**
      * Ignore anything but the first DIGITS digits. 
