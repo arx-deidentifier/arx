@@ -503,18 +503,33 @@ public class DataManager {
     }
 
     /**
-     * Returns the tree for the given sensitive attribute, if a generalization
-     * hierarchy is associated. Required for t-closeness with hierarchical
-     * distance EMD
+     * Returns the tree for the given sensitive attribute, if a generalization hierarchy is associated.
+     * The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.
      * 
      * @param attribute
      * @return tree
      */
     public int[] getTree(String attribute) {
-
+        if (!hierarchiesSensitive.containsKey(attribute)) {
+            throw new IllegalArgumentException("Attribute " + attribute + " is not sensitive");
+        }
         final int[][] data = dataAnalyzed.getArray();
         final int index = indexesSensitive.get(attribute);
-        final int[][] hierarchy = hierarchiesSensitive.get(attribute).map;
+        return getTree(data, index, hierarchiesSensitive.get(attribute).map);
+    }
+    
+    /**
+     * Returns a tree for the given attribute at the index within the given data array, using the given hierarchy.
+     * The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.
+     * @param data
+     * @param index
+     * @param hierarchy
+     * @return tree
+     */
+    public int[] getTree(int[][] data,
+                         int index,
+                         int[][] hierarchy) {
+
         final int totalElementsP = subset == null ? data.length : subsetSize;
         final int height = hierarchy[0].length - 1;
         final int numLeafs = hierarchy.length;
