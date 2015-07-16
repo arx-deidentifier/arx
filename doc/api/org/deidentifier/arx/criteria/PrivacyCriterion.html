@@ -125,7 +125,8 @@ implements java.io.Serializable</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#PrivacyCriterion(boolean)">PrivacyCriterion</a></strong>(boolean&nbsp;monotonic)</code>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#PrivacyCriterion(boolean, boolean)">PrivacyCriterion</a></strong>(boolean&nbsp;monotonicWithSuppression,
+                boolean&nbsp;monotonicWithGeneralization)</code>
 <div class="block">Instantiates a new criterion.</div>
 </td>
 </tr>
@@ -164,17 +165,23 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonic()">isMonotonic</a></strong>()</code>
-<div class="block">Returns whether the criterion is monotonic with tuple suppression.</div>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a></strong>()</code>
+<div class="block">Returns whether the criterion is monotonic with generalization.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a></strong>()</code>
+<div class="block">Returns whether the criterion is monotonic with tuple suppression.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a></strong>()</code>
 <div class="block">Is this criterion based on the overall sample</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></strong>()</code>
 <div class="block">Returns a string representation.</div>
@@ -202,15 +209,16 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="PrivacyCriterion(boolean)">
+<a name="PrivacyCriterion(boolean, boolean)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>PrivacyCriterion</h4>
-<pre>public&nbsp;PrivacyCriterion(boolean&nbsp;monotonic)</pre>
+<pre>public&nbsp;PrivacyCriterion(boolean&nbsp;monotonicWithSuppression,
+                boolean&nbsp;monotonicWithGeneralization)</pre>
 <div class="block">Instantiates a new criterion.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonicWithSuppression</code> - </dd><dd><code>monotonicWithGeneralization</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -255,13 +263,24 @@ implements java.io.Serializable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="isMonotonic()">
+<a name="isMonotonicWithGeneralization()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>isMonotonic</h4>
-<pre>public&nbsp;boolean&nbsp;isMonotonic()</pre>
+<h4>isMonotonicWithGeneralization</h4>
+<pre>public&nbsp;boolean&nbsp;isMonotonicWithGeneralization()</pre>
+<div class="block">Returns whether the criterion is monotonic with generalization.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isMonotonicWithSuppression()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isMonotonicWithSuppression</h4>
+<pre>public&nbsp;boolean&nbsp;isMonotonicWithSuppression()</pre>
 <div class="block">Returns whether the criterion is monotonic with tuple suppression.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>

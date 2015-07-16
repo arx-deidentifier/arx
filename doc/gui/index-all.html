@@ -874,6 +874,10 @@
 <dd>
 <div class="block">Creates a new instance.</div>
 </dd>
+<dt><a href="./org/deidentifier/arx/ARXConfiguration.Monotonicity.html" title="enum in org.deidentifier.arx"><span class="strong">ARXConfiguration.Monotonicity</span></a> - Enum in <a href="./org/deidentifier/arx/package-summary.html">org.deidentifier.arx</a></dt>
+<dd>
+<div class="block">Monotonicity.</div>
+</dd>
 <dt><a href="./org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx"><span class="strong">ARXLattice</span></a> - Class in <a href="./org/deidentifier/arx/package-summary.html">org.deidentifier.arx</a></dt>
 <dd>
 <div class="block">This class implements a representation of the generalization lattice that is
@@ -4047,7 +4051,7 @@
 <dd>
 <div class="block">A privacy criterion that is explicitly bound to a sensitive attribute.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html#ExplicitPrivacyCriterion(java.lang.String, boolean)">ExplicitPrivacyCriterion(String, boolean)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ExplicitPrivacyCriterion</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html#ExplicitPrivacyCriterion(java.lang.String, boolean, boolean)">ExplicitPrivacyCriterion(String, boolean, boolean)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ExplicitPrivacyCriterion</a></dt>
 <dd>
 <div class="block">Creates a new instance</div>
 </dd>
@@ -6390,6 +6394,22 @@
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelGrouping.html#getModelGroups()">getModelGroups()</a></span> - Method in class org.deidentifier.arx.gui.view.impl.wizard.<a href="./org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelGrouping.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">HierarchyWizardModelGrouping</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getMonotonicityOfPrivacy()">getMonotonicityOfPrivacy()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></dt>
+<dd>
+<div class="block">Returns a monotonicity property</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#getMonotonicityOfPrivacy()">getMonotonicityOfPrivacy()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">Returns whether the privacy model is monotonic</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getMonotonicityOfUtility()">getMonotonicityOfUtility()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></dt>
+<dd>
+<div class="block">Returns a monotonicity property</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#getMonotonicityOfUtility()">getMonotonicityOfUtility()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">Returns whether the utility measure is monotonic</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXPopulationModel.Region.html#getName()">getName()</a></span> - Method in enum org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXPopulationModel.Region.html" title="enum in org.deidentifier.arx">ARXPopulationModel.Region</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/Model.html#getName()">getName()</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a></dt>
@@ -8370,7 +8390,7 @@
 <dd>
 <div class="block">A privacy criterion that is implicitly bound to the quasi-identifiers.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/ImplicitPrivacyCriterion.html#ImplicitPrivacyCriterion(boolean)">ImplicitPrivacyCriterion(boolean)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/ImplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ImplicitPrivacyCriterion</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/ImplicitPrivacyCriterion.html#ImplicitPrivacyCriterion(boolean, boolean)">ImplicitPrivacyCriterion(boolean, boolean)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/ImplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ImplicitPrivacyCriterion</a></dt>
 <dd>
 <div class="block">Creates a new instance</div>
 </dd>
@@ -9218,18 +9238,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/worker/io/Vocabulary.html#isCriterion(java.lang.String)">isCriterion(String)</a></span> - Method in class org.deidentifier.arx.gui.worker.io.<a href="./org/deidentifier/arx/gui/worker/io/Vocabulary.html" title="class in org.deidentifier.arx.gui.worker.io">Vocabulary</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#isCriterionMonotonic()">isCriterionMonotonic()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></dt>
-<dd>
-<div class="block">Determines whether the anonymity criterion is montonic.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#isCriterionMonotonic()">isCriterionMonotonic()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
-<dd>
-<div class="block">Determines whether the anonymity criterion is montonic.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html#isCriterionMonotonic()">isCriterionMonotonic()</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a></dt>
-<dd>
-<div class="block">Delegates to an instance of ARXConfiguration.</div>
-</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/worker/io/Vocabulary.html#isDatatype(java.lang.String)">isDatatype(String)</a></span> - Method in class org.deidentifier.arx.gui.worker.io.<a href="./org/deidentifier/arx/gui/worker/io/Vocabulary.html" title="class in org.deidentifier.arx.gui.worker.io">Vocabulary</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/model/Model.html#isDebugEnabled()">isDebugEnabled()</a></span> - Method in class org.deidentifier.arx.gui.model.<a href="./org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a></dt>
@@ -9433,10 +9441,6 @@
 <dd>
 <div class="block">Is this model modified</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonic()">isMonotonic()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></dt>
-<dd>
-<div class="block">Returns whether the criterion is monotonic with tuple suppression.</div>
-</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#isMonotonic()">isMonotonic()</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Returns false if the metric is non-monotone using suppression.</div>
@@ -9445,6 +9449,14 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/MetricDescription.html#isMonotonicVariantSupported()">isMonotonicVariantSupported()</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/MetricDescription.html" title="class in org.deidentifier.arx.metric">MetricDescription</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></dt>
+<dd>
+<div class="block">Returns whether the criterion is monotonic with generalization.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></dt>
+<dd>
+<div class="block">Returns whether the criterion is monotonic with tuple suppression.</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#isMultiDimensional()">isMultiDimensional()</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Returns true if the metric is multi-dimensional.</div>
@@ -9994,7 +10006,7 @@
  Published in:
  Machanavajjhala A, Kifer D, Gehrke J.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/LDiversity.html#LDiversity(java.lang.String, double, boolean)">LDiversity(String, double, boolean)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/LDiversity.html" title="class in org.deidentifier.arx.criteria">LDiversity</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/LDiversity.html#LDiversity(java.lang.String, double, boolean, boolean)">LDiversity(String, double, boolean, boolean)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/LDiversity.html" title="class in org.deidentifier.arx.criteria">LDiversity</a></dt>
 <dd>
 <div class="block">Creates a new instance.</div>
 </dd>
@@ -11105,7 +11117,7 @@
 <dd>
 <div class="block">An abstract base class for privacy criteria.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html#PrivacyCriterion(boolean)">PrivacyCriterion(boolean)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html#PrivacyCriterion(boolean, boolean)">PrivacyCriterion(boolean, boolean)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></dt>
 <dd>
 <div class="block">Instantiates a new criterion.</div>
 </dd>
@@ -11474,7 +11486,7 @@
 <dd>
 <div class="block">Abstract class for criteria that ensure that a certain risk measure is lower than or equal to a given threshold</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/RiskBasedCriterion.html#RiskBasedCriterion(boolean, double)">RiskBasedCriterion(boolean, double)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/RiskBasedCriterion.html" title="class in org.deidentifier.arx.criteria">RiskBasedCriterion</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/RiskBasedCriterion.html#RiskBasedCriterion(boolean, boolean, double)">RiskBasedCriterion(boolean, boolean, double)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/RiskBasedCriterion.html" title="class in org.deidentifier.arx.criteria">RiskBasedCriterion</a></dt>
 <dd>
 <div class="block">Creates a new instance of this criterion.</div>
 </dd>
@@ -11612,7 +11624,7 @@
 <dd>
 <div class="block">An abstract base class for sample-based privacy criteria.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/SampleBasedCriterion.html#SampleBasedCriterion(boolean)">SampleBasedCriterion(boolean)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/SampleBasedCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedCriterion</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/SampleBasedCriterion.html#SampleBasedCriterion(boolean, boolean)">SampleBasedCriterion(boolean, boolean)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/SampleBasedCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedCriterion</a></dt>
 <dd>
 <div class="block">Instantiates a new criterion.</div>
 </dd>
@@ -13606,6 +13618,10 @@
 <dd>
 <div class="block">Returns the enum constant of this type with the specified name.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.Monotonicity.html#valueOf(java.lang.String)">valueOf(String)</a></span> - Static method in enum org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.Monotonicity.html" title="enum in org.deidentifier.arx">ARXConfiguration.Monotonicity</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this type with the specified name.</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.Anonymity.html#valueOf(java.lang.String)">valueOf(String)</a></span> - Static method in enum org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.Anonymity.html" title="enum in org.deidentifier.arx">ARXLattice.Anonymity</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this type with the specified name.</div>
@@ -13671,6 +13687,11 @@ the order they are declared.</div>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsFrequencyDistribution.html#values">values</a></span> - Variable in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsFrequencyDistribution.html" title="class in org.deidentifier.arx.aggregates">StatisticsFrequencyDistribution</a></dt>
 <dd>
 <div class="block">The data values, sorted.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.Monotonicity.html#values()">values()</a></span> - Static method in enum org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.Monotonicity.html" title="enum in org.deidentifier.arx">ARXConfiguration.Monotonicity</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum type, in
+the order they are declared.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.Anonymity.html#values()">values()</a></span> - Static method in enum org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.Anonymity.html" title="enum in org.deidentifier.arx">ARXLattice.Anonymity</a></dt>
 <dd>

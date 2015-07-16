@@ -1296,44 +1296,6 @@
 </ul>
 </li>
 <li class="blockList">
-<h2 title="Package">Package&nbsp;org.deidentifier.arx.algorithm</h2>
-<ul class="blockList">
-<li class="blockList"><a name="org.deidentifier.arx.algorithm.MinMaxPriorityQueue">
-<!--   -->
-</a>
-<h3>Class <a href="org/deidentifier/arx/algorithm/MinMaxPriorityQueue.html" title="class in org.deidentifier.arx.algorithm">org.deidentifier.arx.algorithm.MinMaxPriorityQueue</a> extends java.util.PriorityQueue&lt;<a href="org/deidentifier/arx/algorithm/MinMaxPriorityQueue.html" title="type parameter in MinMaxPriorityQueue">T</a>&gt; implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-3114256836247244397L</dd>
-</dl>
-<ul class="blockList">
-<li class="blockList"><a name="serializedForm">
-<!--   -->
-</a>
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>queue</h4>
-<pre>java.util.PriorityQueue&lt;E&gt; queue</pre>
-<div class="block">Queue</div>
-</li>
-<li class="blockList">
-<h4>inverseQueue</h4>
-<pre>java.util.PriorityQueue&lt;E&gt; inverseQueue</pre>
-<div class="block">Queue with inverse order</div>
-</li>
-<li class="blockListLast">
-<h4>elements</h4>
-<pre>java.util.Set&lt;E&gt; elements</pre>
-<div class="block">Set</div>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList">
 <h2 title="Package">Package&nbsp;org.deidentifier.arx.criteria</h2>
 <ul class="blockList">
 <li class="blockList"><a name="org.deidentifier.arx.criteria.AverageReidentificationRisk">
@@ -1615,10 +1577,15 @@
 </a>
 <h3>Serialized Fields</h3>
 <ul class="blockList">
-<li class="blockListLast">
+<li class="blockList">
 <h4>monotonic</h4>
 <pre>boolean monotonic</pre>
-<div class="block">Is the criterion monotonic when allowing for tuple suppression.</div>
+<div class="block">Is the criterion monotonic with generalization and suppression.</div>
+</li>
+<li class="blockListLast">
+<h4>monotonicWithGeneralization</h4>
+<pre>java.lang.Boolean monotonicWithGeneralization</pre>
+<div class="block">Is the criterion monotonic with generalization.</div>
 </li>
 </ul>
 </li>
