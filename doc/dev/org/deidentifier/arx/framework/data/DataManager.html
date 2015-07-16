@@ -180,78 +180,92 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>double[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDistribution(java.lang.String)">getDistribution</a></strong>(java.lang.String&nbsp;attribute)</code>
-<div class="block">Returns the distribution of the given sensitive attribute in the original
- dataset.</div>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDistribution(int[][], int, int)">getDistribution</a></strong>(int[][]&nbsp;data,
+               int&nbsp;index,
+               int&nbsp;distinctValues)</code>
+<div class="block">Returns the distribution of the attribute in the data array at the given index.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>double[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDistribution(java.lang.String)">getDistribution</a></strong>(java.lang.String&nbsp;attribute)</code>
+<div class="block">Returns the distribution of the given sensitive attribute in the original dataset.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getHeader()">getHeader</a></strong>()</code>
 <div class="block">The original data header.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getHierachiesHeights()">getHierachiesHeights</a></strong>()</code>
 <div class="block">Returns the heights of the hierarchiesQI.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getHierarchies()">getHierarchies</a></strong>()</code>
 <div class="block">Returns the generalization hierarchiesQI.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getHierarchiesMaxLevels()">getHierarchiesMaxLevels</a></strong>()</code>
 <div class="block">Returns the maximum levels for the generalizaiton.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getHierarchiesMinLevels()">getHierarchiesMinLevels</a></strong>()</code>
 <div class="block">Returns the minimum levels for the generalizations.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getMicroaggregationFunctions()">getMicroaggregationFunctions</a></strong>()</code>
 <div class="block">Returns the microaggregation functions.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getMicroaggregationHeader()">getMicroaggregationHeader</a></strong>()</code>
 <div class="block">Returns the header for the according buffer</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getMicroaggregationMap()">getMicroaggregationMap</a></strong>()</code>
 <div class="block">Returns the map for the according buffer</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getMicroaggregationNumAttributes()">getMicroaggregationNumAttributes</a></strong>()</code>
 <div class="block">Gets the number of attributes to which microaggregation will be applied
  in dataAnalyzed.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getMicroaggregationStartIndex()">getMicroaggregationStartIndex</a></strong>()</code>
 <div class="block">Gets the start index of the attributes to which microaggregation will be
  applied in dataAnalyzed.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getTree(int[][], int, int[][])">getTree</a></strong>(int[][]&nbsp;data,
+       int&nbsp;index,
+       int[][]&nbsp;hierarchy)</code>
+<div class="block">Returns a tree for the given attribute at the index within the given data array, using the given hierarchy.</div>
+</td>
+</tr>
 <tr class="altColor">
 <td class="colFirst"><code>int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getTree(java.lang.String)">getTree</a></strong>(java.lang.String&nbsp;attribute)</code>
-<div class="block">Returns the tree for the given sensitive attribute, if a generalization
- hierarchy is associated.</div>
+<div class="block">Returns the tree for the given sensitive attribute, if a generalization hierarchy is associated.</div>
 </td>
 </tr>
 </table>
@@ -333,6 +347,20 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the data</dd></dl>
 </li>
 </ul>
+<a name="getDistribution(int[][], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDistribution</h4>
+<pre>public&nbsp;double[]&nbsp;getDistribution(int[][]&nbsp;data,
+                       int&nbsp;index,
+                       int&nbsp;distinctValues)</pre>
+<div class="block">Returns the distribution of the attribute in the data array at the given index.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>index</code> - </dd><dd><code>distinctValues</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getDistribution(java.lang.String)">
 <!--   -->
 </a>
@@ -340,8 +368,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getDistribution</h4>
 <pre>public&nbsp;double[]&nbsp;getDistribution(java.lang.String&nbsp;attribute)</pre>
-<div class="block">Returns the distribution of the given sensitive attribute in the original
- dataset. Required for t-closeness.</div>
+<div class="block">Returns the distribution of the given sensitive attribute in the original dataset. Required for t-closeness.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd>distribution</dd></dl>
 </li>
@@ -458,6 +485,21 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getTree(int[][], int, int[][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTree</h4>
+<pre>public&nbsp;int[]&nbsp;getTree(int[][]&nbsp;data,
+            int&nbsp;index,
+            int[][]&nbsp;hierarchy)</pre>
+<div class="block">Returns a tree for the given attribute at the index within the given data array, using the given hierarchy.
+ The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>index</code> - </dd><dd><code>hierarchy</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd>tree</dd></dl>
+</li>
+</ul>
 <a name="getTree(java.lang.String)">
 <!--   -->
 </a>
@@ -465,9 +507,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getTree</h4>
 <pre>public&nbsp;int[]&nbsp;getTree(java.lang.String&nbsp;attribute)</pre>
-<div class="block">Returns the tree for the given sensitive attribute, if a generalization
- hierarchy is associated. Required for t-closeness with hierarchical
- distance EMD</div>
+<div class="block">Returns the tree for the given sensitive attribute, if a generalization hierarchy is associated.
+ The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd>tree</dd></dl>
 </li>

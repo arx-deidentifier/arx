@@ -437,7 +437,8 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initialize(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(<a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
           org.deidentifier.arx.framework.data.Data&nbsp;input,
           org.deidentifier.arx.framework.data.GeneralizationHierarchy[]&nbsp;hierarchies,
           <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
@@ -446,7 +447,8 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected abstract void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">initializeInternal</a></strong>(<a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initializeInternal(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">initializeInternal</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+                  <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
                   org.deidentifier.arx.framework.data.Data&nbsp;input,
                   org.deidentifier.arx.framework.data.GeneralizationHierarchy[]&nbsp;hierarchies,
                   <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
@@ -1069,18 +1071,19 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="initialize(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">
+<a name="initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>initialize</h4>
-<pre>public final&nbsp;void&nbsp;initialize(<a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+<pre>public final&nbsp;void&nbsp;initialize(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+              <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
               org.deidentifier.arx.framework.data.Data&nbsp;input,
               org.deidentifier.arx.framework.data.GeneralizationHierarchy[]&nbsp;hierarchies,
               <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</pre>
 <div class="block">Initializes the metric.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>definition</code> - </dd><dd><code>input</code> - </dd><dd><code>hierarchies</code> - </dd><dd><code>config</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>manager</code> - </dd><dd><code>definition</code> - </dd><dd><code>input</code> - </dd><dd><code>hierarchies</code> - </dd><dd><code>config</code> - </dd></dl>
 </li>
 </ul>
 <a name="isIndependent()">
@@ -1207,18 +1210,19 @@ implements java.io.Serializable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">
+<a name="initializeInternal(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>initializeInternal</h4>
-<pre>protected abstract&nbsp;void&nbsp;initializeInternal(<a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+<pre>protected abstract&nbsp;void&nbsp;initializeInternal(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+                      <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
                       org.deidentifier.arx.framework.data.Data&nbsp;input,
                       org.deidentifier.arx.framework.data.GeneralizationHierarchy[]&nbsp;hierarchies,
                       <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</pre>
 <div class="block">Implement this to initialize the metric.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>definition</code> - </dd><dd><code>input</code> - </dd><dd><code>hierarchies</code> - </dd><dd><code>config</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>manager</code> - </dd><dd><code>definition</code> - </dd><dd><code>input</code> - </dd><dd><code>hierarchies</code> - </dd><dd><code>config</code> - </dd></dl>
 </li>
 </ul>
 <a name="round(double)">
