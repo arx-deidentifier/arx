@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * The recursive-(c,l)-diversity criterion.
@@ -61,7 +62,7 @@ public class RecursiveCLDiversity extends LDiversity{
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(HashGroupifyEntry entry, Node transformation) {
 
         Distribution d = entry.distributions[index];
         

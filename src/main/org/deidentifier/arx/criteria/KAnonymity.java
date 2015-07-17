@@ -19,6 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * The k-anonymity criterion
@@ -65,7 +66,7 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(HashGroupifyEntry entry, Node transformation) {
         throw new RuntimeException("This should never be called!");
     }
     

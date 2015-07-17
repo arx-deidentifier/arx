@@ -21,6 +21,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * This is a special criterion that does not enforce any privacy guarantees
@@ -56,7 +57,7 @@ public class Inclusion extends DPresence {
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(HashGroupifyEntry entry, Node transformation) {
         return true;
     }
 

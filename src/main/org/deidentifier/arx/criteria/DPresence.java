@@ -21,6 +21,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * The d-presence criterion
@@ -114,7 +115,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
     }
     
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(HashGroupifyEntry entry, Node transformation) {
         double delta = entry.count == 0 ? 0d : (double) entry.count / (double) entry.pcount;
         return (delta >= dMin) && (delta <= dMax);
     }

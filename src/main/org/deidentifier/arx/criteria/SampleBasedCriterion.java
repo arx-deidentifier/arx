@@ -19,6 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * An abstract base class for sample-based privacy criteria.
@@ -58,7 +59,7 @@ public abstract class SampleBasedCriterion extends PrivacyCriterion {
      * @param entry
      * @return
      */
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(HashGroupifyEntry entry, Node transformation) {
         throw new UnsupportedOperationException("Not implemented");
     }
     

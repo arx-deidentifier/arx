@@ -20,6 +20,7 @@ package org.deidentifier.arx.criteria;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * The t-closeness criterion with hierarchical-distance EMD.
@@ -77,7 +78,7 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(HashGroupifyEntry entry, Node transformation) {
         
         // Empty data in tree
         System.arraycopy(empty, 0, tree, start, empty.length);

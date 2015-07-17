@@ -21,6 +21,7 @@ import java.io.Serializable;
 
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * An abstract base class for privacy criteria.
@@ -65,10 +66,11 @@ public abstract class PrivacyCriterion implements Serializable{
      * Implement this, to enforce the criterion.
      *
      * @param entry
+     * @param transformation TODO
      * @return
      */
-    public abstract boolean isAnonymous(HashGroupifyEntry entry);
-
+    public abstract boolean isAnonymous(HashGroupifyEntry entry, Node transformation);
+    
     /**
      * Returns whether the criterion is monotonic with tuple suppression.
      *
