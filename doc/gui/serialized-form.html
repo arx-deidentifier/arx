@@ -3413,10 +3413,15 @@
 <pre>double[][] cache</pre>
 <div class="block">Column -> Level -> Value.</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>hierarchies</h4>
 <pre>int[][][] hierarchies</pre>
 <div class="block">Column -> Id -> Level -> Output.</div>
+</li>
+<li class="blockListLast">
+<h4>rows</h4>
+<pre>double rows</pre>
+<div class="block">Num rows</div>
 </li>
 </ul>
 </li>
@@ -3448,6 +3453,47 @@
 <dt>serialVersionUID:</dt>
 <dd>-7428794463838685004L</dd>
 </dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropy">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropy.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropy</a> extends <a href="org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMNormalizedEntropyPrecomputed</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>8815423510640657624L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed</a> extends <a href="org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensionalPotentiallyPrecomputed</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-3297238195567701353L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPrecomputed">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPrecomputed</a> extends <a href="org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMEntropyPrecomputed</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-2384411534214262365L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>upper</h4>
+<pre>double[] upper</pre>
+<div class="block">Upper bounds</div>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 <li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricMDPrecision">
 <!--   -->
@@ -3503,6 +3549,39 @@
 <dt>serialVersionUID:</dt>
 <dd>-9156839234909657895L</dd>
 </dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricSDNMAmbiguity">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/MetricSDNMAmbiguity.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.MetricSDNMAmbiguity</a> extends <a href="org/deidentifier/arx/metric/v2/AbstractMetricSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricSingleDimensional</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-4376770864891280340L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>tuples</h4>
+<pre>java.lang.Double tuples</pre>
+<div class="block">Total number of tuples, depends on existence of research subset.</div>
+</li>
+<li class="blockList">
+<h4>shares</h4>
+<pre><a href="org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a>[] shares</pre>
+<div class="block">Domain shares for each dimension.</div>
+</li>
+<li class="blockListLast">
+<h4>max</h4>
+<pre>java.lang.Double max</pre>
+<div class="block">Maximum value</div>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 <li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricSDNMDiscernability">
 <!--   -->
