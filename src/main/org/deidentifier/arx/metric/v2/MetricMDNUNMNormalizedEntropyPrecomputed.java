@@ -113,8 +113,8 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
 
         AbstractILMultiDimensional result = super.getLowerBoundInternal(node);
-        double[] loss = result != null ? result.getValues() : null;
-        if (loss == null) return null;
+        if (result == null) return null;
+        double[] loss = result.getValues();
         
         // Switch sign bit and round
         for (int column = 0; column < loss.length; column++) {
@@ -130,8 +130,8 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
                                                                HashGroupify groupify) {
         
         AbstractILMultiDimensional result = super.getLowerBoundInternal(node, groupify);
-        double[] loss = result != null ? result.getValues() : null;
-        if (loss == null) return null;
+        if (result == null) return null;
+        double[] loss = result.getValues();
         
         // Switch sign bit and round
         for (int column = 0; column < loss.length; column++) {
