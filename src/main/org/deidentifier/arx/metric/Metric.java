@@ -47,6 +47,7 @@ import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricMDPrecision;
 import org.deidentifier.arx.metric.v2.MetricSDAECS;
 import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
+import org.deidentifier.arx.metric.v2.MetricSDNMAmbiguity;
 import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
 import org.deidentifier.arx.metric.v2.__MetricV2;
 
@@ -117,7 +118,16 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<ILSingleDimensional> createAECSMetric() {
         return __MetricV2.createAECSMetric();
     }
-    
+
+
+    /**
+     * Creates an instance of the ambiguity metric.
+     *
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createAmbiguityMetric() {
+        return __MetricV2.createAmbiguityMetric();
+    }
 
     /**
      * Creates an instance of the discernability metric.
@@ -510,6 +520,26 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                      public boolean isInstance(Metric<?> metric) {
                                          return (metric instanceof MetricSDDiscernability) ||
                                                 (metric instanceof MetricSDNMDiscernability);
+                                     } 
+               },
+               new MetricDescription("Ambiguity",
+                                     false,   // monotonic variant supported
+                                     false,  // attribute weights supported
+                                     false,  // configurable coding model supported
+                                     false,  // pre-computation supported
+                                     false){ // aggregate function supported
+
+                                    /** SVUID */
+                                    private static final long serialVersionUID = 9125639204133496116L;
+
+                                    @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         return createAmbiguityMetric();
+                                     } 
+
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricSDNMAmbiguity);
                                      } 
                },
                new MetricDescription("Height",

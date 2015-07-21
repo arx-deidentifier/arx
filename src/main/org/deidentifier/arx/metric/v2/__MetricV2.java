@@ -32,6 +32,15 @@ import org.deidentifier.arx.metric.Metric.AggregateFunction;
 public class __MetricV2 {
 
     /**
+     * Creates an instance of the ambiguity metric.
+     *
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createAmbiguityMetric() {
+        return new MetricSDNMAmbiguity();
+    }
+    
+    /**
      * Creates a new instance of the AECS metric.
      * 
      * @return
