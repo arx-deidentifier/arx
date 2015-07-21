@@ -73,6 +73,9 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     /** Column -> Id -> Level -> Output. */
     private int[][][]     hierarchies;
 
+    /** Num rows */
+    private double        rows;
+
     /**
      * Precomputed.
      *
@@ -241,9 +244,10 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         
         // Cardinalities
         this.cardinalities = new Cardinalities(input, subset, hierarchies);
+        this.rows = input.getDataLength();
         
         // Create a cache for the results
-        cache = new double[hierarchies.length][];
+        this.cache = new double[hierarchies.length][];
         for (int i = 0; i < cache.length; i++) {
             cache[i] = new double[hierarchies[i].getArray()[0].length];
             Arrays.fill(cache[i], NOT_AVAILABLE);
@@ -268,4 +272,39 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super.setMax(max);
         super.setMin(min);
     }
+    
+    /**
+     * Returns the upper bound of the entropy value per column
+     * @return
+     */
+    protected double[] getUpperBounds() {
+
+        // Prepare
+        int[][][] cardinalities = this.cardinalities.getCardinalities();
+        double[] result = new double[hierarchies.length];
+
+        // For each column
+        for (int column = 0; column < hierarchies.length; column++) {
+
+            // Compute entropy
+            double value = 0d;
+            final int[][] cardinality = cardinalities[column];
+            final int[][] hierarchy = hierarchies[column];
+            for (int in = 0; in < hierarchy.length; in++) {
+                final double a = cardinality[in][0];
+                if (a != 0d) {
+                    value += a * log2(a / rows);
+                }
+            }
+            result[column] = value;
+        }
+        
+        // Switch sign bit and round
+        for (int column = 0; column < hierarchies.length; column++) {
+            result[column] = round(result[column] == 0.0d ? result[column] : -result[column]);
+        }
+
+        return result;
+    }
+
 }

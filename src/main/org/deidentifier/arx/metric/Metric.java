@@ -44,6 +44,9 @@ import org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropy;
 import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPotentiallyPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropy;
+import org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricMDPrecision;
 import org.deidentifier.arx.metric.v2.MetricSDAECS;
 import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
@@ -286,7 +289,29 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
             return createMetric(metric);
         }
     }
-    
+
+    /**
+     * Creates an instance of the normalized entropy metric.
+     * The default aggregate function, which is the sum function, will be used.
+     * This metric will respect attribute weights defined in the configuration.
+     *
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createNormalizedEntropyMetric() {
+        return __MetricV2.createNormalizedEntropyMetric();
+    }
+
+    /**
+     * Creates an instance of the normalized entropy metric.
+     * This metric will respect attribute weights defined in the configuration.
+     *
+     * @param function The aggregate function to use for comparing results
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createNormalizedEntropyMetric(AggregateFunction function) {
+        return __MetricV2.createNormalizedEntropyMetric(function);
+    }
+
     /**
      * Creates an instance of the non-monotonic precision metric.
      * The default aggregate function, which is the arithmetic mean, will be used.
@@ -309,6 +334,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(AggregateFunction function) {
         return __MetricV2.createPrecisionMetric(function);
     }
+    
     /**
      * Creates an instance of the precision metric.
      * The default aggregate function, which is the arithmetic mean, will be used.
@@ -322,7 +348,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecisionMetric(monotonic);
     }
 
-    
     /**
      * Creates an instance of the precision metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -334,7 +359,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, AggregateFunction function) {
         return __MetricV2.createPrecisionMetric(monotonic, function);
     }
-
     /**
      * Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -349,7 +373,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecomputedEntropyMetric(threshold);
     }
 
-
+    
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -380,6 +404,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic, function);
     }
 
+
     /**
      * Creates a potentially precomputed instance of the loss metric which treats generalization
      * and suppression equally.
@@ -406,7 +431,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, AggregateFunction function) {
         return __MetricV2.createPrecomputedLossMetric(threshold, function);
     }
-    
+
     /**
      * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
      * The default aggregate function, which is the rank function, will be used.
@@ -426,7 +451,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, double gsFactor) {
         return __MetricV2.createPrecomputedLossMetric(threshold, gsFactor);
     }
-    
 
     /**
      * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
@@ -446,6 +470,35 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, double gsFactor, AggregateFunction function) {
         return __MetricV2.createPrecomputedLossMetric(threshold, gsFactor, function);
+    }
+    
+    /**
+     * Creates a potentially precomputed instance of the normalized entropy metric.
+     * The default aggregate function, which is the sum function, will be used.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param threshold The precomputed variant of the metric will be used if
+     *            #distinctValues / #rows <= threshold for all quasi-identifiers.
+     *
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedNormalizedEntropyMetric(double threshold) {
+        return __MetricV2.createPrecomputedNormalizedEntropyMetric(threshold);
+    }
+    
+
+    /**
+     * Creates a potentially precomputed instance of the normalized entropy metric.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param threshold The precomputed variant of the metric will be used if
+     *            #distinctValues / #rows <= threshold for all quasi-identifiers.
+     *
+     * @param function The aggregate function to use for comparing results
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedNormalizedEntropyMetric(double threshold, AggregateFunction function) {
+        return __MetricV2.createPrecomputedNormalizedEntropyMetric(threshold, function);
     }
 
 
@@ -641,6 +694,34 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                          return (metric instanceof MetricSDNMAmbiguity);
                                      } 
                },
+               new MetricDescription("Normalized non-uniform entropy",
+                                     false,  // monotonic variant supported
+                                     true,  // attribute weights supported
+                                     false, // configurable coding model supported
+                                     true,  // pre-computation supported
+                                     true){ // aggregate function supported
+
+
+                                    /** SVUID*/
+                                    private static final long serialVersionUID = 8536219303137546137L;
+
+                                    @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         if (config.isPrecomputed()) {
+                                             return createPrecomputedNormalizedEntropyMetric(config.getPrecomputationThreshold(), 
+                                                                                             config.getAggregateFunction());                                             
+                                         } else {
+                                             return createNormalizedEntropyMetric(config.getAggregateFunction());
+                                         }
+                                     } 
+
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricMDNUNMNormalizedEntropy) ||
+                                                (metric instanceof MetricMDNUNMNormalizedEntropyPrecomputed) ||
+                                                (metric instanceof MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed);
+                                     } 
+               },
         });
     }
 
@@ -756,6 +837,17 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Evaluates the metric for the given node.
+     *
+     * @param node The node for which to compute the information loss
+     * @param groupify The groupify operator of the previous check
+     * @return the information loss
+     */
+    public final InformationLossWithBound<T> getInformationLoss(final Transformation node, final HashGroupify groupify) {
+        return this.getInformationLossInternal(node, groupify);
+    }
+    
+    /**
      * Returns the information loss that would be induced by suppressing the given entry. The loss
      * is not necessarily consistent with the loss that is computed by 
      * <code>getInformationLoss(node, groupify)</code> but is guaranteed to be comparable for 
@@ -766,17 +858,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public final InformationLossWithBound<T> getInformationLoss(final Transformation node, final HashGroupifyEntry entry) {
         return this.getInformationLossInternal(node, entry);
-    }
-    
-    /**
-     * Evaluates the metric for the given node.
-     *
-     * @param node The node for which to compute the information loss
-     * @param groupify The groupify operator of the previous check
-     * @return the information loss
-     */
-    public final InformationLossWithBound<T> getInformationLoss(final Transformation node, final HashGroupify groupify) {
-        return this.getInformationLossInternal(node, groupify);
     }
     
     /**
@@ -886,6 +967,16 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
+     * Evaluates the metric for the given node.
+     *
+     * @param node The node for which to compute the information loss
+     * @param groupify The groupify operator of the previous check
+     * @return the double
+     */
+    protected abstract InformationLossWithBound<T> getInformationLossInternal(final Transformation node, final HashGroupify groupify);
+    
+ 
+    /**
      * Returns the information loss that would be induced by suppressing the given entry. The loss
      * is not necessarily consistent with the loss that is computed by 
      * <code>getInformationLoss(node, groupify)</code> but is guaranteed to be comparable for 
@@ -895,16 +986,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     protected abstract InformationLossWithBound<T> getInformationLossInternal(final Transformation node, HashGroupifyEntry entry);
-    
- 
-    /**
-     * Evaluates the metric for the given node.
-     *
-     * @param node The node for which to compute the information loss
-     * @param groupify The groupify operator of the previous check
-     * @return the double
-     */
-    protected abstract InformationLossWithBound<T> getInformationLossInternal(final Transformation node, final HashGroupify groupify);
 
     /**
      * Returns a lower bound for the information loss for the given node. 
