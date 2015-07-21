@@ -129,7 +129,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
             }
             m = m.nextOrdered;
         }
-        
+                
         // Return
         return new ILSingleDimensionalWithBound(result, bound);
     }
