@@ -127,6 +127,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
                 result += classResult;
                 bound += classBound;
             }
+            m = m.nextOrdered;
         }
         
         // Return
@@ -181,6 +182,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
                 classResult *= m.count;
                 result += classResult;
             }
+            m = m.nextOrdered;
         }
         
         // Return

@@ -522,26 +522,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                                 (metric instanceof MetricSDNMDiscernability);
                                      } 
                },
-               new MetricDescription("Ambiguity",
-                                     false,   // monotonic variant supported
-                                     false,  // attribute weights supported
-                                     false,  // configurable coding model supported
-                                     false,  // pre-computation supported
-                                     false){ // aggregate function supported
-
-                                    /** SVUID */
-                                    private static final long serialVersionUID = 9125639204133496116L;
-
-                                    @Override
-                                     public Metric<?> createInstance(MetricConfiguration config) {
-                                         return createAmbiguityMetric();
-                                     } 
-
-                                     @Override
-                                     public boolean isInstance(Metric<?> metric) {
-                                         return (metric instanceof MetricSDNMAmbiguity);
-                                     } 
-               },
                new MetricDescription("Height",
                                      false,  // monotonic variant supported
                                      true,   // attribute weights supported
@@ -640,7 +620,27 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                          return (metric instanceof MetricMDPrecision) ||
                                                 (metric instanceof MetricMDNMPrecision);
                                      } 
-               }
+               },
+               new MetricDescription("Ambiguity",
+                                     false,   // monotonic variant supported
+                                     false,  // attribute weights supported
+                                     false,  // configurable coding model supported
+                                     false,  // pre-computation supported
+                                     false){ // aggregate function supported
+
+                                    /** SVUID */
+                                    private static final long serialVersionUID = 3549715700376537750L;
+                                    
+                                    @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         return createAmbiguityMetric();
+                                     } 
+
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricSDNMAmbiguity);
+                                     } 
+               },
         });
     }
 
