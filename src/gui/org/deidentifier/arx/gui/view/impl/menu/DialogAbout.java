@@ -132,7 +132,7 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
     
     @Override
     protected Control createContents(Composite parent) {
-    	Control contents = super.createContents(parent);
+        Control contents = super.createContents(parent);
         setTitle(Resources.getMessage("AboutDialog.12")); //$NON-NLS-1$
         setMessage(Resources.getMessage("AboutDialog.13"), IMessageProvider.INFORMATION); //$NON-NLS-1$
         if (image!=null) setTitleImage(image); //$NON-NLS-1$
