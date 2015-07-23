@@ -175,35 +175,49 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html#getFractionOfUniqueTuplesDankar(boolean)">getFractionOfUniqueTuplesDankar</a></strong>(boolean&nbsp;useZayatzAsFallback)</code>
+<div class="block">Estimated number of unique tuples in the population according to Dankar's
+ decision rule</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html#getFractionOfUniqueTuplesPitman()">getFractionOfUniqueTuplesPitman</a></strong>()</code>
 <div class="block">Estimated number of unique tuples in the population according to Pitman's
  statistical model</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html#getFractionOfUniqueTuplesSNB()">getFractionOfUniqueTuplesSNB</a></strong>()</code>
 <div class="block">Estimated number of unique tuples in the population according to the SNB
  statistical model</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html#getFractionOfUniqueTuplesZayatz()">getFractionOfUniqueTuplesZayatz</a></strong>()</code>
 <div class="block">Estimated number of unique tuples in the population according to Zayatz's
  statistical model</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html#getNumUniqueTuples(org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel)">getNumUniqueTuples</a></strong>(<a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.PopulationUniquenessModel.html" title="enum in org.deidentifier.arx.risk">RiskModelPopulationUniqueness.PopulationUniquenessModel</a>&nbsp;model)</code>
 <div class="block">Estimated number of unique tuples in the population according to the
  given model</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html#getNumUniqueTuplesDankar()">getNumUniqueTuplesDankar</a></strong>()</code>
+<div class="block">Estimated number of unique tuples in the population according to Dankar's
+ decision rule.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html#getNumUniqueTuplesDankar(boolean)">getNumUniqueTuplesDankar</a></strong>(boolean&nbsp;useZayatzAsFallback)</code>
 <div class="block">Estimated number of unique tuples in the population according to Dankar's
  decision rule</div>
 </td>
@@ -331,6 +345,18 @@ extends java.lang.Object</pre>
  decision rule</div>
 </li>
 </ul>
+<a name="getFractionOfUniqueTuplesDankar(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFractionOfUniqueTuplesDankar</h4>
+<pre>public&nbsp;double&nbsp;getFractionOfUniqueTuplesDankar(boolean&nbsp;useZayatzAsFallback)</pre>
+<div class="block">Estimated number of unique tuples in the population according to Dankar's
+ decision rule</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>useZayatzAsFallback</code> - </dd></dl>
+</li>
+</ul>
 <a name="getFractionOfUniqueTuplesPitman()">
 <!--   -->
 </a>
@@ -383,7 +409,19 @@ extends java.lang.Object</pre>
 <h4>getNumUniqueTuplesDankar</h4>
 <pre>public&nbsp;double&nbsp;getNumUniqueTuplesDankar()</pre>
 <div class="block">Estimated number of unique tuples in the population according to Dankar's
+ decision rule.</div>
+</li>
+</ul>
+<a name="getNumUniqueTuplesDankar(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNumUniqueTuplesDankar</h4>
+<pre>public&nbsp;double&nbsp;getNumUniqueTuplesDankar(boolean&nbsp;useZayatzAsFallback)</pre>
+<div class="block">Estimated number of unique tuples in the population according to Dankar's
  decision rule</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>useZayatzAsFallback</code> - </dd></dl>
 </li>
 </ul>
 <a name="getNumUniqueTuplesPitman()">
