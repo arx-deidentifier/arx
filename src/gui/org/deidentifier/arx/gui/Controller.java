@@ -600,7 +600,11 @@ public class Controller implements IView {
             if (worker.getError() instanceof InvocationTargetException) {
                 t = worker.getError().getCause();
             }
-            if (t instanceof NullPointerException) {
+            if (t instanceof OutOfMemoryError) {
+                main.showInfoDialog(main.getShell(),
+                                    Resources.getMessage("Controller.13"), //$NON-NLS-1$
+                                    Resources.getMessage("Controller.120")); //$NON-NLS-1$
+            } else if (t instanceof NullPointerException) {
                 main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.36"), t); //$NON-NLS-1$
             } else {
                 main.showInfoDialog(main.getShell(),
@@ -1134,15 +1138,17 @@ public class Controller implements IView {
 
         main.showProgressDialog(Resources.getMessage("Controller.83"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
-            
-            String message = worker.getError().getMessage();
-            if (message == null || message.equals("")) { //$NON-NLS-1$
-                message = Resources.getMessage("Controller.46")+worker.getError().getClass().getSimpleName(); //$NON-NLS-1$
+            Throwable t = worker.getError();
+            if (worker.getError() instanceof InvocationTargetException) {
+                t = worker.getError().getCause();
             }
-            
+            String message = t.getMessage();
+            if (message == null || message.equals("")) { //$NON-NLS-1$
+                message = Resources.getMessage("Controller.46") + t.getClass().getSimpleName(); //$NON-NLS-1$
+            }
+
             getResources().getLogger().info(worker.getError());
-            main.showInfoDialog(main.getShell(),
-                                Resources.getMessage("Controller.85"), //$NON-NLS-1$
+            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.85"), //$NON-NLS-1$
                                 message);
             return;
         }
