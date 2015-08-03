@@ -51,6 +51,15 @@ public class __MetricV2 {
     }
     
     /**
+     * Creates an instance of the ambiguity metric.
+     *
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createAmbiguityMetric() {
+        return new MetricSDNMAmbiguity();
+    }
+    
+    /**
      * Creates an instance of the discernability metric.
      *
      * @return
@@ -235,7 +244,7 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createLossMetric(AggregateFunction function) {
         return new MetricMDNMLoss(function);
     }
-    
+
     /**
      * Creates an instance of the loss metric with factors for weighting generalization and suppression.
      * The default aggregate function, which is the rank function, will be used.
@@ -270,6 +279,29 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createLossMetric(double gsFactor, AggregateFunction function) {
         return new MetricMDNMLoss(gsFactor, function);
     }
+    
+    /**
+     * Creates an instance of the normalized entropy metric.
+     * The default aggregate function, which is the sum function, will be used.
+     * This metric will respect attribute weights defined in the configuration.
+     *
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createNormalizedEntropyMetric() {
+        return new MetricMDNUNMNormalizedEntropy();
+    }
+
+    /**
+     * Creates an instance of the normalized entropy metric.
+     * This metric will respect attribute weights defined in the configuration.
+     *
+     * @param function The aggregate function to use for comparing results
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createNormalizedEntropyMetric(AggregateFunction function) {
+        return new MetricMDNUNMNormalizedEntropy(function);
+    }
+    
     /**
      * Creates an instance of the non-monotonic precision metric.
      * The default aggregate function, which is the arithmetic mean, will be used.
@@ -455,6 +487,34 @@ public class __MetricV2 {
         return new MetricMDNMLossPotentiallyPrecomputed(threshold, gsFactor, function);
     }
 
+    /**
+     * Creates a potentially precomputed instance of the normalized entropy metric.
+     * The default aggregate function, which is the sum function, will be used.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param threshold The precomputed variant of the metric will be used if
+     *            #distinctValues / #rows <= threshold for all quasi-identifiers.
+     *
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedNormalizedEntropyMetric(double threshold) {
+        return new MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed(threshold);
+    }
+
+    /**
+     * Creates a potentially precomputed instance of the normalized entropy metric.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param threshold The precomputed variant of the metric will be used if
+     *            #distinctValues / #rows <= threshold for all quasi-identifiers.
+     *
+     * @param function The aggregate function to use for comparing results
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedNormalizedEntropyMetric(double threshold, AggregateFunction function) {
+        return new MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed(threshold, function);
+    }
+    
     /**
      * Creates an instance of a metric with statically defined information loss. 
      * The default aggregate function, which is the sum-function, will be used for comparing results.

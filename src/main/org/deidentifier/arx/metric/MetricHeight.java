@@ -21,11 +21,12 @@ import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * This class provides an implementation of the Height metric.
@@ -75,23 +76,23 @@ public class MetricHeight extends MetricDefault {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final HashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
         int level = node.getLevel();
         return new InformationLossDefaultWithBound(level, level);
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Node node) {
+    protected InformationLossDefault getLowerBoundInternal(Transformation node) {
         return new InformationLossDefault(node.getLevel());
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Node node,
+    protected InformationLossDefault getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
         return new InformationLossDefault(node.getLevel());
     }
@@ -111,11 +112,12 @@ public class MetricHeight extends MetricDefault {
     }
 
     @Override
-    protected void initializeInternal(final DataDefinition definition,
-                                      final Data input,
-                                      final GeneralizationHierarchy[] hierarchies,
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
-        super.initializeInternal(definition, input, hierarchies, config);
+        super.initializeInternal(manager, definition, input, hierarchies, config);
 
         minHeight = 0;
         maxHeight = 0;

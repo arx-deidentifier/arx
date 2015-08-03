@@ -24,12 +24,13 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * This class provides an efficient implementation of the non-uniform entropy
@@ -115,12 +116,12 @@ public class MetricEntropy extends MetricDefault {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final HashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
 
         if (node.getLowerBound() != null) { 
             return new InformationLossWithBound<InformationLossDefault>((InformationLossDefault)node.getLowerBound(),
@@ -134,7 +135,7 @@ public class MetricEntropy extends MetricDefault {
         for (int column = 0; column < hierarchies.length; column++) {
 
             // Check for cached value
-            final int state = node.getTransformation()[column];
+            final int state = node.getGeneralization()[column];
             double value = cache[column][state];
             if (value == NA) {
                 value = 0d;
@@ -157,18 +158,19 @@ public class MetricEntropy extends MetricDefault {
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Node node) {
+    protected InformationLossDefault getLowerBoundInternal(Transformation node) {
         return getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Node node,
+    protected InformationLossDefault getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
     
     @Override
-    protected void initializeInternal(final DataDefinition definition,
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
                                       final Data input, 
                                       final GeneralizationHierarchy[] ahierarchies, 
                                       final ARXConfiguration config) {

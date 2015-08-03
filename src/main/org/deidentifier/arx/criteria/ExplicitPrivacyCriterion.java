@@ -39,10 +39,13 @@ public abstract class ExplicitPrivacyCriterion extends PrivacyCriterion {
      * Creates a new instance
      *
      * @param attribute
-     * @param monotonic
+     * @param monotonicWithSuppression
+     * @param monotonicWithGeneralization
      */
-    public ExplicitPrivacyCriterion(String attribute, boolean monotonic) {
-        super(monotonic);
+    public ExplicitPrivacyCriterion(String attribute, 
+                                    boolean monotonicWithSuppression,
+                                    boolean monotonicWithGeneralization) {
+        super(monotonicWithSuppression, monotonicWithGeneralization);
         this.attribute = attribute;
     }
 

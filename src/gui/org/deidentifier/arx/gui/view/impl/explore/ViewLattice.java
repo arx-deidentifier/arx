@@ -68,7 +68,7 @@ public class ViewLattice extends ViewSolutionSpace {
     @SuppressWarnings("unused")
     private static class Bounds implements Serializable {
         
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = -7472570696920782588L;
     }
     
@@ -77,13 +77,13 @@ public class ViewLattice extends ViewSolutionSpace {
      */
     private static enum DragType {
         
-        /**  TODO */
+        /**  MOVE */
         MOVE,
         
-        /**  TODO */
+        /**  ZOOM */
         ZOOM,
         
-        /**  TODO */
+        /**  NONE */
         NONE
     }
 
@@ -92,15 +92,13 @@ public class ViewLattice extends ViewSolutionSpace {
      */
     private static class SerializablePath implements Serializable {
         
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = -4572722688452678425L;
         
-        /**  TODO */
+        /**  Path */
         private final transient Path path;
         
-        /**
-         * 
-         *
+        /** Constructor
          * @param path
          */
         public SerializablePath(Path path){
@@ -108,7 +106,7 @@ public class ViewLattice extends ViewSolutionSpace {
         }
         
         /**
-         * 
+         * Dispose
          */
         public void dispose(){
             if (!this.path.isDisposed()) {
@@ -117,8 +115,7 @@ public class ViewLattice extends ViewSolutionSpace {
         }
         
         /**
-         * 
-         *
+         * Returns the path
          * @return
          */
         public Path getPath(){

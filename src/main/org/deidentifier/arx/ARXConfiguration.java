@@ -78,7 +78,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         public final int getAbsoluteMaxOutliers() {
             return config.getAbsoluteMaxOutliers();
         }
-        
+
         /**
          * Returns all class-based criteria (except k-anonymity) as an array. 
          * Only used internally. If k-anonymity is included the minimal
@@ -96,7 +96,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         public Set<PrivacyCriterion> getCriteria() {
             return config.getCriteria();
         }
-
+        
         /**
          * 
          *
@@ -126,7 +126,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         public Metric<?> getMetric() {
             return config.getMetric();
         }
-        
+
         /**
          * Returns the minimal size of an equivalence class induced by the contained criteria.
          * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
@@ -134,6 +134,22 @@ public class ARXConfiguration implements Serializable, Cloneable {
          */
         public int getMinimalGroupSize() {
             return config.getMinimalGroupSize();
+        }
+
+        /**
+         * Returns a monotonicity property
+         * @return
+         */
+        public Monotonicity getMonotonicityOfPrivacy() {
+            return config.getMonotonicityOfPrivacy();
+        }
+        
+        /**
+         * Returns a monotonicity property
+         * @return
+         */
+        public Monotonicity getMonotonicityOfUtility() {
+            return config.getMonotonicityOfUtility();
         }
 
         /**
@@ -169,15 +185,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
          */
         public int getSuppressedAttributeTypes() {
             return config.getSuppressedAttributeTypes();
-        }
-
-        /**
-         * Determines whether the anonymity criterion is montonic.
-         *
-         * @return
-         */
-        public boolean isCriterionMonotonic() {
-            return config.isCriterionMonotonic();
         }
 
         /**
@@ -218,6 +225,21 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
     }
 
+    /**
+     * Monotonicity.
+     */
+    public static enum Monotonicity {
+        
+        /**  Fully monotonic */
+        FULL,
+        
+        /**  Partially monotonic */
+        PARTIAL,
+        
+        /**  Non-monotonic */
+        NONE
+    }
+
     /** Do the criteria require a counter per equivalence class. */
     public static final int       REQUIREMENT_COUNTER           = 0x1;
 
@@ -231,7 +253,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private static final long     serialVersionUID              = -6713510386735241964L;
 
     /**
-     * Creates a new config without tuple suppression.
+     * Creates a new configuration without tuple suppression.
      *
      * @return
      */
@@ -240,7 +262,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Creates a new config that allows the given percentage of outliers and
+     * Creates a new configuration that allows the given percentage of outliers and
      * thus implements tuple suppression.
      *
      * @param suppressionLimit
@@ -251,7 +273,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Creates a new config that allows the given percentage of outliers and
+     * Creates a new configuration that allows the given percentage of outliers and
      * thus implements tuple suppression. Defines the metric for measuring information loss.
      *
      * @param suppressionLimit
@@ -263,7 +285,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Creates a new config that allows to define the metric for measuring information loss.
+     * Creates a new configuration that allows to define the metric for measuring information loss.
      *
      * @param metric
      * @return
@@ -293,10 +315,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Do we assume practical monotonicity. */
     private boolean                            practicalMonotonicity                 = false;
 
-    /**
-     * Make sure that no information can be derived from associations between
-     * sensitive attributes.
-     */
+    /** Make sure that no information can be derived from associations between sensitive attributes. */
     private boolean                            protectSensitiveAssociations          = false;
 
     /** Relative tuple outliers. */
@@ -309,18 +328,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private int                                snapshotLength;
 
     /**
-     * Defines values of which attribute type are to be replaced by the
-     * suppression string in suppressed tuples.
-     */
+     * Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples. */
     private Integer                            suppressedAttributeTypes              = 1 << AttributeType.ATTR_TYPE_QI;
 
     /** The string with which suppressed values are to be replaced. */
     private String                             suppressionString                     = "*";
 
     /**
-     * Determines whether suppression is applied to the output of anonymous as
-     * well as non-anonymous transformations.
-     */
+     * Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations. */
     private Boolean                            suppressionAlwaysEnabled              = true;
 
     /** TODO: This is a hack and should be removed in future releases. */
@@ -329,8 +344,17 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Are we performing optimal anonymization for sample-based criteria? */
     private boolean                            heuristicSearchForSampleBasedCriteria = false;
 
+    /** Should we use the heuristic search algorithm? */
+    private boolean                            heuristicSearchEnabled                = false;
+
+    /** We will use the heuristic algorithm, if the size of the search space exceeds this threshold */
+    private Integer                            heuristicSearchThreshold              = 100000;
+
+    /** The heuristic algorithm will terminate after the given time limit */
+    private Integer                            heuristicSearchTimeLimit              = 30000;
+
     /**
-     * Creates a new config without tuple suppression.
+     * Creates a new configuration without tuple suppression.
      */
     private ARXConfiguration() {
         this.relMaxOutliers = 0d;
@@ -346,7 +370,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (supp < 0d || supp >= 1d) { throw new NullPointerException("Suppression must be >=0 and <1"); }
         this.relMaxOutliers = supp;
     }
-  
+    
     /**
      * Creates a new config that allows the given percentage of outliers and
      * thus implements tuple suppression. Defines the metric for measuring information loss.
@@ -387,7 +411,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         criteria.add(c);
         return this;
     }
-
+    
     /**
      * Clones this config.
      *
@@ -447,7 +471,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (value == null) return 0.5d;
         else return value;
     }
-    
+  
     /**
      * Returns all configured attribute weights. For attributes which are not a key in this
      * set the default attribute weight will be assumed by ARX. This default value is 
@@ -516,6 +540,30 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * When the size of the solution space exceeds the returned number of transformations,
+     * ARX will use a heuristic search strategy. The default is 100.000.
+     * @return
+     */
+    public int getHeuristicSearchThreshold() {
+        if (this.heuristicSearchThreshold == null) {
+            this.heuristicSearchThreshold = 100000;
+        }
+        return this.heuristicSearchThreshold;
+    }
+    
+    /**
+     * The heuristic search algorithm will terminate after the returned number of milliseconds.
+     * The default is 30 seconds.
+     * @param timeInMillis
+     */
+    public int getHeuristicSearchTimeLimit() {
+        if (this.heuristicSearchTimeLimit == null) {
+            this.heuristicSearchTimeLimit = 30000;
+        }
+        return this.heuristicSearchTimeLimit;
+    }
+    
+    /**
      * Returns the maximum number of allowed outliers.
      *
      * @return
@@ -523,7 +571,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public final double getMaxOutliers() {
         return relMaxOutliers;
     }
-
+    
     /**
      * Returns the metric used for measuring information loss.
      *
@@ -532,7 +580,59 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public Metric<?> getMetric() {
         return this.metric;
     }
-
+    
+    /**
+     * Returns whether the privacy model is monotonic
+     * @return
+     */
+    public Monotonicity getMonotonicityOfPrivacy() {
+        
+        // Practical monotonicity
+        if (this.isPracticalMonotonicity()) {
+            return Monotonicity.FULL;
+        }
+        
+        // Without suppression
+        if (this.getMaxOutliers() == 0d) {
+            for (PrivacyCriterion criterion : this.getCriteria()) {
+                if (!criterion.isMonotonicWithSuppression() || 
+                    !criterion.isMonotonicWithGeneralization()) {
+                    if (this.getMinimalGroupSize() != Integer.MAX_VALUE) {
+                        return Monotonicity.PARTIAL;
+                    } else {
+                        return Monotonicity.NONE;
+                    }
+                }
+            }
+        // With suppression
+        } else {
+            for (PrivacyCriterion criterion : this.getCriteria()) {
+                if (!criterion.isMonotonicWithGeneralization()) {
+                    if (this.getMinimalGroupSize() != Integer.MAX_VALUE) {
+                        return Monotonicity.PARTIAL;
+                    } else {
+                        return Monotonicity.NONE;
+                    }
+                }
+            }
+        }
+        
+        // Full
+        return Monotonicity.FULL;
+    }
+    
+    /**
+     * Returns whether the utility measure is monotonic
+     * @return
+     */
+    public Monotonicity getMonotonicityOfUtility() {
+        if (metric.isMonotonic() || (this.getMaxOutliers() == 0d) || this.isPracticalMonotonicity()) {
+            return Monotonicity.FULL;
+        }  else {
+            return Monotonicity.NONE;
+        }
+    }
+    
     /**
      * Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.
      * @return
@@ -559,19 +659,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Determines whether the anonymity criterion is montonic.
-     *
+     * Returns whether ARX will use a heuristic search strategy. The default is false.
      * @return
      */
-    public final boolean isCriterionMonotonic() {
-
-        if (relMaxOutliers == 0d) { return true; }
-
-        for (PrivacyCriterion c : criteria) {
-            if (!c.isMonotonic()) return false;
-        }
-        // Yes
-        return true;
+    public boolean isHeuristicSearchEnabled() {
+        return this.heuristicSearchEnabled;
     }
 
     /**
@@ -669,6 +761,36 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.attributeWeights = new HashMap<String, Double>();
         }
         this.attributeWeights.put(attribute, weight);
+    }
+
+    /**
+     * Sets whether ARX will use a heuristic search strategy. The default is false.
+     * @param heuristicSearchEnabled
+     * @return
+     */
+    public void setHeuristicSearchEnabled(boolean heuristicSearchEnabled) {
+        this.heuristicSearchEnabled = heuristicSearchEnabled;
+    }
+
+    /**
+     * When the size of the solution space exceeds the given number of transformations,
+     * ARX will use a heuristic search strategy. The default is 100.000.
+     * @param numberOfTransformations
+     * @return
+     */
+    public void setHeuristicSearchThreshold(int numberOfTransformations) {
+        if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
+        this.heuristicSearchThreshold = numberOfTransformations;
+    }
+
+    /**
+     * The heuristic search algorithm will terminate after the given number of milliseconds.
+     * The default is 30 seconds.
+     * @param timeInMillis
+     */
+    public void setHeuristicSearchTimeLimit(int timeInMillis) {
+        if (timeInMillis <= 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
+        this.heuristicSearchTimeLimit = timeInMillis;
     }
 
     /**

@@ -45,7 +45,7 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
      * @param k
      */
     public KAnonymity(int k){
-        super(true);
+        super(true, true);
         this.k = k;
     }
 

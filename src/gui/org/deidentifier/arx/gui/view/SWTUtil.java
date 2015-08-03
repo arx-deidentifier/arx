@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -91,7 +93,16 @@ public class SWTUtil {
      * @param image
      */
     public static void createDisabledImage(ToolItem item) {
-        item.setDisabledImage(new Image(item.getDisplay(), item.getImage(), SWT.IMAGE_GRAY));
+        final Image image = new Image(item.getDisplay(), item.getImage(), SWT.IMAGE_GRAY);
+        item.setDisabledImage(image);
+        item.addDisposeListener(new DisposeListener() {
+            @Override
+            public void widgetDisposed(DisposeEvent arg0) {
+                if (image != null && !image.isDisposed()) {
+                    image.dispose();
+                }
+            }
+        });
     }
     
     /**

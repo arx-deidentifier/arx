@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution.PrivacyCondition.State;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.MetricMDHeight;
@@ -94,7 +94,7 @@ public class HashGroupifyDistribution {
      * @param entry
      */
     HashGroupifyDistribution(final Metric<?> metric,
-                             final Node transformation,
+                             final Transformation transformation,
                              HashGroupifyEntry entry) {
         
         // Initialize

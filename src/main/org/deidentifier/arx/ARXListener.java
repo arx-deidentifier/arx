@@ -26,10 +26,10 @@ package org.deidentifier.arx;
 public interface ARXListener {
 
     /**
-     * Is called when a node has been processed.
+     * Reports a progress value in [0, 1]
      *
-     * @param searchSpaceSize The total number of transformations in the search space
+     * @param progress The progress value in [0, 1]
      */
-    public void nodeTagged(int searchSpaceSize);
+    public void progress(double progress);
 
 }

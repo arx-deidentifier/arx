@@ -43,7 +43,7 @@ public abstract class TCloseness extends ExplicitPrivacyCriterion {
      * @param t
      */
     public TCloseness(String attribute, double t) {
-        super(attribute, false);
+        super(attribute, false, true);
         this.t = t;
     }
 

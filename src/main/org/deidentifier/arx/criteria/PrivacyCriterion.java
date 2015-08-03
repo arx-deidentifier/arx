@@ -30,19 +30,26 @@ import org.deidentifier.arx.framework.data.DataManager;
  */
 public abstract class PrivacyCriterion implements Serializable{
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = -8460571120677880409L;
     
-    /** Is the criterion monotonic when allowing for tuple suppression. */
+    /** Is the criterion monotonic with generalization and suppression. */
     private final boolean monotonic;
+    
+
+    /** Is the criterion monotonic with generalization. */
+    private final Boolean monotonicWithGeneralization;
     
     /**
      * Instantiates a new criterion.
      *
-     * @param monotonic
+     * @param monotonicWithSuppression
+     * @param monotonicWithGeneralization
      */
-    public PrivacyCriterion(boolean monotonic){
-        this.monotonic = monotonic;
+    public PrivacyCriterion(boolean monotonicWithSuppression,
+                            boolean monotonicWithGeneralization){
+        this.monotonic = monotonicWithSuppression;
+        this.monotonicWithGeneralization = monotonicWithGeneralization;
     }
     
     /**
@@ -70,11 +77,24 @@ public abstract class PrivacyCriterion implements Serializable{
     public abstract boolean isAnonymous(HashGroupifyEntry entry);
 
     /**
+     * Returns whether the criterion is monotonic with generalization.
+     * @return
+     */
+    public boolean isMonotonicWithGeneralization() {
+        // Default
+        if (this.monotonicWithGeneralization == null) {
+            return true;
+        } else {
+            return this.monotonicWithGeneralization;
+        }
+    }
+    
+    /**
      * Returns whether the criterion is monotonic with tuple suppression.
      *
      * @return
      */
-    public boolean isMonotonic() {
+    public boolean isMonotonicWithSuppression() {
         return this.monotonic;
     }
     

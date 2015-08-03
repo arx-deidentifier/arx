@@ -379,22 +379,16 @@ public class DataManager {
     }
 
     /**
-     * Returns the distribution of the given sensitive attribute in the original
-     * dataset. Required for t-closeness.
-     * 
-     * @param attribute
-     * @return distribution
+     * Returns the distribution of the attribute in the data array at the given index.
+     * @param data
+     * @param index
+     * @param distinctValues
+     * @return
      */
-    public double[] getDistribution(String attribute) {
-
-        // TODO: Distribution size equals the size of the complete dataset
-        // TODO: Good idea?
-        final int index = indexesSensitive.get(attribute);
-        final int distinct = dataAnalyzed.getDictionary().getMapping()[index].length;
-        final int[][] data = dataAnalyzed.getArray();
+    public double[] getDistribution(int[][] data, int index, int distinctValues) {
 
         // Initialize counts: iterate over all rows or the subset
-        final int[] cardinalities = new int[distinct];
+        final int[] cardinalities = new int[distinctValues];
         for (int i = 0; i < data.length; i++) {
             if (subset == null || subset.contains(i)) {
                 cardinalities[data[i][index]]++;
@@ -408,6 +402,24 @@ public class DataManager {
             distribution[i] = (double) cardinalities[i] / total;
         }
         return distribution;
+    }
+    
+    /**
+     * Returns the distribution of the given sensitive attribute in the original dataset. Required for t-closeness.
+     * 
+     * @param attribute
+     * @return distribution
+     */
+    public double[] getDistribution(String attribute) {
+
+        if (!indexesSensitive.containsKey(attribute)) {
+            throw new IllegalArgumentException("Attribute " + attribute + " is not sensitive");
+        }
+        
+        final int index = indexesSensitive.get(attribute);
+        final int distinctValues = dataAnalyzed.getDictionary().getMapping()[index].length;
+        final int[][] data = dataAnalyzed.getArray();
+        return getDistribution(data, index, distinctValues);
     }
 
     /**
@@ -503,18 +515,17 @@ public class DataManager {
     }
 
     /**
-     * Returns the tree for the given sensitive attribute, if a generalization
-     * hierarchy is associated. Required for t-closeness with hierarchical
-     * distance EMD
-     * 
-     * @param attribute
+     * Returns a tree for the given attribute at the index within the given data array, using the given hierarchy.
+     * The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.
+     * @param data
+     * @param index
+     * @param hierarchy
      * @return tree
      */
-    public int[] getTree(String attribute) {
+    public int[] getTree(int[][] data,
+                         int index,
+                         int[][] hierarchy) {
 
-        final int[][] data = dataAnalyzed.getArray();
-        final int index = indexesSensitive.get(attribute);
-        final int[][] hierarchy = hierarchiesSensitive.get(attribute).map;
         final int totalElementsP = subset == null ? data.length : subsetSize;
         final int height = hierarchy[0].length - 1;
         final int numLeafs = hierarchy.length;
@@ -616,6 +627,22 @@ public class DataManager {
         }
 
         return treeArray;
+    }
+    
+    /**
+     * Returns the tree for the given sensitive attribute, if a generalization hierarchy is associated.
+     * The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.
+     * 
+     * @param attribute
+     * @return tree
+     */
+    public int[] getTree(String attribute) {
+        if (!hierarchiesSensitive.containsKey(attribute)) {
+            throw new IllegalArgumentException("Attribute " + attribute + " is not sensitive");
+        }
+        final int[][] data = dataAnalyzed.getArray();
+        final int index = indexesSensitive.get(attribute);
+        return getTree(data, index, hierarchiesSensitive.get(attribute).map);
     }
 
     /**

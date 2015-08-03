@@ -23,8 +23,9 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * This class provides an abstract skeleton for the implementation of weighted metrics.
@@ -53,18 +54,19 @@ public abstract class MetricWeighted<T extends InformationLoss<?>> extends Metri
 
     @Override
     @SuppressWarnings("unchecked")
-    protected T getLowerBoundInternal(final Node node) {
+    protected T getLowerBoundInternal(final Transformation node) {
         return (T)node.getLowerBound();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected T getLowerBoundInternal(final Node node, final HashGroupify groupify) {
+    protected T getLowerBoundInternal(final Transformation node, final HashGroupify groupify) {
         return (T)node.getLowerBound();
     }
 
     @Override
-    protected void initializeInternal(final DataDefinition definition,
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
                                       final Data input, 
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {

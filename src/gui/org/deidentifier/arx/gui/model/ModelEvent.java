@@ -31,74 +31,77 @@ public class ModelEvent {
      */
     public static enum ModelPart {
         
-        /**  TODO */
+        /**  SELECTED_ATTRIBUTE */
         SELECTED_ATTRIBUTE,
         
-        /**  TODO */
+        /**  INPUT */
         INPUT,
         
-        /**  TODO */
+        /**  OUTPUT */
         OUTPUT,
         
-        /**  TODO */
+        /**  ATTRIBUTE_TYPE */
         ATTRIBUTE_TYPE,
         
-        /**  TODO */
+        /**  RESULT */
         RESULT,
         
-        /**  TODO */
+        /**  DATA_TYPE */
         DATA_TYPE,
         
-        /**  TODO */
+        /**  ALGORITHM */
         ALGORITHM,
         
-        /**  TODO */
+        /**  METRIC */
         METRIC,
         
-        /**  TODO */
+        /**  MAX_OUTLIERS */
         MAX_OUTLIERS,
         
-        /**  TODO */
+        /**  FILTER */
         FILTER,
         
-        /**  TODO */
+        /**  SELECTED_NODE */
         SELECTED_NODE,
         
-        /**  TODO */
+        /**  MODEL */
         MODEL,
         
-        /**  TODO */
+        /**  CLIPBOARD */
         CLIPBOARD,
         
-        /**  TODO */
+        /**  HIERARCHY */
         HIERARCHY,
         
-        /**  TODO */
+        /**  CRITERION_DEFINITION */
         CRITERION_DEFINITION,
         
-        /**  TODO */
+        /**  RESEARCH_SUBSET */
         RESEARCH_SUBSET,
         
-        /**  TODO */
+        /**  SELECTED_VIEW_CONFIG */
         SELECTED_VIEW_CONFIG,
         
-        /**  TODO */
+        /**  SELECTED_UTILITY_VISUALIZATION */
         SELECTED_UTILITY_VISUALIZATION,
         
-        /**  TODO */
+        /**  ATTRIBUTE_VALUE */
         ATTRIBUTE_VALUE,
 
-        /**  TODO */
+        /**  SELECTED_PERSPECTIVE */
         SELECTED_PERSPECTIVE,
 
-        /**  TODO */
+        /**  POPULATION_MODEL */
         POPULATION_MODEL,
 
-        /**  TODO */
+        /**  SELECTED_RISK_VISUALIZATION */
         SELECTED_RISK_VISUALIZATION,
         
-        /**  TODO */
-        SELECTED_QUASI_IDENTIFIERS
+        /**  SELECTED_QUASI_IDENTIFIERS */
+        SELECTED_QUASI_IDENTIFIERS,
+
+        /**  EXPAND */
+        EXPAND
     }
 
     /** The part of the model that has changed. */

@@ -17,13 +17,12 @@
 
 package org.deidentifier.arx.algorithm;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.deidentifier.arx.ARXListener;
+import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
-import org.deidentifier.arx.framework.lattice.Lattice;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.SolutionSpace;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 
@@ -36,46 +35,30 @@ import org.deidentifier.arx.metric.InformationLossWithBound;
 public abstract class AbstractAlgorithm {
 
     /** The optimal transformation. */
-    private Node               globalOptimum          = null;
+    private Transformation     globalOptimum          = null;
 
     /** The optimal information loss. */
     private InformationLoss<?> optimalInformationLoss = null;
 
+    /** The listener */
+    private ARXListener      listener               = null;
+
     /** A node checker. */
-    protected NodeChecker     checker                = null;
+    protected NodeChecker      checker                = null;
 
     /** The lattice. */
-    protected Lattice          lattice                = null;
+    protected SolutionSpace    solutionSpace          = null;
 
     /**
      * Walks the lattice.
      * 
-     * @param lattice
-     *            The lattice
-     * @param checker
-     *            The checker
+     * @param solutionSpace The solution space
+     * @param checker The checker
      */
-    protected AbstractAlgorithm(final Lattice lattice,
+    protected AbstractAlgorithm(final SolutionSpace  solutionSpace,
                                 final NodeChecker checker) {
         this.checker = checker;
-        this.lattice = lattice;
-    }
-
-    /**
-     * Returns a list of all anonymous nodes in the lattice.
-     * 
-     * @return the all anonymous nodes
-     */
-    public List<Node> getAllAnonymousNodes() {
-        final ArrayList<Node> results = new ArrayList<Node>();
-        for (final Node[] level : lattice.getLevels()) {
-            for (final Node n : level) {
-                if (n.hasProperty(Node.PROPERTY_ANONYMOUS)) {
-                    results.add(n);
-                }
-            }
-        }
-        return results;
+        this.solutionSpace = solutionSpace;
     }
 
     /**
@@ -83,10 +66,18 @@ public abstract class AbstractAlgorithm {
      *
      * @return
      */
-    public Node getGlobalOptimum() {
+    public Transformation getGlobalOptimum() {
         return globalOptimum;
     }
 
+    /**
+     * Sets a listener
+     * @param listener
+     */
+    public void setListener(ARXListener listener) {
+        this.listener = listener;
+    }
+    
     /**
      * Implement this method in order to provide a new algorithm.
      */
@@ -97,36 +88,46 @@ public abstract class AbstractAlgorithm {
      * used for estimating minimum and maximum information
      * loss for tagged nodes.
      *
-     * @param node
+     * @param transformation
      */
-    protected void computeUtilityForMonotonicMetrics(Node node) {
-        if ((checker.getMetric().isMonotonic() ||
-            (checker.getConfiguration().getMaxOutliers() == 0d)) &&
-            (node.getInformationLoss() == null)) {
+    protected void computeUtilityForMonotonicMetrics(Transformation transformation) {
+        if (checker.getConfiguration().getMonotonicityOfUtility() == Monotonicity.FULL &&
+            transformation.getInformationLoss() == null) {
 
             // Independent evaluation or check
             if (checker.getMetric().isIndependent()) {
-                InformationLossWithBound<?> loss = checker.getMetric().getInformationLoss(node, (HashGroupify)null);
-                lattice.setInformationLoss(node, loss.getInformationLoss());
-                lattice.setLowerBound(node, loss.getLowerBound());
+                InformationLossWithBound<?> loss = checker.getMetric().getInformationLoss(transformation, (HashGroupify)null);
+                transformation.setInformationLoss(loss.getInformationLoss());
+                transformation.setLowerBound(loss.getLowerBound());
             } else {
-                lattice.setChecked(node, checker.check(node, true));
+                transformation.setChecked(checker.check(transformation, true));
             }
+        }
+    }
+
+    /**
+     * Propagate progress to listeners
+     * @param progress
+     */
+    protected void progress(double progress) {
+        if (this.listener != null) {
+            this.listener.progress(progress);
         }
     }
 
     /**
      * Keeps track of the global optimum.
      *
-     * @param node
+     * @param transformation
      */
-    protected void trackOptimum(Node node) {
-        if (node.hasProperty(Node.PROPERTY_ANONYMOUS) &&
+    protected void trackOptimum(Transformation transformation) {
+        if (transformation.hasProperty(solutionSpace.getPropertyAnonymous()) &&
             ((globalOptimum == null) ||
-             (node.getInformationLoss().compareTo(optimalInformationLoss) < 0) ||
-            ((node.getInformationLoss().compareTo(optimalInformationLoss) == 0) && (node.getLevel() < globalOptimum.getLevel())))) {
-            globalOptimum = node;
-            optimalInformationLoss = node.getInformationLoss();
+             (transformation.getInformationLoss().compareTo(optimalInformationLoss) < 0) ||
+            ((transformation.getInformationLoss().compareTo(optimalInformationLoss) == 0) && (transformation.getLevel() < globalOptimum.getLevel())))) {
+            globalOptimum = transformation;
+            optimalInformationLoss = transformation.getInformationLoss();
         }
     }
+
 }

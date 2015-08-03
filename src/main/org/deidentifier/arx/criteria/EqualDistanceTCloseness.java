@@ -93,6 +93,6 @@ public class EqualDistanceTCloseness extends TCloseness {
 
 	@Override
 	public String toString() {
-		return t+"-closeness with equal distance for attribute '"+attribute+"'";
+		return t+"-closeness with equal ground-distance for attribute '"+attribute+"'";
 	}
 }

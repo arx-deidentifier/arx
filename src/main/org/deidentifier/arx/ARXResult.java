@@ -27,7 +27,8 @@ import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.SolutionSpace;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -68,6 +69,9 @@ public class ARXResult {
     /** The registry. */
     private final DataRegistry     registry;
 
+    /** The registry. */
+    private final SolutionSpace    solutionSpace;
+
     /**
      * Internal constructor for deserialization.
      *
@@ -81,6 +85,7 @@ public class ARXResult {
      * @param config
      * @param optimum
      * @param time
+     * @param solutionSpace
      */
     public ARXResult(       final DataHandle handle,
                             final DataDefinition definition,
@@ -91,7 +96,8 @@ public class ARXResult {
                             final Metric<?> metric,
                             final ARXConfiguration config,
                             final ARXNode optimum,
-                            final long time) {
+                            final long time,
+                            final SolutionSpace solutionSpace) {
 
         // Set registry and definition
         ((DataHandleInput)handle).setDefinition(definition);
@@ -123,7 +129,7 @@ public class ARXResult {
         config.initialize(manager);
 
         // Initialize the metric
-        metric.initialize(definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
+        metric.initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
         // Create a node checker
         final NodeChecker checker = new NodeChecker(manager,
@@ -131,7 +137,8 @@ public class ARXResult {
                                                      config.getInternalConfiguration(),
                                                      historySize,
                                                      snapshotSizeDataset,
-                                                     snapshotSizeSnapshot);
+                                                     snapshotSizeSnapshot,
+                                                     solutionSpace);
 
         // Initialize the result
         this.registry = handle.getRegistry();
@@ -142,6 +149,7 @@ public class ARXResult {
         this.lattice = lattice;
         this.optimalNode = lattice.getOptimum();
         this.duration = time;
+        this.solutionSpace = solutionSpace;
     }
     
     /**
@@ -154,6 +162,7 @@ public class ARXResult {
      * @param config
      * @param lattice
      * @param duration
+     * @param solutionSpace
      */
     protected ARXResult(DataRegistry registry,
                         DataManager manager,
@@ -161,7 +170,8 @@ public class ARXResult {
                         DataDefinition definition,
                         ARXConfiguration config,
                         ARXLattice lattice,
-                        long duration) {
+                        long duration,
+                        SolutionSpace solutionSpace) {
 
         this.registry = registry;
         this.manager = manager;
@@ -171,6 +181,7 @@ public class ARXResult {
         this.lattice = lattice;
         this.optimalNode = lattice.getOptimum();
         this.duration = duration;
+        this.solutionSpace = solutionSpace;
     }
 
 
@@ -285,18 +296,16 @@ public class ARXResult {
         DataHandle handle = registry.getOutputHandle(node);
         if (handle != null) return handle;
 
-        final Node transformation = new Node(0);
-        int level = 0; for (int i : node.getTransformation()) level+= i;
-        transformation.setTransformation(node.getTransformation(), level);
- 
         // Apply the transformation
+        final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
         TransformedData information = checker.applyTransformation(transformation);
+        transformation.setChecked(information.properties);
 
         // Store
         if (!node.isChecked() || node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
             
             node.access().setChecked(true);
-            if (transformation.hasProperty(Node.PROPERTY_ANONYMOUS)) {
+            if (transformation.hasProperty(solutionSpace.getPropertyAnonymous())) {
                 node.access().setAnonymous();
             } else {
                 node.access().setNotAnonymous();

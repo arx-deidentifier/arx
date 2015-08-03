@@ -4,7 +4,7 @@
     <description>Builds, tests, and runs the project.</description>
 
     <!-- defines the version number -->
-    <property name="arx.version" value="3.1.0" />
+    <property name="arx.version" value="3.2.0" />
 
 
     <!-- defines the to be included libraries -->
@@ -25,9 +25,9 @@
             <filename name="**/hppc-0.6.0.jar" />
         	<filename name="**/univocity-parsers-1.3.1.jar" />
         	<filename name="**/newtonraphson-0.0.1.jar" />
+        	<filename name="**/jhpl-0.0.1.jar" />
         </or>
     </fileset>
-
 
     <fileset id="gui.jars" dir="lib">
         <or>

@@ -22,6 +22,7 @@ import java.util.Arrays;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
@@ -157,7 +158,8 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     }
 
     @Override
-    protected void initializeInternal(final DataDefinition definition,
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
                                       final Data input, 
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {

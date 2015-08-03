@@ -47,7 +47,7 @@ public class EntropyLDiversity extends LDiversity {
      * @param l
      */
     public EntropyLDiversity(String attribute, double l){
-        super(attribute, l, false);
+        super(attribute, l, false, true);
         logL = Math.log(l) / Math.log(2d);
     }
 
