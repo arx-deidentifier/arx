@@ -115,13 +115,13 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#SolutionSpace(org.deidentifier.arx.ARXLattice, org.deidentifier.arx.ARXConfiguration)">SolutionSpace</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#SolutionSpace(org.deidentifier.arx.ARXLattice,%20org.deidentifier.arx.ARXConfiguration)">SolutionSpace</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
              <a href="../../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
 <div class="block">For de-serialization</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#SolutionSpace(int[], int[])">SolutionSpace</a></strong>(int[]&nbsp;minLevels,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#SolutionSpace(int[],%20int[])">SolutionSpace</a></strong>(int[]&nbsp;minLevels,
              int[]&nbsp;maxLevels)</code>
 <div class="block">Creates a new solution space</div>
 </td>
@@ -287,28 +287,28 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#hasProperty(int[], de.linearbits.jhpl.PredictiveProperty)">hasProperty</a></strong>(int[]&nbsp;transformation,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#hasProperty(int[],%20de.linearbits.jhpl.PredictiveProperty)">hasProperty</a></strong>(int[]&nbsp;transformation,
            de.linearbits.jhpl.PredictiveProperty&nbsp;property)</code>
 <div class="block">Returns whether a node has a given property</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#isDirectParentChild(int[], int[])">isDirectParentChild</a></strong>(int[]&nbsp;parent,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#isDirectParentChild(int[],%20int[])">isDirectParentChild</a></strong>(int[]&nbsp;parent,
                    int[]&nbsp;child)</code>
 <div class="block">Determines whether a direct parent-child relationship exists.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#isParentChild(int[], int[])">isParentChild</a></strong>(int[]&nbsp;parent,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#isParentChild(int[],%20int[])">isParentChild</a></strong>(int[]&nbsp;parent,
              int[]&nbsp;child)</code>
 <div class="block">Determines whether a parent-child relationship exists.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#isParentChildOrEqual(int[], int[])">isParentChildOrEqual</a></strong>(int[]&nbsp;parent,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#isParentChildOrEqual(int[],%20int[])">isParentChildOrEqual</a></strong>(int[]&nbsp;parent,
                     int[]&nbsp;child)</code>
 <div class="block">Determines whether a parent-child relationship exists, or both are equal</div>
 </td>
@@ -321,21 +321,21 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#setData(long, java.lang.Object)">setData</a></strong>(long&nbsp;id,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#setData(long,%20java.lang.Object)">setData</a></strong>(long&nbsp;id,
        java.lang.Object&nbsp;object)</code>
 <div class="block">Sets data</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#setInformationLoss(long, org.deidentifier.arx.metric.InformationLoss)">setInformationLoss</a></strong>(long&nbsp;identifier,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#setInformationLoss(long,%20org.deidentifier.arx.metric.InformationLoss)">setInformationLoss</a></strong>(long&nbsp;identifier,
                   <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;loss)</code>
 <div class="block">Sets the information loss</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#setLowerBound(long, org.deidentifier.arx.metric.InformationLoss)">setLowerBound</a></strong>(long&nbsp;identifier,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#setLowerBound(long,%20org.deidentifier.arx.metric.InformationLoss)">setLowerBound</a></strong>(long&nbsp;identifier,
              <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;loss)</code>
 <div class="block">Sets the lower bound</div>
 </td>

@@ -33,7 +33,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
 /**
  * This class implements a variant of the Ambiguity metric.
  * See Jacob Goldberger, Tamir Tassa: Efficient Anonymizations with Enhanced Utility.
- * TRANSACTIONS ON DATA PRIVACY. 3. (2010). 149–175.
+ * TRANSACTIONS ON DATA PRIVACY. 3. (2010). 149-175.
  *
  * @author Fabian Prasser
  */
