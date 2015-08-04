@@ -196,7 +196,7 @@ public class ARXAnonymizer {
         handle.getRegistry().createInputSubset(config);
 
         // Execute
-        return anonymizeInternal(handle, handle.getDefinition(), config).asResult(config, handle);
+        return anonymize(handle, handle.getDefinition(), config).asResult(config, handle);
     }
     
     /**
@@ -296,12 +296,12 @@ public class ARXAnonymizer {
      * @return
      * @throws IOException
      */
-    private Result anonymizeInternal(final DataHandle handle,
-                                       final DataDefinition definition,
-                                       final ARXConfiguration config) throws IOException {
+    private Result anonymize(final DataHandle handle,
+                             final DataDefinition definition,
+                             final ARXConfiguration config) throws IOException {
 
         // Encode
-        final DataManager manager = prepareDataManager(handle, definition, config);
+        final DataManager manager = getDataManager(handle, definition, config);
         
         // Attach arrays to data handle
         ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
@@ -538,7 +538,7 @@ public class ARXAnonymizer {
      * @return the data manager
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private DataManager prepareDataManager(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException {
+    private DataManager getDataManager(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException {
 
         // Extract data
         final String[] header = ((DataHandleInput) handle).header;
