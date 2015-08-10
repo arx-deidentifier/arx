@@ -645,12 +645,16 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
 
                                      @Override
                                      public boolean isInstance(Metric<?> metric) {
-                                         return (metric instanceof MetricMDNUEntropy) ||
-                                                (metric instanceof MetricMDNUEntropyPrecomputed) ||
-                                                (metric instanceof MetricMDNUEntropyPotentiallyPrecomputed) ||
-                                                (metric instanceof MetricMDNUNMEntropy) ||
-                                                (metric instanceof MetricMDNUNMEntropyPrecomputed) ||
-                                                (metric instanceof MetricMDNUNMEntropyPotentiallyPrecomputed);
+                                         return ((metric instanceof MetricMDNUEntropy) ||
+                                                 (metric instanceof MetricMDNUEntropyPrecomputed) ||
+                                                 (metric instanceof MetricMDNUEntropyPotentiallyPrecomputed) ||
+                                                 (metric instanceof MetricMDNUNMEntropy) ||
+                                                 (metric instanceof MetricMDNUNMEntropyPrecomputed) ||
+                                                 (metric instanceof MetricMDNUNMEntropyPotentiallyPrecomputed)) 
+                                                &&! 
+                                                ((metric instanceof MetricMDNUNMNormalizedEntropy) ||
+                                                 (metric instanceof MetricMDNUNMNormalizedEntropyPrecomputed) ||
+                                                 (metric instanceof MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed));
                                      } 
                },
                new MetricDescription("Precision",
