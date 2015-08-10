@@ -158,7 +158,7 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
         Arrays.fill(min, 0d);
         
         double[] max = new double[hierarchies.length];
-        Arrays.fill(min, 1d);
+        Arrays.fill(max, 1d);
         
         super.setMax(max);
         super.setMin(min);
