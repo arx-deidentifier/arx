@@ -196,7 +196,7 @@ public class ARXAnonymizer {
         handle.getRegistry().createInputSubset(config);
 
         // Execute
-        return anonymizeInternal(handle, handle.getDefinition(), config).asResult(config, handle);
+        return anonymize(handle, handle.getDefinition(), config).asResult(config, handle);
     }
     
     /**
@@ -285,6 +285,69 @@ public class ARXAnonymizer {
      */
     public void setMaxQuasiIdentifiers(int maxQuasiIdentifiers) {
         this.maxQuasiIdentifiers = maxQuasiIdentifiers;
+    }
+
+    /**
+     * Reset a previous lattice and run the algorithm .
+     *
+     * @param handle
+     * @param definition
+     * @param config
+     * @return
+     * @throws IOException
+     */
+    private Result anonymize(final DataHandle handle,
+                             final DataDefinition definition,
+                             final ARXConfiguration config) throws IOException {
+
+        // Encode
+        final DataManager manager = getDataManager(handle, definition, config);
+        
+        // Attach arrays to data handle
+        ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
+                                         manager.getDataAnalyzed().getArray(),
+                                         manager.getDataStatic().getArray());
+
+        // Initialize
+        config.initialize(manager);
+
+        // Check
+        checkAfterEncoding(config, manager);
+
+        // Build or clean the lattice
+        SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
+
+        // Build a node checker
+        final NodeChecker checker = new NodeChecker(manager,
+                                                    config.getMetric(),
+                                                    config.getInternalConfiguration(),
+                                                    historySize,
+                                                    snapshotSizeDataset,
+                                                    snapshotSizeSnapshot,
+                                                    solutionSpace);
+
+        // Initialize the metric
+        config.getMetric().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
+
+        // Create an algorithm instance
+        AbstractAlgorithm algorithm = getAlgorithm(config,
+                                                   manager,
+                                                   solutionSpace,
+                                                   checker);
+        algorithm.setListener(listener);
+
+        
+        // Execute
+
+        final long time = System.currentTimeMillis();
+        algorithm.traverse();
+        
+        // Deactivate history to prevent bugs when sorting data
+        checker.getHistory().reset();
+        checker.getHistory().setSize(0);
+        
+        // Return the result
+        return new Result(config.getMetric(), checker, solutionSpace, manager, algorithm, time);
     }
 
     /**
@@ -431,25 +494,6 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Prepares the data manager.
-     *
-     * @param handle the handle
-     * @param definition the definition
-     * @param config the config
-     * @return the data manager
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    private DataManager prepareDataManager(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException {
-
-        // Extract data
-        final String[] header = ((DataHandleInput) handle).header;
-        final int[][] dataArray = ((DataHandleInput) handle).data;
-        final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria(), getAggregateFunctions(definition));
-        return manager;
-    }
-
-    /**
      * Returns a map of all microaggregation functions
      * @param definition
      * @return
@@ -463,69 +507,6 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Reset a previous lattice and run the algorithm .
-     *
-     * @param handle
-     * @param definition
-     * @param config
-     * @return
-     * @throws IOException
-     */
-    private Result anonymizeInternal(final DataHandle handle,
-                                       final DataDefinition definition,
-                                       final ARXConfiguration config) throws IOException {
-
-        // Encode
-        final DataManager manager = prepareDataManager(handle, definition, config);
-        
-        // Attach arrays to data handle
-        ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
-                                         manager.getDataAnalyzed().getArray(),
-                                         manager.getDataStatic().getArray());
-
-        // Initialize
-        config.initialize(manager);
-
-        // Check
-        checkAfterEncoding(config, manager);
-
-        // Build or clean the lattice
-        SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
-
-        // Build a node checker
-        final NodeChecker checker = new NodeChecker(manager,
-                                                    config.getMetric(),
-                                                    config.getInternalConfiguration(),
-                                                    historySize,
-                                                    snapshotSizeDataset,
-                                                    snapshotSizeSnapshot,
-                                                    solutionSpace);
-
-        // Initialize the metric
-        config.getMetric().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
-
-        // Create an algorithm instance
-        AbstractAlgorithm algorithm = getAlgorithm(config,
-                                                   manager,
-                                                   solutionSpace,
-                                                   checker);
-        algorithm.setListener(listener);
-
-        
-        // Execute
-
-        final long time = System.currentTimeMillis();
-        algorithm.traverse();
-        
-        // Deactivate history to prevent bugs when sorting data
-        checker.getHistory().reset();
-        checker.getHistory().setSize(0);
-        
-        // Return the result
-        return new Result(config.getMetric(), checker, solutionSpace, manager, algorithm, time);
-    }
-
-    /**
      * Returns an algorithm for the given problem instance
      * @param config
      * @param manager
@@ -533,7 +514,7 @@ public class ARXAnonymizer {
      * @param checker
      * @return
      */
-    public AbstractAlgorithm getAlgorithm(final ARXConfiguration config,
+    private AbstractAlgorithm getAlgorithm(final ARXConfiguration config,
                                           final DataManager manager,
                                           final SolutionSpace solutionSpace,
                                           final NodeChecker checker) {
@@ -546,5 +527,24 @@ public class ARXAnonymizer {
             FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
             return FLASHAlgorithm.create(solutionSpace, checker, strategy);
         }
+    }
+
+    /**
+     * Prepares the data manager.
+     *
+     * @param handle the handle
+     * @param definition the definition
+     * @param config the config
+     * @return the data manager
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    private DataManager getDataManager(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException {
+
+        // Extract data
+        final String[] header = ((DataHandleInput) handle).header;
+        final int[][] dataArray = ((DataHandleInput) handle).data;
+        final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
+        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria(), getAggregateFunctions(definition));
+        return manager;
     }
 }
