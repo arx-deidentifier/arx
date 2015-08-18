@@ -150,63 +150,54 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>org.deidentifier.arx.algorithm.AbstractAlgorithm</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#getAlgorithm(org.deidentifier.arx.ARXConfiguration,%20org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.framework.lattice.SolutionSpace,%20org.deidentifier.arx.framework.check.NodeChecker)">getAlgorithm</a></strong>(<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
-            org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
-            org.deidentifier.arx.framework.lattice.SolutionSpace&nbsp;solutionSpace,
-            org.deidentifier.arx.framework.check.NodeChecker&nbsp;checker)</code>
-<div class="block">Returns an algorithm for the given problem instance</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#getHistorySize()">getHistorySize</a></strong>()</code>
 <div class="block">Returns the maximum number of snapshots allowed to store in the history.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#getMaximumSnapshotSizeDataset()">getMaximumSnapshotSizeDataset</a></strong>()</code>
 <div class="block">Gets the snapshot size.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#getMaximumSnapshotSizeSnapshot()">getMaximumSnapshotSizeSnapshot</a></strong>()</code>
 <div class="block">Gets the snapshot size.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#getMaxQuasiIdentifiers()">getMaxQuasiIdentifiers</a></strong>()</code>
 <div class="block">Returns the maximal number of quasi-identifiers.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setHistorySize(int)">setHistorySize</a></strong>(int&nbsp;historySize)</code>
 <div class="block">Sets the maximum number of snapshots allowed to store in the history.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setListener(org.deidentifier.arx.ARXListener)">setListener</a></strong>(<a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
 <div class="block">Sets a listener.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaximumSnapshotSizeDataset(double)">setMaximumSnapshotSizeDataset</a></strong>(double&nbsp;snapshotSize)</code>
 <div class="block">Sets the maximum size of a snapshot relative to the dataset size.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaximumSnapshotSizeSnapshot(double)">setMaximumSnapshotSizeSnapshot</a></strong>(double&nbsp;snapshotSizeSnapshot)</code>
 <div class="block">Sets the maximum size of a snapshot relative to the previous snapshot.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaxQuasiIdentifiers(int)">setMaxQuasiIdentifiers</a></strong>(int&nbsp;maxQuasiIdentifiers)</code>
 <div class="block">Sets the maximal number of quasi-identifiers.</div>
@@ -373,28 +364,13 @@ extends java.lang.Object</pre>
 <a name="setMaxQuasiIdentifiers(int)">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>setMaxQuasiIdentifiers</h4>
 <pre>public&nbsp;void&nbsp;setMaxQuasiIdentifiers(int&nbsp;maxQuasiIdentifiers)</pre>
 <div class="block">Sets the maximal number of quasi-identifiers. Set to Integer.MAX_VALUE to disable the 
  restriction. By default, the restriction is disabled.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>maxQuasiIdentifiers</code> - </dd></dl>
-</li>
-</ul>
-<a name="getAlgorithm(org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.lattice.SolutionSpace, org.deidentifier.arx.framework.check.NodeChecker)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>getAlgorithm</h4>
-<pre>public&nbsp;org.deidentifier.arx.algorithm.AbstractAlgorithm&nbsp;getAlgorithm(<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
-                                                            org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
-                                                            org.deidentifier.arx.framework.lattice.SolutionSpace&nbsp;solutionSpace,
-                                                            org.deidentifier.arx.framework.check.NodeChecker&nbsp;checker)</pre>
-<div class="block">Returns an algorithm for the given problem instance</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>config</code> - </dd><dd><code>manager</code> - </dd><dd><code>solutionSpace</code> - </dd><dd><code>checker</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>
