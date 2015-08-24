@@ -330,7 +330,10 @@ public class SolutionSpace {
      * @return
      */
     public Transformation getTransformation(long identifier) {
-        return getTransformation(fromJHPL(lattice.space().toIndex(identifier)));
+        
+        int[] transformationJHPL = lattice.space().toIndex(identifier);
+        int[] transformationARX = fromJHPL(transformationJHPL);
+        return new Transformation(transformationARX, transformationJHPL, identifier, lattice, this);
     }
 
     /**

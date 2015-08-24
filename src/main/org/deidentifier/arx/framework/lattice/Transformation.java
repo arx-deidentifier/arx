@@ -71,6 +71,27 @@ public class Transformation {
     }
 
     /**
+     * Instantiates a new transformation.
+     * @param transformationARX
+     * @param transformationJHPL
+     * @param identifier
+     * @param lattice2
+     * @param solutionSpace2
+     */
+    public Transformation(int[] transformationARX,
+                          int[] transformationJHPL,
+                          long identifier,
+                          Lattice<Integer, Integer> lattice,
+                          SolutionSpace solutionSpace) {
+        this.lattice = lattice;
+        this.solutionSpace = solutionSpace;
+        this.transformationARX = transformationARX;
+        this.transformationJHPL = transformationJHPL;
+        this.level = getLevel(transformationARX);
+        this.id = identifier;
+    }
+
+    /**
      * Returns associated data
      * @return
      */
