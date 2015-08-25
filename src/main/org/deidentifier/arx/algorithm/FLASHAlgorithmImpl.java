@@ -36,6 +36,7 @@ import cern.colt.GenericSorting;
 import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
 import cern.colt.list.LongArrayList;
+import de.linearbits.jhpl.JHPLIterator.LongIterator;
 import de.linearbits.jhpl.PredictiveProperty;
 
 /**
@@ -297,10 +298,10 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // Create
         List<Integer> result = new ArrayList<Integer>();
-        for (Iterator<Long> iter = solutionSpace.unsafeGetLevel(level); iter.hasNext();) {
-            int id = iter.next().intValue();
+        for (LongIterator iter = solutionSpace.unsafeGetLevel(level); iter.hasNext();) {
+            long id = iter.next();
             if (!skip(triggerSkip, solutionSpace.getTransformation(id))) {
-                result.add(id);
+                result.add((int)id);
             }
         }
 

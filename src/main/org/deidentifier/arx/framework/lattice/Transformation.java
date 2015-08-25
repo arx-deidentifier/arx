@@ -18,11 +18,11 @@
 package org.deidentifier.arx.framework.lattice;
 
 import java.util.Arrays;
-import java.util.Iterator;
 
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.metric.InformationLoss;
 
+import de.linearbits.jhpl.JHPLIterator.LongIterator;
 import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
 import de.linearbits.jhpl.PredictiveProperty.Direction;
@@ -210,7 +210,7 @@ public class Transformation {
      * @param property
      */
     public void setPropertyToNeighbours(PredictiveProperty property) {
-        Iterator<Long> neighbors;
+        LongIterator neighbors;
         if (property.getDirection() == Direction.UP) {
             neighbors = lattice.nodes().listSuccessors(id);
         } else if (property.getDirection() == Direction.DOWN) {

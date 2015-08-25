@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.framework.lattice;
 
-import java.util.Iterator;
-
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.ARXLattice;
@@ -30,6 +28,7 @@ import cern.colt.list.LongArrayList;
 
 import com.carrotsearch.hppc.LongObjectOpenHashMap;
 
+import de.linearbits.jhpl.JHPLIterator.LongIterator;
 import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
 import de.linearbits.jhpl.PredictiveProperty.Direction;
@@ -165,7 +164,7 @@ public class SolutionSpace {
      * Returns all materialized transformations
      * @return
      */
-    public Iterator<Long> getMaterializedTransformations() {
+    public LongIterator getMaterializedTransformations() {
         return lattice.listNodesAsIdentifiers();
     }
 
@@ -177,7 +176,7 @@ public class SolutionSpace {
     public LongArrayList getPredecessors(long identifier) {
         
         LongArrayList result = new LongArrayList();
-        for (Iterator<Long> iter = lattice.nodes().listPredecessors(identifier); iter.hasNext();) {
+        for (LongIterator iter = lattice.nodes().listPredecessors(identifier); iter.hasNext();) {
             result.add(iter.next());
         }
         return result;
@@ -279,7 +278,7 @@ public class SolutionSpace {
      */
     public LongArrayList getSuccessors(long identifier) {
         LongArrayList result = new LongArrayList();
-        for (Iterator<Long> iter = lattice.nodes().listSuccessors(identifier); iter.hasNext();) {
+        for (LongIterator iter = lattice.nodes().listSuccessors(identifier); iter.hasNext();) {
             result.add(iter.next());
         }
         int lower = 0;
@@ -393,7 +392,7 @@ public class SolutionSpace {
      * Returns all transformations in the solution space
      * @return
      */
-    public Iterator<Long> unsafeGetAllTransformations() {
+    public LongIterator unsafeGetAllTransformations() {
         return lattice.unsafe().listAllNodesAsIdentifiers();
     }
 
@@ -402,7 +401,7 @@ public class SolutionSpace {
      * @param level
      * @return
      */
-    public Iterator<Long> unsafeGetLevel(int level) {
+    public LongIterator unsafeGetLevel(int level) {
         return lattice.unsafe().listAllNodesAsIdentifiers(toJHPL(level));
     }
 
