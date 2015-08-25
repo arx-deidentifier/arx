@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
-import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -734,9 +733,7 @@ public class ARXLattice implements Serializable {
         this.virtualSize = solutions.getSize();
  
         // Set this flag to true, if practical monotonicity is being assumed
-        this.uncertainty =  config.isPracticalMonotonicity() && 
-                            (config.getMonotonicityOfUtility() != Monotonicity.FULL ||
-                             config.getMonotonicityOfPrivacy() != Monotonicity.FULL);
+        this.uncertainty = config.isPracticalMonotonicity();
         
         // Build header map
         final Map<String, Integer> headermap = new HashMap<String, Integer>();
