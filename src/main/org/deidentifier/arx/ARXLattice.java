@@ -650,55 +650,6 @@ public class ARXLattice implements Serializable {
         /**  Max level */
         public int maxLevel = 0;
     }
-    
-    /**
-     * For using int arrays as keys in maps
-     */
-    class IntArrayWrapper {
-
-        /**  Value */
-        private final int[] array;
-        
-        /**  Hash code */
-        private final int   hashCode;
-
-        /**
-         * Constructor
-         *
-         * @param array
-         */
-        public IntArrayWrapper(final int[] array) {
-            this.array = array;
-            this.hashCode = Arrays.hashCode(array);
-        }
-
-        @Override
-        public final boolean equals(final Object obj) {
-            if (this == obj) { return true; }
-            if (obj == null) return false;
-            return Arrays.equals(array, ((IntArrayWrapper) obj).array);
-        }
-
-        /**
-         * 
-         *
-         * @return
-         */
-        public final int[] getArray() {
-            return array;
-        }
-
-        @Override
-        public final int hashCode() {
-            return hashCode;
-        }
-
-        @Override
-        public final String toString() {
-            return Arrays.toString(array);
-        }
-
-    }
 
     /** Deserialization context. */
     private static LatticeDeserializationContext deserializationContext = new LatticeDeserializationContext();
