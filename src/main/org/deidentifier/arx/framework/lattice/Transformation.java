@@ -23,8 +23,6 @@ import java.util.Iterator;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.metric.InformationLoss;
 
-import com.carrotsearch.hppc.LongArrayList;
-
 import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
 import de.linearbits.jhpl.PredictiveProperty.Direction;
@@ -51,9 +49,6 @@ public class Transformation {
     /** Transformation in ARX's space */
     private final int[]                     transformationARX;
 
-    /** Transformation in JHPL's space */
-    private final int[]                     transformationJHPL;
-
     /**
      * Instantiates a new transformation.
      * @param transformation In ARX space
@@ -64,9 +59,8 @@ public class Transformation {
         this.lattice = lattice;
         this.solutionSpace = solutionSpace;
         this.transformationARX = transformation;
-        this.transformationJHPL = solutionSpace.toJHPL(transformation);
         this.level = getLevel(transformationARX);
-        this.id = lattice.space().toId(transformationJHPL);
+        this.id = lattice.space().toId(solutionSpace.toJHPL(transformation));
         
     }
 
@@ -79,17 +73,16 @@ public class Transformation {
      * @param solutionSpace2
      */
     public Transformation(int[] transformationARX,
-                          int[] transformationJHPL,
                           long identifier,
                           Lattice<Integer, Integer> lattice,
                           SolutionSpace solutionSpace) {
         this.lattice = lattice;
         this.solutionSpace = solutionSpace;
         this.transformationARX = transformationARX;
-        this.transformationJHPL = transformationJHPL;
         this.level = getLevel(transformationARX);
         this.id = identifier;
     }
+
 
     /**
      * Returns associated data
@@ -145,7 +138,7 @@ public class Transformation {
      * @return
      */
     public boolean hasProperty(PredictiveProperty property) {
-        return this.lattice.hasProperty(this.transformationJHPL, property);
+        return this.lattice.hasProperty(this.id, property);
     }
 
     /**
@@ -209,7 +202,7 @@ public class Transformation {
      * @param property
      */
     public void setProperty(PredictiveProperty property) {
-        this.lattice.putProperty(this.transformationJHPL, property);
+        this.lattice.putProperty(this.id, property);
     }
 
     /**
@@ -219,18 +212,14 @@ public class Transformation {
     public void setPropertyToNeighbours(PredictiveProperty property) {
         Iterator<Long> neighbors;
         if (property.getDirection() == Direction.UP) {
-            neighbors = lattice.space().indexIteratorToIdIterator(lattice.nodes().listSuccessors(transformationJHPL));
+            neighbors = lattice.nodes().listSuccessors(id);
         } else if (property.getDirection() == Direction.DOWN) {
-            neighbors = lattice.space().indexIteratorToIdIterator(lattice.nodes().listPredecessors(transformationJHPL));
+            neighbors = lattice.nodes().listPredecessors(id);
         } else {
             return;
         }
-        LongArrayList list = new LongArrayList();
         for (;neighbors.hasNext();) {
-            list.add(neighbors.next());
-        }
-        for (long id : list.toArray()) {
-            lattice.putProperty(lattice.space().toIndex(id), property);
+            lattice.putProperty(neighbors.next(), property);
         }
     }
     
@@ -242,36 +231,35 @@ public class Transformation {
         StringBuilder builder = new StringBuilder();
         builder.append("Transformation {\n");
         builder.append(" - Solution space: ").append(this.solutionSpace.hashCode()).append("\n");
-        builder.append(" - Index: ").append(Arrays.toString(transformationJHPL)).append("\n");
         builder.append(" - Id: ").append(id).append("\n");
         builder.append(" - Generalization: ").append(Arrays.toString(transformationARX)).append("\n");
         builder.append(" - Level: ").append(level).append("\n");
         builder.append(" - Properties:\n");
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyAnonymous())) {
+        if (lattice.hasProperty(id, solutionSpace.getPropertyAnonymous())) {
             builder.append("   * ANONYMOUS: ").append(solutionSpace.getPropertyAnonymous().getDirection()).append("\n");    
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyNotAnonymous())) {
+        if (lattice.hasProperty(id, solutionSpace.getPropertyNotAnonymous())) {
             builder.append("   * NOT_ANONYMOUS: ").append(solutionSpace.getPropertyNotAnonymous().getDirection()).append("\n");
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyKAnonymous())) {
+        if (lattice.hasProperty(id, solutionSpace.getPropertyKAnonymous())) {
             builder.append("   * K_ANONYMOUS: ").append(solutionSpace.getPropertyKAnonymous().getDirection()).append("\n");
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyNotKAnonymous())) {
+        if (lattice.hasProperty(id, solutionSpace.getPropertyNotKAnonymous())) {
             builder.append("   * NOT_K_ANONYMOUS: ").append(solutionSpace.getPropertyNotKAnonymous().getDirection()).append("\n");
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyChecked())) {
+        if (lattice.hasProperty(id, solutionSpace.getPropertyChecked())) {
             builder.append("   * CHECKED: ").append(solutionSpace.getPropertyChecked().getDirection()).append("\n");    
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyForceSnapshot())) {
+        if (lattice.hasProperty(id, solutionSpace.getPropertyForceSnapshot())) {
             builder.append("   * FORCE_SNAPSHOT: ").append(solutionSpace.getPropertyForceSnapshot().getDirection()).append("\n");
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyInsufficientUtility())) {
+        if (lattice.hasProperty(id, solutionSpace.getPropertyInsufficientUtility())) {
             builder.append("   * INSUFFICIENT_UTILITY: ").append(solutionSpace.getPropertyInsufficientUtility().getDirection()).append("\n");
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertySuccessorsPruned())) {
+        if (lattice.hasProperty(id, solutionSpace.getPropertySuccessorsPruned())) {
             builder.append("   * SUCCESSORS_PRUNED: ").append(solutionSpace.getPropertySuccessorsPruned().getDirection()).append("\n");
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyVisited())) {
+        if (lattice.hasProperty(id, solutionSpace.getPropertyVisited())) {
             builder.append("   * VISITED: ").append(solutionSpace.getPropertyVisited().getDirection()).append("\n");
         }
         builder.append("}");

@@ -148,16 +148,27 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected int[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#fromJHPL(long)">fromJHPL</a></strong>(long&nbsp;id)</code>
+<div class="block">Constructs an array representing the given node in the index space.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getBottom()">getBottom</a></strong>()</code>
 <div class="block">Returns the bottom transformation</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.lang.Object</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getData(long)">getData</a></strong>(long&nbsp;id)</code>
 <div class="block">Returns data</div>
 </td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>long</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getEqualDimensionsBitMask(long, long)">getEqualDimensionsBitMask</a></strong>(long&nbsp;parent,
+                         long&nbsp;child)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
@@ -172,138 +183,135 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getLevel(long)">getLevel</a></strong>(long&nbsp;identifier)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getLowerBound(long)">getLowerBound</a></strong>(long&nbsp;identifier)</code>
 <div class="block">Returns the lower bound</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.Iterator&lt;java.lang.Long&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getMaterializedTransformations()">getMaterializedTransformations</a></strong>()</code>
 <div class="block">Returns all materialized transformations</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>cern.colt.list.LongArrayList</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPredecessors(long)">getPredecessors</a></strong>(long&nbsp;identifier)</code>
 <div class="block">Returns all predeccessors of the transformation with the given identifier</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>de.linearbits.jhpl.PredictiveProperty</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPropertyAnonymous()">getPropertyAnonymous</a></strong>()</code>
 <div class="block">Returns a property</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>de.linearbits.jhpl.PredictiveProperty</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPropertyChecked()">getPropertyChecked</a></strong>()</code>
 <div class="block">Returns a property</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>de.linearbits.jhpl.PredictiveProperty</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPropertyExpanded()">getPropertyExpanded</a></strong>()</code>
 <div class="block">Property for expanded transformation</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>de.linearbits.jhpl.PredictiveProperty</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPropertyForceSnapshot()">getPropertyForceSnapshot</a></strong>()</code>
 <div class="block">Returns a property</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>de.linearbits.jhpl.PredictiveProperty</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPropertyInsufficientUtility()">getPropertyInsufficientUtility</a></strong>()</code>
 <div class="block">Returns a property</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>de.linearbits.jhpl.PredictiveProperty</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPropertyKAnonymous()">getPropertyKAnonymous</a></strong>()</code>
 <div class="block">Returns a property</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>de.linearbits.jhpl.PredictiveProperty</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPropertyNotAnonymous()">getPropertyNotAnonymous</a></strong>()</code>
 <div class="block">Returns a property</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>de.linearbits.jhpl.PredictiveProperty</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPropertyNotKAnonymous()">getPropertyNotKAnonymous</a></strong>()</code>
 <div class="block">Returns a property</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>de.linearbits.jhpl.PredictiveProperty</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPropertySuccessorsPruned()">getPropertySuccessorsPruned</a></strong>()</code>
 <div class="block">Returns a property</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>de.linearbits.jhpl.PredictiveProperty</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getPropertyVisited()">getPropertyVisited</a></strong>()</code>
 <div class="block">Returns a property</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getSize()">getSize</a></strong>()</code>
 <div class="block">Returns the overall number of transformations in the solution space</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>cern.colt.list.LongArrayList</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getSuccessors(long)">getSuccessors</a></strong>(long&nbsp;identifier)</code>
 <div class="block">Returns all successors of the transformation with the given identifier</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getTop()">getTop</a></strong>()</code>
 <div class="block">Returns the top-transformation</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getTransformation(int[])">getTransformation</a></strong>(int[]&nbsp;transformation)</code>
 <div class="block">Returns a wrapper object with access to all properties about the transformation</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getTransformation(long)">getTransformation</a></strong>(long&nbsp;identifier)</code>
 <div class="block">Returns the transformation with the given identifier</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getUtility(long)">getUtility</a></strong>(long&nbsp;identifier)</code>
 <div class="block">Returns the utility of the transformation with the given identifier</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#hasProperty(int[], de.linearbits.jhpl.PredictiveProperty)">hasProperty</a></strong>(int[]&nbsp;transformation,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#hasProperty(long, de.linearbits.jhpl.PredictiveProperty)">hasProperty</a></strong>(long&nbsp;identifier,
            de.linearbits.jhpl.PredictiveProperty&nbsp;property)</code>
 <div class="block">Returns whether a node has a given property</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#isDirectParentChild(int[], int[])">isDirectParentChild</a></strong>(int[]&nbsp;parent,
                    int[]&nbsp;child)</code>
 <div class="block">Determines whether a direct parent-child relationship exists.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#isParentChild(int[], int[])">isParentChild</a></strong>(int[]&nbsp;parent,
-             int[]&nbsp;child)</code>
-<div class="block">Determines whether a parent-child relationship exists.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -314,51 +322,56 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#isParentChildOrEqual(long, long)">isParentChildOrEqual</a></strong>(long&nbsp;parent,
+                    long&nbsp;child)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#setAnonymityPropertyPredictable(boolean)">setAnonymityPropertyPredictable</a></strong>(boolean&nbsp;predictable)</code>
 <div class="block">Makes the anonymity property predictable</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#setData(long, java.lang.Object)">setData</a></strong>(long&nbsp;id,
        java.lang.Object&nbsp;object)</code>
 <div class="block">Sets data</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#setInformationLoss(long, org.deidentifier.arx.metric.InformationLoss)">setInformationLoss</a></strong>(long&nbsp;identifier,
                   <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;loss)</code>
 <div class="block">Sets the information loss</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#setLowerBound(long, org.deidentifier.arx.metric.InformationLoss)">setLowerBound</a></strong>(long&nbsp;identifier,
              <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;loss)</code>
 <div class="block">Sets the lower bound</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#toJHPL(int)">toJHPL</a></strong>(int&nbsp;level)</code>
 <div class="block">Internal method that subtracts the offset</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#toJHPL(int[])">toJHPL</a></strong>(int[]&nbsp;transformation)</code>
 <div class="block">Internal method that subtracts the offsets</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.Iterator&lt;java.lang.Long&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#unsafeGetAllTransformations()">unsafeGetAllTransformations</a></strong>()</code>
 <div class="block">Returns all transformations in the solution space</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.util.Iterator&lt;java.lang.Long&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#unsafeGetLevel(int)">unsafeGetLevel</a></strong>(int&nbsp;level)</code>
 <div class="block">Returns *all* nodes on the given level.</div>
@@ -644,13 +657,13 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="hasProperty(int[], de.linearbits.jhpl.PredictiveProperty)">
+<a name="hasProperty(long, de.linearbits.jhpl.PredictiveProperty)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>hasProperty</h4>
-<pre>public&nbsp;boolean&nbsp;hasProperty(int[]&nbsp;transformation,
+<pre>public&nbsp;boolean&nbsp;hasProperty(long&nbsp;identifier,
                   de.linearbits.jhpl.PredictiveProperty&nbsp;property)</pre>
 <div class="block">Returns whether a node has a given property</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd><dd><code>property</code> - </dd>
@@ -666,19 +679,6 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;boolean&nbsp;isDirectParentChild(int[]&nbsp;parent,
                           int[]&nbsp;child)</pre>
 <div class="block">Determines whether a direct parent-child relationship exists.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>child</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="isParentChild(int[], int[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isParentChild</h4>
-<pre>public&nbsp;boolean&nbsp;isParentChild(int[]&nbsp;parent,
-                    int[]&nbsp;child)</pre>
-<div class="block">Determines whether a parent-child relationship exists.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>child</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -739,6 +739,18 @@ extends java.lang.Object</pre>
 <pre>protected&nbsp;int[]&nbsp;fromJHPL(int[]&nbsp;transformation)</pre>
 <div class="block">Internal method that adds the offsets</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="fromJHPL(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fromJHPL</h4>
+<pre>protected&nbsp;int[]&nbsp;fromJHPL(long&nbsp;id)</pre>
+<div class="block">Constructs an array representing the given node in the index space.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>id</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -829,13 +841,42 @@ extends java.lang.Object</pre>
 <a name="toJHPL(int[])">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>toJHPL</h4>
 <pre>protected&nbsp;int[]&nbsp;toJHPL(int[]&nbsp;transformation)</pre>
 <div class="block">Internal method that subtracts the offsets</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getLevel(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLevel</h4>
+<pre>public&nbsp;int&nbsp;getLevel(long&nbsp;identifier)</pre>
+</li>
+</ul>
+<a name="isParentChildOrEqual(long, long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isParentChildOrEqual</h4>
+<pre>public&nbsp;boolean&nbsp;isParentChildOrEqual(long&nbsp;parent,
+                           long&nbsp;child)</pre>
+</li>
+</ul>
+<a name="getEqualDimensionsBitMask(long, long)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getEqualDimensionsBitMask</h4>
+<pre>public&nbsp;long&nbsp;getEqualDimensionsBitMask(long&nbsp;parent,
+                             long&nbsp;child)</pre>
 </li>
 </ul>
 </li>

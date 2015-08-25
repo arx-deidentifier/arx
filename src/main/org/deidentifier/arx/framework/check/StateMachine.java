@@ -18,6 +18,7 @@
 package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.framework.check.history.History;
+import org.deidentifier.arx.framework.lattice.SolutionSpace;
 
 /**
  * This class implements a state machine, which determines which optimizations
@@ -66,28 +67,32 @@ public class StateMachine {
     }
 
     /** The history. */
-    private History    history  = null;
+    private History       history  = null;
 
     /** The last node, which has been checked for k-anonymity. */
-    private int[]      lastNode;
+    private long          lastNode;
 
     /** The last transition, which has been performed. */
-    private Transition lastTransition;
+    private Transition    lastTransition;
 
     /** The current snapshot, if any. */
-    private int[]      snapshot = null;
+    private int[]         snapshot = null;
 
     /** The node for the current snapshot. */
-    private int[]      snapshotNode;
+    private long          snapshotNode;
+
+    /** The solution space */
+    private SolutionSpace solutionSpace;
 
     /**
      * Instantiates a new state machine.
-     * 
      * @param history
-     *            the history
+     * @param solutionSpace
      */
-    public StateMachine(final History history) {
-        this.lastNode = null;
+    public StateMachine(final History history,
+                        final SolutionSpace solutionSpace) {
+        this.solutionSpace = solutionSpace;
+        this.lastNode = -1;
         this.lastTransition = null;
         this.history = history;
     }
@@ -97,7 +102,7 @@ public class StateMachine {
      *
      * @return the last node, which has been checked for k-anonymity
      */
-    public int[] getLastNode() {
+    public long getLastNode() {
         return lastNode;
     }
 
@@ -114,7 +119,7 @@ public class StateMachine {
      * Resets the state machine.
      */
     public void reset() {
-        lastNode = null;
+        lastNode = -1;
         lastTransition = null;
     }
 
@@ -125,7 +130,7 @@ public class StateMachine {
      *            the current node
      * @return the transition
      */
-    public Transition transition(final int[] currentNode) {
+    public Transition transition(final long currentNode) {
 
         final Transition result = new Transition();
 
@@ -184,14 +189,8 @@ public class StateMachine {
      *            the current node
      * @return the projection
      */
-    private long getProjection(final int[] currentNode) {
-        long projection = 0L;
-        for (int i = 0; i < currentNode.length; i++) {
-            if (currentNode[i] == lastNode[i]) {
-                projection |= 1L << i;
-            }
-        }
-        return projection;
+    private long getProjection(final long currentNode) {
+        return solutionSpace.getEqualDimensionsBitMask(currentNode, lastNode);
     }
 
     /**
@@ -201,12 +200,8 @@ public class StateMachine {
      *            the current node
      * @return true, if is possible rollup
      */
-    private boolean isPossibleRollup(final int[] currentNode) {
-        for (int i = 0; i < lastNode.length; i++) {
-            if (currentNode[i] < lastNode[i]) { return false; }
-        }
-        return true;
-
+    private boolean isPossibleRollup(final long currentNode) {
+        return solutionSpace.isParentChildOrEqual(currentNode, lastNode);
     }
 
     /**
@@ -216,7 +211,7 @@ public class StateMachine {
      *            the current node
      * @return true, if is possible snapshot
      */
-    private boolean isPossibleSnapshot(final int[] currentNode) {
+    private boolean isPossibleSnapshot(final long currentNode) {
         snapshot = history.get(currentNode);
         snapshotNode = history.getTransformation();
         if (snapshot != null) { return true; }
@@ -226,14 +221,11 @@ public class StateMachine {
     /**
      * Is node2 a predecessor of or equal to node1?.
      *
-     * @param node1
-     * @param node2
+     * @param successor
+     * @param predecessor
      * @return
      */
-    private boolean isPredecessor(final int[] node1, final int[] node2) {
-        for (int i = 0; i < node2.length; i++) {
-            if (node1[i] < node2[i]) { return false; }
-        }
-        return true;
+    private boolean isPredecessor(final long successor, final long predecessor) {
+        return solutionSpace.isParentChildOrEqual(successor, predecessor);
     }
 }

@@ -144,7 +144,8 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/StateMachine.html#StateMachine(org.deidentifier.arx.framework.check.history.History)">StateMachine</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/check/history/History.html" title="class in org.deidentifier.arx.framework.check.history">History</a>&nbsp;history)</code>
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/StateMachine.html#StateMachine(org.deidentifier.arx.framework.check.history.History, org.deidentifier.arx.framework.lattice.SolutionSpace)">StateMachine</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/check/history/History.html" title="class in org.deidentifier.arx.framework.check.history">History</a>&nbsp;history,
+            <a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace)</code>
 <div class="block">Instantiates a new state machine.</div>
 </td>
 </tr>
@@ -164,7 +165,7 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>int[]</code></td>
+<td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/StateMachine.html#getLastNode()">getLastNode</a></strong>()</code>
 <div class="block">Returns the last node.</div>
 </td>
@@ -181,7 +182,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/StateMachine.Transition.html" title="class in org.deidentifier.arx.framework.check">StateMachine.Transition</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/StateMachine.html#transition(int[])">transition</a></strong>(int[]&nbsp;currentNode)</code>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/StateMachine.html#transition(long)">transition</a></strong>(long&nbsp;currentNode)</code>
 <div class="block">Computes the best state transition.</div>
 </td>
 </tr>
@@ -207,15 +208,16 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="StateMachine(org.deidentifier.arx.framework.check.history.History)">
+<a name="StateMachine(org.deidentifier.arx.framework.check.history.History, org.deidentifier.arx.framework.lattice.SolutionSpace)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>StateMachine</h4>
-<pre>public&nbsp;StateMachine(<a href="../../../../../org/deidentifier/arx/framework/check/history/History.html" title="class in org.deidentifier.arx.framework.check.history">History</a>&nbsp;history)</pre>
+<pre>public&nbsp;StateMachine(<a href="../../../../../org/deidentifier/arx/framework/check/history/History.html" title="class in org.deidentifier.arx.framework.check.history">History</a>&nbsp;history,
+            <a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace)</pre>
 <div class="block">Instantiates a new state machine.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>history</code> - the history</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>history</code> - </dd><dd><code>solutionSpace</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -232,7 +234,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getLastNode</h4>
-<pre>public&nbsp;int[]&nbsp;getLastNode()</pre>
+<pre>public&nbsp;long&nbsp;getLastNode()</pre>
 <div class="block">Returns the last node.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the last node, which has been checked for k-anonymity</dd></dl>
 </li>
@@ -257,13 +259,13 @@ extends java.lang.Object</pre>
 <div class="block">Resets the state machine.</div>
 </li>
 </ul>
-<a name="transition(int[])">
+<a name="transition(long)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>transition</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/StateMachine.Transition.html" title="class in org.deidentifier.arx.framework.check">StateMachine.Transition</a>&nbsp;transition(int[]&nbsp;currentNode)</pre>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/StateMachine.Transition.html" title="class in org.deidentifier.arx.framework.check">StateMachine.Transition</a>&nbsp;transition(long&nbsp;currentNode)</pre>
 <div class="block">Computes the best state transition.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>currentNode</code> - the current node</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the transition</dd></dl>

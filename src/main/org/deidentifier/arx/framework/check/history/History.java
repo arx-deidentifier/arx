@@ -139,7 +139,7 @@ public class History {
      * @param transformation
      * @return snapshot
      */
-    public int[] get(final int[] transformation) {
+    public int[] get(final long transformation) {
 
         // Init
         int[] resultSnapshot = null;
@@ -153,7 +153,7 @@ public class History {
             if (currentMetadata.level < level) {
                 final int[] currentSnapshot = nodeToSnapshot.get(currentMetadata.id);
                 if ((resultMetadata == null) || (currentSnapshot.length < resultSnapshot.length)) {
-                    if (solutionSpace.isParentChildOrEqual(transformation, currentMetadata.transformation)) {
+                    if (solutionSpace.isParentChildOrEqual(transformation, currentMetadata.id)) {
                         resultMetadata = currentMetadata;
                         resultSnapshot = currentSnapshot;
                     }
@@ -204,11 +204,11 @@ public class History {
      *
      * @return
      */
-    public int[] getTransformation() {
+    public long getTransformation() {
         if (resultMetadata == null) {
-            return null;
+            return -1;
         } else {
-            return resultMetadata.transformation;
+            return resultMetadata.id;
         }
     }
     
@@ -308,7 +308,7 @@ public class History {
         final Iterator<MRUCacheEntryMetadata> metadata = cache.iterator();
         while (metadata.hasNext()) {
             final MRUCacheEntryMetadata node = metadata.next();
-            if (solutionSpace.hasProperty(node.transformation, solutionSpace.getPropertySuccessorsPruned())) {
+            if (solutionSpace.hasProperty(node.id, solutionSpace.getPropertySuccessorsPruned())) {
                 metadata.remove();
                 removeHistoryEntry(node);
             }
