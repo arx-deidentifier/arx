@@ -2747,10 +2747,6 @@
 <dd>
 <div class="block">Internal method that adds the offsets</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html#fromJHPL(long)">fromJHPL(long)</a></span> - Method in class org.deidentifier.arx.framework.lattice.<a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a></dt>
-<dd>
-<div class="block">Constructs an array representing the given node in the index space.</div>
-</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.html#function">function</a></span> - Variable in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderGroupingBased</a></dt>
 <dd>
 <div class="block">The default aggregate function, might be null.</div>
@@ -2851,7 +2847,7 @@
 <dd>
 <div class="block">Returns the according entry.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/history/History.html#get(long)">get(long)</a></span> - Method in class org.deidentifier.arx.framework.check.history.<a href="./org/deidentifier/arx/framework/check/history/History.html" title="class in org.deidentifier.arx.framework.check.history">History</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/history/History.html#get(int[])">get(int[])</a></span> - Method in class org.deidentifier.arx.framework.check.history.<a href="./org/deidentifier/arx/framework/check/history/History.html" title="class in org.deidentifier.arx.framework.check.history">History</a></dt>
 <dd>
 <div class="block">Retrieves a snapshot.</div>
 </dd>
@@ -3520,8 +3516,6 @@
 <dd>
 <div class="block">Returns all elements backing this datatype.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html#getEqualDimensionsBitMask(long, long)">getEqualDimensionsBitMask(long, long)</a></span> - Method in class org.deidentifier.arx.framework.lattice.<a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html#getEquivalenceClasses()">getEquivalenceClasses()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a></dt>
 <dd>
 <div class="block">Returns a set of classes as an input for the risk model</div>
@@ -4065,8 +4059,6 @@
 <dd>
 <div class="block">Returns the level of the given transformation</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html#getLevel(long)">getLevel(long)</a></span> - Method in class org.deidentifier.arx.framework.lattice.<a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/lattice/Transformation.html#getLevel()">getLevel()</a></span> - Method in class org.deidentifier.arx.framework.lattice.<a href="./org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a></dt>
 <dd>
 <div class="block">Return level</div>
@@ -5500,7 +5492,7 @@
 <dd>
 <div class="block">Returns whether the function accepts a parameter.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html#hasProperty(long, de.linearbits.jhpl.PredictiveProperty)">hasProperty(long, PredictiveProperty)</a></span> - Method in class org.deidentifier.arx.framework.lattice.<a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html#hasProperty(int[], de.linearbits.jhpl.PredictiveProperty)">hasProperty(int[], PredictiveProperty)</a></span> - Method in class org.deidentifier.arx.framework.lattice.<a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a></dt>
 <dd>
 <div class="block">Returns whether a node has a given property</div>
 </dd>
@@ -6662,12 +6654,14 @@
 <dd>
 <div class="block">Is this an interval representing values that are out of the lower bound</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html#isParentChild(int[], int[])">isParentChild(int[], int[])</a></span> - Method in class org.deidentifier.arx.framework.lattice.<a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a></dt>
+<dd>
+<div class="block">Determines whether a parent-child relationship exists.</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html#isParentChildOrEqual(int[], int[])">isParentChildOrEqual(int[], int[])</a></span> - Method in class org.deidentifier.arx.framework.lattice.<a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a></dt>
 <dd>
 <div class="block">Determines whether a parent-child relationship exists, or both are equal</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html#isParentChildOrEqual(long, long)">isParentChildOrEqual(long, long)</a></span> - Method in class org.deidentifier.arx.framework.lattice.<a href="./org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsSummary.html#isPopulationVarianceAvailable()">isPopulationVarianceAvailable()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsSummary.html" title="class in org.deidentifier.arx.aggregates">StatisticsSummary</a></dt>
 <dd>
 <div class="block">Returns whether the following measure is available: population variance</div>
@@ -8750,7 +8744,7 @@
  can be applied to the current transition depending on the previous
  transition.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/StateMachine.html#StateMachine(org.deidentifier.arx.framework.check.history.History, org.deidentifier.arx.framework.lattice.SolutionSpace)">StateMachine(History, SolutionSpace)</a></span> - Constructor for class org.deidentifier.arx.framework.check.<a href="./org/deidentifier/arx/framework/check/StateMachine.html" title="class in org.deidentifier.arx.framework.check">StateMachine</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/StateMachine.html#StateMachine(org.deidentifier.arx.framework.check.history.History)">StateMachine(History)</a></span> - Constructor for class org.deidentifier.arx.framework.check.<a href="./org/deidentifier/arx/framework/check/StateMachine.html" title="class in org.deidentifier.arx.framework.check">StateMachine</a></dt>
 <dd>
 <div class="block">Instantiates a new state machine.</div>
 </dd>
@@ -9079,6 +9073,10 @@
 <dd>
 <div class="block">Keeps track of the global optimum.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/history/MRUCacheEntryMetadata.html#transformation">transformation</a></span> - Variable in class org.deidentifier.arx.framework.check.history.<a href="./org/deidentifier/arx/framework/check/history/MRUCacheEntryMetadata.html" title="class in org.deidentifier.arx.framework.check.history">MRUCacheEntryMetadata</a></dt>
+<dd>
+<div class="block">Transformation</div>
+</dd>
 <dt><a href="./org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice"><span class="strong">Transformation</span></a> - Class in <a href="./org/deidentifier/arx/framework/lattice/package-summary.html">org.deidentifier.arx.framework.lattice</a></dt>
 <dd>
 <div class="block">The class Transformation.</div>
@@ -9087,7 +9085,7 @@
 <dd>
 <div class="block">Instantiates a new transformation.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/lattice/Transformation.html#Transformation(int[], long, de.linearbits.jhpl.Lattice, org.deidentifier.arx.framework.lattice.SolutionSpace)">Transformation(int[], long, Lattice&lt;Integer, Integer&gt;, SolutionSpace)</a></span> - Constructor for class org.deidentifier.arx.framework.lattice.<a href="./org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/lattice/Transformation.html#Transformation(int[], int[], long, de.linearbits.jhpl.Lattice, org.deidentifier.arx.framework.lattice.SolutionSpace)">Transformation(int[], int[], long, Lattice&lt;Integer, Integer&gt;, SolutionSpace)</a></span> - Constructor for class org.deidentifier.arx.framework.lattice.<a href="./org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a></dt>
 <dd>
 <div class="block">Instantiates a new transformation.</div>
 </dd>
@@ -9235,7 +9233,7 @@
 <dd>
 <div class="block">Instantiates a new transformer.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/StateMachine.html#transition(long)">transition(long)</a></span> - Method in class org.deidentifier.arx.framework.check.<a href="./org/deidentifier/arx/framework/check/StateMachine.html" title="class in org.deidentifier.arx.framework.check">StateMachine</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/StateMachine.html#transition(int[])">transition(int[])</a></span> - Method in class org.deidentifier.arx.framework.check.<a href="./org/deidentifier/arx/framework/check/StateMachine.html" title="class in org.deidentifier.arx.framework.check">StateMachine</a></dt>
 <dd>
 <div class="block">Computes the best state transition.</div>
 </dd>

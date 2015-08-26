@@ -25,6 +25,8 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  */
 public class MRUCacheEntryMetadata {
 
+    /** Transformation */
+    public final int[] transformation;
     /** Level */
     public final int   level;
     /** Id */
@@ -35,6 +37,7 @@ public class MRUCacheEntryMetadata {
      * @param transformation
      */
     public MRUCacheEntryMetadata(Transformation transformation) {
+        this.transformation = transformation.getGeneralization().clone();
         this.level = transformation.getLevel();
         this.id = transformation.getIdentifier();
     }

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,8 +41,6 @@ import cern.colt.list.LongArrayList;
 
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.LongObjectOpenHashMap;
-
-import de.linearbits.jhpl.JHPLIterator.LongIterator;
 
 /**
  * This class implements a representation of the generalization lattice that is
@@ -748,8 +747,8 @@ public class ARXLattice implements Serializable {
         final IntObjectOpenHashMap<List<ARXNode>> levels = new IntObjectOpenHashMap<List<ARXNode>>(); 
         int size = 0;
         int maxlevel = 0;
-        for (LongIterator iterator = complete ? solutions.unsafeGetAllTransformations() : 
-                                                solutions.getMaterializedTransformations(); iterator.hasNext();) {
+        for (Iterator<Long> iterator = complete ? solutions.unsafeGetAllTransformations() : 
+                                                  solutions.getMaterializedTransformations(); iterator.hasNext();) {
             
             Transformation transformation = solutions.getTransformation(iterator.next());
             if (!levels.containsKey(transformation.getLevel())) {
@@ -801,8 +800,8 @@ public class ARXLattice implements Serializable {
         }
         
         // Create relationships
-        for (LongIterator iterator = complete ? solutions.unsafeGetAllTransformations() : 
-                                                solutions.getMaterializedTransformations(); iterator.hasNext();) {
+        for (Iterator<Long> iterator = complete ? solutions.unsafeGetAllTransformations() : 
+                                                  solutions.getMaterializedTransformations(); iterator.hasNext();) {
             createRelationships(solutions, map, iterator.next());
         }
         if (!complete) {

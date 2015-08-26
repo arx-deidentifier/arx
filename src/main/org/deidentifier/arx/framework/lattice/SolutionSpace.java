@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.framework.lattice;
 
+import java.util.Iterator;
+
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.ARXLattice;
@@ -28,7 +30,6 @@ import cern.colt.list.LongArrayList;
 
 import com.carrotsearch.hppc.LongObjectOpenHashMap;
 
-import de.linearbits.jhpl.JHPLIterator.LongIterator;
 import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
 import de.linearbits.jhpl.PredictiveProperty.Direction;
@@ -140,6 +141,19 @@ public class SolutionSpace {
     }
     
     /**
+     * Reverses the given array
+     * @param input
+     * @return
+     */
+    private int[] reverse(int[] input) {
+        int[] result = new int[input.length];
+        for (int i = 0; i < input.length; i++) {
+            result[i] = input[input.length - i - 1];
+        }
+        return result;
+    }
+    
+    /**
      * Returns the bottom transformation
      * @return
      */
@@ -159,13 +173,13 @@ public class SolutionSpace {
         }
         return level;
     }
-    
+
     /**
      * Returns all materialized transformations
      * @return
      */
-    public LongIterator getMaterializedTransformations() {
-        return lattice.listNodesAsIdentifiers();
+    public Iterator<Long> getMaterializedTransformations() {
+        return lattice.space().indexIteratorToIdIterator(lattice.listNodes());
     }
 
     /**
@@ -176,11 +190,12 @@ public class SolutionSpace {
     public LongArrayList getPredecessors(long identifier) {
         
         LongArrayList result = new LongArrayList();
-        for (LongIterator iter = lattice.nodes().listPredecessors(identifier); iter.hasNext();) {
+        for (Iterator<Long> iter = lattice.space().indexIteratorToIdIterator(lattice.nodes().listPredecessors(lattice.space().toIndex(identifier))); iter.hasNext();) {
             result.add(iter.next());
         }
         return result;
     }
+    
 
     /**
      * Returns a property
@@ -189,7 +204,6 @@ public class SolutionSpace {
     public PredictiveProperty getPropertyAnonymous() {
         return propertyAnonymous;
     }
-    
 
     /**
      * Returns a property
@@ -270,7 +284,7 @@ public class SolutionSpace {
     public long getSize() {
         return lattice.numNodes();
     }
-
+    
     /**
      * Returns all successors of the transformation with the given identifier
      * @param identifier
@@ -278,7 +292,7 @@ public class SolutionSpace {
      */
     public LongArrayList getSuccessors(long identifier) {
         LongArrayList result = new LongArrayList();
-        for (LongIterator iter = lattice.nodes().listSuccessors(identifier); iter.hasNext();) {
+        for (Iterator<Long> iter = lattice.space().indexIteratorToIdIterator(lattice.nodes().listSuccessors(lattice.space().toIndex(identifier))); iter.hasNext();) {
             result.add(iter.next());
         }
         int lower = 0;
@@ -292,7 +306,7 @@ public class SolutionSpace {
         }
         return result;
     }
-    
+
     /**
      * Returns the top-transformation
      * @return
@@ -300,7 +314,7 @@ public class SolutionSpace {
     public Transformation getTop() {
         return getTransformation(fromJHPL(lattice.nodes().getTop()));
     }
-
+    
     /**
      * Returns a wrapper object with access to all properties about the transformation
      * @param transformation
@@ -316,9 +330,12 @@ public class SolutionSpace {
      * @return
      */
     public Transformation getTransformation(long identifier) {
-        return new Transformation(fromJHPL(identifier), identifier, lattice, this);
+        
+        int[] transformationJHPL = lattice.space().toIndex(identifier);
+        int[] transformationARX = fromJHPL(transformationJHPL);
+        return new Transformation(transformationARX, transformationJHPL, identifier, lattice, this);
     }
-    
+
     /**
      * Returns the utility of the transformation with the given identifier
      * @param identifier
@@ -328,18 +345,15 @@ public class SolutionSpace {
         return utility.getOrDefault(identifier, null);
     }
     
-
     /**
      * Returns whether a node has a given property
      * @param transformation
      * @param property
      * @return
      */
-    public boolean hasProperty(long identifier, PredictiveProperty property) {
-        return lattice.hasProperty(identifier, property);
+    public boolean hasProperty(int[] transformation, PredictiveProperty property) {
+        return lattice.hasProperty(toJHPL(transformation), property);
     }
-
-    
 
     /**
      * Determines whether a direct parent-child relationship exists.
@@ -373,7 +387,7 @@ public class SolutionSpace {
         }
         return true;
     }
-    
+
     /**
      * Makes the anonymity property predictable
      * @param predictable
@@ -392,8 +406,8 @@ public class SolutionSpace {
      * Returns all transformations in the solution space
      * @return
      */
-    public LongIterator unsafeGetAllTransformations() {
-        return lattice.unsafe().listAllNodesAsIdentifiers();
+    public Iterator<Long> unsafeGetAllTransformations() {
+        return lattice.space().indexIteratorToIdIterator(lattice.unsafe().listAllNodes());
     }
 
     /**
@@ -401,21 +415,8 @@ public class SolutionSpace {
      * @param level
      * @return
      */
-    public LongIterator unsafeGetLevel(int level) {
-        return lattice.unsafe().listAllNodesAsIdentifiers(toJHPL(level));
-    }
-
-    /**
-     * Reverses the given array
-     * @param input
-     * @return
-     */
-    private int[] reverse(int[] input) {
-        int[] result = new int[input.length];
-        for (int i = 0; i < input.length; i++) {
-            result[i] = input[input.length - i - 1];
-        }
-        return result;
+    public Iterator<Long> unsafeGetLevel(int level) {
+        return lattice.space().indexIteratorToIdIterator(lattice.unsafe().listAllNodes(toJHPL(level)));
     }
 
     /**
@@ -435,23 +436,6 @@ public class SolutionSpace {
         int[] result = new int[transformation.length];
         for (int i=0; i<result.length; i++) {
             result[i] = transformation[transformation.length - i - 1] + offsetIndices[transformation.length - i - 1];
-        }
-        return result;
-    }
-
-    /**
-     * Constructs an array representing the given node in the index space.
-     * @param id
-     * @return
-     */
-    protected int[] fromJHPL(long id) {
-        
-        long[] multiplier = lattice.nodes().getMultiplier();
-        int[] result = new int[offsetIndices.length];
-        for (int i = 0; i < offsetIndices.length; i++) {
-            long mult = multiplier[i];
-            result[offsetIndices.length - i - 1] = (int)(id / mult) + offsetIndices[i];
-            id %= mult;
         }
         return result;
     }
@@ -531,45 +515,5 @@ public class SolutionSpace {
             result[i]=transformation[transformation.length - i - 1] - offsetIndices[i];
         }
         return result;
-    }
-
-    public int getLevel(long identifier) {
-        long[] multiplier = lattice.nodes().getMultiplier();
-        int level = 0;
-        for (int i = 0; i < offsetIndices.length; i++) {
-            long mult = multiplier[i];
-            level += (int)(identifier / mult) + offsetIndices[i];
-            identifier %= mult;
-        }
-        return level;
-    }
-
-    public boolean isParentChildOrEqual(long parent, long child) {
-        
-        long[] multiplier = lattice.nodes().getMultiplier();
-        for (int i = 0; i < offsetIndices.length; i++) {
-            long mult = multiplier[i];
-            if (parent / mult < child / mult) {
-                return false;
-            }
-            parent %= mult;
-            child %= mult;
-            
-        }
-        return true;
-    }
-
-    public long getEqualDimensionsBitMask(long parent, long child) {
-        long projection = 0L;
-        long[] multiplier = lattice.nodes().getMultiplier();
-        for (int i = 0; i < offsetIndices.length; i++) {
-            long mult = multiplier[i];
-            if (parent / mult == child / mult) {
-                projection |= 1L << (offsetIndices.length - i - 1);
-            }
-            parent %= mult;
-            child %= mult;
-        }
-        return projection;
     }
 }

@@ -174,7 +174,7 @@ public class NodeChecker {
                                    dictionarySensFreq,
                                    solutionSpace);
         
-        this.stateMachine = new StateMachine(history, solutionSpace);
+        this.stateMachine = new StateMachine(history);
         this.currentGroupify = new HashGroupify(initialSize, config);
         this.lastGroupify = new HashGroupify(initialSize, config);
         this.transformer = new Transformer(manager.getDataGeneralized().getArray(),
@@ -254,18 +254,18 @@ public class NodeChecker {
         }
         
         // Store snapshot from last check
-        if (stateMachine.getLastNode() != -1) {
+        if (stateMachine.getLastNode() != null) {
             history.store(solutionSpace.getTransformation(stateMachine.getLastNode()), currentGroupify, stateMachine.getLastTransition().snapshot);
         }
         
         // Transition
-        final Transition transition = stateMachine.transition(node.getIdentifier());
+        final Transition transition = stateMachine.transition(node.getGeneralization());
         
         // Switch groupifies
         final HashGroupify temp = lastGroupify;
         lastGroupify = currentGroupify;
         currentGroupify = temp;
-
+        
         // Apply transition
         switch (transition.type) {
         case UNOPTIMIZED:
@@ -284,7 +284,7 @@ public class NodeChecker {
         if (forceMeasureInfoLoss && !currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
         }
-
+        
         // Compute information loss and lower bound
         InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
                 metric.getInformationLoss(node, currentGroupify) : null;
