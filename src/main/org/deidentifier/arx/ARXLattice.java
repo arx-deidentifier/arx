@@ -985,7 +985,7 @@ public class ARXLattice implements Serializable {
                                        headermap);
             
             // Store optimum
-            if (identifier == optimum.getIdentifier()) {
+            if (optimum != null && identifier == optimum.getIdentifier()) {
                 this.optimum = cache[identifier];
             }
             
