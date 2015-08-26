@@ -967,7 +967,7 @@ public class ARXLattice implements Serializable {
 
         // Init
         this.size = (int) solutions.getSize();
-        int[] offsets = solutions.getMultipliers();
+        int[] offsets = solutions.getMultipliersForLowDimensionalData();
         int[] maxLevels = solutions.getTop().getGeneralization();
         int[] minLevels = solutions.getBottom().getGeneralization();
         int topLevel = solutions.getTop().getLevel();

@@ -170,11 +170,24 @@ public class SolutionSpace {
      * Returns the multipliers
      * @return
      */
-    public int[] getMultipliers() {
+    public int[] getMultipliersForLowDimensionalData() {
         long[] multiplier = lattice.nodes().getMultiplier();
         int[] result = new int[multiplier.length];
         for (int i = 0; i < result.length; i++) {
             result[result.length - i - 1] = (int) multiplier[i];
+        }
+        return result;
+    }
+
+    /**
+     * Returns the multipliers
+     * @return
+     */
+    public long[] getMultipliersForHighDimensionalData() {
+        long[] multiplier = lattice.nodes().getMultiplier();
+        long[] result = new long[multiplier.length];
+        for (int i = 0; i < result.length; i++) {
+            result[result.length - i - 1] = multiplier[i];
         }
         return result;
     }
