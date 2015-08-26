@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.framework.lattice;
 
-import java.util.Iterator;
-
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.ARXLattice;
@@ -26,10 +24,9 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.metric.InformationLoss;
 
-import cern.colt.list.LongArrayList;
-
 import com.carrotsearch.hppc.LongObjectOpenHashMap;
 
+import de.linearbits.jhpl.JHPLIterator.LongIterator;
 import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
 import de.linearbits.jhpl.PredictiveProperty.Direction;
@@ -178,24 +175,9 @@ public class SolutionSpace {
      * Returns all materialized transformations
      * @return
      */
-    public Iterator<Long> getMaterializedTransformations() {
-        return lattice.space().indexIteratorToIdIterator(lattice.listNodes());
+    public LongIterator getMaterializedTransformations() {
+        return lattice.listNodesAsIdentifiers();
     }
-
-    /**
-     * Returns all predeccessors of the transformation with the given identifier
-     * @param transformation
-     * @return
-     */
-    public LongArrayList getPredecessors(long identifier) {
-        
-        LongArrayList result = new LongArrayList();
-        for (Iterator<Long> iter = lattice.space().indexIteratorToIdIterator(lattice.nodes().listPredecessors(lattice.space().toIndex(identifier))); iter.hasNext();) {
-            result.add(iter.next());
-        }
-        return result;
-    }
-    
 
     /**
      * Returns a property
@@ -285,28 +267,6 @@ public class SolutionSpace {
         return lattice.numNodes();
     }
     
-    /**
-     * Returns all successors of the transformation with the given identifier
-     * @param identifier
-     * @return
-     */
-    public LongArrayList getSuccessors(long identifier) {
-        LongArrayList result = new LongArrayList();
-        for (Iterator<Long> iter = lattice.space().indexIteratorToIdIterator(lattice.nodes().listSuccessors(lattice.space().toIndex(identifier))); iter.hasNext();) {
-            result.add(iter.next());
-        }
-        int lower = 0;
-        int upper = result.size() - 1;
-        while (lower < upper) {
-            long temp = result.get(lower);
-            result.set(lower, result.get(upper));
-            result.set(upper, temp);
-            lower++;
-            upper--;
-        }
-        return result;
-    }
-
     /**
      * Returns the top-transformation
      * @return
@@ -406,8 +366,8 @@ public class SolutionSpace {
      * Returns all transformations in the solution space
      * @return
      */
-    public Iterator<Long> unsafeGetAllTransformations() {
-        return lattice.space().indexIteratorToIdIterator(lattice.unsafe().listAllNodes());
+    public LongIterator unsafeGetAllTransformations() {
+        return lattice.unsafe().listAllNodesAsIdentifiers();
     }
 
     /**
@@ -415,8 +375,8 @@ public class SolutionSpace {
      * @param level
      * @return
      */
-    public Iterator<Long> unsafeGetLevel(int level) {
-        return lattice.space().indexIteratorToIdIterator(lattice.unsafe().listAllNodes(toJHPL(level)));
+    public LongIterator unsafeGetLevel(int level) {
+        return lattice.unsafe().listAllNodesAsIdentifiers(toJHPL(level));
     }
 
     /**

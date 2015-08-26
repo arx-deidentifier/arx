@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +40,8 @@ import cern.colt.list.LongArrayList;
 
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.LongObjectOpenHashMap;
+
+import de.linearbits.jhpl.JHPLIterator.LongIterator;
 
 /**
  * This class implements a representation of the generalization lattice that is
@@ -747,8 +748,8 @@ public class ARXLattice implements Serializable {
         final IntObjectOpenHashMap<List<ARXNode>> levels = new IntObjectOpenHashMap<List<ARXNode>>(); 
         int size = 0;
         int maxlevel = 0;
-        for (Iterator<Long> iterator = complete ? solutions.unsafeGetAllTransformations() : 
-                                                  solutions.getMaterializedTransformations(); iterator.hasNext();) {
+        for (LongIterator iterator = complete ? solutions.unsafeGetAllTransformations() : 
+                                                solutions.getMaterializedTransformations(); iterator.hasNext();) {
             
             Transformation transformation = solutions.getTransformation(iterator.next());
             if (!levels.containsKey(transformation.getLevel())) {
@@ -800,8 +801,8 @@ public class ARXLattice implements Serializable {
         }
         
         // Create relationships
-        for (Iterator<Long> iterator = complete ? solutions.unsafeGetAllTransformations() : 
-                                                  solutions.getMaterializedTransformations(); iterator.hasNext();) {
+        for (LongIterator iterator = complete ? solutions.unsafeGetAllTransformations() : 
+                                                solutions.getMaterializedTransformations(); iterator.hasNext();) {
             createRelationships(solutions, map, iterator.next());
         }
         if (!complete) {
@@ -861,8 +862,8 @@ public class ARXLattice implements Serializable {
         Transformation transformation = solutions.getTransformation(indices);
         
         // Collect neighbors
-        LongArrayList neighbors = solutions.getPredecessors(transformation.getIdentifier());
-        LongArrayList successors = solutions.getSuccessors(transformation.getIdentifier());
+        LongArrayList neighbors = transformation.getPredecessors();
+        LongArrayList successors = transformation.getSuccessors();
         neighbors.addAllOfFromTo(successors, 0, successors.size() - 1);
 
         // Find missing neighbors and initialize variables
@@ -1047,12 +1048,13 @@ public class ARXLattice implements Serializable {
         
         // Obtain given node
         final ARXNode center = map.get(id);
+        final Transformation transformation = solutions.getTransformation(id);
         
         // Collect materialized successors and predecessors
         List<ARXNode> successors = new ArrayList<ARXNode>();
         List<ARXNode> predecessors = new ArrayList<ARXNode>();
         
-        LongArrayList list1 = solutions.getSuccessors(id);
+        LongArrayList list1 = transformation.getSuccessors();
         for (int i = 0; i < list1.size(); i++) {
             ARXNode node = map.get(list1.getQuick(i));
             if (node != null) {
@@ -1060,7 +1062,7 @@ public class ARXLattice implements Serializable {
             }
         }
 
-        LongArrayList list2 = solutions.getPredecessors(id);
+        LongArrayList list2 = transformation.getPredecessors();
         for (int i = 0; i < list2.size(); i++) {
             ARXNode node = map.get(list2.getQuick(i));
             if (node != null) {
@@ -1118,11 +1120,12 @@ public class ARXLattice implements Serializable {
                                      final LongObjectOpenHashMap<ARXNode> map,
                                      final long id) {
         final ARXNode fnode = map.get(id);
+        final Transformation transformation = solutions.getTransformation(id);
         
         List<ARXNode> successors = new ArrayList<ARXNode>();
         List<ARXNode> predecessors = new ArrayList<ARXNode>();
         
-        LongArrayList list1 = solutions.getSuccessors(id);
+        LongArrayList list1 = transformation.getSuccessors();
         for (int i = 0; i < list1.size(); i++) {
             ARXNode node = map.get(list1.getQuick(i));
             if (node != null) {
@@ -1130,7 +1133,7 @@ public class ARXLattice implements Serializable {
             }
         }
 
-        LongArrayList list2 = solutions.getPredecessors(id);
+        LongArrayList list2 = transformation.getPredecessors();
         for (int i = 0; i < list2.size(); i++) {
             ARXNode node = map.get(list2.getQuick(i));
             if (node != null) {

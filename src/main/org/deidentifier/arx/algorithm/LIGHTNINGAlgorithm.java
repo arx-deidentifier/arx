@@ -143,7 +143,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     private Transformation expand(PriorityQueue<Long> queue, Transformation transformation) {
         Transformation result = null;
 
-        LongArrayList list = solutionSpace.getSuccessors(transformation.getIdentifier());
+        LongArrayList list = transformation.getSuccessors();
         for (int i = 0; i < list.size(); i++) {
             long id = list.getQuick(i);
             Transformation successor = solutionSpace.getTransformation(id);

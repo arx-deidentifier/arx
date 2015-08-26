@@ -18,13 +18,12 @@
 package org.deidentifier.arx.framework.lattice;
 
 import java.util.Arrays;
-import java.util.Iterator;
 
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.metric.InformationLoss;
 
-import com.carrotsearch.hppc.LongArrayList;
-
+import cern.colt.list.LongArrayList;
+import de.linearbits.jhpl.JHPLIterator.LongIterator;
 import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
 import de.linearbits.jhpl.PredictiveProperty.Direction;
@@ -217,11 +216,11 @@ public class Transformation {
      * @param property
      */
     public void setPropertyToNeighbours(PredictiveProperty property) {
-        Iterator<Long> neighbors;
+        LongIterator neighbors;
         if (property.getDirection() == Direction.UP) {
-            neighbors = lattice.space().indexIteratorToIdIterator(lattice.nodes().listSuccessors(transformationJHPL));
+            neighbors = lattice.nodes().listSuccessorsAsIdentifiers(transformationJHPL, id);
         } else if (property.getDirection() == Direction.DOWN) {
-            neighbors = lattice.space().indexIteratorToIdIterator(lattice.nodes().listPredecessors(transformationJHPL));
+            neighbors = lattice.nodes().listPredecessorsAsIdentifiers(transformationJHPL, id);
         } else {
             return;
         }
@@ -229,12 +228,26 @@ public class Transformation {
         for (;neighbors.hasNext();) {
             list.add(neighbors.next());
         }
-        for (long id : list.toArray()) {
-            lattice.putProperty(lattice.space().toIndex(id), property);
+        for (int i=0; i<list.size(); i++) {
+            lattice.putProperty(lattice.space().toIndex(list.getQuick(i)), property);
         }
     }
     
 
+    /**
+     * Returns all predeccessors of the transformation with the given identifier
+     * @param transformation
+     * @return
+     */
+    public LongArrayList getPredecessors() {
+        
+        LongArrayList result = new LongArrayList();
+        for (LongIterator iter = lattice.nodes().listPredecessorsAsIdentifiers(transformationJHPL, id); iter.hasNext();) {
+            result.add(iter.next());
+        }
+        return result;
+    }
+    
     /**
      * Returns a string representation
      */
@@ -286,5 +299,26 @@ public class Transformation {
     private int getLevel(int[] transformation) {
         int level = 0; for (int lvl : transformation) level += lvl;
         return level;
+    }
+
+    /**
+     * Returns all successors
+     * @return
+     */
+    public LongArrayList getSuccessors() {
+        cern.colt.list.LongArrayList result = new cern.colt.list.LongArrayList();
+        for (LongIterator iter = lattice.nodes().listSuccessorsAsIdentifiers(transformationJHPL, id); iter.hasNext();) {
+            result.add(iter.next());
+        }
+        int lower = 0;
+        int upper = result.size() - 1;
+        while (lower < upper) {
+            long temp = result.get(lower);
+            result.set(lower, result.get(upper));
+            result.set(upper, temp);
+            lower++;
+            upper--;
+        }
+        return result;
     }
 }
