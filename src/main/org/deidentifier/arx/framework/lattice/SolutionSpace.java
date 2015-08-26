@@ -170,11 +170,11 @@ public class SolutionSpace {
      * Returns the multipliers
      * @return
      */
-    public int[] getMultipliersForLowDimensionalData() {
+    public long[] getMultipliersForHighDimensionalData() {
         long[] multiplier = lattice.nodes().getMultiplier();
-        int[] result = new int[multiplier.length];
+        long[] result = new long[multiplier.length];
         for (int i = 0; i < result.length; i++) {
-            result[result.length - i - 1] = (int) multiplier[i];
+            result[result.length - i - 1] = multiplier[i];
         }
         return result;
     }
@@ -183,11 +183,11 @@ public class SolutionSpace {
      * Returns the multipliers
      * @return
      */
-    public long[] getMultipliersForHighDimensionalData() {
+    public int[] getMultipliersForLowDimensionalData() {
         long[] multiplier = lattice.nodes().getMultiplier();
-        long[] result = new long[multiplier.length];
+        int[] result = new int[multiplier.length];
         for (int i = 0; i < result.length; i++) {
-            result[result.length - i - 1] = multiplier[i];
+            result[result.length - i - 1] = (int) multiplier[i];
         }
         return result;
     }
@@ -305,8 +305,7 @@ public class SolutionSpace {
     public Transformation getTransformation(long identifier) {
         
         int[] transformationJHPL = lattice.space().toIndex(identifier);
-        int[] transformationARX = fromJHPL(transformationJHPL);
-        return new Transformation(transformationARX, transformationJHPL, identifier, lattice, this);
+        return new Transformation(transformationJHPL, identifier, lattice, this);
     }
 
     /**
@@ -414,6 +413,15 @@ public class SolutionSpace {
     }
 
     /**
+     * Internal method that adds the offset
+     * @param level
+     * @return
+     */
+    protected int fromJHPL(int level) {
+        return level + offsetLevel;
+    }
+
+    /**
      * Internal method that adds the offsets
      * @param transformation
      * @return
@@ -425,7 +433,7 @@ public class SolutionSpace {
         }
         return result;
     }
-
+    
     /**
      * Returns data
      * @param id
@@ -435,6 +443,7 @@ public class SolutionSpace {
         return data.getOrDefault(id, null);
     }
     
+
     /**
      * Returns the information loss
      * @param identifier
@@ -444,7 +453,6 @@ public class SolutionSpace {
         return utility.getOrDefault(identifier, null);
     }
     
-
     /**
      * Returns the lower bound
      * @param identifier
@@ -453,7 +461,7 @@ public class SolutionSpace {
     protected InformationLoss<?> getLowerBound(long identifier) {
         return lowerBound.getOrDefault(identifier, null);
     }
-    
+
     /**
      * Sets data
      * @param id
@@ -489,7 +497,7 @@ public class SolutionSpace {
     protected int toJHPL(int level) {
         return level - offsetLevel;
     }
-
+    
     /**
      * Internal method that subtracts the offsets
      * @param transformation

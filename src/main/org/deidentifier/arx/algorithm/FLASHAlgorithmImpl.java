@@ -36,6 +36,9 @@ import cern.colt.GenericSorting;
 import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
 import cern.colt.list.LongArrayList;
+
+import com.carrotsearch.hppc.IntArrayList;
+
 import de.linearbits.jhpl.JHPLIterator.LongIterator;
 import de.linearbits.jhpl.PredictiveProperty;
 
@@ -286,7 +289,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         }
         return path;
     }
-
+    
     /**
      * Returns all transformations that do not have the given property and sorts the resulting array
      * according to the strategy.
@@ -298,21 +301,19 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     private int[] getSortedUnprocessedNodes(int level, DependentAction triggerSkip) {
 
         // Create
-        List<Integer> result = new ArrayList<Integer>();
+        IntArrayList list = new IntArrayList();
         for (LongIterator iter = solutionSpace.unsafeGetLevel(level); iter.hasNext();) {
             long id = iter.next();
             if (!skip(triggerSkip, solutionSpace.getTransformation(id))) {
-                result.add((int)id);
-            }
+                list.add((int)id);
+            }            
         }
 
         // Copy & sort
-        int[] resultArray = new int[result.size()];
-        for (int i=0; i<result.size(); i++) {
-            resultArray[i] = result.get(i);
-        }
-        sort(resultArray);
-        return resultArray;
+        int[] array = new int[list.size()];
+        System.arraycopy(list.buffer, 0, array, 0, list.elementsCount);
+        sort(array);
+        return array;
     }
 
     /**
