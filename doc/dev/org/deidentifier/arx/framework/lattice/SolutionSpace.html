@@ -142,50 +142,62 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#fromJHPL(int)">fromJHPL</a></strong>(int&nbsp;level)</code>
+<div class="block">Internal method that adds the offset</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#fromJHPL(int[])">fromJHPL</a></strong>(int[]&nbsp;transformation)</code>
 <div class="block">Internal method that adds the offsets</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getBottom()">getBottom</a></strong>()</code>
 <div class="block">Returns the bottom transformation</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.lang.Object</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getData(long)">getData</a></strong>(long&nbsp;id)</code>
 <div class="block">Returns data</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getInformationLoss(long)">getInformationLoss</a></strong>(long&nbsp;identifier)</code>
 <div class="block">Returns the information loss</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getLevel(int[])">getLevel</a></strong>(int[]&nbsp;transformation)</code>
 <div class="block">Returns the level of the given transformation</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getLowerBound(long)">getLowerBound</a></strong>(long&nbsp;identifier)</code>
 <div class="block">Returns the lower bound</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>de.linearbits.jhpl.JHPLIterator.LongIterator</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getMaterializedTransformations()">getMaterializedTransformations</a></strong>()</code>
 <div class="block">Returns all materialized transformations</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>long[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getMultipliersForHighDimensionalData()">getMultipliersForHighDimensionalData</a></strong>()</code>
+<div class="block">Returns the multipliers</div>
+</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getMultipliers()">getMultipliers</a></strong>()</code>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html#getMultipliersForLowDimensionalData()">getMultipliersForLowDimensionalData</a></strong>()</code>
 <div class="block">Returns the multipliers</div>
 </td>
 </tr>
@@ -439,13 +451,24 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getMultipliers()">
+<a name="getMultipliersForHighDimensionalData()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getMultipliers</h4>
-<pre>public&nbsp;int[]&nbsp;getMultipliers()</pre>
+<h4>getMultipliersForHighDimensionalData</h4>
+<pre>public&nbsp;long[]&nbsp;getMultipliersForHighDimensionalData()</pre>
+<div class="block">Returns the multipliers</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getMultipliersForLowDimensionalData()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMultipliersForLowDimensionalData</h4>
+<pre>public&nbsp;int[]&nbsp;getMultipliersForLowDimensionalData()</pre>
 <div class="block">Returns the multipliers</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -687,6 +710,18 @@ extends java.lang.Object</pre>
 <h4>unsafeGetLevel</h4>
 <pre>public&nbsp;de.linearbits.jhpl.JHPLIterator.LongIterator&nbsp;unsafeGetLevel(int&nbsp;level)</pre>
 <div class="block">Returns *all* nodes on the given level. This is an unsafe operation that only performs well for "small" spaces.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>level</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="fromJHPL(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fromJHPL</h4>
+<pre>protected&nbsp;int&nbsp;fromJHPL(int&nbsp;level)</pre>
+<div class="block">Internal method that adds the offset</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>level</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
