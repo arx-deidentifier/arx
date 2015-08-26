@@ -138,19 +138,6 @@ public class SolutionSpace {
     }
     
     /**
-     * Reverses the given array
-     * @param input
-     * @return
-     */
-    private int[] reverse(int[] input) {
-        int[] result = new int[input.length];
-        for (int i = 0; i < input.length; i++) {
-            result[i] = input[input.length - i - 1];
-        }
-        return result;
-    }
-    
-    /**
      * Returns the bottom transformation
      * @return
      */
@@ -170,13 +157,26 @@ public class SolutionSpace {
         }
         return level;
     }
-
+    
     /**
      * Returns all materialized transformations
      * @return
      */
     public LongIterator getMaterializedTransformations() {
         return lattice.listNodesAsIdentifiers();
+    }
+
+    /**
+     * Returns the multipliers
+     * @return
+     */
+    public int[] getMultipliers() {
+        long[] multiplier = lattice.nodes().getMultiplier();
+        int[] result = new int[multiplier.length];
+        for (int i = 0; i < result.length; i++) {
+            result[result.length - i - 1] = (int) multiplier[i];
+        }
+        return result;
     }
 
     /**
@@ -380,6 +380,19 @@ public class SolutionSpace {
     }
 
     /**
+     * Reverses the given array
+     * @param input
+     * @return
+     */
+    private int[] reverse(int[] input) {
+        int[] result = new int[input.length];
+        for (int i = 0; i < input.length; i++) {
+            result[i] = input[input.length - i - 1];
+        }
+        return result;
+    }
+
+    /**
      * Sets the monotonicity of the anonymity property
      * @param config
      */
@@ -408,7 +421,7 @@ public class SolutionSpace {
     protected Object getData(long id) {
         return data.getOrDefault(id, null);
     }
-
+    
     /**
      * Returns the information loss
      * @param identifier
@@ -418,6 +431,7 @@ public class SolutionSpace {
         return utility.getOrDefault(identifier, null);
     }
     
+
     /**
      * Returns the lower bound
      * @param identifier
@@ -427,7 +441,6 @@ public class SolutionSpace {
         return lowerBound.getOrDefault(identifier, null);
     }
     
-
     /**
      * Sets data
      * @param id
@@ -436,7 +449,7 @@ public class SolutionSpace {
     protected void setData(long id, Object object) {
         data.put(id, object);
     }
-    
+
     /**
      * Sets the information loss
      * @param identifier

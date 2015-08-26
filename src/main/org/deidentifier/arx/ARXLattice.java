@@ -140,6 +140,14 @@ public class ARXLattice implements Serializable {
         }
 
         /**
+         * Updates the solution space
+         * @param solutions
+         */
+        public void setSolutionSpace(SolutionSpace solutions) {
+            lattice.solutions = solutions;
+        }
+        
+        /**
          * 
          *
          * @param top
@@ -147,7 +155,7 @@ public class ARXLattice implements Serializable {
         public void setTop(final ARXNode top) {
             lattice.top = top;
         }
-        
+
         /**
          * 
          *
@@ -155,14 +163,6 @@ public class ARXLattice implements Serializable {
          */
         public void setUncertainty(final boolean uncertainty) {
             lattice.uncertainty = uncertainty;
-        }
-
-        /**
-         * Updates the solution space
-         * @param solutions
-         */
-        public void setSolutionSpace(SolutionSpace solutions) {
-            lattice.solutions = solutions;
         }
     }
 
@@ -321,7 +321,7 @@ public class ARXLattice implements Serializable {
         }
 
         /** Id. */
-        private Integer id = null;
+        private Integer              id         = null;
 
         /** The access. */
         private final Access         access     = new Access(this);
@@ -340,7 +340,7 @@ public class ARXLattice implements Serializable {
 
         /** The lower bound. */
         private InformationLoss<?>   lowerBound;
-        
+
         /** The max information loss. */
         private InformationLoss<?>   maxInformationLoss;
 
@@ -726,6 +726,7 @@ public class ARXLattice implements Serializable {
                final String[] header,
                final ARXConfigurationInternal config) {
 
+        // Init
         this.solutions = solutions;
         this.metric = config.getMetric();
         this.monotonicNonAnonymous = metric.isMonotonic() || !config.isSuppressionAlwaysEnabled();
@@ -742,72 +743,12 @@ public class ARXLattice implements Serializable {
         for (int i = 0; i < header.length; i++) {
             headermap.put(header[i], index++);
         }
-
-        // Create nodes
-        final LongObjectOpenHashMap<ARXNode> map = new LongObjectOpenHashMap<ARXNode>();
-        final IntObjectOpenHashMap<List<ARXNode>> levels = new IntObjectOpenHashMap<List<ARXNode>>(); 
-        int size = 0;
-        int maxlevel = 0;
-        for (LongIterator iterator = complete ? solutions.unsafeGetAllTransformations() : 
-                                                solutions.getMaterializedTransformations(); iterator.hasNext();) {
-            
-            Transformation transformation = solutions.getTransformation(iterator.next());
-            if (!levels.containsKey(transformation.getLevel())) {
-                levels.put(transformation.getLevel(), new ArrayList<ARXNode>());
-            }
-            ARXNode node = new ARXNode(this, solutions, transformation, headermap);
-            map.put(transformation.getIdentifier(), node);
-            levels.get(transformation.getLevel()).add(node);
-            if (optimum != null && transformation.getIdentifier() == optimum.getIdentifier()) {
-                this.optimum = node;
-            }
-            maxlevel = Math.max(maxlevel, transformation.getLevel());
-            size++;
-        }
         
-        // Make sure that bottom and top are in the resulting solution space
-        if (!complete) {
-            Transformation top = solutions.getTop();
-            Transformation bottom = solutions.getBottom();
-            if (!map.containsKey(top.getIdentifier())) {
-                if (!levels.containsKey(top.getLevel())) {
-                    levels.put(top.getLevel(), new ArrayList<ARXNode>());
-                }
-                ARXNode node = new ARXNode(this, solutions, top, headermap);
-                map.put(top.getIdentifier(), node);
-                levels.get(top.getLevel()).add(node);
-                maxlevel = top.getLevel();
-                size++;
-            }
-            if (!map.containsKey(bottom.getIdentifier())) {
-                if (!levels.containsKey(bottom.getLevel())) {
-                    levels.put(bottom.getLevel(), new ArrayList<ARXNode>());
-                }
-                ARXNode node = new ARXNode(this, solutions, bottom, headermap);
-                map.put(bottom.getIdentifier(), node);
-                levels.get(bottom.getLevel()).add(node);
-                size++;
-            }
-        }
-        
-        this.size = size;
-        this.levels = new ARXNode[maxlevel+1][];
-        for (int i = 0; i < this.levels.length; i++) {
-            if (levels.containsKey(i)) {
-                this.levels[i] = levels.get(i).toArray(new ARXNode[levels.get(i).size()]);
-            } else {
-                this.levels[i] = new ARXNode[0];
-            }
-        }
-        
-        // Create relationships
-        for (LongIterator iterator = complete ? solutions.unsafeGetAllTransformations() : 
-                                                solutions.getMaterializedTransformations(); iterator.hasNext();) {
-            createRelationships(solutions, map, iterator.next());
-        }
-        if (!complete) {
-            createRelationships(solutions, map, solutions.getTop().getIdentifier());
-            createRelationships(solutions, map, solutions.getBottom().getIdentifier());
+        // Build lattice
+        if (complete) {
+            buildComplete(optimum, headermap);
+        } else {
+            buildIncomplete(optimum, headermap);
         }
         
         // find bottom node
@@ -816,7 +757,7 @@ public class ARXLattice implements Serializable {
             for (int j = 0; j < level.length; j++) {
                 final ARXNode node = level[j];
                 if (node != null) {
-                    bottom = node;
+                    this.bottom = node;
                     break outer;
                 }
             }
@@ -828,7 +769,7 @@ public class ARXLattice implements Serializable {
             for (int j = 0; j < level.length; j++) {
                 final ARXNode node = level[j];
                 if (node != null) {
-                    top = node;
+                    this.top = node;
                     break outer;
                 }
             }
@@ -1018,6 +959,150 @@ public class ARXLattice implements Serializable {
     }
     
     /**
+     * Build an ARX lattice for a completely classified solution space
+     * @param optimum
+     * @param headermap
+     */
+    private void buildComplete(final Transformation optimum, Map<String, Integer> headermap) {
+
+        // Init
+        this.size = (int) solutions.getSize();
+        int[] offsets = solutions.getMultipliers();
+        int[] maxLevels = solutions.getTop().getGeneralization();
+        int[] minLevels = solutions.getBottom().getGeneralization();
+        int topLevel = solutions.getTop().getLevel();
+
+        // Create nodes
+        int[] levelsizes = new int[topLevel + 1];
+        ARXNode[] cache = new ARXNode[size];
+        for (int identifier = 0; identifier < cache.length; identifier++) {
+            
+            // Create ARXNode
+            Transformation transformation = solutions.getTransformation(identifier);
+            cache[identifier] = new ARXNode(this,
+                                       this.solutions,
+                                       transformation,
+                                       headermap);
+            
+            // Store optimum
+            if (identifier == optimum.getIdentifier()) {
+                this.optimum = cache[identifier];
+            }
+            
+            // Count successors and predecessors
+            int numSuccessors = 0;
+            int numPredecessors = 0;
+            int[] generalization = transformation.getGeneralization();
+            for (int dimension = 0; dimension<generalization.length; dimension++) {
+                numPredecessors += generalization[dimension] > minLevels[dimension] ? 1 : 0;
+                numSuccessors += generalization[dimension] < maxLevels[dimension] ? 1 : 0;
+            }
+            
+            // Increase level size
+            levelsizes[transformation.getLevel()]++;
+            
+            // Initialize arrays
+            cache[identifier].successors = new ARXNode[numSuccessors];
+            cache[identifier].predecessors = new ARXNode[numPredecessors];
+        }
+
+        // Generate level arrays
+        this.levels = new ARXNode[topLevel + 1][];
+        for (int i = 0; i < levels.length; i++) {
+            levels[i] = new ARXNode[levelsizes[i]];
+        }
+
+        // Generate links to successors and predecessors
+        int[] successorIndices = new int[size];
+        int[] predecessorIndices = new int[size];
+        for (int identifier = 0; identifier < cache.length; identifier++) {
+            ARXNode node = cache[identifier];
+            int level = node.getTotalGeneralizationLevel();
+            --levelsizes[level];
+            levels[level][levels[level].length - 1 - levelsizes[level]] = node;
+            int[] generalization = node.getTransformation();
+            for (int dimension = 0; dimension < generalization.length; dimension++) {
+                if (generalization[dimension] < maxLevels[dimension]) {
+                    int successorIdentifier = identifier + offsets[dimension];
+                    ARXNode successor = cache[successorIdentifier];
+                    node.successors[successorIndices[identifier]++] = successor;
+                    successor.predecessors[predecessorIndices[successorIdentifier]++] = node;
+                }
+            }
+        }
+    }
+
+    /**
+     * Build an ARX lattice for an incompletely classified solution space
+     * @param optimum
+     * @param headermap
+     */
+    private void buildIncomplete(final Transformation optimum, Map<String, Integer> headermap) {
+
+        // Create nodes
+        final LongObjectOpenHashMap<ARXNode> map = new LongObjectOpenHashMap<ARXNode>();
+        final IntObjectOpenHashMap<List<ARXNode>> levels = new IntObjectOpenHashMap<List<ARXNode>>(); 
+        int size = 0;
+        int maxlevel = 0;
+        for (LongIterator iterator = solutions.getMaterializedTransformations(); iterator.hasNext();) {
+            
+            Transformation transformation = solutions.getTransformation(iterator.next());
+            if (!levels.containsKey(transformation.getLevel())) {
+                levels.put(transformation.getLevel(), new ArrayList<ARXNode>());
+            }
+            ARXNode node = new ARXNode(this, solutions, transformation, headermap);
+            map.put(transformation.getIdentifier(), node);
+            levels.get(transformation.getLevel()).add(node);
+            if (optimum != null && transformation.getIdentifier() == optimum.getIdentifier()) {
+                this.optimum = node;
+            }
+            maxlevel = Math.max(maxlevel, transformation.getLevel());
+            size++;
+        }
+        
+        // Make sure that bottom and top are in the resulting solution space
+        Transformation top = solutions.getTop();
+        Transformation bottom = solutions.getBottom();
+        if (!map.containsKey(top.getIdentifier())) {
+            if (!levels.containsKey(top.getLevel())) {
+                levels.put(top.getLevel(), new ArrayList<ARXNode>());
+            }
+            ARXNode node = new ARXNode(this, solutions, top, headermap);
+            map.put(top.getIdentifier(), node);
+            levels.get(top.getLevel()).add(node);
+            maxlevel = top.getLevel();
+            size++;
+        }
+        if (!map.containsKey(bottom.getIdentifier())) {
+            if (!levels.containsKey(bottom.getLevel())) {
+                levels.put(bottom.getLevel(), new ArrayList<ARXNode>());
+            }
+            ARXNode node = new ARXNode(this, solutions, bottom, headermap);
+            map.put(bottom.getIdentifier(), node);
+            levels.get(bottom.getLevel()).add(node);
+            size++;
+        }
+
+        // Create levels array
+        this.size = size;
+        this.levels = new ARXNode[maxlevel+1][];
+        for (int i = 0; i < this.levels.length; i++) {
+            if (levels.containsKey(i)) {
+                this.levels[i] = levels.get(i).toArray(new ARXNode[levels.get(i).size()]);
+            } else {
+                this.levels[i] = new ARXNode[0];
+            }
+        }
+        
+        // Create relationships
+        for (LongIterator iterator = solutions.getMaterializedTransformations(); iterator.hasNext();) {
+            createRelationships(solutions, map, iterator.next());
+        }
+        createRelationships(solutions, map, solutions.getTop().getIdentifier());
+        createRelationships(solutions, map, solutions.getBottom().getIdentifier());
+    }
+
+    /**
      * Compares the transformations of two nodes lexicographically
      * @param first
      * @param second
@@ -1035,7 +1120,6 @@ public class ARXLattice implements Serializable {
         }
         return 0;
     }
-
     /**
      * Creates all relationships from the 
      * @param solutions
@@ -1110,6 +1194,7 @@ public class ARXLattice implements Serializable {
         }
     }
 
+
     /**
      * Creates all relationships from the 
      * @param solutions
@@ -1144,6 +1229,8 @@ public class ARXLattice implements Serializable {
         fnode.successors = successors.toArray(new ARXNode[successors.size()]);
         fnode.predecessors = predecessors.toArray(new ARXNode[predecessors.size()]);
     }
+    
+
     /**
      * De-serialization.
      *
@@ -1177,8 +1264,7 @@ public class ARXLattice implements Serializable {
             complete = true;
         }
     }
-
-
+    
     /**
      * This method triggers the estimation of the information loss of all nodes
      * in the lattice regardless of whether they have been checked for anonymity
@@ -1207,7 +1293,6 @@ public class ARXLattice implements Serializable {
             }
         }
     }
-    
 
     /**
      * Returns the optimum, if any.
