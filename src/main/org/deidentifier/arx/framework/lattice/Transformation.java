@@ -42,7 +42,10 @@ public class Transformation {
     private final Lattice<Integer, Integer> lattice;
 
     /** The level */
-    private int                             level             = -1;
+    private int                             levelARX          = -1;
+
+    /** The level */
+    private int                             levelJHPL         = -1;
 
     /** The solution space */
     private final SolutionSpace             solutionSpace;
@@ -124,10 +127,11 @@ public class Transformation {
      * @return
      */
     public int getLevel() {
-        if (this.level == -1) {
-            this.level = solutionSpace.fromJHPL(getLevel(transformationJHPL));
+        if (this.levelARX == -1) {
+            this.levelJHPL = getLevel(transformationJHPL);
+            this.levelARX = solutionSpace.fromJHPL(levelJHPL);
         }
-        return level;
+        return levelARX;
     }
     
     /**
@@ -144,7 +148,8 @@ public class Transformation {
      * @return
      */
     public boolean hasProperty(PredictiveProperty property) {
-        return this.lattice.hasProperty(this.transformationJHPL, property);
+        getLevel();
+        return this.lattice.hasProperty(this.transformationJHPL, this.levelJHPL, property);
     }
 
     /**
@@ -208,7 +213,8 @@ public class Transformation {
      * @param property
      */
     public void setProperty(PredictiveProperty property) {
-        this.lattice.putProperty(this.transformationJHPL, property);
+        getLevel();
+        this.lattice.putProperty(this.transformationJHPL, this.levelJHPL, property);
     }
 
     /**
@@ -229,7 +235,9 @@ public class Transformation {
             list.add(neighbors.next());
         }
         for (int i=0; i<list.size(); i++) {
-            lattice.putProperty(lattice.space().toIndex(list.getQuick(i)), property);
+            int[] index = lattice.space().toIndex(list.getQuick(i));
+            int level = lattice.nodes().getLevel(index);
+            lattice.putProperty(index, level, property);
         }
     }
     
@@ -260,31 +268,31 @@ public class Transformation {
         builder.append(" - Generalization: ").append(Arrays.toString(getGeneralization())).append("\n");
         builder.append(" - Level: ").append(getLevel()).append("\n");
         builder.append(" - Properties:\n");
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyAnonymous())) {
+        if (lattice.hasProperty(transformationJHPL, this.levelJHPL, solutionSpace.getPropertyAnonymous())) {
             builder.append("   * ANONYMOUS: ").append(solutionSpace.getPropertyAnonymous().getDirection()).append("\n");    
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyNotAnonymous())) {
+        if (lattice.hasProperty(transformationJHPL, this.levelJHPL, solutionSpace.getPropertyNotAnonymous())) {
             builder.append("   * NOT_ANONYMOUS: ").append(solutionSpace.getPropertyNotAnonymous().getDirection()).append("\n");
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyKAnonymous())) {
+        if (lattice.hasProperty(transformationJHPL, this.levelJHPL, solutionSpace.getPropertyKAnonymous())) {
             builder.append("   * K_ANONYMOUS: ").append(solutionSpace.getPropertyKAnonymous().getDirection()).append("\n");
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyNotKAnonymous())) {
+        if (lattice.hasProperty(transformationJHPL, this.levelJHPL, solutionSpace.getPropertyNotKAnonymous())) {
             builder.append("   * NOT_K_ANONYMOUS: ").append(solutionSpace.getPropertyNotKAnonymous().getDirection()).append("\n");
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyChecked())) {
+        if (lattice.hasProperty(transformationJHPL, this.levelJHPL, solutionSpace.getPropertyChecked())) {
             builder.append("   * CHECKED: ").append(solutionSpace.getPropertyChecked().getDirection()).append("\n");    
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyForceSnapshot())) {
+        if (lattice.hasProperty(transformationJHPL, this.levelJHPL, solutionSpace.getPropertyForceSnapshot())) {
             builder.append("   * FORCE_SNAPSHOT: ").append(solutionSpace.getPropertyForceSnapshot().getDirection()).append("\n");
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyInsufficientUtility())) {
+        if (lattice.hasProperty(transformationJHPL, this.levelJHPL, solutionSpace.getPropertyInsufficientUtility())) {
             builder.append("   * INSUFFICIENT_UTILITY: ").append(solutionSpace.getPropertyInsufficientUtility().getDirection()).append("\n");
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertySuccessorsPruned())) {
+        if (lattice.hasProperty(transformationJHPL, this.levelJHPL, solutionSpace.getPropertySuccessorsPruned())) {
             builder.append("   * SUCCESSORS_PRUNED: ").append(solutionSpace.getPropertySuccessorsPruned().getDirection()).append("\n");
         }
-        if (lattice.hasProperty(transformationJHPL, solutionSpace.getPropertyVisited())) {
+        if (lattice.hasProperty(transformationJHPL, this.levelJHPL, solutionSpace.getPropertyVisited())) {
             builder.append("   * VISITED: ").append(solutionSpace.getPropertyVisited().getDirection()).append("\n");
         }
         builder.append("}");

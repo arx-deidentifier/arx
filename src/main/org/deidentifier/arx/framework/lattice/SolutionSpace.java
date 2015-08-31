@@ -95,14 +95,15 @@ public class SolutionSpace {
         for (ARXNode[] level : lattice.getLevels()) {
             for (ARXNode node : level) {
                 int[] index = toJHPL(node.getTransformation());
+                int lvl = getLevel(index);
                 long id = this.lattice.space().toId(index);
                 if (node.getAnonymity() == Anonymity.ANONYMOUS) {
-                    this.lattice.putProperty(index, this.getPropertyAnonymous());
+                    this.lattice.putProperty(index, lvl, this.getPropertyAnonymous());
                 } else if (node.getAnonymity() == Anonymity.NOT_ANONYMOUS) {
-                    this.lattice.putProperty(index, this.getPropertyNotAnonymous());
+                    this.lattice.putProperty(index, lvl, this.getPropertyNotAnonymous());
                 }
                 if (node.isChecked()) {
-                    this.lattice.putProperty(index, this.getPropertyChecked());
+                    this.lattice.putProperty(index, lvl, this.getPropertyChecked());
                     this.setInformationLoss(id, node.getMaximumInformationLoss());
                 }
             }
@@ -324,7 +325,9 @@ public class SolutionSpace {
      * @return
      */
     public boolean hasProperty(int[] transformation, PredictiveProperty property) {
-        return lattice.hasProperty(toJHPL(transformation), property);
+        int[] index = toJHPL(transformation);
+        int level = getLevel(index);
+        return lattice.hasProperty(index, level, property);
     }
 
     /**
