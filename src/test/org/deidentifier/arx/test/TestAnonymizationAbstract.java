@@ -35,6 +35,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.junit.Before;
 import org.junit.Rule;
@@ -342,6 +343,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             }
             time = (System.currentTimeMillis() - time) / REPETITIONS;
             time2 /= REPETITIONS;
+            System.out.print(Resources.getVersion());
+            System.out.print("; ");
             System.out.print(this.getClass().getSimpleName());
             System.out.print("; ");
             System.out.print(testCase.id);
