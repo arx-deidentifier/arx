@@ -20,6 +20,7 @@ package org.deidentifier.arx.test;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +37,9 @@ import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 /**
  * Test for data transformations.
@@ -53,6 +56,12 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
      * @author Florian Kohlmayer
      */
     public static class ARXAnonymizationTestCase {
+
+        /** TODO */
+        private static int counter;
+
+        /** TODO */
+        public final int id = counter++;
         
         /** TODO */
         public ARXConfiguration config;
@@ -282,6 +291,9 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
     /** The test case. */
     protected final ARXAnonymizationTestCase testCase;
     
+    /** To access the test name*/
+    @Rule public TestName name = new TestName();
+    
     /**
      * Creates a new instance.
      *
@@ -306,13 +318,33 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
     @Test
     public void test() throws IOException {
         
+        boolean benchmark = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-DBenchmark");
+        
         final Data data = getDataObject(testCase);
         
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         testCase.config.setPracticalMonotonicity(testCase.practical);
         
+        // Test or warmup
         ARXResult result = anonymizer.anonymize(data, testCase.config);
+        
+        // Benchmark
+        if (benchmark) {
+            
+            final int REPETITIONS = 5;
+            long time = System.currentTimeMillis();
+            for (int i=0; i<REPETITIONS; i++) {
+                data.getHandle().release();
+                result = anonymizer.anonymize(data, testCase.config);
+            }
+            time = (System.currentTimeMillis() - time) / REPETITIONS;
+            System.out.print(this.getClass().getSimpleName());
+            System.out.print("; ");
+            System.out.print(testCase.id);
+            System.out.print("; ");
+            System.out.println(time);
+        }
         
         // check if no solution
         if (testCase.optimalTransformation == null) {
