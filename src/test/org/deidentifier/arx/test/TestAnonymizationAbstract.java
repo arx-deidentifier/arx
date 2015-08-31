@@ -334,16 +334,21 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             
             final int REPETITIONS = 5;
             long time = System.currentTimeMillis();
+            long time2 = 0;
             for (int i=0; i<REPETITIONS; i++) {
                 data.getHandle().release();
                 result = anonymizer.anonymize(data, testCase.config);
+                time2 += result.getTime();
             }
             time = (System.currentTimeMillis() - time) / REPETITIONS;
+            time2 /= REPETITIONS;
             System.out.print(this.getClass().getSimpleName());
             System.out.print("; ");
             System.out.print(testCase.id);
             System.out.print("; ");
-            System.out.println(time);
+            System.out.print(time);
+            System.out.print("; ");
+            System.out.println(time2);
         }
         
         // check if no solution
