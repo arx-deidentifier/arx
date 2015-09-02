@@ -323,7 +323,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
     @Test
     public void test() throws IOException {
         
-        System.out.println(name.getMethodName());
+        System.out.println("Running: " + name.getMethodName());
         
         boolean benchmark = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-DBenchmark");
         
