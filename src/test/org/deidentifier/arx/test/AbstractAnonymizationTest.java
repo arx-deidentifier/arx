@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.test;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -48,7 +50,7 @@ import org.junit.rules.TestName;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class TestAnonymizationAbstract extends AbstractTest {
+public abstract class AbstractAnonymizationTest extends AbstractTest {
     
     /**
      * Represents a test case.
@@ -300,7 +302,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
      *
      * @param testCase
      */
-    public TestAnonymizationAbstract(final ARXAnonymizationTestCase testCase) {
+    public AbstractAnonymizationTest(final ARXAnonymizationTestCase testCase) {
         this.testCase = testCase;
     }
     

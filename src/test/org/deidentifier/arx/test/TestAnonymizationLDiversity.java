@@ -36,7 +36,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
-public class TestAnonymizationLDiversity extends TestAnonymizationAbstract {
+public class TestAnonymizationLDiversity extends AbstractAnonymizationTest {
     
     /**
      * 

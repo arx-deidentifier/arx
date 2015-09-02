@@ -34,7 +34,7 @@ import org.junit.Test;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class TestExecutionTimeAbstract extends TestAnonymizationAbstract {
+public abstract class TestExecutionTimeAbstract extends AbstractAnonymizationTest {
 
     /**
      * Creates a new instance.

@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
-public class TestUtilityMetricsLoss extends TestAnonymizationAbstract {
+public class TestUtilityMetricsLoss extends AbstractAnonymizationTest {
     
     /**
      * 

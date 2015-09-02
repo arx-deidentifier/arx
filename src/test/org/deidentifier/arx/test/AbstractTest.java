@@ -20,8 +20,6 @@ package org.deidentifier.arx.test;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.metric.Metric;
 import org.junit.Before;
@@ -29,7 +27,7 @@ import org.junit.Before;
 /**
  * 
  */
-public abstract class AbstractTest extends TestCase {
+public abstract class AbstractTest {
     
     /**
      * 
@@ -58,7 +56,6 @@ public abstract class AbstractTest extends TestCase {
     /** TODO */
     protected DataProvider provider = null;
     
-    @Override
     @Before
     public void setUp() {
         provider = new DataProvider();

@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
-public class TestSolutionSpaceClassification2 extends TestAnonymizationAbstract {
+public class TestSolutionSpaceClassification2 extends AbstractAnonymizationTest {
     
     @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() throws IOException {

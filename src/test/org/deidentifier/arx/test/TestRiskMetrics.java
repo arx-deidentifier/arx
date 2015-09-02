@@ -17,13 +17,14 @@
 
 package org.deidentifier.arx.test;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import junit.framework.TestCase;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -44,7 +45,7 @@ import org.junit.Test;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class TestRiskMetrics extends TestCase {
+public class TestRiskMetrics {
     
     /**
      * Returns the data object for a given dataset
