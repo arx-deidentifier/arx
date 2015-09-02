@@ -77,15 +77,15 @@
             </classpath>
         </javac>
 
-        <junit printsummary="yes">
-            <formatter type="plain" usefile="false" />
+        <junit haltonfailure="yes" showoutput="yes">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="test.jars" />
                 <path path="build/test" />
+                <path path="lib/log4j/log4j-1.2.17.jar" />
             </classpath>
             <batchtest>
-                <fileset dir="src/test/" includes="**/Test*.java"/>
+                <fileset dir="src/test/" includes="**/Test*.java" />
                 <formatter type="plain" usefile="false" />
             </batchtest>
         </junit>

@@ -17,7 +17,8 @@
 
 package org.deidentifier.arx.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -59,10 +60,10 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
      * @author Florian Kohlmayer
      */
     public static class ARXAnonymizationTestCase {
-
+        
         /** TODO */
         private static int counter;
-
+        
         /** TODO */
         public final int id = counter++;
         
@@ -241,7 +242,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         builder.append("}");
         return builder.toString();
     }
-
+    
     /**
      * Returns the data object for the test case.
      *
@@ -294,8 +295,9 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
     /** The test case. */
     protected final ARXAnonymizationTestCase testCase;
     
-    /** To access the test name*/
-    @Rule public TestName name = new TestName();
+    /** To access the test name */
+    @Rule
+    public TestName name = new TestName();
     
     /**
      * Creates a new instance.
@@ -320,6 +322,8 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
      */
     @Test
     public void test() throws IOException {
+        
+        System.out.println(name.getMethodName());
         
         boolean benchmark = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-DBenchmark");
         
