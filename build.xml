@@ -67,6 +67,8 @@
     <target name="test">
         <delete dir="build/test" failonerror="true" />
         <mkdir dir="build/test" />
+        <delete dir="build/junitReports" failonerror="true" />
+        <mkdir dir="build/junitReports" />
 
         <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.7">
             <classpath>
@@ -77,20 +79,22 @@
             </classpath>
         </javac>
 
-        <junit haltonfailure="yes" showoutput="yes" fork="yes">
+        <junit showoutput="yes">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="test.jars" />
                 <path path="build/test" />
                 <path path="lib/log4j/log4j-1.2.17.jar" />
             </classpath>
-            <batchtest>
+            <batchtest todir="build/junitReports">
                 <fileset dir="src/test/" includes="**/Test*.java" />
                 <formatter type="plain" usefile="false" />
+                <formatter type="xml" />
             </batchtest>
         </junit>
 
         <delete dir="build/test" failonerror="true" />
+        <delete dir="build/junitReports" failonerror="true" />
 
     </target>
 
