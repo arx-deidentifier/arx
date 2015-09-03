@@ -77,7 +77,7 @@
             </classpath>
         </javac>
 
-        <junit haltonfailure="yes" showoutput="yes">
+        <junit haltonfailure="yes" showoutput="yes" fork="yes">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="test.jars" />
