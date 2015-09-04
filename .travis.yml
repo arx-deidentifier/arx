@@ -1,7 +1,0 @@
-language: java
-before_install:
-- openssl aes-256-cbc -K $encrypted_deb2ad26c075_key -iv $encrypted_deb2ad26c075_iv
-  -in data/junit-data-travis-encrypted.tar.gz.enc -out data/junit-data-travis-encrypted.tar.gz
-  -d
-- mkdir -p ../arx-data/data-junit/
-- tar -zxvf data/junit-data-travis-encrypted.tar.gz -C ../arx-data/data-junit/
