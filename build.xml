@@ -67,7 +67,6 @@
     <target name="test">
         <delete dir="build/test" failonerror="true" />
         <mkdir dir="build/test" />
-        <delete dir="build/junitReports" failonerror="true" />
         <mkdir dir="build/junitReports" />
 
         <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.7">
@@ -94,7 +93,6 @@
         </junit>
 
         <delete dir="build/test" failonerror="true" />
-        <delete dir="build/junitReports" failonerror="true" />
 
     </target>
 
