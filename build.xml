@@ -84,6 +84,7 @@
                 <fileset refid="test.jars" />
                 <path path="build/test" />
                 <path path="lib/log4j/log4j-1.2.17.jar" />
+                <path path="lib/sqlite/sqlite-jdbc-3.7.2.jar" />
             </classpath>
             <batchtest todir="build/junitReports">
                 <fileset dir="src/test/" includes="**/Test*.java" />
