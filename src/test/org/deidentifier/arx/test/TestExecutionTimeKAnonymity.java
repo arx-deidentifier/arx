@@ -34,7 +34,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
-public class TestExecutionTimeKAnonymity extends TestExecutionTimeAbstract {
+public class TestExecutionTimeKAnonymity extends AbstractTestExecutionTime {
 
     /**
      * 

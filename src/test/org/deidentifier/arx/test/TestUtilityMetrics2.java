@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
-public class TestUtilityMetrics2 extends TestUtilityEstimationAbstract {
+public class TestUtilityMetrics2 extends AbstractTestUtilityEstimation {
     
     /**
      * 

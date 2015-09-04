@@ -34,14 +34,14 @@ import org.junit.Test;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class TestExecutionTimeAbstract extends AbstractAnonymizationTest {
+public abstract class AbstractTestExecutionTime extends AbstractAnonymizationTest {
 
     /**
      * Creates a new instance.
      *
      * @param testCase
      */
-    public TestExecutionTimeAbstract(final ARXAnonymizationTestCase testCase) {
+    public AbstractTestExecutionTime(final ARXAnonymizationTestCase testCase) {
         super(testCase);
     }
 

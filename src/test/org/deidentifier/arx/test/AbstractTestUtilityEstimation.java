@@ -35,14 +35,14 @@ import org.junit.Test;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAbstract {
+public abstract class AbstractTestUtilityEstimation extends TestUtilityMetricsAbstract {
     
     /**
      * Creates a new instance.
      *
      * @param testcase
      */
-    public TestUtilityEstimationAbstract(final ARXUtilityMetricsTestCase testcase) {
+    public AbstractTestUtilityEstimation(final ARXUtilityMetricsTestCase testcase) {
         super(testcase);
     }
     
