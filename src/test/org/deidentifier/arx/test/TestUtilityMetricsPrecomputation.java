@@ -38,7 +38,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
-public class TestUtilityMetricsPrecomputation extends TestUtilityMetricsPrecomputationAbstract {
+public class TestUtilityMetricsPrecomputation extends AbstractTestUtilityMetricsPrecomputation {
     
     /** TODO */
     private final static double threshold = 1d;

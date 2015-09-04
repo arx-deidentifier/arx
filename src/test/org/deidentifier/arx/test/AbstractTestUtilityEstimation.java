@@ -35,7 +35,7 @@ import org.junit.Test;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class AbstractTestUtilityEstimation extends TestUtilityMetricsAbstract {
+public abstract class AbstractTestUtilityEstimation extends AbstractTestUtilityMetrics {
     
     /**
      * Creates a new instance.

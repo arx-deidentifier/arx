@@ -45,7 +45,7 @@ import org.junit.Test;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class TestUtilityMetricsPrecomputationAbstract extends AbstractTest {
+public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractTest {
     
     /**
      * Represents a test case.
@@ -176,7 +176,7 @@ public abstract class TestUtilityMetricsPrecomputationAbstract extends AbstractT
      *
      * @param testCase
      */
-    public TestUtilityMetricsPrecomputationAbstract(final ARXUtilityMetricsTestCase testCase) {
+    public AbstractTestUtilityMetricsPrecomputation(final ARXUtilityMetricsTestCase testCase) {
         this.testcase = testCase;
     }
     

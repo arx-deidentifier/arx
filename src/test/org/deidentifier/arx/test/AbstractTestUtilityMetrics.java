@@ -48,7 +48,7 @@ import org.junit.Test;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class TestUtilityMetricsAbstract extends AbstractTest {
+public abstract class AbstractTestUtilityMetrics extends AbstractTest {
     
     /**
      * Represents a test case.
@@ -177,7 +177,7 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
      *
      * @param testCase
      */
-    public TestUtilityMetricsAbstract(final ARXUtilityMetricsTestCase testCase) {
+    public AbstractTestUtilityMetrics(final ARXUtilityMetricsTestCase testCase) {
         this.testcase = testCase;
     }
     
