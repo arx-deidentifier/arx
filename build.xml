@@ -64,7 +64,26 @@
         </or>
     </fileset>
 
-    <target name="test">
+
+    <available file=".git" type="dir" property="git.present" />
+
+    <!-- https://stackoverflow.com/questions/2974106/how-to-lookup-the-latest-git-commit-hash-from-an-ant-build-script -->
+    <target name="git.revision" description="Store git revision in ${repository.version}" if="git.present">
+        <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+            <arg value="describe" />
+            <arg value="--tags" />
+            <arg value="--always" />
+            <arg value="HEAD" />
+        </exec>
+        <condition property="repository.version" value="${git.revision}" else="unknown">
+            <and>
+                <isset property="git.revision" />
+                <length string="${git.revision}" trim="yes" length="0" when="greater" />
+            </and>
+        </condition>
+    </target>
+
+    <target name="compileTest">
         <delete dir="build/test" failonerror="true" />
         <mkdir dir="build/test" />
         <mkdir dir="build/junitReports" />
@@ -77,7 +96,40 @@
                 <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
             </classpath>
         </javac>
+        <copy todir="build/test/org/deidentifier/arx/gui/resources" overwrite="true">
+            <fileset dir="src/gui/org/deidentifier/arx/gui/resources" defaultexcludes="yes">
+                <exclude name="**/*.java" />
+            </fileset>
+        </copy>
+    </target>
 
+    <target name="benchmark" depends="git.revision,compileTest">
+        <junit showoutput="yes" fork="yes">
+            <jvmarg value="-DBenchmark=build/junitReports" />
+            <jvmarg value="-DVersion=${git.revision}" />
+            <classpath>
+                <fileset refid="lib.jars" />
+                <fileset refid="test.jars" />
+                <path path="build/test" />
+                <path path="lib/log4j/log4j-1.2.17.jar" />
+                <path path="lib/sqlite/sqlite-jdbc-3.7.2.jar" />
+                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+            </classpath>
+            <batchtest todir="build/junitReports">
+                <fileset dir="src/test/">
+                    <include name="**/TestAnonymizationKAnonymity.java" />
+                    <include name="**/TestAnonymizationLDiversity.java" />
+                    <include name="**/TestAnonymizationDPresence.java" />
+                    <include name="**/TestAnonymizationTCloseness.java" />
+                    <include name="**/TestAnonymizationCombinations.java" />
+                </fileset>
+                <formatter type="plain" usefile="false" />
+                <formatter type="xml" />
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="test" depends="compileTest">
         <junit showoutput="yes">
             <classpath>
                 <fileset refid="lib.jars" />
@@ -85,16 +137,14 @@
                 <path path="build/test" />
                 <path path="lib/log4j/log4j-1.2.17.jar" />
                 <path path="lib/sqlite/sqlite-jdbc-3.7.2.jar" />
+                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
             </classpath>
-            <batchtest todir="build/junitReports">
+            <batchtest todir="build/junitReports" fork="yes">
                 <fileset dir="src/test/" includes="**/Test*.java" />
                 <formatter type="plain" usefile="false" />
                 <formatter type="xml" />
             </batchtest>
         </junit>
-
-        <delete dir="build/test" failonerror="true" />
-
     </target>
 
 

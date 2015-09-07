@@ -20,11 +20,17 @@ package org.deidentifier.arx.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.Writer;
 import java.lang.management.ManagementFactory;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -223,6 +229,8 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         }
     }
     
+    private static final String timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss").format(new Date());
+    
     /**
      * Transforms it into a string representation.
      *
@@ -323,7 +331,14 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
     @Test
     public void test() throws IOException {
         
-        boolean benchmark = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-DBenchmark");
+        boolean benchmark = false;
+        List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+        for (String argument : arguments) {
+            if (argument.startsWith("-DBenchmark")) {
+                benchmark = true;
+                break;
+            }
+        }
         
         final Data data = getDataObject(testCase);
         
@@ -337,25 +352,37 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         // Benchmark
         if (benchmark) {
             
+            String version = System.getProperty("Version");
+            String path = System.getProperty("Benchmark");
+            if (path == null) {
+                path = ".";
+            }
+            String testClass = this.getClass().getSimpleName();
+            
             final int REPETITIONS = 5;
             long time = System.currentTimeMillis();
             long time2 = 0;
-            for (int i=0; i<REPETITIONS; i++) {
+            for (int i = 0; i < REPETITIONS; i++) {
                 data.getHandle().release();
                 result = anonymizer.anonymize(data, testCase.config);
                 time2 += result.getTime();
             }
             time = (System.currentTimeMillis() - time) / REPETITIONS;
             time2 /= REPETITIONS;
-            System.out.print(Resources.getVersion());
-            System.out.print("; ");
-            System.out.print(this.getClass().getSimpleName());
-            System.out.print("; ");
-            System.out.print(testCase.id);
-            System.out.print("; ");
-            System.out.print(time);
-            System.out.print("; ");
-            System.out.println(time2);
+            
+            StringBuilder line = new StringBuilder();
+            line.append(Resources.getVersion());
+            line.append(";");
+            line.append(version);
+            line.append(";");
+            line.append(testClass);
+            line.append(";");
+            line.append(testCase.id);
+            line.append(";");
+            line.append(time);
+            line.append(";");
+            line.append(time2);
+            appendToFile(line.toString(), path + "/benchmark_" + version + "_" + timestamp + "_" + testClass + ".csv");
         }
         
         // check if no solution
@@ -416,6 +443,31 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             assertEquals(algorithmConfiguration + ". Mismatch: number of probably anonymous transformations", testCase.statistics[4], statistics[4]);
             assertEquals(algorithmConfiguration + ". Mismatch: number of probably non-anonymous transformations", testCase.statistics[5], statistics[5]);
             assertEquals(algorithmConfiguration + ". Mismatch: number of transformations with utility available", testCase.statistics[6], statistics[6]);
+        }
+    }
+    
+    /**
+     * Appends the given value to the file
+     * @param value
+     * @param file
+     */
+    private void appendToFile(String value, String file) {
+        Writer writer = null;
+        try {
+            writer = new FileWriter(file, true);
+            writer = new BufferedWriter(writer);
+            writer.write(value);
+            writer.write(System.lineSeparator());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
     
