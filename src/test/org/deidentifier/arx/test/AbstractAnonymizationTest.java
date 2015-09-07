@@ -454,6 +454,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
     private void appendToFile(String value, String file) {
         Writer writer = null;
         try {
+            createHeader(file);
             writer = new FileWriter(file, true);
             writer = new BufferedWriter(writer);
             writer.write(value);
@@ -468,6 +469,63 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+    
+    /**
+     * Writes a header to the given file
+     * @param file
+     */
+    private void createHeader(String file) {
+        File f = new File(file);
+        if (!f.exists()) {
+            Writer writer = null;
+            try {
+                writer = new FileWriter(f);
+                writer = new BufferedWriter(writer);
+                
+                StringBuilder line = new StringBuilder();
+                line.append("");
+                line.append(";");
+                line.append("");
+                line.append(";");
+                line.append("");
+                line.append(";");
+                line.append("");
+                line.append(";");
+                line.append("Execution time");
+                line.append(";");
+                line.append("Internal execution time");
+                writer.write(line.toString());
+                writer.write(System.lineSeparator());
+                
+                line = new StringBuilder();
+                line.append("Version");
+                line.append(";");
+                line.append("Git commit");
+                line.append(";");
+                line.append("Test");
+                line.append(";");
+                line.append("Testid");
+                line.append(";");
+                line.append("Arithmetic Mean");
+                line.append(";");
+                line.append("Arithmetic Mean");
+                writer.write(line.toString());
+                writer.write(System.lineSeparator());
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (writer != null) {
+                    try {
+                        writer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            
         }
     }
     
