@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import java.io.Serializable;
+
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -26,7 +28,10 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
  * @author Florian Kohlmayer, Fabian Prasser
  *
  */
-public class TupleMatcher {
+public class TupleMatcher implements Serializable {
+    
+    /** SVUID*/
+    private static final long serialVersionUID = -5081573765755187296L;
     
     /** Data*/
     private final int[][][] hierarchies;
