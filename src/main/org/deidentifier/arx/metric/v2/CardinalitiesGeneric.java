@@ -99,7 +99,7 @@ public class CardinalitiesGeneric implements Serializable {
                 for (int i = 0; i < maps.length; i++) {
                     int key = m.isNotOutlier ? m.key[i] : -1;
                     Integer count = this.maps[i].get(key);
-                    this.maps[i].put(key, count == null ? 1 : count +1);
+                    this.maps[i].put(key, count == null ? m.count : count + m.count);
                 }
             }
             m = m.nextOrdered;

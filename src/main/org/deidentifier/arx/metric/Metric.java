@@ -200,7 +200,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * 
      * @return
      */
-    public static Metric<AbstractILMultiDimensional> createEntropyOriginalMetric(AggregateFunction function) {
+    public static Metric<AbstractILMultiDimensional> DONOTUSE_createEntropyOriginalMetric(AggregateFunction function) {
         return __MetricV2.createEntropyOriginalMetric(function);
     }
 
@@ -212,7 +212,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * 
      * @return
      */
-    public static Metric<AbstractILMultiDimensional> createEntropyOriginalNormalizedMetric(AggregateFunction function) {
+    public static Metric<AbstractILMultiDimensional> DONOTUSE_createEntropyOriginalNormalizedMetric(AggregateFunction function) {
         return __MetricV2.createEntropyOriginalNormalizedMetric(function);
     }
 

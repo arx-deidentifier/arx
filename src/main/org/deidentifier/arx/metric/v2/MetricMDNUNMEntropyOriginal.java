@@ -140,7 +140,7 @@ public class MetricMDNUNMEntropyOriginal extends AbstractMetricMultiDimensional 
         for (int column = 0; column < input[0].length; column++) {
             result[column] = round(result[column] == 0.0d ? result[column] : -result[column]);
         }
-
+        
         // Return
         return new ILMultiDimensionalWithBound(createInformationLoss(result));
     }
