@@ -127,6 +127,12 @@
                 <formatter type="xml" />
             </batchtest>
         </junit>
+        <antcall target="analyse-benchmark" />
+    </target>
+
+    <target name="analyse-benchmark">
+        <java jar="arx-analyse.jar" fork="true">
+        </java>
     </target>
 
     <target name="test" depends="compileTest">
