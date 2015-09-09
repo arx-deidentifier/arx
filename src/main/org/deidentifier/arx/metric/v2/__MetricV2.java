@@ -224,6 +224,15 @@ public class __MetricV2 {
     }
 
     /**
+     * Creates an instance of the KL Divergence metric.
+     *
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createKLDivergenceMetric() {
+        return new MetricSDNMKLDivergence();
+    }
+    
+    /**
      * Creates an instance of the loss metric which treats generalization and suppression equally.
      * The default aggregate function, which is the rank function, will be used.
      * This metric will respect attribute weights defined in the configuration.

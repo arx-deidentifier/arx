@@ -52,6 +52,7 @@ import org.deidentifier.arx.metric.v2.MetricSDAECS;
 import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
 import org.deidentifier.arx.metric.v2.MetricSDNMAmbiguity;
 import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
+import org.deidentifier.arx.metric.v2.MetricSDNMKLDivergence;
 import org.deidentifier.arx.metric.v2.__MetricV2;
 
 /**
@@ -214,6 +215,17 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createHeightMetric(AggregateFunction function) {
         return __MetricV2.createHeightMetric(function);
     }
+    
+
+    /**
+     * Creates an instance of the KL Divergence metric.
+     *
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createKLDivergenceMetric() {
+        return __MetricV2.createKLDivergenceMetric();
+    }
+
 
     /**
      * Creates an instance of the loss metric which treats generalization and suppression equally.
@@ -724,6 +736,26 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                          return (metric instanceof MetricMDNUNMNormalizedEntropy) ||
                                                 (metric instanceof MetricMDNUNMNormalizedEntropyPrecomputed) ||
                                                 (metric instanceof MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed);
+                                     } 
+               },
+               new MetricDescription("KL-Divergence",
+                                     false,   // monotonic variant supported
+                                     false,  // attribute weights supported
+                                     false,  // configurable coding model supported
+                                     false,  // pre-computation supported
+                                     false){ // aggregate function supported
+                   
+                                     /** SVUID */
+                                     private static final long serialVersionUID = 6152052294903443361L;
+
+                                     @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         return createKLDivergenceMetric();
+                                     } 
+
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricSDNMKLDivergence);
                                      } 
                },
         });
