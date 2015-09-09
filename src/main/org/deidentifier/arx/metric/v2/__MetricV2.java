@@ -109,7 +109,6 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createEntropyMetric() {
         return createEntropyMetric(false, AggregateFunction.SUM);
     }
-    
 
     /**
      * Creates an instance of the non-uniform entropy metric. The default aggregate function,
@@ -123,7 +122,7 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createEntropyMetric(boolean monotonic) {
         return createEntropyMetric(monotonic, AggregateFunction.SUM);
     }
-    
+
     /**
      * Creates an instance of the non-uniform entropy metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -156,6 +155,30 @@ public class __MetricV2 {
         MetricMDNUEntropyPrecomputed result = (MetricMDNUEntropyPrecomputed)createEntropyMetric(monotonic, AggregateFunction.SUM);
         result.initialize(cache,  cardinalities, hierarchies);
         return result;
+    }
+
+    /**
+     * Creates an instance of the non-uniform entropy metric.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param function The aggregate function to be used for comparing results
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createEntropyOriginalMetric(AggregateFunction function) {
+        return new MetricMDNUNMEntropyOriginal(function);
+    }
+
+    /**
+     * Creates an instance of the non-uniform entropy metric.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param function The aggregate function to be used for comparing results
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createEntropyOriginalNormalizedMetric(AggregateFunction function) {
+        return new MetricMDNUNMEntropyOriginalNormalized(function);
     }
 
     /**

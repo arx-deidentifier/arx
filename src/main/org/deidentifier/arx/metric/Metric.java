@@ -192,6 +192,29 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createEntropyMetric(monotonic, function);
     }
 
+    /**
+     * Creates an instance of the non-uniform entropy metric.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param function The aggregate function to be used for comparing results
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createEntropyOriginalMetric(AggregateFunction function) {
+        return __MetricV2.createEntropyOriginalMetric(function);
+    }
+
+    /**
+     * Creates an instance of the non-uniform entropy metric.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param function The aggregate function to be used for comparing results
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createEntropyOriginalNormalizedMetric(AggregateFunction function) {
+        return __MetricV2.createEntropyOriginalNormalizedMetric(function);
+    }
 
     /**
      * Creates an instance of the height metric. The default aggregate function, which is the sum-function,
