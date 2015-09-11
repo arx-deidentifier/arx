@@ -233,7 +233,7 @@ public class __MetricV2 {
     
     /**
      * Creates an instance of the loss metric which treats generalization and suppression equally.
-     * The default aggregate function, which is the rank function, will be used.
+     * The default aggregate function, which is the geometric mean, will be used.
      * This metric will respect attribute weights defined in the configuration.
      *
      * @return
@@ -255,7 +255,7 @@ public class __MetricV2 {
 
     /**
      * Creates an instance of the loss metric with factors for weighting generalization and suppression.
-     * The default aggregate function, which is the rank function, will be used.
+     * The default aggregate function, which is the geometric mean, will be used.
      * This metric will respect attribute weights defined in the configuration.
      *
      * @param gsFactor A factor [0,1] weighting generalization and suppression.
@@ -267,7 +267,7 @@ public class __MetricV2 {
      * @return
      */
     public static Metric<AbstractILMultiDimensional> createLossMetric(double gsFactor) {
-        return new MetricMDNMLoss(gsFactor, AggregateFunction.RANK);
+        return new MetricMDNMLoss(gsFactor, AggregateFunction.GEOMETRIC_MEAN);
     }
 
     /**
@@ -430,7 +430,7 @@ public class __MetricV2 {
     /**
      * Creates a potentially precomputed instance of the loss metric which treats generalization
      * and suppression equally.
-     * The default aggregate function, which is the rank function, will be used.
+     * The default aggregate function, which is the geometric mean, will be used.
      * This metric will respect attribute weights defined in the configuration.
      *
      * @param threshold The precomputed variant of the metric will be used if
@@ -457,7 +457,7 @@ public class __MetricV2 {
 
     /**
      * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
-     * The default aggregate function, which is the rank function, will be used.
+     * The default aggregate function, which is the gemetric mean, will be used.
      * This metric will respect attribute weights defined in the configuration.
      *
      * @param threshold The precomputed variant of the metric will be used if
@@ -472,7 +472,7 @@ public class __MetricV2 {
      * @return
      */
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, double gsFactor) {
-        return new MetricMDNMLossPotentiallyPrecomputed(threshold, gsFactor, AggregateFunction.RANK);
+        return new MetricMDNMLossPotentiallyPrecomputed(threshold, gsFactor, AggregateFunction.GEOMETRIC_MEAN);
     }
     
     /**
