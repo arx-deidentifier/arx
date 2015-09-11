@@ -27,6 +27,7 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.Metric.AggregateFunction;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -62,8 +63,8 @@ public class TestUtilityMetricsPrecomputation extends AbstractTestUtilityMetrics
                                               { new ARXUtilityMetricsTestCase(ARXConfiguration.create(0.0d).addCriterion(new DPresence(0.05, 0.15, DataSubset.create(Data.create("../arx-data/data-junit/adult.csv", ';'), Data.create("../arx-data/data-junit/adult_subset.csv", ';')))), "occupation", "../arx-data/data-junit/adult.csv", Metric.createEntropyMetric(false), Metric.createPrecomputedEntropyMetric(threshold, false)) },
                                               
                                               // loss: criterion monotone metric monotone
-                                              { new ARXUtilityMetricsTestCase(ARXConfiguration.create(0.0d).addCriterion(new KAnonymity(5)), "occupation", "../arx-data/data-junit/adult.csv", Metric.createLossMetric(), Metric.createPrecomputedLossMetric(threshold)) },
-                                              { new ARXUtilityMetricsTestCase(ARXConfiguration.create(0.0d).addCriterion(new DPresence(0.05, 0.15, DataSubset.create(Data.create("../arx-data/data-junit/adult.csv", ';'), Data.create("../arx-data/data-junit/adult_subset.csv", ';')))), "occupation", "../arx-data/data-junit/adult.csv", Metric.createLossMetric(), Metric.createPrecomputedLossMetric(threshold)) },
+                                              { new ARXUtilityMetricsTestCase(ARXConfiguration.create(0.0d).addCriterion(new KAnonymity(5)), "occupation", "../arx-data/data-junit/adult.csv", Metric.createLossMetric(AggregateFunction.RANK), Metric.createPrecomputedLossMetric(threshold)) },
+                                              { new ARXUtilityMetricsTestCase(ARXConfiguration.create(0.0d).addCriterion(new DPresence(0.05, 0.15, DataSubset.create(Data.create("../arx-data/data-junit/adult.csv", ';'), Data.create("../arx-data/data-junit/adult_subset.csv", ';')))), "occupation", "../arx-data/data-junit/adult.csv", Metric.createLossMetric(AggregateFunction.RANK), Metric.createPrecomputedLossMetric(threshold)) },
                                               
                                               // entropy: criterion non-monotone metric monotone
                                               { new ARXUtilityMetricsTestCase(ARXConfiguration.create(0.5d).addCriterion(new KAnonymity(5)), "occupation", "../arx-data/data-junit/adult.csv", Metric.createEntropyMetric(true), Metric.createPrecomputedEntropyMetric(threshold, true)) },
@@ -74,8 +75,8 @@ public class TestUtilityMetricsPrecomputation extends AbstractTestUtilityMetrics
                                               { new ARXUtilityMetricsTestCase(ARXConfiguration.create(0.5d).addCriterion(new DPresence(0.05, 0.15, DataSubset.create(Data.create("../arx-data/data-junit/adult.csv", ';'), Data.create("../arx-data/data-junit/adult_subset.csv", ';')))), "occupation", "../arx-data/data-junit/adult.csv", Metric.createEntropyMetric(false), Metric.createPrecomputedEntropyMetric(threshold, false)) },
                                               
                                               // loss: criterion non-monotone metric monotone
-                                              { new ARXUtilityMetricsTestCase(ARXConfiguration.create(0.5d).addCriterion(new KAnonymity(5)), "occupation", "../arx-data/data-junit/adult.csv", Metric.createLossMetric(), Metric.createPrecomputedLossMetric(threshold)) },
-                                              { new ARXUtilityMetricsTestCase(ARXConfiguration.create(0.5d).addCriterion(new DPresence(0.05, 0.15, DataSubset.create(Data.create("../arx-data/data-junit/adult.csv", ';'), Data.create("../arx-data/data-junit/adult_subset.csv", ';')))), "occupation", "../arx-data/data-junit/adult.csv", Metric.createLossMetric(), Metric.createPrecomputedLossMetric(threshold)) },
+                                              { new ARXUtilityMetricsTestCase(ARXConfiguration.create(0.5d).addCriterion(new KAnonymity(5)), "occupation", "../arx-data/data-junit/adult.csv", Metric.createLossMetric(AggregateFunction.RANK), Metric.createPrecomputedLossMetric(threshold)) },
+                                              { new ARXUtilityMetricsTestCase(ARXConfiguration.create(0.5d).addCriterion(new DPresence(0.05, 0.15, DataSubset.create(Data.create("../arx-data/data-junit/adult.csv", ';'), Data.create("../arx-data/data-junit/adult_subset.csv", ';')))), "occupation", "../arx-data/data-junit/adult.csv", Metric.createLossMetric(AggregateFunction.RANK), Metric.createPrecomputedLossMetric(threshold)) },
                                               
         });
     }
