@@ -64,7 +64,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
      * Default constructor which treats all transformation methods equally.
      */
     public MetricMDNMLoss(){
-        this(0.5d, AggregateFunction.RANK);
+        this(0.5d, AggregateFunction.GEOMETRIC_MEAN);
     }
 
     /**
