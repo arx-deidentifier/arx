@@ -44,7 +44,7 @@ public class MetricConfiguration implements Serializable {
     private double            precomputationThreshold = 0.1d;
     
     /** Aggregate function. */
-    private AggregateFunction aggregateFunction       = AggregateFunction.RANK;
+    private AggregateFunction aggregateFunction       = AggregateFunction.GEOMETRIC_MEAN;
     
     /**
      * Constructs a new instance.
