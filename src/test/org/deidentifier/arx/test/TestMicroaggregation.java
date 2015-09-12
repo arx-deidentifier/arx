@@ -37,6 +37,8 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
+import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.Metric.AggregateFunction;
 import org.junit.Test;
 
 /**
@@ -105,6 +107,7 @@ public class TestMicroaggregation extends AbstractTest {
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(5));
         config.setMaxOutliers(1d);
+        config.setMetric(Metric.createLossMetric(AggregateFunction.RANK));
         
         ARXResult result = anonymizer.anonymize(data, config);
         DataHandle exptectedOutput = Data.create("../arx-data/data-junit/adult_age_microaggregated.csv", ';').getHandle();
