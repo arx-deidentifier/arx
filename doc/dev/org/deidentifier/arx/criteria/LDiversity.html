@@ -172,9 +172,10 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriter
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#LDiversity(java.lang.String, double, boolean)">LDiversity</a></strong>(java.lang.String&nbsp;attribute,
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#LDiversity(java.lang.String, double, boolean, boolean)">LDiversity</a></strong>(java.lang.String&nbsp;attribute,
           double&nbsp;l,
-          boolean&nbsp;monotonic)</code>
+          boolean&nbsp;monotonicWithSuppression,
+          boolean&nbsp;monotonicWithGeneralization)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
@@ -224,7 +225,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriter
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.criteria.<a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></h3>
-<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonic()">isMonotonic</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -275,7 +276,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriter
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="LDiversity(java.lang.String, double, boolean)">
+<a name="LDiversity(java.lang.String, double, boolean, boolean)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -283,9 +284,10 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriter
 <h4>LDiversity</h4>
 <pre>public&nbsp;LDiversity(java.lang.String&nbsp;attribute,
           double&nbsp;l,
-          boolean&nbsp;monotonic)</pre>
+          boolean&nbsp;monotonicWithSuppression,
+          boolean&nbsp;monotonicWithGeneralization)</pre>
 <div class="block">Creates a new instance.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd><dd><code>l</code> - </dd><dd><code>monotonic</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd><dd><code>l</code> - </dd><dd><code>monotonicWithSuppression</code> - </dd><dd><code>monotonicWithGeneralization</code> - </dd></dl>
 </li>
 </ul>
 </li>

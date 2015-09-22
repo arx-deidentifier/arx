@@ -46,10 +46,11 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
      *
      * @param attribute
      * @param l
-     * @param monotonic
+     * @param monotonicWithSuppression
+     * @param monotonicWithGeneralization
      */
-    public LDiversity(String attribute, double l, boolean monotonic) {
-        super(attribute, monotonic);
+    public LDiversity(String attribute, double l, boolean monotonicWithSuppression, boolean monotonicWithGeneralization) {
+        super(attribute, monotonicWithSuppression, monotonicWithGeneralization);
         this.l = l;
         this.minSize = (int) Math.ceil(l);
     }

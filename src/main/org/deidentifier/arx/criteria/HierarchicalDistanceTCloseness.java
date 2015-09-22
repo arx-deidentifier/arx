@@ -160,6 +160,6 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
     
 	@Override
 	public String toString() {
-		return t+"-closeness with hierarchical distance for attribute '"+attribute+"'";
+		return t+"-closeness with hierarchical ground-distance for attribute '"+attribute+"'";
 	}
 }

@@ -86,9 +86,9 @@ public class LayoutDefinition implements ILayout {
         // Create views
         new ViewDataInput(compositeLeft, controller, true);
         new ViewSubsetDefinition(compositeLeft, controller);
-        new ViewDataDefinition(compositeTopRight, controller);
+        new LayoutAttributeSettings(compositeTopRight, controller);
         new LayoutCriteria(compositeCenterRight, controller);
-        new LayoutTransformationSettings(compositeBottomRight, controller);
+        new LayoutTransformationModel(compositeBottomRight, controller);
     }
 
 }

@@ -120,8 +120,7 @@
 <li class="blockList">
 <h4>protectSensitiveAssociations</h4>
 <pre>boolean protectSensitiveAssociations</pre>
-<div class="block">Make sure that no information can be derived from associations between
- sensitive attributes.</div>
+<div class="block">Make sure that no information can be derived from associations between sensitive attributes.</div>
 </li>
 <li class="blockList">
 <h4>relMaxOutliers</h4>
@@ -141,8 +140,7 @@
 <li class="blockList">
 <h4>suppressedAttributeTypes</h4>
 <pre>java.lang.Integer suppressedAttributeTypes</pre>
-<div class="block">Defines values of which attribute type are to be replaced by the
- suppression string in suppressed tuples.</div>
+<div class="block">Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.</div>
 </li>
 <li class="blockList">
 <h4>suppressionString</h4>
@@ -152,13 +150,27 @@
 <li class="blockList">
 <h4>suppressionAlwaysEnabled</h4>
 <pre>java.lang.Boolean suppressionAlwaysEnabled</pre>
-<div class="block">Determines whether suppression is applied to the output of anonymous as
- well as non-anonymous transformations.</div>
+<div class="block">Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations.</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>heuristicSearchForSampleBasedCriteria</h4>
 <pre>boolean heuristicSearchForSampleBasedCriteria</pre>
 <div class="block">Are we performing optimal anonymization for sample-based criteria?</div>
+</li>
+<li class="blockList">
+<h4>heuristicSearchEnabled</h4>
+<pre>boolean heuristicSearchEnabled</pre>
+<div class="block">Should we use the heuristic search algorithm?</div>
+</li>
+<li class="blockList">
+<h4>heuristicSearchThreshold</h4>
+<pre>java.lang.Integer heuristicSearchThreshold</pre>
+<div class="block">We will use the heuristic algorithm, if the size of the search space exceeds this threshold</div>
+</li>
+<li class="blockListLast">
+<h4>heuristicSearchTimeLimit</h4>
+<pre>java.lang.Integer heuristicSearchTimeLimit</pre>
+<div class="block">The heuristic algorithm will terminate after the given time limit</div>
 </li>
 </ul>
 </li>
@@ -213,9 +225,19 @@
 <div class="block">The number of nodes.</div>
 </li>
 <li class="blockList">
+<h4>virtualSize</h4>
+<pre>java.lang.Long virtualSize</pre>
+<div class="block">The virtual size</div>
+</li>
+<li class="blockList">
 <h4>uncertainty</h4>
 <pre>boolean uncertainty</pre>
 <div class="block">Is practical monotonicity being assumed.</div>
+</li>
+<li class="blockList">
+<h4>complete</h4>
+<pre>java.lang.Boolean complete</pre>
+<div class="block">Is this the result of an optimal algorithm</div>
 </li>
 <li class="blockList">
 <h4>monotonicAnonymous</h4>
@@ -258,7 +280,7 @@
 <li class="blockListLast">
 <h4>lattice</h4>
 <pre><a href="org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a> lattice</pre>
-<div class="block">TODO</div>
+<div class="block">Lattice</div>
 </li>
 </ul>
 </li>
@@ -1555,10 +1577,15 @@
 </a>
 <h3>Serialized Fields</h3>
 <ul class="blockList">
-<li class="blockListLast">
+<li class="blockList">
 <h4>monotonic</h4>
 <pre>boolean monotonic</pre>
-<div class="block">Is the criterion monotonic when allowing for tuple suppression.</div>
+<div class="block">Is the criterion monotonic with generalization and suppression.</div>
+</li>
+<li class="blockListLast">
+<h4>monotonicWithGeneralization</h4>
+<pre>java.lang.Boolean monotonicWithGeneralization</pre>
+<div class="block">Is the criterion monotonic with generalization.</div>
 </li>
 </ul>
 </li>
@@ -2697,10 +2724,15 @@
 <pre>double[][] cache</pre>
 <div class="block">Column -> Level -> Value.</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>hierarchies</h4>
 <pre>int[][][] hierarchies</pre>
 <div class="block">Column -> Id -> Level -> Output.</div>
+</li>
+<li class="blockListLast">
+<h4>rows</h4>
+<pre>double rows</pre>
+<div class="block">Num rows</div>
 </li>
 </ul>
 </li>
@@ -2732,6 +2764,47 @@
 <dt>serialVersionUID:</dt>
 <dd>-7428794463838685004L</dd>
 </dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropy">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropy.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropy</a> extends <a href="org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMNormalizedEntropyPrecomputed</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>8815423510640657624L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed</a> extends <a href="org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensionalPotentiallyPrecomputed</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-3297238195567701353L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPrecomputed">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPrecomputed</a> extends <a href="org/deidentifier/arx/metric/v2/MetricMDNUNMEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMEntropyPrecomputed</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-2384411534214262365L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>upper</h4>
+<pre>double[] upper</pre>
+<div class="block">Upper bounds</div>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 <li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricMDPrecision">
 <!--   -->
@@ -2787,6 +2860,39 @@
 <dt>serialVersionUID:</dt>
 <dd>-9156839234909657895L</dd>
 </dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricSDNMAmbiguity">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/MetricSDNMAmbiguity.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.MetricSDNMAmbiguity</a> extends <a href="org/deidentifier/arx/metric/v2/AbstractMetricSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricSingleDimensional</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-4376770864891280340L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>tuples</h4>
+<pre>java.lang.Double tuples</pre>
+<div class="block">Total number of tuples, depends on existence of research subset.</div>
+</li>
+<li class="blockList">
+<h4>shares</h4>
+<pre><a href="org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a>[] shares</pre>
+<div class="block">Domain shares for each dimension.</div>
+</li>
+<li class="blockListLast">
+<h4>max</h4>
+<pre>java.lang.Double max</pre>
+<div class="block">Maximum value</div>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 <li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricSDNMDiscernability">
 <!--   -->

@@ -26,7 +26,9 @@ import java.util.Set;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
+import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
+import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
@@ -36,8 +38,7 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Lattice;
-import org.deidentifier.arx.framework.lattice.LatticeBuilder;
+import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -61,39 +62,39 @@ public class ARXAnonymizer {
         final AbstractAlgorithm algorithm;
 
         /** The checker. */
-        final NodeChecker      checker;
+        final NodeChecker       checker;
 
-        /** The lattice. */
-        final Lattice           lattice;
+        /** The solution space. */
+        final SolutionSpace     solutionSpace;
 
         /** The data manager. */
         final DataManager       manager;
 
         /** The metric. */
         final Metric<?>         metric;
-        
+
         /** The time. */
-        final long              time;  
+        final long              time;
 
         /**
          * Creates a new instance.
          *
          * @param metric the metric
          * @param checker the checker
-         * @param lattice the lattice
+         * @param lattice the solution space
          * @param manager the manager
          * @param algorithm
          * @param time
          */
         Result(final Metric<?> metric,
                final NodeChecker checker,
-               final Lattice lattice,
+               final SolutionSpace solutionSpace,
                final DataManager manager,
                final AbstractAlgorithm algorithm,
                final long time) {
             this.metric = metric;
             this.checker = checker;
-            this.lattice = lattice;
+            this.solutionSpace = solutionSpace;
             this.manager = manager;
             this.algorithm = algorithm;
             this.time = time;
@@ -109,10 +110,11 @@ public class ARXAnonymizer {
 		public ARXResult asResult(ARXConfiguration config, DataHandle handle) {
 
 		    // Create lattice
-	        final ARXLattice flattice = new ARXLattice(lattice,
-	                                                   algorithm.getGlobalOptimum(),
-	                                                   manager.getDataGeneralized().getHeader(),
-	                                                   config.getInternalConfiguration());
+	        final ARXLattice lattice = new ARXLattice(solutionSpace,
+	                                                  (algorithm instanceof FLASHAlgorithmImpl),
+	                                                  algorithm.getGlobalOptimum(),
+	                                                  manager.getDataGeneralized().getHeader(),
+	                                                  config.getInternalConfiguration());
 
 			// Create output handle
 	        ((DataHandleInput)handle).setLocked(true);
@@ -121,8 +123,9 @@ public class ARXAnonymizer {
                                  this.checker,
                                  handle.getDefinition(),
                                  config,
-                                 flattice,
-                                 System.currentTimeMillis() - time);      
+                                 lattice,
+                                 System.currentTimeMillis() - time,
+                                 solutionSpace);      
 		}
     }
 
@@ -140,9 +143,6 @@ public class ARXAnonymizer {
 
     /** The maximal number of QIs that can be processed. */
     private int         maxQuasiIdentifiers  = Integer.MAX_VALUE;
-
-    /** The maximal size of the search space that can be processed. */
-    private int         maxTransformations   = 200000;
 
 
     /**
@@ -196,7 +196,7 @@ public class ARXAnonymizer {
         handle.getRegistry().createInputSubset(config);
 
         // Execute
-        return anonymizeInternal(handle, handle.getDefinition(), config).asResult(config, handle);
+        return anonymize(handle, handle.getDefinition(), config).asResult(config, handle);
     }
     
     /**
@@ -233,15 +233,6 @@ public class ARXAnonymizer {
      */
     public int getMaxQuasiIdentifiers() {
         return maxQuasiIdentifiers;
-    }
-
-    /**
-     * Returns the maximal size of the search space.
-     *
-     * @return
-     */
-    public int getMaxTransformations() {
-        return maxTransformations;
     }
 
     /**
@@ -297,12 +288,66 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Sets the maximal size of the search space. Set to Integer.MAX_VALUE to disable the 
-     * restriction. Default is 200,000.
-     * @param maxTransformations
+     * Reset a previous lattice and run the algorithm .
+     *
+     * @param handle
+     * @param definition
+     * @param config
+     * @return
+     * @throws IOException
      */
-    public void setMaxTransformations(int maxTransformations) {
-        this.maxTransformations = maxTransformations;
+    private Result anonymize(final DataHandle handle,
+                             final DataDefinition definition,
+                             final ARXConfiguration config) throws IOException {
+
+        // Encode
+        final DataManager manager = getDataManager(handle, definition, config);
+        
+        // Attach arrays to data handle
+        ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
+                                         manager.getDataAnalyzed().getArray(),
+                                         manager.getDataStatic().getArray());
+
+        // Initialize
+        config.initialize(manager);
+
+        // Check
+        checkAfterEncoding(config, manager);
+
+        // Build or clean the lattice
+        SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
+
+        // Build a node checker
+        final NodeChecker checker = new NodeChecker(manager,
+                                                    config.getMetric(),
+                                                    config.getInternalConfiguration(),
+                                                    historySize,
+                                                    snapshotSizeDataset,
+                                                    snapshotSizeSnapshot,
+                                                    solutionSpace);
+
+        // Initialize the metric
+        config.getMetric().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
+
+        // Create an algorithm instance
+        AbstractAlgorithm algorithm = getAlgorithm(config,
+                                                   manager,
+                                                   solutionSpace,
+                                                   checker);
+        algorithm.setListener(listener);
+
+        
+        // Execute
+
+        final long time = System.currentTimeMillis();
+        algorithm.traverse();
+        
+        // Deactivate history to prevent bugs when sorting data
+        checker.getHistory().reset();
+        checker.getHistory().setSize(0);
+        
+        // Return the result
+        return new Result(config.getMetric(), checker, solutionSpace, manager, algorithm, time);
     }
 
     /**
@@ -446,35 +491,6 @@ public class ARXAnonymizer {
         if (genQis.size() > maxQuasiIdentifiers) { 
             throw new IllegalArgumentException("Too many quasi-identifiers (" + genQis.size()+"). This restriction is configurable."); 
         }
-        int transformations = 1;
-        for (String genQi : genQis) {
-            if (definition.getHierarchy(genQi) == null) {
-                throw new IllegalArgumentException("No hierarchy specified for quasi-identifier (" + genQi + ")");
-            }
-            transformations *= definition.getMaximumGeneralization(genQi) - definition.getMinimumGeneralization(genQi) + 1;
-        }
-        if (transformations > maxTransformations) { 
-            throw new IllegalArgumentException("Too many transformations in the search space (" + transformations+ "). This restriction is configurable."); 
-        }
-    }
-
-    /**
-     * Prepares the data manager.
-     *
-     * @param handle the handle
-     * @param definition the definition
-     * @param config the config
-     * @return the data manager
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    private DataManager prepareDataManager(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException {
-
-        // Extract data
-        final String[] header = ((DataHandleInput) handle).header;
-        final int[][] dataArray = ((DataHandleInput) handle).data;
-        final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria(), getAggregateFunctions(definition));
-        return manager;
     }
 
     /**
@@ -491,56 +507,44 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Reset a previous lattice and run the algorithm .
-     *
-     * @param handle
-     * @param definition
+     * Returns an algorithm for the given problem instance
      * @param config
+     * @param manager
+     * @param solutionSpace
+     * @param checker
      * @return
-     * @throws IOException
      */
-    protected Result anonymizeInternal(final DataHandle handle,
-                                       final DataDefinition definition,
-                                       final ARXConfiguration config) throws IOException {
-
-        // Encode
-        final DataManager manager = prepareDataManager(handle, definition, config);
+    private AbstractAlgorithm getAlgorithm(final ARXConfiguration config,
+                                          final DataManager manager,
+                                          final SolutionSpace solutionSpace,
+                                          final NodeChecker checker) {
         
-        // Attach arrays to data handle
-        ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
-                                         manager.getDataAnalyzed().getArray(),
-                                         manager.getDataStatic().getArray());
+        if (config.isHeuristicSearchEnabled() ||
+            solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
+            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit());
+            
+        } else {
+            FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
+            return FLASHAlgorithm.create(solutionSpace, checker, strategy);
+        }
+    }
 
-        // Initialize
-        config.initialize(manager);
+    /**
+     * Prepares the data manager.
+     *
+     * @param handle the handle
+     * @param definition the definition
+     * @param config the config
+     * @return the data manager
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    private DataManager getDataManager(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException {
 
-        // Check
-        checkAfterEncoding(config, manager);
-
-        // Build or clean the lattice
-        Lattice lattice = new LatticeBuilder(manager.getHierarchiesMaxLevels(), manager.getHierarchiesMinLevels()).build();
-        lattice.setListener(listener);
-
-        // Build a node checker
-        final NodeChecker checker = new NodeChecker(manager, config.getMetric(), config.getInternalConfiguration(), historySize, snapshotSizeDataset, snapshotSizeSnapshot);
-
-        // Initialize the metric
-        config.getMetric().initialize(definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
-
-        // Create an algorithm instance
-        FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());
-        AbstractAlgorithm algorithm = FLASHAlgorithm.create(lattice, checker, strategy);
-        
-        // Execute
-
-        final long time = System.currentTimeMillis();
-        algorithm.traverse();
-        
-        // Deactivate history to prevent bugs when sorting data
-        checker.getHistory().reset();
-        checker.getHistory().setSize(0);
-        
-        // Return the result
-        return new Result(config.getMetric(), checker, lattice, manager, algorithm, time);
+        // Extract data
+        final String[] header = ((DataHandleInput) handle).header;
+        final int[][] dataArray = ((DataHandleInput) handle).data;
+        final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
+        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria(), getAggregateFunctions(definition));
+        return manager;
     }
 }

@@ -83,6 +83,7 @@ import org.deidentifier.arx.gui.worker.WorkerTransform;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.ImportConfiguration;
 import org.deidentifier.arx.io.ImportConfigurationCSV;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -425,6 +426,14 @@ public class Controller implements IView {
     }
 
     /**
+     * Expand action
+     * @param transformation
+     */
+    public void actionExpand(ARXNode transformation) {
+        model.getResult().getLattice().expand(transformation);
+    }
+
+    /**
      * Find and replace action
      */
     public void actionFindReplace() {
@@ -469,6 +478,20 @@ public class Controller implements IView {
                     }
                 }
             }
+
+            // Replace in input hierarchy
+            if (model.getInputConfig() != null) {
+                Hierarchy hierarchy = model.getInputConfig().getHierarchy(model.getSelectedAttribute());
+                if (hierarchy != null) {
+                    for (String[] array : hierarchy.getHierarchy()) {
+                        for (int i=0; i<array.length; i++) {
+                            if (array[i].equals(pair.getFirst())) {
+                                array[i] = pair.getSecond();
+                            }
+                        }
+                    }
+                }
+            }
             
             // Fire event
             ModelAuditTrailEntry entry = ModelAuditTrailEntry.createfindReplaceEntry( model.getSelectedAttribute(), 
@@ -483,9 +506,40 @@ public class Controller implements IView {
     }
 
     /**
-     * Starts the anonymization.
+     * Initializes the hierarchy for the currently selected attribute
      */
-    public void actionMenuEditAnonymize() {
+    public void actionMenuEditInitializeHierarchy() {
+
+        // Check
+        if (model == null ||
+            model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null ||
+            model.getSelectedAttribute() == null) {
+            return;
+        }
+        
+        // Obtain values
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int index = handle.getColumnIndexOf(model.getSelectedAttribute());
+        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
+        
+        // Create hierarchy
+        String[][] array = new String[values.length][0];
+        for (int i = 0; i < values.length; i++) {
+            array[i] = new String[] { values[i] };
+        }
+        
+        // Update
+        Hierarchy hierarchy = Hierarchy.create(array);
+        this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
+        this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+    }
+
+    /**
+     * Starts the anonymization.
+     * @param heuristicSearch 
+     */
+    public void actionMenuEditAnonymize(boolean heuristicSearch) {
 
         if (model == null) {
             main.showInfoDialog(main.getShell(),
@@ -507,10 +561,35 @@ public class Controller implements IView {
             return;
         }
 
-        actionMenuEditReset();
+        // Query for execution time
+        int timeLimit = 0;
+        if (heuristicSearch) {
+            String output = this.actionShowInputDialog(main.getShell(), 
+                                                       Resources.getMessage("Controller.38"),  //$NON-NLS-1$
+                                                       Resources.getMessage("Controller.79") + //$NON-NLS-1$
+                                                       Resources.getMessage("Controller.80"), "0.5", //$NON-NLS-1$ //$NON-NLS-2$
+                                                       new IInputValidator(){
+                                                        public String isValid(String arg0) {
+                                                            // TODO: Ugly hack
+                                                            try { 
+                                                                double val = Double.parseDouble(arg0); 
+                                                                return val>0d ? null : Resources.getMessage("Controller.98");  //$NON-NLS-1$
+                                                            } catch (Exception e) {
+                                                                return Resources.getMessage("Controller.99"); //$NON-NLS-1$
+                                                            }
+                                                        }
+            });
+            if (output == null) {
+                return;
+            }
+            timeLimit = Double.valueOf(Double.valueOf(output) * 1000d).intValue();
+        }
 
+        // Reset
+        actionMenuEditReset();
+        
         // Run the worker
-        final WorkerAnonymize worker = new WorkerAnonymize(model);
+        final WorkerAnonymize worker = new WorkerAnonymize(model, timeLimit);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
 
         // Show errors
@@ -521,7 +600,11 @@ public class Controller implements IView {
             if (worker.getError() instanceof InvocationTargetException) {
                 t = worker.getError().getCause();
             }
-            if (t instanceof NullPointerException) {
+            if (t instanceof OutOfMemoryError) {
+                main.showInfoDialog(main.getShell(),
+                                    Resources.getMessage("Controller.13"), //$NON-NLS-1$
+                                    Resources.getMessage("Controller.120")); //$NON-NLS-1$
+            } else if (t instanceof NullPointerException) {
                 main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.36"), t); //$NON-NLS-1$
             } else {
                 main.showInfoDialog(main.getShell(),
@@ -1055,15 +1138,17 @@ public class Controller implements IView {
 
         main.showProgressDialog(Resources.getMessage("Controller.83"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
-            
-            String message = worker.getError().getMessage();
-            if (message == null || message.equals("")) { //$NON-NLS-1$
-                message = Resources.getMessage("Controller.46")+worker.getError().getClass().getSimpleName(); //$NON-NLS-1$
+            Throwable t = worker.getError();
+            if (worker.getError() instanceof InvocationTargetException) {
+                t = worker.getError().getCause();
             }
-            
+            String message = t.getMessage();
+            if (message == null || message.equals("")) { //$NON-NLS-1$
+                message = Resources.getMessage("Controller.46") + t.getClass().getSimpleName(); //$NON-NLS-1$
+            }
+
             getResources().getLogger().info(worker.getError());
-            main.showInfoDialog(main.getShell(),
-                                Resources.getMessage("Controller.85"), //$NON-NLS-1$
+            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.85"), //$NON-NLS-1$
                                 message);
             return;
         }
@@ -1095,13 +1180,6 @@ public class Controller implements IView {
         // Update subsets of the model
         if (model.getResult() != null) {
             update(new ModelEvent(this, ModelPart.RESULT, model.getResult()));
-        }
-
-        // Update subsets of the model
-        if (tempSelectedNode != null) {
-            model.setSelectedNode(tempSelectedNode);
-            update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
-            this.actionApplySelectedTransformation();
         }
 
         // Update subsets of the model
@@ -1170,6 +1248,13 @@ public class Controller implements IView {
             update(new ModelEvent(this,
                                   ModelPart.SELECTED_VIEW_CONFIG,
                                   model.getOutput()));
+        }
+
+        // Update subsets of the model
+        if (tempSelectedNode != null) {
+            model.setSelectedNode(tempSelectedNode);
+            update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
+            this.actionApplySelectedTransformation();
         }
 
         // We just loaded the model, so there are no changes
@@ -1278,7 +1363,6 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1293,6 +1377,23 @@ public class Controller implements IView {
                                         final String text,
                                         final String initial) {
         return main.showInputDialog(shell, header, text, initial);
+    }
+
+    /**
+     * Shows an input dialog.
+     *
+     * @param shell
+     * @param header
+     * @param text
+     * @param initial
+     * @return
+     */
+    public String actionShowInputDialog(final Shell shell,
+                                        final String header,
+                                        final String text,
+                                        final String initial,
+                                        final IInputValidator validator) {
+        return main.showInputDialog(shell, header, text, initial, validator);
     }
 
     /**
@@ -1352,6 +1453,17 @@ public class Controller implements IView {
         return main.showQuestionDialog(shell, header, text);
     }
 
+    /**
+     * Shows a question dialog.
+     *
+     * @param header
+     * @param text
+     * @return
+     */
+    public boolean actionShowQuestionDialog(final String header,
+                                            final String text) {
+        return main.showQuestionDialog(this.main.getShell(), header, text);
+    }
     /**
      * Internal method for showing a "save file" dialog.
      *
@@ -1453,7 +1565,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.70")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-
+    
     /**
      * Registers a listener at the controller.
      *
@@ -1475,7 +1587,7 @@ public class Controller implements IView {
             }
         }
     }
-    
+
     /**
      * Returns debug data.
      *

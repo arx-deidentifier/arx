@@ -23,11 +23,12 @@ import java.util.Set;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
@@ -99,14 +100,14 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         double[] result = new double[getDimensions()];
         Arrays.fill(result, entry.count);
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
         int suppressedTuples = 0;
         int unsuppressedTuples = 0;
@@ -121,7 +122,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         
         double[] result = new double[getDimensions()];
         for (int i = 0; i<heights.length; i++) {
-            double value = heights[i] == 0 ? 0 : (double) node.getTransformation()[i] / (double) heights[i];
+            double value = heights[i] == 0 ? 0 : (double) node.getGeneralization()[i] / (double) heights[i];
             result[i] += (double)unsuppressedTuples * value + (double)suppressedTuples;
             result[i] /= rowCount;
         }
@@ -132,9 +133,9 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         double[] result = new double[getDimensions()];
-        final int[] transformation = node.getTransformation();
+        final int[] transformation = node.getGeneralization();
         for (int i = 0; i < transformation.length; i++) {
             double level = (double) transformation[i];
             result[i] += heights[i] == 0 ? 0 : (level / (double) heights[i]);
@@ -143,7 +144,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
        return getLowerBoundInternal(node);
     }
@@ -170,11 +171,12 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    protected void initializeInternal(final DataDefinition definition,
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
                                       final Data input, 
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
-        super.initializeInternal(definition, input, hierarchies, config);
+        super.initializeInternal(manager, definition, input, hierarchies, config);
 
         // Min and max
         double[] min = new double[hierarchies.length];

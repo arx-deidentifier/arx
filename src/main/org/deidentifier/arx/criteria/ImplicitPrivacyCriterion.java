@@ -29,10 +29,11 @@ public abstract class ImplicitPrivacyCriterion extends PrivacyCriterion {
 
     /** 
      * Creates a new instance
-     * @param monotonic
+     * @param monotonicWithSuppression
+     * @param monotonicWithGeneralization
      */
-    public ImplicitPrivacyCriterion(boolean monotonic) {
-        super(monotonic);
+    public ImplicitPrivacyCriterion(boolean monotonicWithSuppression,
+                                    boolean monotonicWithGeneralization) {
+        super(monotonicWithSuppression, monotonicWithGeneralization);
     }
-
 }

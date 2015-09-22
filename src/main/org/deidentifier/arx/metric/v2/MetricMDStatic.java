@@ -23,11 +23,12 @@ import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
@@ -91,22 +92,22 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         double[] result = new double[getDimensions()];
         Arrays.fill(result, entry.count);
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         AbstractILMultiDimensional loss = this.getLowerBoundInternal(node);
         return new ILMultiDimensionalWithBound(loss, (AbstractILMultiDimensional)loss.clone());
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         double[] values = new double[getDimensions()];
-        int[] transformation = node.getTransformation();
+        int[] transformation = node.getGeneralization();
         for (int i = 0; i < transformation.length; i++) {
             values[i] = infoloss[i][transformation[i]];
         }
@@ -114,18 +115,19 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                        HashGroupify groupify) {
         return this.getLowerBoundInternal(node);
     }
     
     @Override
-    protected void initializeInternal(final DataDefinition definition,
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
                                       final Data input, 
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
         
-        super.initializeInternal(definition, input, hierarchies, config);
+        super.initializeInternal(manager, definition, input, hierarchies, config);
 
         // Initialize
         infoloss = new double[hierarchies.length][];

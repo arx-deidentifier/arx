@@ -22,11 +22,12 @@ import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * This class provides an implementation of a static metric in
@@ -73,15 +74,15 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     }
     
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final HashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
 
         double value = 0;
-        final int[] transformation = node.getTransformation();
+        final int[] transformation = node.getGeneralization();
         for (int i = 0; i < transformation.length; i++) {
             value += infoloss[i][transformation[i]];
         }
@@ -89,23 +90,24 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Node node) {
+    protected InformationLossDefault getLowerBoundInternal(Transformation node) {
         return this.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Node node,
+    protected InformationLossDefault getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
          return this.getLowerBoundInternal(node);
     }
     
     @Override
-    protected void initializeInternal(final DataDefinition definition,
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
                                       final Data input, 
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
         
-        super.initializeInternal(definition, input, hierarchies, config);
+        super.initializeInternal(manager, definition, input, hierarchies, config);
 
         // Initialize
         infoloss = new double[hierarchies.length][];

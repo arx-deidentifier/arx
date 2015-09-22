@@ -56,7 +56,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
      * @param subset Research subset
      */
     public DPresence(double dMin, double dMax, DataSubset subset) {
-        super(false);
+        super(false, true);
         this.dMin = dMin;
         this.dMax = dMax;
         this.subset = subset;
@@ -68,7 +68,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
      * @param subset
      */
     protected DPresence(DataSubset subset) {
-        super(true);
+        super(true, true);
         this.dMin = 0d;
         this.dMax = 1d;
         this.subset = subset;

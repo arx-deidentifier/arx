@@ -218,15 +218,9 @@ class UtilityEstimator {
      * @return
      */
     private InformationLoss<?> max(InformationLoss<?> first, InformationLoss<?> second) {
-        if (first == null) {
-            return second;
-        } else if (second == null) {
-            return first;
-        } else if (first.compareTo(second) < 0) {
-            return second;
-        } else {
-            return first;
-        }
+        return (first == null) ? second :
+               (second == null) ? first :
+               (first.compareTo(second) < 0) ? second : first;    
     }
 
     /**
@@ -237,15 +231,9 @@ class UtilityEstimator {
      * @return
      */
     private InformationLoss<?> min(InformationLoss<?> first, InformationLoss<?> second) {
-        if (first == null) {
-            return second;
-        } else if (second == null) {
-            return first;
-        } else if (first.compareTo(second) < 0) {
-            return first;
-        } else {
-            return second;
-        }
+        return (first == null) ? second :
+               (second == null) ? first :
+               (first.compareTo(second) < 0) ? first : second;    
     }
 
     /**
@@ -288,11 +276,7 @@ class UtilityEstimator {
      * @param source
      */
     private void pullMax(InformationLoss<?>[] array, int target, int source) {
-        if (array[target] == null) {
-            array[target] = array[source];
-        } else {
-            array[target] = max(array[target], array[source]);
-        }
+        array[target] = array[target] == null ? array[source] : max(array[target], array[source]);
     }
 
     /**
@@ -303,11 +287,7 @@ class UtilityEstimator {
      * @param source
      */
     private void pullMin(InformationLoss<?>[] array, int target, int source) {
-        if (array[target] == null) {
-            array[target] = array[source];
-        } else {
-            array[target] = min(array[target], array[source]);
-        }
+        array[target] = array[target] == null ? array[source] : min(array[target], array[source]);
     }
     
     

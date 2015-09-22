@@ -16,6 +16,8 @@
  */
 package org.deidentifier.arx;
 
+import java.util.Arrays;
+
 import de.linearbits.newtonraphson.NewtonRaphsonConfiguration;
 
 /**
@@ -107,4 +109,11 @@ public class ARXSolverConfiguration extends NewtonRaphsonConfiguration<ARXSolver
         return super.timeTotal(arg0);
     }
 
+    @Override
+    public ARXSolverConfiguration preparedStartValues(double[][] values) {
+        if (super.getStartValues() == null || (values != null && !Arrays.equals(super.getStartValues(), values))) {
+            modified = true;
+        }
+        return super.preparedStartValues(values);
+    }
 }

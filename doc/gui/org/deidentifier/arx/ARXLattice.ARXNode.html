@@ -140,7 +140,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#ARXLattice.ARXNode()">ARXLattice.ARXNode</a></strong>()</code>
+<td class="colOne"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#ARXLattice.ARXNode(org.deidentifier.arx.ARXLattice)">ARXLattice.ARXNode</a></strong>(<a href="../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice)</code>
 <div class="block">Internal constructor for deserialization.</div>
 </td>
 </tr>
@@ -166,96 +166,102 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#expand()">expand</a></strong>()</code>
+<div class="block">Materializes any non-materialized predecessors and successors</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXLattice.Anonymity.html" title="enum in org.deidentifier.arx">ARXLattice.Anonymity</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getAnonymity()">getAnonymity</a></strong>()</code>
 <div class="block">Returns the anonymity property.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.Integer,java.lang.Object&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getAttributes()">getAttributes</a></strong>()</code>
 <div class="block">Returns the attributes.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getDimension(java.lang.String)">getDimension</a></strong>(java.lang.String&nbsp;attr)</code>
 <div class="block">Returns the index of an attribute.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getGeneralization(java.lang.String)">getGeneralization</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Returns the generalization for the attribute.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.lang.Integer</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getId()">getId</a></strong>()</code>
 <div class="block">Returns a node's internal id.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getLowerBound()">getLowerBound</a></strong>()</code>
 <div class="block">Returns a node's lower bound, if any.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getMaximumInformationLoss()">getMaximumInformationLoss</a></strong>()</code>
 <div class="block">Returns the maximal information loss.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getMinimumInformationLoss()">getMinimumInformationLoss</a></strong>()</code>
 <div class="block">Returns the minimal information loss.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getPredecessors()">getPredecessors</a></strong>()</code>
 <div class="block">The predecessors.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getQuasiIdentifyingAttributes()">getQuasiIdentifyingAttributes</a></strong>()</code>
 <div class="block">Returns the quasi identifiers.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getSuccessors()">getSuccessors</a></strong>()</code>
 <div class="block">The successors.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getTotalGeneralizationLevel()">getTotalGeneralizationLevel</a></strong>()</code>
 <div class="block">Returns the sum of all generalization levels.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getTransformation()">getTransformation</a></strong>()</code>
 <div class="block">Returns the transformation as an array.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXLattice.Anonymity.html" title="enum in org.deidentifier.arx">ARXLattice.Anonymity</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#isAnonymous()">isAnonymous</a></strong>()</code>
 <div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#isChecked()">isChecked</a></strong>()</code>
 <div class="block">Returns if the node has been checked explicitly.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#setId(int)">setId</a></strong>(int&nbsp;id)</code>
 <div class="block">Internal method that sets the id.</div>
@@ -283,14 +289,15 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ARXLattice.ARXNode()">
+<a name="ARXLattice.ARXNode(org.deidentifier.arx.ARXLattice)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ARXLattice.ARXNode</h4>
-<pre>public&nbsp;ARXLattice.ARXNode()</pre>
+<pre>public&nbsp;ARXLattice.ARXNode(<a href="../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice)</pre>
 <div class="block">Internal constructor for deserialization.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>lattice</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -310,6 +317,16 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;<a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.Access.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode.Access</a>&nbsp;access()</pre>
 <div class="block">Alter associated fields.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="expand()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>expand</h4>
+<pre>public&nbsp;void&nbsp;expand()</pre>
+<div class="block">Materializes any non-materialized predecessors and successors</div>
 </li>
 </ul>
 <a name="getAnonymity()">

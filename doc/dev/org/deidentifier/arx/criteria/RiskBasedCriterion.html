@@ -134,7 +134,8 @@ extends <a href="../../../../org/deidentifier/arx/criteria/SampleBasedCriterion.
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/RiskBasedCriterion.html#RiskBasedCriterion(boolean, double)">RiskBasedCriterion</a></strong>(boolean&nbsp;monotonic,
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/RiskBasedCriterion.html#RiskBasedCriterion(boolean, boolean, double)">RiskBasedCriterion</a></strong>(boolean&nbsp;monotonicWithSuppression,
+                  boolean&nbsp;monotonicWithGeneralization,
                   double&nbsp;riskThreshold)</code>
 <div class="block">Creates a new instance of this criterion.</div>
 </td>
@@ -192,7 +193,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/SampleBasedCriterion.
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.criteria.<a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></h3>
-<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonic()">isMonotonic</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -215,16 +216,17 @@ extends <a href="../../../../org/deidentifier/arx/criteria/SampleBasedCriterion.
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="RiskBasedCriterion(boolean, double)">
+<a name="RiskBasedCriterion(boolean, boolean, double)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>RiskBasedCriterion</h4>
-<pre>public&nbsp;RiskBasedCriterion(boolean&nbsp;monotonic,
+<pre>public&nbsp;RiskBasedCriterion(boolean&nbsp;monotonicWithSuppression,
+                  boolean&nbsp;monotonicWithGeneralization,
                   double&nbsp;riskThreshold)</pre>
 <div class="block">Creates a new instance of this criterion.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - </dd><dd><code>riskThreshold</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonicWithSuppression</code> - </dd><dd><code>monotonicWithGeneralization</code> - </dd><dd><code>riskThreshold</code> - </dd></dl>
 </li>
 </ul>
 </li>

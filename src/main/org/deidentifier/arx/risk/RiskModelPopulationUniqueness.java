@@ -164,7 +164,16 @@ public class RiskModelPopulationUniqueness extends RiskModelPopulation {
      * decision rule
      */
     public double getFractionOfUniqueTuplesDankar() {
-        return getNumUniqueTuplesDankar() / super.getPopulationSize();
+        return getFractionOfUniqueTuplesDankar(true);
+    }
+
+    /**
+     * Estimated number of unique tuples in the population according to Dankar's
+     * decision rule
+     * @param useZayatzAsFallback 
+     */
+    public double getFractionOfUniqueTuplesDankar(boolean useZayatzAsFallback) {
+        return getNumUniqueTuplesDankar(useZayatzAsFallback) / super.getPopulationSize();
     }
 
     /**
@@ -211,9 +220,19 @@ public class RiskModelPopulationUniqueness extends RiskModelPopulation {
 
     /**
      * Estimated number of unique tuples in the population according to Dankar's
-     * decision rule
+     * decision rule.
      */
     public double getNumUniqueTuplesDankar() {
+        return getNumUniqueTuplesDankar(true);
+    }
+    
+    /**
+     * Estimated number of unique tuples in the population according to Dankar's
+     * decision rule
+     * 
+     * @param useZayatzAsFallback
+     */
+    public double getNumUniqueTuplesDankar(boolean useZayatzAsFallback) {
         if (numUniquesDankar == -1) {
             if (this.numClassesOfSize1 == 0) {
                 numUniquesDankar = 0;
@@ -225,11 +244,11 @@ public class RiskModelPopulationUniqueness extends RiskModelPopulation {
                     if (isValid(numUniquesPitman)) {
                         numUniquesDankar = numUniquesPitman;
                         dankarModel = PopulationUniquenessModel.PITMAN;
-                    } else {
+                    } else if (useZayatzAsFallback) {
                         getNumUniqueTuplesZayatz();
                         numUniquesDankar = numUniquesZayatz;
                         dankarModel = PopulationUniquenessModel.ZAYATZ;
-                    }
+                    } 
                 } else {
                     getNumUniqueTuplesSNB();
                     getNumUniqueTuplesZayatz();

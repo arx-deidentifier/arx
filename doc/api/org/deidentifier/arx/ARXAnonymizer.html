@@ -174,45 +174,33 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#getMaxTransformations()">getMaxTransformations</a></strong>()</code>
-<div class="block">Returns the maximal size of the search space.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setHistorySize(int)">setHistorySize</a></strong>(int&nbsp;historySize)</code>
 <div class="block">Sets the maximum number of snapshots allowed to store in the history.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setListener(org.deidentifier.arx.ARXListener)">setListener</a></strong>(<a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
 <div class="block">Sets a listener.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaximumSnapshotSizeDataset(double)">setMaximumSnapshotSizeDataset</a></strong>(double&nbsp;snapshotSize)</code>
 <div class="block">Sets the maximum size of a snapshot relative to the dataset size.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaximumSnapshotSizeSnapshot(double)">setMaximumSnapshotSizeSnapshot</a></strong>(double&nbsp;snapshotSizeSnapshot)</code>
 <div class="block">Sets the maximum size of a snapshot relative to the previous snapshot.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaxQuasiIdentifiers(int)">setMaxQuasiIdentifiers</a></strong>(int&nbsp;maxQuasiIdentifiers)</code>
 <div class="block">Sets the maximal number of quasi-identifiers.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaxTransformations(int)">setMaxTransformations</a></strong>(int&nbsp;maxTransformations)</code>
-<div class="block">Sets the maximal size of the search space.</div>
 </td>
 </tr>
 </table>
@@ -329,17 +317,6 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getMaxTransformations()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getMaxTransformations</h4>
-<pre>public&nbsp;int&nbsp;getMaxTransformations()</pre>
-<div class="block">Returns the maximal size of the search space.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="setHistorySize(int)">
 <!--   -->
 </a>
@@ -387,25 +364,13 @@ extends java.lang.Object</pre>
 <a name="setMaxQuasiIdentifiers(int)">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>setMaxQuasiIdentifiers</h4>
 <pre>public&nbsp;void&nbsp;setMaxQuasiIdentifiers(int&nbsp;maxQuasiIdentifiers)</pre>
 <div class="block">Sets the maximal number of quasi-identifiers. Set to Integer.MAX_VALUE to disable the 
  restriction. By default, the restriction is disabled.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>maxQuasiIdentifiers</code> - </dd></dl>
-</li>
-</ul>
-<a name="setMaxTransformations(int)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>setMaxTransformations</h4>
-<pre>public&nbsp;void&nbsp;setMaxTransformations(int&nbsp;maxTransformations)</pre>
-<div class="block">Sets the maximal size of the search space. Set to Integer.MAX_VALUE to disable the 
- restriction. Default is 200,000.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>maxTransformations</code> - </dd></dl>
 </li>
 </ul>
 </li>

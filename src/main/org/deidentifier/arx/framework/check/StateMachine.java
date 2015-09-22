@@ -18,7 +18,6 @@
 package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.framework.check.history.History;
-import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * This class implements a state machine, which determines which optimizations
@@ -70,7 +69,7 @@ public class StateMachine {
     private History    history  = null;
 
     /** The last node, which has been checked for k-anonymity. */
-    private Node       lastNode;
+    private int[]      lastNode;
 
     /** The last transition, which has been performed. */
     private Transition lastTransition;
@@ -79,7 +78,7 @@ public class StateMachine {
     private int[]      snapshot = null;
 
     /** The node for the current snapshot. */
-    private Node       snapshotNode;
+    private int[]      snapshotNode;
 
     /**
      * Instantiates a new state machine.
@@ -88,8 +87,8 @@ public class StateMachine {
      *            the history
      */
     public StateMachine(final History history) {
-        lastNode = null;
-        lastTransition = null;
+        this.lastNode = null;
+        this.lastTransition = null;
         this.history = history;
     }
 
@@ -98,7 +97,7 @@ public class StateMachine {
      *
      * @return the last node, which has been checked for k-anonymity
      */
-    public Node getLastNode() {
+    public int[] getLastNode() {
         return lastNode;
     }
 
@@ -126,7 +125,7 @@ public class StateMachine {
      *            the current node
      * @return the transition
      */
-    public Transition transition(final Node currentNode) {
+    public Transition transition(final int[] currentNode) {
 
         final Transition result = new Transition();
 
@@ -153,8 +152,7 @@ public class StateMachine {
             case ROLLUP:
             case SNAPSHOT:
                 if (isPossibleSnapshot(currentNode)) {
-                    result.projection = isPredecessor(snapshotNode, lastNode) ? getProjection(currentNode)
-                            : 0L;
+                    result.projection = isPredecessor(snapshotNode, lastNode) ? getProjection(currentNode) : 0L;
                     result.type = TransitionType.SNAPSHOT;
                     result.snapshot = snapshot;
                 } else if (isPossibleRollup(currentNode)) {
@@ -186,10 +184,10 @@ public class StateMachine {
      *            the current node
      * @return the projection
      */
-    private long getProjection(final Node currentNode) {
+    private long getProjection(final int[] currentNode) {
         long projection = 0L;
-        for (int i = 0; i < currentNode.getTransformation().length; i++) {
-            if (currentNode.getTransformation()[i] == lastNode.getTransformation()[i]) {
+        for (int i = 0; i < currentNode.length; i++) {
+            if (currentNode[i] == lastNode[i]) {
                 projection |= 1L << i;
             }
         }
@@ -203,9 +201,9 @@ public class StateMachine {
      *            the current node
      * @return true, if is possible rollup
      */
-    private boolean isPossibleRollup(final Node currentNode) {
-        for (int i = 0; i < lastNode.getTransformation().length; i++) {
-            if (currentNode.getTransformation()[i] < lastNode.getTransformation()[i]) { return false; }
+    private boolean isPossibleRollup(final int[] currentNode) {
+        for (int i = 0; i < lastNode.length; i++) {
+            if (currentNode[i] < lastNode[i]) { return false; }
         }
         return true;
 
@@ -218,7 +216,7 @@ public class StateMachine {
      *            the current node
      * @return true, if is possible snapshot
      */
-    private boolean isPossibleSnapshot(final Node currentNode) {
+    private boolean isPossibleSnapshot(final int[] currentNode) {
         snapshot = history.get(currentNode);
         snapshotNode = history.getTransformation();
         if (snapshot != null) { return true; }
@@ -232,9 +230,9 @@ public class StateMachine {
      * @param node2
      * @return
      */
-    private boolean isPredecessor(final Node node1, final Node node2) {
-        for (int i = 0; i < node2.getTransformation().length; i++) {
-            if (node1.getTransformation()[i] < node2.getTransformation()[i]) { return false; }
+    private boolean isPredecessor(final int[] node1, final int[] node2) {
+        for (int i = 0; i < node2.length; i++) {
+            if (node1[i] < node2[i]) { return false; }
         }
         return true;
     }

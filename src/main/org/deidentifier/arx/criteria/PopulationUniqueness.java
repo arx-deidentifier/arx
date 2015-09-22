@@ -97,7 +97,7 @@ public class PopulationUniqueness extends RiskBasedCriterion{
                                                PopulationUniquenessModel statisticalModel, 
                                                ARXPopulationModel populationModel,
                                                ARXSolverConfiguration config){
-        super(false, riskThreshold);
+        super(false, statisticalModel == PopulationUniquenessModel.ZAYATZ, riskThreshold);
         this.statisticalModel = statisticalModel;
         this.populationModel = populationModel.clone();
         this.solverConfig = config;
@@ -137,7 +137,12 @@ public class PopulationUniqueness extends RiskBasedCriterion{
                                                                                                       distribution.getNumberOfTuples(),
                                                                                                       solverConfig);
         
-        double populationUniques = riskModel.getFractionOfUniqueTuples(this.statisticalModel);
+        double populationUniques = 0d;
+        if (this.statisticalModel == PopulationUniquenessModel.DANKAR) {
+            populationUniques = riskModel.getFractionOfUniqueTuplesDankar(false);
+        } else {
+            populationUniques = riskModel.getFractionOfUniqueTuples(this.statisticalModel);
+        }
         if (populationUniques > 0d && populationUniques <= getRiskThreshold()) {
             return true;
         } else if (populationUniques == 0d && distribution.getFractionOfTuplesInClassesOfSize(1) == 0d) {

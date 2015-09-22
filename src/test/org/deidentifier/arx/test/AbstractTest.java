@@ -20,8 +20,6 @@ package org.deidentifier.arx.test;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.metric.Metric;
 import org.junit.Before;
@@ -29,41 +27,40 @@ import org.junit.Before;
 /**
  * 
  */
-public abstract class AbstractTest extends TestCase {
-
+public abstract class AbstractTest {
+    
     /**
      * 
      */
     public static enum TestMetric {
         
-        /**  TODO */
+        /** TODO */
         DMSTAR,
-        
-        /**  TODO */
+                                   
+                                   /** TODO */
         DM,
-        
-        /**  TODO */
+                                   
+                                   /** TODO */
         HEIGHT,
-        
-        /**  TODO */
+                                   
+                                   /** TODO */
         PREC,
-        
-        /**  TODO */
+                                   
+                                   /** TODO */
         ENTROPY,
-        
-        /**  TODO */
+                                   
+                                   /** TODO */
         NMENTROPY
     }
-
-    /**  TODO */
+    
+    /** TODO */
     protected DataProvider provider = null;
-
-    @Override
+    
     @Before
     public void setUp() {
         provider = new DataProvider();
     }
-
+    
     /**
      * 
      *
@@ -94,7 +91,7 @@ public abstract class AbstractTest extends TestCase {
         }
         return metric;
     }
-
+    
     /**
      * 
      *
@@ -108,7 +105,7 @@ public abstract class AbstractTest extends TestCase {
         }
         return list.toArray(new String[list.size()][]);
     }
-
+    
     /**
      * 
      *
@@ -116,7 +113,7 @@ public abstract class AbstractTest extends TestCase {
      */
     protected void printArray(final String[][] array) {
         System.out.print("{");
-
+        
         for (int j = 0; j < array.length; j++) {
             final String[] strings = array[j];
             System.out.print("{");
@@ -137,7 +134,7 @@ public abstract class AbstractTest extends TestCase {
         }
         System.out.print("}");
     }
-
+    
     /**
      * 
      *

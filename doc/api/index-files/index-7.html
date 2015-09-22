@@ -265,6 +265,18 @@
 <dd>
 <div class="block">Returns the configuration of this metric.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropy.html#getConfiguration()">getConfiguration()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropy.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMNormalizedEntropy</a></dt>
+<dd>
+<div class="block">Returns the configuration of this metric.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed.html#getConfiguration()">getConfiguration()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed</a></dt>
+<dd>
+<div class="block">Returns the configuration of this metric.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPrecomputed.html#getConfiguration()">getConfiguration()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMNormalizedEntropyPrecomputed</a></dt>
+<dd>
+<div class="block">Returns the configuration of this metric.</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricMDPrecision.html#getConfiguration()">getConfiguration()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricMDPrecision.html" title="class in org.deidentifier.arx.metric.v2">MetricMDPrecision</a></dt>
 <dd>
 <div class="block">Returns the configuration of this metric.</div>
@@ -278,6 +290,10 @@
 <div class="block">Returns the configuration of this metric.</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricSDDiscernability.html#getConfiguration()">getConfiguration()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricSDDiscernability.html" title="class in org.deidentifier.arx.metric.v2">MetricSDDiscernability</a></dt>
+<dd>
+<div class="block">Returns the configuration of this metric.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricSDNMAmbiguity.html#getConfiguration()">getConfiguration()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricSDNMAmbiguity.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMAmbiguity</a></dt>
 <dd>
 <div class="block">Returns the configuration of this metric.</div>
 </dd>
@@ -597,6 +613,11 @@
 <div class="block">Estimated number of unique tuples in the population according to Dankar's
  decision rule</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html#getFractionOfUniqueTuplesDankar(boolean)">getFractionOfUniqueTuplesDankar(boolean)</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationUniqueness</a></dt>
+<dd>
+<div class="block">Estimated number of unique tuples in the population according to Dankar's
+ decision rule</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html#getFractionOfUniqueTuplesPitman()">getFractionOfUniqueTuplesPitman()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationUniqueness</a></dt>
 <dd>
 <div class="block">Estimated number of unique tuples in the population according to Pitman's
@@ -704,6 +725,15 @@
 <dd>
 <div class="block">Returns the header.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.html#getHeuristicSearchThreshold()">getHeuristicSearchThreshold()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">When the size of the solution space exceeds the returned number of transformations,
+ ARX will use a heuristic search strategy.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.html#getHeuristicSearchTimeLimit()">getHeuristicSearchTimeLimit()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">The heuristic search algorithm will terminate after the returned number of milliseconds.</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/AttributeType.Hierarchy.DefaultHierarchy.html#getHierarchy()">getHierarchy()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/AttributeType.Hierarchy.DefaultHierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy.DefaultHierarchy</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/AttributeType.Hierarchy.html#getHierarchy()">getHierarchy()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></dt>
@@ -761,13 +791,13 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/InformationLossWithBound.html#getInformationLoss()">getInformationLoss()</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLoss(Node, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
-<dd>
-<div class="block">Returns the information loss that would be induced by suppressing the given entry.</div>
-</dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLoss(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLoss(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Evaluates the metric for the given node.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLoss(Transformation, HashGroupifyEntry)</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
+<dd>
+<div class="block">Returns the information loss that would be induced by suppressing the given entry.</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataDefinition.html#getInsensitiveAttributes()">getInsensitiveAttributes()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></dt>
 <dd>
@@ -879,11 +909,11 @@
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/InformationLossWithBound.html#getLowerBound()">getLowerBound()</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Node)">getLowerBound(Node)</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBound(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Returns a lower bound for the information loss for the given node.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBound(Node, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBound(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Returns a lower bound for the information loss for the given node.</div>
 </dd>
@@ -986,10 +1016,6 @@
 <dd>
 <div class="block">Returns the maximal number of quasi-identifiers.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/ARXAnonymizer.html#getMaxTransformations()">getMaxTransformations()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a></dt>
-<dd>
-<div class="block">Returns the maximal size of the search space.</div>
-</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html#getMaxValueLength()">getMaxValueLength()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderRedactionBased</a></dt>
 <dd>
 <div class="block">Returns properties about the attribute's domain.</div>
@@ -1068,6 +1094,22 @@
 <dd>
 <div class="block">Returns the mode</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getMonotonicityOfPrivacy()">getMonotonicityOfPrivacy()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></dt>
+<dd>
+<div class="block">Returns a monotonicity property</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.html#getMonotonicityOfPrivacy()">getMonotonicityOfPrivacy()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">Returns whether the privacy model is monotonic</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getMonotonicityOfUtility()">getMonotonicityOfUtility()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></dt>
+<dd>
+<div class="block">Returns a monotonicity property</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.html#getMonotonicityOfUtility()">getMonotonicityOfUtility()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">Returns whether the utility measure is monotonic</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXPopulationModel.Region.html#getName()">getName()</a></span> - Method in enum org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXPopulationModel.Region.html" title="enum in org.deidentifier.arx">ARXPopulationModel.Region</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/io/ImportColumnIndexed.html#getName()">getName()</a></span> - Method in class org.deidentifier.arx.io.<a href="../org/deidentifier/arx/io/ImportColumnIndexed.html" title="class in org.deidentifier.arx.io">ImportColumnIndexed</a></dt>
@@ -1083,6 +1125,14 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/MetricDescription.html#getName()">getName()</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/MetricDescription.html" title="class in org.deidentifier.arx.metric">MetricDescription</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getName()">getName()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLoss</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropy.html#getName()">getName()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropy.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMNormalizedEntropy</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed.html#getName()">getName()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPrecomputed.html#getName()">getName()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUNMNormalizedEntropyPrecomputed</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricSDNMAmbiguity.html#getName()">getName()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricSDNMAmbiguity.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMAmbiguity</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandle.html#getNonConformingValues(int, org.deidentifier.arx.DataType, int)">getNonConformingValues(int, DataType&lt;?&gt;, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
 <dd>
@@ -1180,6 +1230,11 @@
  risk</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html#getNumUniqueTuplesDankar()">getNumUniqueTuplesDankar()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationUniqueness</a></dt>
+<dd>
+<div class="block">Estimated number of unique tuples in the population according to Dankar's
+ decision rule.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html#getNumUniqueTuplesDankar(boolean)">getNumUniqueTuplesDankar(boolean)</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationUniqueness</a></dt>
 <dd>
 <div class="block">Estimated number of unique tuples in the population according to Dankar's
  decision rule</div>
@@ -1641,6 +1696,10 @@
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleSubset.html#getView()">getView()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.html#getVirtualSize()">getVirtualSize()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a></dt>
+<dd>
+<div class="block">Returns the virtual size of the solution space</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataType.DataTypeDescription.html#getWrappedClass()">getWrappedClass()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataType.DataTypeDescription.html" title="class in org.deidentifier.arx">DataType.DataTypeDescription</a></dt>
 <dd>
 <div class="block">Returns the wrapped java class.</div>

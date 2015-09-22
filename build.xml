@@ -4,7 +4,7 @@
     <description>Builds, tests, and runs the project.</description>
 
     <!-- defines the version number -->
-    <property name="arx.version" value="3.1.0" />
+    <property name="arx.version" value="3.2.2" />
 
 
     <!-- defines the to be included libraries -->
@@ -23,11 +23,11 @@
             <filename name="**/poi-ooxml-3.10-FINAL-20140208.jar" />
             <filename name="**/poi-ooxml-schemas-3.10-FINAL-20140208.jar" />
             <filename name="**/hppc-0.6.0.jar" />
-        	<filename name="**/univocity-parsers-1.3.1.jar" />
-        	<filename name="**/newtonraphson-0.0.1.jar" />
+            <filename name="**/univocity-parsers-1.3.1.jar" />
+            <filename name="**/newtonraphson-0.0.1.jar" />
+            <filename name="**/jhpl-0.0.1.jar" />
         </or>
     </fileset>
-
 
     <fileset id="gui.jars" dir="lib">
         <or>
@@ -48,14 +48,110 @@
             <filename name="**/swtrangeslider-0.0.1.jar" />
             <filename name="**/swttiles-0.0.1.jar" />
             <filename name="**/swtpreferences-0.0.1.jar" />
-        	<filename name="**/swtsimplebrowser-0.0.1.jar" />
-        	<filename name="**/jtds-1.3.1.jar" />
+            <filename name="**/swtsimplebrowser-0.0.1.jar" />
+            <filename name="**/jtds-1.3.1.jar" />
             <filename name="**/mysql-connector-java-5.1.27-bin.jar" />
-        	<filename name="**/postgresql-9.3-1101.jdbc41.jar" />
+            <filename name="**/postgresql-9.3-1101.jdbc41.jar" />
             <filename name="**/sqlite-jdbc-3.7.2.jar" />
-        	<filename name="**/ojdbc7.jar" />
+            <filename name="**/ojdbc7.jar" />
         </or>
     </fileset>
+
+    <fileset id="test.jars" dir="lib">
+        <or>
+            <filename name="**/junit-4.11.jar" />
+            <filename name="**/hamcrest-core-1.3.jar" />
+        </or>
+    </fileset>
+
+
+    <available file=".git" type="dir" property="git.present" />
+
+    <!-- https://stackoverflow.com/questions/2974106/how-to-lookup-the-latest-git-commit-hash-from-an-ant-build-script -->
+    <target name="git.revision" description="Store git revision in ${repository.version}" if="git.present">
+        <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+            <arg value="describe" />
+            <arg value="--tags" />
+            <arg value="--always" />
+            <arg value="HEAD" />
+        </exec>
+        <condition property="repository.version" value="${git.revision}" else="unknown">
+            <and>
+                <isset property="git.revision" />
+                <length string="${git.revision}" trim="yes" length="0" when="greater" />
+            </and>
+        </condition>
+    </target>
+
+    <target name="compileTest">
+        <delete dir="build/test" failonerror="true" />
+        <mkdir dir="build/test" />
+        <mkdir dir="build/junitReports" />
+
+        <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.7">
+            <classpath>
+                <fileset refid="lib.jars" />
+                <fileset refid="gui.jars" />
+                <fileset refid="test.jars" />
+                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+            </classpath>
+        </javac>
+        <copy todir="build/test/org/deidentifier/arx/gui/resources" overwrite="true">
+            <fileset dir="src/gui/org/deidentifier/arx/gui/resources" defaultexcludes="yes">
+                <exclude name="**/*.java" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="benchmark" depends="git.revision,compileTest">
+        <junit showoutput="yes" fork="yes">
+            <jvmarg value="-DBenchmark=build/junitReports" />
+            <jvmarg value="-DVersion=${git.revision}" />
+            <classpath>
+                <fileset refid="lib.jars" />
+                <fileset refid="test.jars" />
+                <path path="build/test" />
+                <path path="lib/log4j/log4j-1.2.17.jar" />
+                <path path="lib/sqlite/sqlite-jdbc-3.7.2.jar" />
+                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+            </classpath>
+            <batchtest todir="build/junitReports">
+                <fileset dir="src/test/">
+                    <include name="**/TestAnonymizationKAnonymity.java" />
+                    <include name="**/TestAnonymizationLDiversity.java" />
+                    <include name="**/TestAnonymizationDPresence.java" />
+                    <include name="**/TestAnonymizationTCloseness.java" />
+                    <include name="**/TestAnonymizationCombinations.java" />
+                </fileset>
+                <formatter type="plain" usefile="false" />
+                <formatter type="xml" />
+            </batchtest>
+        </junit>
+        <antcall target="analyse-benchmark" />
+    </target>
+
+    <target name="analyse-benchmark">
+        <java jar="arx-analyse.jar" fork="true">
+        </java>
+    </target>
+
+    <target name="test" depends="compileTest">
+        <junit showoutput="yes">
+            <classpath>
+                <fileset refid="lib.jars" />
+                <fileset refid="test.jars" />
+                <path path="build/test" />
+                <path path="lib/log4j/log4j-1.2.17.jar" />
+                <path path="lib/sqlite/sqlite-jdbc-3.7.2.jar" />
+                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+            </classpath>
+            <batchtest todir="build/junitReports" fork="yes">
+                <fileset dir="src/test/" includes="**/Test*.java" />
+                <formatter type="plain" usefile="false" />
+                <formatter type="xml" />
+            </batchtest>
+        </junit>
+    </target>
 
 
     <target name="release" depends="jars">
@@ -247,7 +343,7 @@
     <target name="jar-libs" depends="compile, buildExternalLibs">
         <jar destfile="jars/arx-${arx.version}-src.jar">
             <fileset dir="src/gui" defaultexcludes="no" />
-        	<fileset dir="src/main" defaultexcludes="no" />
+            <fileset dir="src/main" defaultexcludes="no" />
         </jar>
         <jar destfile="jars/libarx-${arx.version}-src.jar">
             <fileset dir="src/main" defaultexcludes="no" />
@@ -260,7 +356,7 @@
         </jar>
         <jar destfile="jars/libarx-${arx.version}-min.jar">
             <fileset dir="build/lib" defaultexcludes="no" />
-        	<zipfileset src="lib/objectselector/objectselector-0.1-lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/objectselector/objectselector-0.1-lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
         </jar>
     </target>
 

@@ -108,8 +108,8 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXListener.html#nodeTagged(int)">nodeTagged</a></strong>(int&nbsp;searchSpaceSize)</code>
-<div class="block">Is called when a node has been processed.</div>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXListener.html#progress(double)">progress</a></strong>(double&nbsp;progress)</code>
+<div class="block">Reports a progress value in [0, 1]</div>
 </td>
 </tr>
 </table>
@@ -127,15 +127,15 @@
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="nodeTagged(int)">
+<a name="progress(double)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>nodeTagged</h4>
-<pre>void&nbsp;nodeTagged(int&nbsp;searchSpaceSize)</pre>
-<div class="block">Is called when a node has been processed.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>searchSpaceSize</code> - The total number of transformations in the search space</dd></dl>
+<h4>progress</h4>
+<pre>void&nbsp;progress(double&nbsp;progress)</pre>
+<div class="block">Reports a progress value in [0, 1]</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>progress</code> - The progress value in [0, 1]</dd></dl>
 </li>
 </ul>
 </li>

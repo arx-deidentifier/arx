@@ -24,11 +24,12 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
@@ -71,6 +72,9 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
     /** Column -> Id -> Level -> Output. */
     private int[][][]     hierarchies;
+
+    /** Num rows */
+    private double        rows;
 
     /**
      * Precomputed.
@@ -121,14 +125,14 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Node node, HashGroupifyEntry entry) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         double[] result = new double[getDimensions()];
         Arrays.fill(result, entry.count);
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
     
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final HashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
         double[] result = getInformationLossInternalRaw(node, g);
         
@@ -149,7 +153,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
      * @param g
      * @return
      */
-    protected double[] getInformationLossInternalRaw(final Node node, final HashGroupify g) {
+    protected double[] getInformationLossInternalRaw(final Transformation node, final HashGroupify g) {
 
         // Prepare
         int[][][] cardinalities = this.cardinalities.getCardinalities();
@@ -159,7 +163,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         for (int column = 0; column < hierarchies.length; column++) {
 
             // Check for cached value
-            final int transformation = node.getTransformation()[column];
+            final int transformation = node.getGeneralization()[column];
             double value = cache[column][transformation];
             if (value == NOT_AVAILABLE) {
                 value = 0d;
@@ -182,12 +186,12 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return this.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                                HashGroupify groupify) {
         return this.getLowerBoundInternal(node);
     }
@@ -222,12 +226,13 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     @Override
-    protected void initializeInternal(DataDefinition definition,
-                                      Data input,
-                                      GeneralizationHierarchy[] hierarchies,
-                                      ARXConfiguration config) {
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
         
-        super.initializeInternal(definition, input, hierarchies, config);
+        super.initializeInternal(manager, definition, input, hierarchies, config);
 
         // Obtain subset
         RowSet subset = null;
@@ -239,9 +244,10 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         
         // Cardinalities
         this.cardinalities = new Cardinalities(input, subset, hierarchies);
+        this.rows = input.getDataLength();
         
         // Create a cache for the results
-        cache = new double[hierarchies.length][];
+        this.cache = new double[hierarchies.length][];
         for (int i = 0; i < cache.length; i++) {
             cache[i] = new double[hierarchies[i].getArray()[0].length];
             Arrays.fill(cache[i], NOT_AVAILABLE);
@@ -266,4 +272,39 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super.setMax(max);
         super.setMin(min);
     }
+    
+    /**
+     * Returns the upper bound of the entropy value per column
+     * @return
+     */
+    protected double[] getUpperBounds() {
+
+        // Prepare
+        int[][][] cardinalities = this.cardinalities.getCardinalities();
+        double[] result = new double[hierarchies.length];
+
+        // For each column
+        for (int column = 0; column < hierarchies.length; column++) {
+
+            // Compute entropy
+            double value = 0d;
+            final int[][] cardinality = cardinalities[column];
+            final int[][] hierarchy = hierarchies[column];
+            for (int in = 0; in < hierarchy.length; in++) {
+                final double a = cardinality[in][0];
+                if (a != 0d) {
+                    value += a * log2(a / rows);
+                }
+            }
+            result[column] = value;
+        }
+        
+        // Switch sign bit and round
+        for (int column = 0; column < hierarchies.length; column++) {
+            result[column] = round(result[column] == 0.0d ? result[column] : -result[column]);
+        }
+
+        return result;
+    }
+
 }

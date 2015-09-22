@@ -94,6 +94,21 @@
 <!--   -->
 </a>
 <h3>Uses of <a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a> in <a href="../../../../../../org/deidentifier/arx/framework/check/package-summary.html">org.deidentifier.arx.framework.check</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing fields, and an explanation">
+<caption><span>Fields in <a href="../../../../../../org/deidentifier/arx/framework/check/package-summary.html">org.deidentifier.arx.framework.check</a> declared as <a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a></code></td>
+<td class="colLast"><span class="strong">TransformedData.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/TransformedData.html#properties">properties</a></strong></code>
+<div class="block">The properties</div>
+</td>
+</tr>
+</tbody>
+</table>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
 <caption><span>Methods in <a href="../../../../../../org/deidentifier/arx/framework/check/package-summary.html">org.deidentifier.arx.framework.check</a> that return <a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
@@ -103,12 +118,32 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a></code></td>
-<td class="colLast"><span class="strong">NodeChecker.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#check(org.deidentifier.arx.framework.lattice.Node)">check</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">NodeChecker.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#check(org.deidentifier.arx.framework.lattice.Transformation)">check</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node)</code>
+<div class="block">Checks the given transformation, computes the utility if it fulfills the privacy model</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a></code></td>
-<td class="colLast"><span class="strong">NodeChecker.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#check(org.deidentifier.arx.framework.lattice.Node, boolean)">check</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
-     boolean&nbsp;forceMeasureInfoLoss)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">NodeChecker.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#check(org.deidentifier.arx.framework.lattice.Transformation, boolean)">check</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
+     boolean&nbsp;forceMeasureInfoLoss)</code>
+<div class="block">Checks the given transformation</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing constructors, and an explanation">
+<caption><span>Constructors in <a href="../../../../../../org/deidentifier/arx/framework/check/package-summary.html">org.deidentifier.arx.framework.check</a> with parameters of type <a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/TransformedData.html#TransformedData(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics, org.deidentifier.arx.framework.check.NodeChecker.Result)">TransformedData</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;bufferGH,
+               <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;bufferOT,
+               <a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a>&nbsp;statistics,
+               <a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a>&nbsp;properties)</code>
+<div class="block">Instantiate the helper object.</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -126,8 +161,7 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">Lattice.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#setChecked(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.NodeChecker.Result)">setChecked</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
-          <a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a>&nbsp;result)</code>
+<td class="colLast"><span class="strong">Transformation.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html#setChecked(org.deidentifier.arx.framework.check.NodeChecker.Result)">setChecked</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a>&nbsp;result)</code>
 <div class="block">Sets the properties to the given node.</div>
 </td>
 </tr>

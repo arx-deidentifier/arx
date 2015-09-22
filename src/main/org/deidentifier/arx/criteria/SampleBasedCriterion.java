@@ -34,10 +34,12 @@ public abstract class SampleBasedCriterion extends PrivacyCriterion {
     /**
      * Instantiates a new criterion.
      *
-     * @param monotonic
+     * @param monotonicWithSuppression
+     * @param monotonicWithGeneralization
      */
-    public SampleBasedCriterion(boolean monotonic){
-        super(monotonic);
+    public SampleBasedCriterion(boolean monotonicWithSuppression,
+                                boolean monotonicWithGeneralization) {
+        super(monotonicWithSuppression, monotonicWithGeneralization);
     }
     
     /**

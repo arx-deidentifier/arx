@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -34,6 +37,8 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
+import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.Metric.AggregateFunction;
 import org.junit.Test;
 
 /**
@@ -102,6 +107,7 @@ public class TestMicroaggregation extends AbstractTest {
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(5));
         config.setMaxOutliers(1d);
+        config.setMetric(Metric.createLossMetric(AggregateFunction.RANK));
         
         ARXResult result = anonymizer.anonymize(data, config);
         DataHandle exptectedOutput = Data.create("../arx-data/data-junit/adult_age_microaggregated.csv", ';').getHandle();
@@ -138,16 +144,16 @@ public class TestMicroaggregation extends AbstractTest {
         
         final String[][] resultArray = resultToArray(result);
         
-        final String[][] expectedArray =
-        { { "age", "gender", "zipcode" },
-                { "54", "male", "81***" },
-                { "50", "female", "81***" },
-                { "54", "male", "81***" },
-                { "50", "female", "81***" },
-                { "50", "female", "81***" },
-                { "54", "male", "81***" },
-                { "54", "male", "81***" } };
-        
+        final String[][] expectedArray = {
+                                           { "age", "gender", "zipcode" },
+                                           { "54", "male", "81***" },
+                                           { "50", "female", "81***" },
+                                           { "54", "male", "81***" },
+                                           { "50", "female", "81***" },
+                                           { "50", "female", "81***" },
+                                           { "54", "male", "81***" },
+                                           { "54", "male", "81***" } };
+                                           
         assertTrue(Arrays.deepEquals(resultArray, expectedArray));
     }
     
@@ -174,16 +180,16 @@ public class TestMicroaggregation extends AbstractTest {
         
         final String[][] resultArray = resultToArray(result);
         
-        final String[][] expectedArray =
-        { { "age", "gender", "zipcode" },
-                { "52", "male", "81***" },
-                { "47", "female", "81***" },
-                { "52", "male", "81***" },
-                { "47", "female", "81***" },
-                { "47", "female", "81***" },
-                { "52", "male", "81***" },
-                { "52", "male", "81***" } };
-        
+        final String[][] expectedArray = {
+                                           { "age", "gender", "zipcode" },
+                                           { "52", "male", "81***" },
+                                           { "47", "female", "81***" },
+                                           { "52", "male", "81***" },
+                                           { "47", "female", "81***" },
+                                           { "47", "female", "81***" },
+                                           { "52", "male", "81***" },
+                                           { "52", "male", "81***" } };
+                                           
         assertTrue(Arrays.deepEquals(resultArray, expectedArray));
     }
 }

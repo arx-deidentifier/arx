@@ -36,7 +36,7 @@ public class SampleUniqueness extends RiskBasedCriterion{
      * @param riskThreshold
      */
     public SampleUniqueness(double riskThreshold){
-        super(true, riskThreshold);
+        super(true, true, riskThreshold);
     }
 
     @Override

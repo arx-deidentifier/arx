@@ -117,9 +117,6 @@ public class Model implements Serializable {
     private int                                   maximalSizeForComplexOperations = 5000000;
     
     /** Threshold. */
-    private int                                   maxNodesInLattice               = 100000;
-    
-    /** Threshold. */
     private int                                   initialNodesInViewer            = 100;
     
     /** Threshold. */
@@ -289,7 +286,6 @@ public class Model implements Serializable {
 		this.anonymizer.setHistorySize(getHistorySize());
 		this.anonymizer.setMaximumSnapshotSizeDataset(getSnapshotSizeDataset());
 		this.anonymizer.setMaximumSnapshotSizeSnapshot(getSnapshotSizeSnapshot());
-		this.anonymizer.setMaxTransformations(getMaxNodesInLattice());
 		
 		// Add all criteria
 		this.createConfig();
@@ -621,15 +617,6 @@ public class Model implements Serializable {
      */
 	public int getMaximalSizeForComplexOperations(){
 	    return this.maximalSizeForComplexOperations;
-	}
-
-	/**
-     * Returns the maximal size of the lattice.
-     *
-     * @return
-     */
-	public int getMaxNodesInLattice() {
-		return maxNodesInLattice;
 	}
 
 	/**
@@ -1185,16 +1172,6 @@ public class Model implements Serializable {
         this.maximalSizeForComplexOperations = numberOfRows;
         this.setModified();
     }
-
-	/**
-     * Sets the according parameter.
-     *
-     * @param maxNodesInLattice
-     */
-	public void setMaxNodesInLattice(final int maxNodesInLattice) {
-		this.maxNodesInLattice = maxNodesInLattice;
-		setModified();
-	}
 
 	/**
      * Sets the according parameter.
