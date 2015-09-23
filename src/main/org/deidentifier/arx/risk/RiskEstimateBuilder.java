@@ -23,6 +23,8 @@ import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
+import org.deidentifier.arx.risk.hipaa.HIPAAIdentifiers;
+import org.deidentifier.arx.risk.hipaa.SafeHarborValidator;
 
 /**
  * A builder for risk estimates
@@ -215,25 +217,35 @@ public class RiskEstimateBuilder {
     }
 
     /**
-     * Returns an interruptible instance of this object.
-     * 
-     * @return
-     */
-    public RiskEstimateBuilderInterruptible getInterruptibleInstance() {
-        progress.value = 0;
-        return new RiskEstimateBuilderInterruptible(this);
-    }
+         * Returns the identified HIPAA identifiers.
+         * 
+         * @return
+         */
+        public HIPAAIdentifiers getHIPAAIdentifiers() {
+            return new HIPAAIdentifiers(SafeHarborValidator.validate(handle));
+        }
 
     /**
-     * Returns a class providing access to population-based risk estimates about
-     * the attributes. Uses the decision rule by Dankar et al.
-     * 
-     * @return
-     */
-    public RiskModelAttributes getPopulationBasedAttributeRisks() {
-        return getAttributeRisks(PopulationUniquenessModel.DANKAR);
-    }
+         * Returns an interruptible instance of this object.
+         * 
+         * @return
+         */
+        public RiskEstimateBuilderInterruptible getInterruptibleInstance() {
+            progress.value = 0;
+            return new RiskEstimateBuilderInterruptible(this);
+        }
 
+    /**
+         * Returns a class providing access to population-based risk estimates about
+         * the attributes. Uses the decision rule by Dankar et al.
+         * 
+         * @return
+         */
+        public RiskModelAttributes getPopulationBasedAttributeRisks() {
+            return getAttributeRisks(PopulationUniquenessModel.DANKAR);
+        }
+
+    
     /**
      * Returns a class providing access to population-based risk estimates about
      * the attributes.

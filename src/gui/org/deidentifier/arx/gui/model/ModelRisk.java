@@ -53,6 +53,7 @@ public class ModelRisk implements Serializable {
         CLASSES_PLOT,
         CLASSES_TABLE,
         ATTRIBUTES,
+        HIPAA_ATTRIBUTES,
         UNIQUES_DANKAR,
         UNIQUES_ALL,
         OVERVIEW

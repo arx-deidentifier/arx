@@ -24,8 +24,11 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
+import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
-import org.deidentifier.arx.risk.hipaa.SafeHarborValidator;
+import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
+import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
+import org.deidentifier.arx.risk.hipaa.HIPAAIdentifiers;
 import org.deidentifier.arx.risk.hipaa.Warning;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -43,13 +46,16 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class ViewSafeHarborAttributesTable extends ViewRisks<AnalysisContextRisk> {
+public class ViewHIPAAIdentifierTable extends ViewRisks<AnalysisContextRisk> {
     
     /** View */
     private Composite root;
     
     /** View */
     private DynamicTable table;
+    
+    /** Internal stuff. */
+    private AnalysisManager manager;
     
     /**
      * Creates a new instance.
@@ -59,19 +65,19 @@ public class ViewSafeHarborAttributesTable extends ViewRisks<AnalysisContextRisk
      * @param target
      * @param reset
      */
-    public ViewSafeHarborAttributesTable(final Composite parent,
-                                         final Controller controller,
-                                         final ModelPart target,
-                                         final ModelPart reset) {
-                                         
+    public ViewHIPAAIdentifierTable(final Composite parent,
+                                    final Controller controller,
+                                    final ModelPart target,
+                                    final ModelPart reset) {
+                                    
         super(parent, controller, target, reset);
-        controller.addListener(ModelPart.INPUT, this);
+        this.manager = new AnalysisManager(parent.getDisplay());
     }
     
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.INPUT) {
+        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             triggerUpdate();
         }
     }
@@ -93,22 +99,21 @@ public class ViewSafeHarborAttributesTable extends ViewRisks<AnalysisContextRisk
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
         
-        table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.BORDER |
-                                                 SWT.V_SCROLL | SWT.FULL_SELECTION);
+        table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
         
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("30%"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("30%"); //$NON-NLS-1$
         c.setText(Resources.getMessage("RiskAnalysis.27")); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("30%"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("30%"); //$NON-NLS-1$
         c.setText(Resources.getMessage("RiskAnalysis.28")); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("30%"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("30%"); //$NON-NLS-1$
         c.setText(Resources.getMessage("RiskAnalysis.29")); //$NON-NLS-1$
         c.setResizable(true);
         for (final TableColumn col : table.getColumns()) {
@@ -125,6 +130,9 @@ public class ViewSafeHarborAttributesTable extends ViewRisks<AnalysisContextRisk
     
     @Override
     protected void doReset() {
+        if (this.manager != null) {
+            this.manager.stop();
+        }
         table.setRedraw(false);
         for (final TableItem i : table.getItems()) {
             i.dispose();
@@ -135,46 +143,108 @@ public class ViewSafeHarborAttributesTable extends ViewRisks<AnalysisContextRisk
     
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
-        setStatusDone();
         
-        final Warning[] identifiers = SafeHarborValidator.validate(context.handle);
-        
-        // Update chart
-        for (final TableItem i : table.getItems()) {
-            i.dispose();
+        // Enable/disable
+        final RiskEstimateBuilderInterruptible builder = getBuilder(context);
+        if (!this.isEnabled() || builder == null) {
+            if (manager != null) {
+                manager.stop();
+            }
+            this.setStatusEmpty();
+            return;
         }
         
-        // For all identifiers
-        for (Warning item : identifiers) {
-            createItem(item);
-        }
+        // Create an analysis
+        Analysis analysis = new Analysis() {
+            
+            private boolean stopped = false;
+            private HIPAAIdentifiers identifiers;
+            
+            @Override
+            public int getProgress() {
+                return 0;
+            }
+            
+            @Override
+            public void onError() {
+                setStatusEmpty();
+            }
+            
+            @Override
+            public void onFinish() {
+                
+                if (stopped || !isEnabled()) {
+                    return;
+                }
+                
+                // Update chart
+                for (final TableItem i : table.getItems()) {
+                    i.dispose();
+                }
+                
+                // For all identifiers
+                for (Warning item : identifiers.getIdentifiers()) {
+                    createItem(item);
+                }
+                
+                for (final TableColumn col : table.getColumns()) {
+                    col.pack();
+                }
+                
+                table.redraw();
+                table.layout();
+                setStatusDone();
+            }
+            
+            @Override
+            public void onInterrupt() {
+                if (!isEnabled() || !isValid()) {
+                    setStatusEmpty();
+                } else {
+                    setStatusWorking();
+                }
+            }
+            
+            @Override
+            public void run() throws InterruptedException {
+                
+                // Timestamp
+                long time = System.currentTimeMillis();
+                
+                // Perform work
+                identifiers = builder.getHIPAAIdentifiers();
+                
+                // Our users are patient
+                while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped) {
+                    Thread.sleep(10);
+                }
+            }
+            
+            @Override
+            public void stop() {
+                if (builder != null)
+                    builder.interrupt();
+                this.stopped = true;
+            }
+        };
         
-        for (final TableColumn col : table.getColumns()) {
-            col.pack();
-        }
-        
-        table.layout();
-        table.redraw();
-        setStatusDone();
-
+        this.manager.start(analysis);
     }
     
     @Override
     protected ComponentStatusLabelProgressProvider getProgressProvider() {
-        return new ComponentStatusLabelProgressProvider() {
-            public int getProgress() {
-                return 100;
-            }
-        };
+        return null;
     }
     
     @Override
     protected ViewRiskType getViewType() {
-        return ViewRiskType.ATTRIBUTES;
+        return ViewRiskType.HIPAA_ATTRIBUTES;
     }
     
-    @Override
+    /**
+     * Is an analysis running
+     */
     protected boolean isRunning() {
-        return false;
+        return manager != null && manager.isRunning();
     }
 }
