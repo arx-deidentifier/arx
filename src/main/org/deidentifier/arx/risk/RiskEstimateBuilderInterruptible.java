@@ -19,19 +19,19 @@ package org.deidentifier.arx.risk;
 
 import org.deidentifier.arx.risk.RiskEstimateBuilder.ComputationInterruptedException;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
-import org.deidentifier.arx.risk.hipaa.HIPAAIdentifiers;
+import org.deidentifier.arx.risk.hipaa.Match;
 
 /**
  * A builder for risk estimates, interruptible
  * 
  * @author Fabian Prasser
- * 
+ *         
  */
 public class RiskEstimateBuilderInterruptible {
-
+    
     /** The wrapped instance */
     private final RiskEstimateBuilder parent;
-
+    
     /**
      * Creates a new instance
      * 
@@ -40,7 +40,7 @@ public class RiskEstimateBuilderInterruptible {
     RiskEstimateBuilderInterruptible(RiskEstimateBuilder parent) {
         this.parent = parent;
     }
-
+    
     /**
      * Returns a model of the equivalence classes in this data set
      * 
@@ -54,21 +54,21 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
+    
     /**
      * Returns a class providing access to the identifier HIPAA identifiers.
      * 
      * @return
      * @throws InterruptedException
      */
-    public HIPAAIdentifiers getHIPAAIdentifiers() throws InterruptedException {
+    public Match[] getHIPAAIdentifiers() throws InterruptedException {
         try {
             return parent.getHIPAAIdentifiers();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
+    
     /**
      * Returns a class providing access to population-based risk estimates about
      * the attributes. Uses the decision rule by Dankar et al., excluding the
@@ -83,7 +83,7 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
+    
     /**
      * Returns a class providing access to population-based risk estimates about
      * the attributes.
@@ -93,28 +93,28 @@ public class RiskEstimateBuilderInterruptible {
      * @return
      */
     public RiskModelAttributes
-            getPopulationBasedAttributeRisks(PopulationUniquenessModel model) throws InterruptedException {
+           getPopulationBasedAttributeRisks(PopulationUniquenessModel model) throws InterruptedException {
         try {
             return parent.getPopulationBasedAttributeRisks(model);
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
+    
     /**
      * Returns a class providing population-based uniqueness estimates
      * 
      * @return
      */
     public RiskModelPopulationUniqueness
-            getPopulationBasedUniquenessRisk() throws InterruptedException {
+           getPopulationBasedUniquenessRisk() throws InterruptedException {
         try {
             return parent.getPopulationBasedUniquenessRiskInterruptible();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
+    
     /**
      * If supported by the according builder, this method will report a progress
      * value in [0,100]. Otherwise, it will always return 0
@@ -124,7 +124,7 @@ public class RiskEstimateBuilderInterruptible {
     public int getProgress() {
         return parent.getProgress();
     }
-
+    
     /**
      * Returns a class providing access to sample-based risk estimates about the
      * attributes
@@ -138,7 +138,7 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
+    
     /**
      * Returns a class providing sample-based re-identification risk estimates
      * 
@@ -151,7 +151,7 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
+    
     /**
      * Returns a class providing sample-based uniqueness estimates
      * 
@@ -164,7 +164,7 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
+    
     /**
      * Interrupts all computations. Raises an InterruptedException.
      */
