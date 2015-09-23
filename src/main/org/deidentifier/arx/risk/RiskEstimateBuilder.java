@@ -217,35 +217,34 @@ public class RiskEstimateBuilder {
     }
 
     /**
-         * Returns the identified HIPAA identifiers.
-         * 
-         * @return
-         */
-        public HIPAAIdentifiers getHIPAAIdentifiers() {
-            return new HIPAAIdentifiers(SafeHarborValidator.validate(handle));
-        }
+     * Returns the identified HIPAA identifiers.
+     * 
+     * @return
+     */
+    public HIPAAIdentifiers getHIPAAIdentifiers() {
+        return new HIPAAIdentifiers(SafeHarborValidator.validate(handle));
+    }
 
     /**
-         * Returns an interruptible instance of this object.
-         * 
-         * @return
-         */
-        public RiskEstimateBuilderInterruptible getInterruptibleInstance() {
-            progress.value = 0;
-            return new RiskEstimateBuilderInterruptible(this);
-        }
+     * Returns an interruptible instance of this object.
+     * 
+     * @return
+     */
+    public RiskEstimateBuilderInterruptible getInterruptibleInstance() {
+        progress.value = 0;
+        return new RiskEstimateBuilderInterruptible(this);
+    }
 
     /**
-         * Returns a class providing access to population-based risk estimates about
-         * the attributes. Uses the decision rule by Dankar et al.
-         * 
-         * @return
-         */
-        public RiskModelAttributes getPopulationBasedAttributeRisks() {
-            return getAttributeRisks(PopulationUniquenessModel.DANKAR);
-        }
+     * Returns a class providing access to population-based risk estimates about
+     * the attributes. Uses the decision rule by Dankar et al.
+     * 
+     * @return
+     */
+    public RiskModelAttributes getPopulationBasedAttributeRisks() {
+        return getAttributeRisks(PopulationUniquenessModel.DANKAR);
+    }
 
-    
     /**
      * Returns a class providing access to population-based risk estimates about
      * the attributes.
@@ -254,8 +253,7 @@ public class RiskEstimateBuilder {
      *            Uses the given statistical model
      * @return
      */
-    public RiskModelAttributes
-            getPopulationBasedAttributeRisks(PopulationUniquenessModel model) {
+    public RiskModelAttributes getPopulationBasedAttributeRisks(PopulationUniquenessModel model) {
         return getAttributeRisks(model);
     }
 
@@ -313,14 +311,12 @@ public class RiskEstimateBuilder {
      *            null for sample-based model
      * @return
      */
-    private RiskModelAttributes
-            getAttributeRisks(final PopulationUniquenessModel model) {
+    private RiskModelAttributes getAttributeRisks(final PopulationUniquenessModel model) {
         progress.value = 0;
         return new RiskModelAttributes(this.identifiers, this.stop, progress) {
             @Override
-            protected RiskProvider
-                    getRiskProvider(final Set<String> attributes,
-                                    final WrappedBoolean stop) {
+            protected RiskProvider getRiskProvider(final Set<String> attributes,
+                                                   final WrappedBoolean stop) {
 
                 // Compute classes
                 RiskEstimateBuilder builder = new RiskEstimateBuilder(population,
@@ -329,11 +325,7 @@ public class RiskEstimateBuilder {
                                                                       stop,
                                                                       config);
                 RiskModelHistogram classes = builder.getEquivalenceClassModel();
-                builder = new RiskEstimateBuilder(population,
-                                                  handle,
-                                                  classes,
-                                                  stop,
-                                                  config);
+                builder = new RiskEstimateBuilder(population, handle, classes, stop, config);
 
                 // Use classes to compute risks
                 final RiskModelSampleRisks reidentificationRisks = builder.getSampleBasedReidentificationRisk();
@@ -375,11 +367,7 @@ public class RiskEstimateBuilder {
         synchronized (this) {
             if (classes == null) {
                 progress.value = 0;
-                classes = new RiskModelHistogram(handle,
-                                                 identifiers,
-                                                 stop,
-                                                 progress,
-                                                 factor);
+                classes = new RiskModelHistogram(handle, identifiers, stop, progress, factor);
             }
             return classes;
         }
@@ -390,8 +378,7 @@ public class RiskEstimateBuilder {
      * 
      * @return
      */
-    protected RiskModelPopulationUniqueness
-            getPopulationBasedUniquenessRiskInterruptible() {
+    protected RiskModelPopulationUniqueness getPopulationBasedUniquenessRiskInterruptible() {
         progress.value = 0;
         return new RiskModelPopulationUniqueness(population,
                                                  getHistogram(0.25),
