@@ -27,30 +27,30 @@ import java.util.List;
  */
 public class Attribute{
     private ValuePattern pattern;
-    private Identifier identifier;
+    private Category category;
     private List<Label> labels;
 
     /**
-     * @param identifier The identifier this attribute belongs to
+     * @param category The identifier this attribute belongs to
      * @param labels An array of labels associated which an attribute
      * @param pattern A pattern which is used to check the row contents
      */
-    public Attribute(Identifier identifier, Label[] labels, ValuePattern pattern){
-        this.identifier = identifier;
+    public Attribute(Category category, Label[] labels, ValuePattern pattern){
+        this.category = category;
         this.labels = new ArrayList<Label>(Arrays.asList(labels));
         this.pattern = pattern;
     }
 
-    public Attribute(Identifier identifier, Label label){
-        this(identifier, label, null);
+    public Attribute(Category category, Label label){
+        this(category, label, null);
     }
 
-    public Attribute(Identifier identifier, Label[] labels){
-        this(identifier, labels, null);
+    public Attribute(Category category, Label[] labels){
+        this(category, labels, null);
     }
 
-    public Attribute(Identifier identifier, Label label, ValuePattern pattern){
-        this(identifier, new Label[] { label }, pattern);
+    public Attribute(Category category, Label label, ValuePattern pattern){
+        this(category, new Label[] { label }, pattern);
     }
 
     /**
@@ -80,9 +80,9 @@ public class Attribute{
     }
 
     /**
-     * @return Identifier which is associated to this label
+     * @return Category which is associated to this label
      */
-    public Identifier getIdentifier(){
-        return this.identifier;
+    public Category getCategory(){
+        return this.category;
     }
 }

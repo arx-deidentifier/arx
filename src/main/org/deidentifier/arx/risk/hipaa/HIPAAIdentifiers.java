@@ -2,13 +2,13 @@ package org.deidentifier.arx.risk.hipaa;
 
 public class HIPAAIdentifiers {
     
-    final private Warning[] identifiers;
+    final private Identifier[] identifiers;
     
-    public HIPAAIdentifiers(Warning[] identifiers) {
+    public HIPAAIdentifiers(Identifier[] identifiers) {
         this.identifiers = identifiers;
     }
     
-    public Warning[] getIdentifiers() {
+    public Identifier[] getIdentifiers() {
         return identifiers;
     }
     

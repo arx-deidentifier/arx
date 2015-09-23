@@ -29,7 +29,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.hipaa.HIPAAIdentifiers;
-import org.deidentifier.arx.risk.hipaa.Warning;
+import org.deidentifier.arx.risk.hipaa.Identifier;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -86,10 +86,10 @@ public class ViewHIPAAIdentifierTable extends ViewRisks<AnalysisContextRisk> {
      * Creates a table item
      * @param risks
      */
-    private void createItem(Warning identifier) {
+    private void createItem(Identifier identifier) {
         final TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, identifier.getColumn());
-        item.setText(1, identifier.getIdentifier().toString());
+        item.setText(1, identifier.getCategory().toString());
         item.setText(2, identifier.getClassifier().toString());
         item.setText(3, identifier.getValue());
     }
@@ -188,7 +188,7 @@ public class ViewHIPAAIdentifierTable extends ViewRisks<AnalysisContextRisk> {
                 }
                 
                 // For all identifiers
-                for (Warning item : identifiers.getIdentifiers()) {
+                for (Identifier item : identifiers.getIdentifiers()) {
                     createItem(item);
                 }
                 

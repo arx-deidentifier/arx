@@ -18,36 +18,57 @@
 package org.deidentifier.arx.risk.hipaa;
 
 /**
- * Represents the HIPPA identifiers
+ * Provides information about the occurrence of an HIPPA identifier
  * @author David Gaﬂmann
+ * @author Florian Kohlmayer
  */
-public enum Identifier {
-    NAME('A'),
-    GEOGRAPHIC_SUBDIVISION('B'),
-    DATE('C'),
-    TELEPHONE_NUMBER('D'),
-    FAX_NUMBER('E'),
-    EMAIL_ADDRESS('F'),
-    SOCIAL_SECURITY_NUMBER('G'),
-    MEDICAL_RECORD_NUMBER('H'),
-    HEALTH_PLAN_BENEFICIARY_NUMBER('I'),
-    ACCOUNT_NUMBER('J'),
-    CERTIFICATE_NUMBER('K'),
-    VEHICLE_IDENTIFIER('L'),
-    DEVICE_IDENTIFIER('M'),
-    URL('N'),
-    IP('O'),
-    BIOMETRIC_IDENTIFIER('P'),
-    PHOTOGRAPH('Q'),
-    OTHER('R');
-
-    private final char category;
-
-    Identifier(char category) {
+public class Identifier {
+    private final String     columnName;
+    private final Category category;
+    private final Classifier classifiedBy;
+    private final String     value;
+    
+    public Identifier(String columnName, Category category, Classifier classifiedBy, String value) {
+        this.columnName = columnName;
+        this.classifiedBy = classifiedBy;
         this.category = category;
+        this.value = value;
     }
-
-    public int getCategory() {
+    
+    /**
+     * The column name where the identifier was found
+     * @return The column number
+     */
+    public String getColumn() {
+        return this.columnName;
+    }
+    
+    /**
+     * The identifier which was found
+     * @return The found identifier
+     */
+    public Category getCategory() {
         return this.category;
+    }
+    
+    /**
+     * The value which caused the identification
+     * @return The value which caused the warning
+     */
+    public String getValue() {
+        return this.value;
+    }
+    
+    /**
+     * The classifier (column name or instance)
+     * @return
+     */
+    public Classifier getClassifier() {
+        return this.classifiedBy;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("Column: %s\tCategory: %s\tClassifier: %s\tValue: %s", this.getColumn(), this.getCategory(), this.getClassifier(), this.getValue());
     }
 }

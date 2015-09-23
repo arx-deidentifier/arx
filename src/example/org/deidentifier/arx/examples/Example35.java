@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.risk.hipaa.SafeHarborValidator;
-import org.deidentifier.arx.risk.hipaa.Warning;
+import org.deidentifier.arx.risk.hipaa.Identifier;
 
 /**
  * This class implements an example of how to use the HIPAA identifier validator.
@@ -42,7 +42,7 @@ public class Example35 {
         
         DataHandle handle = data.getHandle();
         
-        Warning[] warnings = SafeHarborValidator.validate(handle);
+        Identifier[] warnings = SafeHarborValidator.validate(handle);
         
         printWarnings(warnings);
     }
@@ -68,11 +68,11 @@ public class Example35 {
      * Displays the found warnings.
      * @param warnings
      */
-    private static void printWarnings(Warning[] warnings) {
+    private static void printWarnings(Identifier[] warnings) {
         if (warnings.length == 0) {
             System.out.println("No warnings");
         } else {
-            for (Warning w : warnings) {
+            for (Identifier w : warnings) {
                 System.out.println(w.toString());
             }
         }
