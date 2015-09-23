@@ -101,7 +101,7 @@ public class SafeHarborValidator {
         for (int i = 0; i < handle.getNumColumns(); i++) {
             for (Attribute attribute : attributes) {
                 if (attribute.matchesLabel(handle.getAttributeName(i))) {
-                    warnings.add(new Warning(i, 0, attribute.getIdentifier(), handle.getAttributeName(i)));
+                    warnings.add(new Warning(handle.getAttributeName(i), attribute.getIdentifier(), Classifier.COLUMN_NAME, handle.getAttributeName(i)));
                     columnsToCheck.remove(Integer.valueOf(i));
                 }
             }
@@ -125,7 +125,7 @@ public class SafeHarborValidator {
             for (int i = 0; i < distinctValues.length; i++) {
                 for (Attribute attribute : attributes) {
                     if (attribute.matchesPattern(distinctValues[i])) {
-                        warnings.add(new Warning(index, i, attribute.getIdentifier(), distinctValues[i]));
+                        warnings.add(new Warning(handle.getAttributeName(i), attribute.getIdentifier(), Classifier.ATTRIBUTE_VALUE, distinctValues[i]));
                         columnsToCheck.remove(columnIndex);
                         break;
                     }

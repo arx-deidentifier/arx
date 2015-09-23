@@ -88,9 +88,10 @@ public class ViewHIPAAIdentifierTable extends ViewRisks<AnalysisContextRisk> {
      */
     private void createItem(Warning identifier) {
         final TableItem item = new TableItem(table, SWT.NONE);
-        item.setText(0, String.valueOf(identifier.getColumn()));
+        item.setText(0, identifier.getColumn());
         item.setText(1, identifier.getIdentifier().toString());
-        item.setText(2, identifier.getValue());
+        item.setText(2, identifier.getClassifier().toString());
+        item.setText(3, identifier.getValue());
     }
     
     @Override
@@ -105,16 +106,20 @@ public class ViewHIPAAIdentifierTable extends ViewRisks<AnalysisContextRisk> {
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
         
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("30%"); //$NON-NLS-1$
+        c.setWidth("25%"); //$NON-NLS-1$
         c.setText(Resources.getMessage("RiskAnalysis.27")); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("30%"); //$NON-NLS-1$
+        c.setWidth("25%"); //$NON-NLS-1$
         c.setText(Resources.getMessage("RiskAnalysis.28")); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("30%"); //$NON-NLS-1$
+        c.setWidth("25%"); //$NON-NLS-1$
         c.setText(Resources.getMessage("RiskAnalysis.29")); //$NON-NLS-1$
+        c.setResizable(true);
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth("25%"); //$NON-NLS-1$
+        c.setText(Resources.getMessage("RiskAnalysis.30")); //$NON-NLS-1$
         c.setResizable(true);
         for (final TableColumn col : table.getColumns()) {
             col.pack();

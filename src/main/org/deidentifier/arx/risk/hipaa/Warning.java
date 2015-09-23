@@ -20,52 +20,55 @@ package org.deidentifier.arx.risk.hipaa;
 /**
  * Provides information about the occurrence of an HIPPA identifier
  * @author David Gaﬂmann
+ * @author Florian Kohlmayer
  */
-public class Warning{
-    private int column, row;
-    private Identifier identifier;
-    private String value;
-
-    public Warning(int column, int row, Identifier identifier, String value){
-        this.column = column;
-        this.row = row;
+public class Warning {
+    private final String     columnName;
+    private final Identifier identifier;
+    private final Classifier classifiedBy;
+    private final String     value;
+    
+    public Warning(String columnName, Identifier identifier, Classifier classifiedBy, String value) {
+        this.columnName = columnName;
+        this.classifiedBy = classifiedBy;
         this.identifier = identifier;
         this.value = value;
     }
-
-
+    
     /**
-     * The row number where the identifier was found
-     * @return The row number
-     */
-    public int getRow(){
-        return this.row;
-    }
-
-    /**
-     * The column number where the identifier was found
+     * The column name where the identifier was found
      * @return The column number
      */
-    public int getColumn(){
-        return this.column;
+    public String getColumn() {
+        return this.columnName;
     }
-
+    
     /**
      * The identifier which was found
      * @return The found identifier
      */
-    public Identifier getIdentifier() { return this.identifier; }
-
+    public Identifier getIdentifier() {
+        return this.identifier;
+    }
+    
     /**
-     * The value which caused the warning
+     * The value which caused the identification
      * @return The value which caused the warning
      */
-    public String getValue(){
+    public String getValue() {
         return this.value;
     }
-
+    
+    /**
+     * The classifier (column name or instance)
+     * @return
+     */
+    public Classifier getClassifier() {
+        return this.classifiedBy;
+    }
+    
     @Override
-    public String toString(){
-        return String.format("Column: %d\tRow: %d\tCategory: %s\tValue: %s", this.getColumn(), this.getRow(), this.getIdentifier(), this.getValue());
+    public String toString() {
+        return String.format("Column: %s\tType: %s\tClassifier: %s\tValue: %s", this.getColumn(), this.getIdentifier(), this.getClassifier(), this.getValue());
     }
 }
