@@ -15,12 +15,28 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.risk.hipaa;
+package org.deidentifier.arx.risk;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.ComputationInterruptedException;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
+import org.deidentifier.arx.risk.hipaa.Attribute;
+import org.deidentifier.arx.risk.hipaa.Category;
+import org.deidentifier.arx.risk.hipaa.Classifier;
+import org.deidentifier.arx.risk.hipaa.DatePattern;
+import org.deidentifier.arx.risk.hipaa.EMailPattern;
+import org.deidentifier.arx.risk.hipaa.IBANPattern;
+import org.deidentifier.arx.risk.hipaa.IPPattern;
+import org.deidentifier.arx.risk.hipaa.Identifier;
+import org.deidentifier.arx.risk.hipaa.Label;
+import org.deidentifier.arx.risk.hipaa.NamePattern;
+import org.deidentifier.arx.risk.hipaa.SSNPattern;
+import org.deidentifier.arx.risk.hipaa.URLPattern;
+import org.deidentifier.arx.risk.hipaa.VINPattern;
+import org.deidentifier.arx.risk.hipaa.ZIPPattern;
 
 /**
  * Encapsulates the validation process for the safe harbor method.
@@ -28,18 +44,19 @@ import org.deidentifier.arx.DataHandle;
  * @author Florian Kohlmayer
  *         
  */
-public class SafeHarborValidator {
+public class RiskModelHIPAASafeHarbor {
     /**
      * Validates a file with the safe harbor method
      * @param handle A data handle of the file which is to be validated
+     * @param stop 
      * @return An array of warnings
      */
-    public static Identifier[] validate(DataHandle handle) {
-        SafeHarborValidator validator = new SafeHarborValidator();
+    public static Identifier[] validate(DataHandle handle, WrappedBoolean stop) {
+        RiskModelHIPAASafeHarbor validator = new RiskModelHIPAASafeHarbor();
         List<Integer> columns = validator.getColumns(handle);
         
         List<Identifier> warnings = validator.checkColumnTitles(handle, columns);
-        warnings.addAll(validator.checkRows(handle, columns));
+        warnings.addAll(validator.checkRows(handle, columns, stop));
         
         return warnings.toArray(new Identifier[warnings.size()]);
     }
@@ -49,7 +66,7 @@ public class SafeHarborValidator {
     /**
      * Constructor
      */
-    private SafeHarborValidator() {
+    private RiskModelHIPAASafeHarbor() {
         initialize();
     }
     
@@ -76,9 +93,10 @@ public class SafeHarborValidator {
      * Checks the rows
      * @param handle A data handle of the file which is to be validated
      * @param columnsToCheck A list of column indices which should be checked
+     * @param stop 
      * @return
      */
-    private List<Identifier> checkRows(DataHandle handle, List<Integer> columnsToCheck) {
+    private List<Identifier> checkRows(DataHandle handle, List<Integer> columnsToCheck, WrappedBoolean stop) {
         List<Identifier> warnings = new ArrayList<Identifier>();
         
         for (int columnIndex = columnsToCheck.size() - 1; columnIndex >= 0; columnIndex--) {
@@ -87,6 +105,7 @@ public class SafeHarborValidator {
             
             for (int i = 0; i < distinctValues.length; i++) {
                 for (Attribute attribute : attributes) {
+                    if (stop.value) { throw new ComputationInterruptedException(); }
                     if (attribute.matchesPattern(distinctValues[i])) {
                         warnings.add(new Identifier(handle.getAttributeName(i), attribute.getCategory(), Classifier.ATTRIBUTE_VALUE, distinctValues[i]));
                         columnsToCheck.remove(columnIndex);

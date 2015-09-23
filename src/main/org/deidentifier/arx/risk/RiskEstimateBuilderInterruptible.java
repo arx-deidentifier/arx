@@ -62,7 +62,11 @@ public class RiskEstimateBuilderInterruptible {
      * @throws InterruptedException
      */
     public HIPAAIdentifiers getHIPAAIdentifiers() throws InterruptedException {
-        return parent.getHIPAAIdentifiers();
+        try {
+            return parent.getHIPAAIdentifiers();
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
     }
 
     /**

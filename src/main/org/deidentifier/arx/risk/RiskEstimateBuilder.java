@@ -24,7 +24,6 @@ import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 import org.deidentifier.arx.risk.hipaa.HIPAAIdentifiers;
-import org.deidentifier.arx.risk.hipaa.SafeHarborValidator;
 
 /**
  * A builder for risk estimates
@@ -222,7 +221,7 @@ public class RiskEstimateBuilder {
      * @return
      */
     public HIPAAIdentifiers getHIPAAIdentifiers() {
-        return new HIPAAIdentifiers(SafeHarborValidator.validate(handle));
+        return new HIPAAIdentifiers(RiskModelHIPAASafeHarbor.validate(handle, stop));
     }
 
     /**

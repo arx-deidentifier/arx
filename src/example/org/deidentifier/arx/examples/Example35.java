@@ -20,9 +20,11 @@ package org.deidentifier.arx.examples;
 
 import java.io.IOException;
 
+import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.risk.hipaa.SafeHarborValidator;
+import org.deidentifier.arx.risk.hipaa.HIPAAIdentifiers;
 import org.deidentifier.arx.risk.hipaa.Identifier;
 
 /**
@@ -42,7 +44,7 @@ public class Example35 {
         
         DataHandle handle = data.getHandle();
         
-        Identifier[] warnings = SafeHarborValidator.validate(handle);
+        HIPAAIdentifiers warnings = handle.getRiskEstimator(ARXPopulationModel.create(Region.USA)).getHIPAAIdentifiers();
         
         printWarnings(warnings);
     }
@@ -68,11 +70,11 @@ public class Example35 {
      * Displays the found warnings.
      * @param warnings
      */
-    private static void printWarnings(Identifier[] warnings) {
-        if (warnings.length == 0) {
+    private static void printWarnings(HIPAAIdentifiers warnings) {
+        if (warnings.getIdentifiers().length == 0) {
             System.out.println("No warnings");
         } else {
-            for (Identifier w : warnings) {
+            for (Identifier w : warnings.getIdentifiers()) {
                 System.out.println(w.toString());
             }
         }

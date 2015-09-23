@@ -21,7 +21,7 @@ package org.deidentifier.arx.risk.hipaa;
  * Represents the label of an attribute. Implements the levenshtein distance for fuzzy detection.
  * @author David Gaﬂmann
  */
-class Label {
+public class Label {
     private String value;
     private int tolerance;
 
