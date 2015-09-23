@@ -19,7 +19,6 @@ package org.deidentifier.arx.risk;
 
 import org.deidentifier.arx.risk.RiskEstimateBuilder.ComputationInterruptedException;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
-import org.deidentifier.arx.risk.hipaa.Match;
 
 /**
  * A builder for risk estimates, interruptible
@@ -61,7 +60,7 @@ public class RiskEstimateBuilderInterruptible {
      * @return
      * @throws InterruptedException
      */
-    public Match[] getHIPAAIdentifiers() throws InterruptedException {
+    public HIPAAIdentifierMatch[] getHIPAAIdentifiers() throws InterruptedException {
         try {
             return parent.getHIPAAIdentifiers();
         } catch (ComputationInterruptedException e) {

@@ -27,8 +27,8 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressPro
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
+import org.deidentifier.arx.risk.HIPAAIdentifierMatch;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
-import org.deidentifier.arx.risk.hipaa.Match;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -85,11 +85,11 @@ public class ViewHIPAAIdentifierTable extends ViewRisks<AnalysisContextRisk> {
      * Creates a table item
      * @param risks
      */
-    private void createItem(Match identifier) {
+    private void createItem(HIPAAIdentifierMatch identifier) {
         final TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, identifier.getColumn());
         item.setText(1, identifier.getIdentifier().toString());
-        item.setText(2, identifier.getClassifier().toString());
+        item.setText(2, identifier.getMatchType().toString());
         item.setText(3, identifier.getValue());
     }
     
@@ -162,7 +162,7 @@ public class ViewHIPAAIdentifierTable extends ViewRisks<AnalysisContextRisk> {
         Analysis analysis = new Analysis() {
             
             private boolean stopped = false;
-            private Match[] matches;
+            private HIPAAIdentifierMatch[] matches;
             
             @Override
             public int getProgress() {
@@ -187,7 +187,7 @@ public class ViewHIPAAIdentifierTable extends ViewRisks<AnalysisContextRisk> {
                 }
                 
                 // For all identifiers
-                for (Match item : matches) {
+                for (HIPAAIdentifierMatch item : matches) {
                     createItem(item);
                 }
                 

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.risk.hipaa;
+package org.deidentifier.arx.risk;
 
 import java.util.Calendar;
 import java.util.HashSet;
@@ -32,14 +32,15 @@ import org.apache.commons.validator.routines.checkdigit.IBANCheckDigit;
 
 /**
  * Interfaces the patterns
- * @author David Gaﬂmann
+ * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
  */
-public interface ValueMatcher {
+interface HIPAAMatcherAttributeValue {
+    
     /**
      * Pattern which matches Dates and years older than 89
-     * @author David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    public class DatePattern implements ValueMatcher {
+    class HIPAAMatcherDate implements HIPAAMatcherAttributeValue {
         
         @Override
         public boolean matches(String value) {
@@ -48,8 +49,8 @@ public interface ValueMatcher {
             }
             
             value = value.toLowerCase().trim();
-            boolean isDate = isDate(value);
-            if (isDate) {
+
+            if (isDate(value)) {
                 return true;
             }
             
@@ -60,7 +61,7 @@ public interface ValueMatcher {
          * @param value Cell content
          * @return True if input is a date
          */
-        protected boolean isDate(String value) {
+        private boolean isDate(String value) {
             DateValidator validator = DateValidator.getInstance();
             
             String[] formats = new String[] {
@@ -80,7 +81,7 @@ public interface ValueMatcher {
          * @param value Cell content
          * @return True if input is a year and older than 89
          */
-        protected boolean isYearOlderThan89(String value) {
+        private boolean isYearOlderThan89(String value) {
             if (value.length() != 4) {
                 return false;
             }
@@ -98,9 +99,9 @@ public interface ValueMatcher {
     
     /**
      * Pattern which matches email addresses
-     * @author David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    public class EMailPattern implements ValueMatcher {
+    class HIPAAMatcherEMail implements HIPAAMatcherAttributeValue {
         @Override
         public boolean matches(String value) {
             EmailValidator validator = EmailValidator.getInstance();
@@ -110,10 +111,10 @@ public interface ValueMatcher {
     
     /**
      * Pattern which matches IBAN account numbers
-     * @author David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    public class IBANPattern extends StringPattern {
-        public IBANPattern() {
+    class HIPAAMatcherIBAN extends HIPAAMatcherString {
+        HIPAAMatcherIBAN() {
             super("[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}");
         }
         
@@ -131,9 +132,9 @@ public interface ValueMatcher {
     
     /**
      * Pattern which maches IPv4 and IPv6 addresses
-     * @author David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    public class IPPattern implements ValueMatcher {
+    class HIPAAMatcherIP implements HIPAAMatcherAttributeValue {
         @Override
         public boolean matches(String value) {
             InetAddressValidator validator = InetAddressValidator.getInstance();
@@ -143,12 +144,12 @@ public interface ValueMatcher {
     
     /**
      * Pattern which matches names with a predefined list of names
-     * @author David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    public class NamePattern implements ValueMatcher {
+    class HIPAAMatcherName implements HIPAAMatcherAttributeValue {
         Set<String> names = new HashSet<String>();
         
-        public NamePattern() {
+        HIPAAMatcherName() {
             names.add("john");
             names.add("doe");
             names.add("max");
@@ -163,22 +164,22 @@ public interface ValueMatcher {
     
     /**
      * Pattern which matches the social security numbers
-     * @author David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    public class SSNPattern extends StringPattern {
-        public SSNPattern() {
+    class HIPAAMatcherSSN extends HIPAAMatcherString {
+        HIPAAMatcherSSN() {
             super("[0-9]{3}-[0-9]{2}-[0-9]{4}|[0-9]{9}");
         }
     }
     
     /**
      * Pattern which matches a string with the provided regular expression
-     * @author David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    public class StringPattern implements ValueMatcher {
+    abstract class HIPAAMatcherString implements HIPAAMatcherAttributeValue {
         Matcher matcher;
         
-        public StringPattern(String regex) {
+        HIPAAMatcherString(String regex) {
             Pattern pattern = Pattern.compile(regex);
             matcher = pattern.matcher("");
         }
@@ -192,9 +193,9 @@ public interface ValueMatcher {
     
     /**
      * Pattern which matches an URL
-     * @author David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    public class URLPattern implements ValueMatcher {
+    class HIPAAMatcherURL implements HIPAAMatcherAttributeValue {
         @Override
         public boolean matches(String value) {
             UrlValidator validator = UrlValidator.getInstance();
@@ -204,29 +205,28 @@ public interface ValueMatcher {
     
     /**
      * Pattern which matches names a vehicle identification number
-     * @author David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    public class VINPattern extends StringPattern {
-        public VINPattern() {
+    class HIPAAMatcherVIN extends HIPAAMatcherString {
+        HIPAAMatcherVIN() {
             super("[0-9A-Z]{17}");
         }
         
         @Override
         public boolean matches(String value) {
             value = value.replaceAll("\\s+", "").replaceAll("-", "");
-            boolean match = super.matches(value);
-            return match;
+            return super.matches(value);
         }
     }
     
     /**
      * Pattern which matches a ZIP code
-     * @author David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    public class ZIPPattern implements ValueMatcher {
+    class HIPAAMatcherZIP implements HIPAAMatcherAttributeValue {
         private Set<String> zipCodes;
         
-        public ZIPPattern() {
+        HIPAAMatcherZIP() {
             zipCodes = new HashSet<>();
             
             zipCodes.add("036");

@@ -15,27 +15,23 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.risk.hipaa;
+package org.deidentifier.arx.risk;
 
 /**
  * Provides information about the occurrence of an HIPPA identifier
+ * 
  * @author David Gaﬂmann
+ * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class Match {
-    
-    /**
-     * Represents the classifier for the HIPAA identifier.
-     * @author Florian Kohlmayer
-     */
-    public enum Classifier {
-                            COLUMN_NAME,
-                            ATTRIBUTE_VALUE
-    }
+public class HIPAAIdentifierMatch {
     
     /**
      * Represents the HIPPA identifiers
+     * 
      * @author David Gaﬂmann
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
      */
     public enum HIPAAIdentifier {
                                  NAME('A'),
@@ -63,14 +59,29 @@ public class Match {
             this.category = category;
         }
         
-        public int getCategory() {
+        int getCategory() {
             return category;
         }
     }
     
+    /**
+     * Represents the classifier for the HIPAA identifier.
+     * @author David Gaﬂmann
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     */
+    public enum MatchType {
+                            ATTRIBUTE_NAME,
+                            ATTRIBUTE_VALUE
+    }
+    
+    /** TODO*/
     private final String          column;
+    /** TODO*/
     private final HIPAAIdentifier identifier;
-    private final Classifier      classifiedBy;
+    /** TODO*/
+    private final MatchType      matchType;
+    /** TODO*/
     private final String          value;
     
     /**
@@ -81,19 +92,23 @@ public class Match {
      * @param classifiedBy
      * @param value
      */
-    public Match(String columnName, HIPAAIdentifier category, Classifier classifiedBy, String value) {
+    HIPAAIdentifierMatch(String columnName, HIPAAIdentifier category, MatchType classifiedBy, String value) {
         this.column = columnName;
-        this.classifiedBy = classifiedBy;
+        this.matchType = classifiedBy;
         this.identifier = category;
         this.value = value;
     }
     
-    /**
-     * The classifier (column name or instance)
-     * @return
-     */
-    public Classifier getClassifier() {
-        return classifiedBy;
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("HIPAAIdentifierMatch {\n");
+        builder.append(" - Column: ").append(getColumn()).append("\n");
+        builder.append(" - Identifier: ").append(getIdentifier()).append("\n");
+        builder.append(" - Match type: ").append(getMatchType()).append("\n");
+        builder.append(" - Value: ").append(getValue()).append("\n");
+        builder.append("}");
+        return builder.toString();
     }
     
     /**
@@ -113,15 +128,18 @@ public class Match {
     }
     
     /**
+     * The classifier (column name or instance)
+     * @return
+     */
+    public MatchType getMatchType() {
+        return matchType;
+    }
+    
+    /**
      * The value which caused the identification
      * @return The value which caused the warning
      */
     public String getValue() {
         return value;
-    }
-    
-    @Override
-    public String toString() {
-        return String.format("Column: %s\tIdentifier: %s\tClassifier: %s\tValue: %s", getColumn(), getIdentifier(), getClassifier(), getValue());
     }
 }

@@ -15,25 +15,31 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.risk.hipaa;
+package org.deidentifier.arx.risk;
 
-import org.deidentifier.arx.risk.hipaa.Match.HIPAAIdentifier;
+import org.deidentifier.arx.risk.HIPAAIdentifierMatch.HIPAAIdentifier;
 
 /**
  * Encapsulates validation logic for column headers and pattern matching
  * @author David Gaﬂmann
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
-public class MatcherConfig {
-    private ValueMatcher    pattern;
-    private HIPAAIdentifier category;
-    private HeaderMatcher[] labels;
+class HIPAAIdentifierConfig {
+    
+    /** TODO*/
+    private HIPAAMatcherAttributeValue  matcherValue;
+    /** TODO*/
+    private HIPAAIdentifier             identifier;
+    /** TODO*/
+    private HIPAAMatcherAttributeName[] matchersName;
     
     /**
      * Constructor.
      * @param category
      * @param label
      */
-    public MatcherConfig(HIPAAIdentifier category, HeaderMatcher label) {
+    HIPAAIdentifierConfig(HIPAAIdentifier category, HIPAAMatcherAttributeName label) {
         this(category, label, null);
     }
     
@@ -42,8 +48,8 @@ public class MatcherConfig {
      * @param category
      * @param label
      */
-    public MatcherConfig(HIPAAIdentifier category, HeaderMatcher label, ValueMatcher pattern) {
-        this(category, new HeaderMatcher[] { label }, pattern);
+    HIPAAIdentifierConfig(HIPAAIdentifier category, HIPAAMatcherAttributeName label, HIPAAMatcherAttributeValue pattern) {
+        this(category, new HIPAAMatcherAttributeName[] { label }, pattern);
     }
     
     /**
@@ -51,7 +57,7 @@ public class MatcherConfig {
      * @param category
      * @param label
      */
-    public MatcherConfig(HIPAAIdentifier category, HeaderMatcher[] labels) {
+    HIPAAIdentifierConfig(HIPAAIdentifier category, HIPAAMatcherAttributeName[] labels) {
         this(category, labels, null);
     }
     
@@ -61,35 +67,35 @@ public class MatcherConfig {
      * @param labels An array of labels associated which an attribute
      * @param pattern A pattern which is used to check the row contents
      */
-    public MatcherConfig(HIPAAIdentifier category, HeaderMatcher[] labels, ValueMatcher pattern) {
-        this.category = category;
-        this.labels = labels;
-        this.pattern = pattern;
+    HIPAAIdentifierConfig(HIPAAIdentifier category, HIPAAMatcherAttributeName[] labels, HIPAAMatcherAttributeValue pattern) {
+        this.identifier = category;
+        this.matchersName = labels;
+        this.matcherValue = pattern;
     }
     
     /**
      * @return Category which is associated to this label
      */
-    public HIPAAIdentifier getCategory() {
-        return category;
+    HIPAAIdentifier getIdentifier() {
+        return identifier;
     }
     
     /**
      * @return True if attribute has a pattern
      */
-    public boolean hasPattern() {
-        return pattern != null;
+    boolean hasValueMatcher() {
+        return matcherValue != null;
     }
     
     /**
-     * Returns if the value matches the header matcher
+     * Returns if the attribute name matches
      * 
-     * @param value The column name
+     * @param name The column name
      * @return True if input matches label
      */
-    public boolean matchesLabel(String value) {
-        for (HeaderMatcher label : labels) {
-            if (label.matches(value)) {
+    boolean matchesAttributeName(String name) {
+        for (HIPAAMatcherAttributeName label : matchersName) {
+            if (label.matches(name)) {
                 return true;
             }
         }
@@ -98,16 +104,16 @@ public class MatcherConfig {
     }
     
     /**
-     * Returns if the value matches the pattern matcher.
+     * Returns if the value matches
      * 
      * @param value
      * @return
      */
-    public boolean matchesPattern(String value) {
-        if (!hasPattern()) {
+    boolean matchesAttributeValue(String value) {
+        if (!hasValueMatcher()) {
             return false;
         } else {
-            return pattern.matches(value);
+            return matcherValue.matches(value);
         }
     }
 }

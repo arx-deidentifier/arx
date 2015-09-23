@@ -24,7 +24,7 @@ import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.risk.hipaa.Match;
+import org.deidentifier.arx.risk.HIPAAIdentifierMatch;
 
 /**
  * This class implements an example of how to use the HIPAA identifier validator.
@@ -43,7 +43,7 @@ public class Example35 {
         
         DataHandle handle = data.getHandle();
         
-        Match[] warnings = handle.getRiskEstimator(ARXPopulationModel.create(Region.USA)).getHIPAAIdentifiers();
+        HIPAAIdentifierMatch[] warnings = handle.getRiskEstimator(ARXPopulationModel.create(Region.USA)).getHIPAAIdentifiers();
         
         printWarnings(warnings);
     }
@@ -69,11 +69,11 @@ public class Example35 {
      * Displays the found warnings.
      * @param warnings
      */
-    private static void printWarnings(Match[] warnings) {
+    private static void printWarnings(HIPAAIdentifierMatch[] warnings) {
         if (warnings.length == 0) {
             System.out.println("No warnings");
         } else {
-            for (Match w : warnings) {
+            for (HIPAAIdentifierMatch w : warnings) {
                 System.out.println(w.toString());
             }
         }

@@ -15,21 +15,26 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.risk.hipaa;
+package org.deidentifier.arx.risk;
 
 /**
  * Represents the matcher for the column headers of an attribute. Implements the levenshtein distance for fuzzy detection.
  * @author David Gaﬂmann
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
-public class HeaderMatcher {
+class HIPAAMatcherAttributeName {
+    
+    /** TODO*/
     private String value;
+    /** TODO*/
     private int    tolerance;
     
     /**
      * Constructor.
      * @param value
      */
-    public HeaderMatcher(String value) {
+    HIPAAMatcherAttributeName(String value) {
         this(value, 0);
     }
     
@@ -37,19 +42,9 @@ public class HeaderMatcher {
      * Constructor.
      * @param value
      */
-    public HeaderMatcher(String value, int tolerance) {
+    HIPAAMatcherAttributeName(String value, int tolerance) {
         this.value = value.trim().toLowerCase();
         this.tolerance = tolerance;
-    }
-    
-    /**
-     * Returns true if value matches.
-     * @param value
-     * @return
-     */
-    public boolean matches(String value) {
-        value = value.trim().toLowerCase();
-        return levenshteinDistance(value, this.value) <= tolerance;
     }
     
     /**
@@ -100,5 +95,15 @@ public class HeaderMatcher {
         
         // the distance is the cost for transforming all letters in both strings
         return cost[len0 - 1];
+    }
+    
+    /**
+     * Returns true if value matches.
+     * @param value
+     * @return
+     */
+    boolean matches(String value) {
+        value = value.trim().toLowerCase();
+        return levenshteinDistance(value, this.value) <= tolerance;
     }
 }

@@ -23,7 +23,6 @@ import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
-import org.deidentifier.arx.risk.hipaa.Match;
 
 /**
  * A builder for risk estimates
@@ -220,7 +219,7 @@ public class RiskEstimateBuilder {
      * 
      * @return
      */
-    public Match[] getHIPAAIdentifiers() {
+    public HIPAAIdentifierMatch[] getHIPAAIdentifiers() {
         return RiskModelHIPAASafeHarbor.validate(handle, stop);
     }
 
