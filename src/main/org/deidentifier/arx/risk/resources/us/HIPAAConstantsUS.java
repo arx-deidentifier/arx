@@ -18,7 +18,7 @@ package org.deidentifier.arx.risk.resources.us;
 
 import java.io.InputStream;
 
-import org.deidentifier.arx.risk.resources.HIPAAConstants;
+import org.deidentifier.arx.risk.HIPAAConstants;
 
 /**
  * Utility class providing access to important constants for finding HIPAA identifiers.

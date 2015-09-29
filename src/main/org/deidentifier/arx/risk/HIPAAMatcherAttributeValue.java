@@ -30,23 +30,31 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.commons.validator.routines.checkdigit.IBANCheckDigit;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.risk.resources.HIPAAConstants;
 
 /**
  * Interfaces the patterns
  * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
  */
-interface HIPAAMatcherAttributeValue {
+abstract class HIPAAMatcherAttributeValue {
     
     /**
      * Pattern which matches a city with a predefined list of cities
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherCity implements HIPAAMatcherAttributeValue {
+    static class HIPAAMatcherCity extends HIPAAMatcherAttributeValue {
+        
+        /**
+         * Creates a new instance
+         * @param constants
+         */
+        HIPAAMatcherCity(HIPAAConstants constants) {
+            super(constants);
+        }
+        
         @Override
         public boolean matches(String value) {
             value = value.trim().toLowerCase();
-            return HIPAAConstants.getUSData().isCity(value);
+            return constants.isCity(value);
         }
     }
     
@@ -54,7 +62,15 @@ interface HIPAAMatcherAttributeValue {
      * Pattern which matches Dates and years older than 89
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherDate implements HIPAAMatcherAttributeValue {
+    static class HIPAAMatcherDate extends HIPAAMatcherAttributeValue {
+
+        /**
+         * Creates a new instance
+         * @param constants
+         */
+        HIPAAMatcherDate(HIPAAConstants constants) {
+            super(constants);
+        }
         
         @Override
         public boolean matches(String value) {
@@ -109,7 +125,16 @@ interface HIPAAMatcherAttributeValue {
      * Pattern which matches email addresses
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherEMail implements HIPAAMatcherAttributeValue {
+    static class HIPAAMatcherEMail extends HIPAAMatcherAttributeValue {
+
+        /**
+         * Creates a new instance
+         * @param constants
+         */
+        HIPAAMatcherEMail(HIPAAConstants constants) {
+            super(constants);
+        }
+        
         @Override
         public boolean matches(String value) {
             EmailValidator validator = EmailValidator.getInstance();
@@ -121,11 +146,20 @@ interface HIPAAMatcherAttributeValue {
      * Pattern which matches first names with a predefined list of names
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherFirstName implements HIPAAMatcherAttributeValue {
+    static class HIPAAMatcherFirstName extends HIPAAMatcherAttributeValue {
+
+        /**
+         * Creates a new instance
+         * @param constants
+         */
+        HIPAAMatcherFirstName(HIPAAConstants constants) {
+            super(constants);
+        }
+        
         @Override
         public boolean matches(String value) {
             value = value.trim().toLowerCase();
-            return HIPAAConstants.getUSData().isFirstname(value);
+            return constants.isFirstname(value);
         }
     }
     
@@ -133,7 +167,7 @@ interface HIPAAMatcherAttributeValue {
      * Pattern which matches IBAN account numbers
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherIBAN extends HIPAAMatcherString {
+    static class HIPAAMatcherIBAN extends HIPAAMatcherString {
         HIPAAMatcherIBAN() {
             super("[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}");
         }
@@ -149,49 +183,76 @@ interface HIPAAMatcherAttributeValue {
             return validator.isValid(value);
         }
     }
-
+    
     /**
      * Pattern which maches IPv4 and IPv6 addresses
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherIP implements HIPAAMatcherAttributeValue {
+    static class HIPAAMatcherIP extends HIPAAMatcherAttributeValue {
+
+        /**
+         * Creates a new instance
+         * @param constants
+         */
+        HIPAAMatcherIP(HIPAAConstants constants) {
+            super(constants);
+        }
+        
         @Override
         public boolean matches(String value) {
             InetAddressValidator validator = InetAddressValidator.getInstance();
             return validator.isValid(value);
         }
     }
+    
     /**
      * Pattern which matches last names with a predefined list of names
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherLastName implements HIPAAMatcherAttributeValue {
+    static class HIPAAMatcherLastName extends HIPAAMatcherAttributeValue {
+
+        /**
+         * Creates a new instance
+         * @param constants
+         */
+        HIPAAMatcherLastName(HIPAAConstants constants) {
+            super(constants);
+        }
+        
         @Override
         public boolean matches(String value) {
             value = value.trim().toLowerCase();
-            return HIPAAConstants.getUSData().isLastname(value);
+            return constants.isLastname(value);
         }
     }
-    
+
     /**
      * Pattern which matches the social security numbers
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherSSN extends HIPAAMatcherString {
+    static class HIPAAMatcherSSN extends HIPAAMatcherString {
         HIPAAMatcherSSN() {
             super("[0-9]{3}-[0-9]{2}-[0-9]{4}|[0-9]{9}");
         }
     }
-    
     /**
      * Pattern which matches a state with a predefined list of states
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherState implements HIPAAMatcherAttributeValue {
+    static class HIPAAMatcherState extends HIPAAMatcherAttributeValue {
+
+        /**
+         * Creates a new instance
+         * @param constants
+         */
+        HIPAAMatcherState(HIPAAConstants constants) {
+            super(constants);
+        }
+        
         @Override
         public boolean matches(String value) {
             value = value.trim().toLowerCase();
-            return HIPAAConstants.getUSData().isState(value);
+            return constants.isState(value);
         }
     }
     
@@ -199,10 +260,11 @@ interface HIPAAMatcherAttributeValue {
      * Pattern which matches a string with the provided regular expression
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    abstract class HIPAAMatcherString implements HIPAAMatcherAttributeValue {
+    static abstract class HIPAAMatcherString extends HIPAAMatcherAttributeValue {
         Matcher matcher;
         
         HIPAAMatcherString(String regex) {
+            super(null);
             Pattern pattern = Pattern.compile(regex);
             matcher = pattern.matcher("");
         }
@@ -210,7 +272,6 @@ interface HIPAAMatcherAttributeValue {
         @Override
         public boolean matches(String value) {
             return matcher.reset(value).matches();
-            
         }
     }
     
@@ -218,19 +279,28 @@ interface HIPAAMatcherAttributeValue {
      * Pattern which matches an URL
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherURL implements HIPAAMatcherAttributeValue {
+    static class HIPAAMatcherURL extends HIPAAMatcherAttributeValue {
+
+        /**
+         * Creates a new instance
+         * @param constants
+         */
+        HIPAAMatcherURL(HIPAAConstants constants) {
+            super(constants);
+        }
+        
         @Override
         public boolean matches(String value) {
             UrlValidator validator = UrlValidator.getInstance();
             return validator.isValid(value);
         }
     }
-
+    
     /**
      * Pattern which matches names a vehicle identification number
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherVIN extends HIPAAMatcherString {
+    static class HIPAAMatcherVIN extends HIPAAMatcherString {
         HIPAAMatcherVIN() {
             super("[0-9A-Z]{17}");
         }
@@ -241,15 +311,21 @@ interface HIPAAMatcherAttributeValue {
             return super.matches(value);
         }
     }
-
+    
     /**
      * Pattern which matches a ZIP code
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherZIP implements HIPAAMatcherAttributeValue {
+    static class HIPAAMatcherZIP extends HIPAAMatcherAttributeValue {
         private Set<String> zipCodes;
+
+        /**
+         * Creates a new instance
+         * @param constants
+         */
+        HIPAAMatcherZIP(HIPAAConstants constants) {
+            super(constants);
         
-        HIPAAMatcherZIP() {
             zipCodes = new HashSet<>();
             
             zipCodes.add("036");
@@ -276,7 +352,7 @@ interface HIPAAMatcherAttributeValue {
         @Override
         public boolean matches(String value) {
             value = value.replaceAll("\\s+", "").replaceAll("-", "");
-            if (HIPAAConstants.getUSData().isZipcode(value)) {
+            if (constants.isZipcode(value)) {
                 if (value.length() >= 3) {
                     String zipCode = value.substring(0, 3);
                     return zipCodes.contains(zipCode);
@@ -285,11 +361,22 @@ interface HIPAAMatcherAttributeValue {
             return false;
         }
     }
+
+    /** Constants*/
+    protected final HIPAAConstants constants;
+
+    /**
+     * Creates a new instance
+     * @param constants
+     */
+    public HIPAAMatcherAttributeValue(HIPAAConstants constants) {
+        this.constants = constants;
+    }
     
     /**
      * Returns true if the value matches the given Pattern.
      * @param value
      * @return
      */
-    public boolean matches(String value);
+    public abstract boolean matches(String value);
 }

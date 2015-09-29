@@ -14,13 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deidentifier.arx.risk.resources;
+package org.deidentifier.arx.risk;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.risk.resources.us.HIPAAConstantsUS;
@@ -44,16 +49,40 @@ public abstract class HIPAAConstants {
     }
 
     /** Cities */
-    private Set<String> cities     = null;
+    private Set<String>                       cities     = null;
     /** First names */
-    private Set<String> firstnames = null;
+    private Set<String>                       firstnames = null;
     /** Last names */
-    private Set<String> lastnames  = null;
+    private Set<String>                       lastnames  = null;
     /** States */
-    private Set<String> states     = null;
+    private Set<String>                       states     = null;
     /** Zip codes */
-    private Set<String> zipcodes   = null;
+    private Set<String>                       zipcodes   = null;
+    /** Labels */
+    private Map<String, Map<String, Integer>> labels     = null;
 
+    /**
+     * Returns all matchers for the given category
+     * @param category
+     * @return
+     */
+    public List<HIPAAMatcherAttributeName> getNameMatchers(String category) {
+
+        // Check
+        if (!getNameConfigurations().containsKey(category)) {
+            return new ArrayList<HIPAAMatcherAttributeName>(); 
+        }
+        
+        // Collect each matcher
+        List<HIPAAMatcherAttributeName> result = new ArrayList<HIPAAMatcherAttributeName>();
+        for (Entry<String, Integer> entry2 : getNameConfigurations().get(category).entrySet()) {
+            result.add(new HIPAAMatcherAttributeName(entry2.getKey(), entry2.getValue()));
+        }
+        
+        // Return
+        return result;
+    }
+    
     /** 
      * Cities
      * @param value
@@ -91,7 +120,7 @@ public abstract class HIPAAConstants {
     public boolean isState(String value) {
         return getStates().contains(value);
     }
-    
+
     /** 
      * Zip codes
      * 
@@ -101,7 +130,7 @@ public abstract class HIPAAConstants {
     public boolean isZipcode(String value) {
         return getZipcodes().contains(value);
     }
-
+    
     /** Cities */
     private Set<String> getCities() {
         if (cities == null) {
@@ -126,6 +155,46 @@ public abstract class HIPAAConstants {
         return lastnames;
     }
     
+    /**
+     * Returns all name configurations
+     * @return
+     */
+    private Map<String, Map<String, Integer>> getNameConfigurations() {
+        
+        if (this.labels == null) {
+                
+            InputStream stream = getInputStream("labels.properties");
+            BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+            this.labels = new HashMap<String, Map<String, Integer>>();
+    
+            try {
+                String line = br.readLine();
+                while (line != null) {
+    
+                    String[] parts = line.split("=");
+                    String label = parts[0];
+                    parts = parts[1].split(",");
+                    Map<String, Integer> map = new HashMap<String, Integer>();
+                    for (int i = 0; i < parts.length; i += 2) {
+                        map.put(parts[i], Integer.valueOf(parts[i+1]));
+                    }
+                    labels.put(label, map);
+                    line = br.readLine();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        return this.labels;
+    }
+
     /** States */
     private Set<String> getStates() {
         if (states == null) {
@@ -133,7 +202,7 @@ public abstract class HIPAAConstants {
         }
         return states;
     }
-    
+
     /** Zip codes */
     private Set<String> getZipcodes() {
         if (zipcodes == null) {
@@ -168,7 +237,7 @@ public abstract class HIPAAConstants {
         }
         return set;
     }
-
+    
     /**
      * Implement this to load the according file
      * @param file

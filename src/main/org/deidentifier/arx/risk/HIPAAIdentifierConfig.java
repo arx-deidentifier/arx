@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.risk;
 
+import java.util.List;
+
 import org.deidentifier.arx.risk.HIPAAIdentifierMatch.HIPAAIdentifier;
 
 /**
@@ -28,46 +30,38 @@ import org.deidentifier.arx.risk.HIPAAIdentifierMatch.HIPAAIdentifier;
 class HIPAAIdentifierConfig {
 
     /** TODO */
-    private HIPAAMatcherAttributeValue  matcherValue;
+    private HIPAAMatcherAttributeValue      matcherValue;
     /** TODO */
-    private HIPAAIdentifier             identifier;
+    private HIPAAIdentifier                 identifier;
     /** TODO */
-    private HIPAAMatcherAttributeName[] matchersName;
+    private List<HIPAAMatcherAttributeName> matchersName;
     /** TODO */
-    private String                      instance;
-    
-    /**
-     * Constructor.
-     * @param identifier
-     * @param instance
-     * @param label
-     */
-    HIPAAIdentifierConfig(HIPAAIdentifier identifier, String instance, HIPAAMatcherAttributeName label) {
-        this(identifier, instance, null, new HIPAAMatcherAttributeName[]{label});
-    }
-
-    /**
-     * Constructor.
-     * @param identifier
-     * @param instance
-     * @param label
-     */
-    HIPAAIdentifierConfig(HIPAAIdentifier identifier, String instance, HIPAAMatcherAttributeName... labels) {
-        this(identifier, instance, null, labels);
-    }
+    private String                          instance;
     
     /**
      * Creates a new matcher configuration
      * @param identifier The identifier this attribute belongs to
      * @param instance The specific instance of the identifier
      * @param labels An array of labels associated which an attribute
-     * @param pattern A pattern which is used to check the row contents
      */
-    HIPAAIdentifierConfig(HIPAAIdentifier identifier, String instance, HIPAAMatcherAttributeValue pattern, HIPAAMatcherAttributeName... labels) {
+    HIPAAIdentifierConfig(HIPAAIdentifier identifier, String instance, HIPAAMatcherAttributeValue pattern) {
+        this.identifier = identifier;
+        this.instance = instance;
+        this.matchersName = null;
+        this.matcherValue = pattern;
+    }
+    
+    /**
+     * Constructor.
+     * @param identifier
+     * @param instance
+     * @param label
+     */
+    HIPAAIdentifierConfig(HIPAAIdentifier identifier, String instance, List<HIPAAMatcherAttributeName> labels) {
         this.identifier = identifier;
         this.instance = instance;
         this.matchersName = labels;
-        this.matcherValue = pattern;
+        this.matcherValue = null;
     }
     
     /**
@@ -92,6 +86,9 @@ class HIPAAIdentifierConfig {
      * @return The value if any, null otherwise
      */
     String getMatchingAttributeName(String name) {
+        if (matchersName == null) {
+            return null;
+        }
         for (HIPAAMatcherAttributeName label : matchersName) {
             if (label.matches(name)) {
                 return label.getValue();
@@ -108,17 +105,10 @@ class HIPAAIdentifierConfig {
      * @return
      */
     String getMatchingAttributeValue(String value) {
-        if (hasValueMatcher() && matcherValue.matches(value)) {
+        if (matcherValue != null && matcherValue.matches(value)) {
             return value;
         } else {
             return null;
         }
-    }
-
-    /**
-     * @return True if attribute has a pattern
-     */
-    boolean hasValueMatcher() {
-        return matcherValue != null;
     }
 }
