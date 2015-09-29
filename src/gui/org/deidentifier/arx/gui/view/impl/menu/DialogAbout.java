@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.Text;
 public class DialogAbout extends TitleAreaDialog implements IDialog {
 
     /**  TODO */
-    private static final String LICENSE      = Resources.getLicencseText();
+    private static final String LICENSE      = Resources.getLicenseText();
     
     /**  TODO */
     private static final String ABOUT =   Resources.getMessage("AboutDialog.16") + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
