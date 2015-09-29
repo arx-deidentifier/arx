@@ -45,7 +45,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class ViewHIPAAIdentifierTable extends ViewRisks<AnalysisContextRisk> {
+public class ViewHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRisk> {
     
     /** View */
     private Composite root;
@@ -64,7 +64,7 @@ public class ViewHIPAAIdentifierTable extends ViewRisks<AnalysisContextRisk> {
      * @param target
      * @param reset
      */
-    public ViewHIPAAIdentifierTable(final Composite parent,
+    public ViewHIPAAIdentifiersTable(final Composite parent,
                                     final Controller controller,
                                     final ModelPart target,
                                     final ModelPart reset) {
@@ -89,8 +89,9 @@ public class ViewHIPAAIdentifierTable extends ViewRisks<AnalysisContextRisk> {
         final TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, identifier.getColumn());
         item.setText(1, identifier.getIdentifier().toString());
-        item.setText(2, identifier.getMatchType().toString());
-        item.setText(3, identifier.getValue());
+        item.setText(2, identifier.getInstance());
+        item.setText(3, identifier.getMatchType().toString());
+        item.setText(4, identifier.getValue());
     }
     
     @Override
@@ -105,19 +106,23 @@ public class ViewHIPAAIdentifierTable extends ViewRisks<AnalysisContextRisk> {
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
         
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("25%"); //$NON-NLS-1$
+        c.setWidth("20%%"); //$NON-NLS-1$
         c.setText(Resources.getMessage("RiskAnalysis.27")); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("25%"); //$NON-NLS-1$
+        c.setWidth("20%"); //$NON-NLS-1$
         c.setText(Resources.getMessage("RiskAnalysis.28")); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("25%"); //$NON-NLS-1$
+        c.setWidth("20%%"); //$NON-NLS-1$
+        c.setText(Resources.getMessage("RiskAnalysis.31")); //$NON-NLS-1$
+        c.setResizable(true);
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth("20%"); //$NON-NLS-1$
         c.setText(Resources.getMessage("RiskAnalysis.29")); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("25%"); //$NON-NLS-1$
+        c.setWidth("20%"); //$NON-NLS-1$
         c.setText(Resources.getMessage("RiskAnalysis.30")); //$NON-NLS-1$
         c.setResizable(true);
         for (final TableColumn col : table.getColumns()) {
