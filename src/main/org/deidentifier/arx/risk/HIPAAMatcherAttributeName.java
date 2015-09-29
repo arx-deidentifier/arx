@@ -98,6 +98,14 @@ class HIPAAMatcherAttributeName {
     }
     
     /**
+     * Returns the value
+     * @return
+     */
+    String getValue() {
+        return value;
+    }
+
+    /**
      * Returns true if value matches.
      * @param value
      * @return

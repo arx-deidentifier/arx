@@ -18,19 +18,21 @@
 package org.deidentifier.arx.risk;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.risk.HIPAAIdentifierMatch.HIPAAIdentifier;
 import org.deidentifier.arx.risk.HIPAAIdentifierMatch.MatchType;
+import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherCity;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherDate;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherEMail;
-import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherIBAN;
+import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherFirstName;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherIP;
-import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherName;
+import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherLastName;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherSSN;
+import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherState;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherURL;
-import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherVIN;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherZIP;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.ComputationInterruptedException;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
@@ -41,116 +43,276 @@ import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
  * @author Florian Kohlmayer
  *         
  */
-public class RiskModelHIPAASafeHarbor {
-    /**
-     * Validates a file with the safe harbor method
-     * @param handle A data handle of the file which is to be validated
-     * @param stop
-     * @return An array of warnings
-     */
-    public static HIPAAIdentifierMatch[] validate(DataHandle handle, WrappedBoolean stop) {
-        RiskModelHIPAASafeHarbor validator = new RiskModelHIPAASafeHarbor();
-        List<Integer> columns = validator.getColumns(handle);
-        
-        List<HIPAAIdentifierMatch> warnings = validator.checkColumnTitles(handle, columns);
-        warnings.addAll(validator.checkRows(handle, columns, stop));
-        
-        return warnings.toArray(new HIPAAIdentifierMatch[warnings.size()]);
-    }
-    
-    private List<HIPAAIdentifierConfig> attributes = new ArrayList<HIPAAIdentifierConfig>();
-    
+class RiskModelHIPAASafeHarbor {
+
+    /** All configurations*/
+    private final List<HIPAAIdentifierConfig> configurations;
+
     /**
      * Constructor
      */
-    private RiskModelHIPAASafeHarbor() {
-        initialize();
+    RiskModelHIPAASafeHarbor() {
+        this.configurations = getConfigurations();
     }
     
     /**
-     * Checks the column titles
-     * @param handle A data handle of the file which is to be validated
-     * @param columnsToCheck A list of column indices which should be checked
-     * @return
-     */
-    private List<HIPAAIdentifierMatch> checkColumnTitles(DataHandle handle, List<Integer> columnsToCheck) {
-        List<HIPAAIdentifierMatch> warnings = new ArrayList<HIPAAIdentifierMatch>();
-        for (int i = 0; i < handle.getNumColumns(); i++) {
-            for (HIPAAIdentifierConfig attribute : attributes) {
-                if (attribute.matchesAttributeName(handle.getAttributeName(i))) {
-                    warnings.add(new HIPAAIdentifierMatch(handle.getAttributeName(i), attribute.getIdentifier(), MatchType.ATTRIBUTE_NAME, handle.getAttributeName(i)));
-                    columnsToCheck.remove(Integer.valueOf(i));
-                }
-            }
-        }
-        return warnings;
-    }
-    
-    /**
-     * Checks the rows
-     * @param handle A data handle of the file which is to be validated
-     * @param columnsToCheck A list of column indices which should be checked
+     * Returns a list of matches with HIPAA identifiers
+     * 
+     * @param handle
      * @param stop
-     * @return
+     * @return An array of warnings
      */
-    private List<HIPAAIdentifierMatch> checkRows(DataHandle handle, List<Integer> columnsToCheck, WrappedBoolean stop) {
-        List<HIPAAIdentifierMatch> warnings = new ArrayList<HIPAAIdentifierMatch>();
+    public HIPAAIdentifierMatch[] getMatches(DataHandle handle, 
+                                             WrappedBoolean stop) {
         
-        for (int columnIndex = columnsToCheck.size() - 1; columnIndex >= 0; columnIndex--) {
-            int index = columnsToCheck.get(columnIndex);
-            String[] distinctValues = handle.getDistinctValues(index);
-            
-            for (int i = 0; i < distinctValues.length; i++) {
-                for (HIPAAIdentifierConfig attribute : attributes) {
-                    if (stop.value) {
-                        throw new ComputationInterruptedException();
-                    }
-                    if (attribute.matchesAttributeValue(distinctValues[i])) {
-                        warnings.add(new HIPAAIdentifierMatch(handle.getAttributeName(index), attribute.getIdentifier(), MatchType.ATTRIBUTE_VALUE, distinctValues[i]));
-                        columnsToCheck.remove(columnIndex);
-                        break;
-                    }
-                }
-            }
-        }
-        return warnings;
+        // Prepare
+        List<HIPAAIdentifierMatch> results = new ArrayList<HIPAAIdentifierMatch>();
         
-    }
-    
-    /**
-     * @param handle A data handle of the file which is to be validated
-     * @return A List of column indices
-     */
-    private List<Integer> getColumns(DataHandle handle) {
+        // Build list of columns
         List<Integer> columns = new ArrayList<Integer>();
         for (int i = 0; i < handle.getNumColumns(); i++) {
             columns.add(i);
         }
-        return columns;
+        
+        // Match attribute names
+        Iterator<Integer> iter = columns.iterator();
+        while (iter.hasNext()) {
+            Integer column = iter.next();
+            String attribute = handle.getAttributeName(column);
+            for (HIPAAIdentifierConfig config : configurations) {
+                if (stop.value) {
+                    throw new ComputationInterruptedException();
+                }
+                String match = config.getMatchingAttributeName(attribute);
+                if (match != null) {
+                    results.add(new HIPAAIdentifierMatch(attribute, 
+                                                         config.getIdentifier(), 
+                                                         config.getInstance(),
+                                                         MatchType.ATTRIBUTE_NAME, 
+                                                         match));
+                    iter.remove();
+                    break;
+                }
+            }
+        }
+        
+        // Match attribute values
+        iter = columns.iterator();
+        while (iter.hasNext()) {
+            Integer column = iter.next();
+            String attribute = handle.getAttributeName(column);
+            outer: for (HIPAAIdentifierConfig config : configurations) {
+                String[] values = handle.getDistinctValues(column);
+                for (String value : values) {
+                    if (stop.value) {
+                        throw new ComputationInterruptedException();
+                    }
+                    String match = config.getMatchingAttributeValue(value);
+                    if (match != null) {
+                        results.add(new HIPAAIdentifierMatch(attribute, 
+                                                             config.getIdentifier(), 
+                                                             config.getInstance(),
+                                                             MatchType.ATTRIBUTE_VALUE, 
+                                                             match));
+                        iter.remove();
+                        break outer;
+                    }
+                }
+            }
+        }
+        
+        // Return
+        return results.toArray(new HIPAAIdentifierMatch[results.size()]);
     }
     
     /**
      * Creates the list of attributes
      */
-    private void initialize() {
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.NAME, new HIPAAMatcherAttributeName("name", 1), new HIPAAMatcherName()));
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.GEOGRAPHIC_SUBDIVISION, new HIPAAMatcherAttributeName[] { new HIPAAMatcherAttributeName("address", 1), new HIPAAMatcherAttributeName("city"), new HIPAAMatcherAttributeName("country", 1), new HIPAAMatcherAttributeName("precinct", 1) }));
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.GEOGRAPHIC_SUBDIVISION, new HIPAAMatcherAttributeName[] { new HIPAAMatcherAttributeName("zip"), new HIPAAMatcherAttributeName("zip code", 1) }, new HIPAAMatcherZIP()));
+    private List<HIPAAIdentifierConfig> getConfigurations() {
         
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.DATE, new HIPAAMatcherAttributeName[] { new HIPAAMatcherAttributeName("age", 1), new HIPAAMatcherAttributeName("year", 1), new HIPAAMatcherAttributeName("birth date", 2), new HIPAAMatcherAttributeName("admission date", 2), new HIPAAMatcherAttributeName("discharge date", 2), new HIPAAMatcherAttributeName("death date", 2), new HIPAAMatcherAttributeName("date", 1) }, new HIPAAMatcherDate()));
+        List<HIPAAIdentifierConfig> configurations = new ArrayList<HIPAAIdentifierConfig>();
         
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.TELEPHONE_NUMBER, new HIPAAMatcherAttributeName[] { new HIPAAMatcherAttributeName("number", 1), new HIPAAMatcherAttributeName("telephone, 1"), new HIPAAMatcherAttributeName("fax"), new HIPAAMatcherAttributeName("phone", 1) }));
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.EMAIL_ADDRESS, new HIPAAMatcherAttributeName[] { new HIPAAMatcherAttributeName("email"), new HIPAAMatcherAttributeName("E-Mail address") }, new HIPAAMatcherEMail()));
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.NAME,
+                                                     "Generic name",
+                                                     new HIPAAMatcherAttributeName("name", 1)));
         
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.SOCIAL_SECURITY_NUMBER, new HIPAAMatcherAttributeName[] { new HIPAAMatcherAttributeName("SSN"), new HIPAAMatcherAttributeName("Social Security Number", 1) }, new HIPAAMatcherSSN()));
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.ACCOUNT_NUMBER, new HIPAAMatcherAttributeName[] { new HIPAAMatcherAttributeName("IBAN"), new HIPAAMatcherAttributeName("account number", 1) }, new HIPAAMatcherIBAN()));
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.NAME,
+                                                     "First name",
+                                                     new HIPAAMatcherFirstName(),
+                                                     new HIPAAMatcherAttributeName("first name", 1),
+                                                     new HIPAAMatcherAttributeName("firstname", 1),
+                                                     new HIPAAMatcherAttributeName("forename", 1),
+                                                     new HIPAAMatcherAttributeName("christian name", 2),
+                                                     new HIPAAMatcherAttributeName("given name", 1),
+                                                     new HIPAAMatcherAttributeName("baptismal name", 2)));
         
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.CERTIFICATE_NUMBER, new HIPAAMatcherAttributeName[] { new HIPAAMatcherAttributeName("license", 1), new HIPAAMatcherAttributeName("certificate", 1) }));
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.VEHICLE_IDENTIFIER, new HIPAAMatcherAttributeName[] { new HIPAAMatcherAttributeName("VIN"), new HIPAAMatcherAttributeName("vehicle identification number", 2) }, new HIPAAMatcherVIN()));
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.DEVICE_IDENTIFIER, new HIPAAMatcherAttributeName[] { new HIPAAMatcherAttributeName("serial number", 1) }));
+
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.NAME,
+                                                     "Last name",
+                                                     new HIPAAMatcherLastName(),
+                                                     new HIPAAMatcherAttributeName("last name", 1),
+                                                     new HIPAAMatcherAttributeName("family name", 2),
+                                                     new HIPAAMatcherAttributeName("family", 1),
+                                                     new HIPAAMatcherAttributeName("surname", 1),
+                                                     new HIPAAMatcherAttributeName("byname", 1),
+                                                     new HIPAAMatcherAttributeName("cognomen", 1)));
+
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.GEOGRAPHIC_SUBDIVISION, 
+                                                     "City",
+                                                     new HIPAAMatcherCity(),
+                                                     new HIPAAMatcherAttributeName("city", 1),
+                                                     new HIPAAMatcherAttributeName("municipality", 2),
+                                                     new HIPAAMatcherAttributeName("town", 1)));
+                                                     
+
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.GEOGRAPHIC_SUBDIVISION, 
+                                                     "ZIP Code",
+                                                     new HIPAAMatcherZIP(),
+                                                     new HIPAAMatcherAttributeName("zip", 1),
+                                                     new HIPAAMatcherAttributeName("zip code", 1),
+                                                     new HIPAAMatcherAttributeName("postal code", 2),
+                                                     new HIPAAMatcherAttributeName("zip+4", 1)));
+                                                     
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.GEOGRAPHIC_SUBDIVISION, 
+                                                     "State",
+                                                     new HIPAAMatcherState(),
+                                                     new HIPAAMatcherAttributeName("state", 1),
+                                                     new HIPAAMatcherAttributeName("region", 1),
+                                                     new HIPAAMatcherAttributeName("territory", 2),
+                                                     new HIPAAMatcherAttributeName("canton", 1),
+                                                     new HIPAAMatcherAttributeName("department", 2),
+                                                     new HIPAAMatcherAttributeName("county", 1),
+                                                     new HIPAAMatcherAttributeName("area", 1),
+                                                     new HIPAAMatcherAttributeName("district", 1),
+                                                     new HIPAAMatcherAttributeName("province", 1),
+                                                     new HIPAAMatcherAttributeName("federal state", 2)));
         
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.URL, new HIPAAMatcherAttributeName[] { new HIPAAMatcherAttributeName("url"), new HIPAAMatcherAttributeName("domain", 1) }, new HIPAAMatcherURL()));
-        attributes.add(new HIPAAIdentifierConfig(HIPAAIdentifier.IP, new HIPAAMatcherAttributeName[] { new HIPAAMatcherAttributeName("IP"), new HIPAAMatcherAttributeName("IPv4"), new HIPAAMatcherAttributeName("IPv6"), new HIPAAMatcherAttributeName("IP address", 1) }, new HIPAAMatcherIP()));
+
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.GEOGRAPHIC_SUBDIVISION, 
+                                                     "Generic geographic subdivision",
+                                                     new HIPAAMatcherState(),
+                                                     new HIPAAMatcherAttributeName("street", 1),
+                                                     new HIPAAMatcherAttributeName("road", 1),
+                                                     new HIPAAMatcherAttributeName("thoroughfare", 2),
+                                                     new HIPAAMatcherAttributeName("way", 1),
+                                                     new HIPAAMatcherAttributeName("address", 1),
+                                                     new HIPAAMatcherAttributeName("location", 1),
+                                                     new HIPAAMatcherAttributeName("locality", 1),
+                                                     new HIPAAMatcherAttributeName("place", 1),
+                                                     new HIPAAMatcherAttributeName("situation", 2),
+                                                     new HIPAAMatcherAttributeName("whereabouts", 2),
+                                                     new HIPAAMatcherAttributeName("road", 1),
+                                                     new HIPAAMatcherAttributeName("territory", 2),
+                                                     new HIPAAMatcherAttributeName("canton", 1),
+                                                     new HIPAAMatcherAttributeName("department", 2),
+                                                     new HIPAAMatcherAttributeName("county", 1),
+                                                     new HIPAAMatcherAttributeName("area", 1),
+                                                     new HIPAAMatcherAttributeName("district", 1),
+                                                     new HIPAAMatcherAttributeName("province", 1),
+                                                     new HIPAAMatcherAttributeName("federal state", 2)));
+
+
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.DATE,
+                                                     "Date/Time",
+                                                     new HIPAAMatcherDate(),
+                                                     new HIPAAMatcherAttributeName("year", 1),
+                                                     new HIPAAMatcherAttributeName("age", 1),
+                                                     new HIPAAMatcherAttributeName("birth date", 2),
+                                                     new HIPAAMatcherAttributeName("dob", 1),
+                                                     new HIPAAMatcherAttributeName("date of birth", 2),
+                                                     new HIPAAMatcherAttributeName("date of death", 2),
+                                                     new HIPAAMatcherAttributeName("date of admission", 3),
+                                                     new HIPAAMatcherAttributeName("admission date", 2),
+                                                     new HIPAAMatcherAttributeName("discharge date", 2),
+                                                     new HIPAAMatcherAttributeName("death date", 2),
+                                                     new HIPAAMatcherAttributeName("date", 1),
+                                                     new HIPAAMatcherAttributeName("day", 1),
+                                                     new HIPAAMatcherAttributeName("day of the month", 3),
+                                                     new HIPAAMatcherAttributeName("occasion", 2),
+                                                     new HIPAAMatcherAttributeName("period", 1),
+                                                     new HIPAAMatcherAttributeName("era", 1),
+                                                     new HIPAAMatcherAttributeName("epoch", 1),
+                                                     new HIPAAMatcherAttributeName("century", 1),
+                                                     new HIPAAMatcherAttributeName("decade", 1),
+                                                     new HIPAAMatcherAttributeName("stage", 1)));
+        
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.TELEPHONE_NUMBER, 
+                                                     "Phone number",
+                                                     new HIPAAMatcherAttributeName("number", 1),
+                                                     new HIPAAMatcherAttributeName("telephone", 2),
+                                                     new HIPAAMatcherAttributeName("fax", 1),
+                                                     new HIPAAMatcherAttributeName("phone", 1),
+                                                     new HIPAAMatcherAttributeName("fon", 1),
+                                                     new HIPAAMatcherAttributeName("skype", 1),
+                                                     new HIPAAMatcherAttributeName("tel", 1),
+                                                     new HIPAAMatcherAttributeName("phone number", 2),
+                                                     new HIPAAMatcherAttributeName("number", 1)));
+          
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.EMAIL_ADDRESS, 
+                                                     "Email address",
+                                                     new HIPAAMatcherEMail(),
+                                                     new HIPAAMatcherAttributeName("email", 1),
+                                                     new HIPAAMatcherAttributeName("e-mail", 1),
+                                                     new HIPAAMatcherAttributeName("mail", 1),
+                                                     new HIPAAMatcherAttributeName("e-mail address", 2),
+                                                     new HIPAAMatcherAttributeName("email address", 2),
+                                                     new HIPAAMatcherAttributeName("mail address", 2)));
+        
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.SOCIAL_SECURITY_NUMBER, 
+                                                     "Social security number",
+                                                     new HIPAAMatcherSSN(),
+                                                     new HIPAAMatcherAttributeName("taxpayer identification number", 1),
+                                                     new HIPAAMatcherAttributeName("taxpayer number", 1),
+                                                     new HIPAAMatcherAttributeName("identification number", 1),
+                                                     new HIPAAMatcherAttributeName("social security number", 3),
+                                                     new HIPAAMatcherAttributeName("security number", 3),
+                                                     new HIPAAMatcherAttributeName("social number", 2),
+                                                     new HIPAAMatcherAttributeName("social security", 3)));
+        
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.CERTIFICATE_NUMBER, 
+                                                     "Certificate number",
+                                                     new HIPAAMatcherAttributeName("license", 1), 
+                                                     new HIPAAMatcherAttributeName("certificate", 1)));
+        
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.VEHICLE_IDENTIFIER, 
+                                                     "Vehicle identifier",
+                                                     new HIPAAMatcherAttributeName("vehicle identification number", 5),
+                                                     new HIPAAMatcherAttributeName("vin", 1),
+                                                     new HIPAAMatcherAttributeName("vehicle id", 2),
+                                                     new HIPAAMatcherAttributeName("vehicle identifier", 3),
+                                                     new HIPAAMatcherAttributeName("vehicle identification", 4)));
+        
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.DEVICE_IDENTIFIER, 
+                                                     "Defive identifier",
+                                                     new HIPAAMatcherAttributeName("serial number", 2),
+                                                     new HIPAAMatcherAttributeName("defive identifier", 3)));
+
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.URL, 
+                                                     "URL",
+                                                     new HIPAAMatcherURL(),
+                                                     new HIPAAMatcherAttributeName("url", 1),
+                                                     new HIPAAMatcherAttributeName("domain", 1),
+                                                     new HIPAAMatcherAttributeName("domain name", 2),
+                                                     new HIPAAMatcherAttributeName("web address", 2),
+                                                     new HIPAAMatcherAttributeName("internet address", 3),
+                                                     new HIPAAMatcherAttributeName("website", 2),
+                                                     new HIPAAMatcherAttributeName("homepage", 2),
+                                                     new HIPAAMatcherAttributeName("webpage", 2),
+                                                     new HIPAAMatcherAttributeName("web site", 2),
+                                                     new HIPAAMatcherAttributeName("home page", 2),
+                                                     new HIPAAMatcherAttributeName("web page", 2)));
+
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.IP, 
+                                                     "IP Address",
+                                                     new HIPAAMatcherIP(),
+                                                     new HIPAAMatcherAttributeName("ip", 1),
+                                                     new HIPAAMatcherAttributeName("ip address", 2),
+                                                     new HIPAAMatcherAttributeName("ipv4", 1),
+                                                     new HIPAAMatcherAttributeName("ipv6", 1),
+                                                     new HIPAAMatcherAttributeName("internet protocol", 2),
+                                                     new HIPAAMatcherAttributeName("internet", 2)));
+        
+        return configurations;
     }
     
 }

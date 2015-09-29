@@ -29,12 +29,26 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.commons.validator.routines.checkdigit.IBANCheckDigit;
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.risk.resources.HIPAAConstants;
 
 /**
  * Interfaces the patterns
  * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
  */
 interface HIPAAMatcherAttributeValue {
+    
+    /**
+     * Pattern which matches a city with a predefined list of cities
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     */
+    class HIPAAMatcherCity implements HIPAAMatcherAttributeValue {
+        @Override
+        public boolean matches(String value) {
+            value = value.trim().toLowerCase();
+            return HIPAAConstants.getUSData().isCity(value);
+        }
+    }
     
     /**
      * Pattern which matches Dates and years older than 89
@@ -63,13 +77,7 @@ interface HIPAAMatcherAttributeValue {
          */
         private boolean isDate(String value) {
             DateValidator validator = DateValidator.getInstance();
-            
-            String[] formats = new String[] {
-                                              "yyyy-MM-dd",
-                                              "mm/dd/yyyy",
-                                              "mm/dd/yy"
-            };
-            for (String format : formats) {
+            for (String format : DataType.DATE.getDescription().getExampleFormats()) {
                 if (validator.isValid(value, format)) {
                     return true;
                 }
@@ -110,6 +118,18 @@ interface HIPAAMatcherAttributeValue {
     }
     
     /**
+     * Pattern which matches first names with a predefined list of names
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     */
+    class HIPAAMatcherFirstName implements HIPAAMatcherAttributeValue {
+        @Override
+        public boolean matches(String value) {
+            value = value.trim().toLowerCase();
+            return HIPAAConstants.getUSData().isFirstname(value);
+        }
+    }
+    
+    /**
      * Pattern which matches IBAN account numbers
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
@@ -129,7 +149,7 @@ interface HIPAAMatcherAttributeValue {
             return validator.isValid(value);
         }
     }
-    
+
     /**
      * Pattern which maches IPv4 and IPv6 addresses
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
@@ -141,24 +161,15 @@ interface HIPAAMatcherAttributeValue {
             return validator.isValid(value);
         }
     }
-    
     /**
-     * Pattern which matches names with a predefined list of names
+     * Pattern which matches last names with a predefined list of names
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
      */
-    class HIPAAMatcherName implements HIPAAMatcherAttributeValue {
-        Set<String> names = new HashSet<String>();
-        
-        HIPAAMatcherName() {
-            names.add("john");
-            names.add("doe");
-            names.add("max");
-        }
-        
+    class HIPAAMatcherLastName implements HIPAAMatcherAttributeValue {
         @Override
         public boolean matches(String value) {
             value = value.trim().toLowerCase();
-            return names.contains(value);
+            return HIPAAConstants.getUSData().isLastname(value);
         }
     }
     
@@ -169,6 +180,18 @@ interface HIPAAMatcherAttributeValue {
     class HIPAAMatcherSSN extends HIPAAMatcherString {
         HIPAAMatcherSSN() {
             super("[0-9]{3}-[0-9]{2}-[0-9]{4}|[0-9]{9}");
+        }
+    }
+    
+    /**
+     * Pattern which matches a state with a predefined list of states
+     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     */
+    class HIPAAMatcherState implements HIPAAMatcherAttributeValue {
+        @Override
+        public boolean matches(String value) {
+            value = value.trim().toLowerCase();
+            return HIPAAConstants.getUSData().isState(value);
         }
     }
     
@@ -202,7 +225,7 @@ interface HIPAAMatcherAttributeValue {
             return validator.isValid(value);
         }
     }
-    
+
     /**
      * Pattern which matches names a vehicle identification number
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
@@ -218,7 +241,7 @@ interface HIPAAMatcherAttributeValue {
             return super.matches(value);
         }
     }
-    
+
     /**
      * Pattern which matches a ZIP code
      * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
@@ -252,18 +275,14 @@ interface HIPAAMatcherAttributeValue {
         
         @Override
         public boolean matches(String value) {
-            if (!value.contains("-")) {
-                return false;
-            }
-            
             value = value.replaceAll("\\s+", "").replaceAll("-", "");
-            
-            if (value.length() < 3) {
-                return false;
+            if (HIPAAConstants.getUSData().isZipcode(value)) {
+                if (value.length() >= 3) {
+                    String zipCode = value.substring(0, 3);
+                    return zipCodes.contains(zipCode);
+                }
             }
-            
-            String zipCode = value.substring(0, 3);
-            return zipCodes.contains(zipCode);
+            return false;
         }
     }
     

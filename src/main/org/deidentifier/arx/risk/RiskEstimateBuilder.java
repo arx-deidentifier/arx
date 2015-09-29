@@ -220,7 +220,7 @@ public class RiskEstimateBuilder {
      * @return
      */
     public HIPAAIdentifierMatch[] getHIPAAIdentifiers() {
-        return RiskModelHIPAASafeHarbor.validate(handle, stop);
+        return new RiskModelHIPAASafeHarbor().getMatches(handle, stop);
     }
 
     /**

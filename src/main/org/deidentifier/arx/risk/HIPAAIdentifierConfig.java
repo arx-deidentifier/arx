@@ -26,51 +26,56 @@ import org.deidentifier.arx.risk.HIPAAIdentifierMatch.HIPAAIdentifier;
  * @author Florian Kohlmayer
  */
 class HIPAAIdentifierConfig {
-    
-    /** TODO*/
+
+    /** TODO */
     private HIPAAMatcherAttributeValue  matcherValue;
-    /** TODO*/
+    /** TODO */
     private HIPAAIdentifier             identifier;
-    /** TODO*/
+    /** TODO */
     private HIPAAMatcherAttributeName[] matchersName;
+    /** TODO */
+    private String                      instance;
     
     /**
      * Constructor.
-     * @param category
+     * @param identifier
+     * @param instance
      * @param label
      */
-    HIPAAIdentifierConfig(HIPAAIdentifier category, HIPAAMatcherAttributeName label) {
-        this(category, label, null);
+    HIPAAIdentifierConfig(HIPAAIdentifier identifier, String instance, HIPAAMatcherAttributeName label) {
+        this(identifier, instance, null, new HIPAAMatcherAttributeName[]{label});
     }
-    
+
     /**
      * Constructor.
-     * @param category
+     * @param identifier
+     * @param instance
      * @param label
      */
-    HIPAAIdentifierConfig(HIPAAIdentifier category, HIPAAMatcherAttributeName label, HIPAAMatcherAttributeValue pattern) {
-        this(category, new HIPAAMatcherAttributeName[] { label }, pattern);
-    }
-    
-    /**
-     * Constructor.
-     * @param category
-     * @param label
-     */
-    HIPAAIdentifierConfig(HIPAAIdentifier category, HIPAAMatcherAttributeName[] labels) {
-        this(category, labels, null);
+    HIPAAIdentifierConfig(HIPAAIdentifier identifier, String instance, HIPAAMatcherAttributeName... labels) {
+        this(identifier, instance, null, labels);
     }
     
     /**
      * Creates a new matcher configuration
-     * @param category The identifier this attribute belongs to
+     * @param identifier The identifier this attribute belongs to
+     * @param instance The specific instance of the identifier
      * @param labels An array of labels associated which an attribute
      * @param pattern A pattern which is used to check the row contents
      */
-    HIPAAIdentifierConfig(HIPAAIdentifier category, HIPAAMatcherAttributeName[] labels, HIPAAMatcherAttributeValue pattern) {
-        this.identifier = category;
+    HIPAAIdentifierConfig(HIPAAIdentifier identifier, String instance, HIPAAMatcherAttributeValue pattern, HIPAAMatcherAttributeName... labels) {
+        this.identifier = identifier;
+        this.instance = instance;
         this.matchersName = labels;
         this.matcherValue = pattern;
+    }
+    
+    /**
+     * Returns the instance
+     * @return
+     */
+    public String getInstance() {
+        return this.instance;
     }
     
     /**
@@ -81,39 +86,39 @@ class HIPAAIdentifierConfig {
     }
     
     /**
-     * @return True if attribute has a pattern
-     */
-    boolean hasValueMatcher() {
-        return matcherValue != null;
-    }
-    
-    /**
      * Returns if the attribute name matches
      * 
      * @param name The column name
-     * @return True if input matches label
+     * @return The value if any, null otherwise
      */
-    boolean matchesAttributeName(String name) {
+    String getMatchingAttributeName(String name) {
         for (HIPAAMatcherAttributeName label : matchersName) {
             if (label.matches(name)) {
-                return true;
+                return label.getValue();
             }
         }
         
-        return false;
+        return null;
     }
     
     /**
-     * Returns if the value matches
+     * Returns the value itself if it matches
      * 
      * @param value
      * @return
      */
-    boolean matchesAttributeValue(String value) {
-        if (!hasValueMatcher()) {
-            return false;
+    String getMatchingAttributeValue(String value) {
+        if (hasValueMatcher() && matcherValue.matches(value)) {
+            return value;
         } else {
-            return matcherValue.matches(value);
+            return null;
         }
+    }
+
+    /**
+     * @return True if attribute has a pattern
+     */
+    boolean hasValueMatcher() {
+        return matcherValue != null;
     }
 }

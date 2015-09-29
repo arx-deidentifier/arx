@@ -70,45 +70,35 @@ public class HIPAAIdentifierMatch {
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
-    public enum MatchType {
-                            ATTRIBUTE_NAME,
-                            ATTRIBUTE_VALUE
+    public enum MatchType {ATTRIBUTE_NAME,
+                           ATTRIBUTE_VALUE
     }
     
-    /** TODO*/
+    /** TODO */
     private final String          column;
-    /** TODO*/
+    /** TODO */
     private final HIPAAIdentifier identifier;
-    /** TODO*/
-    private final MatchType      matchType;
-    /** TODO*/
+    /** TODO */
+    private final MatchType       matchType;
+    /** TODO */
     private final String          value;
+    /** TODO */
+    private final String          instance;
     
     /**
      * Constructor.
      * 
-     * @param columnName
-     * @param category
-     * @param classifiedBy
+     * @param column
+     * @param identifier
+     * @param type
      * @param value
      */
-    HIPAAIdentifierMatch(String columnName, HIPAAIdentifier category, MatchType classifiedBy, String value) {
-        this.column = columnName;
-        this.matchType = classifiedBy;
-        this.identifier = category;
+    HIPAAIdentifierMatch(String column, HIPAAIdentifier identifier, String instance, MatchType type, String value) {
+        this.column = column;
+        this.matchType = type;
+        this.identifier = identifier;
         this.value = value;
-    }
-    
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("HIPAAIdentifierMatch {\n");
-        builder.append(" - Column: ").append(getColumn()).append("\n");
-        builder.append(" - Identifier: ").append(getIdentifier()).append("\n");
-        builder.append(" - Match type: ").append(getMatchType()).append("\n");
-        builder.append(" - Value: ").append(getValue()).append("\n");
-        builder.append("}");
-        return builder.toString();
+        this.instance = instance;
     }
     
     /**
@@ -128,6 +118,14 @@ public class HIPAAIdentifierMatch {
     }
     
     /**
+     * The instance of the identifier
+     * @return
+     */
+    public String getInstance() {
+        return instance;
+    }
+    
+    /**
      * The classifier (column name or instance)
      * @return
      */
@@ -141,5 +139,18 @@ public class HIPAAIdentifierMatch {
      */
     public String getValue() {
         return value;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("HIPAAIdentifierMatch {\n");
+        builder.append(" - Column: ").append(getColumn()).append("\n");
+        builder.append(" - Identifier: ").append(getIdentifier()).append("\n");
+        builder.append(" - Instance: ").append(getInstance()).append("\n");
+        builder.append(" - Match type: ").append(getMatchType()).append("\n");
+        builder.append(" - Value: ").append(getValue()).append("\n");
+        builder.append("}");
+        return builder.toString();
     }
 }
