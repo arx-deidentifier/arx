@@ -266,6 +266,12 @@
                 <exclude name="**/*.java" />
             </fileset>
         </copy>
+        <copy todir="build/main/org/deidentifier/arx/risk/resources" overwrite="true">
+            <fileset dir="src/main/org/deidentifier/arx/risk/resources" defaultexcludes="yes">
+                <exclude name="**/*.java" />
+                <exclude name="**/*.txt" />
+            </fileset>
+        </copy>
     </target>
 
     <target name="buildExternalLibs">
