@@ -54,10 +54,10 @@ import de.linearbits.swt.table.DynamicTableColumn;
 public class ViewCriteriaList implements IView {
 
     /** Controller */
-    private Controller         controller;
+    private Controller               controller;
 
     /** Model */
-    private Model              model = null;
+    private Model                    model = null;
 
     /** View */
     private final DynamicTable       table;
@@ -77,6 +77,8 @@ public class ViewCriteriaList implements IView {
     private final Image              symbolK;
     /** View */
     private final Image              symbolD;
+    /** View */
+    private final Image              symbolDP;
     /** View */
     private final Image              symbolR;
     /** View */
@@ -102,6 +104,7 @@ public class ViewCriteriaList implements IView {
         this.symbolT = controller.getResources().getManagedImage("symbol_t.png"); //$NON-NLS-1$
         this.symbolK = controller.getResources().getManagedImage("symbol_k.png"); //$NON-NLS-1$
         this.symbolD = controller.getResources().getManagedImage("symbol_d.png"); //$NON-NLS-1$
+        this.symbolDP = controller.getResources().getManagedImage("symbol_dp.png"); //$NON-NLS-1$
         this.symbolR = controller.getResources().getManagedImage("symbol_r.png"); //$NON-NLS-1$
         
         this.root = parent;
@@ -240,7 +243,14 @@ public class ViewCriteriaList implements IView {
         root.setRedraw(false);
         
         table.removeAll();
-        
+
+        if (model.getDifferentialPrivacyModel().isEnabled()) {
+            TableItem item = new TableItem(table, SWT.NONE);
+            item.setText(new String[] { "", model.getDifferentialPrivacyModel().toString(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
+            item.setImage(0, symbolDP);
+            item.setData(model.getDifferentialPrivacyModel());
+        }
+
         if (model.getKAnonymityModel().isEnabled()) {
             TableItem item = new TableItem(table, SWT.NONE);
             item.setText(new String[] { "", model.getKAnonymityModel().toString(), "" }); //$NON-NLS-1$ //$NON-NLS-2$

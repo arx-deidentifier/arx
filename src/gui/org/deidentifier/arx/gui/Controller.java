@@ -173,7 +173,10 @@ public class Controller implements IView {
     public void actionCriterionAdd() {
 
         List<ModelCriterion> criteria = new ArrayList<ModelCriterion>();
-        
+
+        if (!model.getDifferentialPrivacyModel().isEnabled()) {
+            criteria.add(model.getDifferentialPrivacyModel());
+        }
         if (!model.getKAnonymityModel().isEnabled()) {
             criteria.add(model.getKAnonymityModel());
         }
@@ -233,7 +236,10 @@ public class Controller implements IView {
     public void actionCriterionConfigure(ModelCriterion criterion) {
 
         List<ModelCriterion> criteria = new ArrayList<ModelCriterion>();
-        
+
+        if (model.getDifferentialPrivacyModel().isEnabled()) {
+            criteria.add(model.getDifferentialPrivacyModel());
+        }
         if (model.getKAnonymityModel().isEnabled()) {
             criteria.add(model.getKAnonymityModel());
         }

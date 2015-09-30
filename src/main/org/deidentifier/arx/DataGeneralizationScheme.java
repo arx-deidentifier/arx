@@ -184,6 +184,14 @@ public class DataGeneralizationScheme implements Serializable, Cloneable {
     }
     
     /**
+     * Returns the overall generalization degree, if any
+     * @return
+     */
+    public GeneralizationDegree getGeneralizationDegree() {
+        return this.degree;
+    }
+    
+    /**
      * Returns a generalization level as defined by this class
      * @param attribute
      * @param definition
@@ -207,7 +215,7 @@ public class DataGeneralizationScheme implements Serializable, Cloneable {
         result = Math.min(result, definition.getMaximumGeneralization(attribute));
         return result;
     }
-    
+
     /**
      * Checks the given attribute
      * @param attribute

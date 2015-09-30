@@ -416,7 +416,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (this.containsCriterion(EDDifferentialPrivacy.class) && 
            (this.containsCriterion(DPresence.class) || this.containsCriterion(Inclusion.class))) {
             criteria.remove(c);
-            throw new RuntimeException("(e,d)-DP must not be combined with d-presence or inclusion");
+            throw new RuntimeException("Differential privacy must not be combined with a research subset");
         }
         
         return this;

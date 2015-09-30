@@ -27,6 +27,7 @@ import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
@@ -261,6 +262,16 @@ public class ViewPropertiesOutput extends ViewProperties {
                 KAnonymity criterion = context.config.getCriterion(KAnonymity.class);
                 Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { Resources.getMessage("PropertiesView.52") }); //$NON-NLS-1$ //$NON-NLS-2$
                 new Property(n, Resources.getMessage("PropertiesView.53"), new String[] { String.valueOf(criterion.getK())}); //$NON-NLS-1$
+            }
+            
+            // Print info about (e,d)-dp
+            if (context.config.containsCriterion(EDDifferentialPrivacy.class)) {
+                EDDifferentialPrivacy criterion = context.config.getCriterion(EDDifferentialPrivacy.class);
+                Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { Resources.getMessage("PropertiesView.141") }); //$NON-NLS-1$ //$NON-NLS-2$
+                new Property(n, Resources.getMessage("PropertiesView.142"), new String[] { String.valueOf(criterion.getEpsilon())}); //$NON-NLS-1$
+                new Property(n, Resources.getMessage("PropertiesView.143"), new String[] { String.valueOf(criterion.getDelta())}); //$NON-NLS-1$
+                new Property(n, Resources.getMessage("PropertiesView.144"), new String[] { String.valueOf(criterion.getK())}); //$NON-NLS-1$
+                new Property(n, Resources.getMessage("PropertiesView.145"), new String[] { String.valueOf(criterion.getBeta())}); //$NON-NLS-1$
             }
             
             // Print info about l-diversity or t-closeness

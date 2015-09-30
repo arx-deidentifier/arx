@@ -218,18 +218,21 @@ public class Model implements Serializable {
 
     /** Model for a specific privacy criterion. */
     private ModelDPresenceCriterion               dPresenceModel                  = new ModelDPresenceCriterion();
-    
+
     /** Model for a specific privacy criterion. */
     private ModelKAnonymityCriterion              kAnonymityModel                 = new ModelKAnonymityCriterion();
-    
+
     /** Model for a specific privacy criterion. */
     private Map<String, ModelLDiversityCriterion> lDiversityModel                 = new HashMap<String, ModelLDiversityCriterion>();
-    
+
     /** Model for a specific privacy criterion. */
     private Map<String, ModelTClosenessCriterion> tClosenessModel                 = new HashMap<String, ModelTClosenessCriterion>();
 
     /** Model for a specific privacy criterion. */
     private Set<ModelRiskBasedCriterion>          riskBasedModel                  = new HashSet<ModelRiskBasedCriterion>();
+
+    /** Model for a specific privacy criterion. */
+    private ModelDifferentialPrivacyCriterion     differentialPrivacyModel        = new ModelDifferentialPrivacyCriterion();
 
     /* *****************************************
      * UTILITY ANALYSIS
@@ -365,7 +368,12 @@ public class Model implements Serializable {
                 }
             }
         }
-        
+
+        if (this.differentialPrivacyModel != null &&
+            this.differentialPrivacyModel.isEnabled()) {
+            config.addCriterion(this.differentialPrivacyModel.getCriterion(this));
+        }
+
 		if (this.kAnonymityModel != null &&
 		    this.kAnonymityModel.isEnabled()) {
 		    config.addCriterion(this.kAnonymityModel.getCriterion(this));
@@ -501,6 +509,18 @@ public class Model implements Serializable {
 	}
 
 	/**
+     * Returns the (e,d)-DP model.
+     *
+     * @return
+     */
+    public ModelDifferentialPrivacyCriterion getDifferentialPrivacyModel() {
+        if (this.differentialPrivacyModel == null) {
+            this.differentialPrivacyModel = new ModelDifferentialPrivacyCriterion();
+        }
+        return differentialPrivacyModel;
+    }
+
+	/**
      * Returns the d-presence model.
      *
      * @return
@@ -575,7 +595,7 @@ public class Model implements Serializable {
 	    return getRiskModel().getPopulationModel();
 	}
 
-	/**
+    /**
      * Returns the k-anonymity model.
      *
      * @return
@@ -583,7 +603,7 @@ public class Model implements Serializable {
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
 	}
-	
+    
 	/**
      * Returns the l-diversity model.
      *
@@ -929,19 +949,6 @@ public class Model implements Serializable {
 	}
 
     /**
-     * Returns whether list-wise deletion is used for summary statistics
-     * @return
-     */
-    public Boolean getUseListwiseDeletion() {
-        
-        // Backwards compatibility
-        if (useListwiseDeletion == null) {
-            useListwiseDeletion = true;
-        }
-        return useListwiseDeletion;
-    }
-
-    /**
      * Returns whether functional hierarchies should be used
      * @return
      */
@@ -952,6 +959,19 @@ public class Model implements Serializable {
             useFunctionalHierarchies = true;
         }
         return useFunctionalHierarchies;
+    }
+
+    /**
+     * Returns whether list-wise deletion is used for summary statistics
+     * @return
+     */
+    public Boolean getUseListwiseDeletion() {
+        
+        // Backwards compatibility
+        if (useListwiseDeletion == null) {
+            useListwiseDeletion = true;
+        }
+        return useListwiseDeletion;
     }
 
 	/**
@@ -1057,6 +1077,7 @@ public class Model implements Serializable {
 		
 		if (inputConfig==null || inputConfig.getInput()==null) return;
 		
+		differentialPrivacyModel = new ModelDifferentialPrivacyCriterion();
 		kAnonymityModel = new ModelKAnonymityCriterion();
 		dPresenceModel = new ModelDPresenceCriterion();
 		lDiversityModel.clear();
@@ -1407,19 +1428,19 @@ public class Model implements Serializable {
 	}
 
     /**
-     * Sets whether list-wise deletion should be used for summary statistics
-     * @param useListwiseDeletion
-     */
-    public void setUseListwiseDeletion(boolean useListwiseDeletion) {
-        this.useListwiseDeletion = useListwiseDeletion;
-    }
-
-    /**
      * Sets whether funtional hierarchies should be used during anonymization to esimtate utility
      * @param useFunctionalHierarchies
      */
     public void setUseFunctionalHierarchies(boolean useFunctionalHierarchies) {
         this.useFunctionalHierarchies = useFunctionalHierarchies;
+    }
+
+    /**
+     * Sets whether list-wise deletion should be used for summary statistics
+     * @param useListwiseDeletion
+     */
+    public void setUseListwiseDeletion(boolean useListwiseDeletion) {
+        this.useListwiseDeletion = useListwiseDeletion;
     }
     
     /**

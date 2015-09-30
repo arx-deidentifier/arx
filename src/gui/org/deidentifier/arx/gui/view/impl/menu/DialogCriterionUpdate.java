@@ -22,6 +22,7 @@ import java.util.List;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelDPresenceCriterion;
+import org.deidentifier.arx.gui.model.ModelDifferentialPrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelKAnonymityCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
@@ -155,6 +156,8 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
                 editor = new EditorCriterionDPresence(root, (ModelDPresenceCriterion)selection);
             } else if (selection instanceof ModelRiskBasedCriterion) {
                 editor = new EditorCriterionRiskBased(root, (ModelRiskBasedCriterion)selection);
+            } else if (selection instanceof ModelDifferentialPrivacyCriterion) {
+                editor = new EditorCriterionDifferentialPrivacy(root, (ModelDifferentialPrivacyCriterion)selection);
             }
         } else {
             if (edit && ok != null) {
@@ -246,6 +249,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
         Image symbolK = controller.getResources().getManagedImage("symbol_k.png"); //$NON-NLS-1$
         Image symbolD = controller.getResources().getManagedImage("symbol_d.png"); //$NON-NLS-1$
         Image symbolR = controller.getResources().getManagedImage("symbol_r.png"); //$NON-NLS-1$
+        Image symbolDP = controller.getResources().getManagedImage("symbol_dp.png"); //$NON-NLS-1$
         
         for (ModelCriterion c : elements) {
 
@@ -266,6 +270,9 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
             } else if (c instanceof ModelRiskBasedCriterion) {
                 item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
                 item.setImage(0, symbolR);
+            } else if (c instanceof ModelDifferentialPrivacyCriterion) {
+                item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
+                item.setImage(0, symbolDP);
             }
         }
 
