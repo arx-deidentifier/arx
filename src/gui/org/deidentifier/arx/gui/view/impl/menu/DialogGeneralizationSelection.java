@@ -178,7 +178,8 @@ public class DialogGeneralizationSelection extends TitleAreaDialog implements ID
         // Add
         for (String attribute : attributes) {
             TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(new String[] {attribute, "0", hierarchies.get(attribute)[0][0]});
+            int level = selection.get(attribute);
+            item.setText(new String[] {attribute, String.valueOf(level), hierarchies.get(attribute)[0][level]});
         }
         
 
