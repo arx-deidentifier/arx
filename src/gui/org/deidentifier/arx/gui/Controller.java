@@ -222,7 +222,7 @@ public class Controller implements IView {
         }
         
         // Select criterion
-        ModelCriterion criterion = main.showAddCriterionDialog(criteria);
+        ModelCriterion criterion = main.showAddCriterionDialog(model, criteria);
         if (criterion != null) {
             criterion.setEnabled(true);
             this.update(new ModelEvent(this, ModelPart.CRITERION_DEFINITION, criterion));
@@ -286,7 +286,7 @@ public class Controller implements IView {
         }
         
         // Select criterion
-        main.showConfigureCriterionDialog(criteria, criterion);
+        main.showConfigureCriterionDialog(model, criteria, criterion);
         this.update(new ModelEvent(this, ModelPart.CRITERION_DEFINITION, null));
     }
 

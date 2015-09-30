@@ -19,14 +19,19 @@ package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataGeneralizationScheme.GeneralizationDegree;
+import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelDifferentialPrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -82,6 +87,12 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
      */
     private static final double[] DELTAS   = new double[] { 1E-5d, 1E-6d, 1E-7d, 1E-8d, 1E-9d, 1E-10d };
 
+    /** Controller*/
+    private Controller controller;
+    
+    /** Model*/
+    private Model arxmodel;
+    
     /**
      * Creates a new instance.
      *
@@ -89,8 +100,12 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
      * @param model
      */
     public EditorCriterionDifferentialPrivacy(final Composite parent,
-                                              final ModelDifferentialPrivacyCriterion model) {
+                                              final ModelDifferentialPrivacyCriterion model,
+                                              final Controller controller,
+                                              final Model arxmodel) {
         super(parent, model);
+        this.controller = controller;
+        this.arxmodel = arxmodel;
     }
 
     @Override
@@ -150,7 +165,23 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 int index = comboGeneralization.getSelectionIndex();
-                if (index != -1) {
+                if (index == comboGeneralization.getItemCount()-1) {
+                    
+                    DialogGeneralizationSelection dialog = new DialogGeneralizationSelection(comboGeneralization.getShell(),
+                                                                                             controller,
+                                                                                             arxmodel,
+                                                                                             model.getGeneralization());
+                    dialog.create();
+                    if (dialog.open() == Window.OK) {
+                        DataGeneralizationScheme generalization = DataGeneralizationScheme.create();
+                        Map<String, Integer> scheme = dialog.getSelection();
+                        for (Entry<String, Integer> entry : scheme.entrySet()){
+                            generalization.generalize(entry.getKey(), entry.getValue());
+                        }
+                        model.setGeneralization(generalization);
+                    } 
+                    
+                } else if (index != -1) {
                     model.setGeneralization(DataGeneralizationScheme.create(getGeneralizationDegree(index)));
                 }
             }
@@ -170,6 +201,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
             label = label.substring(0,1).toUpperCase() + label.substring(1);
             result.add(label);
         }
+        result.add("Custom...");
         return result.toArray(new String[result.size()]);
     }
 
@@ -204,7 +236,12 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         knobDelta.setValue(model.getDelta());
         knobEpsilon.setValue(model.getEpsilon());
         if (!_default) {
-            comboGeneralization.select(getIndexOfGeneralizationDegree(model.getGeneralization().getGeneralizationDegree()));
+            int index = getIndexOfGeneralizationDegree(model.getGeneralization().getGeneralizationDegree());
+            if (index != -1) {
+                comboGeneralization.select(index);
+            } else {
+                comboGeneralization.select(comboGeneralization.getItemCount() - 1);
+            }
         }
     }
 

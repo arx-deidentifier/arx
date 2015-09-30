@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.menu;
 import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelDPresenceCriterion;
 import org.deidentifier.arx.gui.model.ModelDifferentialPrivacyCriterion;
@@ -83,6 +84,9 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
     /** Is cancel operation supported */
     private final boolean        edit;
 
+    /** The model */
+    private final Model          model;
+
     /**
      * Constructor.
      *
@@ -94,12 +98,14 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
     public DialogCriterionUpdate(final Controller controller,
                                  final Shell parent,
                                  List<ModelCriterion> elements,
+                                 Model model,
                                  boolean edit) {
         super(parent);
         super.setShellStyle(super.getShellStyle() | SWT.RESIZE | SWT.MAX); 
         this.elements = elements;
         this.controller = controller;
         this.edit = edit;
+        this.model = model;
     }
 
     /**
@@ -114,9 +120,10 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
     public DialogCriterionUpdate(final Controller controller,
                                    final Shell parent,
                                    List<ModelCriterion> elements,
+                                   Model model,
                                    boolean cancel,
                                    ModelCriterion selection) {
-        this(controller, parent, elements, cancel);
+        this(controller, parent, elements, model, cancel);
         this.selection = selection;
     }
 
@@ -157,7 +164,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
             } else if (selection instanceof ModelRiskBasedCriterion) {
                 editor = new EditorCriterionRiskBased(root, (ModelRiskBasedCriterion)selection);
             } else if (selection instanceof ModelDifferentialPrivacyCriterion) {
-                editor = new EditorCriterionDifferentialPrivacy(root, (ModelDifferentialPrivacyCriterion)selection);
+                editor = new EditorCriterionDifferentialPrivacy(root, (ModelDifferentialPrivacyCriterion)selection, controller, model);
             }
         } else {
             if (edit && ok != null) {

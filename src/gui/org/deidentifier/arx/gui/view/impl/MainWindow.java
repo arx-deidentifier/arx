@@ -261,10 +261,11 @@ public class MainWindow implements IView {
      * @param criteria
      * @return
      */
-    public ModelCriterion showAddCriterionDialog(List<ModelCriterion> criteria) {
+    public ModelCriterion showAddCriterionDialog(Model model,
+                                                 List<ModelCriterion> criteria) {
 
         // Dialog
-        final DialogCriterionUpdate dialog = new DialogCriterionUpdate(controller, shell, criteria, true);
+        final DialogCriterionUpdate dialog = new DialogCriterionUpdate(controller, shell, criteria, model, true);
         dialog.create();
         if (dialog.open() != Window.OK) {
             return null;
@@ -288,8 +289,8 @@ public class MainWindow implements IView {
      * @param criterion 
      * @return
      */
-    public void showConfigureCriterionDialog(List<ModelCriterion> criteria, ModelCriterion criterion) {
-        DialogCriterionUpdate dialog = new DialogCriterionUpdate(controller, shell, criteria, false, criterion);
+    public void showConfigureCriterionDialog(Model model, List<ModelCriterion> criteria, ModelCriterion criterion) {
+        DialogCriterionUpdate dialog = new DialogCriterionUpdate(controller, shell, criteria, model, false, criterion);
         dialog.create();
         dialog.open();
     }
