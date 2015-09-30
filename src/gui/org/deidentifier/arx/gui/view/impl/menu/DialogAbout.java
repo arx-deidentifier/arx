@@ -62,7 +62,7 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "Ledian Xhani (hierarchy editor)\n" + //$NON-NLS-1$
                                                "Ljubomir Dshevlekov (hierarchy editor)\n" +  //$NON-NLS-1$
                                                "Michael Schneider (risk analysis)\n" + //$NON-NLS-1$
-                                               "Raffael Bild (heuristic search)\n" + //$NON-NLS-1$
+                                               "Raffael Bild (heuristic search, differential privacy)\n" + //$NON-NLS-1$
                                                "Johanna Eicher (heuristic search)\n" + //$NON-NLS-1$
                                                "Helmut Spengler (heuristic search)"; //$NON-NLS-1$
     

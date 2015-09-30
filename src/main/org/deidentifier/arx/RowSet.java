@@ -36,13 +36,23 @@ public class RowSet implements Serializable, Cloneable {
     private static final int   BIT_INDEX_MASK        = 63;
     
     /**
-     * 
+     * Creates a new instance
      *
      * @param data
      * @return
      */
     public static RowSet create(Data data){
         return new RowSet(data);
+    }
+
+    /**
+     * Creates a new instance
+     *
+     * @param length
+     * @return
+     */
+    public static RowSet create(int length){
+        return new RowSet(length);
     }
     
     /**  TODO */

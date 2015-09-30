@@ -20,6 +20,7 @@ package org.deidentifier.arx.framework.check.groupify;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleBasedCriterion;
@@ -274,6 +275,8 @@ public class HashGroupify {
         // Extract research subset
         if (config.containsCriterion(DPresence.class)) {
             this.privacyModelDefinesSubset = config.getCriterion(DPresence.class).getSubset().getSet();
+        } else if (config.containsCriterion(EDDifferentialPrivacy.class)) {
+            this.privacyModelDefinesSubset = config.getCriterion(EDDifferentialPrivacy.class).getSubset().getSet();
         } else {
             this.privacyModelDefinesSubset = null;
         }
@@ -577,8 +580,8 @@ public class HashGroupify {
     public void performSuppression(final int[][] data) {
         
         for (int row = 0; row < data.length; row++) {
+            final int[] key = data[row];
             if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(row)) {
-                final int[] key = data[row];
                 final int hash = HashTableUtil.hashcode(key);
                 final int index = hash & (hashTableBuckets.length - 1);
                 HashGroupifyEntry m = hashTableBuckets[index];
@@ -591,6 +594,8 @@ public class HashGroupify {
                 if (!m.isNotOutlier) {
                     key[0] |= Data.OUTLIER_MASK;
                 }
+            } else {
+                key[0] |= Data.OUTLIER_MASK;
             }
         }
     }

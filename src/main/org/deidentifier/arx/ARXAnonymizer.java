@@ -29,6 +29,7 @@ import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
@@ -481,6 +482,13 @@ public class ARXAnonymizer {
                 if (definition.getHierarchy(attribute) == null) {
                     throw new IllegalArgumentException("Attribute '" + attribute + "' has an aggregation function specified wich needs a generalization hierarchy");
                 }
+            }
+        }
+        
+        // Check constraints for (e,d)-DP
+        if (config.containsCriterion(EDDifferentialPrivacy.class)) {
+            if (!definition.getQuasiIdentifiersWithMicroaggregation().isEmpty()) {
+                throw new IllegalArgumentException("Differential privacy must not be combined with micro-aggregation");
             }
         }
         

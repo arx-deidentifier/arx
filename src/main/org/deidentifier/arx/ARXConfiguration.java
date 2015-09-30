@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
@@ -401,6 +403,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public ARXConfiguration addCriterion(PrivacyCriterion c) {
         checkArgument(c);
+                
         if ((c instanceof DPresence) && 
             this.containsCriterion(DPresence.class)) {
             throw new RuntimeException("Must not add more than one d-presence criterion");
@@ -409,6 +412,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
                throw new RuntimeException("Must not add more than one k-anonymity criterion"); 
         }
         criteria.add(c);
+        
+        if (this.containsCriterion(EDDifferentialPrivacy.class) && 
+           (this.containsCriterion(DPresence.class) || this.containsCriterion(Inclusion.class))) {
+            criteria.remove(c);
+            throw new RuntimeException("(e,d)-DP must not be combined with d-presence or inclusion");
+        }
+        
         return this;
     }
     
@@ -910,6 +920,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (this.containsCriterion(KAnonymity.class)) {
             k = this.getCriterion(KAnonymity.class).getK();
         }
+        
+        if (this.containsCriterion(EDDifferentialPrivacy.class)) {
+            k = Math.max(k, this.getCriterion(EDDifferentialPrivacy.class).getK());
+        }
 
         if (this.containsCriterion(LDiversity.class)) {
             for (LDiversity c : this.getCriteria(LDiversity.class)) {
@@ -996,12 +1010,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
         int dataLength = 0;
         if (this.containsCriterion(DPresence.class)) {
             dataLength = this.getCriterion(DPresence.class).getSubset().getArray().length;
+        } else if (this.containsCriterion(EDDifferentialPrivacy.class)) {
+            dataLength = this.getCriterion(EDDifferentialPrivacy.class).getSubset().getArray().length;
         } else {
             dataLength = manager.getDataGeneralized().getDataLength();
         }
 
         // Compute max outliers
-        absMaxOutliers = (int) Math.floor(this.relMaxOutliers * (double) dataLength);
+        if (this.containsCriterion(EDDifferentialPrivacy.class)) {
+            absMaxOutliers = (int)dataLength;
+        } else {
+            absMaxOutliers = (int) Math.floor(this.relMaxOutliers * (double) dataLength);
+        }
 
         // Compute optimized array with criteria, assuming complexities
         // dPresence <= lDiversity <= tCloseness and ignoring kAnonymity

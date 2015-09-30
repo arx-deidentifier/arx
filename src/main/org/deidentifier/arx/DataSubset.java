@@ -192,8 +192,18 @@ public class DataSubset implements Serializable {
      * @return
      */
     public static DataSubset create(Data data, Set<Integer> subset){
-        int rows = data.getHandle().getNumRows();
-        RowSet bitset = RowSet.create(data);
+        return create(data.getHandle().getNumRows(), subset);
+    }
+    
+    /**
+     * Creates a new subset from the given set of tuple indices.
+     *
+     * @param rows
+     * @param subset
+     * @return
+     */
+    public static DataSubset create(int rows, Set<Integer> subset){
+        RowSet bitset = RowSet.create(rows);
         int[] array = new int[subset.size()];
         int idx = 0;
         for (Integer line : subset) {

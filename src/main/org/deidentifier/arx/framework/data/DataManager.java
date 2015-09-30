@@ -23,8 +23,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -125,15 +127,6 @@ public class DataManager {
                        final DataDefinition definition,
                        final Set<PrivacyCriterion> criteria,
                        final Map<String, DistributionAggregateFunction> functions) {
-
-        // Store research subset
-        for (PrivacyCriterion c : criteria) {
-            if (c instanceof DPresence) {
-                subset = ((DPresence) c).getSubset().getSet();
-                subsetSize = ((DPresence) c).getSubset().getArray().length;
-                break;
-            }
-        }
 
         // Store columns for reordering the output
         this.header = header;
@@ -258,8 +251,23 @@ public class DataManager {
                 final Integer minGenLevel = definition.getMinimumGeneralization(name);
                 minLevels[dictionaryIndex] = minGenLevel == null ? 0 : minGenLevel;
                 final Integer maxGenLevel = definition.getMaximumGeneralization(name);
-                maxLevels[dictionaryIndex] = maxGenLevel == null ? hierarchiesHeights[dictionaryIndex] - 1
-                        : maxGenLevel;
+                maxLevels[dictionaryIndex] = maxGenLevel == null ? hierarchiesHeights[dictionaryIndex] - 1 : maxGenLevel;
+            }
+        }
+        
+        // Change min & max, when using (e,d)-DP
+        for (PrivacyCriterion c : criteria) {
+            if (c instanceof EDDifferentialPrivacy) {
+                DataGeneralizationScheme scheme = ((EDDifferentialPrivacy)c).getGeneralizationScheme();
+                for (int i = 0; i < header.length; i++) {
+                    final int idx = i * 2;
+                    if (attributesGemeralized.contains(header[i]) &&
+                        map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) {
+                        minLevels[map[idx + 1]] = scheme.getGeneralizationLevel(header[i], definition);
+                        maxLevels[map[idx + 1]] = scheme.getGeneralizationLevel(header[i], definition);
+                    }
+                }
+                break;
             }
         }
 
@@ -347,6 +355,18 @@ public class DataManager {
                     throw new IllegalStateException("No microaggregation function defined for attribute (" +
                                                     header[i] + ")");
                 }
+            }
+        }
+
+        // Store research subset
+        for (PrivacyCriterion c : criteria) {
+            if (c instanceof DPresence) {
+                subset = ((DPresence) c).getSubset().getSet();
+                subsetSize = ((DPresence) c).getSubset().getArray().length;
+            } else if (c instanceof EDDifferentialPrivacy) {
+                ((EDDifferentialPrivacy)c).initialize(this);
+                subset = ((EDDifferentialPrivacy) c).getSubset().getSet();
+                subsetSize = ((EDDifferentialPrivacy) c).getSubset().getArray().length;
             }
         }
     }
