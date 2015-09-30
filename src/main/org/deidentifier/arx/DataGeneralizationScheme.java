@@ -27,11 +27,8 @@ import java.util.Set;
  * This class encapsulates a generalization scheme
  * @author Fabian Prasser
  */
-public class DataGeneralizationScheme implements Serializable {
+public class DataGeneralizationScheme implements Serializable, Cloneable {
     
-    /** SVUID*/
-    private static final long serialVersionUID = -5402090022629905154L;
-
     /**
      * A specific generalization degree
      * @author Fabian Prasser
@@ -67,6 +64,17 @@ public class DataGeneralizationScheme implements Serializable {
         }
     }
 
+    /** SVUID*/
+    private static final long serialVersionUID = -5402090022629905154L;
+
+    /**
+     * Creates a new data generalization scheme
+     * @return
+     */
+    public static DataGeneralizationScheme create() {
+        return new DataGeneralizationScheme(null, null);
+    }
+    
     /**
      * Creates a new data generalization scheme
      * @param data
@@ -75,26 +83,37 @@ public class DataGeneralizationScheme implements Serializable {
     public static DataGeneralizationScheme create(Data data) {
         return new DataGeneralizationScheme(data, null);
     }
+    
     /**
      * Creates a new data generalization scheme
      * @param data
+     * @param degree
      * @return
      */
     public static DataGeneralizationScheme create(Data data, GeneralizationDegree degree) {
         return new DataGeneralizationScheme(data, degree);
     }
+
+    /**
+     * Creates a new data generalization scheme
+     * @param degree
+     * @return
+     */
+    public static DataGeneralizationScheme create(GeneralizationDegree degree) {
+        return new DataGeneralizationScheme(null, degree);
+    }
     
     /** Degrees */
     private Map<String, GeneralizationDegree> degrees = new HashMap<String, GeneralizationDegree>();
-    
+
     /** Levels */
     private Map<String, Integer>              levels  = new HashMap<String, Integer>();
-    
+
     /** Degree */
     private GeneralizationDegree              degree  = null;
 
     /** Data */
-    private final Set<String>                 attributes;
+    private Set<String>                       attributes;
     
     /**
      * Creates a new instance
@@ -102,13 +121,30 @@ public class DataGeneralizationScheme implements Serializable {
      * @param degree 
      */
     private DataGeneralizationScheme(Data data, GeneralizationDegree degree) {
-        this.attributes = new HashSet<String>();
-        for (int i=0; i<data.getHandle().getNumColumns(); i++) {
-            this.attributes.add(data.getHandle().getAttributeName(i));
+        
+        if (data != null) {
+            this.attributes = new HashSet<String>();
+            for (int i=0; i<data.getHandle().getNumColumns(); i++) {
+                this.attributes.add(data.getHandle().getAttributeName(i));
+            }
+        } else {
+            this.attributes = null;
         }
         this.degree = degree;
     }
     
+    /**
+     * Clone method
+     */
+    public DataGeneralizationScheme clone() {
+        DataGeneralizationScheme result = new DataGeneralizationScheme(null, null);
+        result.degrees = new HashMap<String, GeneralizationDegree>(this.degrees);
+        result.degree = this.degree;
+        result.levels = new HashMap<String, Integer>(this.levels);
+        result.attributes = this.attributes != null ? new HashSet<String>(this.attributes) : null;
+        return result;
+    }
+
     /**
      * Defines a specific generalization degree
      * @param degree
@@ -118,6 +154,7 @@ public class DataGeneralizationScheme implements Serializable {
         this.degree = degree;
         return this;
     }
+    
 
     /**
      * Defines a specific generalization degree
@@ -130,7 +167,6 @@ public class DataGeneralizationScheme implements Serializable {
         this.degrees.put(attribute, degree);
         return this;
     }
-    
 
     /**
      * Defines a specific generalization level
@@ -146,7 +182,7 @@ public class DataGeneralizationScheme implements Serializable {
         this.levels.put(attribute, level);
         return this;
     }
-
+    
     /**
      * Returns a generalization level as defined by this class
      * @param attribute
@@ -177,7 +213,7 @@ public class DataGeneralizationScheme implements Serializable {
      * @param attribute
      */
     private void check(String attribute) {
-        if (!attributes.contains(attribute)) {
+        if (attributes != null && !attributes.contains(attribute)) {
             throw new IllegalArgumentException("Unknown attribute: " + attribute);
         }
     }
