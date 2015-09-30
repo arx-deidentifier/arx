@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,14 +27,18 @@ import java.util.Set;
  * This class encapsulates a generalization scheme
  * @author Fabian Prasser
  */
-public class DataGeneralizationScheme {
+public class DataGeneralizationScheme implements Serializable {
     
+    /** SVUID*/
+    private static final long serialVersionUID = -5402090022629905154L;
+
     /**
      * A specific generalization degree
      * @author Fabian Prasser
      *
      */
-    public static enum GeneralizationDegree {
+    public static enum GeneralizationDegree implements Serializable {
+        
         NONE(0d),
         LOW(0.2d),
         LOW_MEDIUM(0.4d),
@@ -78,8 +83,10 @@ public class DataGeneralizationScheme {
     public static DataGeneralizationScheme create(Data data, GeneralizationDegree degree) {
         return new DataGeneralizationScheme(data, degree);
     }
+    
     /** Degrees */
     private Map<String, GeneralizationDegree> degrees = new HashMap<String, GeneralizationDegree>();
+    
     /** Levels */
     private Map<String, Integer>              levels  = new HashMap<String, Integer>();
     
