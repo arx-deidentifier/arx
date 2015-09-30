@@ -325,10 +325,10 @@ public class ComponentFilterTable {
      */
     public void setSelected(String entry, String property, boolean selected) {
         if (!this.entries.contains(entry)) {
-            throw new RuntimeException(Resources.getMessage("ComponentFilterTable.7")); //$NON-NLS-1$
+            return;
         }
         if (!this.properties.contains(property)) {
-            throw new RuntimeException(Resources.getMessage("ComponentFilterTable.8")); //$NON-NLS-1$
+            return;
         }
         if (!this.selected.containsKey(entry)) {
             this.selected.put(entry, new HashMap<String, Boolean>());

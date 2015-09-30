@@ -160,17 +160,17 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
     protected List<ModelCriterion> getTypicalParameters() {
 
         List<ModelCriterion> result = new ArrayList<ModelCriterion>();
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_DISTINCT, 2, 0));
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_DISTINCT, 4, 0));
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_DISTINCT, 6, 0));
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_DISTINCT, 8, 0));
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_DISTINCT, 10, 0));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_DISTINCT, 2, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_DISTINCT, 4, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_DISTINCT, 6, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_DISTINCT, 8, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_DISTINCT, 10, 1.0E-5));
         
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 2, 0));
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 4, 0));
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 6, 0));
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 8, 0));
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 10, 0));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 2, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 4, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 6, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 8, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 10, 1.0E-5));
 
         result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_RECURSIVE, 2, 3));
         result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_RECURSIVE, 4, 3));
