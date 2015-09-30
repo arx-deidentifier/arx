@@ -17,11 +17,14 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataGeneralizationScheme;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -54,17 +57,20 @@ import de.linearbits.swt.table.DynamicTableColumn;
  */
 public class DialogGeneralizationSelection extends TitleAreaDialog implements IDialog {
 
-    /** Selection*/
+    /** Selection */
     private String                  attribute   = null;
 
-    /** Selection*/
+    /** Selection */
     private TableItem               item        = null;
 
-    /** List */
+    /** Map */
     private Map<String, Integer>    selection   = new HashMap<String, Integer>();
 
-    /** List */
+    /** Map */
     private Map<String, String[][]> hierarchies = new HashMap<String, String[][]>();
+
+    /** List */
+    private List<String>            attributes = new ArrayList<String>();
 
     /** Model */
     private DataDefinition          definition;
@@ -85,9 +91,14 @@ public class DialogGeneralizationSelection extends TitleAreaDialog implements ID
                                          final DataGeneralizationScheme scheme) {
         super(shell);
         definition = model.getInputDefinition();
-        for (String attribute : definition.getQuasiIdentifiersWithGeneralization()) {
-            selection.put(attribute, scheme.getGeneralizationLevel(attribute, definition));
-            hierarchies.put(attribute, definition.getHierarchy(attribute));
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        for (int i=0; i<handle.getNumColumns(); i++) {
+            String attribute = handle.getAttributeName(i);
+            if (definition.getQuasiIdentifiersWithGeneralization().contains(attribute)) {
+                attributes.add(attribute);
+                selection.put(attribute, scheme.getGeneralizationLevel(attribute, definition));
+                hierarchies.put(attribute, definition.getHierarchy(attribute));
+            }
         }
     }
 
@@ -165,7 +176,7 @@ public class DialogGeneralizationSelection extends TitleAreaDialog implements ID
         column3.pack();
         
         // Add
-        for (String attribute : definition.getQuasiIdentifiersWithGeneralization()) {
+        for (String attribute : attributes) {
             TableItem item = new TableItem(table, SWT.NONE);
             item.setText(new String[] {attribute, "0", hierarchies.get(attribute)[0][0]});
         }
