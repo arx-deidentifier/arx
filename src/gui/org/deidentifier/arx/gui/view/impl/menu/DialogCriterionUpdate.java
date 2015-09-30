@@ -30,6 +30,8 @@ import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDialog;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -40,12 +42,10 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -290,17 +290,32 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
                 }
             }
         });
-
-        Group border = new Group(parent, SWT.SHADOW_ETCHED_IN);
-        border.setText(Resources.getMessage("DialogCriterionUpdate.15")); //$NON-NLS-1$
-        GridData data = SWTUtil.createFillGridData();
-        data.grabExcessVerticalSpace = false;
-        border.setLayoutData(data);
-        border.setLayout(new FillLayout());
         
-        this.root = new Composite(border, SWT.NONE);
-        this.root.setLayout(SWTUtil.createGridLayout(1));
+        
 
+        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-80"); //$NON-NLS-1$
+        bar.add(Resources.getMessage("DialogCriterionUpdate.16"),  //$NON-NLS-1$
+                controller.getResources().getManagedImage("default.png"), //$NON-NLS-1$
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if (editor != null) {
+                            DialogDefaultParameters dialog = new DialogDefaultParameters(DialogCriterionUpdate.this.getShell(),
+                                                                                         controller,
+                                                                                         editor.getTypicalParameters());
+                            dialog.create();
+                            if (dialog.open() == Window.OK) {
+                                editor.parseDefault(dialog.getSelection());
+                            } 
+                        }
+                    }
+                });
+        
+        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, null);
+        folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.root = folder.createItem(Resources.getMessage("DialogCriterionUpdate.15"), null); //$NON-NLS-1$
+        this.root.setLayout(SWTUtil.createGridLayout(1));
+        folder.setSelection(0);
 
         if (selection != null) {
             table.setSelection(elements.indexOf(selection));

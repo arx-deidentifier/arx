@@ -17,6 +17,10 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -109,10 +113,22 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
     }
     
     @Override
-    protected void parse(ModelTClosenessCriterion model) {
+    protected void parse(ModelTClosenessCriterion model, boolean _default) {
         
         knobT.setValue(model.getT());
         updateLabel(labelT, model.getT());
         comboVariant.select(model.getVariant());
+    }
+
+
+    @Override
+    protected List<ModelCriterion> getTypicalParameters() {
+
+        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
+        result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_EQUAL, 0.15));
+        result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_EQUAL, 0.2));
+        result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_HIERARCHICAL, 0.15));
+        result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_HIERARCHICAL, 0.2));
+        return result;
     }
 }

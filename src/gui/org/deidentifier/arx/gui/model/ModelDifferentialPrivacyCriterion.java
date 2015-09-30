@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.model;
 
+import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataGeneralizationScheme.GeneralizationDegree;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
@@ -33,6 +34,12 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
     /** SVUID */
     private static final long        serialVersionUID = 1803345324372136700L;
 
+    /** Constant */
+    private static final double      LN2            = new Log().value(2);
+
+    /** Constant */
+    private static final double      LN3            = new Log().value(3);
+
     /** Epsilon */
     private double                   epsilon          = 2d;
 
@@ -42,7 +49,24 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
     /** Generalization scheme */
     private DataGeneralizationScheme generalization   = DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM);
 
-	@Override
+    /**
+     * Creates a new instance
+     */
+    public ModelDifferentialPrivacyCriterion() {
+        // Empty by design
+    }
+    
+    /**
+     * Creates a new instance
+     * @param epsilon
+     * @param delta
+     */
+	public ModelDifferentialPrivacyCriterion(double epsilon, double delta) {
+        this.epsilon = epsilon;
+        this.delta = delta;
+    }
+
+    @Override
     public ModelDifferentialPrivacyCriterion clone() {
         ModelDifferentialPrivacyCriterion result = new ModelDifferentialPrivacyCriterion();
         result.epsilon = this.epsilon;
@@ -124,6 +148,14 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     @Override
     public String toString() {
-        return "("+epsilon+", "+delta+")" + Resources.getMessage("ModelCriterion.2"); //$NON-NLS-1$
+        
+        String e = String.valueOf(epsilon);
+        if (epsilon == LN2) {
+            e = "ln(2)";
+        } else if (epsilon == LN3) {
+            e = "ln(3)";
+        }
+        
+        return "("+e+", "+delta+")" + Resources.getMessage("ModelCriterion.2"); //$NON-NLS-1$
     }
 }

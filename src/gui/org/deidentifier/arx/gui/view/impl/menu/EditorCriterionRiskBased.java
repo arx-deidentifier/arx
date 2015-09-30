@@ -17,6 +17,10 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -125,7 +129,7 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
     /**
      * Parses the input
      */
-    protected void parse(ModelRiskBasedCriterion model) {
+    protected void parse(ModelRiskBasedCriterion model, boolean _default) {
         updateLabel(labelThreshold, model.getThreshold());
         knobThreshold.setValue(model.getThreshold());
         switch(model.getVariant()) {
@@ -142,5 +146,25 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
                 cmbModel.select(3);
                 break;
         }
+    }
+
+
+    @Override
+    protected List<ModelCriterion> getTypicalParameters() {
+
+        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR, 0.01d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR, 0.001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR, 0.0001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN, 0.01d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN, 0.001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN, 0.0001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ, 0.01d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ, 0.001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ, 0.0001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB, 0.01d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB, 0.001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB, 0.0001d));
+        return result;
     }
 }

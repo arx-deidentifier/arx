@@ -17,6 +17,10 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelDPresenceCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -121,10 +125,29 @@ public class EditorCriterionDPresence extends EditorCriterion<ModelDPresenceCrit
     /**
      * Parses the input
      */
-    protected void parse(ModelDPresenceCriterion model) {
+    protected void parse(ModelDPresenceCriterion model, boolean _default) {
         updateLabel(labelDMin, model.getDmin());
         knobDMin.setValue(model.getDmin());
         updateLabel(labelDMax, model.getDmax());
         knobDMax.setValue(model.getDmax());
+    }
+
+
+    @Override
+    protected List<ModelCriterion> getTypicalParameters() {
+
+        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
+        result.add(new ModelDPresenceCriterion(0.00d, 0.05d));
+        result.add(new ModelDPresenceCriterion(0.00d, 0.06d));
+        result.add(new ModelDPresenceCriterion(0.00d, 0.07d));
+        result.add(new ModelDPresenceCriterion(0.00d, 0.08d));
+        result.add(new ModelDPresenceCriterion(0.00d, 0.09d));
+        result.add(new ModelDPresenceCriterion(0.00d, 0.10d));
+        result.add(new ModelDPresenceCriterion(0.00d, 0.20d));
+        result.add(new ModelDPresenceCriterion(0.00d, 0.50d));
+        result.add(new ModelDPresenceCriterion(0.00d, 0.70d));
+        result.add(new ModelDPresenceCriterion(0.04d, 0.05d));
+        result.add(new ModelDPresenceCriterion(0.01d, 0.05d));        
+        return result;
     }
 }

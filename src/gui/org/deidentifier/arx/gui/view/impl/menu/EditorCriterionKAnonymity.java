@@ -17,6 +17,10 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelKAnonymityCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -88,8 +92,20 @@ public class EditorCriterionKAnonymity extends EditorCriterion<ModelKAnonymityCr
     /**
      * Parse
      */
-    protected void parse(ModelKAnonymityCriterion model) {
+    protected void parse(ModelKAnonymityCriterion model, boolean _default) {
         updateLabel(labelK, model.getK());
         knobK.setValue(model.getK());
+    }
+
+
+    @Override
+    protected List<ModelCriterion> getTypicalParameters() {
+
+        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
+        result.add(new ModelKAnonymityCriterion(3));
+        result.add(new ModelKAnonymityCriterion(5));
+        result.add(new ModelKAnonymityCriterion(10));
+        result.add(new ModelKAnonymityCriterion(100));
+        return result;
     }
 }

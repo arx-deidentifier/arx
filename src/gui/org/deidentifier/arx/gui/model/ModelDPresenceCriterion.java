@@ -38,7 +38,25 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 	/** Dmax. */
 	private double dmax = 0.0d;
 	
-	@Override
+	/**
+	 * Creates a new instance
+	 */
+    public ModelDPresenceCriterion() {
+        // Empty by design
+    }
+	
+    /**
+     * Creates a new instance
+     * @param dmin
+     * @param dmax
+     */
+	public ModelDPresenceCriterion(double dmin, double dmax) {
+        super();
+        this.dmin = dmin;
+        this.dmax = dmax;
+    }
+
+    @Override
     public ModelDPresenceCriterion clone() {
         ModelDPresenceCriterion result = new ModelDPresenceCriterion();
         result.dmax = this.dmax;

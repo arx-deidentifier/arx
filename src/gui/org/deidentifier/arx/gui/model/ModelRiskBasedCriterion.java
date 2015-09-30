@@ -61,6 +61,16 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
     /**
      * Creates a new instance
      * @param variant
+     * @param threshold
+     */
+    public ModelRiskBasedCriterion(int variant,
+                                   double threshold) {
+        this.variant = variant;
+        this.threshold = threshold;
+    }
+    /**
+     * Creates a new instance
+     * @param variant
      */
     public ModelRiskBasedCriterion(int variant) {
         this.variant = variant;

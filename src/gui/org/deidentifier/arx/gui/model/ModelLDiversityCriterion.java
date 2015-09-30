@@ -55,6 +55,24 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
      * Creates a new instance.
      *
      * @param attribute
+     * @param variant
+     * @param l
+     * @param c
+     */
+    public ModelLDiversityCriterion(String attribute,
+                                    int variant,
+                                    int l,
+                                    double c) {
+        super(attribute);
+        this.variant = variant;
+        this.l = l;
+        this.c = c;
+    }
+    
+    /**
+     * Creates a new instance.
+     *
+     * @param attribute
      */
     public ModelLDiversityCriterion(String attribute) {
         super(attribute);

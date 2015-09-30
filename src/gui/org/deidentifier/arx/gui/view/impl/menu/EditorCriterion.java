@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -48,8 +49,8 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
     private final KnobColorProfile defaultColorProfile;
     /** Color profile */
     private final KnobColorProfile focusedColorProfile;
-    /** Format*/
-    private final DecimalFormat format = new DecimalFormat("0.00000E0###");
+    /** Format */
+    private final DecimalFormat    format = new DecimalFormat("0.00000E0###");
 
     /**
      * Creates a new instance.
@@ -85,71 +86,6 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
     }
     
     /**
-     * Creates a double knob
-     * @param parent
-     * @param min
-     * @param max
-     * @return
-     */
-    protected Knob<Double> createKnobDouble(Composite parent, double min, double max) {
-        Knob<Double> knob = new Knob<Double>(parent, SWT.NULL, new KnobRange.Double(min, max));
-        knob.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).align(SWT.CENTER, SWT.CENTER).hint(30, 30).create());
-        knob.setDefaultColorProfile(defaultColorProfile);
-        knob.setFocusedColorProfile(focusedColorProfile);
-        return knob;
-    }
-
-    /**
-     * Creates a double knob
-     * @param parent
-     * @param min
-     * @param max
-     * @return
-     */
-    protected Knob<Integer> createKnobInteger(Composite parent, int min, int max) {
-        Knob<Integer> knob = new Knob<Integer>(parent, SWT.NULL, new KnobRange.Integer(min, max));
-        knob.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).align(SWT.CENTER, SWT.CENTER).hint(30, 30).create());
-        knob.setDefaultColorProfile(defaultColorProfile);
-        knob.setFocusedColorProfile(focusedColorProfile);
-        return knob;
-    }
-
-    /**
-     * Updates the label and tool tip text.
-     *
-     * @param label
-     * @param value
-     */
-    protected void updateLabel(Label label, int value) {
-        String text = String.valueOf(value);
-        label.setText(" " + text);
-        label.setToolTipText(text);
-    }
-
-    /**
-     * Updates the label and tool tip text.
-     *
-     * @param label
-     * @param value
-     */
-    protected void updateLabel(Label label, double value) {
-        String text = format.format(value).replace(",", ".").replace("E", "e");
-        label.setText(" " + text);
-        label.setToolTipText(text);
-    }
-
-    /**
-     * Creates a label
-     * @return
-     */
-    protected Label createLabel(Composite parent) {
-        Label label = new Label(parent, SWT.BORDER | SWT.LEFT);
-        GridData data = SWTUtil.createFillHorizontallyGridData(false);
-        label.setLayoutData(data);
-        return label;
-    }
-    
-    /**
      * Disposes the editor
      */
     public void dispose() {
@@ -166,6 +102,15 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
     }
 
     /**
+     * Parse method
+     * @param model
+     */
+    @SuppressWarnings("unchecked")
+    public void parseDefault(ModelCriterion model) {
+        this.parse((T)model, true);
+    }
+
+    /**
      * Build the composite
      * 
      * @param parent
@@ -173,9 +118,89 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
     protected abstract Composite build(Composite parent);
 
     /**
+     * Creates a double knob
+     * @param parent
+     * @param min
+     * @param max
+     * @return
+     */
+    protected Knob<Double> createKnobDouble(Composite parent, double min, double max) {
+        Knob<Double> knob = new Knob<Double>(parent, SWT.NULL, new KnobRange.Double(min, max));
+        knob.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).align(SWT.CENTER, SWT.CENTER).hint(30, 30).create());
+        knob.setDefaultColorProfile(defaultColorProfile);
+        knob.setFocusedColorProfile(focusedColorProfile);
+        return knob;
+    }
+    
+    /**
+     * Creates a double knob
+     * @param parent
+     * @param min
+     * @param max
+     * @return
+     */
+    protected Knob<Integer> createKnobInteger(Composite parent, int min, int max) {
+        Knob<Integer> knob = new Knob<Integer>(parent, SWT.NULL, new KnobRange.Integer(min, max));
+        knob.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).align(SWT.CENTER, SWT.CENTER).hint(30, 30).create());
+        knob.setDefaultColorProfile(defaultColorProfile);
+        knob.setFocusedColorProfile(focusedColorProfile);
+        return knob;
+    }
+
+    /**
+     * Creates a label
+     * @return
+     */
+    protected Label createLabel(Composite parent) {
+        Label label = new Label(parent, SWT.BORDER | SWT.LEFT);
+        GridData data = SWTUtil.createFillHorizontallyGridData(false);
+        label.setLayoutData(data);
+        return label;
+    }
+
+    /**
+     * Returns a set of typical parameters
+     * @return
+     */
+    protected abstract List<ModelCriterion> getTypicalParameters();
+    
+    /**
+     * Parse non-default parameters
+     * @param model
+     */
+    protected void parse(T model) {
+        this.parse(model, false);
+    }
+
+    /**
      * Parse
      * 
      * @param model
+     * @param default
      */
-    protected abstract void parse(T model);
+    protected abstract void parse(T model, boolean defaultParameters);
+    
+    /**
+     * Updates the label and tool tip text.
+     *
+     * @param label
+     * @param value
+     */
+    protected void updateLabel(Label label, double value) {
+        String text = format.format(value).replace(",", ".").replace("E", "e");
+        label.setText(" " + text);
+        label.setToolTipText(text);
+    }
+
+    /**
+     * Updates the label and tool tip text.
+     *
+     * @param label
+     * @param value
+     */
+    protected void updateLabel(Label label, int value) {
+        String text = String.valueOf(value);
+        label.setText(" " + text);
+        label.setToolTipText(text);
+    }
 }

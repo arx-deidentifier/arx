@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataGeneralizationScheme.GeneralizationDegree;
+import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelDifferentialPrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -196,12 +197,26 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
     }
     
     @Override
-    protected void parse(ModelDifferentialPrivacyCriterion model) {
+    protected void parse(ModelDifferentialPrivacyCriterion model, boolean _default) {
         
         updateLabel(labelEpsilon, model.getEpsilon());
         updateLabel(labelDelta, model.getDelta());
         knobDelta.setValue(model.getDelta());
         knobEpsilon.setValue(model.getEpsilon());
-        comboGeneralization.select(getIndexOfGeneralizationDegree(model.getGeneralization().getGeneralizationDegree()));
+        if (!_default) {
+            comboGeneralization.select(getIndexOfGeneralizationDegree(model.getGeneralization().getGeneralizationDegree()));
+        }
+    }
+
+    @Override
+    protected List<ModelCriterion> getTypicalParameters() {
+
+        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
+        for (double delta : DELTAS) {
+            for (double epsilon : EPSILONS) {
+                result.add(new ModelDifferentialPrivacyCriterion(epsilon, delta));
+            }
+        }
+        return result;
     }
 }

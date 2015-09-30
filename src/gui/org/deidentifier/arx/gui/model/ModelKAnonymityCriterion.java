@@ -33,8 +33,22 @@ public class ModelKAnonymityCriterion extends ModelImplicitCriterion{
 	
 	/** K. */
 	private int k = 2;
-	
-	@Override
+	/**
+     * Creates a new instance
+     */
+    public ModelKAnonymityCriterion() {
+        // Empty by design
+    }
+    
+	/**
+	 * Creates a new instance
+	 * @param k
+	 */
+	public ModelKAnonymityCriterion(int k) {
+        this.k = k;
+    }
+
+    @Override
     public ModelKAnonymityCriterion clone() {
         ModelKAnonymityCriterion result = new ModelKAnonymityCriterion();
         result.k = this.k;
