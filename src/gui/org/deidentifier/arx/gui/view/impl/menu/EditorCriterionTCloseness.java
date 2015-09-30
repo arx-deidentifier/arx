@@ -28,7 +28,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Scale;
+
+import de.linearbits.swt.widgets.Knob;
 
 /**
  * Implements a view on a t-closeness criterion.
@@ -40,15 +41,15 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
     /**  View */
     private static final String VARIANTS[] = {Resources.getMessage("CriterionDefinitionView.9"), Resources.getMessage("CriterionDefinitionView.10") }; //$NON-NLS-1$ //$NON-NLS-2$
 
-    /**  View */
-    private Scale               sliderT;
-    
-    /**  View */
+    /** View */
+    private Knob<Double>        knobT;
+
+    /** View */
     private Combo               comboVariant;
-    
-    /**  View */
+
+    /** View */
     private Label               labelT;
-    
+
     /**
      * Creates a new instance.
      *
@@ -59,16 +60,6 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
                                      final ModelTClosenessCriterion model) {
 
         super(parent, model);
-    }
-
-    /**
-     * Updates the label and tool tip text.
-     *
-     * @param text
-     */
-    private void updateLabel(String text) {
-        labelT.setText(text);
-        labelT.setToolTipText(text);
     }
 
     @Override
@@ -103,25 +94,14 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
         final Label zLabel = new Label(group, SWT.NONE);
         zLabel.setText(Resources.getMessage("CriterionDefinitionView.43")); //$NON-NLS-1$
 
-        labelT = new Label(group, SWT.BORDER | SWT.CENTER);
-        final GridData d9 = new GridData();
-        d9.minimumWidth = LABEL_WIDTH;
-        d9.widthHint = LABEL_WIDTH;
-        labelT.setLayoutData(d9);
-        updateLabel("0.001"); //$NON-NLS-1$
-
-        sliderT = new Scale(group, SWT.HORIZONTAL);
-        final GridData d6 = SWTUtil.createFillHorizontallyGridData();
-        d6.horizontalSpan = 1;
-        sliderT.setLayoutData(d6);
-        sliderT.setMaximum(SWTUtil.SLIDER_MAX);
-        sliderT.setMinimum(0);
-        sliderT.setSelection(0);
-        sliderT.addSelectionListener(new SelectionAdapter() {
+        labelT = createLabel(group);
+        knobT = createKnobDouble(group, 0.000001d, 1d);
+        updateLabel(labelT, knobT.getValue());
+        knobT.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.setT(SWTUtil.sliderToDouble(0.001d, 1d, sliderT.getSelection()));
-                updateLabel(String.valueOf(model.getT()));
+                model.setT(knobT.getValue());
+                updateLabel(labelT, model.getT());
             }
         });
 
@@ -131,8 +111,8 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
     @Override
     protected void parse(ModelTClosenessCriterion model) {
         
-        sliderT.setSelection(SWTUtil.doubleToSlider(0.001d, 1d, model.getT()));
-        updateLabel(String.valueOf(model.getT()));
+        knobT.setValue(model.getT());
+        updateLabel(labelT, model.getT());
         comboVariant.select(model.getVariant());
     }
 }

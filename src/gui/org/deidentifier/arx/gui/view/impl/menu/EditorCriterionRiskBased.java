@@ -23,12 +23,12 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Scale;
+
+import de.linearbits.swt.widgets.Knob;
 
 /**
  * A view on a risk-based criterion.
@@ -38,14 +38,14 @@ import org.eclipse.swt.widgets.Scale;
 public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCriterion>{
 
     /** View */
-    private Scale sliderThreshold;
+    private Knob<Double> knobThreshold;
 
     /** View */
-    private Label labelThreshold;
+    private Label        labelThreshold;
 
     /** View */
-    private Combo cmbModel;
-    
+    private Combo        cmbModel;
+
     /**
      * Creates a new instance.
      *
@@ -55,16 +55,6 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
     public EditorCriterionRiskBased(final Composite parent, 
                                     final ModelRiskBasedCriterion model) {
         super(parent, model);
-    }
-
-    /**
-     * Updates the "threshold" label and tool tip text.
-     *
-     * @param text
-     */
-    private void updateThresholdLabel(String text) {
-        labelThreshold.setText(text);
-        labelThreshold.setToolTipText(text);
     }
     
     /**
@@ -89,24 +79,14 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
         final Label zLabel = new Label(group, SWT.NONE);
         zLabel.setText(Resources.getMessage("CriterionDefinitionView.81")); //$NON-NLS-1$
 
-        labelThreshold = new Label(group, SWT.BORDER | SWT.CENTER);
-        final GridData d9 = new GridData();
-        d9.minimumWidth = LABEL_WIDTH;
-        d9.widthHint = LABEL_WIDTH;
-        labelThreshold.setLayoutData(d9);
-        updateThresholdLabel("0"); //$NON-NLS-1$
-
-        sliderThreshold = new Scale(group, SWT.HORIZONTAL);
-        sliderThreshold.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        sliderThreshold.setMaximum(SWTUtil.SLIDER_MAX);
-        sliderThreshold.setMinimum(0);
-        sliderThreshold.setSelection(0);
-        sliderThreshold.addSelectionListener(new SelectionAdapter() {
+        labelThreshold = createLabel(group);
+        knobThreshold = createKnobDouble(group, 0d, 1d);
+        updateLabel(labelThreshold, knobThreshold.getValue());
+        knobThreshold.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.setThreshold(SWTUtil.sliderToDouble(0, 1, sliderThreshold.getSelection()));
-                String dmin = String.valueOf(model.getThreshold());
-                updateThresholdLabel(dmin);
+                model.setThreshold(knobThreshold.getValue());
+                updateLabel(labelThreshold, model.getThreshold());
             }
         });
         
@@ -146,8 +126,8 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
      * Parses the input
      */
     protected void parse(ModelRiskBasedCriterion model) {
-        updateThresholdLabel(String.valueOf(model.getThreshold()));
-        sliderThreshold.setSelection(SWTUtil.doubleToSlider(0, 1d, model.getThreshold()));
+        updateLabel(labelThreshold, model.getThreshold());
+        knobThreshold.setValue(model.getThreshold());
         switch(model.getVariant()) {
             case ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR:
                 cmbModel.select(0);

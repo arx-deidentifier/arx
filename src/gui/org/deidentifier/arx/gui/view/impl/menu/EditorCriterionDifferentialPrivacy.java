@@ -34,7 +34,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Scale;
+
+import de.linearbits.swt.widgets.Knob;
 
 /**
  * A view on an (e,d)-DP criterion.
@@ -43,20 +44,20 @@ import org.eclipse.swt.widgets.Scale;
  */
 public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDifferentialPrivacyCriterion> {
 
-    /**  View */
-    private Scale               sliderDelta;
-    
-    /**  View */
-    private Scale               sliderEpsilon;
-    
-    /**  View */
-    private Combo               comboGeneralization;
-    
-    /**  View */
-    private Label               labelEpsilon;
-    
-    /**  View */
-    private Label               labelDelta;
+    /** View */
+    private Knob<Double>          knobDelta;
+
+    /** View */
+    private Knob<Double>          knobEpsilon;
+
+    /** View */
+    private Combo                 comboGeneralization;
+
+    /** View */
+    private Label                 labelEpsilon;
+
+    /** View */
+    private Label                 labelDelta;
     
 
     /**
@@ -91,26 +92,6 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         super(parent, model);
     }
 
-    /**
-     * Updates the "epsilon" label and tool tip text.
-     *
-     * @param text
-     */
-    private void updateEpsilonLabel(String text) {
-        labelEpsilon.setText(text);
-        labelEpsilon.setToolTipText(text);
-    }
-
-    /**
-     * Updates the "delta" label and tool tip text.
-     *
-     * @param text
-     */
-    private void updateDeltaLabel(String text) {
-        labelDelta.setText(text);
-        labelDelta.setToolTipText(text);
-    }
-
     @Override
     protected Composite build(Composite parent) {
 
@@ -126,26 +107,14 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         final Label zLabel = new Label(group, SWT.NONE);
         zLabel.setText(Resources.getMessage("CriterionDefinitionView.90")); //$NON-NLS-1$
 
-        labelEpsilon = new Label(group, SWT.BORDER | SWT.CENTER);
-        final GridData d9 = new GridData();
-        d9.minimumWidth = LABEL_WIDTH;
-        d9.widthHint = LABEL_WIDTH;
-        labelEpsilon.setLayoutData(d9);
-        updateEpsilonLabel("0.001"); //$NON-NLS-1$
-
-        sliderEpsilon = new Scale(group, SWT.HORIZONTAL);
-        final GridData d6 = SWTUtil.createFillHorizontallyGridData();
-        d6.horizontalSpan = 1;
-        sliderEpsilon.setLayoutData(d6);
-        sliderEpsilon.setMaximum(SWTUtil.SLIDER_MAX);
-        sliderEpsilon.setMinimum(0);
-        sliderEpsilon.setSelection(0);
-        sliderEpsilon.setEnabled(false);
-        sliderEpsilon.addSelectionListener(new SelectionAdapter() {
+        labelEpsilon = createLabel(group);
+        knobEpsilon = createKnobDouble(group, 0.01d, 2d);
+        updateLabel(labelEpsilon, knobEpsilon.getValue()); //$NON-NLS-1$
+        knobEpsilon.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.setEpsilon(SWTUtil.sliderToDouble(0.01d, 2d, sliderEpsilon.getSelection()));
-                updateEpsilonLabel(String.valueOf(model.getEpsilon()));
+                model.setEpsilon(knobEpsilon.getValue());
+                updateLabel(labelEpsilon, model.getEpsilon());
             }
         });
 
@@ -153,25 +122,14 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         final Label lLabel = new Label(group, SWT.NONE);
         lLabel.setText(Resources.getMessage("CriterionDefinitionView.91")); //$NON-NLS-1$
 
-        labelDelta = new Label(group, SWT.BORDER | SWT.CENTER);
-        final GridData d = new GridData();
-        d.minimumWidth = LABEL_WIDTH;
-        d.widthHint = LABEL_WIDTH;
-        labelDelta.setLayoutData(d);
-        updateDeltaLabel("2"); //$NON-NLS-1$
-
-        sliderDelta = new Scale(group, SWT.HORIZONTAL);
-        final GridData d4 = SWTUtil.createFillHorizontallyGridData();
-        d4.horizontalSpan = 1;
-        sliderDelta.setLayoutData(d4);
-        sliderDelta.setMaximum(SWTUtil.SLIDER_MAX);
-        sliderDelta.setMinimum(0);
-        sliderDelta.setSelection(0);
-        sliderDelta.addSelectionListener(new SelectionAdapter() {
+        labelDelta = createLabel(group);
+        knobDelta = createKnobDouble(group, 0.00000000001d, 0.00001d);
+        updateLabel(labelDelta, knobDelta.getValue());
+        knobDelta.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.setDelta(SWTUtil.sliderToDouble(0.00000000001d, 0.00001d, sliderDelta.getSelection()));
-                updateDeltaLabel(String.valueOf(model.getDelta()));
+                model.setDelta(knobDelta.getValue());
+                updateLabel(labelDelta, model.getDelta());
             }
         });
 
@@ -240,10 +198,10 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
     @Override
     protected void parse(ModelDifferentialPrivacyCriterion model) {
         
-        updateEpsilonLabel(String.valueOf(model.getEpsilon()));
-        updateDeltaLabel(String.valueOf(model.getDelta()));
-        sliderDelta.setSelection(SWTUtil.doubleToSlider(0.00000000001d, 0.00001d, model.getDelta()));
-        sliderEpsilon.setSelection(SWTUtil.doubleToSlider(0.01d, 2d, model.getEpsilon()));
+        updateLabel(labelEpsilon, model.getEpsilon());
+        updateLabel(labelDelta, model.getDelta());
+        knobDelta.setValue(model.getDelta());
+        knobEpsilon.setValue(model.getEpsilon());
         comboGeneralization.select(getIndexOfGeneralizationDegree(model.getGeneralization().getGeneralizationDegree()));
     }
 }

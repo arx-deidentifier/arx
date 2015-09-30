@@ -127,9 +127,18 @@ public class SWTUtil {
      * @return
      */
     public static GridData createFillHorizontallyGridData() {
+        return createFillHorizontallyGridData(true);
+    }
+
+    /**
+     * Creates grid data.
+     *
+     * @return
+     */
+    public static GridData createFillHorizontallyGridData(boolean fill) {
         final GridData data = new GridData();
         data.horizontalAlignment = SWT.FILL;
-        data.verticalAlignment = SWT.FILL;
+        data.verticalAlignment = fill ? SWT.FILL : SWT.CENTER;
         data.grabExcessHorizontalSpace = true;
         data.grabExcessVerticalSpace = false;
         data.horizontalIndent=0;
