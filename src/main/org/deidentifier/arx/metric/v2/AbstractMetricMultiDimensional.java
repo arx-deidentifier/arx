@@ -66,12 +66,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     /** The start index of the attributes with microaggregation in the data array */
     private int                             microaggregationStartIndex;
 
-    /** The number of attributes with microaggregation in the data array */
-    private int                             microaggregationNumAttributes;
-
-    /** Map for the microaggregated data subset */
-    private int[]                           microaggregationMap;
-
     /** Header of the microaggregated data subset */
     private String[]                        microaggregationHeader;
 
@@ -206,6 +200,22 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         Arrays.fill(weights, 1d);
     }
     
+    /**
+     * Needed for microaggregation
+     * @return
+     */
+    public int getMicroaggregationStartIndex() {
+        return microaggregationStartIndex;
+    }
+
+    /**
+     * Needed for microaggregation
+     * @return
+     */
+    public DistributionAggregateFunction[] getMicroaggregationFunctions() {
+        return microaggregationFunctions;
+    }
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -216,12 +226,9 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         // Handle microaggregation
         this.microaggregationFunctions = manager.getMicroaggregationFunctions();
         this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
-        this.microaggregationNumAttributes = manager.getMicroaggregationNumAttributes();
-        this.microaggregationMap = manager.getMicroaggregationMap();
         this.microaggregationHeader = manager.getMicroaggregationHeader();
         if (!config.isUtilityBasedMicroaggregation() || !isAbleToHandleMicroaggregation()) {
             this.microaggregationFunctions = new DistributionAggregateFunction[0];
-            this.microaggregationNumAttributes = 0;
         }
         
         // Initialize dimensions

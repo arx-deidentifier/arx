@@ -31,6 +31,7 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class implements an example of how to use utility-based microaggregation
@@ -84,8 +85,10 @@ public class Example35 extends Example {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
-        config.setMaxOutliers(0.5d);
+        config.setMaxOutliers(1d);
+        config.setAttributeWeight("age", 100d);
         config.setUtilityBasedMicroaggregation(true);
+        config.setMetric(Metric.createLossMetric());
         try {
             final ARXResult result = anonymizer.anonymize(data, config);
             
