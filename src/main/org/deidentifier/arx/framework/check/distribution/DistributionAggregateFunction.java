@@ -606,10 +606,16 @@ public abstract class DistributionAggregateFunction implements Serializable {
         T max = null;
         for (String string : dictionary) {
             T value = type.parse(string);
-            min = min == null || type.compare(min, value) > 0 ? value : min;
-            max = max == null || type.compare(max, value) < 0 ? value : max;
+            if (!ignoreMissingData || value != null) {
+                min = min == null || type.compare(min, value) > 0 ? value : min;
+                max = max == null || type.compare(max, value) < 0 ? value : max;
+            }
         }
-        return new double[]{type.toDouble(min), type.toDouble(max)};
+        Double _min = type.toDouble(min);
+        Double _max = type.toDouble(max);
+        _min = _min != null ? _min : 0d;
+        _max = _max != null ? _max : 0d;
+        return new double[]{_min, _max};
     }
     
     /**
