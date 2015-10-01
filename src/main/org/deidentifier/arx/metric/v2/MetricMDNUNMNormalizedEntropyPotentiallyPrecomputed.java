@@ -56,7 +56,7 @@ public class MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed extends Abstrac
               new MetricMDNUNMNormalizedEntropyPrecomputed(function),
               threshold);
     }
-    
+
     /**
      * Returns the configuration of this metric.
      *
@@ -70,14 +70,22 @@ public class MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed extends Abstrac
                                        this.getAggregateFunction() // aggregate function
                                        );
     }
+    
+    @Override
+    public String getName() {
+        return "Normalized non-uniform entropy";
+    }
 
     @Override
     public String toString() {
         return "Normalized non-uniform entropy";
     }
 
-    @Override
-    public String getName() {
-        return "Normalized non-uniform entropy";
+    /**
+     * Does this metric handle microaggregation
+     * @return
+     */
+    protected boolean isAbleToHandleMicroaggregation() {
+        return false;
     }
 }

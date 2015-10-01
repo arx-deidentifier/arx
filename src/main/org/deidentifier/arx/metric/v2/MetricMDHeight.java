@@ -56,7 +56,7 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
     protected MetricMDHeight(AggregateFunction function) {
         super(true, true, function);
     }
-
+  
     /**
      * Returns the configuration of this metric.
      *
@@ -70,7 +70,7 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
                                        this.getAggregateFunction() // aggregate function
                                        );
     }
-    
+
     /**
      * For backwards compatibility only.
      *
@@ -82,10 +82,16 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         setMin(new double[]{minHeight});
         setMax(new double[]{maxHeight});
     }
-
+    
     @Override
     public String toString() {
         return "Height";
+    }
+
+    @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
+        AbstractILMultiDimensional loss = getLowerBoundInternal(node);
+        return new ILMultiDimensionalWithBound(loss, (AbstractILMultiDimensional)loss.clone());
     }
     
     @Override
@@ -96,12 +102,6 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
-        AbstractILMultiDimensional loss = getLowerBoundInternal(node);
-        return new ILMultiDimensionalWithBound(loss, (AbstractILMultiDimensional)loss.clone());
-    }
-    
-    @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         double[] result = new double[getDimensions()];
         int[] transformation = node.getGeneralization();
@@ -110,7 +110,7 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         }
         return super.createInformationLoss(result);
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                        HashGroupify groupify) {
@@ -137,5 +137,13 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         
         setMin(min);
         setMax(max);
+    }
+
+    /**
+     * Does this metric handle microaggregation
+     * @return
+     */
+    protected boolean isAbleToHandleMicroaggregation() {
+        return false;
     }
 }

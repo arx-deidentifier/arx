@@ -151,25 +151,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-
-        // Init
-        double[] result = new double[getDimensions()];
-        int dimensions = getDimensions();
-        int[] transformation = node.getGeneralization();
-
-        // Compute
-        for (int dimension = 0; dimension < dimensions; dimension++) {
-            int value = entry.key[dimension];
-            int level = transformation[dimension];
-            result[dimension] = (double) entry.count / shares[dimension].getShare(value, level);
-        }
-        
-        // Return
-        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
-    }
-
-    @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
         
         // Prepare
@@ -205,12 +186,31 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                                                super.createInformationLoss(bound));
         
     }
+    
+    @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+
+        // Init
+        double[] result = new double[getDimensions()];
+        int dimensions = getDimensions();
+        int[] transformation = node.getGeneralization();
+
+        // Compute
+        for (int dimension = 0; dimension < dimensions; dimension++) {
+            int value = entry.key[dimension];
+            int level = transformation[dimension];
+            result[dimension] = (double) entry.count / shares[dimension].getShare(value, level);
+        }
+        
+        // Return
+        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
+    }
 
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
-    
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                                HashGroupify g) {
@@ -251,7 +251,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     protected DomainShare[] getShares(){
         return this.shares;
     }
-
+    
     @SuppressWarnings("unchecked")
     @Override
     protected void initializeInternal(final DataManager manager,
@@ -308,6 +308,14 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         Arrays.fill(max, 1d);
         super.setMin(min);
         super.setMax(max);
+    }
+
+    /**
+     * Does this metric handle microaggregation
+     * @return
+     */
+    protected boolean isAbleToHandleMicroaggregation() {
+        return false;
     }
     
 

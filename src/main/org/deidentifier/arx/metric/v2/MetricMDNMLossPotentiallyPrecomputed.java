@@ -57,7 +57,7 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
               new MetricMDNMLossPrecomputed(function),
               threshold);
     }
-
+    
     /**
      * Creates a new instance. The precomputed variant will be used if 
      * #distinctValues / #rows <= threshold for all quasi-identifiers.
@@ -73,7 +73,7 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
               new MetricMDNMLossPrecomputed(gsFactor, function),
               threshold);
     }
-    
+
     /**
      * Returns the configuration of this metric.
      *
@@ -87,9 +87,17 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
                                        this.getAggregateFunction() // aggregate function
                                        );
     }
-
+    
     @Override
     public String toString() {
         return "Loss";
+    }
+
+    /**
+     * Does this metric handle microaggregation
+     * @return
+     */
+    protected boolean isAbleToHandleMicroaggregation() {
+        return false;
     }
 }

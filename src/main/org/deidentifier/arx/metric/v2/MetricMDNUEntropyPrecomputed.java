@@ -95,7 +95,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     protected MetricMDNUEntropyPrecomputed() {
         super(true, true, AggregateFunction.SUM);
     }
-
+    
     /**
      * Creates a new instance.
      *
@@ -104,7 +104,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     protected MetricMDNUEntropyPrecomputed(AggregateFunction function){
         super(true, true, function);
     }
-    
+
     /**
      * Returns the configuration of this metric.
      *
@@ -118,19 +118,12 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
                                        this.getAggregateFunction() // aggregate function
                                        );
     }
-
+    
     @Override
     public String toString() {
         return "Non-uniform entropy";
     }
 
-    @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        double[] result = new double[getDimensions()];
-        Arrays.fill(result, entry.count);
-        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
-    }
-    
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
@@ -146,6 +139,13 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
                                                super.createInformationLoss(result));
     }
 
+    @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        double[] result = new double[getDimensions()];
+        Arrays.fill(result, entry.count);
+        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
+    }
+    
     /**
      * 
      *
@@ -194,6 +194,40 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                                HashGroupify groupify) {
         return this.getLowerBoundInternal(node);
+    }
+
+    /**
+     * Returns the upper bound of the entropy value per column
+     * @return
+     */
+    protected double[] getUpperBounds() {
+
+        // Prepare
+        int[][][] cardinalities = this.cardinalities.getCardinalities();
+        double[] result = new double[hierarchies.length];
+
+        // For each column
+        for (int column = 0; column < hierarchies.length; column++) {
+
+            // Compute entropy
+            double value = 0d;
+            final int[][] cardinality = cardinalities[column];
+            final int[][] hierarchy = hierarchies[column];
+            for (int in = 0; in < hierarchy.length; in++) {
+                final double a = cardinality[in][0];
+                if (a != 0d) {
+                    value += a * log2(a / rows);
+                }
+            }
+            result[column] = value;
+        }
+        
+        // Switch sign bit and round
+        for (int column = 0; column < hierarchies.length; column++) {
+            result[column] = round(result[column] == 0.0d ? result[column] : -result[column]);
+        }
+
+        return result;
     }
 
     /**
@@ -274,37 +308,11 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     /**
-     * Returns the upper bound of the entropy value per column
+     * Does this metric handle microaggregation
      * @return
      */
-    protected double[] getUpperBounds() {
-
-        // Prepare
-        int[][][] cardinalities = this.cardinalities.getCardinalities();
-        double[] result = new double[hierarchies.length];
-
-        // For each column
-        for (int column = 0; column < hierarchies.length; column++) {
-
-            // Compute entropy
-            double value = 0d;
-            final int[][] cardinality = cardinalities[column];
-            final int[][] hierarchy = hierarchies[column];
-            for (int in = 0; in < hierarchy.length; in++) {
-                final double a = cardinality[in][0];
-                if (a != 0d) {
-                    value += a * log2(a / rows);
-                }
-            }
-            result[column] = value;
-        }
-        
-        // Switch sign bit and round
-        for (int column = 0; column < hierarchies.length; column++) {
-            result[column] = round(result[column] == 0.0d ? result[column] : -result[column]);
-        }
-
-        return result;
+    protected boolean isAbleToHandleMicroaggregation() {
+        return false;
     }
 
 }
