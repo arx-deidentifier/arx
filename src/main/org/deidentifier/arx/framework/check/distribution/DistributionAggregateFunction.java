@@ -357,7 +357,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
             } else {
                 T median1 = getValueAt(values, frequencies, total / 2 - 1);
                 T median2 = getValueAt(values, frequencies, total / 2);
-                if (median1.equals(median2)) {
+                if ((median1 == null && median2 == null) || median1.equals(median2)) {
                     return type.format(median1);
                 } else {
                     return DataType.NULL_VALUE;
@@ -588,8 +588,8 @@ public abstract class DistributionAggregateFunction implements Serializable {
         Iterator<Double> it = DistributionIterator.createIteratorDouble(distribution, dictionary, type);
         while (it.hasNext()) {
             Double value = it.next();
-            // TODO: This is weird as it will lead to null pointer exceptions
-            if (value != null || !ignoreMissingData) {
+            value = value == null ? (ignoreMissingData ? null : 0d) : value;
+            if (value != null) {
                 statistics.addValue(value);
             }
         }
