@@ -222,7 +222,7 @@ public class ViewUtilityMeasures implements IView {
         utilityBasedMicroaggregation.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getInputConfig().setUseUtilityBasedMicroaggregation(monotonicVariant.getSelection());
+                model.getInputConfig().setUseUtilityBasedMicroaggregation(utilityBasedMicroaggregation.getSelection());
             }
         });
 
