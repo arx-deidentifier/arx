@@ -410,6 +410,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * Returns whether microaggregation will be considered by utility measures
+     * @return
+     */
+    public boolean isUtilityBasedMicroaggregation() {
+        return config.isUtilityBasedMicroaggregation();
+    }
+    
+    /**
      * Removes all criteria.
      */
     public void removeAllCriteria() {
@@ -458,7 +466,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setMaxOutliers(supp);
     }
-    
+
     /**
      * @param type
      * @param enabled
@@ -679,6 +687,15 @@ public class ModelConfiguration implements Serializable, Cloneable {
      */
     public void setUnmodified() {
         modified = false;
+    }
+    
+    /**
+     * Returns whether microaggregation will be considered by utility measures
+     * @return
+     */
+    public void setUseUtilityBasedMicroaggregation(boolean value) {
+        setModified();
+        config.setUtilityBasedMicroaggregation(value);
     }
     
     /**

@@ -125,7 +125,7 @@ public class LayoutTransformationModel implements ILayout, IView {
         // Create metrics tab
         Composite composite1 = folder.createItem(Resources.getMessage("CriterionDefinitionView.66"), null);  //$NON-NLS-1$
         composite1.setLayout(new FillLayout());
-        new ViewMetric(composite1, controller);
+        new ViewUtilityMeasures(composite1, controller);
         
         // Select first and finish
         folder.setSelection(0);
