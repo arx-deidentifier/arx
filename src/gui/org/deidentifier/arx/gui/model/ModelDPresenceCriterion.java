@@ -96,7 +96,7 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
     }
 
     @Override
-    public void parse(ModelCriterion criterion) {
+    public void parse(ModelCriterion criterion, boolean _default) {
         if (!(criterion instanceof ModelDPresenceCriterion)) {
             return;
         }

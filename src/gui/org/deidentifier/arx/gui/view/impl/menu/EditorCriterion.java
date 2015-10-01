@@ -108,7 +108,7 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
     @SuppressWarnings("unchecked")
     public void parseDefault(ModelCriterion model) {
         this.parse((T)model, true);
-        this.model.parse(model);
+        this.model.parse(model, true);
     }
 
     /**

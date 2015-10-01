@@ -66,8 +66,9 @@ public abstract class ModelCriterion implements Serializable {
     /**
      * Parse
      * @param other
+     * @param _default Defines whether the model represents a typical parameter configuration for the criterion
      */
-    public abstract void parse(ModelCriterion other);
+    public abstract void parse(ModelCriterion other, boolean _default);
     
     /**
      * Sets the criterion active/inactive.

@@ -111,14 +111,16 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
     }
 
     @Override
-    public void parse(ModelCriterion criterion) {
+    public void parse(ModelCriterion criterion, boolean _default) {
         if (!(criterion instanceof ModelDifferentialPrivacyCriterion)) {
             return;
         }
         ModelDifferentialPrivacyCriterion other = (ModelDifferentialPrivacyCriterion)criterion;
         this.epsilon = other.epsilon;
         this.delta = other.delta;
-        this.generalization = other.generalization.clone();
+        if (!_default) {
+            this.generalization = other.generalization.clone();
+        }
         this.setEnabled(other.isEnabled());
     }
 
