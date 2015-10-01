@@ -302,7 +302,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
 
         ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-80"); //$NON-NLS-1$
         bar.add(Resources.getMessage("DialogCriterionUpdate.16"),  //$NON-NLS-1$
-                controller.getResources().getManagedImage("default.png"), //$NON-NLS-1$
+                controller.getResources().getManagedImage("bullet_arrow_down.png"), //$NON-NLS-1$
                 new Runnable() {
                     @Override
                     public void run() {
