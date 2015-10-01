@@ -433,6 +433,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.suppressionAlwaysEnabled = this.suppressionAlwaysEnabled;
         result.suppressedAttributeTypes = this.suppressedAttributeTypes;
         result.heuristicSearchForSampleBasedCriteria = this.heuristicSearchForSampleBasedCriteria;
+        result.heuristicSearchEnabled = this.heuristicSearchEnabled;
+        result.heuristicSearchThreshold = this.heuristicSearchThreshold;
+        result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
+        result.utilityBasedMicroaggregation = this.utilityBasedMicroaggregation;
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
