@@ -402,15 +402,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Protect sensitive associations.
-     *
-     * @return
-     */
-    public boolean isProtectSensitiveAssociations() {
-        return config.isProtectSensitiveAssociations();
-    }
-    
-    /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#isSuppressionAlwaysEnabled()
      */
@@ -629,16 +620,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void setPracticalMonotonicity(boolean assumeMonotonicity) {
         setModified();
         config.setPracticalMonotonicity(assumeMonotonicity);
-    }
-    
-    /**
-     * Protect sensitive associations.
-     *
-     * @param selection
-     */
-    public void setProtectSensitiveAssociations(boolean selection) {
-        setModified();
-        config.setProtectSensitiveAssociations(selection);
     }
     
     /**
