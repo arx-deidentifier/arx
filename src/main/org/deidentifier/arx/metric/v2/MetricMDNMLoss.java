@@ -188,10 +188,15 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
             m = m.nextOrdered;
         }
         
-        // Normalize: note, we must only normalize values for generalized attributes
+        // Normalize
         for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-            result[dimension] = normalize(result[dimension], dimension);
-            bound[dimension] = normalize(bound[dimension], dimension);
+            result[dimension] = normalizeGeneralized(result[dimension], dimension);
+            bound[dimension] = normalizeGeneralized(bound[dimension], dimension);
+        }
+        
+        // Normalize
+        for (int dimension=dimensionsGeneralized; dimension<dimensionsGeneralized + dimensionsAggregated; dimension++){
+            result[dimension] = normalizeAggregated(result[dimension]);
         }
         
         // Return information loss and lower bound
@@ -259,9 +264,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
             m = m.nextOrdered;
         }
         
-        // Normalize: note, we must only normalize values for generalized attributes
+        // Normalize
         for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-            bound[dimension] = normalize(bound[dimension], dimension);
+            bound[dimension] = normalizeGeneralized(bound[dimension], dimension);
         }
         
         // Return
@@ -342,7 +347,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     protected boolean isAbleToHandleMicroaggregation() {
         return true;
     }
-    
 
     /**
      * Normalizes the aggregate.
@@ -351,11 +355,24 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
      * @param dimension
      * @return
      */
-    protected double normalize(double aggregate, int dimension) {
+    protected double normalizeGeneralized(double aggregate, int dimension) {
 
         double min = gFactor * tuples / shares[dimension].getDomainSize();
         double max = tuples;
         double result = (aggregate - min) / (max - min);
+        result = result >= 0d ? result : 0d;
+        return round(result);
+    }
+
+    /**
+     * Normalizes the aggregate.
+     *
+     * @param aggregate
+     * @param dimension
+     * @return
+     */
+    protected double normalizeAggregated(double aggregate) {
+        double result = aggregate / tuples;
         result = result >= 0d ? result : 0d;
         return round(result);
     }
