@@ -548,7 +548,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
     public abstract <T> String aggregate(Distribution distribution);
     
     /**
-     * Returns the normalized mean squared error, if supported, 0d otherwise
+     * Returns the normalized mean squared error in [0,1], if supported, 0d otherwise
      * @param distribution
      * @return
      */
