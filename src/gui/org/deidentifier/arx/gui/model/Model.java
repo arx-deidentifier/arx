@@ -1205,15 +1205,6 @@ public class Model implements Serializable {
 	}
 
 	/**
-     * Sets the metric configuration.
-     *
-     * @param config
-     */
-    public void setMetricConfiguration(MetricConfiguration config) {
-        this.metricConfig = config;
-    }
-
-	/**
      * Sets the description of the metric.
      *
      * @param description
