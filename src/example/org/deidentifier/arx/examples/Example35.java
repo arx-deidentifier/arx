@@ -18,96 +18,63 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
 
-import org.deidentifier.arx.ARXAnonymizer;
-import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
-import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
+import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.Data.DefaultData;
-import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.risk.HIPAAIdentifierMatch;
 
 /**
- * This class implements an example of how to use utility-based microaggregation
- *
- * @author Fabian Prasser
- * @author Florian Kohlmayer
+ * This class implements an example of how to use the HIPAA identifier validator.
+ * @author David Gaﬂmann
+ *         
  */
-public class Example35 extends Example {
+public class Example35 {
     
     /**
-     * Entry point.
-     * 
+     * Entry point
      * @param args
-     *            the arguments
+     * @throws IOException
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException {
+        Data.DefaultData data = createDemoData();
         
-        // Define data
-        DefaultData data = Data.create();
-        data.add("age", "gender", "zipcode", "date");
-        data.add("45", "female", "81675", "01.01.1982");
-        data.add("34", "male", "81667", "11.05.1982");
-        data.add("NULL", "male", "81925", "31.08.1982");
-        data.add("70", "female", "81931", "02.07.1982");
-        data.add("34", "female", "NULL", "05.01.1982");
-        data.add("70", "male", "81931", "24.03.1982");
-        data.add("45", "male", "81931", "NULL");
+        DataHandle handle = data.getHandle();
         
-        data.getDefinition().setDataType("age", DataType.INTEGER);
-        data.getDefinition().setDataType("zipcode", DataType.DECIMAL);
-        data.getDefinition().setDataType("date", DataType.DATE);
+        HIPAAIdentifierMatch[] warnings = handle.getRiskEstimator(ARXPopulationModel.create(Region.USA)).getHIPAAIdentifiers();
         
-        final DefaultHierarchy gender = Hierarchy.create();
-        gender.add("male", "*");
-        gender.add("female", "*");
-        
-        // Only excerpts for readability
-        final DefaultHierarchy zipcode = Hierarchy.create();
-        zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
-        zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
-        zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
-        zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
-        zipcode.add("NULL", "NULL", "NULL", "NULL", "NULL", "*****");
-        
-        data.getDefinition().setAttributeType("age", MicroAggregationFunction.createGeometricMean());
-        data.getDefinition().setAttributeType("gender", gender);
-        data.getDefinition().setAttributeType("zipcode", zipcode);
-        data.getDefinition().setAttributeType("date", MicroAggregationFunction.createArithmeticMean());
-        
-        // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.setMaxOutliers(1d);
-        config.setAttributeWeight("age", 100d);
-        config.setUtilityBasedMicroaggregation(true);
-        config.setMetric(Metric.createLossMetric());
-        try {
-            final ARXResult result = anonymizer.anonymize(data, config);
-            
-            // Print info
-            printResult(result, data);
-            
-            // Process results
-            System.out.println(" - Transformed data:");
-            final Iterator<String[]> transformed = result.getOutput(false).iterator();
-            while (transformed.hasNext()) {
-                System.out.print("   ");
-                System.out.println(Arrays.toString(transformed.next()));
+        printWarnings(warnings);
+    }
+    
+    /**
+     * Creates the data used in the example.
+     * @return
+     */
+    private static Data.DefaultData createDemoData() {
+        final Data.DefaultData data = Data.create();
+        data.add("first name", "age", "gender", "code", "birth", "email-address", "SSN", "Bank", "Vehicle", "URL", "IP", "phone");
+        data.add("Max", "34", "male", "81667", "2008-09-02", "", "123-45-6789", "GR16 0110 1250 0000 0001 2300 695", "", "http://demodomain.com", "8.8.8.8", "+49 1234566");
+        data.add("Max", "45", "female", "81675", "2008-09-02", "user@arx.org", "", "", "WDD 169 007-1J-236589", "", "2001:db8::1428:57ab", "");
+        data.add("Max", "66", "male", "89375", "2008-09-02", "demo@email.com", "", "", "", "", "", "");
+        data.add("Max", "70", "female", "81931", "2008-09-02", "", "", "", "", "", "", "");
+        data.add("Max", "34", "female", "81931", "2008-09-02", "", "", "", "", "", "", "");
+        data.add("Max", "90", "male", "81931", "2008-09-02", "", "", "", "", "", "", "");
+        data.add("Max", "45", "male", "81931", "2008-09-02", "", "", "", "", "", "", "");
+        return data;
+    }
+    
+    /**
+     * Displays the found warnings.
+     * @param warnings
+     */
+    private static void printWarnings(HIPAAIdentifierMatch[] warnings) {
+        if (warnings.length == 0) {
+            System.out.println("No warnings");
+        } else {
+            for (HIPAAIdentifierMatch w : warnings) {
+                System.out.println(w.toString());
             }
-            
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
         }
-        
     }
 }

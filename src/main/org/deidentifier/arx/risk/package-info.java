@@ -21,6 +21,8 @@
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author David Gaﬂmann
+ * @author Michael Schneider
  */
 package org.deidentifier.arx.risk;
 

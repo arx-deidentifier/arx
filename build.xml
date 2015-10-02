@@ -16,6 +16,7 @@
             <filename name="**/commons-io-2.4.jar" />
             <filename name="**/commons-codec-1.5.jar" />
             <filename name="**/commons-logging-1.1.jar" />
+            <filename name="**/commons-validator-1.4.1.jar" />
             <filename name="**/dom4j-1.6.1.jar" />
             <filename name="**/stax-api-1.0.1.jar" />
             <filename name="**/xmlbeans-2.3.0.jar" />
@@ -264,6 +265,12 @@
         <copy todir="build/gui/org/deidentifier/arx/gui/resources" overwrite="true">
             <fileset dir="src/gui/org/deidentifier/arx/gui/resources" defaultexcludes="yes">
                 <exclude name="**/*.java" />
+            </fileset>
+        </copy>
+        <copy todir="build/main/org/deidentifier/arx/risk/resources/us" overwrite="true">
+            <fileset dir="src/main/org/deidentifier/arx/risk/resources/us" defaultexcludes="yes">
+                <exclude name="**/*.java" />
+                <exclude name="**/*.txt" />
             </fileset>
         </copy>
     </target>
