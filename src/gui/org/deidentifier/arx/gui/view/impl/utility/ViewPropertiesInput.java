@@ -330,8 +330,7 @@ public class ViewPropertiesInput extends ViewProperties {
         }
 
         // Refresh and initialize
-        treeViewer.refresh();
-        treeViewer.expandAll();
+        refresh();
 
         // Redraw
         root.setRedraw(true);

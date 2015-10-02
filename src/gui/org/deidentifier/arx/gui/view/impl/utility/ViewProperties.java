@@ -33,6 +33,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * This view displays basic properties about input or output data.
@@ -205,6 +206,17 @@ public abstract class ViewProperties implements IView {
         return context;
     }
     
+    /**
+     * Refreshes the tree
+     */
+    protected void refresh() {
+        treeViewer.refresh();
+        treeViewer.expandAll();
+        for (TreeColumn tc : treeViewer.getTree().getColumns()) {
+            tc.pack();
+        }
+    }
+
     /**
      * Implement this to update the view.
      */

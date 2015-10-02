@@ -334,8 +334,7 @@ public class ViewPropertiesOutput extends ViewProperties {
         }
 
         // Initialize
-        treeViewer.refresh();
-        treeViewer.expandAll();
+        refresh();
         
         // Redraw
         root.setRedraw(true);
