@@ -77,9 +77,8 @@ public class LayoutRisks implements ILayout {
         centerSash.setLayoutData(SWTUtil.createFillGridData());
         
         // Create center composite
-        final Composite center = new Composite(centerSash, SWT.NONE);
+        SashForm center = new SashForm(centerSash, SWT.HORIZONTAL | SWT.SMOOTH);
         center.setLayoutData(SWTUtil.createFillGridData());
-        center.setLayout(SWTUtil.createGridLayout(2));
 
         // Create left composite
         centerLeft = new Composite(center, SWT.NONE);
@@ -172,5 +171,6 @@ public class LayoutRisks implements ILayout {
         // Set sash weights
         centerSash.setWeights(new int[] { WEIGHT_TOP, WEIGHT_BOTTOM });
         bottomSash.setWeights(new int[] { WEIGHT_LEFT, WEIGHT_RIGHT });
+        center.setWeights(new int[] { WEIGHT_LEFT, WEIGHT_RIGHT });
     }
 }
