@@ -234,11 +234,8 @@ public class ViewTransformationSettings implements IView {
         precomputationThreshold.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getMetricConfiguration().setPrecomputationThreshold(SWTUtil.sliderToDouble(0d,
-                                                            1d,
-                                                            precomputationThreshold.getSelection()));
-                labelThreshold.setText(String.valueOf(model.getMetricConfiguration()
-                                                             .getPrecomputationThreshold()));
+                model.getMetricConfiguration().setPrecomputationThreshold(SWTUtil.sliderToDouble(0d, 1d, precomputationThreshold.getSelection()));
+                labelThreshold.setText(String.valueOf(model.getMetricConfiguration().getPrecomputationThreshold()));
             }
         });
 
