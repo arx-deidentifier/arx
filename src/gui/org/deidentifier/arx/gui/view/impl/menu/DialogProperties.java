@@ -210,6 +210,11 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.54"), 1, 1000000, 1000) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getTimeTotal(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().timeTotal((Integer)t); }});
+
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.56"), false) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getRiskModel().getSolverConfiguration().getStartValues() != null; }
+            protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().preparedStartValues((Boolean)t ? getSolverStartValues() : null); }});
+        
     }
 
     /**
@@ -314,5 +319,20 @@ public class DialogProperties implements IDialog {
             result.add(model.name());
         }
         return result.toArray(new String[result.size()]);
+    }
+
+    /**
+     * Returns start values for the solver, if it is configured to be deterministic
+     * @return
+     */
+    private double[][] getSolverStartValues() {
+        double[][] result = new double[16][];
+        int index = 0;
+        for (double d1 = 0d; d1 < 1d; d1 += 0.33d) {
+            for (double d2 = 0d; d2 < 1d; d2 += 0.33d) {
+                result[index++] = new double[] { d1, d2 };
+            }
+        }
+        return result;
     }
 }
