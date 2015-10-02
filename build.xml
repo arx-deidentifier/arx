@@ -122,6 +122,7 @@
                     <include name="**/TestAnonymizationDPresence.java" />
                     <include name="**/TestAnonymizationTCloseness.java" />
                     <include name="**/TestAnonymizationCombinations.java" />
+                    <include name="**/TestAnonymizationDifferentialPrivacy.java" />
                 </fileset>
                 <formatter type="plain" usefile="false" />
                 <formatter type="xml" />
