@@ -45,7 +45,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class ViewHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRisk> {
+public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRisk> {
     
     /** View */
     private Composite root;
@@ -64,7 +64,7 @@ public class ViewHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRisk> {
      * @param target
      * @param reset
      */
-    public ViewHIPAAIdentifiersTable(final Composite parent,
+    public ViewRisksHIPAAIdentifiersTable(final Composite parent,
                                     final Controller controller,
                                     final ModelPart target,
                                     final ModelPart reset) {

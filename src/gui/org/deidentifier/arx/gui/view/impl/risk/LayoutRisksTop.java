@@ -49,7 +49,7 @@ public class LayoutRisksTop extends LayoutRisksAbstract {
         registerView(2, new ViewRisksAttributesTable(createTab(Resources.getMessage("RiskAnalysis.15")), controller, target, reset)); //$NON-NLS-1$
         
         if (target == ModelPart.INPUT) {
-            new ViewHIPAAIdentifiersTable(createTab(Resources.getMessage("RiskAnalysis.26")), controller, target, reset);
+            new ViewRisksHIPAAIdentifiersTable(createTab(Resources.getMessage("RiskAnalysis.26")), controller, target, reset);
         }
         
         setSelectionIdex(0);
