@@ -341,7 +341,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     /**
-     * Does this metric handle microaggregation
+     * Returns whether this metric handles microaggregation
      * @return
      */
     protected boolean isAbleToHandleMicroaggregation() {

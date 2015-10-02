@@ -160,4 +160,12 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
             }
         }
     }
+
+    /**
+     * Returns whether this metric handles microaggregation
+     * @return
+     */
+    protected boolean isAbleToHandleMicroaggregation() {
+        return true;
+    }
 }
