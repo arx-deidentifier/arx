@@ -90,7 +90,10 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
     
     @Override
     public String toString() {
-        return "Loss";
+        MetricMDNMLoss loss = ((MetricMDNMLoss)super.getDefaultMetric());
+        return "Loss ("+loss.getGeneralizationSuppressionFactor()+"/"+
+                        loss.getGeneralizationFactor()+"/"+
+                        loss.getSuppressionFactor()+")";
     }
 
     /**
