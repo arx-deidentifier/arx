@@ -1170,8 +1170,6 @@ public class Model implements Serializable {
      */
 	public void setInputConfig(final ModelConfiguration config) {
 		this.inputConfig = config;
-		this.metricConfig = config.getMetric().getConfiguration();
-		this.metricDescription = config.getMetric().getDescription();
 	}
 
 	/**
