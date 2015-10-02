@@ -265,7 +265,7 @@ public class ViewFilter implements IView {
             }
 
             List<String> attributes = new ArrayList<String>();
-            attributes.addAll(definition.getQuasiIdentifyingAttributes());
+            attributes.addAll(definition.getQuasiIdentifiersWithGeneralization());
             Collections.sort(attributes, new Comparator<String>(){
                 public int compare(String arg0, String arg1) {
                     return model.getOutput().getColumnIndexOf(arg0)-

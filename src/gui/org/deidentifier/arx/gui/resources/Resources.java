@@ -83,7 +83,7 @@ public class Resources {
      * returns the content as string.
      * @return
      */
-    public static String getLicencseText() {
+    public static String getLicenseText() {
         InputStream stream = Resources.class.getResourceAsStream("license.txt"); //$NON-NLS-1$
         BufferedReader br = new BufferedReader(new InputStreamReader(stream));
         String content = ""; //$NON-NLS-1$

@@ -18,6 +18,7 @@ package org.deidentifier.arx.framework.check.distribution;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
+import cern.colt.list.DoubleArrayList;
 
 /**
  * This abstract class represents a function that aggregates values from a frequency distribution
@@ -46,10 +48,16 @@ public abstract class DistributionAggregateFunction implements Serializable {
     public static class DistributionAggregateFunctionArithmeticMean extends DistributionAggregateFunction {
 
         /** SVUID. */
-        private static final long           serialVersionUID = 8379579591466576517L;
-        
+        private static final long               serialVersionUID = 8379579591466576517L;
+
         /** Commons math object to calculate the statistic. */
         private transient DescriptiveStatistics stats;
+
+        /** Minimum */
+        private double                          minimum          = 0d;
+
+        /** Maximum */
+        private double                          maximum          = 0d;
 
         /**
          * Instantiates.
@@ -62,25 +70,31 @@ public abstract class DistributionAggregateFunction implements Serializable {
 
         @Override
         public <T> String aggregate(Distribution distribution) {
+            stats.clear();
             @SuppressWarnings("unchecked")
             DataType<T> type = (DataType<T>)this.type;
             @SuppressWarnings("unchecked")
-            DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) type;
-            Iterator<Double> it = DistributionIterator.createIteratorDouble(distribution, dictionary, rType);
-            stats.clear();
-            while (it.hasNext()) {
-                Double value = it.next();
-                if (value != null || !ignoreMissingData) {
-                    stats.addValue(value);
-                }
-            }
+            DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
+            addAll(stats, distribution, rType);
             return type.format(rType.fromDouble(stats.getMean()));
+        }
+
+        @Override
+        public <T> double getMeanError(Distribution distribution) {
+            stats.clear();
+            @SuppressWarnings("unchecked")
+            DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
+            addAll(stats, distribution, rType);
+            return getNMSE(minimum, maximum, stats.getValues(), stats.getMean());
         }
 
         @Override
         public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
             super.initialize(dictionary, type, hierarchy);
             this.stats = new DescriptiveStatistics();
+            double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
+            this.minimum = values[0];
+            this.maximum = values[1];
         }        
     }
 
@@ -165,6 +179,12 @@ public abstract class DistributionAggregateFunction implements Serializable {
         /** Commons math object to calculate the statistic. */
         private transient DescriptiveStatistics stats;
 
+        /** Minimum */
+        private double                          minimum          = 0d;
+
+        /** Maximum */
+        private double                          maximum          = 0d;
+
         /**
          * Instantiates.
          * 
@@ -176,25 +196,79 @@ public abstract class DistributionAggregateFunction implements Serializable {
 
         @Override
         public <T> String aggregate(Distribution distribution) {
+            stats.clear();
             @SuppressWarnings("unchecked")
             DataType<T> type = (DataType<T>)this.type;
             @SuppressWarnings("unchecked")
-            DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) type;
-            Iterator<Double> it = DistributionIterator.createIteratorDouble(distribution, dictionary, rType);
-            stats.clear();
-            while (it.hasNext()) {
-                Double value = it.next();
-                if (value != null || !ignoreMissingData) {
-                    stats.addValue(value);
-                }
-            }
+            DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
+            addAll(stats, distribution, rType);
             return type.format(rType.fromDouble(stats.getGeometricMean()));
         }
 
         @Override
+        public <T> double getMeanError(Distribution distribution) {
+            stats.clear();
+            @SuppressWarnings("unchecked")
+            DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
+            addAll(stats, distribution, rType);
+            return getNMSE(minimum, maximum, stats.getValues(), stats.getGeometricMean());
+        }
+        
+        @Override
         public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
             super.initialize(dictionary, type, hierarchy);
             this.stats = new DescriptiveStatistics();
+            double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
+            this.minimum = values[0];
+            this.maximum = values[1];
+        }
+    }
+
+    /**
+     * This class calculates the mode for a given distribution.
+     * 
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     * 
+     */
+    public static class DistributionAggregateFunctionInterval extends DistributionAggregateFunction {
+
+        /** SVUID. */
+        private static final long serialVersionUID = 2349775566497080868L;
+
+        /**
+         * Instantiates.
+         * 
+         * @param ignoreMissingData
+         */
+        public DistributionAggregateFunctionInterval(boolean ignoreMissingData) {
+            super(ignoreMissingData, false);
+        }
+
+        @Override
+        public <T> String aggregate(Distribution distribution) {
+
+            // Determine min & max
+            @SuppressWarnings("unchecked")
+            DataType<T> type = (DataType<T>)this.type;
+            T minT = null;
+            T maxT = null;
+            int[] buckets = distribution.getBuckets();
+            for (int i = 0; i < buckets.length; i += 2) {
+                int value = buckets[i];
+                if (value != -1) {
+                    T valT = type.parse(dictionary[value]);
+                    if (minT == null || type.compare(valT, minT) < 0 ) {
+                        minT = valT;
+                    }
+                    if (maxT == null || type.compare(valT, maxT) > 0 ) {
+                        maxT = valT;
+                    }
+                }
+            }
+            
+            // Format
+            return minT == null || maxT == null ? DataType.NULL_VALUE : "[" + type.format(minT) + ", " + type.format(maxT) + "]";
         }
     }
 
@@ -209,6 +283,12 @@ public abstract class DistributionAggregateFunction implements Serializable {
 
         /** SVUID. */
         private static final long serialVersionUID = 4877214760061314248L;
+
+        /** Minimum */
+        private double                          minimum          = 0d;
+
+        /** Maximum */
+        private double                          maximum          = 0d;
 
         /**
          * Instantiates.
@@ -277,11 +357,47 @@ public abstract class DistributionAggregateFunction implements Serializable {
             } else {
                 T median1 = getValueAt(values, frequencies, total / 2 - 1);
                 T median2 = getValueAt(values, frequencies, total / 2);
-                if (median1.equals(median2)) {
+                if ((median1 == null && median2 == null) || median1.equals(median2)) {
                     return type.format(median1);
                 } else {
                     return DataType.NULL_VALUE;
                 }
+            }
+        }
+
+        @Override
+        public <T> double getMeanError(Distribution distribution) {
+            
+            if (!(type instanceof DataTypeWithRatioScale)) {
+                return 0d;
+            }
+            
+            @SuppressWarnings("unchecked")
+            DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
+            DoubleArrayList list = new DoubleArrayList();
+            Iterator<Double> it = DistributionIterator.createIteratorDouble(distribution, dictionary, rType);
+            while (it.hasNext()) {
+                list.add(it.next());
+            }
+            
+            // Determine and check mode
+            String mean = aggregate(distribution);
+            if (mean == DataType.NULL_VALUE) {
+                return 1d;
+            }
+            
+            // Compute error
+            return getNMSE(minimum, maximum, Arrays.copyOf(list.elements(), list.size()), 
+                                             rType.toDouble(rType.parse(mean)));
+        }
+        
+        @Override
+        public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
+            super.initialize(dictionary, type, hierarchy);
+            if (type instanceof DataTypeWithRatioScale) {
+                double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
+                this.minimum = values[0];
+                this.maximum = values[1];
             }
         }
 
@@ -301,6 +417,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
     }
 
+
     /**
      * This class calculates the mode for a given distribution.
      * 
@@ -312,6 +429,12 @@ public abstract class DistributionAggregateFunction implements Serializable {
 
         /** SVUID. */
         private static final long serialVersionUID = -3424849372778696640L;
+
+        /** Minimum */
+        private double                          minimum          = 0d;
+
+        /** Maximum */
+        private double                          maximum          = 0d;
 
         /**
          * Instantiates.
@@ -326,6 +449,52 @@ public abstract class DistributionAggregateFunction implements Serializable {
         public <T> String aggregate(Distribution distribution) {
 
             // Determine mode
+            int mode = getMode(distribution);
+            return mode == -1 ? DataType.NULL_VALUE : dictionary[mode];
+        }
+
+        @Override
+        public <T> double getMeanError(Distribution distribution) {
+            
+            if (!(type instanceof DataTypeWithRatioScale)) {
+                return 0d;
+            }
+            
+            @SuppressWarnings("unchecked")
+            DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
+            DoubleArrayList list = new DoubleArrayList();
+            Iterator<Double> it = DistributionIterator.createIteratorDouble(distribution, dictionary, rType);
+            while (it.hasNext()) {
+                list.add(it.next());
+            }
+            
+            // Determine and check mode
+            int mode = getMode(distribution);
+            if (mode == -1) {
+                return 1d;
+            }
+            
+            // Compute error
+            return getNMSE(minimum, maximum, Arrays.copyOf(list.elements(), list.size()), 
+                                             rType.toDouble(rType.parse(dictionary[mode])));
+        }
+
+        @Override
+        public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
+            super.initialize(dictionary, type, hierarchy);
+            if (type instanceof DataTypeWithRatioScale) {
+                double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
+                this.minimum = values[0];
+                this.maximum = values[1];
+            }
+        }
+        
+        /**
+         * Returns the index of the most frequent element from the distribution, -1 if there is no such element
+         * @param distribution
+         * @return
+         */
+        private int getMode(Distribution distribution) {
             int[] buckets = distribution.getBuckets();
             int max = -1;
             int mode = -1;
@@ -337,56 +506,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
                     mode = value;
                 }
             }
-            return mode == -1 ? DataType.NULL_VALUE : dictionary[mode];
-        }
-    }
-
-
-    /**
-     * This class calculates the mode for a given distribution.
-     * 
-     * @author Fabian Prasser
-     * @author Florian Kohlmayer
-     * 
-     */
-    public static class DistributionAggregateFunctionInterval extends DistributionAggregateFunction {
-
-        /** SVUID. */
-        private static final long serialVersionUID = 2349775566497080868L;
-
-        /**
-         * Instantiates.
-         * 
-         * @param ignoreMissingData
-         */
-        public DistributionAggregateFunctionInterval(boolean ignoreMissingData) {
-            super(ignoreMissingData, false);
-        }
-
-        @Override
-        public <T> String aggregate(Distribution distribution) {
-
-            // Determine min & max
-            @SuppressWarnings("unchecked")
-            DataType<T> type = (DataType<T>)this.type;
-            T minT = null;
-            T maxT = null;
-            int[] buckets = distribution.getBuckets();
-            for (int i = 0; i < buckets.length; i += 2) {
-                int value = buckets[i];
-                if (value != -1) {
-                    T valT = type.parse(dictionary[value]);
-                    if (minT == null || type.compare(valT, minT) < 0 ) {
-                        minT = valT;
-                    }
-                    if (maxT == null || type.compare(valT, maxT) > 0 ) {
-                        maxT = valT;
-                    }
-                }
-            }
-            
-            // Format
-            return minT == null || maxT == null ? DataType.NULL_VALUE : "[" + type.format(minT) + ", " + type.format(maxT) + "]";
+            return mode;
         }
     }
 
@@ -428,6 +548,15 @@ public abstract class DistributionAggregateFunction implements Serializable {
     public abstract <T> String aggregate(Distribution distribution);
     
     /**
+     * Returns the normalized mean squared error in [0,1], if supported, 0d otherwise
+     * @param distribution
+     * @return
+     */
+    public <T> double getMeanError(Distribution distribution) {
+        return 0d;
+    }
+    
+    /**
      * Initializes the function
      * @param dictionary
      * @param type
@@ -445,5 +574,74 @@ public abstract class DistributionAggregateFunction implements Serializable {
      */
     public boolean isTypePreserving() {
         return this.typePreserving;
+    }
+    
+    /**
+     * Adds all values from the distribution to the given descriptive statistics object
+     * @param statistics
+     * @param distribution
+     * @param type
+     */
+    protected <T> void addAll(DescriptiveStatistics statistics, 
+                           Distribution distribution,
+                           DataTypeWithRatioScale<T> type) {
+        Iterator<Double> it = DistributionIterator.createIteratorDouble(distribution, dictionary, type);
+        while (it.hasNext()) {
+            Double value = it.next();
+            value = value == null ? (ignoreMissingData ? null : 0d) : value;
+            if (value != null) {
+                statistics.addValue(value);
+            }
+        }
+    }
+
+    /**
+     * Returns the minimum and maximum value
+     * @param dictionary
+     * @param type
+     * @return
+     */
+    protected <T> double[] getMinMax(String[] dictionary, DataTypeWithRatioScale<T> type) {
+        T min = null;
+        T max = null;
+        for (String string : dictionary) {
+            T value = type.parse(string);
+            if (!ignoreMissingData || value != null) {
+                min = min == null || type.compare(min, value) > 0 ? value : min;
+                max = max == null || type.compare(max, value) < 0 ? value : max;
+            }
+        }
+        Double _min = type.toDouble(min);
+        Double _max = type.toDouble(max);
+        _min = _min != null ? _min : 0d;
+        _max = _max != null ? _max : 0d;
+        return new double[]{_min, _max};
+    }
+    
+    /**
+     * Calculates the mean square error after normalizing everything into [0,1]
+     * 
+     * @param min
+     * @param max
+     * @param values
+     * @param aggregate
+     * @return
+     */
+    protected double getNMSE(double min, double max, double[] values, double aggregate) {
+        
+        // Prepare
+        double normalizationFactor = 1d / (max - min);
+        double normalizedAggregate = (aggregate - min) * normalizationFactor;
+        
+        // NMSE and Sum 1
+        double nmse = 0d;
+        for (int i = 0; i < values.length; i++) {
+            double normalizedValue = (values[i] - min) * normalizationFactor;
+            double diff = normalizedValue - normalizedAggregate;
+            nmse += diff * diff;
+        }
+
+        // Normalize and return
+        return nmse / (double)values.length;
     }
 }

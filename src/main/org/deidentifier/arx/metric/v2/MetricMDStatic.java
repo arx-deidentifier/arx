@@ -71,7 +71,7 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
         super(true, true, AggregateFunction.SUM);
         _infoloss = infoloss;
     }
-    
+
     /**
      * Returns the configuration of this metric.
      *
@@ -90,18 +90,18 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
     public String toString() {
         return "Static";
     }
+    
+    @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
+        AbstractILMultiDimensional loss = this.getLowerBoundInternal(node);
+        return new ILMultiDimensionalWithBound(loss, (AbstractILMultiDimensional)loss.clone());
+    }
 
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         double[] result = new double[getDimensions()];
         Arrays.fill(result, entry.count);
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
-    }
-
-    @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
-        AbstractILMultiDimensional loss = this.getLowerBoundInternal(node);
-        return new ILMultiDimensionalWithBound(loss, (AbstractILMultiDimensional)loss.clone());
     }
 
     @Override
@@ -119,7 +119,7 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
                                                        HashGroupify groupify) {
         return this.getLowerBoundInternal(node);
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -167,5 +167,13 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
         
         setMin(min);
         setMax(max);
+    }
+    
+    /**
+     * Does this metric handle microaggregation
+     * @return
+     */
+    protected boolean isAbleToHandleMicroaggregation() {
+        return false;
     }
 }

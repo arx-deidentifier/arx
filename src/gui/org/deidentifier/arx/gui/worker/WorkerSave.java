@@ -282,7 +282,6 @@ public class WorkerSave extends Worker<Model> {
         writer.unindent();
         
         writer.write(vocabulary.getPracticalMonotonicity(), config.isPracticalMonotonicity());
-        writer.write(vocabulary.getProtectSensitiveAssociations(), config.isProtectSensitiveAssociations());
         writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
         writer.write(vocabulary.getMetric(), config.getMetric().toString());
 

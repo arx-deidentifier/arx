@@ -140,7 +140,6 @@ public class Example23 extends Example {
         config.addCriterion(new DistinctLDiversity("disease", 2));
         config.addCriterion(new DistinctLDiversity("age", 2));
         config.setMaxOutliers(0.1d);
-        config.setProtectSensitiveAssociations(false);
         config.setMetric(Metric.createEntropyMetric());
         try {
 

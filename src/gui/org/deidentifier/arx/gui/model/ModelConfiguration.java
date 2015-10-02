@@ -402,20 +402,19 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Protect sensitive associations.
-     *
-     * @return
-     */
-    public boolean isProtectSensitiveAssociations() {
-        return config.isProtectSensitiveAssociations();
-    }
-    
-    /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#isSuppressionAlwaysEnabled()
      */
     public boolean isSuppressionAlwaysEnabled() {
         return config.isSuppressionAlwaysEnabled();
+    }
+    
+    /**
+     * Returns whether microaggregation will be considered by utility measures
+     * @return
+     */
+    public boolean isUtilityBasedMicroaggregation() {
+        return config.isUtilityBasedMicroaggregation();
     }
     
     /**
@@ -467,7 +466,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setMaxOutliers(supp);
     }
-    
+
     /**
      * @param type
      * @param enabled
@@ -632,16 +631,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Protect sensitive associations.
-     *
-     * @param selection
-     */
-    public void setProtectSensitiveAssociations(boolean selection) {
-        setModified();
-        config.setProtectSensitiveAssociations(selection);
-    }
-    
-    /**
      * Sets the current research subset.
      *
      * @param subset
@@ -698,6 +687,15 @@ public class ModelConfiguration implements Serializable, Cloneable {
      */
     public void setUnmodified() {
         modified = false;
+    }
+    
+    /**
+     * Returns whether microaggregation will be considered by utility measures
+     * @return
+     */
+    public void setUseUtilityBasedMicroaggregation(boolean value) {
+        setModified();
+        config.setUtilityBasedMicroaggregation(value);
     }
     
     /**

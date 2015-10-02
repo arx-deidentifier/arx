@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -36,22 +37,38 @@ import org.deidentifier.arx.metric.Metric;
 public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMultiDimensional> {
 
     /** SVUID. */
-    private static final long serialVersionUID = 3909752748519119689L;
+    private static final long               serialVersionUID = 3909752748519119689L;
 
     /** The weights. */
-    private double[]                weights;
+    private double[]                        weights;
 
     /** Number of dimensions. */
-    private int                     dimensions;
+    private int                             dimensions;
+
+    /** Number of dimensions with generalization */
+    private int                             dimensionsGeneralized;
+
+    /** Number of dimensions with aggregation */
+    private int                             dimensionsAggregated;
 
     /** Min. */
-    private double[]                min;
+    private double[]                        min;
 
     /** Max. */
-    private double[]                max;
+    private double[]                        max;
 
     /** The aggregate function. */
-    private final AggregateFunction function;
+    private AggregateFunction               function;
+
+    /** The microaggregation functions. */
+    private DistributionAggregateFunction[] microaggregationFunctions;
+
+    /** The start index of the attributes with microaggregation in the data array */
+    private int                             microaggregationStartIndex;
+
+    /** Header of the microaggregated data subset */
+    private String[]                        microaggregationHeader;
+
 
     /**
      * Creates a new instance.
@@ -89,7 +106,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     public AggregateFunction getAggregateFunction() {
         return this.function;
     }
-  
+    
     /**
      * Helper method for creating information loss.
      *
@@ -113,8 +130,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
             throw new IllegalStateException("Unknown aggregate function: "+function);
         }
     }
-
-
+  
     /**
      * Helper method for creating information loss.
      *
@@ -128,6 +144,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
                                                createInformationLoss(bound));
     }
 
+
     /**
      * Helper method for creating information loss.
      *
@@ -139,12 +156,38 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     }
 
     /**
+     * Returns the aggregate functions used for microaggregation
+     * @return
+     */
+    protected DistributionAggregateFunction[] getAggregateFunctions() {
+        return this.microaggregationFunctions;
+    }
+
+    /**
      * Returns the number of dimensions.
      *
      * @return
      */
     protected int getDimensions() {
         return dimensions;
+    }
+
+    /**
+     * Returns the number of dimensions.
+     *
+     * @return
+     */
+    protected int getDimensionsAggregated() {
+        return dimensionsAggregated;
+    }
+
+    /**
+     * Returns the number of dimensions.
+     *
+     * @return
+     */
+    protected int getDimensionsGeneralized() {
+        return dimensionsGeneralized;
     }
     
     /**
@@ -156,6 +199,22 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         this.weights = new double[dimensions];
         Arrays.fill(weights, 1d);
     }
+    
+    /**
+     * Needed for microaggregation
+     * @return
+     */
+    public int getMicroaggregationStartIndex() {
+        return microaggregationStartIndex;
+    }
+
+    /**
+     * Needed for microaggregation
+     * @return
+     */
+    public DistributionAggregateFunction[] getMicroaggregationFunctions() {
+        return microaggregationFunctions;
+    }
 
     @Override
     protected void initializeInternal(final DataManager manager,
@@ -163,17 +222,36 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
                                       final Data input, 
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
+
+        // Handle microaggregation
+        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
+        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
+        this.microaggregationHeader = manager.getMicroaggregationHeader();
+        if (!config.isUtilityBasedMicroaggregation() || !isAbleToHandleMicroaggregation()) {
+            this.microaggregationFunctions = new DistributionAggregateFunction[0];
+        }
+        
+        // Initialize dimensions
+        dimensionsGeneralized = hierarchies.length;
+        dimensionsAggregated = microaggregationFunctions.length;
+        dimensions = dimensionsGeneralized + dimensionsAggregated;
         
         // Initialize weights
-        weights = new double[hierarchies.length];
+        weights = new double[dimensions];
         double maximum = 0d;
-        for (int i = 0; i < hierarchies.length; i++) {
+        for (int i = 0; i < dimensionsGeneralized; i++) {
             String attribute = hierarchies[i].getName();
             double weight = config.getAttributeWeight(attribute);
             weights[i] = weight;
             maximum = Math.max(maximum, weight);
         }
-        
+        for (int i = 0; i < dimensionsAggregated; i++) {
+            String attribute = microaggregationHeader[i];
+            double weight = config.getAttributeWeight(attribute);
+            weights[dimensionsGeneralized + i] = weight;
+            maximum = Math.max(maximum, weight);
+        }
+
         // Normalize: default case
         if (maximum == 0d) {
             Arrays.fill(weights, 1d);
@@ -184,15 +262,18 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
             }
         }
         
-        // Initialize dimensions
-        dimensions = hierarchies.length;
-        
         // Min and max
-        this.min = new double[hierarchies.length];
+        this.min = new double[dimensions];
         Arrays.fill(min, 0d);
-        this.max = new double[min.length];
+        this.max = new double[dimensions];
         Arrays.fill(max, Double.MAX_VALUE);
     }
+
+    /**
+     * Does this metric handle microaggregation
+     * @return
+     */
+    protected abstract boolean isAbleToHandleMicroaggregation();
 
     /**
      * Sets the maximal information loss.
@@ -200,6 +281,9 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      * @param max
      */
     protected void setMax(double[] max) {
+        if (max.length != dimensions) {
+            throw new IllegalArgumentException("Invalid number of dimensions");
+        }
         this.max = max;
     }
 
@@ -209,6 +293,9 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      * @param min
      */
     protected void setMin(double[] min) {
+        if (min.length != dimensions) {
+            throw new IllegalArgumentException("Invalid number of dimensions");
+        }
         this.min = min;
     }
 }

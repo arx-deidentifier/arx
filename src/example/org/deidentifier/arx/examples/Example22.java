@@ -97,7 +97,6 @@ public class Example22 extends Example {
         ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new EntropyLDiversity("occupation", 5));
         config.setMaxOutliers(0.04d);
-        config.setProtectSensitiveAssociations(false);
         config.setMetric(Metric.createEntropyMetric());
         
         // Anonymize

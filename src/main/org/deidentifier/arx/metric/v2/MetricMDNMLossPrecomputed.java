@@ -118,7 +118,7 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
                 
         // Normalize
         for (int column=0; column<dimensions; column++){
-            bound[column] = normalize(bound[column], column);
+            bound[column] = normalizeGeneralized(bound[column], column);
         }
         
         // Return
@@ -159,5 +159,13 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
                 values[i][j] = hierarchies[i].getDistinctValues(j);
             }
         }
+    }
+
+    /**
+     * Returns whether this metric handles microaggregation
+     * @return
+     */
+    protected boolean isAbleToHandleMicroaggregation() {
+        return true;
     }
 }

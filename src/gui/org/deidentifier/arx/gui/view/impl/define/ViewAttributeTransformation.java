@@ -288,6 +288,7 @@ public class ViewAttributeTransformation implements IView {
     
     @Override
     public void update(final ModelEvent event) {
+        
         if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
             if (model != null) {
                 SWTUtil.enable(root);
@@ -574,7 +575,8 @@ public class ViewAttributeTransformation implements IView {
                 } 
             }
             this.cmbFunction.setItems(functions.toArray(new String[functions.size()]));
-            int index = functions.indexOf(model.getInputConfig().getMicroAggregationFunction(attribute));
+            MicroAggregationFunctionDescription description = model.getInputConfig().getMicroAggregationFunction(attribute);
+            int index = description == null ? -1 : functions.indexOf(description.getLabel());
             if (index == -1) {
                 this.cmbFunction.select(0);
                 this.model.getInputConfig().setMicroAggregationFunction(attribute, getMicroAggregationFunction(functions.get(0)));

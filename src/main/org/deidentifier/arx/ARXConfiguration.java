@@ -317,9 +317,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Do we assume practical monotonicity. */
     private boolean                            practicalMonotonicity                 = false;
 
-    /** Make sure that no information can be derived from associations between sensitive attributes. */
-    private boolean                            protectSensitiveAssociations          = false;
-
     /** Relative tuple outliers. */
     private double                             relMaxOutliers                        = -1;
 
@@ -337,8 +334,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private String                             suppressionString                     = "*";
 
     /**
-     * Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations. */
+     * Determines whether suppression is applied to the output of anonymous as
+     * well as non-anonymous transformations.
+     */
     private Boolean                            suppressionAlwaysEnabled              = true;
+
+    /** Should microaggregation be based on data utility measurements */
+    private boolean                            utilityBasedMicroaggregation          = true;
 
     /** TODO: This is a hack and should be removed in future releases. */
     private transient ARXConfigurationInternal accessibleInstance                    = null;
@@ -437,11 +439,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.requirements = this.requirements;
         result.metric = this.metric;
         result.snapshotLength = this.snapshotLength;
-        result.protectSensitiveAssociations = this.protectSensitiveAssociations;
         result.suppressionString = this.suppressionString;
         result.suppressionAlwaysEnabled = this.suppressionAlwaysEnabled;
         result.suppressedAttributeTypes = this.suppressedAttributeTypes;
         result.heuristicSearchForSampleBasedCriteria = this.heuristicSearchForSampleBasedCriteria;
+        result.heuristicSearchEnabled = this.heuristicSearchEnabled;
+        result.heuristicSearchThreshold = this.heuristicSearchThreshold;
+        result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
+        result.utilityBasedMicroaggregation = this.utilityBasedMicroaggregation;
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
@@ -686,15 +691,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns, whether the anonymizer should take associations between sensitive attributes into account.
-     *
-     * @return
-     */
-    public boolean isProtectSensitiveAssociations() {
-        return this.protectSensitiveAssociations;
-    }
-
-    /**
      * Returns whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
      * transformations to make them anonymous (if possible). Default is <code>true</code>.
@@ -709,10 +705,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Do we guarantee optimality for sample-based criteria?
+     * Is optimality guaranteed for sample-based criteria?
      */
     public boolean isUseHeuristicSearchForSampleBasedCriteria() {
         return heuristicSearchForSampleBasedCriteria;
+    }
+    
+    /**
+     * Returns whether microaggregation is based on utility measures
+     * @return
+     */
+    public boolean isUtilityBasedMicroaggregation() {
+        return this.utilityBasedMicroaggregation;
     }
 
     /**
@@ -833,15 +837,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Set, whether the anonymizer should take associations between sensitive attributes into account.
-     *
-     * @param protect
-     */
-    public void setProtectSensitiveAssociations(boolean protect) {
-        this.protectSensitiveAssociations = protect;
-    }
-
-    /**
      * Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
      * transformations to make them anonymous (if possible). Default is <code>true</code>. 
@@ -850,7 +845,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setSuppressionAlwaysEnabled(boolean enabled){
     	this.suppressionAlwaysEnabled = enabled;
     }
-    
+
     /**
      * Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.
      * @param suppressionString
@@ -859,12 +854,20 @@ public class ARXConfiguration implements Serializable, Cloneable {
     	checkArgument(suppressionString);
         this.suppressionString = suppressionString;    	
     }
-
+    
     /**
      * Do we guarantee optimality for sample-based criteria?
      */
     public void setUseHeuristicSearchForSampleBasedCriteria(boolean value) {
         this.heuristicSearchForSampleBasedCriteria = value;
+    }
+
+    /**
+     * Sets whether microaggregation should be based on utility measures
+     * @return
+     */
+    public void setUtilityBasedMicroaggregation(boolean value) {
+        this.utilityBasedMicroaggregation = value;
     }
 
     /**

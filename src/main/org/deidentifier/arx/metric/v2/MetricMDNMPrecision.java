@@ -79,7 +79,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     protected MetricMDNMPrecision(boolean monotonic, boolean independent, AggregateFunction function){
         super(monotonic, independent, function);
     }
-
+    
     /**
      * Returns the configuration of this metric.
      *
@@ -97,13 +97,6 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     @Override
     public String toString() {
         return "Non-monotonic precision";
-    }
-
-    @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        double[] result = new double[getDimensions()];
-        Arrays.fill(result, entry.count);
-        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
 
     @Override
@@ -131,7 +124,14 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         return new ILMultiDimensionalWithBound(createInformationLoss(result), 
                                                (AbstractILMultiDimensional)getLowerBoundInternal(node).clone());
     }
-    
+
+    @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        double[] result = new double[getDimensions()];
+        Arrays.fill(result, entry.count);
+        return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
+    }
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         double[] result = new double[getDimensions()];
@@ -142,7 +142,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         }
         return createInformationLoss(result);
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
@@ -169,7 +169,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         setMin(min);
         setMax(max);
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -200,5 +200,13 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         for (int j = 0; j < heights.length; j++) {
             heights[j] = hierarchies[j].getArray()[0].length - 1;
         }
+    }
+    
+    /**
+     * Does this metric handle microaggregation
+     * @return
+     */
+    protected boolean isAbleToHandleMicroaggregation() {
+        return false;
     }
 }

@@ -121,7 +121,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
 
         // Create epsilon slider
         final Label zLabel = new Label(group, SWT.NONE);
-        zLabel.setText(Resources.getMessage("CriterionDefinitionView.90")); //$NON-NLS-1$
+        zLabel.setText(Resources.getMessage("CriterionDefinitionView.92")); //$NON-NLS-1$
 
         labelEpsilon = createLabel(group);
         knobEpsilon = createKnobDouble(group, 0.01d, 2d);
@@ -136,7 +136,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
 
         // Create delta slider
         final Label lLabel = new Label(group, SWT.NONE);
-        lLabel.setText(Resources.getMessage("CriterionDefinitionView.91")); //$NON-NLS-1$
+        lLabel.setText(Resources.getMessage("CriterionDefinitionView.93")); //$NON-NLS-1$
 
         labelDelta = createLabel(group);
         knobDelta = createKnobDouble(group, 0.00000000001d, 0.00001d);
@@ -151,7 +151,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
 
         // Create criterion combo
         final Label cLabel = new Label(group, SWT.PUSH);
-        cLabel.setText(Resources.getMessage("CriterionDefinitionView.92")); //$NON-NLS-1$
+        cLabel.setText(Resources.getMessage("CriterionDefinitionView.94")); //$NON-NLS-1$
 
         comboGeneralization = new Combo(group, SWT.READ_ONLY);
         GridData d31 = SWTUtil.createFillHorizontallyGridData();

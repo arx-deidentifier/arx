@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.Text;
 public class DialogAbout extends TitleAreaDialog implements IDialog {
 
     /**  TODO */
-    private static final String LICENSE      = Resources.getLicencseText();
+    private static final String LICENSE      = Resources.getLicenseText();
     
     /**  TODO */
     private static final String ABOUT =   Resources.getMessage("AboutDialog.16") + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
@@ -64,7 +64,8 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "Michael Schneider (risk analysis)\n" + //$NON-NLS-1$
                                                "Raffael Bild (heuristic search, differential privacy)\n" + //$NON-NLS-1$
                                                "Johanna Eicher (heuristic search)\n" + //$NON-NLS-1$
-                                               "Helmut Spengler (heuristic search)"; //$NON-NLS-1$
+                                               "Helmut Spengler (heuristic search)\n" + //$NON-NLS-1$
+                                               "David Gaﬂmann (HIPAA identifiers)"; //$NON-NLS-1$
     
     /**  TODO */
     private Image image;

@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.Label;
  *
  * @author Fabian Prasser
  */
-public class ViewMetric implements IView {
+public class ViewUtilityMeasures implements IView {
 
     /** Static settings. */
     private static final int                     LABEL_HEIGHT = 20;
@@ -85,6 +85,9 @@ public class ViewMetric implements IView {
     
     /** View. */
     private Button                monotonicVariant;
+
+    /** View. */
+    private Button                utilityBasedMicroaggregation;
     
     /** View. */
     private Combo                 comboAggregate;
@@ -96,7 +99,7 @@ public class ViewMetric implements IView {
      * @param controller
      * @param folder
      */
-    public ViewMetric(final Composite parent,
+    public ViewUtilityMeasures(final Composite parent,
                       final Controller controller) {
 
         this.controller = controller;
@@ -201,6 +204,28 @@ public class ViewMetric implements IView {
             }
         });
 
+        // Create microaggreation button
+        final Label mLabel4 = new Label(mBase, SWT.PUSH);
+        mLabel4.setText(Resources.getMessage("CriterionDefinitionView.90")); //$NON-NLS-1$
+        GridData d24 = new GridData();
+        d24.heightHint = LABEL_HEIGHT;
+        d24.minimumHeight = LABEL_HEIGHT;
+        d24.grabExcessVerticalSpace = true;
+        d24.verticalAlignment = GridData.CENTER;
+        mLabel4.setLayoutData(d24);
+
+        utilityBasedMicroaggregation = new Button(mBase, SWT.CHECK);
+        utilityBasedMicroaggregation.setText(Resources.getMessage("CriterionDefinitionView.91")); //$NON-NLS-1$
+        utilityBasedMicroaggregation.setSelection(false);
+        utilityBasedMicroaggregation.setEnabled(false);
+        utilityBasedMicroaggregation.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).grab(false, true).align(GridData.BEGINNING, GridData.CENTER).create());
+        utilityBasedMicroaggregation.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                model.getInputConfig().setUseUtilityBasedMicroaggregation(utilityBasedMicroaggregation.getSelection());
+            }
+        });
+
         // Create monotonicity button
         final Label mLabel3 = new Label(mBase, SWT.PUSH);
         mLabel3.setText(Resources.getMessage("CriterionDefinitionView.72")); //$NON-NLS-1$
@@ -276,6 +301,9 @@ public class ViewMetric implements IView {
             this.monotonicVariant.setEnabled(true);
             this.monotonicVariant.setSelection(config.isMonotonic());
         }
+        
+        // Set
+        utilityBasedMicroaggregation.setSelection(model.getInputConfig().isUtilityBasedMicroaggregation());
 
         // Aggregate function
         comboAggregate.removeAll();

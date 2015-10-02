@@ -19,100 +19,62 @@ package org.deidentifier.arx.examples;
 
 import java.io.IOException;
 
-import org.deidentifier.arx.ARXAnonymizer;
-import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
+import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.Data.DefaultData;
-import org.deidentifier.arx.DataGeneralizationScheme;
-import org.deidentifier.arx.DataGeneralizationScheme.GeneralizationDegree;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.risk.HIPAAIdentifierMatch;
 
 /**
- * This class implements an example of how to use (e,d)-DP
- *
- * @author Fabian Prasser
- * @author Florian Kohlmayer
+ * This class implements an example of how to use the HIPAA identifier validator.
+ * @author David Gaﬂmann
+ *         
  */
-public class Example35 extends Example {
-
+public class Example35 {
+    
     /**
-     * Entry point.
-     * 
+     * Entry point
      * @param args
-     *            the arguments
+     * @throws IOException
      */
-    public static void main(final String[] args) {
-
-        // Define data
-        final DefaultData data = Data.create();
-        data.add("age", "gender", "zipcode");
-        data.add("34", "male", "81667");
-        data.add("45", "female", "81675");
-        data.add("66", "male", "81925");
-        data.add("70", "female", "81931");
-        data.add("34", "female", "81931");
-        data.add("70", "male", "81931");
-        data.add("45", "male", "81931");
-
-        // Define hierarchies
-        final DefaultHierarchy age = Hierarchy.create();
-        age.add("34", "<50", "*");
-        age.add("45", "<50", "*");
-        age.add("66", ">=50", "*");
-        age.add("70", ">=50", "*");
-
-        final DefaultHierarchy gender = Hierarchy.create();
-        gender.add("male", "*");
-        gender.add("female", "*");
-
-        // Only excerpts for readability
-        final DefaultHierarchy zipcode = Hierarchy.create();
-        zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
-        zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
-        zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
-        zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
-
-        data.getDefinition().setAttributeType("age", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
-        data.getDefinition().setAttributeType("gender", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
-        data.getDefinition().setAttributeType("zipcode", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
-        data.getDefinition().setHierarchy("age", age);
-        data.getDefinition().setHierarchy("gender", gender);
-        data.getDefinition().setHierarchy("zipcode", zipcode);
-
-        try {
-            // Create an instance of the anonymizer
-            ARXAnonymizer anonymizer = new ARXAnonymizer();
-
-            // Create a differential privacy criterion
-            EDDifferentialPrivacy criterion =  new EDDifferentialPrivacy(2d, 0.00001d, 
-                                                                         DataGeneralizationScheme.create(data, GeneralizationDegree.MEDIUM));
-            
-            ARXConfiguration config = ARXConfiguration.create();
-            config.addCriterion(criterion);
-            config.setMaxOutliers(1d);
-            ARXResult result = anonymizer.anonymize(data, config);
-
-            // Access output
-            DataHandle optimal = result.getOutput();
-            
-            System.out.println(result.isResultAvailable());
-
-            // Print input
-            System.out.println(" - Input data:");
-            printHandle(data.getHandle());
-
-            System.out.println(" - Result:");
-            printHandle(optimal);
-
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+    public static void main(final String[] args) throws IOException {
+        Data.DefaultData data = createDemoData();
+        
+        DataHandle handle = data.getHandle();
+        
+        HIPAAIdentifierMatch[] warnings = handle.getRiskEstimator(ARXPopulationModel.create(Region.USA)).getHIPAAIdentifiers();
+        
+        printWarnings(warnings);
+    }
+    
+    /**
+     * Creates the data used in the example.
+     * @return
+     */
+    private static Data.DefaultData createDemoData() {
+        final Data.DefaultData data = Data.create();
+        data.add("first name", "age", "gender", "code", "birth", "email-address", "SSN", "Bank", "Vehicle", "URL", "IP", "phone");
+        data.add("Max", "34", "male", "81667", "2008-09-02", "", "123-45-6789", "GR16 0110 1250 0000 0001 2300 695", "", "http://demodomain.com", "8.8.8.8", "+49 1234566");
+        data.add("Max", "45", "female", "81675", "2008-09-02", "user@arx.org", "", "", "WDD 169 007-1J-236589", "", "2001:db8::1428:57ab", "");
+        data.add("Max", "66", "male", "89375", "2008-09-02", "demo@email.com", "", "", "", "", "", "");
+        data.add("Max", "70", "female", "81931", "2008-09-02", "", "", "", "", "", "", "");
+        data.add("Max", "34", "female", "81931", "2008-09-02", "", "", "", "", "", "", "");
+        data.add("Max", "90", "male", "81931", "2008-09-02", "", "", "", "", "", "", "");
+        data.add("Max", "45", "male", "81931", "2008-09-02", "", "", "", "", "", "", "");
+        return data;
+    }
+    
+    /**
+     * Displays the found warnings.
+     * @param warnings
+     */
+    private static void printWarnings(HIPAAIdentifierMatch[] warnings) {
+        if (warnings.length == 0) {
+            System.out.println("No warnings");
+        } else {
+            for (HIPAAIdentifierMatch w : warnings) {
+                System.out.println(w.toString());
+            }
         }
     }
 }
