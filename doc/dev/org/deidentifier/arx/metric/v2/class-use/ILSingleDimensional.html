@@ -123,6 +123,12 @@
 <div class="block">Creates an instance of the discernability metric.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a>&gt;</code></td>
+<td class="colLast"><span class="strong">Metric.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/Metric.html#createKLDivergenceMetric()">createKLDivergenceMetric</a></strong>()</code>
+<div class="block">Creates an instance of the KL Divergence metric.</div>
+</td>
+</tr>
 </tbody>
 </table>
 </li>
@@ -139,15 +145,23 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a></code></td>
-<td class="colLast"><span class="strong">MetricSDNMDiscernability.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#createMaxInformationLoss()">createMaxInformationLoss</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">MetricSDNMKLDivergence.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMKLDivergence.html#createMaxInformationLoss()">createMaxInformationLoss</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a></code></td>
-<td class="colLast"><span class="strong">MetricSDNMAmbiguity.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMAmbiguity.html#createMaxInformationLoss()">createMaxInformationLoss</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">MetricSDNMDiscernability.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#createMaxInformationLoss()">createMaxInformationLoss</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a></code></td>
+<td class="colLast"><span class="strong">MetricSDNMAmbiguity.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMAmbiguity.html#createMaxInformationLoss()">createMaxInformationLoss</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a></code></td>
 <td class="colLast"><span class="strong">MetricSDAECS.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDAECS.html#createMaxInformationLoss()">createMaxInformationLoss</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a></code></td>
+<td class="colLast"><span class="strong">MetricSDNMKLDivergence.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMKLDivergence.html#createMinInformationLoss()">createMinInformationLoss</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a></code></td>
@@ -163,15 +177,24 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a></code></td>
-<td class="colLast"><span class="strong">MetricSDNMDiscernability.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">MetricSDNMKLDivergence.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMKLDivergence.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a></code></td>
-<td class="colLast"><span class="strong">MetricSDNMAmbiguity.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMAmbiguity.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">MetricSDNMDiscernability.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a></code></td>
+<td class="colLast"><span class="strong">MetricSDNMAmbiguity.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMAmbiguity.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a></code></td>
 <td class="colLast"><span class="strong">MetricSDAECS.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDAECS.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBoundInternal</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a></code></td>
+<td class="colLast"><span class="strong">MetricSDNMKLDivergence.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMKLDivergence.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
+                     <a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;g)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a></code></td>
@@ -232,6 +255,12 @@
 <td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createDiscernabilityMetric(boolean, double)">createDiscernabilityMetric</a></strong>(boolean&nbsp;monotonic,
                           double&nbsp;numTuples)</code>
 <div class="block">Creates an instance of the discernability metric.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a>&gt;</code></td>
+<td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createKLDivergenceMetric()">createKLDivergenceMetric</a></strong>()</code>
+<div class="block">Creates an instance of the KL Divergence metric.</div>
 </td>
 </tr>
 </tbody>

@@ -305,13 +305,13 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#isProtectSensitiveAssociations()">isProtectSensitiveAssociations</a></strong>()</code>
-<div class="block">Protect sensitive associations.</div>
-</td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#isSuppressionAlwaysEnabled()">isSuppressionAlwaysEnabled</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#isSuppressionAlwaysEnabled()">isSuppressionAlwaysEnabled</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#isUtilityBasedMicroaggregation()">isUtilityBasedMicroaggregation</a></strong>()</code>
+<div class="block">Returns whether microaggregation will be considered by utility measures</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -431,42 +431,42 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setProtectSensitiveAssociations(boolean)">setProtectSensitiveAssociations</a></strong>(boolean&nbsp;selection)</code>
-<div class="block">Protect sensitive associations.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setResearchSubset(org.deidentifier.arx.RowSet)">setResearchSubset</a></strong>(<a href="../../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;subset)</code>
 <div class="block">Sets the current research subset.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setSuppressionAlwaysEnabled(boolean)">setSuppressionAlwaysEnabled</a></strong>(boolean&nbsp;enabled)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setSuppressionString(java.lang.String)">setSuppressionString</a></strong>(java.lang.String&nbsp;suppressionString)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setSuppressionWeight(double)">setSuppressionWeight</a></strong>(double&nbsp;suppressionWeight)</code>
 <div class="block">Sets the suppression/generalization weight, that will be respected by
  the NDS metric.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setTransformationMode(java.lang.String, org.deidentifier.arx.gui.model.ModelTransformationMode)">setTransformationMode</a></strong>(java.lang.String&nbsp;attribute,
                      <a href="../../../../../org/deidentifier/arx/gui/model/ModelTransformationMode.html" title="enum in org.deidentifier.arx.gui.model">ModelTransformationMode</a>&nbsp;mode)</code>
 <div class="block">Sets the transformation mode</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setUnmodified()">setUnmodified</a></strong>()</code>
 <div class="block">Sets the config unmodified.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html#setUseUtilityBasedMicroaggregation(boolean)">setUseUtilityBasedMicroaggregation</a></strong>(boolean&nbsp;value)</code>
+<div class="block">Returns whether microaggregation will be considered by utility measures</div>
 </td>
 </tr>
 </table>
@@ -848,17 +848,6 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="isProtectSensitiveAssociations()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isProtectSensitiveAssociations</h4>
-<pre>public&nbsp;boolean&nbsp;isProtectSensitiveAssociations()</pre>
-<div class="block">Protect sensitive associations.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="isSuppressionAlwaysEnabled()">
 <!--   -->
 </a>
@@ -867,6 +856,17 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>isSuppressionAlwaysEnabled</h4>
 <pre>public&nbsp;boolean&nbsp;isSuppressionAlwaysEnabled()</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#isSuppressionAlwaysEnabled()"><code>ARXConfiguration.isSuppressionAlwaysEnabled()</code></a></dd></dl>
+</li>
+</ul>
+<a name="isUtilityBasedMicroaggregation()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isUtilityBasedMicroaggregation</h4>
+<pre>public&nbsp;boolean&nbsp;isUtilityBasedMicroaggregation()</pre>
+<div class="block">Returns whether microaggregation will be considered by utility measures</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="removeAllCriteria()">
@@ -1091,17 +1091,6 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>assumeMonotonicity</code> - </dd></dl>
 </li>
 </ul>
-<a name="setProtectSensitiveAssociations(boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setProtectSensitiveAssociations</h4>
-<pre>public&nbsp;void&nbsp;setProtectSensitiveAssociations(boolean&nbsp;selection)</pre>
-<div class="block">Protect sensitive associations.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>selection</code> - </dd></dl>
-</li>
-</ul>
 <a name="setResearchSubset(org.deidentifier.arx.RowSet)">
 <!--   -->
 </a>
@@ -1160,11 +1149,21 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <a name="setUnmodified()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setUnmodified</h4>
 <pre>public&nbsp;void&nbsp;setUnmodified()</pre>
 <div class="block">Sets the config unmodified.</div>
+</li>
+</ul>
+<a name="setUseUtilityBasedMicroaggregation(boolean)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setUseUtilityBasedMicroaggregation</h4>
+<pre>public&nbsp;void&nbsp;setUseUtilityBasedMicroaggregation(boolean&nbsp;value)</pre>
+<div class="block">Returns whether microaggregation will be considered by utility measures</div>
 </li>
 </ul>
 </li>

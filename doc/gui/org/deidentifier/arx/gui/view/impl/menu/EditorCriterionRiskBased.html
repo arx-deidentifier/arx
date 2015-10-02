@@ -119,7 +119,7 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/Ed
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;org.deidentifier.arx.gui.view.impl.menu.<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterion</a></h3>
-<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#LABEL_WIDTH">LABEL_WIDTH</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#model">model</a></code></li>
+<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#model">model</a></code></li>
 </ul>
 </li>
 </ul>
@@ -162,8 +162,15 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/Ed
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected java.util.List&lt;<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionRiskBased.html#getTypicalParameters()">getTypicalParameters</a></strong>()</code>
+<div class="block">Returns a set of typical parameters</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionRiskBased.html#parse(org.deidentifier.arx.gui.model.ModelRiskBasedCriterion)">parse</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelRiskBasedCriterion</a>&nbsp;model)</code>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionRiskBased.html#parse(org.deidentifier.arx.gui.model.ModelRiskBasedCriterion, boolean)">parse</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelRiskBasedCriterion</a>&nbsp;model,
+     boolean&nbsp;_default)</code>
 <div class="block">Parses the input</div>
 </td>
 </tr>
@@ -173,7 +180,7 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/Ed
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.gui.view.impl.menu.<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterion</a></h3>
-<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#dispose()">dispose</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#getModel()">getModel</a></code></li>
+<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#createKnobDouble(org.eclipse.swt.widgets.Composite, double, double)">createKnobDouble</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#createKnobInteger(org.eclipse.swt.widgets.Composite, int, int)">createKnobInteger</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#createLabel(org.eclipse.swt.widgets.Composite)">createLabel</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#dispose()">dispose</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#getModel()">getModel</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#parse(T)">parse</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#parseDefault(org.deidentifier.arx.gui.model.ModelCriterion)">parseDefault</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#updateLabel(org.eclipse.swt.widgets.Label, double)">updateLabel</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#updateLabel(org.eclipse.swt.widgets.Label, int)">updateLabel</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -231,18 +238,34 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/Ed
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="parse(org.deidentifier.arx.gui.model.ModelRiskBasedCriterion)">
+<a name="parse(org.deidentifier.arx.gui.model.ModelRiskBasedCriterion, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parse</h4>
+<pre>protected&nbsp;void&nbsp;parse(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelRiskBasedCriterion</a>&nbsp;model,
+         boolean&nbsp;_default)</pre>
+<div class="block">Parses the input</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#parse(T, boolean)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterion</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelRiskBasedCriterion</a>&gt;</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getTypicalParameters()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>parse</h4>
-<pre>protected&nbsp;void&nbsp;parse(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelRiskBasedCriterion</a>&nbsp;model)</pre>
-<div class="block">Parses the input</div>
+<h4>getTypicalParameters</h4>
+<pre>protected&nbsp;java.util.List&lt;<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&gt;&nbsp;getTypicalParameters()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#getTypicalParameters()">EditorCriterion</a></code></strong></div>
+<div class="block">Returns a set of typical parameters</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#parse(T)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterion</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelRiskBasedCriterion</a>&gt;</code></dd>
-</dl>
+<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#getTypicalParameters()">getTypicalParameters</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterion</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelRiskBasedCriterion</a>&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

@@ -156,9 +156,13 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><span class="strong">DPresence.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/DPresence.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">EDDifferentialPrivacy.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="strong">DPresence.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/DPresence.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="strong">DistinctLDiversity.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/criteria/DistinctLDiversity.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
 </tr>
@@ -198,6 +202,12 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a></code></td>
+<td class="colLast"><span class="strong">HashGroupify.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getEntry(int[])">getEntry</a></strong>(int[]&nbsp;tuple)</code>
+<div class="block">Returns the entry for the given tuple</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a></code></td>
 <td class="colLast"><span class="strong">HashGroupify.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getFirstEquivalenceClass()">getFirstEquivalenceClass</a></strong>()</code>
 <div class="block">Returns the first entry</div>
@@ -370,50 +380,55 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensionalWithBound.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensionalWithBound</a></code></td>
-<td class="colLast"><span class="strong">MetricSDNMDiscernability.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
+<td class="colLast"><span class="strong">MetricSDNMKLDivergence.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMKLDivergence.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
                           <a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensionalWithBound.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensionalWithBound</a></code></td>
+<td class="colLast"><span class="strong">MetricSDNMDiscernability.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMDiscernability.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
+                          <a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensionalWithBound.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensionalWithBound</a></code></td>
 <td class="colLast"><span class="strong">MetricSDNMAmbiguity.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/metric/v2/MetricSDNMAmbiguity.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
                           <a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensionalWithBound.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensionalWithBound</a></code></td>
 <td class="colLast"><span class="strong">MetricSDAECS.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/metric/v2/MetricSDAECS.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
                           <a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/metric/v2/ILMultiDimensionalWithBound.html" title="class in org.deidentifier.arx.metric.v2">ILMultiDimensionalWithBound</a></code></td>
 <td class="colLast"><span class="strong">MetricMDStatic.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/metric/v2/MetricMDStatic.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
                           <a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/metric/v2/ILMultiDimensionalWithBound.html" title="class in org.deidentifier.arx.metric.v2">ILMultiDimensionalWithBound</a></code></td>
 <td class="colLast"><span class="strong">MetricMDNUNMNormalizedEntropyPrecomputed.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/metric/v2/MetricMDNUNMNormalizedEntropyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
                           <a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/metric/v2/ILMultiDimensionalWithBound.html" title="class in org.deidentifier.arx.metric.v2">ILMultiDimensionalWithBound</a></code></td>
 <td class="colLast"><span class="strong">MetricMDNUEntropyPrecomputed.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
                           <a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/metric/v2/ILMultiDimensionalWithBound.html" title="class in org.deidentifier.arx.metric.v2">ILMultiDimensionalWithBound</a></code></td>
 <td class="colLast"><span class="strong">MetricMDNMPrecision.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
                           <a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/metric/v2/ILMultiDimensionalWithBound.html" title="class in org.deidentifier.arx.metric.v2">ILMultiDimensionalWithBound</a></code></td>
 <td class="colLast"><span class="strong">MetricMDNMLoss.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
                           <a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/metric/v2/ILMultiDimensionalWithBound.html" title="class in org.deidentifier.arx.metric.v2">ILMultiDimensionalWithBound</a></code></td>
 <td class="colLast"><span class="strong">MetricMDHeight.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/metric/v2/MetricMDHeight.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
                           <a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a>&lt;<a href="../../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><span class="strong">AbstractMetricMultiDimensionalPotentiallyPrecomputed.</span><code><strong><a href="../../../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(<a href="../../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
                           <a href="../../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>&nbsp;</td>

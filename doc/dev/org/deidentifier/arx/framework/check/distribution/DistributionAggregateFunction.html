@@ -236,9 +236,39 @@ implements java.io.Serializable</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected &lt;T&gt;&nbsp;void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics, org.deidentifier.arx.framework.check.distribution.Distribution, org.deidentifier.arx.DataType.DataTypeWithRatioScale)">addAll</a></strong>(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics&nbsp;statistics,
+      <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution,
+      <a href="../../../../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;T&gt;&nbsp;type)</code>
+<div class="block">Adds all values from the distribution to the given descriptive statistics object</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#aggregate(org.deidentifier.arx.framework.check.distribution.Distribution)">aggregate</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution)</code>
 <div class="block">This function returns an aggregate value.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getMeanError(org.deidentifier.arx.framework.check.distribution.Distribution)">getMeanError</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution)</code>
+<div class="block">Returns the normalized mean squared error in [0,1], if supported, 0d otherwise</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected &lt;T&gt;&nbsp;double[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getMinMax(java.lang.String[], org.deidentifier.arx.DataType.DataTypeWithRatioScale)">getMinMax</a></strong>(java.lang.String[]&nbsp;dictionary,
+         <a href="../../../../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;T&gt;&nbsp;type)</code>
+<div class="block">Returns the minimum and maximum value</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getNMSE(double, double, double[], double)">getNMSE</a></strong>(double&nbsp;min,
+       double&nbsp;max,
+       double[]&nbsp;values,
+       double&nbsp;aggregate)</code>
+<div class="block">Calculates the mean square error after normalizing everything into [0,1]</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -357,6 +387,18 @@ implements java.io.Serializable</pre>
 <dt><span class="strong">Returns:</span></dt><dd>the string</dd></dl>
 </li>
 </ul>
+<a name="getMeanError(org.deidentifier.arx.framework.check.distribution.Distribution)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMeanError</h4>
+<pre>public&nbsp;&lt;T&gt;&nbsp;double&nbsp;getMeanError(<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution)</pre>
+<div class="block">Returns the normalized mean squared error in [0,1], if supported, 0d otherwise</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>distribution</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="initialize(java.lang.String[], org.deidentifier.arx.DataType, int[][])">
 <!--   -->
 </a>
@@ -373,12 +415,53 @@ implements java.io.Serializable</pre>
 <a name="isTypePreserving()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>isTypePreserving</h4>
 <pre>public&nbsp;boolean&nbsp;isTypePreserving()</pre>
 <div class="block">Returns whether this is a type-preserving function</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics, org.deidentifier.arx.framework.check.distribution.Distribution, org.deidentifier.arx.DataType.DataTypeWithRatioScale)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addAll</h4>
+<pre>protected&nbsp;&lt;T&gt;&nbsp;void&nbsp;addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics&nbsp;statistics,
+              <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution,
+              <a href="../../../../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;T&gt;&nbsp;type)</pre>
+<div class="block">Adds all values from the distribution to the given descriptive statistics object</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>statistics</code> - </dd><dd><code>distribution</code> - </dd><dd><code>type</code> - </dd></dl>
+</li>
+</ul>
+<a name="getMinMax(java.lang.String[], org.deidentifier.arx.DataType.DataTypeWithRatioScale)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMinMax</h4>
+<pre>protected&nbsp;&lt;T&gt;&nbsp;double[]&nbsp;getMinMax(java.lang.String[]&nbsp;dictionary,
+                     <a href="../../../../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;T&gt;&nbsp;type)</pre>
+<div class="block">Returns the minimum and maximum value</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>dictionary</code> - </dd><dd><code>type</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getNMSE(double, double, double[], double)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getNMSE</h4>
+<pre>protected&nbsp;double&nbsp;getNMSE(double&nbsp;min,
+             double&nbsp;max,
+             double[]&nbsp;values,
+             double&nbsp;aggregate)</pre>
+<div class="block">Calculates the mean square error after normalizing everything into [0,1]</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - </dd><dd><code>max</code> - </dd><dd><code>values</code> - </dd><dd><code>aggregate</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

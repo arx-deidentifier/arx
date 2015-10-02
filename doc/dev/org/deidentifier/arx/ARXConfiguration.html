@@ -374,20 +374,20 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isProtectSensitiveAssociations()">isProtectSensitiveAssociations</a></strong>()</code>
-<div class="block">Returns, whether the anonymizer should take associations between sensitive attributes into account.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isSuppressionAlwaysEnabled()">isSuppressionAlwaysEnabled</a></strong>()</code>
 <div class="block">Returns whether suppression is applied to the output of anonymous as well as non-anonymous transformations.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isUseHeuristicSearchForSampleBasedCriteria()">isUseHeuristicSearchForSampleBasedCriteria</a></strong>()</code>
-<div class="block">Do we guarantee optimality for sample-based criteria?</div>
+<div class="block">Is optimality guaranteed for sample-based criteria?</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isUtilityBasedMicroaggregation()">isUtilityBasedMicroaggregation</a></strong>()</code>
+<div class="block">Returns whether microaggregation is based on utility measures</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -463,26 +463,26 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setProtectSensitiveAssociations(boolean)">setProtectSensitiveAssociations</a></strong>(boolean&nbsp;protect)</code>
-<div class="block">Set, whether the anonymizer should take associations between sensitive attributes into account.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setSuppressionAlwaysEnabled(boolean)">setSuppressionAlwaysEnabled</a></strong>(boolean&nbsp;enabled)</code>
 <div class="block">Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setSuppressionString(java.lang.String)">setSuppressionString</a></strong>(java.lang.String&nbsp;suppressionString)</code>
 <div class="block">Sets the string with which suppressed values are to be replaced.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setUseHeuristicSearchForSampleBasedCriteria(boolean)">setUseHeuristicSearchForSampleBasedCriteria</a></strong>(boolean&nbsp;value)</code>
 <div class="block">Do we guarantee optimality for sample-based criteria?</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setUtilityBasedMicroaggregation(boolean)">setUtilityBasedMicroaggregation</a></strong>(boolean&nbsp;value)</code>
+<div class="block">Sets whether microaggregation should be based on utility measures</div>
 </td>
 </tr>
 </table>
@@ -810,17 +810,6 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="isProtectSensitiveAssociations()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isProtectSensitiveAssociations</h4>
-<pre>public&nbsp;boolean&nbsp;isProtectSensitiveAssociations()</pre>
-<div class="block">Returns, whether the anonymizer should take associations between sensitive attributes into account.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="isSuppressionAlwaysEnabled()">
 <!--   -->
 </a>
@@ -841,7 +830,18 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>isUseHeuristicSearchForSampleBasedCriteria</h4>
 <pre>public&nbsp;boolean&nbsp;isUseHeuristicSearchForSampleBasedCriteria()</pre>
-<div class="block">Do we guarantee optimality for sample-based criteria?</div>
+<div class="block">Is optimality guaranteed for sample-based criteria?</div>
+</li>
+</ul>
+<a name="isUtilityBasedMicroaggregation()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isUtilityBasedMicroaggregation</h4>
+<pre>public&nbsp;boolean&nbsp;isUtilityBasedMicroaggregation()</pre>
+<div class="block">Returns whether microaggregation is based on utility measures</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="removeCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">
@@ -962,17 +962,6 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>assumeMonotonicity</code> - </dd></dl>
 </li>
 </ul>
-<a name="setProtectSensitiveAssociations(boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setProtectSensitiveAssociations</h4>
-<pre>public&nbsp;void&nbsp;setProtectSensitiveAssociations(boolean&nbsp;protect)</pre>
-<div class="block">Set, whether the anonymizer should take associations between sensitive attributes into account.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>protect</code> - </dd></dl>
-</li>
-</ul>
 <a name="setSuppressionAlwaysEnabled(boolean)">
 <!--   -->
 </a>
@@ -1005,6 +994,16 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>setUseHeuristicSearchForSampleBasedCriteria</h4>
 <pre>public&nbsp;void&nbsp;setUseHeuristicSearchForSampleBasedCriteria(boolean&nbsp;value)</pre>
 <div class="block">Do we guarantee optimality for sample-based criteria?</div>
+</li>
+</ul>
+<a name="setUtilityBasedMicroaggregation(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setUtilityBasedMicroaggregation</h4>
+<pre>public&nbsp;void&nbsp;setUtilityBasedMicroaggregation(boolean&nbsp;value)</pre>
+<div class="block">Sets whether microaggregation should be based on utility measures</div>
 </li>
 </ul>
 <a name="getAbsoluteMaxOutliers()">

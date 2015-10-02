@@ -79,6 +79,13 @@
 <div class="block">This package provides the public API for the ARX anonymization framework.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="#org.deidentifier.arx.framework.check.distribution">org.deidentifier.arx.framework.check.distribution</a></td>
+<td class="colLast">
+<div class="block">This package implements means for efficiently maintaining distributions of values
+ for each equivalence class</div>
+</td>
+</tr>
 </tbody>
 </table>
 </li>
@@ -111,6 +118,35 @@
 <td class="colFirst"><code>static class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/DataType.ARXInteger.html" title="class in org.deidentifier.arx">DataType.ARXInteger</a></strong></code>
 <div class="block">Base class for numeric types.</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.framework.check.distribution">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a> in <a href="../../../../org/deidentifier/arx/framework/check/distribution/package-summary.html">org.deidentifier.arx.framework.check.distribution</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../org/deidentifier/arx/framework/check/distribution/package-summary.html">org.deidentifier.arx.framework.check.distribution</a> with parameters of type <a href="../../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>protected &lt;T&gt;&nbsp;void</code></td>
+<td class="colLast"><span class="strong">DistributionAggregateFunction.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics, org.deidentifier.arx.framework.check.distribution.Distribution, org.deidentifier.arx.DataType.DataTypeWithRatioScale)">addAll</a></strong>(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics&nbsp;statistics,
+      <a href="../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution,
+      <a href="../../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;T&gt;&nbsp;type)</code>
+<div class="block">Adds all values from the distribution to the given descriptive statistics object</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected &lt;T&gt;&nbsp;double[]</code></td>
+<td class="colLast"><span class="strong">DistributionAggregateFunction.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getMinMax(java.lang.String[], org.deidentifier.arx.DataType.DataTypeWithRatioScale)">getMinMax</a></strong>(java.lang.String[]&nbsp;dictionary,
+         <a href="../../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;T&gt;&nbsp;type)</code>
+<div class="block">Returns the minimum and maximum value</div>
 </td>
 </tr>
 </tbody>

@@ -130,7 +130,14 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelKAnonymityCriterion.html#ModelKAnonymityCriterion()">ModelKAnonymityCriterion</a></strong>()</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelKAnonymityCriterion.html#ModelKAnonymityCriterion()">ModelKAnonymityCriterion</a></strong>()</code>
+<div class="block">Creates a new instance</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelKAnonymityCriterion.html#ModelKAnonymityCriterion(int)">ModelKAnonymityCriterion</a></strong>(int&nbsp;k)</code>
+<div class="block">Creates a new instance</div>
+</td>
 </tr>
 </table>
 </li>
@@ -173,7 +180,8 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelKAnonymityCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion)">parse</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion)</code>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelKAnonymityCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">parse</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion,
+     boolean&nbsp;_default)</code>
 <div class="block">Parse</div>
 </td>
 </tr>
@@ -221,10 +229,22 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 <a name="ModelKAnonymityCriterion()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>ModelKAnonymityCriterion</h4>
 <pre>public&nbsp;ModelKAnonymityCriterion()</pre>
+<div class="block">Creates a new instance</div>
+</li>
+</ul>
+<a name="ModelKAnonymityCriterion(int)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>ModelKAnonymityCriterion</h4>
+<pre>public&nbsp;ModelKAnonymityCriterion(int&nbsp;k)</pre>
+<div class="block">Creates a new instance</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>k</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -291,19 +311,20 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="parse(org.deidentifier.arx.gui.model.ModelCriterion)">
+<a name="parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>parse</h4>
-<pre>public&nbsp;void&nbsp;parse(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion)">ModelCriterion</a></code></strong></div>
+<pre>public&nbsp;void&nbsp;parse(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion,
+         boolean&nbsp;_default)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">ModelCriterion</a></code></strong></div>
 <div class="block">Parse</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
-</dl>
+<dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
+<dd><code>_default</code> - Defines whether the model represents a typical parameter configuration for the criterion</dd></dl>
 </li>
 </ul>
 <a name="setK(int)">

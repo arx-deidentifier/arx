@@ -189,36 +189,42 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getEntry(int[])">getEntry</a></strong>(int[]&nbsp;tuple)</code>
+<div class="block">Returns the entry for the given tuple</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getEquivalenceClassStatistics()">getEquivalenceClassStatistics</a></strong>()</code>
 <div class="block">Returns statistics</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getFirstEquivalenceClass()">getFirstEquivalenceClass</a></strong>()</code>
 <div class="block">Returns the first entry</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getNumberOfEquivalenceClasses()">getNumberOfEquivalenceClasses</a></strong>()</code>
 <div class="block">Returns the current size in terms of classes</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#isMinimalClassSizeFulfilled()">isMinimalClassSizeFulfilled</a></strong>()</code>
 <div class="block">Returns whether the current state of the dataset fulfills the minimal class-size property</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#isPrivacyModelFulfilled()">isPrivacyModelFulfilled</a></strong>()</code>
 <div class="block">Returns whether the current state of the dataset fulfills the privacy model</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[])">performMicroaggregation</a></strong>(int[][]&nbsp;data,
                        int&nbsp;start,
@@ -229,26 +235,26 @@ extends java.lang.Object</pre>
 <div class="block">Microaggregates all according attributes</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performSuppression(int[][])">performSuppression</a></strong>(int[][]&nbsp;data)</code>
 <div class="block">Marks all outliers in the given (generalized subset of the) input datasets</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#stateAnalyze(org.deidentifier.arx.framework.lattice.Transformation, boolean)">stateAnalyze</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
             boolean&nbsp;force)</code>
 <div class="block">Analyzes the current state</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#stateClear()">stateClear</a></strong>()</code>
 <div class="block">Clears all entries</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#stateResetSuppression()">stateResetSuppression</a></strong>()</code>
 <div class="block">This method will reset all flags that indicate that equivalence classes are suppressed.</div>
@@ -340,6 +346,18 @@ extends java.lang.Object</pre>
                    int&nbsp;pcount)</pre>
 <div class="block">Adds a class from a snapshot</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>generalized</code> - </dd><dd><code>elements</code> - </dd><dd><code>frequencies</code> - </dd><dd><code>representative</code> - </dd><dd><code>count</code> - </dd><dd><code>pcount</code> - </dd></dl>
+</li>
+</ul>
+<a name="getEntry(int[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEntry</h4>
+<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;getEntry(int[]&nbsp;tuple)</pre>
+<div class="block">Returns the entry for the given tuple</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>tuple</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getEquivalenceClassStatistics()">

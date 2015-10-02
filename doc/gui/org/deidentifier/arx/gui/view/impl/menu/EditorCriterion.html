@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/DialogSeparator.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDPresence.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDifferentialPrivacy.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" target="_top">Frames</a></li>
@@ -94,7 +94,7 @@
 <li class="blockList">
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDPresence.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionDPresence</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionKAnonymity.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionKAnonymity</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionLDiversity.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionLDiversity</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionRiskBased.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionRiskBased</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionTCloseness.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionTCloseness</a></dd>
+<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDifferentialPrivacy.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionDifferentialPrivacy</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDPresence.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionDPresence</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionKAnonymity.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionKAnonymity</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionLDiversity.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionLDiversity</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionRiskBased.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionRiskBased</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionTCloseness.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionTCloseness</a></dd>
 </dl>
 <hr>
 <br>
@@ -120,12 +120,6 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected static int</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#LABEL_WIDTH">LABEL_WIDTH</a></strong></code>
-<div class="block">Constant</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" title="type parameter in EditorCriterion">T</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#model">model</a></strong></code>
 <div class="block">Model</div>
@@ -173,21 +167,76 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected de.linearbits.swt.widgets.Knob&lt;java.lang.Double&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#createKnobDouble(org.eclipse.swt.widgets.Composite, double, double)">createKnobDouble</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                double&nbsp;min,
+                double&nbsp;max)</code>
+<div class="block">Creates a double knob</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected de.linearbits.swt.widgets.Knob&lt;java.lang.Integer&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#createKnobInteger(org.eclipse.swt.widgets.Composite, int, int)">createKnobInteger</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                 int&nbsp;min,
+                 int&nbsp;max)</code>
+<div class="block">Creates a double knob</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected org.eclipse.swt.widgets.Label</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#createLabel(org.eclipse.swt.widgets.Composite)">createLabel</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent)</code>
+<div class="block">Creates a label</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#dispose()">dispose</a></strong>()</code>
 <div class="block">Disposes the editor</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" title="type parameter in EditorCriterion">T</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#getModel()">getModel</a></strong>()</code>
 <div class="block">Returns the altered model</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected abstract java.util.List&lt;<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#getTypicalParameters()">getTypicalParameters</a></strong>()</code>
+<div class="block">Returns a set of typical parameters</div>
+</td>
+</tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected abstract void</code></td>
+<td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#parse(T)">parse</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" title="type parameter in EditorCriterion">T</a>&nbsp;model)</code>
+<div class="block">Parse non-default parameters</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected abstract void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#parse(T, boolean)">parse</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" title="type parameter in EditorCriterion">T</a>&nbsp;model,
+     boolean&nbsp;defaultParameters)</code>
 <div class="block">Parse</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#parseDefault(org.deidentifier.arx.gui.model.ModelCriterion)">parseDefault</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;model)</code>
+<div class="block">Parse method</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#updateLabel(org.eclipse.swt.widgets.Label, double)">updateLabel</a></strong>(org.eclipse.swt.widgets.Label&nbsp;label,
+           double&nbsp;value)</code>
+<div class="block">Updates the label and tool tip text.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html#updateLabel(org.eclipse.swt.widgets.Label, int)">updateLabel</a></strong>(org.eclipse.swt.widgets.Label&nbsp;label,
+           int&nbsp;value)</code>
+<div class="block">Updates the label and tool tip text.</div>
 </td>
 </tr>
 </table>
@@ -212,17 +261,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="LABEL_WIDTH">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>LABEL_WIDTH</h4>
-<pre>protected static final&nbsp;int LABEL_WIDTH</pre>
-<div class="block">Constant</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../../../constant-values.html#org.deidentifier.arx.gui.view.impl.menu.EditorCriterion.LABEL_WIDTH">Constant Field Values</a></dd></dl>
-</li>
-</ul>
 <a name="model">
 <!--   -->
 </a>
@@ -284,6 +322,17 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="parseDefault(org.deidentifier.arx.gui.model.ModelCriterion)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parseDefault</h4>
+<pre>public&nbsp;void&nbsp;parseDefault(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;model)</pre>
+<div class="block">Parse method</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - </dd></dl>
+</li>
+</ul>
 <a name="build(org.eclipse.swt.widgets.Composite)">
 <!--   -->
 </a>
@@ -295,17 +344,105 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd></dl>
 </li>
 </ul>
+<a name="createKnobDouble(org.eclipse.swt.widgets.Composite, double, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createKnobDouble</h4>
+<pre>protected&nbsp;de.linearbits.swt.widgets.Knob&lt;java.lang.Double&gt;&nbsp;createKnobDouble(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                                                                double&nbsp;min,
+                                                                double&nbsp;max)</pre>
+<div class="block">Creates a double knob</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>min</code> - </dd><dd><code>max</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="createKnobInteger(org.eclipse.swt.widgets.Composite, int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createKnobInteger</h4>
+<pre>protected&nbsp;de.linearbits.swt.widgets.Knob&lt;java.lang.Integer&gt;&nbsp;createKnobInteger(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                                                                  int&nbsp;min,
+                                                                  int&nbsp;max)</pre>
+<div class="block">Creates a double knob</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>min</code> - </dd><dd><code>max</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="createLabel(org.eclipse.swt.widgets.Composite)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createLabel</h4>
+<pre>protected&nbsp;org.eclipse.swt.widgets.Label&nbsp;createLabel(org.eclipse.swt.widgets.Composite&nbsp;parent)</pre>
+<div class="block">Creates a label</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getTypicalParameters()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTypicalParameters</h4>
+<pre>protected abstract&nbsp;java.util.List&lt;<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&gt;&nbsp;getTypicalParameters()</pre>
+<div class="block">Returns a set of typical parameters</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="parse(org.deidentifier.arx.gui.model.ModelCriterion)">
 <!--   -->
 </a><a name="parse(T)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>parse</h4>
-<pre>protected abstract&nbsp;void&nbsp;parse(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" title="type parameter in EditorCriterion">T</a>&nbsp;model)</pre>
-<div class="block">Parse</div>
+<pre>protected&nbsp;void&nbsp;parse(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" title="type parameter in EditorCriterion">T</a>&nbsp;model)</pre>
+<div class="block">Parse non-default parameters</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - </dd></dl>
+</li>
+</ul>
+<a name="parse(org.deidentifier.arx.gui.model.ModelCriterion,boolean)">
+<!--   -->
+</a><a name="parse(T, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parse</h4>
+<pre>protected abstract&nbsp;void&nbsp;parse(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" title="type parameter in EditorCriterion">T</a>&nbsp;model,
+         boolean&nbsp;defaultParameters)</pre>
+<div class="block">Parse</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - </dd><dd><code>default</code> - </dd></dl>
+</li>
+</ul>
+<a name="updateLabel(org.eclipse.swt.widgets.Label, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>updateLabel</h4>
+<pre>protected&nbsp;void&nbsp;updateLabel(org.eclipse.swt.widgets.Label&nbsp;label,
+               double&nbsp;value)</pre>
+<div class="block">Updates the label and tool tip text.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>label</code> - </dd><dd><code>value</code> - </dd></dl>
+</li>
+</ul>
+<a name="updateLabel(org.eclipse.swt.widgets.Label, int)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>updateLabel</h4>
+<pre>protected&nbsp;void&nbsp;updateLabel(org.eclipse.swt.widgets.Label&nbsp;label,
+               int&nbsp;value)</pre>
+<div class="block">Updates the label and tool tip text.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>label</code> - </dd><dd><code>value</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -335,7 +472,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/DialogSeparator.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDPresence.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDifferentialPrivacy.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" target="_top">Frames</a></li>

@@ -118,11 +118,6 @@
 <div class="block">Do we assume practical monotonicity.</div>
 </li>
 <li class="blockList">
-<h4>protectSensitiveAssociations</h4>
-<pre>boolean protectSensitiveAssociations</pre>
-<div class="block">Make sure that no information can be derived from associations between sensitive attributes.</div>
-</li>
-<li class="blockList">
 <h4>relMaxOutliers</h4>
 <pre>double relMaxOutliers</pre>
 <div class="block">Relative tuple outliers.</div>
@@ -150,7 +145,13 @@
 <li class="blockList">
 <h4>suppressionAlwaysEnabled</h4>
 <pre>java.lang.Boolean suppressionAlwaysEnabled</pre>
-<div class="block">Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations.</div>
+<div class="block">Determines whether suppression is applied to the output of anonymous as
+ well as non-anonymous transformations.</div>
+</li>
+<li class="blockList">
+<h4>utilityBasedMicroaggregation</h4>
+<pre>boolean utilityBasedMicroaggregation</pre>
+<div class="block">Should microaggregation be based on data utility measurements</div>
 </li>
 <li class="blockList">
 <h4>heuristicSearchForSampleBasedCriteria</h4>
@@ -453,6 +454,44 @@
 <h4>label</h4>
 <pre>java.lang.String label</pre>
 <div class="block">The label</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.DataGeneralizationScheme">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/DataGeneralizationScheme.html" title="class in org.deidentifier.arx">org.deidentifier.arx.DataGeneralizationScheme</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-5402090022629905154L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>degrees</h4>
+<pre>java.util.Map&lt;K,V&gt; degrees</pre>
+<div class="block">Degrees</div>
+</li>
+<li class="blockList">
+<h4>levels</h4>
+<pre>java.util.Map&lt;K,V&gt; levels</pre>
+<div class="block">Levels</div>
+</li>
+<li class="blockList">
+<h4>degree</h4>
+<pre><a href="org/deidentifier/arx/DataGeneralizationScheme.GeneralizationDegree.html" title="enum in org.deidentifier.arx">DataGeneralizationScheme.GeneralizationDegree</a> degree</pre>
+<div class="block">Degree</div>
+</li>
+<li class="blockListLast">
+<h4>attributes</h4>
+<pre>java.util.Set&lt;E&gt; attributes</pre>
+<div class="block">Data</div>
 </li>
 </ul>
 </li>
@@ -1349,6 +1388,54 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.EDDifferentialPrivacy">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/EDDifferentialPrivacy.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.EDDifferentialPrivacy</a> extends <a href="org/deidentifier/arx/criteria/ImplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ImplicitPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>242579895476272606L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>epsilon</h4>
+<pre>double epsilon</pre>
+<div class="block">Parameter</div>
+</li>
+<li class="blockList">
+<h4>delta</h4>
+<pre>double delta</pre>
+<div class="block">Parameter</div>
+</li>
+<li class="blockList">
+<h4>k</h4>
+<pre>int k</pre>
+<div class="block">Parameter</div>
+</li>
+<li class="blockList">
+<h4>beta</h4>
+<pre>double beta</pre>
+<div class="block">Parameter</div>
+</li>
+<li class="blockList">
+<h4>subset</h4>
+<pre><a href="org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a> subset</pre>
+<div class="block">Parameter</div>
+</li>
+<li class="blockListLast">
+<h4>generalization</h4>
+<pre><a href="org/deidentifier/arx/DataGeneralizationScheme.html" title="class in org.deidentifier.arx">DataGeneralizationScheme</a> generalization</pre>
+<div class="block">Parameter</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="org.deidentifier.arx.criteria.EntropyLDiversity">
 <!--   -->
 </a>
@@ -1868,6 +1955,11 @@
 <div class="block">Model for a specific privacy criterion.</div>
 </li>
 <li class="blockList">
+<h4>differentialPrivacyModel</h4>
+<pre><a href="org/deidentifier/arx/gui/model/ModelDifferentialPrivacyCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelDifferentialPrivacyCriterion</a> differentialPrivacyModel</pre>
+<div class="block">Model for a specific privacy criterion.</div>
+</li>
+<li class="blockList">
 <h4>metricConfig</h4>
 <pre><a href="org/deidentifier/arx/metric/MetricConfiguration.html" title="class in org.deidentifier.arx.metric">MetricConfiguration</a> metricConfig</pre>
 <div class="block">Configuration.</div>
@@ -2028,6 +2120,39 @@
 <h4>enabled</h4>
 <pre>boolean enabled</pre>
 <div class="block">Is this criterion enabled.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.gui.model.ModelDifferentialPrivacyCriterion">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/gui/model/ModelDifferentialPrivacyCriterion.html" title="class in org.deidentifier.arx.gui.model">org.deidentifier.arx.gui.model.ModelDifferentialPrivacyCriterion</a> extends <a href="org/deidentifier/arx/gui/model/ModelImplicitCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelImplicitCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>1803345324372136700L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>epsilon</h4>
+<pre>double epsilon</pre>
+<div class="block">Epsilon</div>
+</li>
+<li class="blockList">
+<h4>delta</h4>
+<pre>double delta</pre>
+<div class="block">Delta</div>
+</li>
+<li class="blockListLast">
+<h4>generalization</h4>
+<pre><a href="org/deidentifier/arx/DataGeneralizationScheme.html" title="class in org.deidentifier.arx">DataGeneralizationScheme</a> generalization</pre>
+<div class="block">Generalization scheme</div>
 </li>
 </ul>
 </li>
@@ -2874,6 +2999,16 @@
 <div class="block">Number of dimensions.</div>
 </li>
 <li class="blockList">
+<h4>dimensionsGeneralized</h4>
+<pre>int dimensionsGeneralized</pre>
+<div class="block">Number of dimensions with generalization</div>
+</li>
+<li class="blockList">
+<h4>dimensionsAggregated</h4>
+<pre>int dimensionsAggregated</pre>
+<div class="block">Number of dimensions with aggregation</div>
+</li>
+<li class="blockList">
 <h4>min</h4>
 <pre>double[] min</pre>
 <div class="block">Min.</div>
@@ -2883,10 +3018,25 @@
 <pre>double[] max</pre>
 <div class="block">Max.</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>function</h4>
 <pre><a href="org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a> function</pre>
 <div class="block">The aggregate function.</div>
+</li>
+<li class="blockList">
+<h4>microaggregationFunctions</h4>
+<pre>org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[] microaggregationFunctions</pre>
+<div class="block">The microaggregation functions.</div>
+</li>
+<li class="blockList">
+<h4>microaggregationStartIndex</h4>
+<pre>int microaggregationStartIndex</pre>
+<div class="block">The start index of the attributes with microaggregation in the data array</div>
+</li>
+<li class="blockListLast">
+<h4>microaggregationHeader</h4>
+<pre>java.lang.String[] microaggregationHeader</pre>
+<div class="block">Header of the microaggregated data subset</div>
 </li>
 </ul>
 </li>
@@ -3591,6 +3741,86 @@
 <dt>serialVersionUID:</dt>
 <dd>-8573084860566655278L</dd>
 </dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricSDNMKLDivergence">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/MetricSDNMKLDivergence.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.MetricSDNMKLDivergence</a> extends <a href="org/deidentifier/arx/metric/v2/AbstractMetricSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricSingleDimensional</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-4918601543733931921L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>tuples</h4>
+<pre>java.lang.Double tuples</pre>
+<div class="block">Total number of tuples, depends on existence of research subset.</div>
+</li>
+<li class="blockList">
+<h4>shares</h4>
+<pre><a href="org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a>[] shares</pre>
+<div class="block">Domain shares for each dimension.</div>
+</li>
+<li class="blockList">
+<h4>max</h4>
+<pre>java.lang.Double max</pre>
+<div class="block">Maximum value</div>
+</li>
+<li class="blockList">
+<h4>matcher</h4>
+<pre><a href="org/deidentifier/arx/metric/v2/TupleMatcher.html" title="class in org.deidentifier.arx.metric.v2">TupleMatcher</a> matcher</pre>
+<div class="block">Tuple matcher</div>
+</li>
+<li class="blockList">
+<h4>inputDistribution</h4>
+<pre>double[] inputDistribution</pre>
+<div class="block">Distribution</div>
+</li>
+<li class="blockListLast">
+<h4>maximalArea</h4>
+<pre>double maximalArea</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.TupleMatcher">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/TupleMatcher.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.TupleMatcher</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-5081573765755187296L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>hierarchies</h4>
+<pre>int[][][] hierarchies</pre>
+<div class="block">Data</div>
+</li>
+<li class="blockList">
+<h4>data</h4>
+<pre>int[][] data</pre>
+<div class="block">Data</div>
+</li>
+<li class="blockListLast">
+<h4>tuple</h4>
+<pre>int[] tuple</pre>
+<div class="block">Data</div>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 </ul>
 </li>

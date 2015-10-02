@@ -122,52 +122,58 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/HIPAAIdentifierMatch.html" title="class in org.deidentifier.arx.risk">HIPAAIdentifierMatch</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getHIPAAIdentifiers()">getHIPAAIdentifiers</a></strong>()</code>
+<div class="block">Returns a class providing access to the identifier HIPAA identifiers.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getPopulationBasedAttributeRisks()">getPopulationBasedAttributeRisks</a></strong>()</code>
 <div class="block">Returns a class providing access to population-based risk estimates about
  the attributes.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getPopulationBasedAttributeRisks(org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel)">getPopulationBasedAttributeRisks</a></strong>(<a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.PopulationUniquenessModel.html" title="enum in org.deidentifier.arx.risk">RiskModelPopulationUniqueness.PopulationUniquenessModel</a>&nbsp;model)</code>
 <div class="block">Returns a class providing access to population-based risk estimates about
  the attributes.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelPopulationUniqueness</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getPopulationBasedUniquenessRisk()">getPopulationBasedUniquenessRisk</a></strong>()</code>
 <div class="block">Returns a class providing population-based uniqueness estimates</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getProgress()">getProgress</a></strong>()</code>
 <div class="block">If supported by the according builder, this method will report a progress
  value in [0,100].</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getSampleBasedAttributeRisks()">getSampleBasedAttributeRisks</a></strong>()</code>
 <div class="block">Returns a class providing access to sample-based risk estimates about the
  attributes</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html" title="class in org.deidentifier.arx.risk">RiskModelSampleRisks</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getSampleBasedReidentificationRisk()">getSampleBasedReidentificationRisk</a></strong>()</code>
 <div class="block">Returns a class providing sample-based re-identification risk estimates</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelSampleUniqueness</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getSampleBasedUniquenessRisk()">getSampleBasedUniquenessRisk</a></strong>()</code>
 <div class="block">Returns a class providing sample-based uniqueness estimates</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#interrupt()">interrupt</a></strong>()</code>
 <div class="block">Interrupts all computations.</div>
@@ -204,6 +210,20 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;getEquivalenceClassModel()
                                             throws java.lang.InterruptedException</pre>
 <div class="block">Returns a model of the equivalence classes in this data set</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.InterruptedException</code></dd></dl>
+</li>
+</ul>
+<a name="getHIPAAIdentifiers()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getHIPAAIdentifiers</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/HIPAAIdentifierMatch.html" title="class in org.deidentifier.arx.risk">HIPAAIdentifierMatch</a>[]&nbsp;getHIPAAIdentifiers()
+                                           throws java.lang.InterruptedException</pre>
+<div class="block">Returns a class providing access to the identifier HIPAA identifiers.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.InterruptedException</code></dd></dl>

@@ -189,6 +189,10 @@
 <td class="colLast"><span class="strong">ModelDPresenceCriterion.</span><code><strong><a href="../../../../../../org/deidentifier/arx/gui/model/ModelDPresenceCriterion.html#getCriterion(org.deidentifier.arx.gui.model.Model)">getCriterion</a></strong>(<a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">ModelDifferentialPrivacyCriterion.</span><code><strong><a href="../../../../../../org/deidentifier/arx/gui/model/ModelDifferentialPrivacyCriterion.html#getCriterion(org.deidentifier.arx.gui.model.Model)">getCriterion</a></strong>(<a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
 <td class="colLast"><span class="strong">ModelCriterion.</span><code><strong><a href="../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#getCriterion(org.deidentifier.arx.gui.model.Model)">getCriterion</a></strong>(<a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</code>
 <div class="block">Implement this to return the criterion.</div>
@@ -216,6 +220,21 @@
 <td class="colFirst"><code>abstract boolean</code></td>
 <td class="colLast"><span class="strong">MainMenuItem.</span><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainMenuItem.html#isEnabled(org.deidentifier.arx.gui.model.Model)">isEnabled</a></strong>(<a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</code>
 <div class="block">Override this to return whether the item is enabled</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></td>
+<td class="colLast"><span class="strong">MainWindow.</span><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showAddCriterionDialog(org.deidentifier.arx.gui.model.Model, java.util.List)">showAddCriterionDialog</a></strong>(<a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model,
+                      java.util.List&lt;<a href="../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&gt;&nbsp;criteria)</code>
+<div class="block">Shows a dialog for selecting privacy criteria.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">MainWindow.</span><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showConfigureCriterionDialog(org.deidentifier.arx.gui.model.Model, java.util.List, org.deidentifier.arx.gui.model.ModelCriterion)">showConfigureCriterionDialog</a></strong>(<a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model,
+                            java.util.List&lt;<a href="../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&gt;&nbsp;criteria,
+                            <a href="../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion)</code>
+<div class="block">Shows a dialog for configuring privacy criteria.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -342,6 +361,25 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/menu/DialogCriterionUpdate.html#DialogCriterionUpdate(org.deidentifier.arx.gui.Controller, org.eclipse.swt.widgets.Shell, java.util.List, org.deidentifier.arx.gui.model.Model, boolean)">DialogCriterionUpdate</a></strong>(<a href="../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                     org.eclipse.swt.widgets.Shell&nbsp;parent,
+                     java.util.List&lt;<a href="../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&gt;&nbsp;elements,
+                     <a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model,
+                     boolean&nbsp;edit)</code>
+<div class="block">Constructor.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/menu/DialogCriterionUpdate.html#DialogCriterionUpdate(org.deidentifier.arx.gui.Controller, org.eclipse.swt.widgets.Shell, java.util.List, org.deidentifier.arx.gui.model.Model, boolean, org.deidentifier.arx.gui.model.ModelCriterion)">DialogCriterionUpdate</a></strong>(<a href="../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                     org.eclipse.swt.widgets.Shell&nbsp;parent,
+                     java.util.List&lt;<a href="../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&gt;&nbsp;elements,
+                     <a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model,
+                     boolean&nbsp;cancel,
+                     <a href="../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;selection)</code>
+<div class="block">Constructor.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/menu/DialogFindReplace.html#DialogFindReplace(org.eclipse.swt.widgets.Shell, org.deidentifier.arx.gui.model.Model, org.deidentifier.arx.DataHandle, int)">DialogFindReplace</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;parentShell,
                  <a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model,
                  <a href="../../../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
@@ -350,9 +388,25 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/menu/DialogGeneralizationSelection.html#DialogGeneralizationSelection(org.eclipse.swt.widgets.Shell, org.deidentifier.arx.gui.Controller, org.deidentifier.arx.gui.model.Model, org.deidentifier.arx.DataGeneralizationScheme)">DialogGeneralizationSelection</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+                             <a href="../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                             <a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model,
+                             <a href="../../../../../../org/deidentifier/arx/DataGeneralizationScheme.html" title="class in org.deidentifier.arx">DataGeneralizationScheme</a>&nbsp;scheme)</code>
+<div class="block">Constructor.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/menu/DialogProperties.html#DialogProperties(org.eclipse.swt.widgets.Shell, org.deidentifier.arx.gui.model.Model, org.deidentifier.arx.gui.Controller)">DialogProperties</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;parent,
                 <a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model,
                 <a href="../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDifferentialPrivacy.html#EditorCriterionDifferentialPrivacy(org.eclipse.swt.widgets.Composite, org.deidentifier.arx.gui.model.ModelDifferentialPrivacyCriterion, org.deidentifier.arx.gui.Controller, org.deidentifier.arx.gui.model.Model)">EditorCriterionDifferentialPrivacy</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                                  <a href="../../../../../../org/deidentifier/arx/gui/model/ModelDifferentialPrivacyCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelDifferentialPrivacyCriterion</a>&nbsp;model,
+                                  <a href="../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                                  <a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;arxmodel)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
