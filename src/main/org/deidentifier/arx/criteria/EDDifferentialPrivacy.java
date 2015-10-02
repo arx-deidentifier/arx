@@ -18,6 +18,7 @@ package org.deidentifier.arx.criteria;
 
 import java.security.SecureRandom;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.analysis.function.Exp;
@@ -58,8 +59,33 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
     /** Parameter */
     private transient DataManager    manager;
     /** Parameter */
+    private transient Random         random;
+    /** Parameter */
     private DataGeneralizationScheme generalization;
 
+    /**
+     * Creates a new instance which may be configured to produce deterministic output.
+     * Note: *never* use this in production. It is implemented for testing purposes, only.
+     * 
+     * @param epsilon
+     * @param delta
+     * @param generalization
+     * @param deterministic
+     */
+    public EDDifferentialPrivacy(double epsilon, double delta, 
+                                 DataGeneralizationScheme generalization,
+                                 boolean deterministic) {
+        super(false, false);
+        this.epsilon = epsilon;
+        this.delta = delta;
+        this.generalization = generalization;
+        this.beta = calculateBeta(epsilon);
+        this.k = calculateK(delta, epsilon, this.beta);
+        if (deterministic) {
+            this.random = new Random(0xDEADBEEF);
+        }
+    }
+    
     /**
      * Creates a new instance
      * @param epsilon
@@ -250,10 +276,12 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
 
         // Create a data subset via sampling based on beta
         Set<Integer> subsetIndices = new HashSet<Integer>();
-        SecureRandom rand = new SecureRandom();
+        if (random == null) {
+            random = new SecureRandom();
+        }
         int records = manager.getDataGeneralized().getDataLength();
         for (int i = 0; i < records; ++i) {
-            if (rand.nextDouble() < beta) {
+            if (random.nextDouble() < beta) {
                 subsetIndices.add(i);
             }
         }
