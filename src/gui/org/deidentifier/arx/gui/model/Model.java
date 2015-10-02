@@ -238,10 +238,10 @@ public class Model implements Serializable {
      * UTILITY ANALYSIS
      ******************************************/
     /** Configuration. */
-    private MetricConfiguration                   metricConfig                    = ARXConfiguration.create().getMetric().getConfiguration();
+    private MetricConfiguration                   metricConfig                    = null;
     
     /** Description. */
-    private MetricDescription                     metricDescription               = ARXConfiguration.create().getMetric().getDescription();
+    private MetricDescription                     metricDescription               = null;
     
     /** Summary statistics */
     private Boolean                               useListwiseDeletion             = true;
