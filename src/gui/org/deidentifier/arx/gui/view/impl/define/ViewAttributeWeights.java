@@ -34,6 +34,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -53,29 +54,35 @@ import de.linearbits.swt.widgets.KnobRange;
  */
 public class ViewAttributeWeights implements IView {
 
+    /** Constant */
+    private static final int        MIN_SPACE  = 60;
+
+    /** Constant */
+    private static final int        MIN_KNOB   = 30;
+
     /** Controller. */
-    private Controller          controller = null;
-    
+    private Controller              controller = null;
+
     /** Model. */
-    private Model               model      = null;
-    
+    private Model                   model      = null;
+
     /** Model. */
-    private final Set<String>   attributes = new HashSet<String>();
-    
+    private final Set<String>       attributes = new HashSet<String>();
+
     /** View. */
-    private Composite           panel      = null;
-    
+    private Composite               panel      = null;
+
     /** View. */
-    private final Composite     root;
-    
+    private final ScrolledComposite root;
+
     /** Misc. */
-    private final DecimalFormat format     = new DecimalFormat("0.000"); //$NON-NLS-1$
-    
-    /** Color profile*/
-    private final KnobColorProfile defaultColorProfile;
-    
-    /** Color profile*/
-    private final KnobColorProfile focusedColorProfile;
+    private final DecimalFormat     format     = new DecimalFormat("0.000"); //$NON-NLS-1$
+
+    /** Color profile */
+    private final KnobColorProfile  defaultColorProfile;
+
+    /** Color profile */
+    private final KnobColorProfile  focusedColorProfile;
 
     /**
      * Creates a new instance.
@@ -95,9 +102,7 @@ public class ViewAttributeWeights implements IView {
         this.defaultColorProfile = KnobColorProfile.createDefaultSystemProfile(parent.getDisplay());
         this.focusedColorProfile = KnobColorProfile.createFocusedBlueRedProfile(parent.getDisplay());
         
-        this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).margins(3, 3).create());
-        this.root.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).margins(0, 0).create());
+        this.root = new ScrolledComposite(parent, SWT.H_SCROLL);
         this.root.addDisposeListener(new DisposeListener() {
             @Override
             public void widgetDisposed(DisposeEvent arg0) {
@@ -148,122 +153,134 @@ public class ViewAttributeWeights implements IView {
         if (event.part == ModelPart.ATTRIBUTE_TYPE ||
             event.part == ModelPart.MODEL) {
             if (model!=null) {
-                
-                // Create ordered list of QIs
-                DataDefinition definition = model.getInputDefinition();
-                List<String> qis = new ArrayList<String>();
-                
-                if (definition != null) {
-                    Set<String> _qis = definition.getQuasiIdentifyingAttributes();
-                    
-                    // Break if nothing has changed
-                    if (this.attributes.equals(_qis)) {
-                        return;
-                    }
-                    
-                    DataHandle handle = model.getInputConfig().getInput().getHandle();
-                    for (int i=0; i<handle.getNumColumns(); i++){
-                        String attr = handle.getAttributeName(i);
-                        if (_qis.contains(attr)){
-                            qis.add(attr);
-                        }
-                    }
-                    attributes.clear();
-                    attributes.addAll(qis);
-                }
-
-                if (root.isDisposed()) return;
-                
-                root.setRedraw(false);
-                
-                // Dispose widgets
-                if (panel != null) {
-                    panel.dispose();
-                }
-                
-                // Create layout
-                panel = new Composite(root, SWT.NONE);
-                panel.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.CENTER).create());
-                panel.setLayout(GridLayoutFactory.swtDefaults().numColumns(qis.size()).margins(0, 0).equalWidth(true).create());
-                
-                // Create composites
-                List<Composite> composites = new ArrayList<Composite>();
-                for(int i=0; i<qis.size(); i++){
-                    Composite c = new Composite(panel, SWT.NONE);
-                    c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-                    c.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).margins(2, 0).create());
-                    composites.add(c);
-                }
-                
-                // Create labels
-                for(int i=0; i<qis.size(); i++){
-                    Label label = new Label(composites.get(i), SWT.CENTER);
-                    label.setText(qis.get(i));
-                    label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-                }
-                
-                // Create knob widgets
-                List<Knob<Double>> knobs = new ArrayList<Knob<Double>>();
-                for(int i=0; i<qis.size(); i++){
-                    Knob<Double> knob = new Knob<Double>(composites.get(i), SWT.NULL, new KnobRange.Double(0d, 1d));
-                    knob.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).align(SWT.CENTER, SWT.CENTER).hint(30, 30).create());
-                    knob.setDefaultColorProfile(defaultColorProfile);
-                    knob.setFocusedColorProfile(focusedColorProfile);
-                    knobs.add(knob);
-                }
-
-                // Create labels
-                for(int i=0; i<qis.size(); i++){
-                    
-                    final Label label = new Label(composites.get(i), SWT.CENTER);
-                    label.setText("0.0"); //$NON-NLS-1$
-                    label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-                    
-                    final String attribute = qis.get(i);
-                    final Knob<Double> knob = knobs.get(i);
-                    knob.addSelectionListener(new SelectionAdapter(){
-                        public void widgetSelected(SelectionEvent arg0) {
-                            
-                            double value = knob.getValue();
-                            label.setText(format.format(value));
-                            label.setToolTipText(String.valueOf(value));
-                            
-                            try {
-                                
-                                // Correctly indicate weights slightly > 0
-                                double parsedValue = format.parse(format.format(value)).doubleValue();
-                                if (parsedValue == 0d && value > 0d) {
-                                    label.setText(">0"); //$NON-NLS-1$
-                                }
-                                
-                                // Correctly indicate weights slightly < 1
-                                if (parsedValue == 1d && value < 1d) {
-                                    label.setText("<1"); //$NON-NLS-1$
-                                }
-                                
-                            } catch (ParseException e) {
-                                // Drop silently
-                            }
-                            
-                            if (model != null && model.getInputConfig() != null) {
-                                model.getInputConfig().setAttributeWeight(attribute, value);
-                            }
-                        }
-                    });
-                }
-                
-                // Set values
-                for(int i=0; i<qis.size(); i++){
-                    if (model != null && model.getInputConfig() != null) {
-                        knobs.get(i).setValue(model.getInputConfig().getAttributeWeight(qis.get(i)));
-                    }
-                }
-                
-                // Update root composite
-                root.setVisible(!qis.isEmpty());
-                root.layout(true, true);    
-                root.setRedraw(true);
+                updateControls();
             }
         }
+    }
+
+    /**
+     * Updates the controls
+     */
+    private void updateControls() {
+
+        // Create ordered list of QIs
+        DataDefinition definition = model.getInputDefinition();
+        List<String> qis = new ArrayList<String>();
+        
+        if (definition != null) {
+            Set<String> _qis = definition.getQuasiIdentifyingAttributes();
+            
+            // Break if nothing has changed
+            if (this.attributes.equals(_qis)) {
+                return;
+            }
+            
+            DataHandle handle = model.getInputConfig().getInput().getHandle();
+            for (int i=0; i<handle.getNumColumns(); i++){
+                String attr = handle.getAttributeName(i);
+                if (_qis.contains(attr)){
+                    qis.add(attr);
+                }
+            }
+            attributes.clear();
+            attributes.addAll(qis);
+        }
+
+        if (root.isDisposed()) return;
+        
+        root.setRedraw(false);
+        
+        // Dispose widgets
+        if (panel != null) {
+            panel.dispose();
+        }
+        
+        // Create layout
+        panel = new Composite(root, SWT.NONE);
+        panel.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.CENTER).create());
+        panel.setLayout(GridLayoutFactory.swtDefaults().numColumns(qis.size()).margins(0, 0).equalWidth(true).create());
+        
+        // Create composites
+        List<Composite> composites = new ArrayList<Composite>();
+        for(int i=0; i<qis.size(); i++){
+            Composite c = new Composite(panel, SWT.NONE);
+            c.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.CENTER).create());
+            c.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).margins(2, 0).create());
+            composites.add(c);
+        }
+        
+        // Create labels
+        for(int i=0; i<qis.size(); i++){
+            Label label = new Label(composites.get(i), SWT.CENTER);
+            label.setText(qis.get(i));
+            label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        }
+        
+        // Create knob widgets
+        List<Knob<Double>> knobs = new ArrayList<Knob<Double>>();
+        for(int i=0; i<qis.size(); i++){
+            Knob<Double> knob = new Knob<Double>(composites.get(i), SWT.NULL, new KnobRange.Double(0d, 1d));
+            knob.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).align(SWT.CENTER, SWT.CENTER).hint(MIN_KNOB, MIN_KNOB).create());
+            knob.setDefaultColorProfile(defaultColorProfile);
+            knob.setFocusedColorProfile(focusedColorProfile);
+            knobs.add(knob);
+        }
+
+        // Create labels
+        for(int i=0; i<qis.size(); i++){
+            
+            final Label label = new Label(composites.get(i), SWT.CENTER);
+            label.setText("0.0"); //$NON-NLS-1$
+            label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+            
+            final String attribute = qis.get(i);
+            final Knob<Double> knob = knobs.get(i);
+            knob.addSelectionListener(new SelectionAdapter(){
+                public void widgetSelected(SelectionEvent arg0) {
+                    
+                    double value = knob.getValue();
+                    label.setText(format.format(value));
+                    label.setToolTipText(String.valueOf(value));
+                    
+                    try {
+                        
+                        // Correctly indicate weights slightly > 0
+                        double parsedValue = format.parse(format.format(value)).doubleValue();
+                        if (parsedValue == 0d && value > 0d) {
+                            label.setText(">0"); //$NON-NLS-1$
+                        }
+                        
+                        // Correctly indicate weights slightly < 1
+                        if (parsedValue == 1d && value < 1d) {
+                            label.setText("<1"); //$NON-NLS-1$
+                        }
+                        
+                    } catch (ParseException e) {
+                        // Drop silently
+                    }
+                    
+                    if (model != null && model.getInputConfig() != null) {
+                        model.getInputConfig().setAttributeWeight(attribute, value);
+                    }
+                }
+            });
+        }
+        
+        // Set values
+        for(int i=0; i<qis.size(); i++){
+            if (model != null && model.getInputConfig() != null) {
+                knobs.get(i).setValue(model.getInputConfig().getAttributeWeight(qis.get(i)));
+            }
+        }
+        
+        root.setContent(panel);
+        root.setMinWidth(MIN_SPACE * qis.size());
+        root.setExpandHorizontal(true);
+        root.setExpandVertical(true);
+        
+        // Update root composite
+        root.setVisible(!qis.isEmpty());
+        root.layout(true, true);    
+        root.setRedraw(true);
     }
 }
