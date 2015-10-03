@@ -42,40 +42,40 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 public class ViewSubsetDefinition implements IView{
 
-    /**  TODO */
+    /**  Controller */
     private Controller controller;
     
-    /**  TODO */
+    /**  View */
     private Composite root;
     
-    /**  TODO */
+    /**  Model */
     private Model model;
     
-    /**  TODO */
+    /**  View */
     private Text size;
     
-    /**  TODO */
+    /**  View */
     private Text origin;
     
-    /**  TODO */
+    /**  View */
     private Text total;
     
-    /**  TODO */
+    /**  View */
     private Text percent;
 
-    /**  TODO */
+    /**  View */
     private ToolItem all;
     
-    /**  TODO */
+    /**  View */
     private ToolItem none;
     
-    /**  TODO */
+    /**  View */
     private ToolItem file;
     
-    /**  TODO */
+    /**  View */
     private ToolItem filter;
     
-    /**  TODO */
+    /**  View */
     private DecimalFormat format = new DecimalFormat("##0.00"); //$NON-NLS-1$
     
     /**
@@ -168,6 +168,14 @@ public class ViewSubsetDefinition implements IView{
                     @Override
                     public void run() {
                         controller.actionSubsetQuery();
+                    }
+                });
+        bar.add(Resources.getMessage("SubsetDefinitionView.7"),  //$NON-NLS-1$
+                controller.getResources().getManagedImage("shuffle.png"), //$NON-NLS-1$
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        controller.actionSubsetRandom();
                     }
                 });
         

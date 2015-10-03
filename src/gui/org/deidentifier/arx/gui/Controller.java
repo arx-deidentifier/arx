@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
@@ -1569,6 +1571,54 @@ public class Controller implements IView {
         this.model.getInputConfig().setResearchSubset(subset.getSet());
         this.model.setQuery(result.query);
         model.setSubsetOrigin(Resources.getMessage("Controller.70")); //$NON-NLS-1$
+        update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
+    }
+
+    /**
+     * Creates a subset via random sampling
+     */
+    public void actionSubsetRandom() {
+
+        String result = main.showInputDialog(main.getShell(), Resources.getMessage("Controller.130"), //$NON-NLS-1$
+                                                  Resources.getMessage("Controller.131"), //$NON-NLS-1$
+                                                  Resources.getMessage("Controller.132"), //$NON-NLS-1$
+                                                  new IInputValidator() {
+                                                      @Override
+                                                      public String isValid(String arg0) {
+                                                          double value = 0d;
+                                                          try {
+                                                              value = Double.valueOf(arg0);
+                                                          } catch (Exception e) {
+                                                              return "Not a decimal";
+                                                          }
+                                                          if (value < 0d || value > 1d) {
+                                                              return "Out of range";
+                                                          }
+                                                          return null;
+                                                      }
+                                                  });
+        
+        // Check
+        if (result == null) {
+            return;
+        }
+        
+        // Convert
+        double probability = Double.valueOf(result);
+
+        // Create a data subset via sampling based on beta
+        Set<Integer> subsetIndices = new HashSet<Integer>();
+        Random random = new SecureRandom();
+        int records = model.getInputConfig().getInput().getHandle().getNumRows();
+        for (int i = 0; i < records; ++i) {
+            if (random.nextDouble() < probability) {
+                subsetIndices.add(i);
+            }
+        }
+        DataSubset subset = DataSubset.create(records, subsetIndices);
+        
+        this.model.getInputConfig().setResearchSubset(subset.getSet());
+        model.setSubsetOrigin(Resources.getMessage("Controller.133")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
     
