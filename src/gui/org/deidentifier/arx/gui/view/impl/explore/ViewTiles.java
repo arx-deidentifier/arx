@@ -130,7 +130,9 @@ public class ViewTiles extends ViewSolutionSpace {
         tiles.setDecoratorLabel(new DecoratorString<ARXNode>() {
             @Override
             public String decorate(ARXNode node) {
-                return Arrays.toString(node.getTransformation());
+                String text = Arrays.toString(node.getTransformation());
+                text = text.substring(1, text.length() - 1);
+                return trimLabel(text);
             }
         });
         tiles.setDecoratorBackgroundColor(createDecoratorBackgroundColor());

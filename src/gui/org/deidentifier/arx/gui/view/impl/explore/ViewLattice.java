@@ -626,6 +626,7 @@ public class ViewLattice extends ViewSolutionSpace {
                 if (!node.getAttributes().containsKey(ATTRIBUTE_LABEL)) {
                     String text = Arrays.toString(node.getTransformation());
                     text = text.substring(1, text.length() - 1);
+                    text = super.trimLabel(text);
                     node.getAttributes().put(ATTRIBUTE_LABEL, text);
                 }
             }

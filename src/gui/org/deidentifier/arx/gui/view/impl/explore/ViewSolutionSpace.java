@@ -145,6 +145,9 @@ public abstract class ViewSolutionSpace implements IView {
     /** Decorator */
     private Gradient                 gradient;
 
+    /** Maximal length of a label in characters*/
+    private static final int MAX_LABEL_LENGTH = 20;
+    
     /**
      * Constructor
      * @param parent
@@ -193,13 +196,13 @@ public abstract class ViewSolutionSpace implements IView {
         // Show primary
         this.showPrimaryComposite();
     }
-    
+
     @Override
     public void dispose() {
         controller.removeListener(this);
         gradient.dispose();
     }
-
+    
     /**
      * Resets the view.
      */
@@ -246,7 +249,7 @@ public abstract class ViewSolutionSpace implements IView {
             }
         }
     }
-    
+
     /**
      * Creates the context menu.
      */
@@ -290,7 +293,7 @@ public abstract class ViewSolutionSpace implements IView {
             }
         });
     }
-
+    
     private void initializeTooltip() {
         this.tooltipDecorator = new DecoratorString<ARXNode>() {
             @Override
@@ -350,7 +353,7 @@ public abstract class ViewSolutionSpace implements IView {
             return false;
         }
     }
-    
+
     /**gray.dispose();
      * Action to redraw
      */
@@ -365,7 +368,7 @@ public abstract class ViewSolutionSpace implements IView {
         getModel().setSelectedNode(node);
         controller.update(new ModelEvent(this, ModelPart.SELECTED_NODE, node));
     }
-
+    
     /**
      * Action show menu
      * @param x
@@ -375,7 +378,7 @@ public abstract class ViewSolutionSpace implements IView {
         menu.setLocation(x, y);
         menu.setVisible(true);
     }
-    
+
     /**
      * Converts an information loss into a relative value in percent.
      *
@@ -430,7 +433,7 @@ public abstract class ViewSolutionSpace implements IView {
      * @param result
      */
     protected abstract void eventResultChanged(ARXResult result);
-
+    
     /**
      * Returns the controller
      * @return
@@ -497,7 +500,7 @@ public abstract class ViewSolutionSpace implements IView {
         result = node.isChecked() ? result + 1 : result;
         return result >=1 ? result < 1 ? 1 : result : 1;
     }
-    
+
     /**
      * Returns the primary composite
      * @return
@@ -505,7 +508,7 @@ public abstract class ViewSolutionSpace implements IView {
     protected Composite getPrimaryComposite() {
         return this.primary;
     }
-
+    
     /**
      * Returns the selected node
      * @return
@@ -513,7 +516,7 @@ public abstract class ViewSolutionSpace implements IView {
     protected ARXNode getSelectedNode() {
         return this.selectedNode;
     }
-    
+
     /**
      * Returns the tool tip decorator
      * @return
@@ -536,7 +539,7 @@ public abstract class ViewSolutionSpace implements IView {
             return gradient.getColor(asRelativeValue(node.getMinimumInformationLoss()) / 100d);
         }
     }
-
+    
     /**
      * Shows the primary composite
      */
@@ -544,7 +547,7 @@ public abstract class ViewSolutionSpace implements IView {
         this.layout.topControl = this.primary;
         this.base.layout();
     }
-
+    
     /**
      * Shows the secondary composite
      */
@@ -557,5 +560,21 @@ public abstract class ViewSolutionSpace implements IView {
         
         this.layout.topControl = this.secondary;
         this.base.layout();
+    }
+
+    /**
+     * Trims the label to a predefined length
+     * @param label
+     * @return
+     */
+    protected String trimLabel(String label) {
+        if (label.length() > MAX_LABEL_LENGTH) {
+            label = label.replace(" ", "");
+            label = label.replace(",", "");
+        }
+        if (label.length() > MAX_LABEL_LENGTH) {
+            label = label.substring(0, MAX_LABEL_LENGTH -3) + "...";
+        }
+        return label;
     }
 }
