@@ -23,7 +23,7 @@ import org.deidentifier.arx.risk.HIPAAIdentifierMatch.HIPAAIdentifier;
 
 /**
  * Encapsulates validation logic for column headers and pattern matching
- * @author David Gaﬂmann
+ * @author David Gassmann
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */

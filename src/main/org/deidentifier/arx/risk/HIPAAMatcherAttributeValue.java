@@ -33,13 +33,13 @@ import org.deidentifier.arx.DataType;
 
 /**
  * Interfaces the patterns
- * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+ * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
  */
 abstract class HIPAAMatcherAttributeValue {
     
     /**
      * Pattern which matches a city with a predefined list of cities
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static class HIPAAMatcherCity extends HIPAAMatcherAttributeValue {
         
@@ -60,7 +60,7 @@ abstract class HIPAAMatcherAttributeValue {
     
     /**
      * Pattern which matches Dates and years older than 89
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static class HIPAAMatcherDate extends HIPAAMatcherAttributeValue {
 
@@ -123,7 +123,7 @@ abstract class HIPAAMatcherAttributeValue {
     
     /**
      * Pattern which matches email addresses
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static class HIPAAMatcherEMail extends HIPAAMatcherAttributeValue {
 
@@ -144,7 +144,7 @@ abstract class HIPAAMatcherAttributeValue {
     
     /**
      * Pattern which matches first names with a predefined list of names
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static class HIPAAMatcherFirstName extends HIPAAMatcherAttributeValue {
 
@@ -165,7 +165,7 @@ abstract class HIPAAMatcherAttributeValue {
     
     /**
      * Pattern which matches IBAN account numbers
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static class HIPAAMatcherIBAN extends HIPAAMatcherString {
         HIPAAMatcherIBAN() {
@@ -186,7 +186,7 @@ abstract class HIPAAMatcherAttributeValue {
     
     /**
      * Pattern which maches IPv4 and IPv6 addresses
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static class HIPAAMatcherIP extends HIPAAMatcherAttributeValue {
 
@@ -207,7 +207,7 @@ abstract class HIPAAMatcherAttributeValue {
     
     /**
      * Pattern which matches last names with a predefined list of names
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static class HIPAAMatcherLastName extends HIPAAMatcherAttributeValue {
 
@@ -228,7 +228,7 @@ abstract class HIPAAMatcherAttributeValue {
 
     /**
      * Pattern which matches the social security numbers
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static class HIPAAMatcherSSN extends HIPAAMatcherString {
         HIPAAMatcherSSN() {
@@ -237,7 +237,7 @@ abstract class HIPAAMatcherAttributeValue {
     }
     /**
      * Pattern which matches a state with a predefined list of states
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static class HIPAAMatcherState extends HIPAAMatcherAttributeValue {
 
@@ -258,7 +258,7 @@ abstract class HIPAAMatcherAttributeValue {
     
     /**
      * Pattern which matches a string with the provided regular expression
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static abstract class HIPAAMatcherString extends HIPAAMatcherAttributeValue {
         Matcher matcher;
@@ -277,7 +277,7 @@ abstract class HIPAAMatcherAttributeValue {
     
     /**
      * Pattern which matches an URL
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static class HIPAAMatcherURL extends HIPAAMatcherAttributeValue {
 
@@ -298,7 +298,7 @@ abstract class HIPAAMatcherAttributeValue {
     
     /**
      * Pattern which matches names a vehicle identification number
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static class HIPAAMatcherVIN extends HIPAAMatcherString {
         HIPAAMatcherVIN() {
@@ -314,7 +314,7 @@ abstract class HIPAAMatcherAttributeValue {
     
     /**
      * Pattern which matches a ZIP code
-     * @author Florian Kohlmayer, Fabian Prasser, David Gaﬂmann
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
     static class HIPAAMatcherZIP extends HIPAAMatcherAttributeValue {
         private Set<String> zipCodes;

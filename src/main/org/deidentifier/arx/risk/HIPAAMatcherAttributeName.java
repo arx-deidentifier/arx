@@ -19,7 +19,7 @@ package org.deidentifier.arx.risk;
 
 /**
  * Represents the matcher for the column headers of an attribute. Implements the levenshtein distance for fuzzy detection.
- * @author David Gaﬂmann
+ * @author David Gassmann
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */

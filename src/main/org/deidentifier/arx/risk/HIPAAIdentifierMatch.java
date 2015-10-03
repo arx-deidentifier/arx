@@ -20,7 +20,7 @@ package org.deidentifier.arx.risk;
 /**
  * Provides information about the occurrence of an HIPPA identifier
  * 
- * @author David Gaﬂmann
+ * @author David Gassmann
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
@@ -29,7 +29,7 @@ public class HIPAAIdentifierMatch {
     /**
      * Represents the HIPPA identifiers
      * 
-     * @author David Gaﬂmann
+     * @author David Gassmann
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
@@ -66,7 +66,7 @@ public class HIPAAIdentifierMatch {
     
     /**
      * Represents the classifier for the HIPAA identifier.
-     * @author David Gaﬂmann
+     * @author David Gassmann
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
