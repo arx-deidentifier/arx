@@ -570,6 +570,8 @@ public abstract class ViewSolutionSpace implements IView {
     protected String trimLabel(String label) {
         if (label.length() > MAX_LABEL_LENGTH) {
             label = label.replace(" ", "");
+        }
+        if (label.length() > MAX_LABEL_LENGTH) {
             label = label.replace(",", "");
         }
         if (label.length() > MAX_LABEL_LENGTH) {
