@@ -39,7 +39,7 @@ import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
 
 /**
  * Encapsulates the validation process for the safe harbor method.
- * @author David Gaﬂmann
+ * @author David Gassmann
  * @author Florian Kohlmayer
  *         
  */
