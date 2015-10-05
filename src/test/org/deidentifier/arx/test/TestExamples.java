@@ -24,6 +24,7 @@ import org.deidentifier.arx.examples.Example10;
 import org.deidentifier.arx.examples.Example11;
 import org.deidentifier.arx.examples.Example12;
 import org.deidentifier.arx.examples.Example13;
+import org.deidentifier.arx.examples.Example14;
 import org.deidentifier.arx.examples.Example16;
 import org.deidentifier.arx.examples.Example17;
 import org.deidentifier.arx.examples.Example18;
@@ -126,7 +127,20 @@ public class TestExamples {
             Assert.fail();
         }
     }
-    
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample14() {
+        try {
+            Example14.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
     /**
      * Perform unit test based on the example
      */
