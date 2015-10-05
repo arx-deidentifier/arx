@@ -377,7 +377,11 @@ public abstract class DistributionAggregateFunction implements Serializable {
             DoubleArrayList list = new DoubleArrayList();
             Iterator<Double> it = DistributionIterator.createIteratorDouble(distribution, dictionary, rType);
             while (it.hasNext()) {
-                list.add(it.next());
+                Double value = it.next();
+                value = value == null ? (ignoreMissingData ? null : 0d) : value;
+                if (value != null) {
+                    list.add(value);
+                }
             }
             
             // Determine and check mode
@@ -465,7 +469,11 @@ public abstract class DistributionAggregateFunction implements Serializable {
             DoubleArrayList list = new DoubleArrayList();
             Iterator<Double> it = DistributionIterator.createIteratorDouble(distribution, dictionary, rType);
             while (it.hasNext()) {
-                list.add(it.next());
+                Double value = it.next();
+                value = value == null ? (ignoreMissingData ? null : 0d) : value;
+                if (value != null) {
+                    list.add(value);
+                }
             }
             
             // Determine and check mode
