@@ -80,11 +80,11 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false,                      // monotonic
-                                       super.getGeneralizationSuppressionFactor(), // gs-factor
-                                       true,      // precomputed
-                                       1.0d,      // precomputation threshold
-                                       this.getAggregateFunction() // aggregate function
+        return new MetricConfiguration(false,                                       // monotonic
+                                       super.getGeneralizationSuppressionFactor(),  // gs-factor
+                                       true,                                        // precomputed
+                                       1.0d,                                        // precomputation threshold
+                                       this.getAggregateFunction()                  // aggregate function
                                        );
     }
 
