@@ -22,10 +22,12 @@ import java.util.Comparator;
 import java.util.Set;
 
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.risk.Groupify.Group;
-import org.deidentifier.arx.risk.RiskEstimateBuilder.ComputationInterruptedException;
-import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
-import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
+import org.deidentifier.arx.common.ComputationInterruptedException;
+import org.deidentifier.arx.common.Groupify;
+import org.deidentifier.arx.common.Groupify.Group;
+import org.deidentifier.arx.common.TupleWrapper;
+import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 
@@ -35,47 +37,6 @@ import com.carrotsearch.hppc.IntIntOpenHashMap;
  * @author Fabian Prasser
  */
 public class RiskModelHistogram {
-
-    /**
-     * For hash tables
-     * 
-     * @author Fabian Prasser
-     */
-    private static class TupleWrapper {
-
-        /** Hash code */
-        private final int      hashcode;
-        /** Indices */
-        private final String[] values;
-
-        /**
-         * Constructor
-         * 
-         * @param handle
-         * @param row
-         */
-        private TupleWrapper(DataHandle handle, int[] indices, int row) {
-            this.values = new String[indices.length];
-            int hashcode = 1;
-            int idx = 0;
-            for (int index : indices) {
-                String value = handle.getValue(row, index);
-                hashcode = 31 * hashcode + value.hashCode();
-                values[idx++] = value;
-            }
-            this.hashcode = hashcode;
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            return Arrays.equals(((TupleWrapper) other).values, this.values);
-        }
-
-        @Override
-        public int hashCode() {
-            return hashcode;
-        }
-    }
 
     /** The equivalence classes */
     private int[]  equivalenceClasses;

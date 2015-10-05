@@ -55,6 +55,9 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     private static final String         TAB_CONTINGENCY_TABLE  = Resources.getMessage("StatisticsView.5"); //$NON-NLS-1$
 
     /** Constant */
+    private static final String         TAB_CLASSES_TABLE      = Resources.getMessage("StatisticsView.7"); //$NON-NLS-1$
+
+    /** Constant */
     private static final String         TAB_PROPERTIES         = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
 
     /**  View */
@@ -115,6 +118,8 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         item2.setLayout(new FillLayout());
         final Composite item2b = folder.createItem(TAB_CONTINGENCY_TABLE, null);
         item2b.setLayout(new FillLayout());
+        final Composite item3a = folder.createItem(TAB_CLASSES_TABLE, null);
+        item3a.setLayout(new FillLayout());
         final Composite item3 = folder.createItem(TAB_PROPERTIES, null);
         item3.setLayout(new FillLayout());
         folder.setSelection(0);
@@ -127,6 +132,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         new ViewStatisticsDistributionTable(item1b, controller, target, reset);
         new ViewStatisticsContingencyHeatmap(item2, controller, target, reset);
         new ViewStatisticsContingencyTable(item2b, controller, target, reset);
+        new ViewStatisticsEquivalenceClassTable(item3a, controller, target, reset);
         if (target == ModelPart.INPUT) {
             new ViewPropertiesInput(item3, controller);
         } else {

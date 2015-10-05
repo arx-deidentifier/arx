@@ -21,8 +21,8 @@ import java.io.Serializable;
 
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXSolverConfiguration;
-import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
-import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
+import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 /**
  * Class for risks based on population uniqueness. It implements Dankar et al.'s

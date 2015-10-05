@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
-import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 
 
 /**
@@ -43,15 +42,14 @@ public class DataHandleSubset extends DataHandle {
      *
      * @param source
      * @param subset
-     * @param eqStatistics
      */
-    public DataHandleSubset(DataHandle source, DataSubset subset, StatisticsEquivalenceClasses eqStatistics) {
+    public DataHandleSubset(DataHandle source, DataSubset subset) {
         this.source = source;
         this.dataTypes = source.dataTypes;
         this.definition = source.definition;
         this.header = source.header;
         this.subset = subset;
-        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), eqStatistics);
+        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this));
     }
 
     @Override

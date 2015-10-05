@@ -246,6 +246,14 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     }
 
     /**
+     * Returns the target
+     * @return
+     */
+    protected ModelPart getTarget() {
+        return target;
+    }
+
+    /**
      * Status update.
      */
     protected void setStatusDone(){

@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.deidentifier.arx.risk;
+package org.deidentifier.arx.common;
 
 /**
  * A hash groupify operator. It implements a hash table with chaining and keeps

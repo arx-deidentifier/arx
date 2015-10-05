@@ -225,7 +225,7 @@ public class NodeChecker {
         }
         
         // Return the buffer
-        return new TransformedData(generalizedOutput, microaggregatedOutput, currentGroupify.getEquivalenceClassStatistics(),
+        return new TransformedData(generalizedOutput, microaggregatedOutput, 
                                    new Result(currentGroupify.isPrivacyModelFulfilled(), 
                                               minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null, 
                                               loss, null));

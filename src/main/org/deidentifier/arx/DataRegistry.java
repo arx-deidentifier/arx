@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.criteria.DPresence;
 
 import cern.colt.GenericSorting;
@@ -77,12 +76,11 @@ class DataRegistry {
      *
      * @param handle
      * @param subset
-     * @param eqStatistics
      * @return
      */
-    private DataHandleSubset createSubset(DataHandle handle, DataSubset subset, StatisticsEquivalenceClasses eqStatistics) {
+    private DataHandleSubset createSubset(DataHandle handle, DataSubset subset) {
         
-        DataHandleSubset result = new DataHandleSubset(handle, subset, eqStatistics);
+        DataHandleSubset result = new DataHandleSubset(handle, subset);
         result.setRegistry(this);
         return result;
     }
@@ -225,7 +223,7 @@ class DataRegistry {
     protected void createInputSubset(ARXConfiguration config){
         
         if (config.containsCriterion(DPresence.class)) {
-            this.inputSubset = createSubset(this.input, config.getCriterion(DPresence.class).getSubset(), null);
+            this.inputSubset = createSubset(this.input, config.getCriterion(DPresence.class).getSubset());
         } else {
             this.inputSubset = null;
         }
@@ -237,11 +235,10 @@ class DataRegistry {
      *
      * @param node
      * @param config
-     * @param peqStatistics
      */
-    protected void createOutputSubset(ARXNode node, ARXConfiguration config, StatisticsEquivalenceClasses peqStatistics){
+    protected void createOutputSubset(ARXNode node, ARXConfiguration config){
         if (config.containsCriterion(DPresence.class)) {
-            this.outputSubset.put(node, createSubset(this.output.get(node), config.getCriterion(DPresence.class).getSubset(), peqStatistics));
+            this.outputSubset.put(node, createSubset(this.output.get(node), config.getCriterion(DPresence.class).getSubset()));
         } else {
             this.outputSubset.remove(node);
         }

@@ -18,8 +18,8 @@
 package org.deidentifier.arx.risk;
 
 import org.deidentifier.arx.ARXPopulationModel;
-import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
-import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
+import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 import de.linearbits.newtonraphson.Function;
 import de.linearbits.newtonraphson.NewtonRaphson2D;

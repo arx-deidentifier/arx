@@ -39,6 +39,10 @@ import org.deidentifier.arx.DataType.ARXString;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
 import org.deidentifier.arx.aggregates.StatisticsSummary.StatisticsSummaryOrdinal;
+import org.deidentifier.arx.common.ComputationInterruptedException;
+import org.deidentifier.arx.common.Groupify;
+import org.deidentifier.arx.common.Groupify.Group;
+import org.deidentifier.arx.common.TupleWrapper;
 
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
@@ -50,37 +54,7 @@ import cern.colt.function.IntComparator;
  * @author Fabian Prasser
  */
 public class StatisticsBuilder {
-    
-    /**
-     * Local class for interrupts.
-     *
-     * @author Fabian Prasser
-     */
-    class ComputationInterruptedException extends RuntimeException {
-        
-        /** SVUID */
-        private static final long serialVersionUID = 5339918851212367422L;
-        
-        /**
-         * Constructor
-         * @param message
-         */
-        public ComputationInterruptedException(String message) {
-            super(message);
-        }
-        
-        /** 
-         * Constructor
-         * @param cause
-         */
-        public ComputationInterruptedException(Throwable cause) {
-            super(cause);
-        }
-    }
-    
-    /** The equivalence class statistics. */
-    private StatisticsEquivalenceClasses ecStatistics;
-    
+
     /** The handle. */
     private DataHandleStatistics         handle;
     
@@ -91,11 +65,8 @@ public class StatisticsBuilder {
      * Creates a new instance.
      *
      * @param handle
-     * @param ecStatistics
      */
-    public StatisticsBuilder(DataHandleStatistics handle,
-                             StatisticsEquivalenceClasses ecStatistics) {
-        this.ecStatistics = ecStatistics;
+    public StatisticsBuilder(DataHandleStatistics handle) {
         this.handle = handle;
     }
     
@@ -500,7 +471,91 @@ public class StatisticsBuilder {
      * @return
      */
     public StatisticsEquivalenceClasses getEquivalenceClassStatistics() {
-        return ecStatistics;
+
+        // Reset stop flag
+        interrupt = false;
+
+        // Prepare
+        Set<String> attributes = handle.getDefinition().getQuasiIdentifyingAttributes();
+        final int[] indices = new int[attributes.size()];
+        int index = 0;
+        for (int column = 0; column < handle.getNumColumns(); column++) {
+            if (attributes.contains(handle.getAttributeName(column))) {
+                indices[index++] = column;
+            }
+        }
+
+        // Calculate equivalence classes
+        int capacity = handle.getNumRows() / 10;
+        capacity = capacity > 10 ? capacity : 10;
+        Groupify<TupleWrapper> map = new Groupify<TupleWrapper>(capacity);
+        int numRows = handle.getNumRows();
+        for (int row = 0; row < numRows; row++) {
+
+            TupleWrapper tuple = new TupleWrapper(handle, indices, row);
+            map.add(tuple);
+            if (interrupt) { throw new ComputationInterruptedException(); }
+        }
+
+        // Now compute the following values
+        double averageEquivalenceClassSize = 0d;
+        double averageEquivalenceClassSizeIncludingOutliers = 0d;
+        int maximalEquivalenceClassSize = Integer.MIN_VALUE;
+        int maximalEquivalenceClassSizeIncludingOutliers = Integer.MIN_VALUE;
+        int minimalEquivalenceClassSize = Integer.MAX_VALUE;
+        int minimalEquivalenceClassSizeIncludingOutliers = Integer.MAX_VALUE;
+        int numberOfEquivalenceClasses = 0;
+        int numberOfEquivalenceClassesIncludingOutliers = map.size();
+        int numberOfTuples = 0;
+        int numberOfOutlyingTuples = 0;
+         
+        // Let's do it
+        boolean containsOutliers = false;
+        Group<TupleWrapper> element = map.first();
+        while (element != null) {
+            
+            if (interrupt) { throw new ComputationInterruptedException(); }
+            
+            maximalEquivalenceClassSizeIncludingOutliers = Math.max(element.getCount(), maximalEquivalenceClassSizeIncludingOutliers);
+            minimalEquivalenceClassSizeIncludingOutliers = Math.min(element.getCount(), minimalEquivalenceClassSizeIncludingOutliers);
+            averageEquivalenceClassSizeIncludingOutliers += element.getCount();
+            numberOfTuples += element.getCount();
+            
+            if (!isOutlier(element, handle.getSuppressionString())) {
+                
+                maximalEquivalenceClassSize = Math.max(element.getCount(), maximalEquivalenceClassSize);
+                minimalEquivalenceClassSize = Math.min(element.getCount(), minimalEquivalenceClassSize);
+                averageEquivalenceClassSize += element.getCount();
+                
+            } else {
+                
+                containsOutliers = true;
+                numberOfOutlyingTuples = element.getCount();
+            }
+            
+            element = element.next();
+        }
+        
+        numberOfEquivalenceClasses = numberOfEquivalenceClassesIncludingOutliers;
+        if (containsOutliers) {
+            numberOfEquivalenceClasses -= 1;
+        }
+        
+        averageEquivalenceClassSize /= (double)numberOfEquivalenceClasses;
+        averageEquivalenceClassSizeIncludingOutliers /= (double)numberOfEquivalenceClassesIncludingOutliers;
+        
+
+        // And return
+        return new StatisticsEquivalenceClasses(averageEquivalenceClassSize,
+                                                averageEquivalenceClassSizeIncludingOutliers,
+                                                maximalEquivalenceClassSize,
+                                                maximalEquivalenceClassSizeIncludingOutliers,
+                                                minimalEquivalenceClassSize,
+                                                minimalEquivalenceClassSizeIncludingOutliers,
+                                                numberOfEquivalenceClasses,
+                                                numberOfEquivalenceClassesIncludingOutliers,
+                                                numberOfTuples,
+                                                numberOfOutlyingTuples);
     }
     
     /**
@@ -514,7 +569,7 @@ public class StatisticsBuilder {
     public StatisticsFrequencyDistribution getFrequencyDistribution(int column) {
         return getFrequencyDistribution(column, true);
     }
-    
+
     /**
      * Returns a frequency distribution for the values in the given column.
      *
@@ -577,7 +632,7 @@ public class StatisticsBuilder {
      * @return
      */
     public StatisticsBuilderInterruptible getInterruptibleInstance() {
-        return new StatisticsBuilderInterruptible(handle, ecStatistics);
+        return new StatisticsBuilderInterruptible(handle);
     }
     
     /**
@@ -894,6 +949,21 @@ public class StatisticsBuilder {
                 }
             });
         }
+    }
+    
+    /**
+     * Returns whether the given element is suppressed
+     * @param element
+     * @param suppression
+     * @return
+     */
+    private boolean isOutlier(Group<TupleWrapper> element, String suppression) {
+        for (String value : element.getElement().getValues()) {
+            if (!value.equals(suppression)) {
+                return false;
+            }
+        }
+        return true;
     }
     
     /**

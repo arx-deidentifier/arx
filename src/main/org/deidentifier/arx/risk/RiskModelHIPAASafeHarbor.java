@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.common.ComputationInterruptedException;
+import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.risk.HIPAAIdentifierMatch.HIPAAIdentifier;
 import org.deidentifier.arx.risk.HIPAAIdentifierMatch.MatchType;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherCity;
@@ -34,8 +36,6 @@ import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherSSN;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherState;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherURL;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherZIP;
-import org.deidentifier.arx.risk.RiskEstimateBuilder.ComputationInterruptedException;
-import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
 
 /**
  * Encapsulates the validation process for the safe harbor method.

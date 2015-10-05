@@ -22,6 +22,8 @@ import java.util.Set;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**
@@ -31,34 +33,6 @@ import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquen
  * 
  */
 public class RiskEstimateBuilder {
-
-    /**
-     * Helper class
-     * 
-     * @author Fabian Prasser
-     * 
-     */
-    static final class ComputationInterruptedException extends RuntimeException {
-        private static final long serialVersionUID = -4553285212475615392L;
-    }
-
-    /**
-     * Helper class
-     * 
-     * @author Fabian Prasser
-     */
-    static final class WrappedBoolean {
-        public boolean value = false;
-    }
-
-    /**
-     * Helper class
-     * 
-     * @author Fabian Prasser
-     */
-    static final class WrappedInteger {
-        public int value = 0;
-    }
 
     /** Fields */
     private final ARXPopulationModel     population;

@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandleStatistics;
-import org.deidentifier.arx.aggregates.StatisticsBuilder.ComputationInterruptedException;
+import org.deidentifier.arx.common.ComputationInterruptedException;
 
 
 /**
@@ -41,9 +41,8 @@ public class StatisticsBuilderInterruptible {
      * @param handle
      * @param ecStatistics
      */
-    StatisticsBuilderInterruptible(DataHandleStatistics handle,
-                                   StatisticsEquivalenceClasses ecStatistics) {
-        this.builder = new StatisticsBuilder(handle, ecStatistics);
+    StatisticsBuilderInterruptible(DataHandleStatistics handle) {
+        this.builder = new StatisticsBuilder(handle);
     }
 
     /**

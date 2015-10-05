@@ -24,7 +24,6 @@ import java.util.Set;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
-import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.DataManager.AttributeTypeInternal;
@@ -128,7 +127,6 @@ public class DataHandleOutput extends DataHandle {
      * @param outputGeneralized
      * @param outputMicroaggregated
      * @param node
-     * @param statistics
      * @param definition
      * @param config
      */
@@ -138,7 +136,6 @@ public class DataHandleOutput extends DataHandle {
                                final Data outputGeneralized,
                                final Data outputMicroaggregated,
                                final ARXNode node,
-                               final StatisticsEquivalenceClasses statistics,
                                final DataDefinition definition,
                                final ARXConfiguration config) {
         
@@ -150,7 +147,7 @@ public class DataHandleOutput extends DataHandle {
         this.suppressedAttributeTypes = convert(config.getSuppressedAttributeTypes());
         this.result = result;
         this.definition = definition;
-        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), statistics);
+        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this));
         this.node = node;
         
         // Extract data
@@ -208,7 +205,7 @@ public class DataHandleOutput extends DataHandle {
         this.inverseDictionaries[AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED] = this.outputMicroaggregated.getDictionary();
         
         // Create view
-        this.getRegistry().createOutputSubset(node, config, statistics.getSubsetStatistics());
+        this.getRegistry().createOutputSubset(node, config);
         
         // Obtain data types
         this.dataTypes = getDataTypeArray();

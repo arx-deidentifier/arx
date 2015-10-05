@@ -100,7 +100,7 @@ public class DataHandleInput extends DataHandle {
         this.dataTypes = getDataTypeArray();
         
         // Create statistics
-        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), null);
+        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this));
     }
 
     @Override

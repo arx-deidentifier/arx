@@ -19,8 +19,8 @@ package org.deidentifier.arx.risk;
 
 import org.apache.commons.math3.distribution.HypergeometricDistribution;
 import org.deidentifier.arx.ARXPopulationModel;
-import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
-import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
+import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 /**
  * This class implements the ZayatzModel based on equivalence classes, for

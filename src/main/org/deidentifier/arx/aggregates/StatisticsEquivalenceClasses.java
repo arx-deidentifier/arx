@@ -16,8 +16,6 @@
  */
 package org.deidentifier.arx.aggregates;
 
-import org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics;
-
 /**
  * Statistics about the equivalence classes.
  *
@@ -25,25 +23,69 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceCla
  */
 public class StatisticsEquivalenceClasses {
 
-    /**  Backing class */
-    private EquivalenceClassStatistics groupStatistics;
+    /** Statistic value */
+    private final double                     averageEquivalenceClassSize;
+    /** Statistic value */
+    private final double                     averageEquivalenceClassSizeIncludingOutliers;
+    /** Statistic value */
+    private final int                        maximalEquivalenceClassSize;
+    /** Statistic value */
+    private final int                        maximalEquivalenceClassSizeIncludingOutliers;
+    /** Statistic value */
+    private final int                        minimalEquivalenceClassSize;
+    /** Statistic value */
+    private final int                        minimalEquivalenceClassSizeIncludingOutliers;
+    /** Statistic value */
+    private final int                        numberOfEquivalenceClasses;
+    /** Statistic value */
+    private final int                        numberOfEquivalenceClassesIncludingOutliers;
+    /** Statistic value */
+    private final int                        numberOfTuples;
+    /** Statistic value */
+    private final int                        numberOfOutlyingTuples;
     
     /**
-     * Creates a new instance.
-     *
-     * @param groupStatistics Statistics obtained from hash groupify
+     * Creates a new instance
+     * @param averageEquivalenceClassSize
+     * @param averageEquivalenceClassSizeIncludingOutliers
+     * @param maximalEquivalenceClassSize
+     * @param maximalEquivalenceClassSizeIncludingOutliers
+     * @param minimalEquivalenceClassSize
+     * @param minimalEquivalenceClassSizeIncludingOutliers
+     * @param numberOfEquivalenceClasses
+     * @param numberOfEquivalenceClassesIncludingOutliers
+     * @param numberOfTuples
+     * @param numberOfOutlyingTuples
      */
-    public StatisticsEquivalenceClasses(EquivalenceClassStatistics groupStatistics) {
-        this.groupStatistics = groupStatistics;
+    public StatisticsEquivalenceClasses(double averageEquivalenceClassSize,
+                                        double averageEquivalenceClassSizeIncludingOutliers,
+                                        int maximalEquivalenceClassSize,
+                                        int maximalEquivalenceClassSizeIncludingOutliers,
+                                        int minimalEquivalenceClassSize,
+                                        int minimalEquivalenceClassSizeIncludingOutliers,
+                                        int numberOfEquivalenceClasses,
+                                        int numberOfEquivalenceClassesIncludingOutliers,
+                                        int numberOfTuples,
+                                        int numberOfOutlyingTuples) {
+        this.averageEquivalenceClassSize = averageEquivalenceClassSize;
+        this.averageEquivalenceClassSizeIncludingOutliers = averageEquivalenceClassSizeIncludingOutliers;
+        this.maximalEquivalenceClassSize = maximalEquivalenceClassSize;
+        this.maximalEquivalenceClassSizeIncludingOutliers = maximalEquivalenceClassSizeIncludingOutliers;
+        this.minimalEquivalenceClassSize = minimalEquivalenceClassSize;
+        this.minimalEquivalenceClassSizeIncludingOutliers = minimalEquivalenceClassSizeIncludingOutliers;
+        this.numberOfEquivalenceClasses = numberOfEquivalenceClasses;
+        this.numberOfEquivalenceClassesIncludingOutliers = numberOfEquivalenceClassesIncludingOutliers;
+        this.numberOfTuples = numberOfTuples;
+        this.numberOfOutlyingTuples = numberOfOutlyingTuples;
     }
-    
+
     /**
      * Returns the maximal size of an equivalence class.
      *
      * @return
      */
     public double getAverageEquivalenceClassSize(){
-        return groupStatistics.getAverageEquivalenceClassSize();
+        return averageEquivalenceClassSize;
     }
 
     /**
@@ -52,7 +94,7 @@ public class StatisticsEquivalenceClasses {
      * @return
      */
     public double getAverageEquivalenceClassSizeIncludingOutliers(){
-        return groupStatistics.getAverageEquivalenceClassSizeIncludingOutliers();
+        return averageEquivalenceClassSizeIncludingOutliers;
     }
 
     /**
@@ -61,7 +103,7 @@ public class StatisticsEquivalenceClasses {
      * @return
      */
     public int getMaximalEquivalenceClassSize(){
-        return groupStatistics.getMaximalEquivalenceClassSize();
+        return maximalEquivalenceClassSize;
     }
 
     /**
@@ -70,7 +112,7 @@ public class StatisticsEquivalenceClasses {
      * @return
      */
     public int getMaximalEquivalenceClassSizeIncludingOutliers(){
-        return groupStatistics.getMaximalEquivalenceClassSizeIncludingOutliers();
+        return maximalEquivalenceClassSizeIncludingOutliers;
     }
 
 
@@ -80,7 +122,7 @@ public class StatisticsEquivalenceClasses {
      * @return
      */
     public int getMinimalEquivalenceClassSize(){
-        return groupStatistics.getMinimalEquivalenceClassSize();
+        return minimalEquivalenceClassSize;
     }
 
     /**
@@ -89,7 +131,7 @@ public class StatisticsEquivalenceClasses {
      * @return
      */
     public int getMinimalEquivalenceClassSizeIncludingOutliers(){
-        return groupStatistics.getMinimalEquivalenceClassSizeIncludingOutliers();
+        return minimalEquivalenceClassSizeIncludingOutliers;
     }
 
     /**
@@ -99,7 +141,7 @@ public class StatisticsEquivalenceClasses {
      * @return
      */
     public int getNumberOfEquivalenceClasses() {
-        return groupStatistics.getNumberOfEquivalenceClasses();
+        return numberOfEquivalenceClasses;
     }
 
     /**
@@ -108,10 +150,29 @@ public class StatisticsEquivalenceClasses {
      *
      * @return
      */
-    public int getNumberOfOutlyingEquivalenceClasses() {
-        return groupStatistics.getNumberOfOutlyingEquivalenceClasses();
+    public int getNumberOfEquivalenceClassesIncludingOutliers() {
+        return numberOfEquivalenceClassesIncludingOutliers;
     }
 
+    /**
+     * Returns the number of tuples in the currently selected data
+     * representation.
+     *
+     * @return
+     */
+    public int getNumberOfTuples() {
+        return numberOfTuples - numberOfOutlyingTuples;
+    }
+    /**
+     * Returns the number of tuples in the currently selected data
+     * representation.
+     *
+     * @return
+     */
+    public int getNumberOfTuplesIncludingOutliers() {
+        return numberOfTuples;
+    }
+    
     /**
      * Returns the number of outliers in the currently selected data
      * representation.
@@ -119,19 +180,7 @@ public class StatisticsEquivalenceClasses {
      * @return
      */
     public int getNumberOfOutlyingTuples() {
-        return groupStatistics.getNumberOfOutlyingTuples();
-    }
-
-    /**
-     * Returns statistics for the subset, if any
-     * @return
-     */
-    public StatisticsEquivalenceClasses getSubsetStatistics() {
-        if (groupStatistics.getSubsetStatistics() != null) {
-            return new StatisticsEquivalenceClasses(groupStatistics.getSubsetStatistics());
-        } else {
-            return null;
-        }
+        return numberOfOutlyingTuples;
     }
 
     @Override
@@ -143,7 +192,8 @@ public class StatisticsEquivalenceClasses {
                "- Minimal equivalence class size = " + getMinimalEquivalenceClassSize() + "\n" +
                "- Minimal equivalence class size (including outliers) =" + getMinimalEquivalenceClassSizeIncludingOutliers() + "\n" +
                "- Number of equivalence classes = " + getNumberOfEquivalenceClasses() + "\n" +
-               "- Number of outlying equivalence classes = " + getNumberOfOutlyingEquivalenceClasses() + "\n" +
+               "- Number of equivalence classes (including outliers) = " + getNumberOfEquivalenceClassesIncludingOutliers() + "\n" +
+               "- Number of tuples = " + getNumberOfTuples() + "\n" +
                "- Number of outlying tuples = " + getNumberOfOutlyingTuples() + "\n}";
     }
     

@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -329,7 +328,6 @@ public class ARXResult {
                                                        information.bufferGeneralized,
                                                        information.bufferMicroaggregated,
                                                        node,
-                                                       new StatisticsEquivalenceClasses(information.statistics),
                                                        definition,
                                                        config);
         
