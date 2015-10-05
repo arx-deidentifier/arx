@@ -134,8 +134,7 @@ public class RiskModelHistogram {
         if (handle == null) { throw new NullPointerException("Handle is null"); }
         if (qis == null) { throw new NullPointerException("Quasi identifiers must not be null"); }
         for (String q : qis) {
-            if (handle.getColumnIndexOf(q) == -1) { throw new IllegalArgumentException(q +
-                                                                                       " is not an attribute"); }
+            if (handle.getColumnIndexOf(q) == -1) { throw new IllegalArgumentException(q + " is not an attribute"); }
         }
 
         /* ********************************
@@ -155,8 +154,7 @@ public class RiskModelHistogram {
         int numRows = handle.getNumRows();
         for (int row = 0; row < numRows; row++) {
 
-            int prog = (int) Math.round((double) row / (double) numRows *
-                                        factor * 80d);
+            int prog = (int) Math.round((double) row / (double) numRows * factor * 80d);
             if (prog != progress.value) {
                 progress.value = prog;
             }
@@ -173,9 +171,7 @@ public class RiskModelHistogram {
         int size = map.size();
         Group<TupleWrapper> element = map.first();
         while (element != null) {
-            int prog = (int) Math.round((80d + (double) i++ / (double) size *
-                                               20d) *
-                                        factor);
+            int prog = (int) Math.round((80d + (double) i++ / (double) size * 20d) * factor);
             if (prog != progress.value) {
                 progress.value = prog;
             }
