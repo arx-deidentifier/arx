@@ -254,7 +254,15 @@ class DataRegistry {
     protected DataType<?> getBaseDataType(String attribute) {
         return this.input.getBaseDataType(attribute);
     }
-    
+
+    /**
+     * Returns the input handle
+     * @return
+     */
+    protected DataHandleInput getInputHandle() {
+        return this.input;
+    }
+
     /**
      * Returns a registered handle, if any.
      *
@@ -264,7 +272,7 @@ class DataRegistry {
     protected DataHandle getOutputHandle(ARXNode node) {
         return this.output.get(node);
     }
-
+    
     /**
      * Implementation of {@link DataHandle#isOutlier(row)}.
      *

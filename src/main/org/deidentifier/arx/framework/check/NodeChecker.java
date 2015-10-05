@@ -297,6 +297,14 @@ public class NodeChecker {
                                       loss,
                                       bound);
     }
+    
+    /**
+     * Returns the input buffer
+     * @return
+     */
+    public int[][] getInputBuffer() {
+        return this.dataGeneralized.getArray();
+    }
 
     /**
      * Returns the configuration

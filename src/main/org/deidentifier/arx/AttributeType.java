@@ -778,6 +778,15 @@ public class AttributeType implements Serializable, Cloneable {
         protected DistributionAggregateFunction getFunction() {
             return function;
         }
+        
+        /**
+         * Clones this function
+         */
+        public MicroAggregationFunction clone() {
+            return new MicroAggregationFunction(this.function.clone(),
+                                                this.requiredScale,
+                                                this.label);
+        }
     }
 
     /** SVUID. */

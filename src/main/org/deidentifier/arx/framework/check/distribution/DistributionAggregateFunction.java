@@ -67,7 +67,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
         public DistributionAggregateFunctionArithmeticMean(boolean ignoreMissingData) {
             super(ignoreMissingData, true);
         }
-
+        
         @Override
         public <T> String aggregate(Distribution distribution) {
             stats.clear();
@@ -77,6 +77,13 @@ public abstract class DistributionAggregateFunction implements Serializable {
             DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
             addAll(stats, distribution, rType);
             return type.format(rType.fromDouble(stats.getMean()));
+        }
+
+        /**
+         * Clone method
+         */
+        public DistributionAggregateFunctionArithmeticMean clone() {
+            return new DistributionAggregateFunctionArithmeticMean(this.ignoreMissingData);
         }
 
         @Override
@@ -146,6 +153,13 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
 
         /**
+         * Clone method
+         */
+        public DistributionAggregateFunctionGeneralization clone() {
+            return new DistributionAggregateFunctionGeneralization(this.ignoreMissingData);
+        }
+
+        /**
          * Reads data into the provided array
          * @param buckets
          * @param state
@@ -203,6 +217,13 @@ public abstract class DistributionAggregateFunction implements Serializable {
             DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
             addAll(stats, distribution, rType);
             return type.format(rType.fromDouble(stats.getGeometricMean()));
+        }
+
+        /**
+         * Clone method
+         */
+        public DistributionAggregateFunctionGeometricMean clone() {
+            return new DistributionAggregateFunctionGeometricMean(this.ignoreMissingData);
         }
 
         @Override
@@ -269,6 +290,13 @@ public abstract class DistributionAggregateFunction implements Serializable {
             
             // Format
             return minT == null || maxT == null ? DataType.NULL_VALUE : "[" + type.format(minT) + ", " + type.format(maxT) + "]";
+        }
+
+        /**
+         * Clone method
+         */
+        public DistributionAggregateFunctionInterval clone() {
+            return new DistributionAggregateFunctionInterval(this.ignoreMissingData);
         }
     }
 
@@ -365,6 +393,13 @@ public abstract class DistributionAggregateFunction implements Serializable {
             }
         }
 
+        /**
+         * Clone method
+         */
+        public DistributionAggregateFunctionMedian clone() {
+            return new DistributionAggregateFunctionMedian(this.ignoreMissingData);
+        }
+
         @Override
         public <T> double getMeanError(Distribution distribution) {
             
@@ -455,6 +490,13 @@ public abstract class DistributionAggregateFunction implements Serializable {
             // Determine mode
             int mode = getMode(distribution);
             return mode == -1 ? DataType.NULL_VALUE : dictionary[mode];
+        }
+
+        /**
+         * Clone method
+         */
+        public DistributionAggregateFunctionMode clone() {
+            return new DistributionAggregateFunctionMode(this.ignoreMissingData);
         }
 
         @Override
@@ -554,6 +596,11 @@ public abstract class DistributionAggregateFunction implements Serializable {
      * @return the string
      */
     public abstract <T> String aggregate(Distribution distribution);
+    
+    /**
+     * Clones this function
+     */
+    public abstract DistributionAggregateFunction clone();
     
     /**
      * Returns the normalized mean squared error in [0,1], if supported, 0d otherwise

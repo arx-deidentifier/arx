@@ -231,6 +231,15 @@ public class DataHandleInput extends DataHandle {
         System.arraycopy(dict, 0, vals, 0, vals.length);
         return vals;
     }
+
+    /**
+     * Returns the input buffer
+     * @return
+     */
+    protected int[][] getInputBuffer() {
+        checkRegistry();
+        return this.dataGH;
+    }
     
     @Override
     protected String internalGetValue(final int row, final int column) {

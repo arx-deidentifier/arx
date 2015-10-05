@@ -248,6 +248,15 @@ public class DataHandleOutput extends DataHandle {
         checkRegistry();
         return node.getGeneralization(attribute);
     }
+
+    /**
+     * Returns the input buffer
+     * @return
+     */
+    protected int[][] getInputBuffer() {
+        checkRegistry();
+        return registry.getInputHandle().getInputBuffer();
+    }
     
     /**
      * Gets the num columns.

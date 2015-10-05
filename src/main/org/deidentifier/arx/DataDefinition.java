@@ -77,7 +77,7 @@ public class DataDefinition implements Cloneable{
             d.hierarchies.put(attr, hierarchies.get(attr));
         }
         for (final String attr : functions.keySet()) {
-            d.functions.put(attr, functions.get(attr));
+            d.functions.put(attr, functions.get(attr).clone());
         }
         for (final String attr : minGeneralization.keySet()) {
             d.minGeneralization.put(attr, minGeneralization.get(attr));

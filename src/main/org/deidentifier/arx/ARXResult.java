@@ -18,9 +18,16 @@
 package org.deidentifier.arx;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.DistinctLDiversity;
+import org.deidentifier.arx.criteria.Inclusion;
+import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -29,6 +36,8 @@ import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
+
+import cern.colt.list.IntArrayList;
 
 /**
  * Encapsulates the results of an execution of the ARX algorithm.
@@ -397,5 +406,75 @@ public class ARXResult {
             bufferLockedByHandle = null;
             bufferLockedByNode = null;
         }
+    }
+    
+    /**
+     * This method optimizes the given data output with local recoding to improve its utility
+     * @param handle
+     */
+    public void optimize(DataHandle handle) {
+        
+        // Check, if output
+        if (!(handle instanceof DataHandleOutput)) {
+            throw new IllegalArgumentException("Can only be applied to output data");
+        }
+        
+        // Extract
+        DataHandleOutput output = (DataHandleOutput)handle;
+        
+        // Check, if input matches
+        if (!output.getInputBuffer().equals(this.checker.getInputBuffer())) {
+            throw new IllegalArgumentException("This output data is associated to the correct input data");
+        }
+        
+        // Check, if only k-anonymity, potentially combined with inclusion
+        Set<Class<?>> supportedModels = new HashSet<Class<?>>();
+        supportedModels.add(KAnonymity.class);
+        supportedModels.add(DistinctLDiversity.class);
+        supportedModels.add(Inclusion.class);
+        for (PrivacyCriterion c : config.getCriteria()) {
+            if (!supportedModels.contains(c.getClass())) {
+                throw new UnsupportedOperationException("This method does currently not supported the model: " + c.getClass().getSimpleName());
+            }
+        }
+        
+        // Extract the subset, if any
+        RowSet set = null;
+        if (config.containsCriterion(DPresence.class)) {
+            set = config.getCriterion(DPresence.class).getSubset().getSet();
+        }
+        
+        // Everything that is used from here on, needs to be either
+        // (a) state-less, or
+        // (b) a fresh copy of the original configuration.
+
+        // We start by cloning the configuration
+        ARXConfiguration config = this.config.clone();
+        
+        // Regarding privacy-criteria, everything is fine:
+        // - KAnonymity and Inclusion are state-less
+        // - DistinctLDiversity is state-less
+        // - The super-class of DistinctLDiversity, which is ExplicitPrivacyCriterion, is not state-less
+        //   but the state remains the same when post-optimizing
+
+        // Metrics are not state-less, but we create a copy
+        config.setMetric(this.config.getMetric().getDescription().createInstance(this.config.getMetric().getConfiguration()));
+        
+        // In the data definition, only MicroAggregationFunctions maintain a state, but these
+        // are cloned, when cloning the definition
+        DataDefinition definition = this.definition.clone();
+        
+        // We are now ready, to go
+        // Collect input and row indices
+        IntArrayList indexes = new IntArrayList();
+        for (int row = 0; row < output.getNumRows(); row++) {
+            if (output.isOutlier(row)) {
+                if (set == null || set.contains(row)) {
+                    indexes.add(row);
+                }
+            }
+        }
+        
+        // TODO:
     }
 }
