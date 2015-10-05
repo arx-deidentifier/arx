@@ -340,7 +340,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private Boolean                            suppressionAlwaysEnabled              = true;
 
     /** Should microaggregation be based on data utility measurements */
-    private boolean                            utilityBasedMicroaggregation          = true;
+    private boolean                            utilityBasedMicroaggregation          = false;
 
     /** TODO: This is a hack and should be removed in future releases. */
     private transient ARXConfigurationInternal accessibleInstance                    = null;
