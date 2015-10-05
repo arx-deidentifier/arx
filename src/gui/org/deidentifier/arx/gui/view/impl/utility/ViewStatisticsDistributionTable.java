@@ -61,7 +61,7 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
                                      final ModelPart target,
                                      final ModelPart reset) {
         
-        super(parent, controller, target, reset);
+        super(parent, controller, target, reset, true);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     

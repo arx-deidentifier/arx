@@ -82,7 +82,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                                      final ModelPart target,
                                      final ModelPart reset) {
         
-        super(parent, controller, target, reset);
+        super(parent, controller, target, reset, true);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
 

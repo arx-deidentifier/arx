@@ -67,7 +67,7 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
                                   final ModelPart target,
                                   final ModelPart reset) {
         
-        super(parent, controller, target, reset);
+        super(parent, controller, target, reset, true);
     }
 
     @Override

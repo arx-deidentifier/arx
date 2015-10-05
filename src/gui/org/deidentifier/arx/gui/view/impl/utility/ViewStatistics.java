@@ -60,6 +60,9 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     /** Internal stuff. */
     private T                     viewContext;
 
+    /** Internal stuff. */
+    private final boolean         dependsOnAttribute;
+    
 	/**
      * Creates a new instance.
      *
@@ -67,11 +70,13 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * @param controller
      * @param target
      * @param reset
+     * @param dependsOnAttribute
      */
     public ViewStatistics( final Composite parent,
                            final Controller controller,
                            final ModelPart target,
-                           final ModelPart reset) {
+                           final ModelPart reset,
+                           final boolean dependsOnAttribute) {
 
         // Register
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
@@ -90,6 +95,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         this.controller = controller;
         this.reset = reset;
         this.target = target;
+        this.dependsOnAttribute = dependsOnAttribute;
 
         // Create controls
         parent.setLayout(new StackLayout());
@@ -136,28 +142,29 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         }
         
         // Invalidate
-        if (event.part == ModelPart.OUTPUT ||
-            event.part == target ||
-            event.part == ModelPart.SELECTED_ATTRIBUTE ||
-            event.part == ModelPart.SELECTED_VIEW_CONFIG ||
-            event.part == ModelPart.ATTRIBUTE_VALUE) {
-            
+        if (event.part == ModelPart.OUTPUT || event.part == target || event.part == ModelPart.SELECTED_VIEW_CONFIG) {
             this.viewContext = null;
             this.update();
             return;
         }
-        
-        // Potentially invalidate
-        if (event.part == ModelPart.DATA_TYPE ||
-            event.part == ModelPart.ATTRIBUTE_TYPE) {
-            
-            if (model == null || 
-                viewContext == null ||
-                viewContext.isAttributeSelected(model.getSelectedAttribute())) {
-                
+
+        // Invalidate
+        if (event.part == ModelPart.SELECTED_ATTRIBUTE || event.part == ModelPart.ATTRIBUTE_VALUE) {
+            if (dependsOnAttribute) {
                 this.viewContext = null;
                 this.update();
                 return;
+            }
+        }
+        
+        // Potentially invalidate
+        if (event.part == ModelPart.DATA_TYPE || event.part == ModelPart.ATTRIBUTE_TYPE) {
+            if (dependsOnAttribute) {
+                if (model == null ||  viewContext == null || viewContext.isAttributeSelected(model.getSelectedAttribute())) {
+                    this.viewContext = null;
+                    this.update();
+                    return;
+                }
             }
         }
 
@@ -170,11 +177,10 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
          
         // Update
         if (event.part == target ||
-           event.part == ModelPart.SELECTED_ATTRIBUTE ||
-           event.part == ModelPart.ATTRIBUTE_TYPE ||
-           event.part == ModelPart.SELECTED_VIEW_CONFIG ||
-           event.part == ModelPart.SELECTED_UTILITY_VISUALIZATION) {
-            
+            event.part == ModelPart.SELECTED_ATTRIBUTE ||
+            event.part == ModelPart.ATTRIBUTE_TYPE ||
+            event.part == ModelPart.SELECTED_VIEW_CONFIG ||
+            event.part == ModelPart.SELECTED_UTILITY_VISUALIZATION) {
             this.update();
         }
     }
