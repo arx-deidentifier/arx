@@ -44,6 +44,10 @@ import org.deidentifier.arx.examples.Example30;
 import org.deidentifier.arx.examples.Example31;
 import org.deidentifier.arx.examples.Example32;
 import org.deidentifier.arx.examples.Example33;
+import org.deidentifier.arx.examples.Example34;
+import org.deidentifier.arx.examples.Example35;
+import org.deidentifier.arx.examples.Example36;
+import org.deidentifier.arx.examples.Example37;
 import org.deidentifier.arx.examples.Example4;
 import org.deidentifier.arx.examples.Example5;
 import org.deidentifier.arx.examples.Example6;
@@ -54,12 +58,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 
+ * Perform unit test based on the examples
  */
 public class TestExamples {
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample1() {
@@ -72,7 +76,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample10() {
@@ -85,7 +89,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample11() {
@@ -98,7 +102,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample12() {
@@ -111,7 +115,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample13() {
@@ -124,7 +128,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample16() {
@@ -137,7 +141,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample17() {
@@ -150,7 +154,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample18() {
@@ -163,7 +167,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample19() {
@@ -176,9 +180,9 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      *
-     * @throws IOException
+     * Perform unit test based on the example@throws IOException
      */
     @Test
     public void testExample2() throws IOException {
@@ -191,7 +195,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample20() {
@@ -204,7 +208,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample21() {
@@ -217,7 +221,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample22() {
@@ -230,7 +234,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample23() {
@@ -243,7 +247,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample24() {
@@ -256,7 +260,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample25() {
@@ -269,7 +273,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample26() {
@@ -282,7 +286,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample27() {
@@ -295,7 +299,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample28() {
@@ -308,7 +312,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample29() {
@@ -321,7 +325,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample3() {
@@ -334,7 +338,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample30() {
@@ -347,7 +351,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample31() {
@@ -360,7 +364,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample32() {
@@ -373,7 +377,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample33() {
@@ -384,9 +388,61 @@ public class TestExamples {
             Assert.fail();
         }
     }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample34() {
+        try {
+            Example34.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample35() {
+        try {
+            Example35.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample36() {
+        try {
+            Example36.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample37() {
+        try {
+            Example37.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample4() {
@@ -399,7 +455,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample5() {
@@ -412,7 +468,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample6() {
@@ -425,7 +481,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample7() {
@@ -438,7 +494,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample8() {
@@ -451,7 +507,7 @@ public class TestExamples {
     }
     
     /**
-     * 
+     * Perform unit test based on the example
      */
     @Test
     public void testExample9() {
