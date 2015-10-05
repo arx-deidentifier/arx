@@ -423,7 +423,7 @@ public class ARXResult {
         DataHandleOutput output = (DataHandleOutput)handle;
         
         // Check, if input matches
-        if (!output.getInputBuffer().equals(this.checker.getInputBuffer())) {
+        if (output.getInputBuffer() == null || !output.getInputBuffer().equals(this.checker.getInputBuffer())) {
             throw new IllegalArgumentException("This output data is associated to the correct input data");
         }
         
