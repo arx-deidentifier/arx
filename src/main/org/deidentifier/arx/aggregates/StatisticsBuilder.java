@@ -58,21 +58,19 @@ public class StatisticsBuilder {
      */
     class ComputationInterruptedException extends RuntimeException {
         
-        /** TODO */
+        /** SVUID */
         private static final long serialVersionUID = 5339918851212367422L;
         
         /**
-         * 
-         *
+         * Constructor
          * @param message
          */
         public ComputationInterruptedException(String message) {
             super(message);
         }
         
-        /**
-         * 
-         *
+        /** 
+         * Constructor
          * @param cause
          */
         public ComputationInterruptedException(Throwable cause) {
