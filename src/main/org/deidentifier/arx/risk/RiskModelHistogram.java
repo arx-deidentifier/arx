@@ -129,8 +129,8 @@ public class RiskModelHistogram {
                        double factor) {
 
         /* ********************************
-         * Check *******************************
-         */
+         * Check 
+         * ********************************/
         if (handle == null) { throw new NullPointerException("Handle is null"); }
         if (qis == null) { throw new NullPointerException("Quasi identifiers must not be null"); }
         for (String q : qis) {
@@ -139,8 +139,8 @@ public class RiskModelHistogram {
         }
 
         /* ********************************
-         * Build equivalence classes *******************************
-         */
+         * Build equivalence classes 
+         * ********************************/
         final int[] indices = new int[qis.size()];
         int index = 0;
         for (final String attribute : qis) {
