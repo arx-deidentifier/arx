@@ -161,7 +161,6 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
                 // Perform work
                 this.distribution = builder.getFrequencyDistribution(column, hierarchy);
 
-
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
                     Thread.sleep(10);
