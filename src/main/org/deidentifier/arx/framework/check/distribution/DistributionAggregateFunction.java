@@ -54,10 +54,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
         private transient DescriptiveStatistics stats;
 
         /** Minimum */
-        private double                          minimum          = 0d;
+        private Double                          minimum          = null;
 
         /** Maximum */
-        private double                          maximum          = 0d;
+        private Double                          maximum          = null;
 
         /**
          * Instantiates.
@@ -73,16 +73,13 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * @param ignoreMissingData
          * @param minimum
          * @param maximum
-         * @param descriptiveStatistics
          */
         private DistributionAggregateFunctionArithmeticMean(boolean ignoreMissingData,
-                                                           double minimum,
-                                                           double maximum,
-                                                           DescriptiveStatistics descriptiveStatistics) {
+                                                            Double minimum,
+                                                            Double maximum) {
             this(ignoreMissingData);
             this.minimum = minimum;
             this.maximum = maximum;
-            this.stats = descriptiveStatistics;
         }
 
         @Override
@@ -100,10 +97,13 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * Clone method
          */
         public DistributionAggregateFunctionArithmeticMean clone() {
-            return new DistributionAggregateFunctionArithmeticMean(this.ignoreMissingData,
-                                                                   this.minimum,
-                                                                   this.maximum,
-                                                                   new DescriptiveStatistics());
+            DistributionAggregateFunctionArithmeticMean result = new DistributionAggregateFunctionArithmeticMean(this.ignoreMissingData,
+                                                                                                                 this.minimum,
+                                                                                                                 this.maximum);
+            if (dictionary != null) {
+                result.initialize(dictionary, type, hierarchy);
+            }
+            return result;
         }
 
         @Override
@@ -119,9 +119,11 @@ public abstract class DistributionAggregateFunction implements Serializable {
         public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
             super.initialize(dictionary, type, hierarchy);
             this.stats = new DescriptiveStatistics();
-            double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
-            this.minimum = values[0];
-            this.maximum = values[1];
+            if (minimum == null || maximum == null) {
+                double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
+                this.minimum = values[0];
+                this.maximum = values[1];
+            }
         }        
     }
 
@@ -176,7 +178,11 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * Clone method
          */
         public DistributionAggregateFunctionGeneralization clone() {
-            return new DistributionAggregateFunctionGeneralization(this.ignoreMissingData);
+            DistributionAggregateFunctionGeneralization result = new DistributionAggregateFunctionGeneralization(this.ignoreMissingData);
+            if (dictionary != null) {
+                result.initialize(dictionary, type, hierarchy);
+            }
+            return result;
         }
 
         /**
@@ -214,10 +220,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
         private transient DescriptiveStatistics stats;
 
         /** Minimum */
-        private double                          minimum          = 0d;
+        private Double                          minimum          = null;
 
         /** Maximum */
-        private double                          maximum          = 0d;
+        private Double                          maximum          = null;
 
         /**
          * Instantiates.
@@ -233,16 +239,13 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * @param ignoreMissingData
          * @param minimum
          * @param maximum
-         * @param descriptiveStatistics
          */
         private DistributionAggregateFunctionGeometricMean(boolean ignoreMissingData,
-                                                           double minimum,
-                                                           double maximum,
-                                                           DescriptiveStatistics descriptiveStatistics) {
+                                                           Double minimum,
+                                                           Double maximum) {
             this(ignoreMissingData);
             this.minimum = minimum;
             this.maximum = maximum;
-            this.stats = descriptiveStatistics;
         }
 
         @Override
@@ -260,10 +263,14 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * Clone method
          */
         public DistributionAggregateFunctionGeometricMean clone() {
-            return new DistributionAggregateFunctionGeometricMean(this.ignoreMissingData,
-                                                                  this.minimum,
-                                                                  this.maximum,
-                                                                  new DescriptiveStatistics());
+            
+            DistributionAggregateFunctionGeometricMean result = new DistributionAggregateFunctionGeometricMean(this.ignoreMissingData,
+                                                                                                               this.minimum,
+                                                                                                               this.maximum);
+            if (dictionary != null) {
+                result.initialize(dictionary, type, hierarchy);
+            }
+            return result;
         }
 
         @Override
@@ -279,9 +286,11 @@ public abstract class DistributionAggregateFunction implements Serializable {
         public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
             super.initialize(dictionary, type, hierarchy);
             this.stats = new DescriptiveStatistics();
-            double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
-            this.minimum = values[0];
-            this.maximum = values[1];
+            if (minimum == null || maximum == null) {
+                double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
+                this.minimum = values[0];
+                this.maximum = values[1];
+            }
         }
     }
 
@@ -336,7 +345,11 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * Clone method
          */
         public DistributionAggregateFunctionInterval clone() {
-            return new DistributionAggregateFunctionInterval(this.ignoreMissingData);
+            DistributionAggregateFunctionInterval result = new DistributionAggregateFunctionInterval(this.ignoreMissingData);
+            if (dictionary != null) {
+                result.initialize(dictionary, type, hierarchy);
+            }
+            return result;
         }
     }
 
@@ -353,10 +366,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
         private static final long serialVersionUID = 4877214760061314248L;
 
         /** Minimum */
-        private double                          minimum          = 0d;
+        private Double                          minimum          = null;
 
         /** Maximum */
-        private double                          maximum          = 0d;
+        private Double                          maximum          = null;
 
         /**
          * Instantiates.
@@ -374,8 +387,8 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * @param maximum
          */
         private DistributionAggregateFunctionMedian(boolean ignoreMissingData,
-                                                    double minimum,
-                                                    double maximum) {
+                                                    Double minimum,
+                                                    Double maximum) {
             this(ignoreMissingData);
             this.minimum = minimum;
             this.maximum = maximum;
@@ -451,9 +464,13 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * Clone method
          */
         public DistributionAggregateFunctionMedian clone() {
-            return new DistributionAggregateFunctionMedian(this.ignoreMissingData,
-                                                           this.minimum,
-                                                           this.maximum);
+            DistributionAggregateFunctionMedian result = new DistributionAggregateFunctionMedian(this.ignoreMissingData,
+                                                                                                 this.minimum,
+                                                                                                 this.maximum);
+            if (dictionary != null) {
+                result.initialize(dictionary, type, hierarchy);
+            }
+            return result;
         }
 
         @Override
@@ -490,9 +507,11 @@ public abstract class DistributionAggregateFunction implements Serializable {
         public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
             super.initialize(dictionary, type, hierarchy);
             if (type instanceof DataTypeWithRatioScale) {
-                double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
-                this.minimum = values[0];
-                this.maximum = values[1];
+                if (minimum == null || maximum == null) {
+                    double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
+                    this.minimum = values[0];
+                    this.maximum = values[1];
+                }
             }
         }
 
@@ -566,9 +585,13 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * Clone method
          */
         public DistributionAggregateFunctionMode clone() {
-            return new DistributionAggregateFunctionMode(this.ignoreMissingData,
-                                                         this.minimum,
-                                                         this.maximum);
+            DistributionAggregateFunctionMode result = new DistributionAggregateFunctionMode(this.ignoreMissingData,
+                                                                                                 this.minimum,
+                                                                                                 this.maximum);
+            if (dictionary != null) {
+                result.initialize(dictionary, type, hierarchy);
+            }
+            return result;
         }
 
         @Override
