@@ -254,6 +254,12 @@ public class Model implements Serializable {
      ******************************************/
     private Set<String>                           selectedQuasiIdentifiers        = null;
     
+
+    /* *****************************************
+     * LOCAL RECODING
+     ******************************************/
+    private ModelLocalRecoding                    localRecodingModel              = new ModelLocalRecoding();
+    
     /**
      * Creates a new instance.
      *
@@ -297,7 +303,7 @@ public class Model implements Serializable {
 		return anonymizer;
 	}
 
-	/**
+    /**
      * Replaces the output config with a clone of the input config.
      */
     public void createClonedConfig() {
@@ -425,8 +431,8 @@ public class Model implements Serializable {
             }
         }
 	}
-    
-    /**
+
+	/**
      * Creates an ARXConfiguration for the subset.
      *
      * @return
@@ -444,8 +450,8 @@ public class Model implements Serializable {
         // Return the config
 		return config;
 	}
-
-	/**
+    
+    /**
      * Returns the current anonymizer.
      *
      * @return
@@ -453,7 +459,7 @@ public class Model implements Serializable {
 	public ARXAnonymizer getAnonymizer() {
 		return anonymizer;
 	}
-    
+
 	/**
      * Returns the last two selected attributes.
      *
@@ -463,7 +469,7 @@ public class Model implements Serializable {
 		if (pair == null) pair = new String[] { null, null };
 		return pair;
 	}
-	
+    
 	/**
 	 * Returns the audit trail
 	 * @return
@@ -486,7 +492,7 @@ public class Model implements Serializable {
         }
         return clipboard;
     }
-
+	
 	/**
      * Gets the csv config model.
      * @return
@@ -595,7 +601,7 @@ public class Model implements Serializable {
 	    return getRiskModel().getPopulationModel();
 	}
 
-    /**
+	/**
      * Returns the k-anonymity model.
      *
      * @return
@@ -603,8 +609,8 @@ public class Model implements Serializable {
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
 	}
-    
-	/**
+
+    /**
      * Returns the l-diversity model.
      *
      * @return
@@ -615,7 +621,7 @@ public class Model implements Serializable {
 	        }
 		return lDiversityModel;
 	}
-
+    
 	/**
      * Returns the project locale.
      *
@@ -628,6 +634,17 @@ public class Model implements Serializable {
 	        return locale;
 	    }
 	}
+
+	/**
+     * Returns the model for local recoding
+     * @return
+     */
+    public ModelLocalRecoding getLocalRecodingModel() {
+        if (this.localRecodingModel == null) {
+            this.localRecodingModel = new ModelLocalRecoding();
+        }
+        return localRecodingModel;
+    }
 	
 	/**
      * When a dataset has more records than this threshold,

@@ -100,26 +100,26 @@ public abstract class ViewProperties implements IView {
     }
 
     /** Internal stuff. */
-    protected final List<Property> roots  = new ArrayList<Property>();
-    
+    protected final List<Property> roots   = new ArrayList<Property>();
+
     /** Internal stuff. */
     protected final Composite      root;
-    
+
     /** Internal stuff. */
-    protected final NumberFormat   format = new DecimalFormat("##0.000"); //$NON-NLS-1$
-    
+    protected final NumberFormat   format  = new DecimalFormat("##0.000"); //$NON-NLS-1$
+
     /** Internal stuff. */
     protected Model                model;
-    
+
+    /** Internal stuff. */
+    protected final Controller     controller;
+
     /** Internal stuff. */
     protected TreeViewer           treeViewer;
-    
-    /** Internal stuff. */
-    private final Controller       controller;
-    
+
     /** Internal stuff. */
     private final ModelPart        reset;
-    
+
     /** Internal stuff. */
     private final AnalysisContext  context = new AnalysisContext();
     
@@ -145,12 +145,12 @@ public abstract class ViewProperties implements IView {
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(target, this);
-        this.controller = controller;
         if (reset != null) {
             controller.addListener(reset, this);
         }
         this.reset = reset;
         this.root = parent;
+        this.controller = controller;
         this.context.setTarget(target);
     }
 

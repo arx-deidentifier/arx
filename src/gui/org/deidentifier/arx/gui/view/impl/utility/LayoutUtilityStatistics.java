@@ -60,6 +60,9 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     /** Constant */
     private static final String         TAB_PROPERTIES         = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
 
+    /** Constant */
+    private static final String         TAB_LOCAL_RECODING     = Resources.getMessage("StatisticsView.8"); //$NON-NLS-1$
+
     /**  View */
     private final ComponentTitledFolder folder;
     
@@ -122,6 +125,13 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         item3a.setLayout(new FillLayout());
         final Composite item3 = folder.createItem(TAB_PROPERTIES, null);
         item3.setLayout(new FillLayout());
+        
+        Composite item4 = null;
+        if (target == ModelPart.OUTPUT) {
+            item4 = folder.createItem(TAB_LOCAL_RECODING, null);
+            item4.setLayout(new FillLayout());
+        } 
+        
         folder.setSelection(0);
         this.enable = folder.getButtonItem(label);
         this.enable.setEnabled(false);
@@ -137,6 +147,10 @@ public class LayoutUtilityStatistics implements ILayout, IView {
             new ViewPropertiesInput(item3, controller);
         } else {
             new ViewPropertiesOutput(item3, controller);
+        }
+
+        if (target == ModelPart.OUTPUT) {
+            new ViewLocalRecoding(item4, controller);
         }
     }
 

@@ -58,7 +58,7 @@ import org.eclipse.swt.widgets.TreeColumn;
  * @author Fabian Prasser
  */
 public class ViewPropertiesOutput extends ViewProperties {
-
+    
     /**
      * A content provider.
      *
@@ -118,14 +118,12 @@ public class ViewPropertiesOutput extends ViewProperties {
         }
 
         @Override
-        public Image
-                getColumnImage(final Object element, final int columnIndex) {
+        public Image getColumnImage(final Object element, final int columnIndex) {
             return null;
         }
 
         @Override
-        public String
-                getColumnText(final Object element, final int columnIndex) {
+        public String getColumnText(final Object element, final int columnIndex) {
             switch (columnIndex) {
             case 0:
                 return ((Property) element).property;

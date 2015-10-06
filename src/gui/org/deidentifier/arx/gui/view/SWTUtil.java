@@ -104,13 +104,13 @@ public class SWTUtil {
             }
         });
     }
-    
+
     /**
      * Creates grid data.
      *
      * @return
      */
-    public static GridData createFillGridData() {
+    public static GridData createFillGridData(int span) {
         final GridData data = new GridData();
         data.horizontalAlignment = SWT.FILL;
         data.verticalAlignment = SWT.FILL;
@@ -118,7 +118,17 @@ public class SWTUtil {
         data.grabExcessVerticalSpace = true;
         data.horizontalIndent=0;
         data.verticalIndent=0;
+        data.horizontalSpan = span;
         return data;
+    }
+
+    /**
+     * Creates grid data.
+     *
+     * @return
+     */
+    public static GridData createFillGridData() {
+        return createFillGridData(1);
     }
 
     /**
@@ -136,11 +146,20 @@ public class SWTUtil {
      * @return
      */
     public static GridData createFillHorizontallyGridData(boolean fill) {
+        return createFillHorizontallyGridData(fill, 1);
+    }
+    /**
+     * Creates grid data.
+     *
+     * @return
+     */
+    public static GridData createFillHorizontallyGridData(boolean fill, int span) {
         final GridData data = new GridData();
         data.horizontalAlignment = SWT.FILL;
         data.verticalAlignment = fill ? SWT.FILL : SWT.CENTER;
         data.grabExcessHorizontalSpace = true;
         data.grabExcessVerticalSpace = false;
+        data.horizontalSpan = span;
         data.horizontalIndent=0;
         data.verticalIndent=0;
         return data;
@@ -278,21 +297,6 @@ public class SWTUtil {
         d.grabExcessVerticalSpace = false;
         return d;
     }
-
-    /**
-     * Creates grid data.
-     *
-     * @param i
-     * @return
-     */
-    public static Object createSpanColumnsAndFillGridData(final int i) {
-        final GridData d = new GridData();
-        d.grabExcessHorizontalSpace = true;
-        d.grabExcessVerticalSpace = true;
-        d.horizontalSpan = i;
-        return d;
-    }
-
 
     /**
      * Creates grid data.

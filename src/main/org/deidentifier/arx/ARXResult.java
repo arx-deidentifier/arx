@@ -36,6 +36,7 @@ import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
@@ -439,9 +440,10 @@ public class ARXResult {
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
+     * @return The number of optimized records
      */
-    public void optimize(DataHandle handle) {
-        this.optimize(handle, 0.5d, new ARXListener(){
+    public int optimize(DataHandle handle) {
+        return this.optimize(handle, 0.5d, new ARXListener(){
             @Override
             public void progress(double progress) {
                 // Empty by design
@@ -458,9 +460,10 @@ public class ARXResult {
      *            will favor suppression, and a factor of 1 will favor
      *            generalization. The values in between can be used for
      *            balancing both methods.
+     * @return The number of optimized records
      */
-    public void optimize(DataHandle handle, double gsFactor) {
-        this.optimize(handle, gsFactor, new ARXListener(){
+    public int optimize(DataHandle handle, double gsFactor) {
+        return this.optimize(handle, gsFactor, new ARXListener(){
             @Override
             public void progress(double progress) {
                 // Empty by design
@@ -478,10 +481,16 @@ public class ARXResult {
      *            generalization. The values in between can be used for
      *            balancing both methods.
      * @param listener 
+     * @return The number of optimized records
      */
-    public void optimize(DataHandle handle,
+    public int optimize(DataHandle handle,
                          double gsFactor,
                          ARXListener listener) {
+        
+
+        if (gsFactor < 0d || gsFactor > 1d) {
+            throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");
+        }
         
         // Check, if output
         if (!(handle instanceof DataHandleOutput)) {
@@ -555,7 +564,7 @@ public class ARXResult {
         
         // Break, if no solution has been found
         if (result.optimum == null) {
-            return;
+            return 0;
         }
         
         // Else, merge the results back into the given handle
@@ -565,16 +574,110 @@ public class ARXResult {
         int[][] oldMicroaggregated = output.getOutputBufferMicroaggregated().getArray();
         int[][] newGeneralized = data.bufferGeneralized.getArray();
         int[][] newMicroaggregated = data.bufferMicroaggregated.getArray();
+        int optimized = 0;
         for (int oldIndex = 0; oldIndex < rowset.length(); oldIndex++) {
             if (rowset.contains(oldIndex)) {
                 newIndex++;
                 if (oldGeneralized != null && oldGeneralized.length != 0) {
                     System.arraycopy(newGeneralized[newIndex], 0, oldGeneralized[oldIndex], 0, newGeneralized[newIndex].length);
+                    optimized += (newGeneralized[newIndex][0] & Data.OUTLIER_MASK) != 0 ? 0 : 1;
                 }
                 if (oldMicroaggregated != null && oldMicroaggregated.length != 0) {
                     System.arraycopy(newMicroaggregated[newIndex], 0, oldMicroaggregated[oldIndex], 0, newMicroaggregated[newIndex].length);
                 }
             }
+        }
+        return optimized;
+    }
+    
+    /**
+     * This method optimizes the given data output with local recoding to improve its utility
+     * @param handle
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @param maxIterations The maximal number of iterations to perform
+     * @param adaptionFactor Is added to the gsFactor when reaching a fixpoint 
+     * @param listener 
+     */
+    public void optimizeIterative(DataHandle handle,
+                                  double gsFactor,
+                                  int maxIterations,
+                                  double adaptionFactor) {
+        this.optimizeIterative(handle, gsFactor, maxIterations, adaptionFactor, new ARXListener(){
+            @Override
+            public void progress(double progress) {
+                // Empty by design
+            }
+        });
+    }
+    
+    /**
+     * This method optimizes the given data output with local recoding to improve its utility
+     * @param handle
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @param maxIterations The maximal number of iterations to perform
+     * @param adaptionFactor Is added to the gsFactor when reaching a fixpoint 
+     * @param listener 
+     */
+    public void optimizeIterative(final DataHandle handle,
+                                  double gsFactor,
+                                  final int maxIterations,
+                                  final double adaptionFactor,
+                                  final ARXListener listener) {
+        
+        if (gsFactor < 0d || gsFactor > 1d) {
+            throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");
+        }
+        if (adaptionFactor < 0d || adaptionFactor > 1d) {
+            throw new IllegalArgumentException("Adaption factor must be in [0, 1]");
+        }
+        if (maxIterations <= 0) {
+            throw new IllegalArgumentException("Max. iterations must be > zero");
+        }
+
+        // Outer loop
+        int iterations = 0;
+        int optimized = Integer.MAX_VALUE;
+        double totalAdaption = 0d;
+        final double max = maxIterations != Integer.MAX_VALUE ? maxIterations : (1d - gsFactor) / adaptionFactor;
+        while (isOptimizable(handle) && iterations < maxIterations && optimized > 0) {
+
+            // Create a wrapped listener
+            final double base = maxIterations != Integer.MAX_VALUE ? iterations : totalAdaption / adaptionFactor;
+            ARXListener wrapper = new ARXListener() {
+                @Override
+                public void progress(double progress) {
+                    double _max = (max > 1d && !Double.isInfinite(max) ? max : 1d);
+                    double _base = (base > 0d && !Double.isNaN(base) ? base : 0d);
+                    double value = (progress + _base) / _max;
+                    listener.progress(value);
+                }
+            };
+
+            // Perform individual optimization
+            optimized = optimize(handle, gsFactor, wrapper);
+            
+            // Try to adapt, if possible
+            if (optimized == 0 && adaptionFactor > 0d) {
+                gsFactor += adaptionFactor;
+                totalAdaption += adaptionFactor;
+                
+                // If valid, try again
+                if (gsFactor <= 1d) {
+                    optimized = Integer.MAX_VALUE;
+                }
+            }
+            
+            iterations++;
         }
     }
     

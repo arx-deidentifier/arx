@@ -80,6 +80,7 @@ import org.deidentifier.arx.gui.worker.WorkerAnonymize;
 import org.deidentifier.arx.gui.worker.WorkerExport;
 import org.deidentifier.arx.gui.worker.WorkerImport;
 import org.deidentifier.arx.gui.worker.WorkerLoad;
+import org.deidentifier.arx.gui.worker.WorkerLocalRecode;
 import org.deidentifier.arx.gui.worker.WorkerSave;
 import org.deidentifier.arx.gui.worker.WorkerTransform;
 import org.deidentifier.arx.io.CSVDataOutput;
@@ -157,9 +158,59 @@ public class Controller implements IView {
                 this.updateViewConfig(true);
             } else {
                 this.model.getViewConfig().setMode(Mode.UNSORTED);
+                this.updateViewConfig(true);
             }
             this.update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, model.getOutput()));
         }
+    }
+    
+    /**
+     * Applies local recoding
+     */
+    public void actionLocalRecoding() {
+        
+
+        // Run the worker
+        final WorkerLocalRecode worker = new WorkerLocalRecode(model);
+        main.showProgressDialog(Resources.getMessage("Controller.140"), worker); //$NON-NLS-1$
+
+        // Show errors
+        if (worker.getError() != null) {
+
+            // Extract
+            Throwable t = worker.getError();
+            if (worker.getError() instanceof InvocationTargetException) {
+                t = worker.getError().getCause();
+            }
+            if (t instanceof OutOfMemoryError) {
+                main.showInfoDialog(main.getShell(),
+                                    Resources.getMessage("Controller.13"), //$NON-NLS-1$
+                                    Resources.getMessage("Controller.120")); //$NON-NLS-1$
+            } else if (t instanceof NullPointerException) {
+                main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.36"), t); //$NON-NLS-1$
+            } else {
+                main.showInfoDialog(main.getShell(),
+                                    Resources.getMessage("Controller.13"), //$NON-NLS-1$
+                                    Resources.getMessage("Controller.141") + t.getMessage()); //$NON-NLS-1$
+            }
+            return;
+        }
+
+        update(new ModelEvent(this,
+                              ModelPart.OUTPUT,
+                              model.getOutput()));
+
+        // Do not sort if dataset is too large
+        if (model.getMaximalSizeForComplexOperations() == 0 ||
+            model.getInputConfig().getInput().getHandle().getNumRows() <=
+            model.getMaximalSizeForComplexOperations()) {
+            this.model.getViewConfig().setMode(Mode.GROUPED);
+            this.updateViewConfig(true);
+        } else {
+            this.model.getViewConfig().setMode(Mode.UNSORTED);
+            this.updateViewConfig(true);
+        }
+        this.update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, model.getOutput()));
     }
 
     /**
@@ -1878,7 +1929,9 @@ public class Controller implements IView {
 
         handle = config.isSubset() ? handle.getView() : handle;
 
-        if (config.getMode() == Mode.SORTED_INPUT ||
+        if (config.getMode() == Mode.UNSORTED) {
+            model.setGroups(null);
+        } else  if (config.getMode() == Mode.SORTED_INPUT ||
             config.getMode() == Mode.SORTED_OUTPUT) {
 
             // Sort
