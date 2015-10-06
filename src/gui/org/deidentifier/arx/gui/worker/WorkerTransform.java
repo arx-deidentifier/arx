@@ -44,8 +44,7 @@ public class WorkerTransform extends Worker<DataHandle> {
     }
 
     @Override
-    public void
-            run(final IProgressMonitor arg0) throws InvocationTargetException,
+    public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                             InterruptedException {
 
         arg0.beginTask(Resources.getMessage("WorkerTransform.0"), 1); //$NON-NLS-1$
