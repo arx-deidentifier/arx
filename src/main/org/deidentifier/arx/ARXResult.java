@@ -502,8 +502,12 @@ public class ARXResult {
         for (int oldIndex = 0; oldIndex < rowset.length(); oldIndex++) {
             if (rowset.contains(oldIndex)) {
                 newIndex++;
-                System.arraycopy(newGeneralized[newIndex], 0, oldGeneralized[oldIndex], 0, newGeneralized[newIndex].length);
-                System.arraycopy(newMicroaggregated[newIndex], 0, oldMicroaggregated[oldIndex], 0, newMicroaggregated[newIndex].length);
+                if (oldGeneralized != null && oldGeneralized.length != 0) {
+                    System.arraycopy(newGeneralized[newIndex], 0, oldGeneralized[oldIndex], 0, newGeneralized[newIndex].length);
+                }
+                if (oldMicroaggregated != null && oldMicroaggregated.length != 0) {
+                    System.arraycopy(newMicroaggregated[newIndex], 0, oldMicroaggregated[oldIndex], 0, newMicroaggregated[newIndex].length);
+                }
             }
         }
     }
