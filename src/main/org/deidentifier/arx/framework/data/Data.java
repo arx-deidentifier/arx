@@ -142,15 +142,18 @@ public class Data implements Cloneable{
      * @return
      */
     public Data getSubsetInstance(RowSet rowset) {
-        List<int[]> newdata = new ArrayList<int[]>();
-        for (int row = 0; row < this.data.length; row++) {
-            if (rowset.contains(row)) {
-                newdata.add(data[row]);
+        int[][] array = null;
+        if (this.data != null) {
+            List<int[]> newdata = new ArrayList<int[]>();
+            for (int row = 0; row < this.data.length; row++) {
+                if (rowset.contains(row)) {
+                    newdata.add(data[row]);
+                }
             }
-        }
-        int[][] array = new int[newdata.size()][];
-        for (int i = 0; i < newdata.size(); i++) {
-            array[i] = newdata.get(i);
+            array = new int[newdata.size()][];
+            for (int i = 0; i < newdata.size(); i++) {
+                array[i] = newdata.get(i);
+            }
         }
         return new Data(array, header, map, dictionary);
     }
