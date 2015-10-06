@@ -378,6 +378,56 @@ public class ARXResult {
     }
 
     /**
+     * Returns whether local recoding can be applied to the given handle
+     * @param handle
+     * @return
+     */
+    public boolean isOptimizable(DataHandle handle) {
+
+        // Check, if output
+        if (!(handle instanceof DataHandleOutput)) {
+            return false;
+        }
+        
+        // Extract
+        DataHandleOutput output = (DataHandleOutput)handle;
+        
+        // Check, if input matches
+        if (output.getInputBuffer() == null || !output.getInputBuffer().equals(this.checker.getInputBuffer())) {
+            return false;
+        }
+        
+        // Create a set of supported privacy models
+        Set<Class<?>> supportedModels = new HashSet<Class<?>>();
+        supportedModels.add(KAnonymity.class);
+        supportedModels.add(DistinctLDiversity.class);
+        supportedModels.add(RecursiveCLDiversity.class);
+        supportedModels.add(EntropyLDiversity.class);
+        supportedModels.add(HierarchicalDistanceTCloseness.class);
+        supportedModels.add(EqualDistanceTCloseness.class);
+        supportedModels.add(Inclusion.class);
+        for (PrivacyCriterion c : config.getCriteria()) {
+            if (!supportedModels.contains(c.getClass())) {
+                return false;
+            }
+        }
+
+        // Check, if there are enough outliers
+        int outliers = 0;
+        for (int row = 0; row < output.getNumRows(); row++) {
+            if (output.isOutlier(row)) {
+                outliers++;
+            }
+        }
+        if (outliers < config.getMinimalGroupSize()) {
+            return false;
+        }
+        
+        // Yes, we probably can do this
+        return true;
+    }
+
+    /**
      * Indicates if a result is available.
      *
      * @return
@@ -387,36 +437,27 @@ public class ARXResult {
     }
 
     /**
-     * Returns a map of all microaggregation functions
-     * @param definition
-     * @return
-     */
-    private Map<String, DistributionAggregateFunction> getAggregateFunctions(DataDefinition definition) {
-        Map<String, DistributionAggregateFunction> result = new HashMap<String, DistributionAggregateFunction>();
-        for (String key : definition.getQuasiIdentifiersWithMicroaggregation()) {
-            result.put(key, definition.getMicroAggregationFunction(key).getFunction());
-        }
-        return result;
-    }
-
-    /**
-     * Releases the buffer.
-     *
-     * @param handle
-     */
-    protected void releaseBuffer(DataHandleOutput handle) {
-        if (handle == bufferLockedByHandle) {
-            bufferLockedByHandle = null;
-            bufferLockedByNode = null;
-        }
-    }
-    
-    /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
+     * @param listener 
      * @throws IOException 
      */
     public void optimize(DataHandle handle) {
+        this.optimize(handle, new ARXListener(){
+            @Override
+            public void progress(double progress) {
+                // Empty by design
+            }
+        });
+    }
+
+    /**
+     * This method optimizes the given data output with local recoding to improve its utility
+     * @param handle
+     * @param listener 
+     * @throws IOException 
+     */
+    public void optimize(DataHandle handle, ARXListener listener) {
         
         // Check, if output
         if (!(handle instanceof DataHandleOutput)) {
@@ -477,6 +518,7 @@ public class ARXResult {
         // Create an anonymizer
         // TODO: It stores some values that should be transferred?
         ARXAnonymizer anonymizer = new ARXAnonymizer();
+        anonymizer.setListener(listener);
         
         // Anonymize
         Result result = null;
@@ -509,6 +551,31 @@ public class ARXResult {
                     System.arraycopy(newMicroaggregated[newIndex], 0, oldMicroaggregated[oldIndex], 0, newMicroaggregated[newIndex].length);
                 }
             }
+        }
+    }
+    
+    /**
+     * Returns a map of all microaggregation functions
+     * @param definition
+     * @return
+     */
+    private Map<String, DistributionAggregateFunction> getAggregateFunctions(DataDefinition definition) {
+        Map<String, DistributionAggregateFunction> result = new HashMap<String, DistributionAggregateFunction>();
+        for (String key : definition.getQuasiIdentifiersWithMicroaggregation()) {
+            result.put(key, definition.getMicroAggregationFunction(key).getFunction());
+        }
+        return result;
+    }
+    
+    /**
+     * Releases the buffer.
+     *
+     * @param handle
+     */
+    protected void releaseBuffer(DataHandleOutput handle) {
+        if (handle == bufferLockedByHandle) {
+            bufferLockedByHandle = null;
+            bufferLockedByNode = null;
         }
     }
 }
