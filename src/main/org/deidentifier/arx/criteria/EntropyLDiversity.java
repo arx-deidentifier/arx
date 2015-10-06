@@ -92,4 +92,9 @@ public class EntropyLDiversity extends LDiversity {
     private final double log2(final double num) {
         return Math.log(num) / log2;
     }
+
+    @Override
+    public EntropyLDiversity clone() {
+        return new EntropyLDiversity(this.getAttribute(), this.getL());
+    }
 }

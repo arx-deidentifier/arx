@@ -151,4 +151,12 @@ public class PopulationUniqueness extends RiskBasedCriterion{
             return false;
         }
     }
+
+    @Override
+    public PopulationUniqueness clone() {
+        return new PopulationUniqueness(this.getRiskThreshold(),
+                                        this.getStatisticalModel(),
+                                        this.getPopulationModel(),
+                                        this.solverConfig);
+    }
 }

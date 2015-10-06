@@ -162,4 +162,9 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
 	public String toString() {
 		return t+"-closeness with hierarchical ground-distance for attribute '"+attribute+"'";
 	}
+
+    @Override
+    public HierarchicalDistanceTCloseness clone() {
+        return new HierarchicalDistanceTCloseness(this.getAttribute(), this.getT(), this.hierarchy);
+    }
 }

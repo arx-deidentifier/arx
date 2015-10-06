@@ -96,4 +96,11 @@ public class RecursiveCLDiversity extends LDiversity{
 	public String toString() {
 		return "recursive-("+c+","+minSize+")-diversity for attribute '"+attribute+"'";
 	}
+
+    @Override
+    public RecursiveCLDiversity clone() {
+        return new RecursiveCLDiversity(this.getAttribute(),
+                                        this.getC(),
+                                        (int)this.getL());
+    }
 }

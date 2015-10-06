@@ -110,6 +110,61 @@ public class DataManager {
 
     /** The size of the research subset. */
     private int                                        subsetSize = 0;
+    
+    /**
+     * For creating a projected instance
+     * @param dataAnalyzed
+     * @param dataGeneralized
+     * @param dataStatic
+     * @param header
+     * @param hierarchiesGeneralized
+     * @param hierarchiesHeights
+     * @param hierarchiesSensitive
+     * @param indexesSensitive
+     * @param maxLevels
+     * @param microaggregationFunctions
+     * @param microaggregationHeader
+     * @param microaggregationMap
+     * @param microaggregationNumAttributes
+     * @param microaggregationStartIndex
+     * @param minLevels
+     */
+    protected DataManager(Data dataAnalyzed,
+                       Data dataGeneralized,
+                       Data dataStatic,
+                       String[] header,
+                       GeneralizationHierarchy[] hierarchiesGeneralized,
+                       int[] hierarchiesHeights,
+                       Map<String, GeneralizationHierarchy> hierarchiesSensitive,
+                       Map<String, Integer> indexesSensitive,
+                       int[] maxLevels,
+                       DistributionAggregateFunction[] microaggregationFunctions,
+                       String[] microaggregationHeader,
+                       int[] microaggregationMap,
+                       int microaggregationNumAttributes,
+                       int microaggregationStartIndex,
+                       int[] minLevels) {
+        this.dataAnalyzed = dataAnalyzed;
+        this.dataGeneralized = dataGeneralized;
+        this.dataStatic = dataStatic;
+        this.header = header;
+        this.hierarchiesGeneralized = hierarchiesGeneralized;
+        this.hierarchiesHeights = hierarchiesHeights;
+        this.hierarchiesSensitive = hierarchiesSensitive;
+        this.indexesSensitive = indexesSensitive;
+        this.maxLevels = maxLevels;
+        this.microaggregationFunctions = microaggregationFunctions;
+        this.microaggregationHeader = microaggregationHeader;
+        this.microaggregationMap = microaggregationMap;
+        this.microaggregationNumAttributes = microaggregationNumAttributes;
+        this.microaggregationStartIndex = microaggregationStartIndex;
+        this.minLevels = minLevels;
+        
+        // Both variables are only used for getDistribution() and getTree()
+        // The projected instance delegates these methods to the original data manager
+        this.subset = null;
+        this.subsetSize = 0;
+    }
 
     /**
      * Creates a new data manager from pre-encoded data.
@@ -742,5 +797,35 @@ public class DataManager {
                 new Data(valsDI, headerAnalyzed, mapAnalyzed, dictionaryAnalyzed),
                 new Data(valsIS, headerStatic, mapStatic, dictionaryStatic) };
         return result;
+    }
+
+    /**
+     * Returns an instance of this data manager, that is projected onto the given rowset
+     * @param rowset
+     * @return
+     */
+    public DataManager getSubsetInstance(RowSet rowset) {
+        
+        DistributionAggregateFunction[] microaggregationFunctions = new DistributionAggregateFunction[this.microaggregationFunctions.length];
+        for (int i = 0; i < this.microaggregationFunctions.length; i++) {
+            microaggregationFunctions[i] = this.microaggregationFunctions[i].clone();
+        }
+        
+        return new DataManagerSubset(this,
+                                     this.dataAnalyzed.getSubsetInstance(rowset),
+                                     this.dataGeneralized.getSubsetInstance(rowset),
+                                     this.dataStatic.getSubsetInstance(rowset),
+                                     this.header,
+                                     this.hierarchiesGeneralized,
+                                     this.hierarchiesHeights,
+                                     this.hierarchiesSensitive,
+                                     this.indexesSensitive,
+                                     this.maxLevels,
+                                     microaggregationFunctions,
+                                     this.microaggregationHeader,
+                                     this.microaggregationMap,
+                                     this.microaggregationNumAttributes,
+                                     this.microaggregationStartIndex,
+                                     this.minLevels);
     }
 }

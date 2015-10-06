@@ -48,4 +48,9 @@ public class SampleUniqueness extends RiskBasedCriterion{
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
         return distribution.getFractionOfTuplesInClassesOfSize(1) <= getRiskThreshold();
     }
+
+    @Override
+    public SampleUniqueness clone() {
+        return new SampleUniqueness(this.getRiskThreshold());
+    }
 }

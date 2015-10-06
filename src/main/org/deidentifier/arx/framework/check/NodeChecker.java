@@ -184,6 +184,7 @@ public class NodeChecker {
                                            dictionarySensValue,
                                            dictionarySensFreq);
     }
+
     
     /**
      * Applies the given transformation and returns the dataset
@@ -191,6 +192,21 @@ public class NodeChecker {
      * @return
      */
     public TransformedData applyTransformation(final Transformation transformation) {
+        return applyTransformation(transformation,
+                                   new Dictionary(microaggregationNumAttributes));
+    }
+        
+    /**
+     * Applies the given transformation and returns the dataset
+     * @param transformation
+     * @param microaggregationDictionary A dictionary for microaggregated values
+     * @return
+     */
+    public TransformedData applyTransformation(final Transformation transformation,
+                                               final Dictionary microaggregationDictionary) {
+        
+        // Prepare
+        microaggregationDictionary.definalizeAll();
         
         // Apply transition and groupify
         currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
@@ -216,7 +232,8 @@ public class NodeChecker {
                                                                             microaggregationNumAttributes,
                                                                             microaggregationFunctions,
                                                                             microaggregationMap,
-                                                                            microaggregationHeader);
+                                                                            microaggregationHeader,
+                                                                            microaggregationDictionary);
         }
         
         // Perform suppression

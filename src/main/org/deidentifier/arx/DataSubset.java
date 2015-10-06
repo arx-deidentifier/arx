@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.carrotsearch.hppc.IntArrayList;
+
 /**
  * This class represents a data subset as required for d-presence.
  *
@@ -72,7 +74,7 @@ public class DataSubset implements Serializable {
         }
     }
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = 3945730896172205344L;
     
     /**
@@ -236,7 +238,7 @@ public class DataSubset implements Serializable {
     }
 
     /**
-     * 
+     * Getter
      *
      * @return
      */
@@ -245,11 +247,39 @@ public class DataSubset implements Serializable {
     }
 
     /**
+     * Getter
      * 
-     *
      * @return
      */
     public RowSet getSet() {
         return set;
+    }
+    
+    /**
+     * Clone
+     */
+    public DataSubset clone() {
+        return new DataSubset(this.set.clone(), Arrays.copyOf(this.array, this.array.length));
+    }
+
+    /**
+     * Returns a new data subset, only containing those rows that are included in the subset
+     * @param rowset
+     * @return
+     */
+    protected DataSubset getSubsetInstance(RowSet rowset) {
+        int index = -1;
+        RowSet newset = RowSet.create(rowset.size());
+        IntArrayList list = new IntArrayList();
+        for (int row = 0; row < this.set.length(); row++) {
+            if (rowset.contains(row)) {
+                index++;
+                if (this.set.contains(row)) {
+                    newset.add(index);
+                    list.add(index);
+                }
+            }
+        }
+        return new DataSubset(newset, list.toArray());
     }
 }

@@ -48,4 +48,9 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
         return 1.0d / (double)distribution.getAverageClassSize() <= getRiskThreshold();
     }
+
+    @Override
+    public AverageReidentificationRisk clone() {
+        return new AverageReidentificationRisk(this.getRiskThreshold());
+    }
 }

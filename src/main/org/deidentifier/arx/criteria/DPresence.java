@@ -123,4 +123,9 @@ public class DPresence extends ImplicitPrivacyCriterion{
 	public String toString() {
 		return "("+dMin+","+dMax+")-presence";
 	}
+
+    @Override
+    public DPresence clone() {
+        return new DPresence(this.getDMin(), this.getDMax(), this.getSubset().clone());
+    }
 }

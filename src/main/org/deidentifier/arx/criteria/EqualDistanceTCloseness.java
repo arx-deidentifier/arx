@@ -95,4 +95,9 @@ public class EqualDistanceTCloseness extends TCloseness {
 	public String toString() {
 		return t+"-closeness with equal ground-distance for attribute '"+attribute+"'";
 	}
+
+    @Override
+    public EqualDistanceTCloseness clone() {
+        return new EqualDistanceTCloseness(this.getAttribute(), this.getT());
+    }
 }

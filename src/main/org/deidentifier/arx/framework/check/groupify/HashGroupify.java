@@ -289,6 +289,7 @@ public class HashGroupify {
      * @param functions
      * @param map
      * @param header
+     * @param dictionary
      * @return
      */
     public Data performMicroaggregation(int[][] data,
@@ -296,10 +297,11 @@ public class HashGroupify {
                                         int num,
                                         DistributionAggregateFunction[] functions,
                                         int[] map,
-                                        String[] header) {
+                                        String[] header,
+                                        Dictionary dictionary) {
         
         // Prepare result
-        Data result = new Data(new int[data.length][num], header, map, new Dictionary(num));
+        Data result = new Data(new int[data.length][num], header, map, dictionary);
 
         // TODO: To improve performance, microaggregation and marking of outliers could be performed in one pass
         ObjectIntOpenHashMap<Distribution> cache = new ObjectIntOpenHashMap<Distribution>();

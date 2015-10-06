@@ -52,4 +52,9 @@ public class DistinctLDiversity extends LDiversity{
 	public String toString() {
 		return "distinct-"+minSize+"-diversity for attribute '"+attribute+"'";
 	}
+
+    @Override
+    public DistinctLDiversity clone() {
+        return new DistinctLDiversity(this.getAttribute(), (int)this.getL());
+    }
 }

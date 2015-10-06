@@ -250,15 +250,6 @@ public class DataHandleOutput extends DataHandle {
     }
 
     /**
-     * Returns the input buffer
-     * @return
-     */
-    protected int[][] getInputBuffer() {
-        checkRegistry();
-        return registry.getInputHandle().getInputBuffer();
-    }
-    
-    /**
      * Gets the num columns.
      * 
      * @return the num columns
@@ -268,7 +259,7 @@ public class DataHandleOutput extends DataHandle {
         checkRegistry();
         return header.length;
     }
-    
+
     /**
      * Gets the num rows.
      * 
@@ -279,7 +270,7 @@ public class DataHandleOutput extends DataHandle {
         checkRegistry();
         return outputGeneralized.getDataLength();
     }
-    
+
     /**
      * Gets the value.
      * 
@@ -437,6 +428,31 @@ public class DataHandleOutput extends DataHandle {
         }
         handler.checkInterrupt();
         return vals.toArray(new String[vals.size()]);
+    }
+    
+    /**
+     * Returns the input buffer
+     * @return
+     */
+    protected int[][] getInputBuffer() {
+        checkRegistry();
+        return registry.getInputHandle().getInputBuffer();
+    }
+    
+    /**
+     * Returns the output buffer
+     * @return
+     */
+    protected Data getOutputBufferGeneralized() {
+        return outputGeneralized;
+    }
+    
+    /**
+     * Returns the output buffer
+     * @return
+     */
+    protected Data getOutputBufferMicroaggregated() {
+        return outputMicroaggregated;
     }
     
     /**

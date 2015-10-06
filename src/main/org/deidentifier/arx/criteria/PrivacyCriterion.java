@@ -112,4 +112,9 @@ public abstract class PrivacyCriterion implements Serializable{
      * @return
      */
     public abstract String toString();
+    
+    /**
+     * Clone
+     */
+    public abstract PrivacyCriterion clone();
 }

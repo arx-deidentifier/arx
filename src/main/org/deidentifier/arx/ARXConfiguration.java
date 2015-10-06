@@ -453,9 +453,37 @@ public class ARXConfiguration implements Serializable, Cloneable {
             result.attributeWeights = null;
         }
         return result;
-
     }
 
+    /**
+     * Clones this config and projects everything onto the given subset.<br>
+     * - All privacy models will be cloned<br>
+     * - Subsets in d-presence will be projected accordingly<br>
+     * - Utility measures will be cloned<br>
+     *
+     * @return
+     */
+    protected ARXConfiguration getSubsetInstance(RowSet rowset) {
+        ARXConfiguration result = this.clone();
+        result.aCriteria = null;
+        HashSet<PrivacyCriterion> criteria = new HashSet<PrivacyCriterion>();
+        for (PrivacyCriterion criterion : result.criteria) {
+            PrivacyCriterion clone = null;
+            if (criterion instanceof Inclusion) {
+                clone = new Inclusion(((Inclusion)criterion).getSubset().getSubsetInstance(rowset));
+            } else if (criterion instanceof DPresence) {
+                clone = new DPresence(((DPresence)criterion).getDMin(),
+                                      ((DPresence)criterion).getDMax(),
+                                      ((DPresence)criterion).getSubset().getSubsetInstance(rowset));
+            } else {
+                clone = criterion.clone();
+            }
+            criteria.add(clone);
+        }
+        result.criteria = criteria;
+        result.metric = result.getMetric().getDescription().createInstance(result.getMetric().getConfiguration());
+        return result;
+    }
     /**
      * Returns whether the configuration contains a criterion of the given class.
      *

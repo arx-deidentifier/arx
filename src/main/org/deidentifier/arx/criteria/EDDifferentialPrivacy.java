@@ -307,4 +307,9 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
     public String toString() {
         return "("+epsilon+","+delta+")-DP";
     }
+    
+    @Override
+    public EDDifferentialPrivacy clone() {
+        return new EDDifferentialPrivacy(this.getEpsilon(), this.getDelta(), this.getGeneralizationScheme());
+    }
 }

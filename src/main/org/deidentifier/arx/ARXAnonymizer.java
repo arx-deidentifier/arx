@@ -40,6 +40,7 @@ import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
+import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -77,6 +78,9 @@ public class ARXAnonymizer {
         /** The time. */
         final long              time;
 
+        /** The global optimum */
+        final Transformation    optimum;
+
         /**
          * Creates a new instance.
          *
@@ -99,6 +103,7 @@ public class ARXAnonymizer {
             this.manager = manager;
             this.algorithm = algorithm;
             this.time = time;
+            this.optimum = algorithm.getGlobalOptimum();
         }
 
         /**
@@ -113,7 +118,7 @@ public class ARXAnonymizer {
 		    // Create lattice
 	        final ARXLattice lattice = new ARXLattice(solutionSpace,
 	                                                  (algorithm instanceof FLASHAlgorithmImpl),
-	                                                  algorithm.getGlobalOptimum(),
+	                                                  optimum,
 	                                                  manager.getDataGeneralized().getHeader(),
 	                                                  config.getInternalConfiguration());
 
@@ -186,14 +191,24 @@ public class ARXAnonymizer {
             throw new RuntimeException("This data handle is locked. Please release it first");
         }
         
+        // Update registry
         DataHandle handle = data.getHandle();
         handle.getDefinition().materializeHierarchies(handle);
         checkBeforeEncoding(handle, config);
         handle.getRegistry().reset();
         handle.getRegistry().createInputSubset(config);
+        
+        // Create manager
+        DataManager manager = getDataManager(handle, handle.getDefinition(), config);
+
+        // Attach arrays to data handle
+        ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
+                                         manager.getDataAnalyzed().getArray(),
+                                         manager.getDataStatic().getArray());
+
 
         // Execute
-        return anonymize(handle, handle.getDefinition(), config).asResult(config, handle);
+        return anonymize(manager, handle.getDefinition(), config).asResult(config, handle);
     }
     
     /**
@@ -287,23 +302,15 @@ public class ARXAnonymizer {
     /**
      * Reset a previous lattice and run the algorithm .
      *
-     * @param handle
+     * @param manager
      * @param definition
      * @param config
      * @return
      * @throws IOException
      */
-    private Result anonymize(final DataHandle handle,
-                             final DataDefinition definition,
-                             final ARXConfiguration config) throws IOException {
-
-        // Encode
-        final DataManager manager = getDataManager(handle, definition, config);
-        
-        // Attach arrays to data handle
-        ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
-                                         manager.getDataAnalyzed().getArray(),
-                                         manager.getDataStatic().getArray());
+    protected Result anonymize(final DataManager manager,
+                               final DataDefinition definition,
+                               final ARXConfiguration config) throws IOException {
 
         // Initialize
         config.initialize(manager);

@@ -17,17 +17,22 @@
 
 package org.deidentifier.arx;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXAnonymizer.Result;
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
+import org.deidentifier.arx.criteria.EntropyLDiversity;
+import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
+import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -36,8 +41,6 @@ import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
-
-import cern.colt.list.IntArrayList;
 
 /**
  * Encapsulates the results of an execution of the ARX algorithm.
@@ -411,6 +414,7 @@ public class ARXResult {
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
+     * @throws IOException 
      */
     public void optimize(DataHandle handle) {
         
@@ -427,54 +431,80 @@ public class ARXResult {
             throw new IllegalArgumentException("This output data is associated to the correct input data");
         }
         
-        // Check, if only k-anonymity, potentially combined with inclusion
+        // Create a set of supported privacy models
         Set<Class<?>> supportedModels = new HashSet<Class<?>>();
         supportedModels.add(KAnonymity.class);
         supportedModels.add(DistinctLDiversity.class);
+        supportedModels.add(RecursiveCLDiversity.class);
+        supportedModels.add(EntropyLDiversity.class);
+        supportedModels.add(HierarchicalDistanceTCloseness.class);
+        supportedModels.add(EqualDistanceTCloseness.class);
         supportedModels.add(Inclusion.class);
         for (PrivacyCriterion c : config.getCriteria()) {
             if (!supportedModels.contains(c.getClass())) {
                 throw new UnsupportedOperationException("This method does currently not supported the model: " + c.getClass().getSimpleName());
             }
         }
-        
-        // Extract the subset, if any
-        RowSet set = null;
-        if (config.containsCriterion(DPresence.class)) {
-            set = config.getCriterion(DPresence.class).getSubset().getSet();
+
+        // We are now ready, to go
+        // Collect input and row indices
+        RowSet rowset = RowSet.create(output.getNumRows());
+        for (int row = 0; row < output.getNumRows(); row++) {
+            if (output.isOutlier(row)) {
+                rowset.add(row);
+            }
         }
         
         // Everything that is used from here on, needs to be either
         // (a) state-less, or
         // (b) a fresh copy of the original configuration.
 
-        // We start by cloning the configuration
-        ARXConfiguration config = this.config.clone();
-        
-        // Regarding privacy-criteria, everything is fine:
-        // - KAnonymity and Inclusion are state-less
-        // - DistinctLDiversity is state-less
-        // - The super-class of DistinctLDiversity, which is ExplicitPrivacyCriterion, is not state-less
-        //   but the state remains the same when post-optimizing
+        // We start by creating a projected instance of the configuration
+        // - All privacy models will be cloned
+        // - Subsets in d-presence will be projected accordingly
+        // - Utility measures will be cloned
+        ARXConfiguration config = this.config.getSubsetInstance(rowset);
 
-        // Metrics are not state-less, but we create a copy
-        config.setMetric(this.config.getMetric().getDescription().createInstance(this.config.getMetric().getConfiguration()));
-        
-        // In the data definition, only MicroAggregationFunctions maintain a state, but these
+        // In the data definition, only MicroAggregationFunctions maintain a state, but these 
         // are cloned, when cloning the definition
+        // TODO: This is probably not necessary, because they are used from the data manager,
+        //       which in turn creates a clone by itself
         DataDefinition definition = this.definition.clone();
         
-        // We are now ready, to go
-        // Collect input and row indices
-        IntArrayList indexes = new IntArrayList();
-        for (int row = 0; row < output.getNumRows(); row++) {
-            if (output.isOutlier(row)) {
-                if (set == null || set.contains(row)) {
-                    indexes.add(row);
-                }
-            }
+        // Clone the data manager
+        DataManager manager = this.manager.getSubsetInstance(rowset);
+        
+        // Create an anonymizer
+        // TODO: It stores some values that should be transferred?
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        
+        // Anonymize
+        Result result = null;
+        try {
+            result = anonymizer.anonymize(manager, definition, config);
+        } catch (IOException e) {
+            // This should not happen at this point in time, as data has already been read from the source
+            throw new RuntimeException("Internal error");
         }
         
-        // TODO:
+        // Break, if no solution has been found
+        if (result.optimum == null) {
+            return;
+        }
+        
+        // Else, merge the results back into the given handle
+        TransformedData data = result.checker.applyTransformation(result.optimum, output.getOutputBufferMicroaggregated().getDictionary());
+        int newIndex = -1;
+        int[][] oldGeneralized = output.getOutputBufferGeneralized().getArray();
+        int[][] oldMicroaggregated = output.getOutputBufferMicroaggregated().getArray();
+        int[][] newGeneralized = data.bufferGeneralized.getArray();
+        int[][] newMicroaggregated = data.bufferMicroaggregated.getArray();
+        for (int oldIndex = 0; oldIndex < rowset.length(); oldIndex++) {
+            if (rowset.contains(oldIndex)) {
+                newIndex++;
+                System.arraycopy(newGeneralized[newIndex], 0, oldGeneralized[oldIndex], 0, newGeneralized[newIndex].length);
+                System.arraycopy(newMicroaggregated[newIndex], 0, oldMicroaggregated[oldIndex], 0, newMicroaggregated[newIndex].length);
+            }
+        }
     }
 }
