@@ -68,6 +68,23 @@ public abstract class DistributionAggregateFunction implements Serializable {
             super(ignoreMissingData, true);
         }
         
+        /**
+         * Clone constructor
+         * @param ignoreMissingData
+         * @param minimum
+         * @param maximum
+         * @param descriptiveStatistics
+         */
+        private DistributionAggregateFunctionArithmeticMean(boolean ignoreMissingData,
+                                                           double minimum,
+                                                           double maximum,
+                                                           DescriptiveStatistics descriptiveStatistics) {
+            this(ignoreMissingData);
+            this.minimum = minimum;
+            this.maximum = maximum;
+            this.stats = descriptiveStatistics;
+        }
+
         @Override
         public <T> String aggregate(Distribution distribution) {
             stats.clear();
@@ -83,7 +100,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * Clone method
          */
         public DistributionAggregateFunctionArithmeticMean clone() {
-            return new DistributionAggregateFunctionArithmeticMean(this.ignoreMissingData);
+            return new DistributionAggregateFunctionArithmeticMean(this.ignoreMissingData,
+                                                                   this.minimum,
+                                                                   this.maximum,
+                                                                   new DescriptiveStatistics());
         }
 
         @Override
@@ -208,6 +228,23 @@ public abstract class DistributionAggregateFunction implements Serializable {
             super(ignoreMissingData, true);
         }
 
+        /**
+         * Clone constructor
+         * @param ignoreMissingData
+         * @param minimum
+         * @param maximum
+         * @param descriptiveStatistics
+         */
+        private DistributionAggregateFunctionGeometricMean(boolean ignoreMissingData,
+                                                           double minimum,
+                                                           double maximum,
+                                                           DescriptiveStatistics descriptiveStatistics) {
+            this(ignoreMissingData);
+            this.minimum = minimum;
+            this.maximum = maximum;
+            this.stats = descriptiveStatistics;
+        }
+
         @Override
         public <T> String aggregate(Distribution distribution) {
             stats.clear();
@@ -223,7 +260,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * Clone method
          */
         public DistributionAggregateFunctionGeometricMean clone() {
-            return new DistributionAggregateFunctionGeometricMean(this.ignoreMissingData);
+            return new DistributionAggregateFunctionGeometricMean(this.ignoreMissingData,
+                                                                  this.minimum,
+                                                                  this.maximum,
+                                                                  new DescriptiveStatistics());
         }
 
         @Override
@@ -327,6 +367,20 @@ public abstract class DistributionAggregateFunction implements Serializable {
             super(ignoreMissingData, true);
         }
 
+        /**
+         * Clone constructor
+         * @param ignoreMissingData
+         * @param minimum
+         * @param maximum
+         */
+        private DistributionAggregateFunctionMedian(boolean ignoreMissingData,
+                                                    double minimum,
+                                                    double maximum) {
+            this(ignoreMissingData);
+            this.minimum = minimum;
+            this.maximum = maximum;
+        }
+
         @Override
         public <T> String aggregate(Distribution distribution) {
             
@@ -397,7 +451,9 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * Clone method
          */
         public DistributionAggregateFunctionMedian clone() {
-            return new DistributionAggregateFunctionMedian(this.ignoreMissingData);
+            return new DistributionAggregateFunctionMedian(this.ignoreMissingData,
+                                                           this.minimum,
+                                                           this.maximum);
         }
 
         @Override
@@ -484,6 +540,20 @@ public abstract class DistributionAggregateFunction implements Serializable {
             super(ignoreMissingData, true);
         }
 
+        /**
+         * Clone constructor
+         * @param ignoreMissingData
+         * @param minimum
+         * @param maximum
+         */
+        private DistributionAggregateFunctionMode(boolean ignoreMissingData,
+                                                  double minimum,
+                                                  double maximum) {
+            this(ignoreMissingData);
+            this.minimum = minimum;
+            this.maximum = maximum;
+        }
+
         @Override
         public <T> String aggregate(Distribution distribution) {
 
@@ -496,7 +566,9 @@ public abstract class DistributionAggregateFunction implements Serializable {
          * Clone method
          */
         public DistributionAggregateFunctionMode clone() {
-            return new DistributionAggregateFunctionMode(this.ignoreMissingData);
+            return new DistributionAggregateFunctionMode(this.ignoreMissingData,
+                                                         this.minimum,
+                                                         this.maximum);
         }
 
         @Override
