@@ -419,7 +419,7 @@ public class ARXResult {
                 outliers++;
             }
         }
-        if (outliers < config.getMinimalGroupSize()) {
+        if (config.getMinimalGroupSize() != Integer.MAX_VALUE && outliers < config.getMinimalGroupSize()) {
             return false;
         }
         
@@ -439,11 +439,9 @@ public class ARXResult {
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
-     * @param listener 
-     * @throws IOException 
      */
     public void optimize(DataHandle handle) {
-        this.optimize(handle, new ARXListener(){
+        this.optimize(handle, 0.5d, new ARXListener(){
             @Override
             public void progress(double progress) {
                 // Empty by design
@@ -454,10 +452,36 @@ public class ARXResult {
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
-     * @param listener 
-     * @throws IOException 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
      */
-    public void optimize(DataHandle handle, ARXListener listener) {
+    public void optimize(DataHandle handle, double gsFactor) {
+        this.optimize(handle, gsFactor, new ARXListener(){
+            @Override
+            public void progress(double progress) {
+                // Empty by design
+            }
+        });
+    }
+
+    /**
+     * This method optimizes the given data output with local recoding to improve its utility
+     * @param handle
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @param listener 
+     */
+    public void optimize(DataHandle handle,
+                         double gsFactor,
+                         ARXListener listener) {
         
         // Check, if output
         if (!(handle instanceof DataHandleOutput)) {
@@ -504,7 +528,7 @@ public class ARXResult {
         // - All privacy models will be cloned
         // - Subsets in d-presence will be projected accordingly
         // - Utility measures will be cloned
-        ARXConfiguration config = this.config.getSubsetInstance(rowset);
+        ARXConfiguration config = this.config.getSubsetInstance(rowset, gsFactor);
 
         // In the data definition, only MicroAggregationFunctions maintain a state, but these 
         // are cloned, when cloning the definition

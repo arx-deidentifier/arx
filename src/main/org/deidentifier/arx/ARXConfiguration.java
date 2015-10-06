@@ -35,6 +35,7 @@ import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
  * A generic configuration for the ARX anonymizer.
@@ -460,10 +461,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * - All privacy models will be cloned<br>
      * - Subsets in d-presence will be projected accordingly<br>
      * - Utility measures will be cloned<br>
+     * @param gsFactor 
      *
      * @return
      */
-    protected ARXConfiguration getSubsetInstance(RowSet rowset) {
+    protected ARXConfiguration getSubsetInstance(RowSet rowset, double gsFactor) {
         ARXConfiguration result = this.clone();
         result.aCriteria = null;
         HashSet<PrivacyCriterion> criteria = new HashSet<PrivacyCriterion>();
@@ -481,7 +483,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
             criteria.add(clone);
         }
         result.criteria = criteria;
-        result.metric = result.getMetric().getDescription().createInstance(result.getMetric().getConfiguration());
+        MetricConfiguration utilityConfig = result.getMetric().getConfiguration();
+        utilityConfig.setGsFactor(gsFactor);
+        result.metric = result.getMetric().getDescription().createInstance(utilityConfig);
         return result;
     }
     /**
