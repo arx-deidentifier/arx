@@ -118,6 +118,9 @@ public class DataHandleOutput extends DataHandle {
     /** Suppression handling. */
     private final String suppressionString;
 
+    /** Flag determining whether this buffer has been optimized */
+    private boolean      optimized = false;
+
     /**
      * Instantiates a new handle.
      * 
@@ -290,6 +293,14 @@ public class DataHandleOutput extends DataHandle {
         
         // Perform
         return internalGetValue(row, col);
+    }
+    
+    /**
+     * Has this handle been optimized with local recoding?
+     * @return
+     */
+    public boolean isOptimized() {
+        return this.optimized;
     }
     
     /**
@@ -602,5 +613,13 @@ public class DataHandleOutput extends DataHandle {
             outputMicroaggregated.getArray()[row1] = outputMicroaggregated.getArray()[row2];
             outputMicroaggregated.getArray()[row2] = temp;
         }
+    }
+    
+    /**
+     * Marks this handle as optimized
+     * @param optimized
+     */
+    protected void setOptimized(boolean optimized) {
+        this.optimized = true;
     }
 }

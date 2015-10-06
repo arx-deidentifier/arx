@@ -296,7 +296,7 @@ public class ARXResult {
 
         // Release lock
         if (!fork && bufferLockedByHandle != null) {
-            if (bufferLockedByNode == node) {
+            if (bufferLockedByNode == node && !((DataHandleOutput)bufferLockedByHandle).isOptimized()) {
                 return bufferLockedByHandle;
             } else {
                 registry.release(bufferLockedByHandle);
@@ -306,7 +306,13 @@ public class ARXResult {
         }
         
         DataHandle handle = registry.getOutputHandle(node);
-        if (handle != null) return handle;
+        if (handle != null) {
+            if (!((DataHandleOutput)handle).isOptimized()) {
+                return handle;
+            } else {
+                registry.release(handle);
+            }
+        }
 
         // Apply the transformation
         final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
@@ -587,6 +593,13 @@ public class ARXResult {
                 }
             }
         }
+        
+        // Mark as optimized
+        if (optimized != 0) {
+            output.setOptimized(true);
+        }
+        
+        // Return
         return optimized;
     }
     
