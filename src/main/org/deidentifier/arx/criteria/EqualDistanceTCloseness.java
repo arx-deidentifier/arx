@@ -73,7 +73,7 @@ public class EqualDistanceTCloseness extends TCloseness {
          * Additionally,
          * SUM_{i \in Q\P} q_i = 1 - SUM_{i \in P} q_i = 1 + SUM_{i \in P} - q_i
          * 
-         * As a result, we implement the metric as follows
+         * As a result, we implement the distance measure as follows
          * 
          * D[P, Q] = 1/2 * ( 1 + SUM_{i \in P} (|p_i - q_i| - q_i))
          */
