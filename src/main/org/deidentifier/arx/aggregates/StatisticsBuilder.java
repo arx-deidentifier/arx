@@ -443,7 +443,7 @@ public class StatisticsBuilder {
             
             // Handle optimized handles
             int lower = handle.isOptimized() ? 1 : level;
-            int upper = handle.isOptimized() ? _hierarchy[0].length: level;
+            int upper = handle.isOptimized() ? _hierarchy[0].length: level + 1;
             
             // Build higher level order from base order
             for (int i = 0; i < _hierarchy.length; i++) {
