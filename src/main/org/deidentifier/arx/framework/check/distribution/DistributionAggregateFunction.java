@@ -203,6 +203,35 @@ public abstract class DistributionAggregateFunction implements Serializable {
                 return true;
             }
         }
+
+        @Override
+        public <T> double getMeanError(Distribution distribution) {
+
+            // Prepare iteration
+            int[] buckets = distribution.getBuckets();
+            int[] state = new int[] { -1, 0 }; // value, next offset
+            read(buckets, state);
+            int current = state[0];
+            int previous = -1;
+
+            // Compute the generalization level
+            int lvl = 0;
+            int val = hierarchy[current][0];
+            outer: while (read(buckets, state)) {
+                previous = current;
+                current = state[0];
+                while (hierarchy[current][lvl] != val) {
+                    lvl++;
+                    if (lvl == hierarchy[previous].length -1) {
+                        break outer;
+                    }
+                    val = hierarchy[previous][lvl];
+                }
+            }
+            
+            // Return error
+            return (double) lvl / (double) (hierarchy[0].length - 1);
+        }
     }
 
     /**
