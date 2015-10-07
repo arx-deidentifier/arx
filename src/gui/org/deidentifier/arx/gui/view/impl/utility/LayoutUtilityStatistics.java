@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.utility;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
@@ -113,24 +114,24 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         
         // Create the tab folder
         folder = new ComponentTitledFolder(parent, controller, bar, null, false, true);
-        final Composite item0 = folder.createItem(TAB_SUMMARY, null);
+        final Composite item0 = folder.createItem(TAB_SUMMARY, null, true);
         item0.setLayout(new FillLayout());
-        final Composite item1 = folder.createItem(TAB_DISTRIBUTION, null);
+        final Composite item1 = folder.createItem(TAB_DISTRIBUTION, null, true);
         item1.setLayout(new FillLayout());
-        final Composite item1b = folder.createItem(TAB_DISTRIBUTION_TABLE, null);
+        final Composite item1b = folder.createItem(TAB_DISTRIBUTION_TABLE, null, true);
         item1b.setLayout(new FillLayout());
-        final Composite item2 = folder.createItem(TAB_CONTINGENCY, null);
+        final Composite item2 = folder.createItem(TAB_CONTINGENCY, null, true);
         item2.setLayout(new FillLayout());
-        final Composite item2b = folder.createItem(TAB_CONTINGENCY_TABLE, null);
+        final Composite item2b = folder.createItem(TAB_CONTINGENCY_TABLE, null, true);
         item2b.setLayout(new FillLayout());
-        final Composite item3a = folder.createItem(TAB_CLASSES_TABLE, null);
+        final Composite item3a = folder.createItem(TAB_CLASSES_TABLE, null, true);
         item3a.setLayout(new FillLayout());
-        final Composite item3 = folder.createItem(TAB_PROPERTIES, null);
+        final Composite item3 = folder.createItem(TAB_PROPERTIES, null, true);
         item3.setLayout(new FillLayout());
         
         Composite item4 = null;
         if (target == ModelPart.OUTPUT) {
-            item4 = folder.createItem(TAB_LOCAL_RECODING, null);
+            item4 = folder.createItem(TAB_LOCAL_RECODING, null, false);
             item4.setLayout(new FillLayout());
         } 
         
@@ -154,6 +155,13 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         if (target == ModelPart.OUTPUT) {
             new ViewLocalRecoding(item4, controller);
         }
+        
+        // Set initial visibility
+        folder.setVisibleItems(Arrays.asList(new String[] { TAB_SUMMARY,
+                                                            TAB_DISTRIBUTION,
+                                                            TAB_CONTINGENCY,
+                                                            TAB_CLASSES_TABLE,
+                                                            TAB_PROPERTIES }));
     }
 
     /**

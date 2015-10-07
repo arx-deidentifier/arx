@@ -56,15 +56,17 @@ public class ComponentTitledFolder implements IComponent {
      * @author Fabian Prasser
      */
     private class TitledFolderEntry {
-        
-        /** Field*/
+
+        /** Field */
         private String  text;
-        /** Field*/
+        /** Field */
         private Control control;
-        /** Field*/
+        /** Field */
         private Image   image;
-        /** Field*/
+        /** Field */
         private int     index;
+        /** Field */
+        private boolean hideable;
         
         /**
          * Creates a new instance
@@ -72,12 +74,14 @@ public class ComponentTitledFolder implements IComponent {
          * @param control
          * @param image
          * @param index
+         * @param hideable
          */
-        public TitledFolderEntry(String text, Control control, Image image, int index) {
+        public TitledFolderEntry(String text, Control control, Image image, int index, boolean hideable) {
             this.text = text;
             this.control = control;
             this.image = image;
             this.index = index;
+            this.hideable = hideable;
         }
     }
 
@@ -169,7 +173,19 @@ public class ComponentTitledFolder implements IComponent {
      * @return
      */
     public Composite createItem(String title, Image image){
-        return createItem(title, image, getItemCount());
+        return createItem(title, image, getItemCount(), false);
+    }
+
+    /**
+     * Creates a new entry in the folder.
+     *
+     * @param title
+     * @param image
+     * @param hideable
+     * @return
+     */
+    public Composite createItem(String title, Image image, boolean hideable){
+        return createItem(title, image, getItemCount(), hideable);
     }
 
     /**
@@ -178,9 +194,10 @@ public class ComponentTitledFolder implements IComponent {
      * @param title
      * @param image
      * @param index
+     * @param hideable
      * @return
      */
-    public Composite createItem(String title, Image image, int index){
+    public Composite createItem(String title, Image image, int index, boolean hideable){
 
         Composite composite = new Composite(folder, SWT.NONE);
         composite.setLayout(new GridLayout());
@@ -190,7 +207,7 @@ public class ComponentTitledFolder implements IComponent {
         if (image!=null) item.setImage(image);
         item.setShowClose(false);
         item.setControl(composite);
-        entries.add(new TitledFolderEntry(title, composite, image, index));
+        entries.add(new TitledFolderEntry(title, composite, image, index, hideable));
         return composite;
     }
 
@@ -320,7 +337,7 @@ public class ComponentTitledFolder implements IComponent {
         
         boolean changed = false;
         
-        for (String item : getAllItems()) {
+        for (String item : getAllHideableItems()) {
             if (items.contains(item)) {
                 changed |= setVisible(item, true);
                 if (this.folder.getItemCount() == 1) {
@@ -332,7 +349,9 @@ public class ComponentTitledFolder implements IComponent {
         }
         
         if (changed && this.itemVisibilityListener != null) {
-            this.itemVisibilityListener.widgetSelected(new SelectionEvent(new Event()));
+            Event event = new Event();
+            event.widget = this.folder;
+            this.itemVisibilityListener.widgetSelected(new SelectionEvent(event));
         }
     }
 
@@ -356,11 +375,11 @@ public class ComponentTitledFolder implements IComponent {
             item.addSelectionListener(new SelectionAdapter(){
                 @Override
                 public void widgetSelected(SelectionEvent arg0) {
-                    List<String> result = controller.actionShowMultiSelectionDialog(folder.getShell(), 
-                                                              "Manage folder items", 
-                                                              "Select items to display in the folder",
-                                                              getAllItems(), 
-                                                              getVisibleItems());
+                    List<String> result = controller.actionShowMultiSelectionDialog(folder.getShell(),
+                                                                                    Resources.getMessage("ComponentTitledFolder.0"), //$NON-NLS-1$
+                                                                                    Resources.getMessage("ComponentTitledFolder.1"), //$NON-NLS-1$
+                                                                                    getAllHideableItems(),
+                                                                                    getVisibleItems());
                     
                     if (result != null) {
                         setVisibleItems(result);
@@ -405,10 +424,12 @@ public class ComponentTitledFolder implements IComponent {
      * Returns all items
      * @return
      */
-    private List<String> getAllItems() {
+    private List<String> getAllHideableItems() {
         List<String> result = new ArrayList<String>();
         for (TitledFolderEntry entry : this.entries) {
-            result.add(entry.text);
+            if (entry.hideable) {
+                result.add(entry.text);
+            }
         }
         return result;
     }
@@ -437,7 +458,12 @@ public class ComponentTitledFolder implements IComponent {
      */
     private boolean setInvisible(String text) {
         for (CTabItem item : folder.getItems()){
-            if (item.getText().equals(text)) {
+            label: if (item.getText().equals(text)) {
+                for (TitledFolderEntry entry : this.entries) {
+                    if (entry.text.equals(text) && !entry.hideable) {
+                        break label;
+                    }
+                }
                 item.dispose();
                 return true;
             }

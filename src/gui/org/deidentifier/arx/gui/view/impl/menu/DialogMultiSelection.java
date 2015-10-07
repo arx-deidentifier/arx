@@ -84,8 +84,8 @@ public class DialogMultiSelection extends TitleAreaDialog implements IDialog {
     @Override
     public void create() {
         super.create();
-        setTitle(Resources.getMessage(title)); //$NON-NLS-1$
-        setMessage(Resources.getMessage(message), IMessageProvider.NONE); //$NON-NLS-1$
+        setTitle(title); //$NON-NLS-1$
+        setMessage(message, IMessageProvider.NONE); //$NON-NLS-1$
     }
 
     /**
