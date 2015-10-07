@@ -17,6 +17,10 @@
 
 package org.deidentifier.arx.gui.view.impl.common;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -44,9 +48,48 @@ import org.eclipse.swt.widgets.ToolItem;
  * @author Fabian Prasser
  */
 public class ComponentTitledFolder implements IComponent {
+
+    /**
+     * An entry in a folder
+     * 
+     * @author Fabian Prasser
+     */
+    private class TitledFolderEntry {
+        
+        /** Field*/
+        private String  text;
+        /** Field*/
+        private Control control;
+        /** Field*/
+        private Image   image;
+        /** Field*/
+        private int     index;
+        
+        /**
+         * Creates a new instance
+         * @param text
+         * @param control
+         * @param image
+         * @param index
+         */
+        public TitledFolderEntry(String text, Control control, Image image, int index) {
+            this.text = text;
+            this.control = control;
+            this.image = image;
+            this.index = index;
+        }
+    }
+
+    private List<TitledFolderEntry> entries = new ArrayList<TitledFolderEntry>();
+
+    /** The folder */
+    private final CTabFolder        folder;
+
+    /** Controller */
+    private final Controller        controller;
     
-    /**  TODO */
-    private final CTabFolder folder;
+    /** Flag*/
+    private final boolean supportsHidingElements;
 
     /**
      * Creates a new instance.
@@ -57,7 +100,7 @@ public class ComponentTitledFolder implements IComponent {
      * @param id
      */
     public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButton bar, String id){
-        this(parent, controller, bar, id, false);
+        this(parent, controller, bar, id, false, false);
     }
 
     /**
@@ -69,11 +112,19 @@ public class ComponentTitledFolder implements IComponent {
      * @param id
      * @param bottom
      */
-    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButton bar, String id, boolean bottom){
+    public ComponentTitledFolder(Composite parent, 
+                                 Controller controller, 
+                                 ComponentTitledFolderButton bar, 
+                                 String id, 
+                                 boolean bottom,
+                                 boolean supportsHidingElements){
 
         int flags = SWT.BORDER | SWT.FLAT;
         if (bottom) flags |= SWT.BOTTOM;
         else flags |= SWT.TOP;
+        
+        this.controller = controller;
+        this.supportsHidingElements = supportsHidingElements;
         
         folder = new CTabFolder(parent, flags);
         folder.setUnselectedCloseVisible(false);
@@ -139,7 +190,7 @@ public class ComponentTitledFolder implements IComponent {
         if (image!=null) item.setImage(image);
         item.setShowClose(false);
         item.setControl(composite);
-        
+        entries.add(new TitledFolderEntry(title, composite, image, index));
         return composite;
     }
     
@@ -242,12 +293,19 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * @param arg0
-     * @param arg1
-     * @see org.eclipse.swt.widgets.Control#setSize(int, int)
+     * Sets the according item visible
+     * @param item
+     * @param visible
      */
-    public void setSize(int arg0, int arg1) {
-        folder.setSize(arg0, arg1);
+    public void setVisible(String item, boolean visible) {
+        if (!supportsHidingElements) {
+            return;
+        }
+        if (visible) {
+            this.setVisible(item);
+        } else {
+            this.setInvisible(item);
+        }
     }
 
     /**
@@ -291,5 +349,66 @@ public class ComponentTitledFolder implements IComponent {
         
         int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         folder.setTabHeight(Math.max(height, folder.getTabHeight()));
+    }
+
+    /**
+     * Returns a list of all invisible entries
+     * @return
+     */
+    private List<TitledFolderEntry> getInvisibleEntries() {
+        List<TitledFolderEntry> result = new ArrayList<TitledFolderEntry>();
+        result.addAll(this.entries);
+        for (CTabItem item : folder.getItems()){
+            Iterator<TitledFolderEntry> iter = result.iterator();
+            while (iter.hasNext()) {
+                if (item.getText().equals(iter.next().text)) {
+                    iter.remove();
+                }
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Sets the given item invisible
+     * @param item
+     */
+    private void setInvisible(String text) {
+        for (CTabItem item : folder.getItems()){
+            if (item.getText().equals(text)) {
+                item.dispose();
+                return;
+            }
+        }
+    }
+
+    /**
+     * Sets an entry visible
+     * @return
+     */
+    private void setVisible(String text) {
+        List<TitledFolderEntry> list = getInvisibleEntries();
+        
+        // Find
+        for (TitledFolderEntry entry : list) {
+            if (entry.text.equals(text)) {
+
+                // Shift
+                int index = entry.index;
+                for (TitledFolderEntry other : list) {
+                    if (other.index < entry.index) {
+                        index--;
+                    }
+                }
+                
+                // Show
+                CTabItem item = new CTabItem(folder, SWT.NULL, index);
+                item.setText(entry.text);
+                if (entry.image!=null) item.setImage(entry.image);
+                item.setShowClose(false);
+                item.setControl(entry.control);
+                return;
+            }
+        }
     }
 }
