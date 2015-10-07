@@ -1,7 +1,9 @@
 org.deidentifier.arx
 org.deidentifier.arx.aggregates
 org.deidentifier.arx.algorithm
+org.deidentifier.arx.common
 org.deidentifier.arx.criteria
+org.deidentifier.arx.exceptions
 org.deidentifier.arx.framework
 org.deidentifier.arx.framework.check
 org.deidentifier.arx.framework.check.distribution

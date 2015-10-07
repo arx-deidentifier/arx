@@ -1,6 +1,8 @@
 org.deidentifier.arx
 org.deidentifier.arx.aggregates
+org.deidentifier.arx.common
 org.deidentifier.arx.criteria
+org.deidentifier.arx.exceptions
 org.deidentifier.arx.gui
 org.deidentifier.arx.gui.model
 org.deidentifier.arx.gui.resources

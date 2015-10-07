@@ -170,6 +170,10 @@
 <dd>
 <div class="block">Adds a row to the tabular representation of this hierarchy.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/Groupify.html#add(T)">add(T)</a></span> - Method in class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/Groupify.html" title="class in org.deidentifier.arx.common">Groupify</a></dt>
+<dd>
+<div class="block">Adds a new element</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/Data.DefaultData.html#add(java.lang.String...)">add(String...)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/Data.DefaultData.html" title="class in org.deidentifier.arx">Data.DefaultData</a></dt>
 <dd>
 <div class="block">Adds a row to this data object.</div>
@@ -185,10 +189,6 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/Distribution.html#add(int)">add(int)</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a></dt>
 <dd>
 <div class="block">Adds a element to the hashtable.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/risk/Groupify.html#add(T)">add(T)</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/Groupify.html" title="class in org.deidentifier.arx.risk">Groupify</a></dt>
-<dd>
-<div class="block">Adds a new element</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/RowSet.html#add(int)">add(int)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a></dt>
 <dd>&nbsp;</dd>
@@ -432,6 +432,10 @@
 <dd>
 <div class="block">Performs data anonymization.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXAnonymizer.html#anonymize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">anonymize(DataManager, DataDefinition, ARXConfiguration)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a></dt>
+<dd>
+<div class="block">Reset a previous lattice and run the algorithm .</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/history/MRUCache.html#append(T)">append(T)</a></span> - Method in class org.deidentifier.arx.framework.check.history.<a href="./org/deidentifier/arx/framework/check/history/MRUCache.html" title="class in org.deidentifier.arx.framework.check.history">MRUCache</a></dt>
 <dd>
 <div class="block">Append.</div>
@@ -469,6 +473,10 @@
 <div class="block">Apply snapshot.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/NodeChecker.html#applyTransformation(org.deidentifier.arx.framework.lattice.Transformation)">applyTransformation(Transformation)</a></span> - Method in class org.deidentifier.arx.framework.check.<a href="./org/deidentifier/arx/framework/check/NodeChecker.html" title="class in org.deidentifier.arx.framework.check">NodeChecker</a></dt>
+<dd>
+<div class="block">Applies the given transformation and returns the dataset</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/NodeChecker.html#applyTransformation(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.data.Dictionary)">applyTransformation(Transformation, Dictionary)</a></span> - Method in class org.deidentifier.arx.framework.check.<a href="./org/deidentifier/arx/framework/check/NodeChecker.html" title="class in org.deidentifier.arx.framework.check">NodeChecker</a></dt>
 <dd>
 <div class="block">Applies the given transformation and returns the dataset</div>
 </dd>
@@ -831,11 +839,45 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/AttributeType.Hierarchy.DefaultHierarchy.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/AttributeType.Hierarchy.DefaultHierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy.DefaultHierarchy</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/AttributeType.MicroAggregationFunction.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/AttributeType.MicroAggregationFunction.html" title="class in org.deidentifier.arx">AttributeType.MicroAggregationFunction</a></dt>
+<dd>
+<div class="block">Clones this function</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/AverageReidentificationRisk.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/AverageReidentificationRisk.html" title="class in org.deidentifier.arx.criteria">AverageReidentificationRisk</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/DistinctLDiversity.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/DistinctLDiversity.html" title="class in org.deidentifier.arx.criteria">DistinctLDiversity</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/DPresence.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/DPresence.html" title="class in org.deidentifier.arx.criteria">DPresence</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/EDDifferentialPrivacy.html" title="class in org.deidentifier.arx.criteria">EDDifferentialPrivacy</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/EntropyLDiversity.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/EntropyLDiversity.html" title="class in org.deidentifier.arx.criteria">EntropyLDiversity</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/EqualDistanceTCloseness.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/EqualDistanceTCloseness.html" title="class in org.deidentifier.arx.criteria">EqualDistanceTCloseness</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/HierarchicalDistanceTCloseness.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/HierarchicalDistanceTCloseness.html" title="class in org.deidentifier.arx.criteria">HierarchicalDistanceTCloseness</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/KAnonymity.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/KAnonymity.html" title="class in org.deidentifier.arx.criteria">KAnonymity</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/PopulationUniqueness.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/PopulationUniqueness.html" title="class in org.deidentifier.arx.criteria">PopulationUniqueness</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></dt>
+<dd>
+<div class="block">Clone</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/RecursiveCLDiversity.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/RecursiveCLDiversity.html" title="class in org.deidentifier.arx.criteria">RecursiveCLDiversity</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/criteria/SampleUniqueness.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/SampleUniqueness.html" title="class in org.deidentifier.arx.criteria">SampleUniqueness</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataDefinition.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataGeneralizationScheme.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataGeneralizationScheme.html" title="class in org.deidentifier.arx">DataGeneralizationScheme</a></dt>
 <dd>
 <div class="block">Clone method</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataSubset.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></dt>
+<dd>
+<div class="block">Clone</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataType.ARXDate.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataType.ARXDate.html" title="class in org.deidentifier.arx">DataType.ARXDate</a></dt>
 <dd>&nbsp;</dd>
@@ -849,6 +891,34 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataType.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a></dt>
+<dd>
+<div class="block">Clones this function</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean</a></dt>
+<dd>
+<div class="block">Clone method</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionGeneralization.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionGeneralization.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction.DistributionAggregateFunctionGeneralization</a></dt>
+<dd>
+<div class="block">Clone method</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean</a></dt>
+<dd>
+<div class="block">Clone method</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionInterval.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionInterval.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction.DistributionAggregateFunctionInterval</a></dt>
+<dd>
+<div class="block">Clone method</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionMedian.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionMedian.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction.DistributionAggregateFunctionMedian</a></dt>
+<dd>
+<div class="block">Clone method</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionMode.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionMode.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction.DistributionAggregateFunctionMode</a></dt>
+<dd>
+<div class="block">Clone method</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/Data.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/InformationLoss.html#clone()">clone()</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a></dt>
@@ -943,6 +1013,26 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html#compareTo(org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisk)">compareTo(RiskModelAttributes.QuasiIdentifierRisk)</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes.QuasiIdentifierRisk</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="./org/deidentifier/arx/exceptions/ComputationInterruptedException.html" title="class in org.deidentifier.arx.exceptions"><span class="strong">ComputationInterruptedException</span></a> - Exception in <a href="./org/deidentifier/arx/exceptions/package-summary.html">org.deidentifier.arx.exceptions</a></dt>
+<dd>
+<div class="block">Local class for interrupts.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/exceptions/ComputationInterruptedException.html#ComputationInterruptedException()">ComputationInterruptedException()</a></span> - Constructor for exception org.deidentifier.arx.exceptions.<a href="./org/deidentifier/arx/exceptions/ComputationInterruptedException.html" title="class in org.deidentifier.arx.exceptions">ComputationInterruptedException</a></dt>
+<dd>
+<div class="block">Constructor</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/exceptions/ComputationInterruptedException.html#ComputationInterruptedException(java.lang.String)">ComputationInterruptedException(String)</a></span> - Constructor for exception org.deidentifier.arx.exceptions.<a href="./org/deidentifier/arx/exceptions/ComputationInterruptedException.html" title="class in org.deidentifier.arx.exceptions">ComputationInterruptedException</a></dt>
+<dd>
+<div class="block">Constructor</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/exceptions/ComputationInterruptedException.html#ComputationInterruptedException(java.lang.String, java.lang.Throwable)">ComputationInterruptedException(String, Throwable)</a></span> - Constructor for exception org.deidentifier.arx.exceptions.<a href="./org/deidentifier/arx/exceptions/ComputationInterruptedException.html" title="class in org.deidentifier.arx.exceptions">ComputationInterruptedException</a></dt>
+<dd>
+<div class="block">Constructor</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/exceptions/ComputationInterruptedException.html#ComputationInterruptedException(java.lang.Throwable)">ComputationInterruptedException(Throwable)</a></span> - Constructor for exception org.deidentifier.arx.exceptions.<a href="./org/deidentifier/arx/exceptions/ComputationInterruptedException.html" title="class in org.deidentifier.arx.exceptions">ComputationInterruptedException</a></dt>
+<dd>
+<div class="block">Constructor</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/algorithm/AbstractAlgorithm.html#computeUtilityForMonotonicMetrics(org.deidentifier.arx.framework.lattice.Transformation)">computeUtilityForMonotonicMetrics(Transformation)</a></span> - Method in class org.deidentifier.arx.algorithm.<a href="./org/deidentifier/arx/algorithm/AbstractAlgorithm.html" title="class in org.deidentifier.arx.algorithm">AbstractAlgorithm</a></dt>
 <dd>
 <div class="block">Determine information loss of the given node if it can be
@@ -2228,7 +2318,7 @@
 <dd>
 <div class="block">An implementation of the class DataHandle for output data.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleOutput.html#DataHandleOutput(org.deidentifier.arx.ARXResult, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">DataHandleOutput(ARXResult, DataRegistry, DataManager, Data, Data, ARXLattice.ARXNode, StatisticsEquivalenceClasses, DataDefinition, ARXConfiguration)</a></span> - Constructor for class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleOutput.html#DataHandleOutput(org.deidentifier.arx.ARXResult, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">DataHandleOutput(ARXResult, DataRegistry, DataManager, Data, Data, ARXLattice.ARXNode, DataDefinition, ARXConfiguration)</a></span> - Constructor for class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
 <dd>
 <div class="block">Instantiates a new handle.</div>
 </dd>
@@ -2254,13 +2344,17 @@
 <dd>
 <div class="block">This implementation of a data handle projects a given data handle onto a given research subset.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleSubset.html#DataHandleSubset(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataSubset, org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses)">DataHandleSubset(DataHandle, DataSubset, StatisticsEquivalenceClasses)</a></span> - Constructor for class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleSubset.html#DataHandleSubset(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataSubset)">DataHandleSubset(DataHandle, DataSubset)</a></span> - Constructor for class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
 <dd>
 <div class="block">Creates a new handle that represents the research subset.</div>
 </dd>
 <dt><a href="./org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">DataManager</span></a> - Class in <a href="./org/deidentifier/arx/framework/data/package-summary.html">org.deidentifier.arx.framework.data</a></dt>
 <dd>
 <div class="block">Holds all data needed for the anonymization process.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/DataManager.html#DataManager(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, java.lang.String[], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[], java.util.Map, java.util.Map, int[], org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], java.lang.String[], int[], int, int, int[])">DataManager(Data, Data, Data, String[], GeneralizationHierarchy[], int[], Map&lt;String, GeneralizationHierarchy&gt;, Map&lt;String, Integer&gt;, int[], DistributionAggregateFunction[], String[], int[], int, int, int[])</a></span> - Constructor for class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a></dt>
+<dd>
+<div class="block">For creating a projected instance</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/DataManager.html#DataManager(java.lang.String[], int[][], org.deidentifier.arx.framework.data.Dictionary, org.deidentifier.arx.DataDefinition, java.util.Set, java.util.Map)">DataManager(String[], int[][], Dictionary, DataDefinition, Set&lt;PrivacyCriterion&gt;, Map&lt;String, DistributionAggregateFunction&gt;)</a></span> - Constructor for class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a></dt>
 <dd>
@@ -2272,6 +2366,14 @@
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/DataManager.AttributeTypeInternal.html#DataManager.AttributeTypeInternal()">DataManager.AttributeTypeInternal()</a></span> - Constructor for class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/DataManager.AttributeTypeInternal.html" title="class in org.deidentifier.arx.framework.data">DataManager.AttributeTypeInternal</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="./org/deidentifier/arx/framework/data/DataManagerSubset.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">DataManagerSubset</span></a> - Class in <a href="./org/deidentifier/arx/framework/data/package-summary.html">org.deidentifier.arx.framework.data</a></dt>
+<dd>
+<div class="block">A data manager that is projected onto a given subset.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/DataManagerSubset.html#DataManagerSubset(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, java.lang.String[], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[], java.util.Map, java.util.Map, int[], org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], java.lang.String[], int[], int, int, int[])">DataManagerSubset(DataManager, Data, Data, Data, String[], GeneralizationHierarchy[], int[], Map&lt;String, GeneralizationHierarchy&gt;, Map&lt;String, Integer&gt;, int[], DistributionAggregateFunction[], String[], int[], int, int, int[])</a></span> - Constructor for class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/DataManagerSubset.html" title="class in org.deidentifier.arx.framework.data">DataManagerSubset</a></dt>
+<dd>
+<div class="block">Constructor</div>
+</dd>
 <dt><a href="./org/deidentifier/arx/DataScale.html" title="enum in org.deidentifier.arx"><span class="strong">DataScale</span></a> - Enum in <a href="./org/deidentifier/arx/package-summary.html">org.deidentifier.arx</a></dt>
 <dd>
 <div class="block">This class represents different scales of measure.</div>
@@ -2366,6 +2468,10 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/io/CSVSyntax.html#DEFAULT_QUOTE">DEFAULT_QUOTE</a></span> - Static variable in class org.deidentifier.arx.io.<a href="./org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a></dt>
 <dd>
 <div class="block">Default values.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/Dictionary.html#definalizeAll()">definalizeAll()</a></span> - Method in class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a></dt>
+<dd>
+<div class="block">Definalizes the dictionary</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataHandle.html#definition">definition</a></span> - Variable in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
 <dd>
@@ -2669,6 +2775,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsContingencyTable.Entry.html#equals(java.lang.Object)">equals(Object)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsContingencyTable.Entry.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable.Entry</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/TupleWrapper.html#equals(java.lang.Object)">equals(Object)</a></span> - Method in class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/TupleWrapper.html" title="class in org.deidentifier.arx.common">TupleWrapper</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataSelector.html#equals(java.util.Date)">equals(Date)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataSelector.html" title="class in org.deidentifier.arx">DataSelector</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataSelector.html#equals(double)">equals(double)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataSelector.html" title="class in org.deidentifier.arx">DataSelector</a></dt>
@@ -2731,7 +2839,7 @@
 <dd>
 <div class="block">Finalizes all dimensions.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/risk/Groupify.html#first()">first()</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/Groupify.html" title="class in org.deidentifier.arx.risk">Groupify</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/Groupify.html#first()">first()</a></span> - Method in class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/Groupify.html" title="class in org.deidentifier.arx.common">Groupify</a></dt>
 <dd>
 <div class="block">Returns the first entry for iterations</div>
 </dd>
@@ -3010,7 +3118,9 @@
 <div class="block">Returns the mean</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataSubset.html#getArray()">getArray()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Getter</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/Data.html#getArray()">getArray()</a></span> - Method in class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></dt>
 <dd>
 <div class="block">Returns the data array.</div>
@@ -3073,15 +3183,7 @@
 <dd>
 <div class="block">Returns the maximal size of an equivalence class.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getAverageEquivalenceClassSize()">getAverageEquivalenceClassSize()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></dt>
-<dd>
-<div class="block">Returns the maximal size of an equivalence class.</div>
-</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getAverageEquivalenceClassSizeIncludingOutliers()">getAverageEquivalenceClassSizeIncludingOutliers()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
-<dd>
-<div class="block">Returns the maximal size of an equivalence class.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getAverageEquivalenceClassSizeIncludingOutliers()">getAverageEquivalenceClassSizeIncludingOutliers()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></dt>
 <dd>
 <div class="block">Returns the maximal size of an equivalence class.</div>
 </dd>
@@ -3331,7 +3433,7 @@
 <dd>
 <div class="block">Returns a contingency table for the given columns.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/risk/Groupify.Group.html#getCount()">getCount()</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/Groupify.Group.html" title="class in org.deidentifier.arx.risk">Groupify.Group</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/Groupify.Group.html#getCount()">getCount()</a></span> - Method in class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/Groupify.Group.html" title="class in org.deidentifier.arx.common">Groupify.Group</a></dt>
 <dd>
 <div class="block">The count</div>
 </dd>
@@ -3588,6 +3690,10 @@
 <dd>
 <div class="block">Returns the distribution of the given sensitive attribute in the original dataset.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/DataManagerSubset.html#getDistribution(int[][], int, int)">getDistribution(int[][], int, int)</a></span> - Method in class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/DataManagerSubset.html" title="class in org.deidentifier.arx.framework.data">DataManagerSubset</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/DataManagerSubset.html#getDistribution(java.lang.String)">getDistribution(String)</a></span> - Method in class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/DataManagerSubset.html" title="class in org.deidentifier.arx.framework.data">DataManagerSubset</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/criteria/DPresence.html#getDMax()">getDMax()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="./org/deidentifier/arx/criteria/DPresence.html" title="class in org.deidentifier.arx.criteria">DPresence</a></dt>
 <dd>
 <div class="block">Returns dMax.</div>
@@ -3620,7 +3726,7 @@
 <dd>
 <div class="block">Returns a double value from the specified cell.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/risk/Groupify.Group.html#getElement()">getElement()</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/Groupify.Group.html" title="class in org.deidentifier.arx.risk">Groupify.Group</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/Groupify.Group.html#getElement()">getElement()</a></span> - Method in class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/Groupify.Group.html" title="class in org.deidentifier.arx.common">Groupify.Group</a></dt>
 <dd>
 <div class="block">The element</div>
 </dd>
@@ -3655,10 +3761,6 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getEquivalenceClassStatistics()">getEquivalenceClassStatistics()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilderInterruptible</a></dt>
 <dd>
 <div class="block">Returns statistics about the equivalence classes.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getEquivalenceClassStatistics()">getEquivalenceClassStatistics()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a></dt>
-<dd>
-<div class="block">Returns statistics</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/io/CSVSyntax.html#getEscape()">getEscape()</a></span> - Method in class org.deidentifier.arx.io.<a href="./org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a></dt>
 <dd>
@@ -4125,6 +4227,18 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#getInformationLossInternalRaw(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternalRaw(Transformation, HashGroupify)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleInput.html#getInputBuffer()">getInputBuffer()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleInput.html" title="class in org.deidentifier.arx">DataHandleInput</a></dt>
+<dd>
+<div class="block">Returns the input buffer</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleOutput.html#getInputBuffer()">getInputBuffer()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
+<dd>
+<div class="block">Returns the input buffer</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/NodeChecker.html#getInputBuffer()">getInputBuffer()</a></span> - Method in class org.deidentifier.arx.framework.check.<a href="./org/deidentifier/arx/framework/check/NodeChecker.html" title="class in org.deidentifier.arx.framework.check">NodeChecker</a></dt>
+<dd>
+<div class="block">Returns the input buffer</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/risk/HIPAAConstants.html#getInputStream(java.lang.String)">getInputStream(String)</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/HIPAAConstants.html" title="class in org.deidentifier.arx.risk">HIPAAConstants</a></dt>
 <dd>
 <div class="block">Implement this to load the according file</div>
@@ -4482,15 +4596,7 @@
 <dd>
 <div class="block">Returns the maximal size of an equivalence class.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getMaximalEquivalenceClassSize()">getMaximalEquivalenceClassSize()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></dt>
-<dd>
-<div class="block">Returns the maximal size of an equivalence class.</div>
-</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getMaximalEquivalenceClassSizeIncludingOutliers()">getMaximalEquivalenceClassSizeIncludingOutliers()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
-<dd>
-<div class="block">Returns the maximal size of an equivalence class.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getMaximalEquivalenceClassSizeIncludingOutliers()">getMaximalEquivalenceClassSizeIncludingOutliers()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></dt>
 <dd>
 <div class="block">Returns the maximal size of an equivalence class.</div>
 </dd>
@@ -4539,6 +4645,8 @@
 <div class="block">Returns properties about the attribute's domain.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean.html#getMeanError(org.deidentifier.arx.framework.check.distribution.Distribution)">getMeanError(Distribution)</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionGeneralization.html#getMeanError(org.deidentifier.arx.framework.check.distribution.Distribution)">getMeanError(Distribution)</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionGeneralization.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction.DistributionAggregateFunctionGeneralization</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean.html#getMeanError(org.deidentifier.arx.framework.check.distribution.Distribution)">getMeanError(Distribution)</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean</a></dt>
 <dd>&nbsp;</dd>
@@ -4620,15 +4728,7 @@
 <dd>
 <div class="block">Returns the minimal size of an equivalence class.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getMinimalEquivalenceClassSize()">getMinimalEquivalenceClassSize()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></dt>
-<dd>
-<div class="block">Returns the minimal size of an equivalence class.</div>
-</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getMinimalEquivalenceClassSizeIncludingOutliers()">getMinimalEquivalenceClassSizeIncludingOutliers()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
-<dd>
-<div class="block">Returns the minimal size of an equivalence class.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getMinimalEquivalenceClassSizeIncludingOutliers()">getMinimalEquivalenceClassSizeIncludingOutliers()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></dt>
 <dd>
 <div class="block">Returns the minimal size of an equivalence class.</div>
 </dd>
@@ -4755,42 +4855,37 @@
 <div class="block">Returns the number of equivalence classes in the currently selected data
  representation.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getNumberOfEquivalenceClasses()">getNumberOfEquivalenceClasses()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></dt>
-<dd>
-<div class="block">Returns the number of equivalence classes in the currently selected data
- representation.</div>
-</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getNumberOfEquivalenceClasses()">getNumberOfEquivalenceClasses()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a></dt>
 <dd>
 <div class="block">Returns the current size in terms of classes</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfEquivalenceClassesIncludingOutliers()">getNumberOfEquivalenceClassesIncludingOutliers()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
+<dd>
+<div class="block">Returns the number of outlying equivalence classes in the currently selected data
+ representation.</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsSummary.html#getNumberOfMeasuresAsString()">getNumberOfMeasuresAsString()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsSummary.html" title="class in org.deidentifier.arx.aggregates">StatisticsSummary</a></dt>
 <dd>
 <div class="block">Returns the number of measures</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfOutlyingEquivalenceClasses()">getNumberOfOutlyingEquivalenceClasses()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
-<dd>
-<div class="block">Returns the number of outlying equivalence classes in the currently selected data
- representation.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getNumberOfOutlyingEquivalenceClasses()">getNumberOfOutlyingEquivalenceClasses()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></dt>
-<dd>
-<div class="block">Returns the number of outlying equivalence classes in the currently selected data
- representation.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfOutlyingTuples()">getNumberOfOutlyingTuples()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
 <dd>
 <div class="block">Returns the number of outliers in the currently selected data
  representation.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getNumberOfOutlyingTuples()">getNumberOfOutlyingTuples()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfTuples()">getNumberOfTuples()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
 <dd>
-<div class="block">Returns the number of outliers in the currently selected data
+<div class="block">Returns the number of tuples in the currently selected data
  representation.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html#getNumberOfTuples()">getNumberOfTuples()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyDistribution</a></dt>
 <dd>
 <div class="block">Returns the number of tuples</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfTuplesIncludingOutliers()">getNumberOfTuplesIncludingOutliers()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
+<dd>
+<div class="block">Returns the number of tuples in the currently selected data
+ representation.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/risk/RiskModelHistogram.html#getNumClasses()">getNumClasses()</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a></dt>
 <dd>
@@ -4921,6 +5016,14 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXResult.html#getOutput(boolean)">getOutput(boolean)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
 <dd>
 <div class="block">Returns a handle to the data obtained by applying the optimal transformation.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleOutput.html#getOutputBufferGeneralized()">getOutputBufferGeneralized()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
+<dd>
+<div class="block">Returns the output buffer</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleOutput.html#getOutputBufferMicroaggregated()">getOutputBufferMicroaggregated()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
+<dd>
+<div class="block">Returns the output buffer</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/Distribution.html#getPackedElements()">getPackedElements()</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a></dt>
 <dd>
@@ -5199,7 +5302,7 @@
 <dd>
 <div class="block">Returns a risk estimator for the given set of quasi-identifiers</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/risk/RiskModelAttributes.html#getRiskProvider(java.util.Set, org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean)">getRiskProvider(Set&lt;String&gt;, RiskEstimateBuilder.WrappedBoolean)</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/risk/RiskModelAttributes.html#getRiskProvider(java.util.Set, org.deidentifier.arx.common.WrappedBoolean)">getRiskProvider(Set&lt;String&gt;, WrappedBoolean)</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes</a></dt>
 <dd>
 <div class="block">Implement this to provide risk estimates</div>
 </dd>
@@ -5284,7 +5387,9 @@
 <div class="block">Returns the sensitive attributes.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataSubset.html#getSet()">getSet()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Getter</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/DomainShare.html#getShare(int, int)">getShare(int, int)</a></span> - Method in interface org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a></dt>
 <dd>
 <div class="block">Returns the share of the given value.</div>
@@ -5374,13 +5479,21 @@
 <dd>
 <div class="block">Returns the research subset.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getSubsetStatistics()">getSubsetStatistics()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#getSubsetInstance(org.deidentifier.arx.RowSet, double)">getSubsetInstance(RowSet, double)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
 <dd>
-<div class="block">Returns statistics for the subset, if any</div>
+<div class="block">Clones this config and projects everything onto the given subset.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#getSubsetStatistics()">getSubsetStatistics()</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataSubset.html#getSubsetInstance(org.deidentifier.arx.RowSet)">getSubsetInstance(RowSet)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></dt>
 <dd>
-<div class="block">Returns the statistics of the subset, if any</div>
+<div class="block">Returns a new data subset, only containing those rows that are included in the subset</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/Data.html#getSubsetInstance(org.deidentifier.arx.RowSet)">getSubsetInstance(RowSet)</a></span> - Method in class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></dt>
+<dd>
+<div class="block">Returns a new instance that is projected onto the given subset</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/DataManager.html#getSubsetInstance(org.deidentifier.arx.RowSet)">getSubsetInstance(RowSet)</a></span> - Method in class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a></dt>
+<dd>
+<div class="block">Returns an instance of this data manager, that is projected onto the given rowset</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.ARXNode.html#getSuccessors()">getSuccessors()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a></dt>
 <dd>
@@ -5486,6 +5599,10 @@
 <dd>
 <div class="block">Returns the tree for the given sensitive attribute, if a generalization hierarchy is associated.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/DataManagerSubset.html#getTree(int[][], int, int[][])">getTree(int[][], int, int[][])</a></span> - Method in class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/DataManagerSubset.html" title="class in org.deidentifier.arx.framework.data">DataManagerSubset</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/data/DataManagerSubset.html#getTree(java.lang.String)">getTree(String)</a></span> - Method in class org.deidentifier.arx.framework.data.<a href="./org/deidentifier/arx/framework/data/DataManagerSubset.html" title="class in org.deidentifier.arx.framework.data">DataManagerSubset</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html#getTriggerCheck()">getTriggerCheck()</a></span> - Method in class org.deidentifier.arx.algorithm.<a href="./org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration</a></dt>
 <dd>
 <div class="block">Getter: A trigger for checking nodes in this phase.</div>
@@ -5562,6 +5679,10 @@
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html#getValues()">getValues()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderOrderBased.CloseElements</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/TupleWrapper.html#getValues()">getValues()</a></span> - Method in class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/TupleWrapper.html" title="class in org.deidentifier.arx.common">TupleWrapper</a></dt>
+<dd>
+<div class="block">Returns the associated entry</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html#getValues()">getValues()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataHandle.html#getView()">getView()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
@@ -5586,15 +5707,15 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataSelector.html#greater(java.lang.String)">greater(String)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataSelector.html" title="class in org.deidentifier.arx">DataSelector</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="./org/deidentifier/arx/risk/Groupify.html" title="class in org.deidentifier.arx.risk"><span class="strong">Groupify</span></a>&lt;<a href="./org/deidentifier/arx/risk/Groupify.html" title="type parameter in Groupify">T</a>&gt; - Class in <a href="./org/deidentifier/arx/risk/package-summary.html">org.deidentifier.arx.risk</a></dt>
+<dt><a href="./org/deidentifier/arx/common/Groupify.html" title="class in org.deidentifier.arx.common"><span class="strong">Groupify</span></a>&lt;<a href="./org/deidentifier/arx/common/Groupify.html" title="type parameter in Groupify">T</a>&gt; - Class in <a href="./org/deidentifier/arx/common/package-summary.html">org.deidentifier.arx.common</a></dt>
 <dd>
 <div class="block">A hash groupify operator.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/risk/Groupify.html#Groupify(int)">Groupify(int)</a></span> - Constructor for class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/Groupify.html" title="class in org.deidentifier.arx.risk">Groupify</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/Groupify.html#Groupify(int)">Groupify(int)</a></span> - Constructor for class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/Groupify.html" title="class in org.deidentifier.arx.common">Groupify</a></dt>
 <dd>
 <div class="block">Constructs a new hash groupify operator.</div>
 </dd>
-<dt><a href="./org/deidentifier/arx/risk/Groupify.Group.html" title="class in org.deidentifier.arx.risk"><span class="strong">Groupify.Group</span></a>&lt;<a href="./org/deidentifier/arx/risk/Groupify.Group.html" title="type parameter in Groupify.Group">U</a>&gt; - Class in <a href="./org/deidentifier/arx/risk/package-summary.html">org.deidentifier.arx.risk</a></dt>
+<dt><a href="./org/deidentifier/arx/common/Groupify.Group.html" title="class in org.deidentifier.arx.common"><span class="strong">Groupify.Group</span></a>&lt;<a href="./org/deidentifier/arx/common/Groupify.Group.html" title="type parameter in Groupify.Group">U</a>&gt; - Class in <a href="./org/deidentifier/arx/common/package-summary.html">org.deidentifier.arx.common</a></dt>
 <dd>
 <div class="block">Entry</div>
 </dd>
@@ -5615,6 +5736,8 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Interval.html#hashCode()">hashCode()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Interval.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased.Interval</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsContingencyTable.Entry.html#hashCode()">hashCode()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsContingencyTable.Entry.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable.Entry</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/TupleWrapper.html#hashCode()">hashCode()</a></span> - Method in class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/TupleWrapper.html" title="class in org.deidentifier.arx.common">TupleWrapper</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataType.ARXDate.html#hashCode()">hashCode()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataType.ARXDate.html" title="class in org.deidentifier.arx">DataType.ARXDate</a></dt>
 <dd>&nbsp;</dd>
@@ -5652,14 +5775,6 @@
 <dd>
 <div class="block">Constructs a new hash groupify operator.</div>
 </dd>
-<dt><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">HashGroupify.EquivalenceClassStatistics</span></a> - Class in <a href="./org/deidentifier/arx/framework/check/groupify/package-summary.html">org.deidentifier.arx.framework.check.groupify</a></dt>
-<dd>
-<div class="block">Statistics about the equivalence classes, excluding outliers.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html#HashGroupify.EquivalenceClassStatistics(double, int, int, double, int, int, int, int, int, org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics)">HashGroupify.EquivalenceClassStatistics(double, int, int, double, int, int, int, int, int, HashGroupify.EquivalenceClassStatistics)</a></span> - Constructor for class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></dt>
-<dd>
-<div class="block">Creates a new instance.</div>
-</dd>
 <dt><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">HashGroupifyDistribution</span></a> - Class in <a href="./org/deidentifier/arx/framework/check/groupify/package-summary.html">org.deidentifier.arx.framework.check.groupify</a></dt>
 <dd>
 <div class="block">A distribution of equivalence classes</div>
@@ -5690,6 +5805,10 @@
 <dd>
 <div class="block">Is a lower bound provided.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/Groupify.Group.html#hasNext()">hasNext()</a></span> - Method in class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/Groupify.Group.html" title="class in org.deidentifier.arx.common">Groupify.Group</a></dt>
+<dd>
+<div class="block">Returns whether a next entry exists</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleOutput.ResultIterator.html#hasNext()">hasNext()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleOutput.ResultIterator.html" title="class in org.deidentifier.arx">DataHandleOutput.ResultIterator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/DistributionIterator.html#hasNext()">hasNext()</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/DistributionIterator.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionIterator</a></dt>
@@ -5715,10 +5834,6 @@
 <div class="block">Indicates whether there is another element to return
  
  This returns true when there is another element in the result set <a href="./org/deidentifier/arx/io/ImportAdapterJDBC.html#resultSet"><code>ImportAdapterJDBC.resultSet</code></a>.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/risk/Groupify.Group.html#hasNext()">hasNext()</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/Groupify.Group.html" title="class in org.deidentifier.arx.risk">Groupify.Group</a></dt>
-<dd>
-<div class="block">Returns whether a next entry exists</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/AggregateFunction.html#hasParameter()">hasParameter()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a></dt>
 <dd>
@@ -6957,6 +7072,22 @@
 <dd>
 <div class="block">Is this an interval for null values</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXResult.html#isOptimizable(org.deidentifier.arx.DataHandle)">isOptimizable(DataHandle)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
+<dd>
+<div class="block">Returns whether local recoding can be applied to the given handle</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandle.html#isOptimized()">isOptimized()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
+<dd>
+<div class="block">Has this handle been optimized with local recoding?</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleOutput.html#isOptimized()">isOptimized()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleStatistics.html#isOptimized()">isOptimized()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a></dt>
+<dd>
+<div class="block">Returns whether the handle is optimized</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleSubset.html#isOptimized()">isOptimized()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataHandle.html#isOrphaned()">isOrphaned()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
 <dd>
 <div class="block">Determines whether this handle is orphaned, i.e., should not be used anymore</div>
@@ -7759,6 +7890,10 @@
 <dd>
 <div class="block">Creates a new instance with the given format string and the given locale.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/Groupify.Group.html#next()">next()</a></span> - Method in class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/Groupify.Group.html" title="class in org.deidentifier.arx.common">Groupify.Group</a></dt>
+<dd>
+<div class="block">Returns the next entry, null if this is the last entry</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleOutput.ResultIterator.html#next()">next()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleOutput.ResultIterator.html" title="class in org.deidentifier.arx">DataHandleOutput.ResultIterator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/DistributionIterator.html#next()">next()</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/DistributionIterator.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionIterator</a></dt>
@@ -7789,10 +7924,6 @@
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/io/ImportAdapterJDBC.html#next()">next()</a></span> - Method in class org.deidentifier.arx.io.<a href="./org/deidentifier/arx/io/ImportAdapterJDBC.html" title="class in org.deidentifier.arx.io">ImportAdapterJDBC</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/risk/Groupify.Group.html#next()">next()</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/Groupify.Group.html" title="class in org.deidentifier.arx.risk">Groupify.Group</a></dt>
-<dd>
-<div class="block">Returns the next entry, null if this is the last entry</div>
-</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html#nextOrdered">nextOrdered</a></span> - Variable in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a></dt>
 <dd>
 <div class="block">The overall next element in original order.</div>
@@ -7835,6 +7966,26 @@
 </a>
 <h2 class="title">O</h2>
 <dl>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXResult.html#optimize(org.deidentifier.arx.DataHandle)">optimize(DataHandle)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
+<dd>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXResult.html#optimize(org.deidentifier.arx.DataHandle, double)">optimize(DataHandle, double)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
+<dd>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXResult.html#optimize(org.deidentifier.arx.DataHandle, double, org.deidentifier.arx.ARXListener)">optimize(DataHandle, double, ARXListener)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
+<dd>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXResult.html#optimizeIterative(org.deidentifier.arx.DataHandle, double, int, double)">optimizeIterative(DataHandle, double, int, double)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
+<dd>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/ARXResult.html#optimizeIterative(org.deidentifier.arx.DataHandle, double, int, double, org.deidentifier.arx.ARXListener)">optimizeIterative(DataHandle, double, int, double, ARXListener)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
+<dd>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataSelector.html#or()">or()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataSelector.html" title="class in org.deidentifier.arx">DataSelector</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataType.html#ORDERED_STRING">ORDERED_STRING</a></span> - Static variable in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a></dt>
@@ -7853,10 +8004,18 @@
 <dd>
 <div class="block">This package provides algorithms which traverse the generalization lattice.</div>
 </dd>
+<dt><a href="./org/deidentifier/arx/common/package-summary.html">org.deidentifier.arx.common</a> - package org.deidentifier.arx.common</dt>
+<dd>
+<div class="block">A package containing commonly used classes in ARX</div>
+</dd>
 <dt><a href="./org/deidentifier/arx/criteria/package-summary.html">org.deidentifier.arx.criteria</a> - package org.deidentifier.arx.criteria</dt>
 <dd>
 <div class="block">This package implements different variants of class-based privacy criteria,
  such as k-anonymity, l-diversity, t-closeness and d-presence.</div>
+</dd>
+<dt><a href="./org/deidentifier/arx/exceptions/package-summary.html">org.deidentifier.arx.exceptions</a> - package org.deidentifier.arx.exceptions</dt>
+<dd>
+<div class="block">A package containing exceptions that may be thrown by ARX</div>
 </dd>
 <dt><a href="./org/deidentifier/arx/framework/package-summary.html">org.deidentifier.arx.framework</a> - package org.deidentifier.arx.framework</dt>
 <dd>
@@ -8023,7 +8182,7 @@
 <dd>
 <div class="block">The number of elements in this class.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[])">performMicroaggregation(int[][], int, int, DistributionAggregateFunction[], int[], String[])</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[], org.deidentifier.arx.framework.data.Dictionary)">performMicroaggregation(int[][], int, int, DistributionAggregateFunction[], int[], String[], Dictionary)</a></span> - Method in class org.deidentifier.arx.framework.check.groupify.<a href="./org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a></dt>
 <dd>
 <div class="block">Microaggregates all according attributes</div>
 </dd>
@@ -8495,6 +8654,27 @@
 <dd>
 <div class="block">Creates a new instance</div>
 </dd>
+<dt><a href="./org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions"><span class="strong">RollbackRequiredException</span></a> - Exception in <a href="./org/deidentifier/arx/exceptions/package-summary.html">org.deidentifier.arx.exceptions</a></dt>
+<dd>
+<div class="block">This exception is raised, if the method that was called has left something in an
+ invalid state that may breach privacy.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/exceptions/RollbackRequiredException.html#RollbackRequiredException()">RollbackRequiredException()</a></span> - Constructor for exception org.deidentifier.arx.exceptions.<a href="./org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></dt>
+<dd>
+<div class="block">Constructor</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/exceptions/RollbackRequiredException.html#RollbackRequiredException(java.lang.String)">RollbackRequiredException(String)</a></span> - Constructor for exception org.deidentifier.arx.exceptions.<a href="./org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></dt>
+<dd>
+<div class="block">Constructor</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/exceptions/RollbackRequiredException.html#RollbackRequiredException(java.lang.String, java.lang.Throwable)">RollbackRequiredException(String, Throwable)</a></span> - Constructor for exception org.deidentifier.arx.exceptions.<a href="./org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></dt>
+<dd>
+<div class="block">Constructor</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/exceptions/RollbackRequiredException.html#RollbackRequiredException(java.lang.Throwable)">RollbackRequiredException(Throwable)</a></span> - Constructor for exception org.deidentifier.arx.exceptions.<a href="./org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></dt>
+<dd>
+<div class="block">Constructor</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/Metric.html#round(double)">round(double)</a></span> - Method in class org.deidentifier.arx.metric.<a href="./org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
 <dd>
 <div class="block">Ignore anything but the first DIGITS digits.</div>
@@ -8908,6 +9088,10 @@
 <dd>
 <div class="block">Returns the number of rows in the dataset or subset.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/DataHandleOutput.html#setOptimized(boolean)">setOptimized(boolean)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
+<dd>
+<div class="block">Marks this handle as optimized</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXLattice.Access.html#setOptimum(org.deidentifier.arx.ARXLattice.ARXNode)">setOptimum(ARXLattice.ARXNode)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/ARXConfiguration.html#setPracticalMonotonicity(boolean)">setPracticalMonotonicity(boolean)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
@@ -9004,6 +9188,10 @@
 <dd>
 <div class="block">The shift.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/Groupify.html#size()">size()</a></span> - Method in class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/Groupify.html" title="class in org.deidentifier.arx.common">Groupify</a></dt>
+<dd>
+<div class="block">Returns the current number of entries</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/distribution/Distribution.html#size()">size()</a></span> - Method in class org.deidentifier.arx.framework.check.distribution.<a href="./org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a></dt>
 <dd>
 <div class="block">Gets the current size.</div>
@@ -9017,10 +9205,6 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/history/MRUCache.html#size()">size()</a></span> - Method in class org.deidentifier.arx.framework.check.history.<a href="./org/deidentifier/arx/framework/check/history/MRUCache.html" title="class in org.deidentifier.arx.framework.check.history">MRUCache</a></dt>
 <dd>
 <div class="block">Size.</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/risk/Groupify.html#size()">size()</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/Groupify.html" title="class in org.deidentifier.arx.risk">Groupify</a></dt>
-<dd>
-<div class="block">Returns the current number of entries</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/RowSet.html#size()">size()</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a></dt>
 <dd>&nbsp;</dd>
@@ -9108,15 +9292,11 @@
 <dd>
 <div class="block">The statistics.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/TransformedData.html#statistics">statistics</a></span> - Variable in class org.deidentifier.arx.framework.check.<a href="./org/deidentifier/arx/framework/check/TransformedData.html" title="class in org.deidentifier.arx.framework.check">TransformedData</a></dt>
-<dd>
-<div class="block">The group statistic</div>
-</dd>
 <dt><a href="./org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates"><span class="strong">StatisticsBuilder</span></a> - Class in <a href="./org/deidentifier/arx/aggregates/package-summary.html">org.deidentifier.arx.aggregates</a></dt>
 <dd>
 <div class="block">A class offering basic descriptive statistics about data handles.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsBuilder.html#StatisticsBuilder(org.deidentifier.arx.DataHandleStatistics, org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses)">StatisticsBuilder(DataHandleStatistics, StatisticsEquivalenceClasses)</a></span> - Constructor for class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsBuilder.html#StatisticsBuilder(org.deidentifier.arx.DataHandleStatistics)">StatisticsBuilder(DataHandleStatistics)</a></span> - Constructor for class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
 <dd>
 <div class="block">Creates a new instance.</div>
 </dd>
@@ -9136,9 +9316,9 @@
 <dd>
 <div class="block">Statistics about the equivalence classes.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#StatisticsEquivalenceClasses(org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics)">StatisticsEquivalenceClasses(HashGroupify.EquivalenceClassStatistics)</a></span> - Constructor for class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#StatisticsEquivalenceClasses(double, double, int, int, int, int, int, int, int, int)">StatisticsEquivalenceClasses(double, double, int, int, int, int, int, int, int, int)</a></span> - Constructor for class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></dt>
 <dd>
-<div class="block">Creates a new instance.</div>
+<div class="block">Creates a new instance</div>
 </dd>
 <dt><a href="./org/deidentifier/arx/aggregates/StatisticsFrequencyDistribution.html" title="class in org.deidentifier.arx.aggregates"><span class="strong">StatisticsFrequencyDistribution</span></a> - Class in <a href="./org/deidentifier/arx/aggregates/package-summary.html">org.deidentifier.arx.aggregates</a></dt>
 <dd>
@@ -9441,7 +9621,7 @@
 <dd>
 <div class="block">Helper class to convey buffers.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/TransformedData.html#TransformedData(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics, org.deidentifier.arx.framework.check.NodeChecker.Result)">TransformedData(Data, Data, HashGroupify.EquivalenceClassStatistics, NodeChecker.Result)</a></span> - Constructor for class org.deidentifier.arx.framework.check.<a href="./org/deidentifier/arx/framework/check/TransformedData.html" title="class in org.deidentifier.arx.framework.check">TransformedData</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/framework/check/TransformedData.html#TransformedData(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.check.NodeChecker.Result)">TransformedData(Data, Data, NodeChecker.Result)</a></span> - Constructor for class org.deidentifier.arx.framework.check.<a href="./org/deidentifier/arx/framework/check/TransformedData.html" title="class in org.deidentifier.arx.framework.check">TransformedData</a></dt>
 <dd>
 <div class="block">Instantiate the helper object.</div>
 </dd>
@@ -9601,6 +9781,18 @@
 <dd>
 <div class="block">A class that supports associating input with output</div>
 </dd>
+<dt><a href="./org/deidentifier/arx/common/TupleWrapper.html" title="class in org.deidentifier.arx.common"><span class="strong">TupleWrapper</span></a> - Class in <a href="./org/deidentifier/arx/common/package-summary.html">org.deidentifier.arx.common</a></dt>
+<dd>
+<div class="block">For hash tables</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/TupleWrapper.html#TupleWrapper(org.deidentifier.arx.DataHandle, int[], int)">TupleWrapper(DataHandle, int[], int)</a></span> - Constructor for class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/TupleWrapper.html" title="class in org.deidentifier.arx.common">TupleWrapper</a></dt>
+<dd>
+<div class="block">Constructor</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/TupleWrapper.html#TupleWrapper(org.deidentifier.arx.DataHandleStatistics, int[], int)">TupleWrapper(DataHandleStatistics, int[], int)</a></span> - Constructor for class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/TupleWrapper.html" title="class in org.deidentifier.arx.common">TupleWrapper</a></dt>
+<dd>
+<div class="block">Constructor</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/AggregateFunction.html#type">type</a></span> - Variable in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a></dt>
 <dd>
 <div class="block">The data type.</div>
@@ -9645,6 +9837,10 @@
 </a>
 <h2 class="title">V</h2>
 <dl>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/WrappedBoolean.html#value">value</a></span> - Variable in class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/WrappedBoolean.html" title="class in org.deidentifier.arx.common">WrappedBoolean</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/WrappedInteger.html#value">value</a></span> - Variable in class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/WrappedInteger.html" title="class in org.deidentifier.arx.common">WrappedInteger</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/aggregates/StatisticsContingencyTable.Entry.html#value1">value1</a></span> - Variable in class org.deidentifier.arx.aggregates.<a href="./org/deidentifier/arx/aggregates/StatisticsContingencyTable.Entry.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable.Entry</a></dt>
 <dd>
 <div class="block">Index of the value from the first column.</div>
@@ -9819,6 +10015,18 @@ the order they are declared.</div>
 <dd>
 <div class="block">The weights.</div>
 </dd>
+<dt><a href="./org/deidentifier/arx/common/WrappedBoolean.html" title="class in org.deidentifier.arx.common"><span class="strong">WrappedBoolean</span></a> - Class in <a href="./org/deidentifier/arx/common/package-summary.html">org.deidentifier.arx.common</a></dt>
+<dd>
+<div class="block">Helper class</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/WrappedBoolean.html#WrappedBoolean()">WrappedBoolean()</a></span> - Constructor for class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/WrappedBoolean.html" title="class in org.deidentifier.arx.common">WrappedBoolean</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="./org/deidentifier/arx/common/WrappedInteger.html" title="class in org.deidentifier.arx.common"><span class="strong">WrappedInteger</span></a> - Class in <a href="./org/deidentifier/arx/common/package-summary.html">org.deidentifier.arx.common</a></dt>
+<dd>
+<div class="block">Helper class</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/common/WrappedInteger.html#WrappedInteger()">WrappedInteger()</a></span> - Constructor for class org.deidentifier.arx.common.<a href="./org/deidentifier/arx/common/WrappedInteger.html" title="class in org.deidentifier.arx.common">WrappedInteger</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/io/CSVDataOutput.html#write(java.util.Iterator)">write(Iterator&lt;String[]&gt;)</a></span> - Method in class org.deidentifier.arx.io.<a href="./org/deidentifier/arx/io/CSVDataOutput.html" title="class in org.deidentifier.arx.io">CSVDataOutput</a></dt>
 <dd>
 <div class="block">Write the results.</div>

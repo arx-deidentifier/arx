@@ -1768,6 +1768,29 @@
 </ul>
 </li>
 <li class="blockList">
+<h2 title="Package">Package&nbsp;org.deidentifier.arx.exceptions</h2>
+<ul class="blockList">
+<li class="blockList"><a name="org.deidentifier.arx.exceptions.ComputationInterruptedException">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/exceptions/ComputationInterruptedException.html" title="class in org.deidentifier.arx.exceptions">org.deidentifier.arx.exceptions.ComputationInterruptedException</a> extends java.lang.RuntimeException implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>5339918851212367422L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.exceptions.RollbackRequiredException">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">org.deidentifier.arx.exceptions.RollbackRequiredException</a> extends java.lang.Exception implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-7587463020191596936L</dd>
+</dl>
+</li>
+</ul>
+</li>
+<li class="blockList">
 <h2 title="Package">Package&nbsp;org.deidentifier.arx.gui.model</h2>
 <ul class="blockList">
 <li class="blockList"><a name="org.deidentifier.arx.gui.model.Model">
@@ -1979,9 +2002,13 @@
 <pre>java.lang.Boolean useFunctionalHierarchies</pre>
 <div class="block">Utility estimation during anonymization</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>selectedQuasiIdentifiers</h4>
 <pre>java.util.Set&lt;E&gt; selectedQuasiIdentifiers</pre>
+</li>
+<li class="blockListLast">
+<h4>localRecodingModel</h4>
+<pre><a href="org/deidentifier/arx/gui/model/ModelLocalRecoding.html" title="class in org.deidentifier.arx.gui.model">ModelLocalRecoding</a> localRecodingModel</pre>
 </li>
 </ul>
 </li>
@@ -2269,6 +2296,44 @@
 <h4>c</h4>
 <pre>double c</pre>
 <div class="block">C, if any.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.gui.model.ModelLocalRecoding">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/gui/model/ModelLocalRecoding.html" title="class in org.deidentifier.arx.gui.model">org.deidentifier.arx.gui.model.ModelLocalRecoding</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-5333464333997155970L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>gsFactor</h4>
+<pre>double gsFactor</pre>
+<div class="block">GS-Factor</div>
+</li>
+<li class="blockList">
+<h4>numIterations</h4>
+<pre>int numIterations</pre>
+<div class="block">The number of iterations to perform</div>
+</li>
+<li class="blockList">
+<h4>adaptionFactor</h4>
+<pre>double adaptionFactor</pre>
+<div class="block">Is the GS-Factor adaptive</div>
+</li>
+<li class="blockListLast">
+<h4>mode</h4>
+<pre><a href="org/deidentifier/arx/gui/model/ModelLocalRecoding.LocalRecodingMode.html" title="enum in org.deidentifier.arx.gui.model">ModelLocalRecoding.LocalRecodingMode</a> mode</pre>
+<div class="block">The type of recoding to perform</div>
 </li>
 </ul>
 </li>

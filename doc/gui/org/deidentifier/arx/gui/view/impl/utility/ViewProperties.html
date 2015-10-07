@@ -34,7 +34,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtilityStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewLocalRecoding.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -146,30 +146,36 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#controller">controller</a></strong></code>
+<div class="block">Internal stuff.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.text.NumberFormat</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#format">format</a></strong></code>
 <div class="block">Internal stuff.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#model">model</a></strong></code>
 <div class="block">Internal stuff.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected org.eclipse.swt.widgets.Composite</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#root">root</a></strong></code>
 <div class="block">Internal stuff.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.util.List&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewProperties.Property</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#roots">roots</a></strong></code>
 <div class="block">Internal stuff.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected org.eclipse.jface.viewers.TreeViewer</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#treeViewer">treeViewer</a></strong></code>
 <div class="block">Internal stuff.</div>
@@ -235,18 +241,24 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#refresh()">refresh</a></strong>()</code>
+<div class="block">Refreshes the tree</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#reset()">reset</a></strong>()</code>
 <div class="block">Resets the view.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#update()">update</a></strong>()</code>
 <div class="block">Implement this to update the view.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelEvent.html" title="class in org.deidentifier.arx.gui.model">ModelEvent</a>&nbsp;event)</code>
 <div class="block">Updates the view.</div>
@@ -311,6 +323,16 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <li class="blockList">
 <h4>model</h4>
 <pre>protected&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a> model</pre>
+<div class="block">Internal stuff.</div>
+</li>
+</ul>
+<a name="controller">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>controller</h4>
+<pre>protected final&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a> controller</pre>
 <div class="block">Internal stuff.</div>
 </li>
 </ul>
@@ -424,6 +446,16 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="refresh()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>refresh</h4>
+<pre>protected&nbsp;void&nbsp;refresh()</pre>
+<div class="block">Refreshes the tree</div>
+</li>
+</ul>
 <a name="update()">
 <!--   -->
 </a>
@@ -460,7 +492,7 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtilityStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewLocalRecoding.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">

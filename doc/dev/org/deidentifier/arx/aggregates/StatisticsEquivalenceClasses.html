@@ -115,8 +115,17 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#StatisticsEquivalenceClasses(org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics)">StatisticsEquivalenceClasses</a></strong>(<a href="../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a>&nbsp;groupStatistics)</code>
-<div class="block">Creates a new instance.</div>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#StatisticsEquivalenceClasses(double, double, int, int, int, int, int, int, int, int)">StatisticsEquivalenceClasses</a></strong>(double&nbsp;averageEquivalenceClassSize,
+                            double&nbsp;averageEquivalenceClassSizeIncludingOutliers,
+                            int&nbsp;maximalEquivalenceClassSize,
+                            int&nbsp;maximalEquivalenceClassSizeIncludingOutliers,
+                            int&nbsp;minimalEquivalenceClassSize,
+                            int&nbsp;minimalEquivalenceClassSizeIncludingOutliers,
+                            int&nbsp;numberOfEquivalenceClasses,
+                            int&nbsp;numberOfEquivalenceClassesIncludingOutliers,
+                            int&nbsp;numberOfTuples,
+                            int&nbsp;numberOfOutlyingTuples)</code>
+<div class="block">Creates a new instance</div>
 </td>
 </tr>
 </table>
@@ -179,7 +188,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfOutlyingEquivalenceClasses()">getNumberOfOutlyingEquivalenceClasses</a></strong>()</code>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfEquivalenceClassesIncludingOutliers()">getNumberOfEquivalenceClassesIncludingOutliers</a></strong>()</code>
 <div class="block">Returns the number of outlying equivalence classes in the currently selected data
  representation.</div>
 </td>
@@ -192,12 +201,20 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getSubsetStatistics()">getSubsetStatistics</a></strong>()</code>
-<div class="block">Returns statistics for the subset, if any</div>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfTuples()">getNumberOfTuples</a></strong>()</code>
+<div class="block">Returns the number of tuples in the currently selected data
+ representation.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#getNumberOfTuplesIncludingOutliers()">getNumberOfTuplesIncludingOutliers</a></strong>()</code>
+<div class="block">Returns the number of tuples in the currently selected data
+ representation.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html#toString()">toString</a></strong>()</code>&nbsp;</td>
 </tr>
@@ -223,15 +240,24 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="StatisticsEquivalenceClasses(org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics)">
+<a name="StatisticsEquivalenceClasses(double, double, int, int, int, int, int, int, int, int)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>StatisticsEquivalenceClasses</h4>
-<pre>public&nbsp;StatisticsEquivalenceClasses(<a href="../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a>&nbsp;groupStatistics)</pre>
-<div class="block">Creates a new instance.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>groupStatistics</code> - Statistics obtained from hash groupify</dd></dl>
+<pre>public&nbsp;StatisticsEquivalenceClasses(double&nbsp;averageEquivalenceClassSize,
+                            double&nbsp;averageEquivalenceClassSizeIncludingOutliers,
+                            int&nbsp;maximalEquivalenceClassSize,
+                            int&nbsp;maximalEquivalenceClassSizeIncludingOutliers,
+                            int&nbsp;minimalEquivalenceClassSize,
+                            int&nbsp;minimalEquivalenceClassSizeIncludingOutliers,
+                            int&nbsp;numberOfEquivalenceClasses,
+                            int&nbsp;numberOfEquivalenceClassesIncludingOutliers,
+                            int&nbsp;numberOfTuples,
+                            int&nbsp;numberOfOutlyingTuples)</pre>
+<div class="block">Creates a new instance</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>averageEquivalenceClassSize</code> - </dd><dd><code>averageEquivalenceClassSizeIncludingOutliers</code> - </dd><dd><code>maximalEquivalenceClassSize</code> - </dd><dd><code>maximalEquivalenceClassSizeIncludingOutliers</code> - </dd><dd><code>minimalEquivalenceClassSize</code> - </dd><dd><code>minimalEquivalenceClassSizeIncludingOutliers</code> - </dd><dd><code>numberOfEquivalenceClasses</code> - </dd><dd><code>numberOfEquivalenceClassesIncludingOutliers</code> - </dd><dd><code>numberOfTuples</code> - </dd><dd><code>numberOfOutlyingTuples</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -323,14 +349,38 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getNumberOfOutlyingEquivalenceClasses()">
+<a name="getNumberOfEquivalenceClassesIncludingOutliers()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getNumberOfOutlyingEquivalenceClasses</h4>
-<pre>public&nbsp;int&nbsp;getNumberOfOutlyingEquivalenceClasses()</pre>
+<h4>getNumberOfEquivalenceClassesIncludingOutliers</h4>
+<pre>public&nbsp;int&nbsp;getNumberOfEquivalenceClassesIncludingOutliers()</pre>
 <div class="block">Returns the number of outlying equivalence classes in the currently selected data
+ representation.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getNumberOfTuples()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNumberOfTuples</h4>
+<pre>public&nbsp;int&nbsp;getNumberOfTuples()</pre>
+<div class="block">Returns the number of tuples in the currently selected data
+ representation.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getNumberOfTuplesIncludingOutliers()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNumberOfTuplesIncludingOutliers</h4>
+<pre>public&nbsp;int&nbsp;getNumberOfTuplesIncludingOutliers()</pre>
+<div class="block">Returns the number of tuples in the currently selected data
  representation.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -344,17 +394,6 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;int&nbsp;getNumberOfOutlyingTuples()</pre>
 <div class="block">Returns the number of outliers in the currently selected data
  representation.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getSubsetStatistics()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSubsetStatistics</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a>&nbsp;getSubsetStatistics()</pre>
-<div class="block">Returns statistics for the subset, if any</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

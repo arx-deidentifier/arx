@@ -117,6 +117,27 @@
 <!--   -->
 </a>
 <h3>Uses of <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a> in <a href="../../../../../../org/deidentifier/arx/package-summary.html">org.deidentifier.arx</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../../org/deidentifier/arx/package-summary.html">org.deidentifier.arx</a> that return <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
+<td class="colLast"><span class="strong">DataHandleOutput.</span><code><strong><a href="../../../../../../org/deidentifier/arx/DataHandleOutput.html#getOutputBufferGeneralized()">getOutputBufferGeneralized</a></strong>()</code>
+<div class="block">Returns the output buffer</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
+<td class="colLast"><span class="strong">DataHandleOutput.</span><code><strong><a href="../../../../../../org/deidentifier/arx/DataHandleOutput.html#getOutputBufferMicroaggregated()">getOutputBufferMicroaggregated</a></strong>()</code>
+<div class="block">Returns the output buffer</div>
+</td>
+</tr>
+</tbody>
+</table>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing constructors, and an explanation">
 <caption><span>Constructors in <a href="../../../../../../org/deidentifier/arx/package-summary.html">org.deidentifier.arx</a> with parameters of type <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
@@ -124,13 +145,12 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/DataHandleOutput.html#DataHandleOutput(org.deidentifier.arx.ARXResult, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">DataHandleOutput</a></strong>(<a href="../../../../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a>&nbsp;result,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/DataHandleOutput.html#DataHandleOutput(org.deidentifier.arx.ARXResult, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">DataHandleOutput</a></strong>(<a href="../../../../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a>&nbsp;result,
                 org.deidentifier.arx.DataRegistry&nbsp;registry,
                 <a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
                 <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;outputGeneralized,
                 <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;outputMicroaggregated,
                 <a href="../../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node,
-                <a href="../../../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a>&nbsp;statistics,
                 <a href="../../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
                 <a href="../../../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
 <div class="block">Instantiates a new handle.</div>
@@ -171,9 +191,8 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/TransformedData.html#TransformedData(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.check.groupify.HashGroupify.EquivalenceClassStatistics, org.deidentifier.arx.framework.check.NodeChecker.Result)">TransformedData</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;bufferGH,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/TransformedData.html#TransformedData(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.check.NodeChecker.Result)">TransformedData</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;bufferGH,
                <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;bufferOT,
-               <a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a>&nbsp;statistics,
                <a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a>&nbsp;properties)</code>
 <div class="block">Instantiate the helper object.</div>
 </td>
@@ -194,12 +213,13 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
-<td class="colLast"><span class="strong">HashGroupify.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[])">performMicroaggregation</a></strong>(int[][]&nbsp;data,
+<td class="colLast"><span class="strong">HashGroupify.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[], org.deidentifier.arx.framework.data.Dictionary)">performMicroaggregation</a></strong>(int[][]&nbsp;data,
                        int&nbsp;start,
                        int&nbsp;num,
                        <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;functions,
                        int[]&nbsp;map,
-                       java.lang.String[]&nbsp;header)</code>
+                       java.lang.String[]&nbsp;header,
+                       <a href="../../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;dictionary)</code>
 <div class="block">Microaggregates all according attributes</div>
 </td>
 </tr>
@@ -237,6 +257,59 @@
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
 <td class="colLast"><span class="strong">DataManager.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDataStatic()">getDataStatic</a></strong>()</code>
 <div class="block">Returns the static input data.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
+<td class="colLast"><span class="strong">Data.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/data/Data.html#getSubsetInstance(org.deidentifier.arx.RowSet)">getSubsetInstance</a></strong>(<a href="../../../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset)</code>
+<div class="block">Returns a new instance that is projected onto the given subset</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing constructors, and an explanation">
+<caption><span>Constructors in <a href="../../../../../../org/deidentifier/arx/framework/data/package-summary.html">org.deidentifier.arx.framework.data</a> with parameters of type <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html#DataManager(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, java.lang.String[], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[], java.util.Map, java.util.Map, int[], org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], java.lang.String[], int[], int, int, int[])">DataManager</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataAnalyzed,
+           <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataGeneralized,
+           <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataStatic,
+           java.lang.String[]&nbsp;header,
+           <a href="../../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchiesGeneralized,
+           int[]&nbsp;hierarchiesHeights,
+           java.util.Map&lt;java.lang.String,<a href="../../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>&gt;&nbsp;hierarchiesSensitive,
+           java.util.Map&lt;java.lang.String,java.lang.Integer&gt;&nbsp;indexesSensitive,
+           int[]&nbsp;maxLevels,
+           <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;microaggregationFunctions,
+           java.lang.String[]&nbsp;microaggregationHeader,
+           int[]&nbsp;microaggregationMap,
+           int&nbsp;microaggregationNumAttributes,
+           int&nbsp;microaggregationStartIndex,
+           int[]&nbsp;minLevels)</code>
+<div class="block">For creating a projected instance</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/data/DataManagerSubset.html#DataManagerSubset(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, java.lang.String[], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[], java.util.Map, java.util.Map, int[], org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], java.lang.String[], int[], int, int, int[])">DataManagerSubset</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;source,
+                 <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataAnalyzed,
+                 <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataGeneralized,
+                 <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataStatic,
+                 java.lang.String[]&nbsp;header,
+                 <a href="../../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchiesGeneralized,
+                 int[]&nbsp;hierarchiesHeights,
+                 java.util.Map&lt;java.lang.String,<a href="../../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>&gt;&nbsp;hierarchiesSensitive,
+                 java.util.Map&lt;java.lang.String,java.lang.Integer&gt;&nbsp;indexesSensitive,
+                 int[]&nbsp;maxLevels,
+                 <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;microaggregationFunctions,
+                 java.lang.String[]&nbsp;microaggregationHeader,
+                 int[]&nbsp;microaggregationMap,
+                 int&nbsp;microaggregationNumAttributes,
+                 int&nbsp;microaggregationStartIndex,
+                 int[]&nbsp;minLevels)</code>
+<div class="block">Constructor</div>
 </td>
 </tr>
 </tbody>

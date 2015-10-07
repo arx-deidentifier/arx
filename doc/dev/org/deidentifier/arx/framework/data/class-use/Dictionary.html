@@ -80,6 +80,18 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="#org.deidentifier.arx.framework.check">org.deidentifier.arx.framework.check</a></td>
+<td class="colLast">
+<div class="block">This package implements the core functionality of the ARX framework, i.e., a highly efficient check for k-anonymity</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="#org.deidentifier.arx.framework.check.groupify">org.deidentifier.arx.framework.check.groupify</a></td>
+<td class="colLast">
+<div class="block">This package implements different hash-groupify operators.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="#org.deidentifier.arx.framework.data">org.deidentifier.arx.framework.data</a></td>
 <td class="colLast">
 <div class="block">This package implements data management, i.e., encoding and representing input data, output data and generalization
@@ -106,6 +118,53 @@
 <td class="colFirst"><code>protected <a href="../../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a></code></td>
 <td class="colLast"><span class="strong">DataHandleInput.</span><code><strong><a href="../../../../../../org/deidentifier/arx/DataHandleInput.html#dictionary">dictionary</a></strong></code>
 <div class="block">The dictionary.</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.framework.check">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a> in <a href="../../../../../../org/deidentifier/arx/framework/check/package-summary.html">org.deidentifier.arx.framework.check</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../../org/deidentifier/arx/framework/check/package-summary.html">org.deidentifier.arx.framework.check</a> with parameters of type <a href="../../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/TransformedData.html" title="class in org.deidentifier.arx.framework.check">TransformedData</a></code></td>
+<td class="colLast"><span class="strong">NodeChecker.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#applyTransformation(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.data.Dictionary)">applyTransformation</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
+                   <a href="../../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;microaggregationDictionary)</code>
+<div class="block">Applies the given transformation and returns the dataset</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.framework.check.groupify">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a> in <a href="../../../../../../org/deidentifier/arx/framework/check/groupify/package-summary.html">org.deidentifier.arx.framework.check.groupify</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../../org/deidentifier/arx/framework/check/groupify/package-summary.html">org.deidentifier.arx.framework.check.groupify</a> with parameters of type <a href="../../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
+<td class="colLast"><span class="strong">HashGroupify.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[], org.deidentifier.arx.framework.data.Dictionary)">performMicroaggregation</a></strong>(int[][]&nbsp;data,
+                       int&nbsp;start,
+                       int&nbsp;num,
+                       <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;functions,
+                       int[]&nbsp;map,
+                       java.lang.String[]&nbsp;header,
+                       <a href="../../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;dictionary)</code>
+<div class="block">Microaggregates all according attributes</div>
 </td>
 </tr>
 </tbody>

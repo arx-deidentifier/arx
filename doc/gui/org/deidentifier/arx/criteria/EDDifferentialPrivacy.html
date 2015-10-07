@@ -164,60 +164,66 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html" title="class in org.deidentifier.arx.criteria">EDDifferentialPrivacy</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#clone()">clone</a></strong>()</code>
+<div class="block">Clone</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getBeta()">getBeta</a></strong>()</code>
 <div class="block">Returns the k parameter of (k,b)-SDGS</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getDelta()">getDelta</a></strong>()</code>
 <div class="block">Returns the delta parameter of (e,d)-DP</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getEpsilon()">getEpsilon</a></strong>()</code>
 <div class="block">Returns the epsilon parameter of (e,d)-DP</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataGeneralizationScheme.html" title="class in org.deidentifier.arx">DataGeneralizationScheme</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getGeneralizationScheme()">getGeneralizationScheme</a></strong>()</code>
 <div class="block">Returns the defined generalization scheme</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getK()">getK</a></strong>()</code>
 <div class="block">Returns the k parameter of (k,b)-SDGS</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getRequirements()">getRequirements</a></strong>()</code>
 <div class="block">Returns the criterion's requirements.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getSubset()">getSubset</a></strong>()</code>
 <div class="block">Returns the research subset.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager)</code>
 <div class="block">Creates a random sample based on beta</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry&nbsp;entry)</code>
 <div class="block">Implement this, to enforce the criterion.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#toString()">toString</a></strong>()</code>
 <div class="block">Returns a string representation.</div>
@@ -236,7 +242,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
+<code>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -401,7 +407,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <a name="toString()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>toString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
@@ -410,6 +416,21 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="clone()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>clone</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html" title="class in org.deidentifier.arx.criteria">EDDifferentialPrivacy</a>&nbsp;clone()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">PrivacyCriterion</a></code></strong></div>
+<div class="block">Clone</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">clone</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
 </dl>
 </li>
 </ul>

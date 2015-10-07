@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtility.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewLocalRecoding.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/utility/LayoutUtilityStatistics.html" target="_top">Frames</a></li>
@@ -161,9 +161,21 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayo
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtilityStatistics.html#getVisibleItems()">getVisibleItems</a></strong>()</code>
+<div class="block">Returns all visible items</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtilityStatistics.html#reset()">reset</a></strong>()</code>
 <div class="block">Resets the view.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtilityStatistics.html#setItemVisibilityListener(org.eclipse.swt.events.SelectionListener)">setItemVisibilityListener</a></strong>(org.eclipse.swt.events.SelectionListener&nbsp;listener)</code>
+<div class="block">Sets the according listener</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -173,6 +185,12 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayo
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtilityStatistics.html#setVisibleItems(java.util.List)">setVisibleItems</a></strong>(java.util.List&lt;java.lang.String&gt;&nbsp;items)</code>
+<div class="block">Sets all visible items</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtilityStatistics.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelEvent.html" title="class in org.deidentifier.arx.gui.model">ModelEvent</a>&nbsp;event)</code>
 <div class="block">Updates the view.</div>
@@ -259,6 +277,17 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayo
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getVisibleItems()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVisibleItems</h4>
+<pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getVisibleItems()</pre>
+<div class="block">Returns all visible items</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="reset()">
 <!--   -->
 </a>
@@ -274,6 +303,17 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayo
 </dl>
 </li>
 </ul>
+<a name="setItemVisibilityListener(org.eclipse.swt.events.SelectionListener)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setItemVisibilityListener</h4>
+<pre>public&nbsp;void&nbsp;setItemVisibilityListener(org.eclipse.swt.events.SelectionListener&nbsp;listener)</pre>
+<div class="block">Sets the according listener</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>listener</code> - </dd></dl>
+</li>
+</ul>
 <a name="setSelectionIdex(int)">
 <!--   -->
 </a>
@@ -283,6 +323,17 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayo
 <pre>public&nbsp;void&nbsp;setSelectionIdex(int&nbsp;index)</pre>
 <div class="block">Sets the selection index.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - </dd></dl>
+</li>
+</ul>
+<a name="setVisibleItems(java.util.List)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setVisibleItems</h4>
+<pre>public&nbsp;void&nbsp;setVisibleItems(java.util.List&lt;java.lang.String&gt;&nbsp;items)</pre>
+<div class="block">Sets all visible items</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>items</code> - </dd></dl>
 </li>
 </ul>
 <a name="update(org.deidentifier.arx.gui.model.ModelEvent)">
@@ -327,7 +378,7 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/ILayo
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtility.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewLocalRecoding.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/utility/LayoutUtilityStatistics.html" target="_top">Frames</a></li>

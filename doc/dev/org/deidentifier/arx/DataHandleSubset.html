@@ -135,9 +135,8 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#DataHandleSubset(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataSubset, org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses)">DataHandleSubset</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;source,
-                <a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset,
-                <a href="../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a>&nbsp;eqStatistics)</code>
+<td class="colOne"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#DataHandleSubset(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataSubset)">DataHandleSubset</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;source,
+                <a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>
 <div class="block">Creates a new handle that represents the research subset.</div>
 </td>
 </tr>
@@ -282,18 +281,24 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#isOptimized()">isOptimized</a></strong>()</code>
+<div class="block">Has this handle been optimized with local recoding?</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#isOutlier(int)">isOutlier</a></strong>(int&nbsp;row)</code>
 <div class="block">Determines whether a given row is an outlier in the currently associated
  data transformation.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.Iterator&lt;java.lang.String[]&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#iterator()">iterator</a></strong>()</code>
 <div class="block">Returns an iterator over the data.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#replace(int, java.lang.String, java.lang.String)">replace</a></strong>(int&nbsp;column,
        java.lang.String&nbsp;original,
@@ -330,17 +335,16 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="DataHandleSubset(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataSubset, org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses)">
+<a name="DataHandleSubset(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataSubset)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>DataHandleSubset</h4>
 <pre>public&nbsp;DataHandleSubset(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;source,
-                <a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset,
-                <a href="../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a>&nbsp;eqStatistics)</pre>
+                <a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</pre>
 <div class="block">Creates a new handle that represents the research subset.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>source</code> - </dd><dd><code>subset</code> - </dd><dd><code>eqStatistics</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>source</code> - </dd><dd><code>subset</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -470,6 +474,21 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <dt><strong>Overrides:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#getView()">getView</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
 <dt><span class="strong">Returns:</span></dt><dd>the view</dd></dl>
+</li>
+</ul>
+<a name="isOptimized()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isOptimized</h4>
+<pre>public&nbsp;boolean&nbsp;isOptimized()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html#isOptimized()">DataHandle</a></code></strong></div>
+<div class="block">Has this handle been optimized with local recoding?</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#isOptimized()">isOptimized</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="isOutlier(int)">

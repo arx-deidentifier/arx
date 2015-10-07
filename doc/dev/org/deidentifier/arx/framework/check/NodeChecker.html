@@ -168,28 +168,41 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html" title="class in org.deidentifier.arx.framework.check">TransformedData</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#applyTransformation(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.data.Dictionary)">applyTransformation</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
+                   <a href="../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;microaggregationDictionary)</code>
+<div class="block">Applies the given transformation and returns the dataset</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#check(org.deidentifier.arx.framework.lattice.Transformation)">check</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node)</code>
 <div class="block">Checks the given transformation, computes the utility if it fulfills the privacy model</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#check(org.deidentifier.arx.framework.lattice.Transformation, boolean)">check</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
      boolean&nbsp;forceMeasureInfoLoss)</code>
 <div class="block">Checks the given transformation</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#getConfiguration()">getConfiguration</a></strong>()</code>
 <div class="block">Returns the configuration</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/history/History.html" title="class in org.deidentifier.arx.framework.check.history">History</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#getHistory()">getHistory</a></strong>()</code>
 <div class="block">Returns the checkers history, if any.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int[][]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#getInputBuffer()">getInputBuffer</a></strong>()</code>
+<div class="block">Returns the input buffer</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -257,6 +270,19 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="applyTransformation(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.data.Dictionary)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>applyTransformation</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html" title="class in org.deidentifier.arx.framework.check">TransformedData</a>&nbsp;applyTransformation(<a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
+                                  <a href="../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;microaggregationDictionary)</pre>
+<div class="block">Applies the given transformation and returns the dataset</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd><dd><code>microaggregationDictionary</code> - A dictionary for microaggregated values</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="check(org.deidentifier.arx.framework.lattice.Transformation)">
 <!--   -->
 </a>
@@ -280,6 +306,17 @@ extends java.lang.Object</pre>
 <div class="block">Checks the given transformation</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - </dd><dd><code>forceMeasureInfoLoss</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getInputBuffer()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInputBuffer</h4>
+<pre>public&nbsp;int[][]&nbsp;getInputBuffer()</pre>
+<div class="block">Returns the input buffer</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getConfiguration()">

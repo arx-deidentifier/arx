@@ -67,7 +67,9 @@
 <li><a href="org/deidentifier/arx/package-tree.html">org.deidentifier.arx</a>, </li>
 <li><a href="org/deidentifier/arx/aggregates/package-tree.html">org.deidentifier.arx.aggregates</a>, </li>
 <li><a href="org/deidentifier/arx/algorithm/package-tree.html">org.deidentifier.arx.algorithm</a>, </li>
+<li><a href="org/deidentifier/arx/common/package-tree.html">org.deidentifier.arx.common</a>, </li>
 <li><a href="org/deidentifier/arx/criteria/package-tree.html">org.deidentifier.arx.criteria</a>, </li>
+<li><a href="org/deidentifier/arx/exceptions/package-tree.html">org.deidentifier.arx.exceptions</a>, </li>
 <li><a href="org/deidentifier/arx/framework/package-tree.html">org.deidentifier.arx.framework</a>, </li>
 <li><a href="org/deidentifier/arx/framework/check/package-tree.html">org.deidentifier.arx.framework.check</a>, </li>
 <li><a href="org/deidentifier/arx/framework/check/distribution/package-tree.html">org.deidentifier.arx.framework.check.distribution</a>, </li>
@@ -182,7 +184,11 @@
 </li>
 <li type="circle">org.deidentifier.arx.<a href="org/deidentifier/arx/DataHandleOutput.ResultIterator.html" title="class in org.deidentifier.arx"><span class="strong">DataHandleOutput.ResultIterator</span></a> (implements java.util.Iterator&lt;E&gt;)</li>
 <li type="circle">org.deidentifier.arx.<a href="org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx"><span class="strong">DataHandleStatistics</span></a></li>
-<li type="circle">org.deidentifier.arx.framework.data.<a href="org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">DataManager</span></a></li>
+<li type="circle">org.deidentifier.arx.framework.data.<a href="org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">DataManager</span></a>
+<ul>
+<li type="circle">org.deidentifier.arx.framework.data.<a href="org/deidentifier/arx/framework/data/DataManagerSubset.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">DataManagerSubset</span></a></li>
+</ul>
+</li>
 <li type="circle">org.deidentifier.arx.framework.data.<a href="org/deidentifier/arx/framework/data/DataManager.AttributeTypeInternal.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">DataManager.AttributeTypeInternal</span></a></li>
 <li type="circle">org.deidentifier.arx.<a href="org/deidentifier/arx/DataSelector.html" title="class in org.deidentifier.arx"><span class="strong">DataSelector</span></a></li>
 <li type="circle">org.deidentifier.arx.<a href="org/deidentifier/arx/DataSource.html" title="class in org.deidentifier.arx"><span class="strong">DataSource</span></a></li>
@@ -225,10 +231,9 @@
 <li type="circle">org.deidentifier.arx.algorithm.<a href="org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" title="class in org.deidentifier.arx.algorithm"><span class="strong">FLASHPhaseConfiguration</span></a></li>
 <li type="circle">org.deidentifier.arx.algorithm.<a href="org/deidentifier/arx/algorithm/FLASHStrategy.html" title="class in org.deidentifier.arx.algorithm"><span class="strong">FLASHStrategy</span></a> (implements java.util.Comparator&lt;T&gt;)</li>
 <li type="circle">org.deidentifier.arx.framework.data.<a href="org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data"><span class="strong">GeneralizationHierarchy</span></a></li>
-<li type="circle">org.deidentifier.arx.risk.<a href="org/deidentifier/arx/risk/Groupify.html" title="class in org.deidentifier.arx.risk"><span class="strong">Groupify</span></a>&lt;T&gt;</li>
-<li type="circle">org.deidentifier.arx.risk.<a href="org/deidentifier/arx/risk/Groupify.Group.html" title="class in org.deidentifier.arx.risk"><span class="strong">Groupify.Group</span></a>&lt;U&gt;</li>
+<li type="circle">org.deidentifier.arx.common.<a href="org/deidentifier/arx/common/Groupify.html" title="class in org.deidentifier.arx.common"><span class="strong">Groupify</span></a>&lt;T&gt;</li>
+<li type="circle">org.deidentifier.arx.common.<a href="org/deidentifier/arx/common/Groupify.Group.html" title="class in org.deidentifier.arx.common"><span class="strong">Groupify.Group</span></a>&lt;U&gt;</li>
 <li type="circle">org.deidentifier.arx.framework.check.groupify.<a href="org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">HashGroupify</span></a></li>
-<li type="circle">org.deidentifier.arx.framework.check.groupify.<a href="org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">HashGroupify.EquivalenceClassStatistics</span></a></li>
 <li type="circle">org.deidentifier.arx.framework.check.groupify.<a href="org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">HashGroupifyDistribution</span></a></li>
 <li type="circle">org.deidentifier.arx.framework.check.groupify.<a href="org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">HashGroupifyEntry</span></a></li>
 <li type="circle">org.deidentifier.arx.framework.check.groupify.<a href="org/deidentifier/arx/framework/check/groupify/HashTableUtil.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">HashTableUtil</span></a></li>
@@ -472,10 +477,27 @@
 <li type="circle">org.deidentifier.arx.aggregates.<a href="org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates"><span class="strong">StatisticsEquivalenceClasses</span></a></li>
 <li type="circle">org.deidentifier.arx.aggregates.<a href="org/deidentifier/arx/aggregates/StatisticsFrequencyDistribution.html" title="class in org.deidentifier.arx.aggregates"><span class="strong">StatisticsFrequencyDistribution</span></a></li>
 <li type="circle">org.deidentifier.arx.aggregates.<a href="org/deidentifier/arx/aggregates/StatisticsSummary.html" title="class in org.deidentifier.arx.aggregates"><span class="strong">StatisticsSummary</span></a>&lt;T&gt;</li>
+<li type="circle">java.lang.Throwable (implements java.io.Serializable)
+<ul>
+<li type="circle">java.lang.Exception
+<ul>
+<li type="circle">org.deidentifier.arx.exceptions.<a href="org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions"><span class="strong">RollbackRequiredException</span></a></li>
+<li type="circle">java.lang.RuntimeException
+<ul>
+<li type="circle">org.deidentifier.arx.exceptions.<a href="org/deidentifier/arx/exceptions/ComputationInterruptedException.html" title="class in org.deidentifier.arx.exceptions"><span class="strong">ComputationInterruptedException</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li type="circle">org.deidentifier.arx.framework.lattice.<a href="org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice"><span class="strong">Transformation</span></a></li>
 <li type="circle">org.deidentifier.arx.framework.check.<a href="org/deidentifier/arx/framework/check/TransformedData.html" title="class in org.deidentifier.arx.framework.check"><span class="strong">TransformedData</span></a></li>
 <li type="circle">org.deidentifier.arx.framework.check.<a href="org/deidentifier/arx/framework/check/Transformer.html" title="class in org.deidentifier.arx.framework.check"><span class="strong">Transformer</span></a></li>
 <li type="circle">org.deidentifier.arx.metric.v2.<a href="org/deidentifier/arx/metric/v2/TupleMatcher.html" title="class in org.deidentifier.arx.metric.v2"><span class="strong">TupleMatcher</span></a> (implements java.io.Serializable)</li>
+<li type="circle">org.deidentifier.arx.common.<a href="org/deidentifier/arx/common/TupleWrapper.html" title="class in org.deidentifier.arx.common"><span class="strong">TupleWrapper</span></a></li>
+<li type="circle">org.deidentifier.arx.common.<a href="org/deidentifier/arx/common/WrappedBoolean.html" title="class in org.deidentifier.arx.common"><span class="strong">WrappedBoolean</span></a></li>
+<li type="circle">org.deidentifier.arx.common.<a href="org/deidentifier/arx/common/WrappedInteger.html" title="class in org.deidentifier.arx.common"><span class="strong">WrappedInteger</span></a></li>
 </ul>
 </li>
 </ul>

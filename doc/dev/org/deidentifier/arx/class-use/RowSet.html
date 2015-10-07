@@ -80,6 +80,13 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="#org.deidentifier.arx.framework.data">org.deidentifier.arx.framework.data</a></td>
+<td class="colLast">
+<div class="block">This package implements data management, i.e., encoding and representing input data, output data and generalization
+ hierarchies</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="#org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -132,7 +139,9 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a></code></td>
-<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#getSet()">getSet</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#getSet()">getSet</a></strong>()</code>
+<div class="block">Getter</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -148,6 +157,45 @@
 <td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data, org.deidentifier.arx.RowSet)">create</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
       <a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;subset)</code>
 <div class="block">Creates a new subset from the given row set, from which a copy is created.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
+<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#getSubsetInstance(org.deidentifier.arx.RowSet)">getSubsetInstance</a></strong>(<a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset)</code>
+<div class="block">Returns a new data subset, only containing those rows that are included in the subset</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
+<td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.html#getSubsetInstance(org.deidentifier.arx.RowSet, double)">getSubsetInstance</a></strong>(<a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset,
+                 double&nbsp;gsFactor)</code>
+<div class="block">Clones this config and projects everything onto the given subset.</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.framework.data">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a> in <a href="../../../../org/deidentifier/arx/framework/data/package-summary.html">org.deidentifier.arx.framework.data</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../org/deidentifier/arx/framework/data/package-summary.html">org.deidentifier.arx.framework.data</a> with parameters of type <a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a></code></td>
+<td class="colLast"><span class="strong">DataManager.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/data/DataManager.html#getSubsetInstance(org.deidentifier.arx.RowSet)">getSubsetInstance</a></strong>(<a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset)</code>
+<div class="block">Returns an instance of this data manager, that is projected onto the given rowset</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
+<td class="colLast"><span class="strong">Data.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/data/Data.html#getSubsetInstance(org.deidentifier.arx.RowSet)">getSubsetInstance</a></strong>(<a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset)</code>
+<div class="block">Returns a new instance that is projected onto the given subset</div>
 </td>
 </tr>
 </tbody>

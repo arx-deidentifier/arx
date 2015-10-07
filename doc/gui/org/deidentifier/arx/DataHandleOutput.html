@@ -140,7 +140,7 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;org.deidentifier.arx.<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></h3>
-<code><a href="../../../org/deidentifier/arx/DataHandle.html#dataTypes">dataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#definition">definition</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#header">header</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#registry">registry</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#statistics">statistics</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#subset">subset</a></code></li>
+<code><a href="../../../org/deidentifier/arx/DataHandle.html#dataTypes">dataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#definition">definition</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#header">header</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#node">node</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#registry">registry</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#statistics">statistics</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#subset">subset</a></code></li>
 </ul>
 </li>
 </ul>
@@ -158,13 +158,12 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected </code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#DataHandleOutput(org.deidentifier.arx.ARXResult, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">DataHandleOutput</a></strong>(<a href="../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a>&nbsp;result,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#DataHandleOutput(org.deidentifier.arx.ARXResult, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">DataHandleOutput</a></strong>(<a href="../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a>&nbsp;result,
                 org.deidentifier.arx.DataRegistry&nbsp;registry,
                 org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
                 org.deidentifier.arx.framework.data.Data&nbsp;outputGeneralized,
                 org.deidentifier.arx.framework.data.Data&nbsp;outputMicroaggregated,
                 <a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node,
-                <a href="../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a>&nbsp;statistics,
                 <a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
                 <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
 <div class="block">Instantiates a new handle.</div>
@@ -223,31 +222,49 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected int[][]</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#getInputBuffer()">getInputBuffer</a></strong>()</code>
+<div class="block">Returns the input buffer</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#getNumColumns()">getNumColumns</a></strong>()</code>
 <div class="block">Gets the num columns.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#getNumRows()">getNumRows</a></strong>()</code>
 <div class="block">Gets the num rows.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected org.deidentifier.arx.framework.data.Data</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#getOutputBufferGeneralized()">getOutputBufferGeneralized</a></strong>()</code>
+<div class="block">Returns the output buffer</div>
+</td>
+</tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected org.deidentifier.arx.framework.data.Data</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#getOutputBufferMicroaggregated()">getOutputBufferMicroaggregated</a></strong>()</code>
+<div class="block">Returns the output buffer</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#getSuppressionString()">getSuppressionString</a></strong>()</code>
 <div class="block">Returns the suppression string.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#getValue(int, int)">getValue</a></strong>(int&nbsp;row,
         int&nbsp;col)</code>
 <div class="block">Gets the value.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#internalCompare(int, int, int[], boolean)">internalCompare</a></strong>(int&nbsp;row1,
                int&nbsp;row2,
@@ -257,20 +274,20 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
  less than, equal to, or greater than the second.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#internalGetValue(int, int)">internalGetValue</a></strong>(int&nbsp;row,
                 int&nbsp;col)</code>
 <div class="block">Gets the value internal.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#internalIsOutlier(int)">internalIsOutlier</a></strong>(int&nbsp;row)</code>
 <div class="block">Returns whether the given row is an outlier.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#internalReplace(int, java.lang.String, java.lang.String)">internalReplace</a></strong>(int&nbsp;column,
                java.lang.String&nbsp;original,
@@ -278,11 +295,17 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <div class="block">Internal replacement method.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#internalSwap(int, int)">internalSwap</a></strong>(int&nbsp;row1,
             int&nbsp;row2)</code>
 <div class="block">Swap internal.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#isOptimized()">isOptimized</a></strong>()</code>
+<div class="block">Has this handle been optimized with local recoding?</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -297,6 +320,12 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
        java.lang.String&nbsp;original,
        java.lang.String&nbsp;replacement)</code>
 <div class="block">Replaces the original value with the replacement in the given column.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#setOptimized(boolean)">setOptimized</a></strong>(boolean&nbsp;optimized)</code>
+<div class="block">Marks this handle as optimized</div>
 </td>
 </tr>
 </table>
@@ -328,7 +357,7 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="DataHandleOutput(org.deidentifier.arx.ARXResult, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">
+<a name="DataHandleOutput(org.deidentifier.arx.ARXResult, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -340,11 +369,10 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
                 org.deidentifier.arx.framework.data.Data&nbsp;outputGeneralized,
                 org.deidentifier.arx.framework.data.Data&nbsp;outputMicroaggregated,
                 <a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node,
-                <a href="../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a>&nbsp;statistics,
                 <a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
                 <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</pre>
 <div class="block">Instantiates a new handle.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>result</code> - </dd><dd><code>registry</code> - </dd><dd><code>manager</code> - </dd><dd><code>outputGeneralized</code> - </dd><dd><code>outputMicroaggregated</code> - </dd><dd><code>node</code> - </dd><dd><code>statistics</code> - </dd><dd><code>definition</code> - </dd><dd><code>config</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>result</code> - </dd><dd><code>registry</code> - </dd><dd><code>manager</code> - </dd><dd><code>outputGeneralized</code> - </dd><dd><code>outputMicroaggregated</code> - </dd><dd><code>node</code> - </dd><dd><code>definition</code> - </dd><dd><code>config</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -446,6 +474,21 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <dt><span class="strong">Returns:</span></dt><dd>the value</dd></dl>
 </li>
 </ul>
+<a name="isOptimized()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isOptimized</h4>
+<pre>public&nbsp;boolean&nbsp;isOptimized()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html#isOptimized()">DataHandle</a></code></strong></div>
+<div class="block">Has this handle been optimized with local recoding?</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#isOptimized()">isOptimized</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="iterator()">
 <!--   -->
 </a>
@@ -521,6 +564,39 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int, org.deidentifier.arx.DataHandleStatistics.InterruptHandler)">getDistinctValues</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>col</code> - the column</dd><dd><code>handler</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd>the distinct values</dd></dl>
+</li>
+</ul>
+<a name="getInputBuffer()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInputBuffer</h4>
+<pre>protected&nbsp;int[][]&nbsp;getInputBuffer()</pre>
+<div class="block">Returns the input buffer</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getOutputBufferGeneralized()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getOutputBufferGeneralized</h4>
+<pre>protected&nbsp;org.deidentifier.arx.framework.data.Data&nbsp;getOutputBufferGeneralized()</pre>
+<div class="block">Returns the output buffer</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getOutputBufferMicroaggregated()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getOutputBufferMicroaggregated</h4>
+<pre>protected&nbsp;org.deidentifier.arx.framework.data.Data&nbsp;getOutputBufferMicroaggregated()</pre>
+<div class="block">Returns the output buffer</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getSuppressionString()">
@@ -607,13 +683,24 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <a name="internalSwap(int, int)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>internalSwap</h4>
 <pre>protected&nbsp;void&nbsp;internalSwap(int&nbsp;row1,
                 int&nbsp;row2)</pre>
 <div class="block">Swap internal.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>row1</code> - the row1</dd><dd><code>row2</code> - the row2</dd></dl>
+</li>
+</ul>
+<a name="setOptimized(boolean)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setOptimized</h4>
+<pre>protected&nbsp;void&nbsp;setOptimized(boolean&nbsp;optimized)</pre>
+<div class="block">Marks this handle as optimized</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>optimized</code> - </dd></dl>
 </li>
 </ul>
 </li>

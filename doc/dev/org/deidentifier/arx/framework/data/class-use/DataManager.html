@@ -126,6 +126,14 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><code>protected org.deidentifier.arx.ARXAnonymizer.Result</code></td>
+<td class="colLast"><span class="strong">ARXAnonymizer.</span><code><strong><a href="../../../../../../org/deidentifier/arx/ARXAnonymizer.html#anonymize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">anonymize</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
+         <a href="../../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+         <a href="../../../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
+<div class="block">Reset a previous lattice and run the algorithm .</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../../org/deidentifier/arx/ARXConfiguration.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>
 <div class="block">Initializes the configuration.</div>
@@ -152,13 +160,12 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/DataHandleOutput.html#DataHandleOutput(org.deidentifier.arx.ARXResult, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">DataHandleOutput</a></strong>(<a href="../../../../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a>&nbsp;result,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/DataHandleOutput.html#DataHandleOutput(org.deidentifier.arx.ARXResult, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">DataHandleOutput</a></strong>(<a href="../../../../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a>&nbsp;result,
                 org.deidentifier.arx.DataRegistry&nbsp;registry,
                 <a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
                 <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;outputGeneralized,
                 <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;outputMicroaggregated,
                 <a href="../../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node,
-                <a href="../../../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a>&nbsp;statistics,
                 <a href="../../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
                 <a href="../../../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
 <div class="block">Instantiates a new handle.</div>
@@ -241,6 +248,36 @@
 <!--   -->
 </a>
 <h3>Uses of <a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a> in <a href="../../../../../../org/deidentifier/arx/framework/data/package-summary.html">org.deidentifier.arx.framework.data</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing subclasses, and an explanation">
+<caption><span>Subclasses of <a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a> in <a href="../../../../../../org/deidentifier/arx/framework/data/package-summary.html">org.deidentifier.arx.framework.data</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/data/DataManagerSubset.html" title="class in org.deidentifier.arx.framework.data">DataManagerSubset</a></strong></code>
+<div class="block">A data manager that is projected onto a given subset.</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../../org/deidentifier/arx/framework/data/package-summary.html">org.deidentifier.arx.framework.data</a> that return <a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a></code></td>
+<td class="colLast"><span class="strong">DataManager.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html#getSubsetInstance(org.deidentifier.arx.RowSet)">getSubsetInstance</a></strong>(<a href="../../../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset)</code>
+<div class="block">Returns an instance of this data manager, that is projected onto the given rowset</div>
+</td>
+</tr>
+</tbody>
+</table>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
 <caption><span>Methods in <a href="../../../../../../org/deidentifier/arx/framework/data/package-summary.html">org.deidentifier.arx.framework.data</a> with parameters of type <a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
@@ -252,6 +289,34 @@
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><span class="strong">GeneralizationHierarchy.</span><code><strong><a href="../../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html#checkMonotonicity(org.deidentifier.arx.framework.data.DataManager)">checkMonotonicity</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>
 <div class="block">Throws an exception, if the hierarchy is not monotonic.</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing constructors, and an explanation">
+<caption><span>Constructors in <a href="../../../../../../org/deidentifier/arx/framework/data/package-summary.html">org.deidentifier.arx.framework.data</a> with parameters of type <a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/data/DataManagerSubset.html#DataManagerSubset(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, java.lang.String[], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[], java.util.Map, java.util.Map, int[], org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], java.lang.String[], int[], int, int, int[])">DataManagerSubset</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;source,
+                 <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataAnalyzed,
+                 <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataGeneralized,
+                 <a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataStatic,
+                 java.lang.String[]&nbsp;header,
+                 <a href="../../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchiesGeneralized,
+                 int[]&nbsp;hierarchiesHeights,
+                 java.util.Map&lt;java.lang.String,<a href="../../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>&gt;&nbsp;hierarchiesSensitive,
+                 java.util.Map&lt;java.lang.String,java.lang.Integer&gt;&nbsp;indexesSensitive,
+                 int[]&nbsp;maxLevels,
+                 <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;microaggregationFunctions,
+                 java.lang.String[]&nbsp;microaggregationHeader,
+                 int[]&nbsp;microaggregationMap,
+                 int&nbsp;microaggregationNumAttributes,
+                 int&nbsp;microaggregationStartIndex,
+                 int[]&nbsp;minLevels)</code>
+<div class="block">Constructor</div>
 </td>
 </tr>
 </tbody>

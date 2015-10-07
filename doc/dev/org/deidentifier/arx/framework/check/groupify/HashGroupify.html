@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li>Prev Class</li>
-<li><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?org/deidentifier/arx/framework/check/groupify/HashGroupify.html" target="_top">Frames</a></li>
@@ -59,7 +59,7 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
@@ -104,27 +104,6 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="nested_class_summary">
-<!--   -->
-</a>
-<h3>Nested Class Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
-<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Class and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></strong></code>
-<div class="block">Statistics about the equivalence classes, excluding outliers.</div>
-</td>
-</tr>
-</table>
-</li>
-</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_summary">
@@ -195,66 +174,61 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getEquivalenceClassStatistics()">getEquivalenceClassStatistics</a></strong>()</code>
-<div class="block">Returns statistics</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getFirstEquivalenceClass()">getFirstEquivalenceClass</a></strong>()</code>
 <div class="block">Returns the first entry</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#getNumberOfEquivalenceClasses()">getNumberOfEquivalenceClasses</a></strong>()</code>
 <div class="block">Returns the current size in terms of classes</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#isMinimalClassSizeFulfilled()">isMinimalClassSizeFulfilled</a></strong>()</code>
 <div class="block">Returns whether the current state of the dataset fulfills the minimal class-size property</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#isPrivacyModelFulfilled()">isPrivacyModelFulfilled</a></strong>()</code>
 <div class="block">Returns whether the current state of the dataset fulfills the privacy model</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[])">performMicroaggregation</a></strong>(int[][]&nbsp;data,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[], org.deidentifier.arx.framework.data.Dictionary)">performMicroaggregation</a></strong>(int[][]&nbsp;data,
                        int&nbsp;start,
                        int&nbsp;num,
                        <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;functions,
                        int[]&nbsp;map,
-                       java.lang.String[]&nbsp;header)</code>
+                       java.lang.String[]&nbsp;header,
+                       <a href="../../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;dictionary)</code>
 <div class="block">Microaggregates all according attributes</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performSuppression(int[][])">performSuppression</a></strong>(int[][]&nbsp;data)</code>
 <div class="block">Marks all outliers in the given (generalized subset of the) input datasets</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#stateAnalyze(org.deidentifier.arx.framework.lattice.Transformation, boolean)">stateAnalyze</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
             boolean&nbsp;force)</code>
 <div class="block">Analyzes the current state</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#stateClear()">stateClear</a></strong>()</code>
 <div class="block">Clears all entries</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#stateResetSuppression()">stateResetSuppression</a></strong>()</code>
 <div class="block">This method will reset all flags that indicate that equivalence classes are suppressed.</div>
@@ -360,17 +334,6 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getEquivalenceClassStatistics()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getEquivalenceClassStatistics</h4>
-<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify.EquivalenceClassStatistics</a>&nbsp;getEquivalenceClassStatistics()</pre>
-<div class="block">Returns statistics</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="getFirstEquivalenceClass()">
 <!--   -->
 </a>
@@ -415,7 +378,7 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[])">
+<a name="performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[], org.deidentifier.arx.framework.data.Dictionary)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -426,9 +389,10 @@ extends java.lang.Object</pre>
                            int&nbsp;num,
                            <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;functions,
                            int[]&nbsp;map,
-                           java.lang.String[]&nbsp;header)</pre>
+                           java.lang.String[]&nbsp;header,
+                           <a href="../../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;dictionary)</pre>
 <div class="block">Microaggregates all according attributes</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>start</code> - </dd><dd><code>num</code> - </dd><dd><code>functions</code> - </dd><dd><code>map</code> - </dd><dd><code>header</code> - </dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>start</code> - </dd><dd><code>num</code> - </dd><dd><code>functions</code> - </dd><dd><code>map</code> - </dd><dd><code>header</code> - </dd><dd><code>dictionary</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -502,7 +466,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li>Prev Class</li>
-<li><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.EquivalenceClassStatistics.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html" title="class in org.deidentifier.arx.framework.check.groupify"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?org/deidentifier/arx/framework/check/groupify/HashGroupify.html" target="_top">Frames</a></li>
@@ -526,7 +490,7 @@ extends java.lang.Object</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>

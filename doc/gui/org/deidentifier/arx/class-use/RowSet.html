@@ -144,7 +144,9 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a></code></td>
-<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#getSet()">getSet</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#getSet()">getSet</a></strong>()</code>
+<div class="block">Getter</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -160,6 +162,19 @@
 <td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data, org.deidentifier.arx.RowSet)">create</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
       <a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;subset)</code>
 <div class="block">Creates a new subset from the given row set, from which a copy is created.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
+<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#getSubsetInstance(org.deidentifier.arx.RowSet)">getSubsetInstance</a></strong>(<a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset)</code>
+<div class="block">Returns a new data subset, only containing those rows that are included in the subset</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
+<td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.html#getSubsetInstance(org.deidentifier.arx.RowSet, double)">getSubsetInstance</a></strong>(<a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset,
+                 double&nbsp;gsFactor)</code>
+<div class="block">Clones this config and projects everything onto the given subset.</div>
 </td>
 </tr>
 </tbody>
