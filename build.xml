@@ -102,6 +102,11 @@
                 <exclude name="**/*.java" />
             </fileset>
         </copy>
+        <copy todir="build/test/org/deidentifier/arx/main/risk/resources/us" overwrite="true">
+            <fileset dir="src/gui/org/deidentifier/arx/main/risk/resources/us" defaultexcludes="yes">
+                <exclude name="**/*.java" />
+            </fileset>
+        </copy>
     </target>
 
     <target name="benchmark" depends="git.revision,compileTest">
