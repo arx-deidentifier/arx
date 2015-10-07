@@ -168,7 +168,7 @@ public class Controller implements IView {
     /**
      * Applies local recoding
      */
-    public void actionLocalRecoding() {
+    public void actionApplyLocalRecoding() {
         
 
         // Run the worker
@@ -186,6 +186,8 @@ public class Controller implements IView {
             if (t instanceof RollbackRequiredException) {
                 // Rollback
                 this.actionApplySelectedTransformation();
+                return;
+                
             } else if (t instanceof OutOfMemoryError) {
                 main.showInfoDialog(main.getShell(),
                                     Resources.getMessage("Controller.13"), //$NON-NLS-1$
@@ -197,7 +199,6 @@ public class Controller implements IView {
                                     Resources.getMessage("Controller.13"), //$NON-NLS-1$
                                     Resources.getMessage("Controller.141") + t.getMessage()); //$NON-NLS-1$
             }
-            return;
         }
 
         update(new ModelEvent(this,

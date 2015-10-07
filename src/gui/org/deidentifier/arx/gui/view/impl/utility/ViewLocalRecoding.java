@@ -160,7 +160,7 @@ public class ViewLocalRecoding implements IView {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 if (model.getResult() != null && model.getOutput() != null) {
-                    controller.actionLocalRecoding();
+                    controller.actionApplyLocalRecoding();
                 }
             }
         });
