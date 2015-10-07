@@ -99,23 +99,18 @@ public abstract class Example {
      * @param iterator
      */
     protected static void printIterator(Iterator<String[]> iterator) {
-        System.out.print("{");
         while (iterator.hasNext()) {
-            System.out.print("{");
             String[] next = iterator.next();
+            System.out.print("[");
             for (int i = 0; i < next.length; i++) {
                 String string = next[i];
-                System.out.print("\"" + string + "\"");
+                System.out.print(string);
                 if (i < next.length - 1) {
-                    System.out.print(",");
+                    System.out.print(", ");
                 }
             }
-            System.out.print("}");
-            if (iterator.hasNext()) {
-                System.out.print(",");
-            }
+            System.out.println("]");
         }
-        System.out.println("}");
     }
     
     /**
