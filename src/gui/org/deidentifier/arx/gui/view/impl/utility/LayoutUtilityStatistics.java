@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.gui.view.impl.utility;
 
+import java.util.List;
+
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -90,9 +92,9 @@ public class LayoutUtilityStatistics implements ILayout, IView {
      * @param reset
      */
     public LayoutUtilityStatistics(final Composite parent,
-                            final Controller controller,
-                            final ModelPart target,
-                            final ModelPart reset) {
+                                   final Controller controller,
+                                   final ModelPart target,
+                                   final ModelPart reset) {
 
         this.enabled = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
         this.disabled = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
@@ -110,7 +112,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         }});
         
         // Create the tab folder
-        folder = new ComponentTitledFolder(parent, controller, bar, null);
+        folder = new ComponentTitledFolder(parent, controller, bar, null, false, true);
         final Composite item0 = folder.createItem(TAB_SUMMARY, null);
         item0.setLayout(new FillLayout());
         final Composite item1 = folder.createItem(TAB_DISTRIBUTION, null);
@@ -162,7 +164,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     public void addSelectionListener(final SelectionListener listener) {
         folder.addSelectionListener(listener);
     }
-
+    
     @Override
     public void dispose() {
         // Empty by design
@@ -176,6 +178,14 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     public int getSelectionIndex() {
         return folder.getSelectionIndex();
     }
+
+    /**
+     * Returns all visible items
+     * @return
+     */
+    public List<String> getVisibleItems() {
+        return this.folder.getVisibleItems();
+    }
     
     @Override
     public void reset() {
@@ -186,12 +196,28 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     }
     
     /**
+     * Sets the according listener
+     * @param listener
+     */
+    public void setItemVisibilityListener(final SelectionListener listener) {
+        folder.setItemVisibilityListener(listener);
+    }
+
+    /**
      * Sets the selection index.
      *
      * @param index
      */
     public void setSelectionIdex(final int index) {
         folder.setSelection(index);
+    }
+
+    /**
+     * Sets all visible items
+     * @param items
+     */
+    public void setVisibleItems(List<String> items) {
+        this.folder.setVisibleItems(items);
     }
 
     @Override

@@ -284,6 +284,22 @@ public class LayoutUtility implements ILayout {
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
             }
         });
+        statisticsInputLayout.setItemVisibilityListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                statisticsOutputLayout.setVisibleItems(statisticsInputLayout.getVisibleItems());
+                // Hack to update visualizations
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
+            }
+        });
+        statisticsOutputLayout.setItemVisibilityListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                statisticsInputLayout.setVisibleItems(statisticsOutputLayout.getVisibleItems());
+                // Hack to update visualizations
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
+            }
+        });
 
         // Set sash weights
         centerSash.setWeights(new int[] { WEIGHT_TOP, WEIGHT_BOTTOM });

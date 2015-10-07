@@ -38,6 +38,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -85,11 +86,11 @@ public class ComponentTitledFolder implements IComponent {
     /** The folder */
     private final CTabFolder        folder;
 
-    /** Controller */
-    private final Controller        controller;
-    
-    /** Flag*/
-    private final boolean supportsHidingElements;
+    /** Flag */
+    private final boolean           supportsHidingElements;
+
+    /** Listener */
+    private SelectionListener       itemVisibilityListener;
 
     /**
      * Creates a new instance.
@@ -123,19 +124,18 @@ public class ComponentTitledFolder implements IComponent {
         if (bottom) flags |= SWT.BOTTOM;
         else flags |= SWT.TOP;
         
-        this.controller = controller;
         this.supportsHidingElements = supportsHidingElements;
         
-        folder = new CTabFolder(parent, flags);
-        folder.setUnselectedCloseVisible(false);
-        folder.setSimple(false);
+        this.folder = new CTabFolder(parent, flags);
+        this.folder.setUnselectedCloseVisible(false);
+        this.folder.setSimple(false);
         
         // Create help button
         if (bar == null) SWTUtil.createHelpButton(controller, folder, id);
         else createBar(controller, folder, bar);
 
         // Prevent closing
-        folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+        this.folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
             @Override
             public void close(final CTabFolderEvent event) {
                 event.doit = false;
@@ -160,7 +160,7 @@ public class ComponentTitledFolder implements IComponent {
     public void addSelectionListener(SelectionListener listener) {
         folder.addSelectionListener(listener);
     }
-
+    
     /**
      * Creates a new entry in the folder.
      *
@@ -193,7 +193,7 @@ public class ComponentTitledFolder implements IComponent {
         entries.add(new TitledFolderEntry(title, composite, image, index));
         return composite;
     }
-    
+
     /**
      * Disposes the given item.
      *
@@ -206,7 +206,7 @@ public class ComponentTitledFolder implements IComponent {
             }
         }
     }
-
+    
     /**
      * Returns the button item for the given text.
      *
@@ -266,12 +266,32 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
+     * Returns all visible items
+     * @return
+     */
+    public List<String> getVisibleItems() {
+        List<String> result = new ArrayList<String>();
+        for (CTabItem item : folder.getItems()) {
+            result.add(item.getText());
+        }
+        return result;
+    }
+
+    /**
      * Enables/disables the component.
      *
      * @param b
      */
     public void setEnabled(boolean b) {
         folder.setEnabled(b);
+    }
+
+    /**
+     * Sets the item visibility listener
+     * @param listener
+     */
+    public void setItemVisibilityListener(SelectionListener listener) {
+        this.itemVisibilityListener = listener;
     }
 
     /**
@@ -282,7 +302,7 @@ public class ComponentTitledFolder implements IComponent {
     public void setLayoutData(Object data){
         folder.setLayoutData(data);
     }
-
+    
     /**
      * Sets the current selection.
      *
@@ -293,18 +313,26 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * Sets the according item visible
+     * Sets the given items as visible
      * @param item
-     * @param visible
      */
-    public void setVisible(String item, boolean visible) {
-        if (!supportsHidingElements) {
-            return;
+    public void setVisibleItems(List<String> items) {
+        
+        boolean changed = false;
+        
+        for (String item : getAllItems()) {
+            if (items.contains(item)) {
+                changed |= setVisible(item, true);
+                if (this.folder.getItemCount() == 1) {
+                    this.folder.setSelection(0);
+                }
+            } else {
+                changed |= setVisible(item, false);
+            }
         }
-        if (visible) {
-            this.setVisible(item);
-        } else {
-            this.setInvisible(item);
+        
+        if (changed && this.itemVisibilityListener != null) {
+            this.itemVisibilityListener.widgetSelected(new SelectionEvent(new Event()));
         }
     }
 
@@ -318,6 +346,28 @@ public class ComponentTitledFolder implements IComponent {
     private void createBar(final Controller controller, final CTabFolder folder, final ComponentTitledFolderButton bar) {
         ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
         folder.setTopRight( toolbar, SWT.RIGHT );
+
+        if (this.supportsHidingElements) {
+
+            ToolItem item = new ToolItem( toolbar, SWT.PUSH );
+            item.setImage(controller.getResources().getManagedImage("manage.png"));  //$NON-NLS-1$
+            item.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
+            SWTUtil.createDisabledImage(item);
+            item.addSelectionListener(new SelectionAdapter(){
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    List<String> result = controller.actionShowMultiSelectionDialog(folder.getShell(), 
+                                                              "Manage folder items", 
+                                                              "Select items to display in the folder",
+                                                              getAllItems(), 
+                                                              getVisibleItems());
+                    
+                    if (result != null) {
+                        setVisibleItems(result);
+                    }
+                }
+            });
+        }
         
         for (String title : bar.getTitles()){
             
@@ -352,6 +402,18 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
+     * Returns all items
+     * @return
+     */
+    private List<String> getAllItems() {
+        List<String> result = new ArrayList<String>();
+        for (TitledFolderEntry entry : this.entries) {
+            result.add(entry.text);
+        }
+        return result;
+    }
+    
+    /**
      * Returns a list of all invisible entries
      * @return
      */
@@ -368,25 +430,26 @@ public class ComponentTitledFolder implements IComponent {
         }
         return result;
     }
-    
+
     /**
      * Sets the given item invisible
      * @param item
      */
-    private void setInvisible(String text) {
+    private boolean setInvisible(String text) {
         for (CTabItem item : folder.getItems()){
             if (item.getText().equals(text)) {
                 item.dispose();
-                return;
+                return true;
             }
         }
+        return false;
     }
-
+    
     /**
      * Sets an entry visible
      * @return
      */
-    private void setVisible(String text) {
+    private boolean setVisible(String text) {
         List<TitledFolderEntry> list = getInvisibleEntries();
         
         // Find
@@ -407,8 +470,25 @@ public class ComponentTitledFolder implements IComponent {
                 if (entry.image!=null) item.setImage(entry.image);
                 item.setShowClose(false);
                 item.setControl(entry.control);
-                return;
+                return true;
             }
+        }
+        return false;
+    }
+
+    /**
+     * Sets the according item visible
+     * @param item
+     * @param visible
+     */
+    private boolean setVisible(String item, boolean visible) {
+        if (!supportsHidingElements) {
+            return false;
+        }
+        if (visible) {
+            return this.setVisible(item);
+        } else {
+            return this.setInvisible(item);
         }
     }
 }

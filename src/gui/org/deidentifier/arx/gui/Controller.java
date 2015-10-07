@@ -1537,6 +1537,19 @@ public class Controller implements IView {
     public String actionShowSaveFileDialog(final Shell shell, String filter) {
         return main.showSaveFileDialog(shell, filter);
     }
+    
+    /**
+     * Shows a dialog for selecting multiple elements
+     * @param shell
+     * @param title
+     * @param text
+     * @param elements
+     * @param selected
+     * @return
+     */
+    public List<String> actionShowMultiSelectionDialog(Shell shell, String title, String text, List<String> elements, List<String> selected) {
+        return main.showMultiSelectionDialog(shell, title, text, elements, selected);
+    }
 
     /**
      * Includes all tuples in the research subset.

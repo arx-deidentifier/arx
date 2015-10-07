@@ -52,6 +52,7 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogDebug;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
 import org.deidentifier.arx.gui.view.impl.menu.DialogFindReplace;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
+import org.deidentifier.arx.gui.view.impl.menu.DialogMultiSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogOrderSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
@@ -1034,5 +1035,29 @@ public class MainWindow implements IView {
                 return true;
             }  
         };
+    }
+
+    /**
+     * Shows a dialog that allows selecting multiple elements
+     * @param shell
+     * @param title
+     * @param text
+     * @param elements
+     * @param selected
+     * @return
+     */
+    public List<String> showMultiSelectionDialog(Shell shell,
+                                                       String title,
+                                                       String text,
+                                                       List<String> elements,
+                                                       List<String> selected) {
+
+        // Open dialog
+        DialogMultiSelection dlg = new DialogMultiSelection(shell, title, text, elements, selected);
+        if (dlg.open() == Window.OK) {
+            return dlg.getSelectedItems();
+        } else {
+            return null;
+        }
     }
 }
