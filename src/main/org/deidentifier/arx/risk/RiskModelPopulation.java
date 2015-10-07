@@ -18,9 +18,9 @@
 package org.deidentifier.arx.risk;
 
 import org.deidentifier.arx.ARXPopulationModel;
-import org.deidentifier.arx.common.ComputationInterruptedException;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
+import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 /**
  * Abstract base class for population-based uniqueness models

@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandleStatistics;
-import org.deidentifier.arx.common.ComputationInterruptedException;
+import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 
 /**
@@ -416,8 +416,8 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                e.printStackTrace();
+                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
             }
         }
     }

@@ -319,13 +319,15 @@ public class ViewUtilityMeasures implements IView {
         if (selected != -1) {
             comboAggregate.select(selected);
         }
+        
+        SWTUtil.enable(root);        
 
         if (comboAggregate.getItemCount() == 0) {
             comboAggregate.add(Resources.getMessage("ViewMetric.0")); //$NON-NLS-1$
             comboAggregate.select(0);
+            comboAggregate.setEnabled(false);
         }
 
         root.setRedraw(true);
-        SWTUtil.enable(root);
     }
 }

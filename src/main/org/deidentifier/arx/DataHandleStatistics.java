@@ -132,6 +132,14 @@ public class DataHandleStatistics {
     }
     
     /**
+     * Returns whether the handle is optimized
+     * @return
+     */
+    public boolean isOptimized() {
+        return handle.isOptimized();
+    }
+
+    /**
      * Returns whether the given row is suppressed
      * @param row
      * @return

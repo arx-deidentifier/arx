@@ -22,12 +22,12 @@ import java.util.Comparator;
 import java.util.Set;
 
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.common.ComputationInterruptedException;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
+import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 

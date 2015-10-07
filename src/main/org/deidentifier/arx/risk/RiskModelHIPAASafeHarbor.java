@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.common.ComputationInterruptedException;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 import org.deidentifier.arx.risk.HIPAAIdentifierMatch.HIPAAIdentifier;
 import org.deidentifier.arx.risk.HIPAAIdentifierMatch.MatchType;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherCity;

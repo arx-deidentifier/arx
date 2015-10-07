@@ -39,10 +39,10 @@ import org.deidentifier.arx.DataType.ARXString;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
 import org.deidentifier.arx.aggregates.StatisticsSummary.StatisticsSummaryOrdinal;
-import org.deidentifier.arx.common.ComputationInterruptedException;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
+import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
@@ -441,14 +441,21 @@ public class StatisticsBuilder {
                 baseOrder.put(baseArray[i], i);
             }
             
+            // Handle optimized handles
+            int lower = handle.isOptimized() ? 1 : level;
+            int upper = handle.isOptimized() ? _hierarchy[0].length: level;
+            
             // Build higher level order from base order
             for (int i = 0; i < _hierarchy.length; i++) {
                 checkInterrupt();
-                if (!order.containsKey(_hierarchy[i][level])) {
-                    Integer position = baseOrder.get(_hierarchy[i][0]);
-                    if (position != null) {
-                        order.put(_hierarchy[i][level], position);
-                        max = Math.max(position, max) + 1;
+                
+                for (int j = lower; j < upper; j++) {
+                    if (!order.containsKey(_hierarchy[i][j])) {
+                        Integer position = baseOrder.get(_hierarchy[i][0]);
+                        if (position != null) {
+                            order.put(_hierarchy[i][j], position);
+                            max = Math.max(position, max) + 1;
+                        }
                     }
                 }
             }

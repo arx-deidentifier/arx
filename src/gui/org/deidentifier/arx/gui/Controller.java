@@ -52,6 +52,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
 import org.deidentifier.arx.gui.model.ModelCriterion;
@@ -182,7 +183,10 @@ public class Controller implements IView {
             if (worker.getError() instanceof InvocationTargetException) {
                 t = worker.getError().getCause();
             }
-            if (t instanceof OutOfMemoryError) {
+            if (t instanceof RollbackRequiredException) {
+                // Rollback
+                this.actionApplySelectedTransformation();
+            } else if (t instanceof OutOfMemoryError) {
                 main.showInfoDialog(main.getShell(),
                                     Resources.getMessage("Controller.13"), //$NON-NLS-1$
                                     Resources.getMessage("Controller.120")); //$NON-NLS-1$

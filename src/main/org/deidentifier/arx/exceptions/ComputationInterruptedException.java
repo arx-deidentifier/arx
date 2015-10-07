@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deidentifier.arx.common;
+package org.deidentifier.arx.exceptions;
 
 
 /**
@@ -41,6 +41,15 @@ public class ComputationInterruptedException extends RuntimeException {
         super(message);
     }
     
+    /** 
+     * Constructor
+     * @param message
+     * @param cause
+     */
+    public ComputationInterruptedException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
     /** 
      * Constructor
      * @param cause

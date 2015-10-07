@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.deidentifier.arx.common.ComputationInterruptedException;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
+import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 /**
  * A class for attribute-related risks

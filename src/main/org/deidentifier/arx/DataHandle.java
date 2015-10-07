@@ -118,7 +118,7 @@ public abstract class DataHandle {
         checkRegistry();
         return definition.getDataType(attribute);
     }
-
+    
     /**
      * Returns a date/time value from the specified cell.
      *
@@ -458,7 +458,7 @@ public abstract class DataHandle {
      * @return the num rows
      */
     public abstract int getNumRows();
-    
+
     /**
      * Returns a risk estimator
      * @param model
@@ -467,7 +467,7 @@ public abstract class DataHandle {
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model) {
         return getRiskEstimator(model, getDefinition().getQuasiIdentifyingAttributes());
     }
-
+    
     /**
      * Returns a risk estimator
      * @param model
@@ -560,6 +560,14 @@ public abstract class DataHandle {
         } else {
             return subset;
         }
+    }
+
+    /**
+     * Has this handle been optimized with local recoding?
+     * @return
+     */
+    public boolean isOptimized() {
+        return false;
     }
 
     /**

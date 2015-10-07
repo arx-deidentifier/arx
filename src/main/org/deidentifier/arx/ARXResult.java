@@ -33,6 +33,7 @@ import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
+import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -447,8 +448,9 @@ public class ARXResult {
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
      * @return The number of optimized records
+     * @throws RollbackRequiredException 
      */
-    public int optimize(DataHandle handle) {
+    public int optimize(DataHandle handle) throws RollbackRequiredException {
         return this.optimize(handle, 0.5d, new ARXListener(){
             @Override
             public void progress(double progress) {
@@ -467,8 +469,9 @@ public class ARXResult {
      *            generalization. The values in between can be used for
      *            balancing both methods.
      * @return The number of optimized records
+     * @throws RollbackRequiredException 
      */
-    public int optimize(DataHandle handle, double gsFactor) {
+    public int optimize(DataHandle handle, double gsFactor) throws RollbackRequiredException {
         return this.optimize(handle, gsFactor, new ARXListener(){
             @Override
             public void progress(double progress) {
@@ -489,9 +492,7 @@ public class ARXResult {
      * @param listener 
      * @return The number of optimized records
      */
-    public int optimize(DataHandle handle,
-                         double gsFactor,
-                         ARXListener listener) {
+    public int optimize(DataHandle handle, double gsFactor, ARXListener listener) throws RollbackRequiredException {
         
 
         if (gsFactor < 0d || gsFactor > 1d) {
@@ -580,27 +581,36 @@ public class ARXResult {
         int[][] oldMicroaggregated = output.getOutputBufferMicroaggregated().getArray();
         int[][] newGeneralized = data.bufferGeneralized.getArray();
         int[][] newMicroaggregated = data.bufferMicroaggregated.getArray();
-        int optimized = 0;
-        for (int oldIndex = 0; oldIndex < rowset.length(); oldIndex++) {
-            if (rowset.contains(oldIndex)) {
-                newIndex++;
-                if (oldGeneralized != null && oldGeneralized.length != 0) {
-                    System.arraycopy(newGeneralized[newIndex], 0, oldGeneralized[oldIndex], 0, newGeneralized[newIndex].length);
-                    optimized += (newGeneralized[newIndex][0] & Data.OUTLIER_MASK) != 0 ? 0 : 1;
-                }
-                if (oldMicroaggregated != null && oldMicroaggregated.length != 0) {
-                    System.arraycopy(newMicroaggregated[newIndex], 0, oldMicroaggregated[oldIndex], 0, newMicroaggregated[newIndex].length);
+        
+        try {
+            
+            int optimized = 0;
+            for (int oldIndex = 0; oldIndex < rowset.length(); oldIndex++) {
+                if (rowset.contains(oldIndex)) {
+                    newIndex++;
+                    if (oldGeneralized != null && oldGeneralized.length != 0) {
+                        System.arraycopy(newGeneralized[newIndex], 0, oldGeneralized[oldIndex], 0, newGeneralized[newIndex].length);
+                        optimized += (newGeneralized[newIndex][0] & Data.OUTLIER_MASK) != 0 ? 0 : 1;
+                    }
+                    if (oldMicroaggregated != null && oldMicroaggregated.length != 0) {
+                        System.arraycopy(newMicroaggregated[newIndex], 0, oldMicroaggregated[oldIndex], 0, newMicroaggregated[newIndex].length);
+                    }
                 }
             }
+            
+            // Mark as optimized
+            if (optimized != 0) {
+                output.setOptimized(true);
+            }
+            
+            // Return
+            return optimized;
+            
+        // If anything happens in the above block, the operation needs to be rolled back, because
+        // the buffer might be in an inconsistent state
+        } catch (Exception e) {
+            throw new RollbackRequiredException("You must reset the handle", e);
         }
-        
-        // Mark as optimized
-        if (optimized != 0) {
-            output.setOptimized(true);
-        }
-        
-        // Return
-        return optimized;
     }
     
     /**
@@ -615,11 +625,12 @@ public class ARXResult {
      * @param maxIterations The maximal number of iterations to perform
      * @param adaptionFactor Is added to the gsFactor when reaching a fixpoint 
      * @param listener 
+     * @throws RollbackRequiredException 
      */
     public void optimizeIterative(DataHandle handle,
                                   double gsFactor,
                                   int maxIterations,
-                                  double adaptionFactor) {
+                                  double adaptionFactor) throws RollbackRequiredException {
         this.optimizeIterative(handle, gsFactor, maxIterations, adaptionFactor, new ARXListener(){
             @Override
             public void progress(double progress) {
@@ -640,12 +651,13 @@ public class ARXResult {
      * @param maxIterations The maximal number of iterations to perform
      * @param adaptionFactor Is added to the gsFactor when reaching a fixpoint 
      * @param listener 
+     * @throws RollbackRequiredException 
      */
     public void optimizeIterative(final DataHandle handle,
                                   double gsFactor,
                                   final int maxIterations,
                                   final double adaptionFactor,
-                                  final ARXListener listener) {
+                                  final ARXListener listener) throws RollbackRequiredException {
         
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");

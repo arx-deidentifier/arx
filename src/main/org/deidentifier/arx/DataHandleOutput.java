@@ -100,9 +100,6 @@ public class DataHandleOutput extends DataHandle {
     /** The start index of the MA attributes in the dataDI */
     private final int    microaggregationStartIndex;
 
-    /** The current node. */
-    private ARXNode      node;
-
     /** The data. */
     private Data         outputGeneralized;
 
@@ -295,10 +292,7 @@ public class DataHandleOutput extends DataHandle {
         return internalGetValue(row, col);
     }
     
-    /**
-     * Has this handle been optimized with local recoding?
-     * @return
-     */
+    @Override
     public boolean isOptimized() {
         return this.optimized;
     }
@@ -449,7 +443,7 @@ public class DataHandleOutput extends DataHandle {
         checkRegistry();
         return registry.getInputHandle().getInputBuffer();
     }
-    
+        
     /**
      * Returns the output buffer
      * @return

@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.risk;
 
-import org.deidentifier.arx.common.ComputationInterruptedException;
+import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**

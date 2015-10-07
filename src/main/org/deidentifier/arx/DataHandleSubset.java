@@ -104,6 +104,11 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
+    public boolean isOptimized() {
+        return source.isOptimized();
+    }
+
+    @Override
     public boolean isOutlier(int row) {
         checkRegistry();
         return super.isOutlier(this.subset.getArray()[row]);
@@ -156,7 +161,7 @@ public class DataHandleSubset extends DataHandle {
     @Override
     protected DataType<?>[][] getDataTypeArray() {
         return source.dataTypes;
-    }
+    }    
 
     @Override
     protected String[] getDistinctValues(int column, InterruptHandler handler) {
