@@ -406,14 +406,7 @@ public class ARXResult {
         }
         
         // Create a set of supported privacy models
-        Set<Class<?>> supportedModels = new HashSet<Class<?>>();
-        supportedModels.add(KAnonymity.class);
-        supportedModels.add(DistinctLDiversity.class);
-        supportedModels.add(RecursiveCLDiversity.class);
-        supportedModels.add(EntropyLDiversity.class);
-        supportedModels.add(HierarchicalDistanceTCloseness.class);
-        supportedModels.add(EqualDistanceTCloseness.class);
-        supportedModels.add(Inclusion.class);
+        Set<Class<?>> supportedModels = getOptimizablePrivacyModels();
         for (PrivacyCriterion c : config.getCriteria()) {
             if (!supportedModels.contains(c.getClass())) {
                 return false;
@@ -513,14 +506,7 @@ public class ARXResult {
         }
         
         // Create a set of supported privacy models
-        Set<Class<?>> supportedModels = new HashSet<Class<?>>();
-        supportedModels.add(KAnonymity.class);
-        supportedModels.add(DistinctLDiversity.class);
-        supportedModels.add(RecursiveCLDiversity.class);
-        supportedModels.add(EntropyLDiversity.class);
-        supportedModels.add(HierarchicalDistanceTCloseness.class);
-        supportedModels.add(EqualDistanceTCloseness.class);
-        supportedModels.add(Inclusion.class);
+        Set<Class<?>> supportedModels = getOptimizablePrivacyModels();
         for (PrivacyCriterion c : config.getCriteria()) {
             if (!supportedModels.contains(c.getClass())) {
                 throw new UnsupportedOperationException("This method does currently not supported the model: " + c.getClass().getSimpleName());
@@ -609,7 +595,7 @@ public class ARXResult {
         // If anything happens in the above block, the operation needs to be rolled back, because
         // the buffer might be in an inconsistent state
         } catch (Exception e) {
-            throw new RollbackRequiredException("You must reset the handle", e);
+            throw new RollbackRequiredException("Handle must be rebuild to ensure privacy", e);
         }
     }
     
@@ -638,7 +624,7 @@ public class ARXResult {
             }
         });
     }
-    
+
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -716,6 +702,22 @@ public class ARXResult {
         for (String key : definition.getQuasiIdentifiersWithMicroaggregation()) {
             result.put(key, definition.getMicroAggregationFunction(key).getFunction());
         }
+        return result;
+    }
+    
+    /**
+     * Returns a set of classes of privacy models that may be optimized
+     * @return
+     */
+    private Set<Class<?>> getOptimizablePrivacyModels() {
+        Set<Class<?>> result = new HashSet<Class<?>>();
+        result.add(KAnonymity.class);
+        result.add(DistinctLDiversity.class);
+        result.add(RecursiveCLDiversity.class);
+        result.add(EntropyLDiversity.class);
+        result.add(HierarchicalDistanceTCloseness.class);
+        result.add(EqualDistanceTCloseness.class);
+        result.add(Inclusion.class);
         return result;
     }
     
