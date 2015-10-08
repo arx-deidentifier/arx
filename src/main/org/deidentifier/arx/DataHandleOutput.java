@@ -495,9 +495,14 @@ public class DataHandleOutput extends DataHandle {
             final int key = index * 2;
             final int attributeType = inverseMap[key];
             final int indexMap = inverseMap[key + 1];
-            if (attributeType == AttributeTypeInternal.IDENTIFYING) return 0;
+            
+            // Identifying attributes are removed from output data
+            if (attributeType == AttributeTypeInternal.IDENTIFYING) {
+                continue;
+            }
             
             int cmp = 0;
+            
             try {
                 String s1 = internalGetValue(row1, index);
                 String s2 = internalGetValue(row2, index);
