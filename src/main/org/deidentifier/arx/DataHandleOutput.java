@@ -443,7 +443,7 @@ public class DataHandleOutput extends DataHandle {
         checkRegistry();
         return registry.getInputHandle().getInputBuffer();
     }
-        
+    
     /**
      * Returns the output buffer
      * @return
@@ -451,7 +451,7 @@ public class DataHandleOutput extends DataHandle {
     protected Data getOutputBufferGeneralized() {
         return outputGeneralized;
     }
-    
+        
     /**
      * Returns the output buffer
      * @return
@@ -620,5 +620,23 @@ public class DataHandleOutput extends DataHandle {
      */
     protected void setOptimized(boolean optimized) {
         this.optimized = true;
+    }
+    
+    /**
+     * Used to update data types after local recoding
+     * @param transformation
+     */
+    protected void updateDataTypes(int[] transformation) {
+
+        for (int i = 0; i < dataTypes.length; i++) {
+            DataType<?>[] type = dataTypes[i];
+            if (type != null) {
+                for (int j = 0; j < type.length; j++) {
+                    if ((i == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED && transformation[j] > 0)) {
+                        dataTypes[i][j] = DataType.STRING;
+                    }
+                }
+            }
+        }
     }
 }

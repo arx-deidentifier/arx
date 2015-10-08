@@ -584,6 +584,9 @@ public class ARXResult {
                 }
             }
             
+            // Update data types
+            output.updateDataTypes(result.optimum.getGeneralization());
+            
             // Mark as optimized
             if (optimized != 0) {
                 output.setOptimized(true);
