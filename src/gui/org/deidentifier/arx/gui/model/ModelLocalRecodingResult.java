@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,11 +29,14 @@ import org.deidentifier.arx.DataType;
  *
  * @author Fabian Prasser
  */
-public class ModelLocalRecodingResult {
+public class ModelLocalRecodingResult implements Serializable {
 
-    /** The data types that resulted from the local recoding step*/
-    private final Map<String, DataType<?>> dataTypes = new HashMap<String, DataType<?>>();
-    
+    /** SVUID */
+    private static final long              serialVersionUID = -2447897054772331576L;
+
+    /** The data types that resulted from the local recoding step */
+    private final Map<String, DataType<?>> dataTypes        = new HashMap<String, DataType<?>>();
+
     /**
      * Creates a new instance for the given handle
      * @param output

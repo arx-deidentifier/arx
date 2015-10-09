@@ -1218,7 +1218,11 @@ public class Model implements Serializable {
 	 * @param handle
 	 */
 	public void setLocalRecodingResult(DataHandle handle) {
-	    this.localRecodingResult = new ModelLocalRecodingResult((DataHandleOutput) handle);
+	    if (handle == null) {
+	        this.localRecodingResult = null;
+	    } else {
+	        this.localRecodingResult = new ModelLocalRecodingResult((DataHandleOutput) handle);
+	    }
 	}
 
 	/**
