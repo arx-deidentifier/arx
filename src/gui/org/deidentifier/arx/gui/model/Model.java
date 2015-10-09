@@ -38,6 +38,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleOutput;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.criteria.DPresence;
@@ -258,7 +259,11 @@ public class Model implements Serializable {
     /* *****************************************
      * LOCAL RECODING
      ******************************************/
+    /** The local recoding model*/
     private ModelLocalRecoding                    localRecodingModel              = new ModelLocalRecoding();
+    
+    /** A result from local recoding*/
+    private ModelLocalRecodingResult              localRecodingResult             = null;
     
     /**
      * Creates a new instance.
@@ -282,8 +287,8 @@ public class Model implements Serializable {
 	    this.getAuditTrail().add(entry);
 	    this.setModified();
 	}
-
-    /**
+	
+	/**
      * Creates an anonymizer for the current config.
      *
      * @return
@@ -302,8 +307,8 @@ public class Model implements Serializable {
         // Return the anonymizer
 		return anonymizer;
 	}
-
-    /**
+	
+	/**
      * Replaces the output config with a clone of the input config.
      */
     public void createClonedConfig() {
@@ -313,7 +318,7 @@ public class Model implements Serializable {
         this.setModified();
 	}
 
-	/**
+    /**
      * Creates an ARXConfiguration.
      */
 	public void createConfig() {
@@ -432,7 +437,7 @@ public class Model implements Serializable {
         }
 	}
 
-	/**
+    /**
      * Creates an ARXConfiguration for the subset.
      *
      * @return
@@ -450,8 +455,8 @@ public class Model implements Serializable {
         // Return the config
 		return config;
 	}
-    
-    /**
+
+	/**
      * Returns the current anonymizer.
      *
      * @return
@@ -470,7 +475,7 @@ public class Model implements Serializable {
 		return pair;
 	}
     
-	/**
+    /**
 	 * Returns the audit trail
 	 * @return
 	 */
@@ -480,7 +485,7 @@ public class Model implements Serializable {
 	    }
 	    return auditTrail;
 	}
-	
+
 	/**
      * Returns the clipboard.
      *
@@ -492,7 +497,7 @@ public class Model implements Serializable {
         }
         return clipboard;
     }
-	
+    
 	/**
      * Gets the csv config model.
      * @return
@@ -504,7 +509,7 @@ public class Model implements Serializable {
         }
         return csvSyntax;
     }
-
+	
 	/**
      * Returns the project description.
      *
@@ -513,7 +518,7 @@ public class Model implements Serializable {
 	public String getDescription() {
 		return description;
 	}
-
+	
 	/**
      * Returns the (e,d)-DP model.
      *
@@ -610,7 +615,7 @@ public class Model implements Serializable {
 		return kAnonymityModel;
 	}
 
-    /**
+	/**
      * Returns the l-diversity model.
      *
      * @return
@@ -621,7 +626,7 @@ public class Model implements Serializable {
 	        }
 		return lDiversityModel;
 	}
-    
+
 	/**
      * Returns the project locale.
      *
@@ -635,7 +640,7 @@ public class Model implements Serializable {
 	    }
 	}
 
-	/**
+    /**
      * Returns the model for local recoding
      * @return
      */
@@ -645,7 +650,15 @@ public class Model implements Serializable {
         }
         return localRecodingModel;
     }
-	
+    
+	/**
+	 * Returns the result, if the current output was altered with local recoding
+	 * @return
+	 */
+	public ModelLocalRecodingResult getLocalRecodingResult() {
+	    return this.localRecodingResult;
+	}
+
 	/**
      * When a dataset has more records than this threshold,
      * visualization of statistics will be disabled.
@@ -655,7 +668,7 @@ public class Model implements Serializable {
 	public int getMaximalSizeForComplexOperations(){
 	    return this.maximalSizeForComplexOperations;
 	}
-
+	
 	/**
      * Returns the maximal size of a sub-lattice that will be displayed
      * by the viewer.
@@ -785,7 +798,7 @@ public class Model implements Serializable {
         return null;
     }
 
-    /**
+	/**
      * Returns the path of the project.
      *
      * @return
@@ -794,7 +807,7 @@ public class Model implements Serializable {
 		return path;
 	}
 
-	/**
+    /**
      * @return the perspective
      */
     public Perspective getPerspective() {
@@ -812,7 +825,7 @@ public class Model implements Serializable {
 	public String getQuery() {
         return query;
     }
-	
+
 	/**
      * Returns the current result.
      *
@@ -836,7 +849,7 @@ public class Model implements Serializable {
         }
         return riskBasedModel;
     }
-
+	
 	/**
      * Returns the risk model
      * @return the risk model
@@ -857,7 +870,7 @@ public class Model implements Serializable {
 		return selectedAttribute;
 	}
 
-    /**
+	/**
      * Returns the selected transformation.
      *
      * @return
@@ -865,7 +878,7 @@ public class Model implements Serializable {
 	public ARXNode getSelectedNode() {
 		return selectedNode;
 	}
-    
+
     /**
      * Returns a set of quasi identifiers selected for risk analysis
      * @return
@@ -907,8 +920,8 @@ public class Model implements Serializable {
         }
         return this.selectedQuasiIdentifiers;
     }
-
-	/**
+    
+    /**
      * Returns the separator.
      *
      * @return
@@ -917,7 +930,7 @@ public class Model implements Serializable {
 		return separator;
 	}
 
-    /**
+	/**
      * Returns the according parameter.
      *
      * @return
@@ -944,7 +957,7 @@ public class Model implements Serializable {
         return this.subsetOrigin;
     }
 
-	/**
+    /**
      * Returns the t-closeness model.
      *
      * @return
@@ -965,7 +978,7 @@ public class Model implements Serializable {
 		return time;
 	}
 
-    /**
+	/**
      * Returns whether functional hierarchies should be used
      * @return
      */
@@ -991,7 +1004,7 @@ public class Model implements Serializable {
         return useListwiseDeletion;
     }
 
-	/**
+    /**
      * Returns the view configuration.
      *
      * @return
@@ -1009,7 +1022,7 @@ public class Model implements Serializable {
 	    return debugEnabled;
 	}
 
-    /**
+	/**
      * Returns whether this project is modified.
      *
      * @return
@@ -1030,7 +1043,7 @@ public class Model implements Serializable {
 		return modified;
 	}
 
-	/**
+    /**
      * Returns whether a quasi-identifier is selected.
      *
      * @return
@@ -1039,7 +1052,7 @@ public class Model implements Serializable {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
 	}
 
-    /**
+	/**
      * Returns whether a sensitive attribute is selected.
      *
      * @return
@@ -1048,7 +1061,7 @@ public class Model implements Serializable {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
 
-	/**
+    /**
      * Returns whether visualization is enabled.
      *
      * @return
@@ -1060,23 +1073,24 @@ public class Model implements Serializable {
 	        return this.showVisualization;
 	    }
 	}
-	
+
 	/**
      * Resets the model.
      */
 	public void reset() {
-        resetCriteria();
-        resetAttributePair();
-        inputConfig = new ModelConfiguration();
-        outputConfig = null;
-        output = null;
-        result = null;
+        this.resetCriteria();
+        this.resetAttributePair();
+        this.inputConfig = new ModelConfiguration();
+        this.outputConfig = null;
+        this.output = null;
+        this.result = null;
         if (auditTrail != null) auditTrail.clear();
-        selectedQuasiIdentifiers = null;
-        subsetOrigin = Resources.getMessage("Model.0"); //$NON-NLS-1$
-        groups = null;
+        this.selectedQuasiIdentifiers = null;
+        this.subsetOrigin = Resources.getMessage("Model.0"); //$NON-NLS-1$
+        this.groups = null;
+        this.localRecodingResult = null;
 	}
-
+	
 	/**
      * Returns the last two selected attributes.
      */
@@ -1086,8 +1100,8 @@ public class Model implements Serializable {
 		pair[0] = null;
 		pair[1] = null;
 	}
-    
-    /**
+
+	/**
      * Resets the configuration of the privacy criteria.
      */
 	public void resetCriteria() {
@@ -1120,8 +1134,8 @@ public class Model implements Serializable {
 		setModified();
 		this.anonymizer = anonymizer;
 	}
-
-	/**
+    
+    /**
      * Enables debugging.
      *
      * @param value
@@ -1170,7 +1184,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-    /**
+	/**
      * Sets the size of the input in bytes.
      *
      * @param inputBytes
@@ -1180,7 +1194,7 @@ public class Model implements Serializable {
 		this.inputBytes = inputBytes;
 	}
 
-	/**
+    /**
      * Sets the input config.
      *
      * @param config
@@ -1198,6 +1212,14 @@ public class Model implements Serializable {
         this.locale = locale;
         this.setModified();
     }
+
+	/**
+	 * Sets the local recoding result
+	 * @param handle
+	 */
+	public void setLocalRecodingResult(DataHandle handle) {
+	    this.localRecodingResult = new ModelLocalRecodingResult((DataHandleOutput) handle);
+	}
 
 	/**
      * Sets the according parameter.

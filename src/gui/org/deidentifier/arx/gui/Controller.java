@@ -149,6 +149,7 @@ public class Controller implements IView {
         // Distribute results
         if (worker.getResult() != null) {
             this.model.setOutput(worker.getResult(), model.getSelectedNode());
+            this.model.setLocalRecodingResult(null);
             this.update(new ModelEvent(this, ModelPart.OUTPUT, worker.getResult()));
 
             // Do not sort if dataset is too large
@@ -201,6 +202,7 @@ public class Controller implements IView {
             }
         }
 
+        this.model.setLocalRecodingResult(model.getOutput());
         update(new ModelEvent(this,
                               ModelPart.OUTPUT,
                               model.getOutput()));
@@ -712,6 +714,7 @@ public class Controller implements IView {
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
             if (result.isResultAvailable()) {
                 model.setOutput(result.getOutput(false), result.getGlobalOptimum());
+                model.setLocalRecodingResult(null);
                 model.setSelectedNode(result.getGlobalOptimum());
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
