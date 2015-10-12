@@ -38,7 +38,6 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.DataHandleOutput;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.criteria.DPresence;
@@ -261,9 +260,6 @@ public class Model implements Serializable {
      ******************************************/
     /** The local recoding model*/
     private ModelLocalRecoding                    localRecodingModel              = new ModelLocalRecoding();
-    
-    /** A result from local recoding*/
-    private ModelLocalRecodingResult              localRecodingResult             = null;
     
     /**
      * Creates a new instance.
@@ -651,14 +647,6 @@ public class Model implements Serializable {
         return localRecodingModel;
     }
     
-	/**
-	 * Returns the result, if the current output was altered with local recoding
-	 * @return
-	 */
-	public ModelLocalRecodingResult getLocalRecodingResult() {
-	    return this.localRecodingResult;
-	}
-
 	/**
      * When a dataset has more records than this threshold,
      * visualization of statistics will be disabled.
@@ -1088,7 +1076,6 @@ public class Model implements Serializable {
         this.selectedQuasiIdentifiers = null;
         this.subsetOrigin = Resources.getMessage("Model.0"); //$NON-NLS-1$
         this.groups = null;
-        this.localRecodingResult = null;
 	}
 	
 	/**
@@ -1212,18 +1199,6 @@ public class Model implements Serializable {
         this.locale = locale;
         this.setModified();
     }
-
-	/**
-	 * Sets the local recoding result
-	 * @param handle
-	 */
-	public void setLocalRecodingResult(DataHandle handle) {
-	    if (handle == null) {
-	        this.localRecodingResult = null;
-	    } else {
-	        this.localRecodingResult = new ModelLocalRecodingResult((DataHandleOutput) handle);
-	    }
-	}
 
 	/**
      * Sets the according parameter.

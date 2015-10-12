@@ -81,6 +81,7 @@ import org.deidentifier.arx.gui.worker.WorkerAnonymize;
 import org.deidentifier.arx.gui.worker.WorkerExport;
 import org.deidentifier.arx.gui.worker.WorkerImport;
 import org.deidentifier.arx.gui.worker.WorkerLoad;
+import org.deidentifier.arx.gui.worker.WorkerLoadLocalRecoding;
 import org.deidentifier.arx.gui.worker.WorkerLocalRecode;
 import org.deidentifier.arx.gui.worker.WorkerSave;
 import org.deidentifier.arx.gui.worker.WorkerTransform;
@@ -130,43 +131,6 @@ public class Controller implements IView {
     }
 
     /**
-     * Applies the selected transformation.
-     */
-    public void actionApplySelectedTransformation() {
-
-        // Run the worker
-        final WorkerTransform worker = new WorkerTransform(model);
-        main.showProgressDialog(Resources.getMessage("Controller.0"), worker); //$NON-NLS-1$
-
-        // Show errors
-        if (worker.getError() != null) {
-            main.showErrorDialog(main.getShell(),
-                                 Resources.getMessage("Controller.2"), //$NON-NLS-1$
-                                 worker.getError());
-            return;
-        }
-
-        // Distribute results
-        if (worker.getResult() != null) {
-            this.model.setOutput(worker.getResult(), model.getSelectedNode());
-            this.model.setLocalRecodingResult(null);
-            this.update(new ModelEvent(this, ModelPart.OUTPUT, worker.getResult()));
-
-            // Do not sort if dataset is too large
-            if (model.getMaximalSizeForComplexOperations() == 0 ||
-                model.getInputConfig().getInput().getHandle().getNumRows() <=
-                model.getMaximalSizeForComplexOperations()) {
-                this.model.getViewConfig().setMode(Mode.GROUPED);
-                this.updateViewConfig(true);
-            } else {
-                this.model.getViewConfig().setMode(Mode.UNSORTED);
-                this.updateViewConfig(true);
-            }
-            this.update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, model.getOutput()));
-        }
-    }
-    
-    /**
      * Applies local recoding
      */
     public void actionApplyLocalRecoding() {
@@ -202,7 +166,6 @@ public class Controller implements IView {
             }
         }
 
-        this.model.setLocalRecodingResult(model.getOutput());
         update(new ModelEvent(this,
                               ModelPart.OUTPUT,
                               model.getOutput()));
@@ -218,6 +181,42 @@ public class Controller implements IView {
             this.updateViewConfig(true);
         }
         this.update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, model.getOutput()));
+    }
+    
+    /**
+     * Applies the selected transformation.
+     */
+    public void actionApplySelectedTransformation() {
+
+        // Run the worker
+        final WorkerTransform worker = new WorkerTransform(model);
+        main.showProgressDialog(Resources.getMessage("Controller.0"), worker); //$NON-NLS-1$
+
+        // Show errors
+        if (worker.getError() != null) {
+            main.showErrorDialog(main.getShell(),
+                                 Resources.getMessage("Controller.2"), //$NON-NLS-1$
+                                 worker.getError());
+            return;
+        }
+
+        // Distribute results
+        if (worker.getResult() != null) {
+            this.model.setOutput(worker.getResult(), model.getSelectedNode());
+            this.update(new ModelEvent(this, ModelPart.OUTPUT, worker.getResult()));
+
+            // Do not sort if dataset is too large
+            if (model.getMaximalSizeForComplexOperations() == 0 ||
+                model.getInputConfig().getInput().getHandle().getNumRows() <=
+                model.getMaximalSizeForComplexOperations()) {
+                this.model.getViewConfig().setMode(Mode.GROUPED);
+                this.updateViewConfig(true);
+            } else {
+                this.model.getViewConfig().setMode(Mode.UNSORTED);
+                this.updateViewConfig(true);
+            }
+            this.update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, model.getOutput()));
+        }
     }
 
     /**
@@ -572,36 +571,6 @@ public class Controller implements IView {
     }
 
     /**
-     * Initializes the hierarchy for the currently selected attribute
-     */
-    public void actionMenuEditInitializeHierarchy() {
-
-        // Check
-        if (model == null ||
-            model.getInputConfig() == null ||
-            model.getInputConfig().getInput() == null ||
-            model.getSelectedAttribute() == null) {
-            return;
-        }
-        
-        // Obtain values
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-        int index = handle.getColumnIndexOf(model.getSelectedAttribute());
-        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
-        
-        // Create hierarchy
-        String[][] array = new String[values.length][0];
-        for (int i = 0; i < values.length; i++) {
-            array[i] = new String[] { values[i] };
-        }
-        
-        // Update
-        Hierarchy hierarchy = Hierarchy.create(array);
-        this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
-        this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
-    }
-
-    /**
      * Starts the anonymization.
      * @param heuristicSearch 
      */
@@ -714,7 +683,6 @@ public class Controller implements IView {
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
             if (result.isResultAvailable()) {
                 model.setOutput(result.getOutput(false), result.getGlobalOptimum());
-                model.setLocalRecodingResult(null);
                 model.setSelectedNode(result.getGlobalOptimum());
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
@@ -794,6 +762,36 @@ public class Controller implements IView {
                 update(new ModelEvent(this, ModelPart.HIERARCHY, result.hierarchy));
             }
         }
+    }
+
+    /**
+     * Initializes the hierarchy for the currently selected attribute
+     */
+    public void actionMenuEditInitializeHierarchy() {
+
+        // Check
+        if (model == null ||
+            model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null ||
+            model.getSelectedAttribute() == null) {
+            return;
+        }
+        
+        // Obtain values
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int index = handle.getColumnIndexOf(model.getSelectedAttribute());
+        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
+        
+        // Create hierarchy
+        String[][] array = new String[values.length][0];
+        for (int i = 0; i < values.length; i++) {
+            array[i] = new String[] { values[i] };
+        }
+        
+        // Update
+        Hierarchy hierarchy = Hierarchy.create(array);
+        this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
+        this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
     }
 
     /**
@@ -1322,6 +1320,9 @@ public class Controller implements IView {
             model.setSelectedNode(tempSelectedNode);
             update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
             this.actionApplySelectedTransformation();
+            
+            // Load local recoding
+            actionLoadLocalRecoding(path);
         }
 
         // We just loaded the model, so there are no changes
@@ -1430,6 +1431,7 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
+
     /**
      * Shows an input dialog.
      *
@@ -1445,7 +1447,6 @@ public class Controller implements IView {
                                         final String initial) {
         return main.showInputDialog(shell, header, text, initial);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1461,6 +1462,19 @@ public class Controller implements IView {
                                         final String initial,
                                         final IInputValidator validator) {
         return main.showInputDialog(shell, header, text, initial, validator);
+    }
+
+    /**
+     * Shows a dialog for selecting multiple elements
+     * @param shell
+     * @param title
+     * @param text
+     * @param elements
+     * @param selected
+     * @return
+     */
+    public List<String> actionShowMultiSelectionDialog(Shell shell, String title, String text, List<String> elements, List<String> selected) {
+        return main.showMultiSelectionDialog(shell, title, text, elements, selected);
     }
 
     /**
@@ -1542,19 +1556,6 @@ public class Controller implements IView {
         return main.showSaveFileDialog(shell, filter);
     }
     
-    /**
-     * Shows a dialog for selecting multiple elements
-     * @param shell
-     * @param title
-     * @param text
-     * @param elements
-     * @param selected
-     * @return
-     */
-    public List<String> actionShowMultiSelectionDialog(Shell shell, String title, String text, List<String> elements, List<String> selected) {
-        return main.showMultiSelectionDialog(shell, title, text, elements, selected);
-    }
-
     /**
      * Includes all tuples in the research subset.
      */
@@ -1693,7 +1694,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.133")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-    
+
     /**
      * Registers a listener at the controller.
      *
@@ -1706,7 +1707,7 @@ public class Controller implements IView {
         }
         listeners.get(target).add(listener);
     }
-
+    
     @Override
     public void dispose() {
         for (final Set<IView> listeners : getListeners().values()) {
@@ -1892,6 +1893,64 @@ public class Controller implements IView {
             }
         }
         return null;
+    }
+
+    /**
+     * Used to load a local recoding from a project file
+     * @param path 
+     */
+    private void actionLoadLocalRecoding(String path) {
+
+        // Run the worker
+        WorkerLoadLocalRecoding worker;
+        try {
+            worker = new WorkerLoadLocalRecoding(model, path);
+        } catch (final IOException e) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.82"), e.getMessage()); //$NON-NLS-1$
+            return;
+        }
+        main.showProgressDialog(Resources.getMessage("WorkerLoadLocalRecoding.0"), worker); //$NON-NLS-1$
+
+        // Show errors
+        if (worker.getError() != null) {
+
+            // Extract
+            Throwable t = worker.getError();
+            if (worker.getError() instanceof InvocationTargetException) {
+                t = worker.getError().getCause();
+            } else if (t instanceof OutOfMemoryError) {
+                main.showInfoDialog(main.getShell(),
+                                    Resources.getMessage("Controller.13"), //$NON-NLS-1$
+                                    Resources.getMessage("Controller.120")); //$NON-NLS-1$
+            } else if (t instanceof NullPointerException) {
+                main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.36"), t); //$NON-NLS-1$
+            } else {
+                main.showInfoDialog(main.getShell(),
+                                    Resources.getMessage("Controller.13"), //$NON-NLS-1$
+                                    Resources.getMessage("Controller.141") + t.getMessage()); //$NON-NLS-1$
+            }
+            return;
+        }
+
+        // Update
+        if (worker.getResult()) {
+            update(new ModelEvent(this,
+                                  ModelPart.OUTPUT,
+                                  model.getOutput()));
+    
+            // Do not sort if dataset is too large
+            if (model.getMaximalSizeForComplexOperations() == 0 ||
+                model.getInputConfig().getInput().getHandle().getNumRows() <=
+                model.getMaximalSizeForComplexOperations()) {
+                this.model.getViewConfig().setMode(Mode.GROUPED);
+                this.updateViewConfig(true);
+            } else {
+                this.model.getViewConfig().setMode(Mode.UNSORTED);
+                this.updateViewConfig(true);
+            }
+            this.update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, model.getOutput()));
+        }
     }
 
     /**
