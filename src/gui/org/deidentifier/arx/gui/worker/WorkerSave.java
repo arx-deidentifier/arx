@@ -39,7 +39,6 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.DataHandleOutput;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
@@ -48,7 +47,6 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.worker.io.FileBuilder;
-import org.deidentifier.arx.gui.worker.io.LocalRecodingData;
 import org.deidentifier.arx.gui.worker.io.Vocabulary;
 import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
 import org.deidentifier.arx.gui.worker.io.XMLWriter;
@@ -90,7 +88,7 @@ public class WorkerSave extends Worker<Model> {
     public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                                         InterruptedException {
 
-        arg0.beginTask(Resources.getMessage("WorkerSave.0"), 11); //$NON-NLS-1$
+        arg0.beginTask(Resources.getMessage("WorkerSave.0"), 10); //$NON-NLS-1$
 
         try {
             final FileOutputStream f = new FileOutputStream(path);
@@ -116,8 +114,6 @@ public class WorkerSave extends Worker<Model> {
             writeClipboard(model, map, zip);
             arg0.worked(1);
             writeFilter(model, zip);
-            arg0.worked(1);
-            writeLocalRecoding(model, zip);
             zip.close();
             arg0.worked(1);
         } catch (final Exception e) {
@@ -594,25 +590,6 @@ public class WorkerSave extends Worker<Model> {
         return map;
     }
     
-    /**
-     * Writes info about local recoding
-     * @param model
-     * @param zip
-     * @throws IOException 
-     */
-    private void writeLocalRecoding(Model model, ZipOutputStream zip) throws IOException {
-        
-        if (model.getOutput() == null || !model.getOutput().isOptimized()) {
-            return; 
-        }
-        
-        // Write data
-        zip.putNextEntry(new ZipEntry("local.dat")); //$NON-NLS-1$
-        ObjectOutputStream oos = new ObjectOutputStream(zip);
-        oos.writeObject(new LocalRecodingData((DataHandleOutput) model.getOutput()));
-        oos.flush();
-    }
-
     /**
      * Writes the meta data to the file.
      *

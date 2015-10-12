@@ -81,7 +81,6 @@ import org.deidentifier.arx.gui.worker.WorkerAnonymize;
 import org.deidentifier.arx.gui.worker.WorkerExport;
 import org.deidentifier.arx.gui.worker.WorkerImport;
 import org.deidentifier.arx.gui.worker.WorkerLoad;
-import org.deidentifier.arx.gui.worker.WorkerLoadLocalRecoding;
 import org.deidentifier.arx.gui.worker.WorkerLocalRecode;
 import org.deidentifier.arx.gui.worker.WorkerSave;
 import org.deidentifier.arx.gui.worker.WorkerTransform;
@@ -1317,12 +1316,9 @@ public class Controller implements IView {
 
         // Update subsets of the model
         if (tempSelectedNode != null) {
-            model.setSelectedNode(tempSelectedNode);
-            update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
+            this.model.setSelectedNode(tempSelectedNode);
+            this.update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
             this.actionApplySelectedTransformation();
-            
-            // Load local recoding
-            actionLoadLocalRecoding(path);
         }
 
         // We just loaded the model, so there are no changes
@@ -1893,64 +1889,6 @@ public class Controller implements IView {
             }
         }
         return null;
-    }
-
-    /**
-     * Used to load a local recoding from a project file
-     * @param path 
-     */
-    private void actionLoadLocalRecoding(String path) {
-
-        // Run the worker
-        WorkerLoadLocalRecoding worker;
-        try {
-            worker = new WorkerLoadLocalRecoding(model, path);
-        } catch (final IOException e) {
-            main.showInfoDialog(main.getShell(),
-                                Resources.getMessage("Controller.82"), e.getMessage()); //$NON-NLS-1$
-            return;
-        }
-        main.showProgressDialog(Resources.getMessage("WorkerLoadLocalRecoding.0"), worker); //$NON-NLS-1$
-
-        // Show errors
-        if (worker.getError() != null) {
-
-            // Extract
-            Throwable t = worker.getError();
-            if (worker.getError() instanceof InvocationTargetException) {
-                t = worker.getError().getCause();
-            } else if (t instanceof OutOfMemoryError) {
-                main.showInfoDialog(main.getShell(),
-                                    Resources.getMessage("Controller.13"), //$NON-NLS-1$
-                                    Resources.getMessage("Controller.120")); //$NON-NLS-1$
-            } else if (t instanceof NullPointerException) {
-                main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.36"), t); //$NON-NLS-1$
-            } else {
-                main.showInfoDialog(main.getShell(),
-                                    Resources.getMessage("Controller.13"), //$NON-NLS-1$
-                                    Resources.getMessage("Controller.141") + t.getMessage()); //$NON-NLS-1$
-            }
-            return;
-        }
-
-        // Update
-        if (worker.getResult()) {
-            update(new ModelEvent(this,
-                                  ModelPart.OUTPUT,
-                                  model.getOutput()));
-    
-            // Do not sort if dataset is too large
-            if (model.getMaximalSizeForComplexOperations() == 0 ||
-                model.getInputConfig().getInput().getHandle().getNumRows() <=
-                model.getMaximalSizeForComplexOperations()) {
-                this.model.getViewConfig().setMode(Mode.GROUPED);
-                this.updateViewConfig(true);
-            } else {
-                this.model.getViewConfig().setMode(Mode.UNSORTED);
-                this.updateViewConfig(true);
-            }
-            this.update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, model.getOutput()));
-        }
     }
 
     /**
