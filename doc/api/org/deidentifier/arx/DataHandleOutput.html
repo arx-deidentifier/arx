@@ -198,6 +198,14 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <div class="block">Replaces the original value with the replacement in the given column.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleOutput.html#updateData(org.deidentifier.arx.DataHandle, java.util.Map, int[])">updateData</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;data,
+          java.util.Map&lt;java.lang.String,<a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&gt;&nbsp;types,
+          int[]&nbsp;outliers)</code>
+<div class="block">Used to update data when loading projects after local recoding.</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_org.deidentifier.arx.DataHandle">
@@ -350,7 +358,7 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <a name="replace(int, java.lang.String, java.lang.String)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>replace</h4>
 <pre>public&nbsp;boolean&nbsp;replace(int&nbsp;column,
@@ -364,6 +372,20 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#replace(int, java.lang.String, java.lang.String)">replace</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - the column</dd><dd><code>original</code> - the original</dd><dd><code>replacement</code> - the replacement</dd>
 <dt><span class="strong">Returns:</span></dt><dd>Whether the original value was found</dd></dl>
+</li>
+</ul>
+<a name="updateData(org.deidentifier.arx.DataHandle, java.util.Map, int[])">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>updateData</h4>
+<pre>public&nbsp;void&nbsp;updateData(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;data,
+              java.util.Map&lt;java.lang.String,<a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&gt;&nbsp;types,
+              int[]&nbsp;outliers)</pre>
+<div class="block">Used to update data when loading projects after local recoding. This is part of the internal API
+ and should never be called by users</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>types</code> - </dd></dl>
 </li>
 </ul>
 </li>
