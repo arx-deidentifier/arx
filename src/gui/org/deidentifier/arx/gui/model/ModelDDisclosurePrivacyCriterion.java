@@ -68,7 +68,7 @@ public class ModelDDisclosurePrivacyCriterion extends ModelExplicitCriterion{
 	
 	@Override
     public String getLabel() {
-        return Resources.getMessage("Model.1b"); //$NON-NLS-1$
+        return Resources.getMessage("Model.31"); //$NON-NLS-1$
     }
 	
 	/**
