@@ -234,6 +234,9 @@ public class Model implements Serializable {
     /** Model for a specific privacy criterion. */
     private ModelDifferentialPrivacyCriterion     differentialPrivacyModel        = new ModelDifferentialPrivacyCriterion();
 
+    /** Model for a specific privacy criterion. */
+    private Map<String, ModelDDisclosurePrivacyCriterion> dDisclosurePrivacyModel = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
+
     /* *****************************************
      * UTILITY ANALYSIS
      ******************************************/
@@ -397,6 +400,13 @@ public class Model implements Serializable {
 	            config.addCriterion(entry.getValue().getCriterion(this));
 	        }
 		}
+        
+		for (Entry<String, ModelDDisclosurePrivacyCriterion> entry : this.dDisclosurePrivacyModel.entrySet()){
+            if (entry.getValue() != null &&
+                entry.getValue().isEnabled()) {
+                config.addCriterion(entry.getValue().getCriterion(this));
+            }
+        }
         
         for (Entry<String, ModelTClosenessCriterion> entry : this.tClosenessModel.entrySet()){
             if (entry.getValue() != null &&
@@ -957,6 +967,18 @@ public class Model implements Serializable {
 		return tClosenessModel;
 	}
 
+    /**
+     * Returns the d-disclosure privacy model.
+     *
+     * @return
+     */
+    public Map<String, ModelDDisclosurePrivacyCriterion> getDDisclosurePrivacyModel() {
+        if (this.dDisclosurePrivacyModel == null) {
+            this.dDisclosurePrivacyModel = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
+        }
+        return dDisclosurePrivacyModel;
+    }
+
 	/**
      * Returns the execution time of the last anonymization process.
      *
@@ -1101,11 +1123,13 @@ public class Model implements Serializable {
 		lDiversityModel.clear();
 		tClosenessModel.clear();
 		riskBasedModel.clear();
+		dDisclosurePrivacyModel.clear();
 		DataHandle handle = inputConfig.getInput().getHandle();
 		for (int col = 0; col < handle.getNumColumns(); col++) {
 			String attribute = handle.getAttributeName(col);
 			lDiversityModel.put(attribute, new ModelLDiversityCriterion(attribute));
 			tClosenessModel.put(attribute, new ModelTClosenessCriterion(attribute));
+			dDisclosurePrivacyModel.put(attribute, new ModelDDisclosurePrivacyCriterion(attribute));
 		}
 		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_AVERAGE_RISK));
 		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));

@@ -27,6 +27,7 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
@@ -277,6 +278,11 @@ public class ViewCriteriaList implements IView {
                 explicit.add(other);
             }
         }
+        for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
+            if (other.isEnabled()) {
+                explicit.add(other);
+            }
+        }
         Collections.sort(explicit, new Comparator<ModelExplicitCriterion>(){
             public int compare(ModelExplicitCriterion o1, ModelExplicitCriterion o2) {
                 return o1.getAttribute().compareTo(o2.getAttribute());
@@ -288,8 +294,10 @@ public class ViewCriteriaList implements IView {
             item.setText(new String[] { "", c.toString(), c.getAttribute() }); //$NON-NLS-1$
             if (c instanceof ModelLDiversityCriterion) {
                 item.setImage(0, symbolL);
-            } else {
+            } else if (c instanceof ModelTClosenessCriterion) {
                 item.setImage(0, symbolT);
+            } else if (c instanceof ModelDDisclosurePrivacyCriterion) {
+                item.setImage(0, symbolD);
             }
             item.setData(c);
         }

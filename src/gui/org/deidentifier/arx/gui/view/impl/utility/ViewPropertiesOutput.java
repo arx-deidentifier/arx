@@ -24,6 +24,7 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
+import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
@@ -290,6 +291,12 @@ public class ViewPropertiesOutput extends ViewProperties {
                     new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                     final int height = context.config.getHierarchy(criterion.getAttribute()).getHierarchy()[0].length;
                     new Property(n, "SE-"+(index++), new String[] { Resources.getMessage("PropertiesView.87") + String.valueOf(height) }); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                else if (c instanceof DDisclosurePrivacy){
+                    DDisclosurePrivacy criterion = (DDisclosurePrivacy)c;
+                    Property n = new Property(Resources.getMessage("PropertiesView.83"), new String[] { Resources.getMessage("PropertiesView.130") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.131"), new String[] { String.valueOf(criterion.getD()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                 }
             }
 
