@@ -524,6 +524,11 @@ public class Model implements Serializable {
     public Map<String, ModelDDisclosurePrivacyCriterion> getDDisclosurePrivacyModel() {
         if (this.dDisclosurePrivacyModel == null) {
             this.dDisclosurePrivacyModel = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
+            DataHandle handle = inputConfig.getInput().getHandle();
+            for (int col = 0; col < handle.getNumColumns(); col++) {
+                String attribute = handle.getAttributeName(col);
+                dDisclosurePrivacyModel.put(attribute, new ModelDDisclosurePrivacyCriterion(attribute));
+            }
         }
         return dDisclosurePrivacyModel;
     }

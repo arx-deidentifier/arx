@@ -272,7 +272,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
                 item.setText(new String[] { "", c.getLabel(), ((ModelTClosenessCriterion)c).getAttribute() }); //$NON-NLS-1$
                 item.setImage(0, symbolT);
             } else if (c instanceof ModelDDisclosurePrivacyCriterion) {
-                item.setText(new String[] { "", c.getLabel(), ((ModelTClosenessCriterion)c).getAttribute() }); //$NON-NLS-1$
+                item.setText(new String[] { "", c.getLabel(), ((ModelDDisclosurePrivacyCriterion)c).getAttribute() }); //$NON-NLS-1$
                 item.setImage(0, symbolD);
             } else if (c instanceof ModelKAnonymityCriterion) {
                 item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
