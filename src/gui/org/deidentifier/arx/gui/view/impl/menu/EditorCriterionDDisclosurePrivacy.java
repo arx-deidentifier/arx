@@ -70,7 +70,7 @@ public class EditorCriterionDDisclosurePrivacy extends EditorCriterion<ModelDDis
 
         // Create t slider
         final Label zLabel = new Label(group, SWT.NONE);
-        zLabel.setText(Resources.getMessage("CriterionDefinitionView.43")); //$NON-NLS-1$
+        zLabel.setText(Resources.getMessage("CriterionDefinitionView.100")); //$NON-NLS-1$
 
         labelD = createLabel(group);
         knobD = createKnobDouble(group, 0.000001d, 1d);
