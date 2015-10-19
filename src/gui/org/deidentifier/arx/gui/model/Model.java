@@ -401,13 +401,6 @@ public class Model implements Serializable {
 	        }
 		}
         
-		for (Entry<String, ModelDDisclosurePrivacyCriterion> entry : this.dDisclosurePrivacyModel.entrySet()){
-            if (entry.getValue() != null &&
-                entry.getValue().isEnabled()) {
-                config.addCriterion(entry.getValue().getCriterion(this));
-            }
-        }
-        
         for (Entry<String, ModelTClosenessCriterion> entry : this.tClosenessModel.entrySet()){
             if (entry.getValue() != null &&
                 entry.getValue().isEnabled()) {
@@ -420,6 +413,13 @@ public class Model implements Serializable {
                 
                 PrivacyCriterion criterion = entry.getValue().getCriterion(this);
                 config.addCriterion(criterion);
+            }
+        }
+
+        for (Entry<String, ModelDDisclosurePrivacyCriterion> entry : this.dDisclosurePrivacyModel.entrySet()){
+            if (entry.getValue() != null &&
+                entry.getValue().isEnabled()) {
+                config.addCriterion(entry.getValue().getCriterion(this));
             }
         }
         
@@ -517,6 +517,18 @@ public class Model implements Serializable {
     }
 	
 	/**
+     * Returns the d-disclosure privacy model.
+     *
+     * @return
+     */
+    public Map<String, ModelDDisclosurePrivacyCriterion> getDDisclosurePrivacyModel() {
+        if (this.dDisclosurePrivacyModel == null) {
+            this.dDisclosurePrivacyModel = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
+        }
+        return dDisclosurePrivacyModel;
+    }
+	
+	/**
      * Returns the project description.
      *
      * @return
@@ -524,7 +536,7 @@ public class Model implements Serializable {
 	public String getDescription() {
 		return description;
 	}
-	
+
 	/**
      * Returns the (e,d)-DP model.
      *
@@ -633,7 +645,7 @@ public class Model implements Serializable {
 		return lDiversityModel;
 	}
 
-	/**
+    /**
      * Returns the project locale.
      *
      * @return
@@ -645,8 +657,8 @@ public class Model implements Serializable {
 	        return locale;
 	    }
 	}
-
-    /**
+    
+	/**
      * Returns the model for local recoding
      * @return
      */
@@ -656,7 +668,7 @@ public class Model implements Serializable {
         }
         return localRecodingModel;
     }
-    
+	
 	/**
      * When a dataset has more records than this threshold,
      * visualization of statistics will be disabled.
@@ -666,7 +678,7 @@ public class Model implements Serializable {
 	public int getMaximalSizeForComplexOperations(){
 	    return this.maximalSizeForComplexOperations;
 	}
-	
+
 	/**
      * Returns the maximal size of a sub-lattice that will be displayed
      * by the viewer.
@@ -796,7 +808,7 @@ public class Model implements Serializable {
         return null;
     }
 
-	/**
+    /**
      * Returns the path of the project.
      *
      * @return
@@ -805,7 +817,7 @@ public class Model implements Serializable {
 		return path;
 	}
 
-    /**
+	/**
      * @return the perspective
      */
     public Perspective getPerspective() {
@@ -823,7 +835,7 @@ public class Model implements Serializable {
 	public String getQuery() {
         return query;
     }
-
+	
 	/**
      * Returns the current result.
      *
@@ -847,7 +859,7 @@ public class Model implements Serializable {
         }
         return riskBasedModel;
     }
-	
+
 	/**
      * Returns the risk model
      * @return the risk model
@@ -868,7 +880,7 @@ public class Model implements Serializable {
 		return selectedAttribute;
 	}
 
-	/**
+    /**
      * Returns the selected transformation.
      *
      * @return
@@ -876,7 +888,7 @@ public class Model implements Serializable {
 	public ARXNode getSelectedNode() {
 		return selectedNode;
 	}
-
+    
     /**
      * Returns a set of quasi identifiers selected for risk analysis
      * @return
@@ -918,8 +930,8 @@ public class Model implements Serializable {
         }
         return this.selectedQuasiIdentifiers;
     }
-    
-    /**
+
+	/**
      * Returns the separator.
      *
      * @return
@@ -928,7 +940,7 @@ public class Model implements Serializable {
 		return separator;
 	}
 
-	/**
+    /**
      * Returns the according parameter.
      *
      * @return
@@ -966,18 +978,6 @@ public class Model implements Serializable {
         }
 		return tClosenessModel;
 	}
-
-    /**
-     * Returns the d-disclosure privacy model.
-     *
-     * @return
-     */
-    public Map<String, ModelDDisclosurePrivacyCriterion> getDDisclosurePrivacyModel() {
-        if (this.dDisclosurePrivacyModel == null) {
-            this.dDisclosurePrivacyModel = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
-        }
-        return dDisclosurePrivacyModel;
-    }
 
 	/**
      * Returns the execution time of the last anonymization process.
