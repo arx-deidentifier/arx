@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.deidentifier.arx.ARXAnonymizer.Result;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
@@ -715,6 +716,7 @@ public class ARXResult {
     private Set<Class<?>> getOptimizablePrivacyModels() {
         Set<Class<?>> result = new HashSet<Class<?>>();
         result.add(KAnonymity.class);
+        result.add(DDisclosurePrivacy.class);
         result.add(DistinctLDiversity.class);
         result.add(RecursiveCLDiversity.class);
         result.add(EntropyLDiversity.class);
