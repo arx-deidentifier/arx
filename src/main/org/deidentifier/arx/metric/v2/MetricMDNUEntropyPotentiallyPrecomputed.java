@@ -76,18 +76,6 @@ public class MetricMDNUEntropyPotentiallyPrecomputed extends AbstractMetricMulti
     public String toString() {
         return "Non-uniform entropy";
     }
-    
-    /**
-     * For backwards compatibility.
-     *
-     * @param cache
-     * @param cardinalities
-     * @param hierarchies
-     */
-    protected void initialize(double[][] cache, int[][][] cardinalities, int[][][] hierarchies) {
-        ((MetricMDNUEntropy)this.getDefaultMetric()).initialize(cache, cardinalities, hierarchies);
-        ((MetricMDNUEntropyPrecomputed)this.getPrecomputedMetric()).initialize(cache, cardinalities, hierarchies);
-    }
 
     /**
      * Does this metric handle microaggregation
