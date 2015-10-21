@@ -379,12 +379,12 @@ public abstract class AbstractTransformer {
     }
 
     /**
-     * Inits the.
+     * Initialize
      * 
      * @param projection
      *            the projection
-     * @param state
-     *            the state
+     * @param transformation
+     *            the transformation
      * @param groupify
      *            the groupify
      * @param source
@@ -401,7 +401,7 @@ public abstract class AbstractTransformer {
      *            the buffer
      */
     public void init(final long projection,
-                     final int[] state,
+                     final int[] transformation,
                      final HashGroupify groupify,
                      final HashGroupify source,
                      final int[] snapshot,
@@ -413,13 +413,13 @@ public abstract class AbstractTransformer {
         this.buffer = buffer;
         this.startIndex = startIndex;
         this.stopIndex = stopIndex;
-        this.generalization = state;
+        this.generalization = transformation;
         this.transition = transition;
 
         int index = 0;
         for (int i = 0; i < dimensions; i++) {
             if ((projection & (1L << i)) == 0) {
-                generalizationIndexArray[index] = state[i];
+                generalizationIndexArray[index] = transformation[i];
                 columnIndexArray[index] = i;
                 columnMapArray[index] = hierarchies[i].getArray();
                 index++;
