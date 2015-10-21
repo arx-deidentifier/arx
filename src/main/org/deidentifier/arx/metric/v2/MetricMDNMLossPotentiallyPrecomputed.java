@@ -52,7 +52,7 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
      * @param function
      */
     protected MetricMDNMLossPotentiallyPrecomputed(double threshold,
-                                                                    AggregateFunction function) {
+                                                   AggregateFunction function) {
         super(new MetricMDNMLoss(function),
               new MetricMDNMLossPrecomputed(function),
               threshold);
@@ -67,8 +67,8 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
      * @param function
      */
     protected MetricMDNMLossPotentiallyPrecomputed(double threshold,
-                                                                    double gsFactor,
-                                                                    AggregateFunction function) {
+                                                   double gsFactor,
+                                                   AggregateFunction function) {
         super(new MetricMDNMLoss(gsFactor, function),
               new MetricMDNMLossPrecomputed(gsFactor, function),
               threshold);

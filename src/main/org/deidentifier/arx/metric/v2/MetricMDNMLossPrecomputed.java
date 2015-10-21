@@ -70,7 +70,7 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
      * @param function
      */
     protected MetricMDNMLossPrecomputed(double gsFactor,
-                                                       AggregateFunction function) {
+                                        AggregateFunction function) {
         super(gsFactor, function);
     }
 

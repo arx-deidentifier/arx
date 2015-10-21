@@ -90,6 +90,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
      */
     public MetricMDNMLoss(double gsFactor, AggregateFunction function){
         super(false, false, function);
+        if (gsFactor < 0d || gsFactor > 1d) {
+            throw new IllegalArgumentException("Parameter must be in [0, 1]");
+        }
         this.gsFactor = gsFactor;
         this.sFactor = gsFactor <  0.5d ? 2d * gsFactor : 1d;
         this.gFactor = gsFactor <= 0.5d ? 1d            : 1d - 2d * (gsFactor - 0.5d);
