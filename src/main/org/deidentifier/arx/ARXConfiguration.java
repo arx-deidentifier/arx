@@ -359,6 +359,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** The heuristic algorithm will terminate after the given time limit */
     private Integer                            heuristicSearchTimeLimit              = 30000;
 
+    /** The number of threads to use */
+    private int                                threads                               = 1;
+
     /**
      * Creates a new configuration without tuple suppression.
      */
@@ -456,39 +459,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return result;
     }
-
-    /**
-     * Clones this config and projects everything onto the given subset.<br>
-     * - All privacy models will be cloned<br>
-     * - Subsets in d-presence will be projected accordingly<br>
-     * - Utility measures will be cloned<br>
-     * @param gsFactor 
-     *
-     * @return
-     */
-    protected ARXConfiguration getSubsetInstance(RowSet rowset, double gsFactor) {
-        ARXConfiguration result = this.clone();
-        result.aCriteria = null;
-        HashSet<PrivacyCriterion> criteria = new HashSet<PrivacyCriterion>();
-        for (PrivacyCriterion criterion : result.criteria) {
-            PrivacyCriterion clone = null;
-            if (criterion instanceof Inclusion) {
-                clone = new Inclusion(((Inclusion)criterion).getSubset().getSubsetInstance(rowset));
-            } else if (criterion instanceof DPresence) {
-                clone = new DPresence(((DPresence)criterion).getDMin(),
-                                      ((DPresence)criterion).getDMax(),
-                                      ((DPresence)criterion).getSubset().getSubsetInstance(rowset));
-            } else {
-                clone = criterion.clone();
-            }
-            criteria.add(clone);
-        }
-        result.criteria = criteria;
-        MetricConfiguration utilityConfig = result.getMetric().getConfiguration();
-        utilityConfig.setGsFactor(gsFactor);
-        result.metric = result.getMetric().getDescription().createInstance(utilityConfig);
-        return result;
-    }
+    
     /**
      * Returns whether the configuration contains a criterion of the given class.
      *
@@ -519,7 +490,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (value == null) return 0.5d;
         else return value;
     }
-  
+
     /**
      * Returns all configured attribute weights. For attributes which are not a key in this
      * set the default attribute weight will be assumed by ARX. This default value is 
@@ -534,7 +505,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return new HashMap<String, Double>(this.attributeWeights);
     }
-    
     /**
      * Returns all criteria.
      * @return
@@ -561,7 +531,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return result;
     }
-
+  
     /**
      * Returns an instance of the class, if any. Throws an exception if more than one such criterion exists.
      *
@@ -586,7 +556,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
             return null;
         }
     }
-
+    
     /**
      * When the size of the solution space exceeds the returned number of transformations,
      * ARX will use a heuristic search strategy. The default is 100.000.
@@ -610,7 +580,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.heuristicSearchTimeLimit;
     }
-    
+
     /**
      * Returns the maximum number of allowed outliers.
      *
@@ -619,7 +589,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public final double getMaxOutliers() {
         return relMaxOutliers;
     }
-    
+
     /**
      * Returns the metric used for measuring information loss.
      *
@@ -682,6 +652,17 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * Returns the number of threads
+     * @return
+     */
+    public int getNumThreads() {
+        if (this.threads == 0) {
+            this.threads = 1;
+        }
+        return this.threads;
+    }
+    
+    /**
      * Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.
      * @return
      */
@@ -690,7 +671,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (suppressionString == null) { return "*"; }
         return this.suppressionString;
     }
-
+    
     /**
      * Returns whether values of the given attribute type will be replaced by the suppression 
      * string in suppressed tuples.
@@ -705,7 +686,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return (suppressedAttributeTypes & (1 << type.getType())) != 0;
     }
-
+    
     /**
      * Returns whether ARX will use a heuristic search strategy. The default is false.
      * @return
@@ -743,7 +724,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public boolean isUseHeuristicSearchForSampleBasedCriteria() {
         return heuristicSearchForSampleBasedCriteria;
     }
-    
+
     /**
      * Returns whether microaggregation is based on utility measures
      * @return
@@ -763,7 +744,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         checkArgument(arg);
         return criteria.remove(arg);
     }
-
+    
     /**
      * Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.
      * With default settings, only quasi-identifiers will be suppressed.
@@ -861,6 +842,16 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * Sets the number of threads
+     * @param threads
+     */
+    public void setNumThreads(int threads) {
+        if (threads < 1 || threads > 100) {
+            throw new IllegalArgumentException("Threads must be in [0, 100]");
+        }
+    }
+
+    /**
      * Set, if practical monotonicity assumed.
      *
      * @param assumeMonotonicity
@@ -887,14 +878,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
     	checkArgument(suppressionString);
         this.suppressionString = suppressionString;    	
     }
-    
+
     /**
      * Do we guarantee optimality for sample-based criteria?
      */
     public void setUseHeuristicSearchForSampleBasedCriteria(boolean value) {
         this.heuristicSearchForSampleBasedCriteria = value;
     }
-
+    
     /**
      * Sets whether microaggregation should be based on utility measures
      * @return
@@ -913,7 +904,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
             throw new IllegalArgumentException("Argument must not be null"); 
         }
     }
-    
+
     /**
      * Returns the maximum number of allowed outliers.
      *
@@ -943,7 +934,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.accessibleInstance;
     }
-
+    
     /**
      * Returns the minimal size of an equivalence class induced by the contained criteria.
      * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
@@ -996,6 +987,39 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     protected int getSnapshotLength() {
         return this.snapshotLength;
+    }
+
+    /**
+     * Clones this config and projects everything onto the given subset.<br>
+     * - All privacy models will be cloned<br>
+     * - Subsets in d-presence will be projected accordingly<br>
+     * - Utility measures will be cloned<br>
+     * @param gsFactor 
+     *
+     * @return
+     */
+    protected ARXConfiguration getSubsetInstance(RowSet rowset, double gsFactor) {
+        ARXConfiguration result = this.clone();
+        result.aCriteria = null;
+        HashSet<PrivacyCriterion> criteria = new HashSet<PrivacyCriterion>();
+        for (PrivacyCriterion criterion : result.criteria) {
+            PrivacyCriterion clone = null;
+            if (criterion instanceof Inclusion) {
+                clone = new Inclusion(((Inclusion)criterion).getSubset().getSubsetInstance(rowset));
+            } else if (criterion instanceof DPresence) {
+                clone = new DPresence(((DPresence)criterion).getDMin(),
+                                      ((DPresence)criterion).getDMax(),
+                                      ((DPresence)criterion).getSubset().getSubsetInstance(rowset));
+            } else {
+                clone = criterion.clone();
+            }
+            criteria.add(clone);
+        }
+        result.criteria = criteria;
+        MetricConfiguration utilityConfig = result.getMetric().getConfiguration();
+        utilityConfig.setGsFactor(gsFactor);
+        result.metric = result.getMetric().getDescription().createInstance(utilityConfig);
+        return result;
     }
     
     /**

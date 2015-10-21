@@ -17,14 +17,12 @@
 
 package org.deidentifier.arx.framework.check.transformer;
 
-import java.util.concurrent.Callable;
-
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
 /**
@@ -33,7 +31,7 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class AbstractTransformer implements Callable<HashGroupify> {
+public abstract class AbstractTransformer {
 
     /**
      * Implementation of the delegate for Requirements.COUNTER
@@ -43,17 +41,17 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
 
         @Override
         public final void callAll(final int[] outtuple, final int i) {
-            groupify.addFromBuffer(outtuple, null, i, 1, -1);
+            target.addFromBuffer(outtuple, null, i, 1, -1);
         }
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            groupify.addFromGroupify(outtuple, null, element.representative, element.count, -1);
+            target.addFromGroupify(outtuple, null, element.representative, element.count, -1);
         }
 
         @Override
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
-            groupify.addFromSnapshot(outtuple, null, null, snapshot[i], snapshot[i + 1], -1);
+            target.addFromSnapshot(outtuple, null, null, snapshot[i], snapshot[i + 1], -1);
         }
     }
 
@@ -65,12 +63,12 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         
         @Override
         public final void callAll(final int[] outtuple, final int i) {
-            groupify.addFromBuffer(outtuple, otherValues[i], i, 1, -1);
+            target.addFromBuffer(outtuple, otherValues[i], i, 1, -1);
         }
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            groupify.addFromGroupify(outtuple, element.distributions, element.representative, element.count, -1);
+            target.addFromGroupify(outtuple, element.distributions, element.representative, element.count, -1);
         }
 
         @Override
@@ -87,7 +85,7 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
                 frequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
             }
             
-            groupify.addFromSnapshot(outtuple, values, frequencies, snapshot[i], snapshot[i + 1], -1);
+            target.addFromSnapshot(outtuple, values, frequencies, snapshot[i], snapshot[i + 1], -1);
         }
     }
 
@@ -99,17 +97,17 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         
         @Override
         public final void callAll(final int[] outtuple, final int i) {
-            groupify.addFromBuffer(outtuple, null, i, 1, 1);
+            target.addFromBuffer(outtuple, null, i, 1, 1);
         }
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            groupify.addFromGroupify(outtuple, null, element.representative, element.count, element.pcount);
+            target.addFromGroupify(outtuple, null, element.representative, element.count, element.pcount);
         }
 
         @Override
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
-            groupify.addFromSnapshot(outtuple, null, null, snapshot[i], snapshot[i + 1], snapshot[i + 2]);
+            target.addFromSnapshot(outtuple, null, null, snapshot[i], snapshot[i + 1], snapshot[i + 2]);
         }
     }
 
@@ -122,12 +120,12 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         
         @Override
         public final void callAll(final int[] outtuple, final int i) {
-            groupify.addFromBuffer(outtuple, otherValues[i], i, 1, 1);
+            target.addFromBuffer(outtuple, otherValues[i], i, 1, 1);
         }
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            groupify.addFromGroupify(outtuple, element.distributions, element.representative, element.count, element.pcount);
+            target.addFromGroupify(outtuple, element.distributions, element.representative, element.count, element.pcount);
         }
 
         @Override
@@ -144,7 +142,7 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
                 frequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
             }
 
-            groupify.addFromSnapshot(outtuple, values, frequencies, snapshot[i], snapshot[i + 1], snapshot[i + 2]);
+            target.addFromSnapshot(outtuple, values, frequencies, snapshot[i], snapshot[i + 1], snapshot[i + 2]);
         }
     }
 
@@ -157,12 +155,12 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         
         @Override
         public final void callAll(final int[] outtuple, final int i) {
-            groupify.addFromBuffer(outtuple, otherValues[i], i, 1, -1);
+            target.addFromBuffer(outtuple, otherValues[i], i, 1, -1);
         }
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            groupify.addFromGroupify(outtuple, element.distributions, element.representative, element.count, -1);
+            target.addFromGroupify(outtuple, element.distributions, element.representative, element.count, -1);
         }
 
         @Override
@@ -179,7 +177,7 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
                 frequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
             }
 
-            groupify.addFromSnapshot(outtuple, values, frequencies, snapshot[i], snapshot[i + 1], -1);
+            target.addFromSnapshot(outtuple, values, frequencies, snapshot[i], snapshot[i + 1], -1);
         }
     }
 
@@ -216,152 +214,87 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         public abstract void callSnapshot(final int[] outtuple, final int[] snapshot, final int i);
     }
     
+
     /** The hash groupify. */
-    private HashGroupify                     groupify;
-    
-    /** The bucket. */
-    protected int                             bucket;
-    
+    private HashGroupify                    source;
+
+    /** The hash groupify. */
+    private HashGroupify                      target;
+
     /** The buffer. */
     protected int[][]                         buffer;
-    
+
     /** The column index array. */
     protected final int[]                     columnIndexArray;
-    
+
     /** The column map array. */
     protected final int[][][]                 columnMapArray;
-    
+
     /** The mode of operation *. */
     protected final ARXConfigurationInternal  config;
-    
+
     /** The data. */
     protected final int[][]                   data;
-    
+
     /** The delegate. */
     protected final IGroupify                 delegate;
-    
+
     /** The dictionary for the snapshot compression *. */
     protected final IntArrayDictionary        dictionarySensFreq;
-    
+
     /** The dictionary for the snapshot compression *. */
     protected final IntArrayDictionary        dictionarySensValue;
-    
+
     /** The dimensions. */
     protected final int                       dimensions;
-    
-    /** The element. */
-    protected HashGroupifyEntry               element;
+
     /** The groupify array. */
     protected HashGroupifyEntry[]             groupifyArray;
+
     /** The hierarchies. */
     protected final GeneralizationHierarchy[] hierarchies;
-    /** The idindex14. */
-    protected int[][]                         idindex0, idindex1, idindex2, idindex3, idindex4, idindex5,
-                                              idindex6, idindex7, idindex8, idindex9, idindex10, idindex11, idindex12, idindex13, idindex14;
+    /** The id indexes. */
+    protected int[][]                         idindex0, idindex1, idindex2, idindex3, idindex4, idindex5, idindex6, 
+                                              idindex7, idindex8, idindex9, idindex10, idindex11, idindex12, idindex13, idindex14;
     /** The index14. */
     protected int                             index0, index1, index2, index3, index4, index5, index6, index7,
                                               index8, index9, index10, index11, index12, index13, index14;
+    /** The index. */
+    protected int                             outindex0, outindex1, outindex10, outindex11, outindex12, outindex13,
+                                              outindex14, outindex2, outindex3, outindex4, outindex5, outindex6, outindex7,
+                                              outindex8, outindex9;
+
     /** The intuple. */
     protected int[]                           intuple;
     
     /** The generalization hierarchies. */
     protected int[][][]                       map;
-    /** The outindices. */
-    protected int                             outindex0;
-    /** The outindices. */
-    protected int                             outindex1;
-    /** The outindices. */
-    protected int                             outindex10;
-    /** The outindices. */
-    protected int                             outindex11;
-    /** The outindices. */
-    protected int                             outindex12;
-    /** The outindices. */
-    protected int                             outindex13;
-    /** The outindices. */
-    protected int                             outindex14;
-    /** The outindices. */
-    protected int                             outindex2;
-    /** The outindices. */
-    protected int                             outindex3;
-    /** The outindices. */
-    protected int                             outindex4;
-    /** The outindices. */
-    protected int                             outindex5;
-    /** The outindices. */
-    protected int                             outindex6;
-    /** The outindices. */
-    protected int                             outindex7;
-    /** The outindices. */
-    protected int                             outindex8;
-    /** The outindices. */
-    protected int                             outindex9;
     /** The outtuple. */
-    protected int[]                           outtuple;
+    protected int[]                           outtuple;    
     /** The sesitive values. */
     protected final int[][]                   otherValues;
-    /** The snapshot. */
-    protected int[]                           snapshot;
-    
     /** The size of one snapshopt entry *. */
     protected final int                       ssStepWidth;
     /** The start index. */
     protected int                             startIndex;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex0;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex1;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex10;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex11;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex12;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex13;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex14;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex2;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex3;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex4;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex5;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex6;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex7;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex8;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex9;
+    /** The index. */
+    protected int                             generalizationindex0, generalizationindex1, generalizationindex10,
+                                              generalizationindex11, generalizationindex12, generalizationindex13,
+                                              generalizationindex14, generalizationindex2, generalizationindex3,
+                                              generalizationindex4, generalizationindex5, generalizationindex6,
+                                              generalizationindex7, generalizationindex8, generalizationindex9;
+
     /** The state index array. */
     protected final int[]                     generalizationIndexArray;
-    
+
     /** The states. */
     protected int[]                           generalization;
     /** The stop index. */
     protected int                             stopIndex;
+    /** The snapshot. */
+    protected int[]                           snapshot;
     /** The transition. */
     protected TransitionType                  transition;
-
     /**
      * Instantiates a new abstract transformer.
      *
@@ -378,24 +311,25 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
                                final IntArrayDictionary dictionarySensValue,
                                final IntArrayDictionary dictionarySensFreq,
                                final ARXConfigurationInternal config) {
+        
         this.config = config;
         this.data = data;
         this.hierarchies = hierarchies;
         this.otherValues = other;
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
-        ssStepWidth = config.getSnapshotLength();
+        this.ssStepWidth = config.getSnapshotLength();
 
         // Init arrays
-        dimensions = data[0].length;
+        this.dimensions = data[0].length;
         int arraySizes = 15;
         if (dimensions > arraySizes) {
             arraySizes = dimensions;
         }
-        generalizationIndexArray = new int[arraySizes];
-        columnIndexArray = new int[arraySizes];
-        columnMapArray = new int[arraySizes][][];
-        map = new int[hierarchies.length][][];
+        this.generalizationIndexArray = new int[arraySizes];
+        this.columnIndexArray = new int[arraySizes];
+        this.columnMapArray = new int[arraySizes][][];
+        this.map = new int[hierarchies.length][][];
         for (int i = 0; i < hierarchies.length; i++) {
             map[i] = hierarchies[i].getArray();
         }
@@ -423,15 +357,10 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.concurrent.Callable#call()
+    /**
+     * Calls the transformer
      */
-    @Override
-    public HashGroupify call() {
-        // clear local groupify
-        groupify.stateClear();
+    public void call() {
 
         switch (transition) {
         case UNOPTIMIZED:
@@ -447,7 +376,6 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         default:
             break;
         }
-        return groupify;
     }
 
     /**
@@ -469,10 +397,6 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
      *            the start index
      * @param stopIndex
      *            the stop index
-     * @param bucket
-     *            the bucket
-     * @param element
-     *            the element
      * @param buffer
      *            the buffer
      */
@@ -484,17 +408,11 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
                      final TransitionType transition,
                      final int startIndex,
                      final int stopIndex,
-                     final int bucket,
-                     final HashGroupifyEntry element,
                      final int[][] buffer) {
 
         this.buffer = buffer;
-
         this.startIndex = startIndex;
         this.stopIndex = stopIndex;
-        this.element = element;
-        this.bucket = bucket;
-
         this.generalization = state;
         this.transition = transition;
 
@@ -509,8 +427,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         }
 
         // Store groupify
-        this.groupify = groupify;
-        // this.groupify.clear();
+        this.target = groupify;
+        this.source = source;
 
         // Store snapshot
         this.snapshot = snapshot;
@@ -586,40 +504,16 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
     }
 
     /**
-     * Update out indices.
-     * 
-     * @param activecolumns
-     *            the activecolumns
-     * @param projection
-     *            the projection
+     * Returns the element at the given index
+     * @param startIndex
+     * @return
      */
-    public void updateOutIndices(final int[] activecolumns, final long projection) {
-
-        // Make sure all 15 indices are set
-        final int[] outindices2 = new int[15];
-        int outcount = 0;
-        for (int i = 0; i < activecolumns.length; i++) {
-            if ((projection & (1L << activecolumns[i])) == 0) {
-                outindices2[outcount++] = i;
-            }
+    protected HashGroupifyEntry getElement(int startIndex) {
+        HashGroupifyEntry result = source.getFirstEquivalenceClass();
+        for (int i = 0; i < startIndex; i++) {
+            result = result.nextOrdered;
         }
-
-        // Copy
-        outindex0 = outindices2[0];
-        outindex1 = outindices2[1];
-        outindex2 = outindices2[2];
-        outindex3 = outindices2[3];
-        outindex4 = outindices2[4];
-        outindex5 = outindices2[5];
-        outindex6 = outindices2[6];
-        outindex7 = outindices2[7];
-        outindex8 = outindices2[8];
-        outindex9 = outindices2[9];
-        outindex10 = outindices2[10];
-        outindex11 = outindices2[11];
-        outindex12 = outindices2[12];
-        outindex13 = outindices2[13];
-        outindex14 = outindices2[14];
+        return result;
     }
 
     /**

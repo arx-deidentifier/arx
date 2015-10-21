@@ -19,6 +19,7 @@ package org.deidentifier.arx.framework.check.transformer;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
 /**
@@ -66,6 +67,7 @@ public class Transformer01 extends AbstractTransformer {
     protected void processGroupify() {
 
         int elements = stopIndex - startIndex;
+        HashGroupifyEntry element = getElement(startIndex);
         while (element != null && elements > 0) {
 
             intuple = data[element.representative];

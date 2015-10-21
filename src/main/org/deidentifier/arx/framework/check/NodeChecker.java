@@ -209,7 +209,7 @@ public class NodeChecker {
         microaggregationDictionary.definalizeAll();
         
         // Apply transition and groupify
-        currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
+        transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
         currentGroupify.stateAnalyze(transformation, true);
         if (!currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
@@ -286,13 +286,13 @@ public class NodeChecker {
         // Apply transition
         switch (transition.type) {
         case UNOPTIMIZED:
-            currentGroupify = transformer.apply(transition.projection, node.getGeneralization(), currentGroupify);
+            transformer.apply(transition.projection, node.getGeneralization(), currentGroupify);
             break;
         case ROLLUP:
-            currentGroupify = transformer.applyRollup(transition.projection, node.getGeneralization(), lastGroupify, currentGroupify);
+            transformer.applyRollup(transition.projection, node.getGeneralization(), lastGroupify, currentGroupify);
             break;
         case SNAPSHOT:
-            currentGroupify = transformer.applySnapshot(transition.projection, node.getGeneralization(), currentGroupify, transition.snapshot);
+            transformer.applySnapshot(transition.projection, node.getGeneralization(), currentGroupify, transition.snapshot);
             break;
         }
         
