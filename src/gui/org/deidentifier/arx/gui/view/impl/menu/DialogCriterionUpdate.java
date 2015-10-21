@@ -22,6 +22,7 @@ import java.util.List;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelCriterion;
+import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelDPresenceCriterion;
 import org.deidentifier.arx.gui.model.ModelDifferentialPrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelKAnonymityCriterion;
@@ -157,6 +158,8 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
                 editor = new EditorCriterionLDiversity(root, (ModelLDiversityCriterion)selection);
             } else if (selection instanceof ModelTClosenessCriterion) {
                 editor = new EditorCriterionTCloseness(root, (ModelTClosenessCriterion)selection);
+            } else if (selection instanceof ModelDDisclosurePrivacyCriterion) {
+                editor = new EditorCriterionDDisclosurePrivacy(root, (ModelDDisclosurePrivacyCriterion)selection);
             } else if (selection instanceof ModelKAnonymityCriterion) {
                 editor = new EditorCriterionKAnonymity(root, (ModelKAnonymityCriterion)selection);
             } else if (selection instanceof ModelDPresenceCriterion) {
@@ -268,6 +271,9 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
             } else if (c instanceof ModelTClosenessCriterion) {
                 item.setText(new String[] { "", c.getLabel(), ((ModelTClosenessCriterion)c).getAttribute() }); //$NON-NLS-1$
                 item.setImage(0, symbolT);
+            } else if (c instanceof ModelDDisclosurePrivacyCriterion) {
+                item.setText(new String[] { "", c.getLabel(), ((ModelDDisclosurePrivacyCriterion)c).getAttribute() }); //$NON-NLS-1$
+                item.setImage(0, symbolD);
             } else if (c instanceof ModelKAnonymityCriterion) {
                 item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
                 item.setImage(0, symbolK);

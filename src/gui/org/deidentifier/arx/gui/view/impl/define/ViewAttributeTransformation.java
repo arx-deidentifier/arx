@@ -370,12 +370,14 @@ public class ViewAttributeTransformation implements IView {
                 if (type != AttributeType.SENSITIVE_ATTRIBUTE) {
                     
                     if (model.getLDiversityModel().get(attribute).isEnabled() ||
-                        model.getTClosenessModel().get(attribute).isEnabled()) {
+                        model.getTClosenessModel().get(attribute).isEnabled() ||
+                        model.getDDisclosurePrivacyModel().get(attribute).isEnabled()) {
                         criteriaDisabled = true;
                     }
                     
                     model.getTClosenessModel().get(attribute).setEnabled(false);
                     model.getLDiversityModel().get(attribute).setEnabled(false);
+                    model.getDDisclosurePrivacyModel().get(attribute).setEnabled(false);
                 }
                 
                 // Enable/disable criteria for quasi-identifiers

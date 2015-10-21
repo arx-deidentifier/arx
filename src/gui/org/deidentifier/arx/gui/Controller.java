@@ -58,6 +58,7 @@ import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
@@ -255,6 +256,11 @@ public class Controller implements IView {
                 explicit.add(other);
             }
         }
+        for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
+            if (!other.isEnabled() && sensitive.contains(other.getAttribute())) {
+                explicit.add(other);
+            }
+        }
         Collections.sort(explicit, new Comparator<ModelExplicitCriterion>(){
             public int compare(ModelExplicitCriterion o1, ModelExplicitCriterion o2) {
                 return o1.getAttribute().compareTo(o2.getAttribute());
@@ -314,6 +320,11 @@ public class Controller implements IView {
             }
         }
         for (ModelTClosenessCriterion other : model.getTClosenessModel().values()) {
+            if (other.isEnabled() && sensitive.contains(other.getAttribute())) {
+                explicit.add(other);
+            }
+        }
+        for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
             if (other.isEnabled() && sensitive.contains(other.getAttribute())) {
                 explicit.add(other);
             }
@@ -383,6 +394,12 @@ public class Controller implements IView {
                     others.add((ModelExplicitCriterion) other);
                 }
             }
+        } else if (criterion instanceof ModelDDisclosurePrivacyCriterion) {
+            for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
+                if (!other.equals(criterion) && other.isEnabled()) {
+                    others.add((ModelExplicitCriterion) other);
+                }
+            }
         } else {
             throw new RuntimeException(Resources.getMessage("Controller.1")); //$NON-NLS-1$
         }
@@ -424,6 +441,12 @@ public class Controller implements IView {
                 }
             } else if (criterion instanceof ModelTClosenessCriterion) {
                 for (ModelTClosenessCriterion other : model.getTClosenessModel().values()) {
+                    if (!other.equals(criterion) && other.isEnabled()) {
+                        other.pull((ModelExplicitCriterion) criterion);
+                    }
+                }
+            } else if (criterion instanceof ModelDDisclosurePrivacyCriterion) {
+                for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
                     if (!other.equals(criterion) && other.isEnabled()) {
                         other.pull((ModelExplicitCriterion) criterion);
                     }

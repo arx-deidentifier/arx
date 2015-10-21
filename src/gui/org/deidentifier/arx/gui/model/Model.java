@@ -234,6 +234,9 @@ public class Model implements Serializable {
     /** Model for a specific privacy criterion. */
     private ModelDifferentialPrivacyCriterion     differentialPrivacyModel        = new ModelDifferentialPrivacyCriterion();
 
+    /** Model for a specific privacy criterion. */
+    private Map<String, ModelDDisclosurePrivacyCriterion> dDisclosurePrivacyModel = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
+
     /* *****************************************
      * UTILITY ANALYSIS
      ******************************************/
@@ -412,6 +415,13 @@ public class Model implements Serializable {
                 config.addCriterion(criterion);
             }
         }
+
+        for (Entry<String, ModelDDisclosurePrivacyCriterion> entry : this.dDisclosurePrivacyModel.entrySet()){
+            if (entry.getValue() != null &&
+                entry.getValue().isEnabled()) {
+                config.addCriterion(entry.getValue().getCriterion(this));
+            }
+        }
         
         for (ModelRiskBasedCriterion entry : this.riskBasedModel){
             if (entry != null &&
@@ -507,6 +517,23 @@ public class Model implements Serializable {
     }
 	
 	/**
+     * Returns the d-disclosure privacy model.
+     *
+     * @return
+     */
+    public Map<String, ModelDDisclosurePrivacyCriterion> getDDisclosurePrivacyModel() {
+        if (this.dDisclosurePrivacyModel == null) {
+            this.dDisclosurePrivacyModel = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
+            DataHandle handle = inputConfig.getInput().getHandle();
+            for (int col = 0; col < handle.getNumColumns(); col++) {
+                String attribute = handle.getAttributeName(col);
+                dDisclosurePrivacyModel.put(attribute, new ModelDDisclosurePrivacyCriterion(attribute));
+            }
+        }
+        return dDisclosurePrivacyModel;
+    }
+	
+	/**
      * Returns the project description.
      *
      * @return
@@ -514,7 +541,7 @@ public class Model implements Serializable {
 	public String getDescription() {
 		return description;
 	}
-	
+
 	/**
      * Returns the (e,d)-DP model.
      *
@@ -623,7 +650,7 @@ public class Model implements Serializable {
 		return lDiversityModel;
 	}
 
-	/**
+    /**
      * Returns the project locale.
      *
      * @return
@@ -635,8 +662,8 @@ public class Model implements Serializable {
 	        return locale;
 	    }
 	}
-
-    /**
+    
+	/**
      * Returns the model for local recoding
      * @return
      */
@@ -646,7 +673,7 @@ public class Model implements Serializable {
         }
         return localRecodingModel;
     }
-    
+	
 	/**
      * When a dataset has more records than this threshold,
      * visualization of statistics will be disabled.
@@ -656,7 +683,7 @@ public class Model implements Serializable {
 	public int getMaximalSizeForComplexOperations(){
 	    return this.maximalSizeForComplexOperations;
 	}
-	
+
 	/**
      * Returns the maximal size of a sub-lattice that will be displayed
      * by the viewer.
@@ -786,7 +813,7 @@ public class Model implements Serializable {
         return null;
     }
 
-	/**
+    /**
      * Returns the path of the project.
      *
      * @return
@@ -795,7 +822,7 @@ public class Model implements Serializable {
 		return path;
 	}
 
-    /**
+	/**
      * @return the perspective
      */
     public Perspective getPerspective() {
@@ -813,7 +840,7 @@ public class Model implements Serializable {
 	public String getQuery() {
         return query;
     }
-
+	
 	/**
      * Returns the current result.
      *
@@ -837,7 +864,7 @@ public class Model implements Serializable {
         }
         return riskBasedModel;
     }
-	
+
 	/**
      * Returns the risk model
      * @return the risk model
@@ -858,7 +885,7 @@ public class Model implements Serializable {
 		return selectedAttribute;
 	}
 
-	/**
+    /**
      * Returns the selected transformation.
      *
      * @return
@@ -866,7 +893,7 @@ public class Model implements Serializable {
 	public ARXNode getSelectedNode() {
 		return selectedNode;
 	}
-
+    
     /**
      * Returns a set of quasi identifiers selected for risk analysis
      * @return
@@ -908,8 +935,8 @@ public class Model implements Serializable {
         }
         return this.selectedQuasiIdentifiers;
     }
-    
-    /**
+
+	/**
      * Returns the separator.
      *
      * @return
@@ -918,7 +945,7 @@ public class Model implements Serializable {
 		return separator;
 	}
 
-	/**
+    /**
      * Returns the according parameter.
      *
      * @return
@@ -1101,11 +1128,13 @@ public class Model implements Serializable {
 		lDiversityModel.clear();
 		tClosenessModel.clear();
 		riskBasedModel.clear();
+		dDisclosurePrivacyModel.clear();
 		DataHandle handle = inputConfig.getInput().getHandle();
 		for (int col = 0; col < handle.getNumColumns(); col++) {
 			String attribute = handle.getAttributeName(col);
 			lDiversityModel.put(attribute, new ModelLDiversityCriterion(attribute));
 			tClosenessModel.put(attribute, new ModelTClosenessCriterion(attribute));
+			dDisclosurePrivacyModel.put(attribute, new ModelDDisclosurePrivacyCriterion(attribute));
 		}
 		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_AVERAGE_RISK));
 		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
