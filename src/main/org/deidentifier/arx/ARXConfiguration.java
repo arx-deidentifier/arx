@@ -857,6 +857,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (threads < 1 || threads > 100) {
             throw new IllegalArgumentException("Threads must be in [0, 100]");
         }
+        this.threads = threads;
     }
 
     /**

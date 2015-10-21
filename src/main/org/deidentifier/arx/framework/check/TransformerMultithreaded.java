@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
@@ -72,8 +73,19 @@ public class TransformerMultithreaded extends Transformer {
         for (int i=1; i<threads; i++) {
             this.transformers[i] = super.createTransformers();
         }
-        // TODO: Shutdown or set as daemon
-        this.pool = Executors.newFixedThreadPool(threads);
+        
+        // TODO: Shutdown
+        this.pool = Executors.newFixedThreadPool(threads, new ThreadFactory(){
+
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread thread = new Thread(r);
+                thread.setDaemon(true);
+                thread.setName("ARX Transformer & Analyzer");
+                return thread;
+            }
+            
+        });
     }
 
     /**
@@ -177,5 +189,11 @@ public class TransformerMultithreaded extends Transformer {
                  stopIndex);
         
         return app;
+    }
+    
+    @Override
+    public void finalize() {
+        this.pool.shutdown();
+        System.out.println("Shutting down");
     }
 }

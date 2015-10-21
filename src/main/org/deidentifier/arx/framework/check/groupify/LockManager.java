@@ -16,6 +16,7 @@
  */
 package org.deidentifier.arx.framework.check.groupify;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.deidentifier.arx.framework.check.groupify.LockManager.SpinLock.Lock;
@@ -69,12 +70,29 @@ public class LockManager {
     }
 
 
-    private final SpinLock[] locksBucket;
-    private final SpinLock   lockRehash = new SpinLock();
-    private final SpinLock   lockCreate = new SpinLock();
+    private SpinLock[] locksBucket;
+    private SpinLock   lockRehash = new SpinLock();
+    private SpinLock   lockCreate = new SpinLock();
     
     public LockManager(int buckets) {
         this.locksBucket = new SpinLock[buckets];
+        for (int i=0; i<this.locksBucket.length; i++) {
+            this.locksBucket[i] = new SpinLock();
+        }
+    }
+    
+    public void setNumberOfBuckets(int size) {
+
+        if (size == this.locksBucket.length) {
+            return;
+        } else if (size < this.locksBucket.length) {
+            this.locksBucket = Arrays.copyOf(this.locksBucket, size);
+        } else {
+            this.locksBucket = new SpinLock[size];
+            for (int i=0; i<this.locksBucket.length; i++) {
+                this.locksBucket[i] = new SpinLock();
+            }
+        }
     }
     
     public Lock lockBucket(int bucket) {
