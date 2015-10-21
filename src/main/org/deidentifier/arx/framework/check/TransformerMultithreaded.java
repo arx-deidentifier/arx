@@ -111,7 +111,33 @@ public class TransformerMultithreaded extends Transformer {
                                           final HashGroupify target,
                                           final int[] snapshot,
                                           final TransitionType transition) {
+        
 
+        // Determine total
+        final int total;
+        switch (transition) {
+        case UNOPTIMIZED:
+            total = getDataLength();
+            break;
+        case ROLLUP:
+            total = source.getNumberOfEquivalenceClasses();
+            break;
+        case SNAPSHOT:
+            total = snapshot.length / getSnapshotLength();
+            break;
+        default:
+            throw new IllegalStateException("Unknown transition type");
+        }
+
+        // Single threaded
+        if (total < 5000) {
+
+            int startIndex = 0;
+            int stopIndex = total;
+            getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, 0).call();
+            return;
+        }
+        
         // List
         List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
 
@@ -120,9 +146,16 @@ public class TransformerMultithreaded extends Transformer {
 
             // Execute
             final int thread = i;
+            final int stepping = total / this.threads;
             futures.add(pool.submit(new Runnable() {
                     public void run() {
-                        getTransformer(projection, transformation, source, target, snapshot, transition, thread).call();
+                        
+                        int startIndex = thread * stepping;
+                        int stopIndex = (thread + 1) * stepping;
+                        if (thread == threads - 1) {
+                            stopIndex = total;
+                        }                        
+                        getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, thread).call();
                     }
             }, true));
         }
@@ -154,31 +187,12 @@ public class TransformerMultithreaded extends Transformer {
                                                HashGroupify target,
                                                int[] snapshot,
                                                TransitionType transition,
+                                               int startIndex,
+                                               int stopIndex,
                                                int thread) {
         
-        // Determine total
-        int total = 0;
-        switch (transition) {
-        case UNOPTIMIZED:
-            total = getDataLength();
-            break;
-        case ROLLUP:
-            total = source.getNumberOfEquivalenceClasses();
-            break;
-        case SNAPSHOT:
-            total = snapshot.length / getSnapshotLength();
-        }
-        
-        int stepping = total / this.threads;
-        int startIndex = thread * stepping;
-        int stopIndex = (thread + 1) * stepping;
-        if (thread == this.threads - 1) {
-            stopIndex = total;
-        }
 
-        AbstractTransformer app = null;
-        app = getTransformer(projection, transformers[thread]);
-        
+        AbstractTransformer app = getTransformer(projection, transformers[thread]);
         app.init(projection,
                  transformation,
                  target,
