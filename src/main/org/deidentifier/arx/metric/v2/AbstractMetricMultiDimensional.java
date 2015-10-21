@@ -198,6 +198,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     protected void initialize(int dimensions){
         this.weights = new double[dimensions];
         Arrays.fill(weights, 1d);
+        this.dimensions = dimensions;
     }
     
     /**
