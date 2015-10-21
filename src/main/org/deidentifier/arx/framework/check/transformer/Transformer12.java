@@ -74,7 +74,8 @@ public class Transformer12 extends AbstractTransformer {
     @Override
     protected void processGroupify() {
 
-        while (element != null) {
+        int elements = stopIndex - startIndex;
+        while (element != null && elements > 0) {
 
             intuple = data[element.representative];
             outtuple = buffer[element.representative];
@@ -95,6 +96,7 @@ public class Transformer12 extends AbstractTransformer {
             delegate.callGroupify(outtuple, element);
 
             // Next element
+            elements--;
             element = element.nextOrdered;
         }
     }
