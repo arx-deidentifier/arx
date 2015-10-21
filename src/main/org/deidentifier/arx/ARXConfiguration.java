@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.Inclusion;
@@ -1059,10 +1060,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         // Compute optimized array with criteria, assuming complexities
-        // dPresence <= lDiversity <= tCloseness and ignoring kAnonymity
+        // dPresence <= dDisclosurePrivacy <= lDiversity <= tCloseness and ignoring kAnonymity
         List<PrivacyCriterion> list = new ArrayList<PrivacyCriterion>();
         if (this.containsCriterion(DPresence.class)) {
             list.add(this.getCriterion(DPresence.class));
+        }
+        if (this.containsCriterion(DDisclosurePrivacy.class)) {
+            list.addAll(this.getCriteria(DDisclosurePrivacy.class));
         }
         if (this.containsCriterion(LDiversity.class)) {
             list.addAll(this.getCriteria(LDiversity.class));

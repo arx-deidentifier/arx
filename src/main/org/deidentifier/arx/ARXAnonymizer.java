@@ -29,6 +29,7 @@ import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
+import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
@@ -375,6 +376,13 @@ public class ARXAnonymizer {
 	            }
             }
         }
+        if (config.containsCriterion(DDisclosurePrivacy.class)){
+            for (DDisclosurePrivacy c : config.getCriteria(DDisclosurePrivacy.class)){
+                if (c.getD() < 0) { 
+                    throw new IllegalArgumentException("Parameter d (" + c.getD() + ") musst be positive and larger than 0"); 
+                }
+            }
+        }
         
         // Check whether all hierarchies are monotonic
         for (final GeneralizationHierarchy hierarchy : manager.getHierarchies()) {
@@ -424,6 +432,14 @@ public class ARXAnonymizer {
             }
             if (!found) {
                 for (TCloseness c : config.getCriteria(TCloseness.class)) {
+                    if (c.getAttribute().equals(attr)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
+                for (DDisclosurePrivacy c : config.getCriteria(DDisclosurePrivacy.class)) {
                     if (c.getAttribute().equals(attr)) {
                         found = true;
                         break;
