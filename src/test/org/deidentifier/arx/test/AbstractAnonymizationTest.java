@@ -330,35 +330,21 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
      */
     @Test
     public void test() throws IOException {
-        
-        boolean benchmark = false;
-        List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
-        for (String argument : arguments) {
-            if (argument.startsWith("-DBenchmark")) {
-                benchmark = true;
-                break;
-            }
-        }
-        
-        final Data data = getDataObject(testCase);
-        
-        // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        testCase.config.setPracticalMonotonicity(testCase.practical);
-        
-        // Test or warmup
-        ARXResult result = anonymizer.anonymize(data, testCase.config);
-        
-        // Benchmark
-        if (benchmark) {
-            
-            String version = System.getProperty("Version");
-            String path = System.getProperty("Benchmark");
-            if (path == null) {
-                path = ".";
-            }
-            String testClass = this.getClass().getSimpleName();
-            
+
+        System.out.println(testCase.toString());
+
+        for (int threads = 1; threads <= 8; threads++) {
+
+            final Data data = getDataObject(testCase);
+
+            // Create an instance of the anonymizer
+            final ARXAnonymizer anonymizer = new ARXAnonymizer();
+            testCase.config.setPracticalMonotonicity(testCase.practical);
+            testCase.config.setNumThreads(threads);
+
+            // Test or warmup
+            ARXResult result = anonymizer.anonymize(data, testCase.config);
+
             final int REPETITIONS = 5;
             long time = System.currentTimeMillis();
             long time2 = 0;
@@ -369,80 +355,8 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             }
             time = (System.currentTimeMillis() - time) / REPETITIONS;
             time2 /= REPETITIONS;
-            
-            StringBuilder line = new StringBuilder();
-            line.append(Resources.getVersion());
-            line.append(";");
-            line.append(version);
-            line.append(";");
-            line.append(testClass);
-            line.append(";");
-            line.append(testCase.id);
-            line.append(";");
-            line.append(time);
-            line.append(";");
-            line.append(time2);
-            appendToFile(line.toString(), path + "/benchmark_" + version + "_" + timestamp + "_" + testClass + ".csv");
-        }
-        
-        // check if no solution
-        if (testCase.optimalTransformation == null) {
-            assertTrue(result.getGlobalOptimum() == null);
-        } else {
-            
-            String lossActual = result.getGlobalOptimum().getMaximumInformationLoss().toString();
-            String lossExpected = testCase.optimalInformationLoss;
-            
-            assertEquals(testCase.dataset + "-should: " + lossExpected + " is: " +
-                         lossActual + "(" + result.getGlobalOptimum().getMinimumInformationLoss().toString() + ")",
-                         lossExpected,
-                         lossActual);
-                         
-            if (!Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation)) {
-                System.err.println("Note: Information loss equals, but the optimum differs:");
-                System.err.println("Should: " + Arrays.toString(testCase.optimalTransformation) + " is: " +
-                                   Arrays.toString(result.getGlobalOptimum().getTransformation()));
-                System.err.println("Test case: " + testCase.toString());
-            }
-        }
-        
-        if (testCase.statistics != null) {
-            
-            // Collect statistics
-            int[] statistics = new int[7];
-            for (ARXNode[] level : result.getLattice().getLevels()) {
-                for (ARXNode arxNode : level) {
-                    statistics[0]++;
-                    if (arxNode.isChecked()) {
-                        statistics[1]++;
-                    }
-                    if (arxNode.getAnonymity() == Anonymity.ANONYMOUS) {
-                        statistics[2]++;
-                    }
-                    if (arxNode.getAnonymity() == Anonymity.NOT_ANONYMOUS) {
-                        statistics[3]++;
-                    }
-                    if (arxNode.getAnonymity() == Anonymity.PROBABLY_ANONYMOUS) {
-                        statistics[4]++;
-                    }
-                    if (arxNode.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
-                        statistics[5]++;
-                    }
-                    if (arxNode.getMaximumInformationLoss() == arxNode.getMinimumInformationLoss()) {
-                        statistics[6]++;
-                    }
-                }
-            }
-            
-            // Compare
-            String algorithmConfiguration = getAlgorithmConfiguration(testCase.config);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of transformations", testCase.statistics[0], statistics[0]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of checks", testCase.statistics[1], statistics[1]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of anonymous transformations", testCase.statistics[2], statistics[2]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of non-anonymous transformations", testCase.statistics[3], statistics[3]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of probably anonymous transformations", testCase.statistics[4], statistics[4]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of probably non-anonymous transformations", testCase.statistics[5], statistics[5]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of transformations with utility available", testCase.statistics[6], statistics[6]);
+
+            System.out.println(" - " + threads + ": " + time + "[ms] / " + time2 + "[ms]");
         }
     }
     

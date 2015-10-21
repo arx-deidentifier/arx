@@ -57,19 +57,8 @@ public class LockManager {
                 _lock.set(null);
             }
         }
-        public boolean isLocked()
-        {
-            return _lock.get()!=null;
-        }
-        
-        public void waitForUnlock() {
-            while (_lock.get()!=null) {
-                // Spin
-            }
-        }
     }
-
-
+    
     private SpinLock[] locksBucket;
     private SpinLock   lockRehash = new SpinLock();
     private SpinLock   lockCreate = new SpinLock();
@@ -105,13 +94,5 @@ public class LockManager {
     
     public Lock lockRehash() {
         return lockRehash.lock();
-    }
-    
-    public void waitForLockRehash() {
-        lockRehash.waitForUnlock();
-    }
-
-    public boolean isLockedRehash() {
-        return lockRehash.isLocked();
     }
 }

@@ -67,7 +67,7 @@ public class HashGroupify {
     private final float                  hashTableLoadFactor = 0.75f;
 
     /** Maximum number of elements that can be put in this map before having to rehash. */
-    private int                          hashTableThreshold;
+    private AtomicInteger                hashTableThreshold = new AtomicInteger(0);
 
     /** Do we ensure optimality for sample-based criteria */
     private final boolean                heuristicForSampleBasedCriteria;
@@ -99,6 +99,9 @@ public class HashGroupify {
     /** Lock manager */
     private final LockManager            lockManager;
 
+    /** Counts the number of active threads */
+    private final AtomicInteger          workingThreads      = new AtomicInteger(0);
+
     /**
      * Constructs a new hash groupify operator.
      *
@@ -111,7 +114,7 @@ public class HashGroupify {
         capacity = HashTableUtil.calculateCapacity(capacity);
         this.hashTableElementCount = new AtomicInteger(0);
         this.hashTableBuckets = new HashGroupifyEntry[capacity];
-        this.hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
+        this.hashTableThreshold.set(HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor));
         if (config.getNumThreads() > 1) {
             lockManager = new LockManager(capacity);
         } else {
@@ -159,21 +162,21 @@ public class HashGroupify {
      * @param pcount
      */
     public void addFromBuffer(int[] generalized, int[] other, int representative, int count, int pcount) {
-        
+
         // Hash
         final int hash = HashTableUtil.hashcode(generalized);
-        
-        // Wait
-        if (this.lockManager != null) {
-            this.lockManager.waitForLockRehash();
-        }
+
+        // Potentially rehash
+        _rehash();
+
+        workingThreads.incrementAndGet();
         
         // Compute bucket
-        final int index = hash & (hashTableBuckets.length - 1);
+        int index = hash & (hashTableBuckets.length - 1);
 
         // Acquire lock for bucket
         try(Lock lock = lockManager != null ? lockManager.lockBucket(index) : null){
-    
+        
             // Add
             final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
             
@@ -198,11 +201,9 @@ public class HashGroupify {
                 }
             }
         }
+
+        workingThreads.decrementAndGet();
         
-        // Rehash
-        if (hashTableElementCount.get() > hashTableThreshold) {
-            rehash();
-        }
     }
     
     /**
@@ -214,18 +215,17 @@ public class HashGroupify {
      * @param pcount
      */
     public void addFromGroupify(int[] generalized, Distribution[] distributions, int representative, int count, int pcount) {
-        
 
         // Hash
         final int hash = HashTableUtil.hashcode(generalized);
-        
-        // Wait
-        if (this.lockManager != null) {
-            this.lockManager.waitForLockRehash();
-        }
+
+        // Potentially rehash
+        _rehash();
+
+        workingThreads.incrementAndGet();
         
         // Compute bucket
-        final int index = hash & (hashTableBuckets.length - 1);
+        int index = hash & (hashTableBuckets.length - 1);
 
         // Acquire lock for bucket
         try(Lock lock = lockManager != null ? lockManager.lockBucket(index) : null){
@@ -246,13 +246,11 @@ public class HashGroupify {
                 }
             }
         }
+
+        workingThreads.decrementAndGet();
         
-        // Rehash
-        if (hashTableElementCount.get() > hashTableThreshold) {
-            rehash();
-        }
     }
-    
+
     /**
      * Adds a class from a snapshot
      * @param generalized
@@ -263,22 +261,21 @@ public class HashGroupify {
      * @param pcount
      */
     public void addFromSnapshot(int[] generalized, int[][] elements, int[][] frequencies, int representative, int count, int pcount) {
-        
 
         // Hash
         final int hash = HashTableUtil.hashcode(generalized);
-        
-        // Wait
-        if (this.lockManager != null) {
-            this.lockManager.waitForLockRehash();
-        }
+
+        // Potentially rehash
+        _rehash();
+
+        workingThreads.incrementAndGet();
         
         // Compute bucket
-        final int index = hash & (hashTableBuckets.length - 1);
+        int index = hash & (hashTableBuckets.length - 1);
 
         // Acquire lock for bucket
         try(Lock lock = lockManager != null ? lockManager.lockBucket(index) : null){
-            
+        
             // Add
             final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
             
@@ -301,11 +298,9 @@ public class HashGroupify {
                 }
             }
         }
+
+        workingThreads.decrementAndGet();
         
-        // Rehash
-        if (hashTableElementCount.get() > hashTableThreshold) {
-            rehash();
-        }
     }
     
     /**
@@ -432,7 +427,7 @@ public class HashGroupify {
             }
         }
     }
-
+    
     /**
      * Analyzes the current state
      * @param transformation
@@ -442,7 +437,7 @@ public class HashGroupify {
         if (force) analyzeAll(transformation);
         else analyzeWithEarlyAbort(transformation);
     }
-    
+
     /**
      * Clears all entries
      */
@@ -700,13 +695,14 @@ public class HashGroupify {
      * @return the hash groupify entry
      */
     private HashGroupifyEntry createEntry(final int[] key, final int index, final int hash, final int line) {
-        
-        try(Lock lock = lockManager != null ? lockManager.lockCreate() : null){
-        
-            final HashGroupifyEntry entry = new HashGroupifyEntry(key, hash);
-            entry.next = hashTableBuckets[index];
-            entry.representative = line;
-            hashTableBuckets[index] = entry;
+
+        final HashGroupifyEntry entry = new HashGroupifyEntry(key, hash);
+        entry.next = hashTableBuckets[index];
+        entry.representative = line;
+        hashTableBuckets[index] = entry;
+
+        try (Lock lock = lockManager != null ? lockManager.lockCreate() : null) {
+
             if (hashTableFirstEntry == null) {
                 hashTableFirstEntry = entry;
                 hashTableLastEntry = entry;
@@ -714,8 +710,8 @@ public class HashGroupify {
                 hashTableLastEntry.nextOrdered = entry;
                 hashTableLastEntry = entry;
             }
-            return entry;
         }
+        return entry;
     }
     
     /**
@@ -752,7 +748,7 @@ public class HashGroupify {
         }
         return m;
     }
-        
+    
     /**
      * Checks whether the given entry is anonymous.
      *
@@ -777,32 +773,54 @@ public class HashGroupify {
         }
         return -1;
     }
-
+        
     /**
      * Rehashes this operator.
      */
     private void rehash() {
-        
-        if (lockManager != null && lockManager.isLockedRehash()) {
-            return;
+
+        // Wait for all other threads to exit the hash table
+        if (lockManager != null) {
+            while (workingThreads.get() > 0) {
+                // Spin
+            }
+        }
+
+        final int length = HashTableUtil.calculateCapacity((hashTableBuckets.length == 0 ? 1 : hashTableBuckets.length << 1));
+        final HashGroupifyEntry[] newData = new HashGroupifyEntry[length];
+        HashGroupifyEntry entry = hashTableFirstEntry;
+        while (entry != null) {
+            final int index = entry.hashcode & (length - 1);
+            entry.next = newData[index];
+            newData[index] = entry;
+            entry = entry.nextOrdered;
+        }
+
+        // Update lock manager
+        if (lockManager != null) {
+            lockManager.setNumberOfBuckets(newData.length);
         }
         
-        try(Lock lock = lockManager != null ? lockManager.lockRehash() : null){
+        // Update hash table
+        hashTableBuckets = newData;
+        hashTableThreshold.set(HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor));
+    }
 
-            final int length = HashTableUtil.calculateCapacity((hashTableBuckets.length == 0 ? 1 : hashTableBuckets.length << 1));
-            final HashGroupifyEntry[] newData = new HashGroupifyEntry[length];
-            HashGroupifyEntry entry = hashTableFirstEntry;
-            while (entry != null) {
-                final int index = entry.hashcode & (length - 1);
-                entry.next = newData[index];
-                newData[index] = entry;
-                entry = entry.nextOrdered;
+    /**
+     * This method tries to rehash
+     * @param bucketLock 
+     */
+    private void _rehash() {
+
+        // Acquire lock for rehashing
+        try (Lock lock = lockManager != null ? lockManager.lockRehash() : null) {
+
+            // Rehash, if still necessary to rehash
+            if (hashTableElementCount.get() > hashTableThreshold.get()) {
+
+                // Rehash
+                rehash();
             }
-            hashTableBuckets = newData;
-            if (lockManager != null) {
-                lockManager.setNumberOfBuckets(hashTableBuckets.length);
-            }
-            hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
         }
     }
 }
