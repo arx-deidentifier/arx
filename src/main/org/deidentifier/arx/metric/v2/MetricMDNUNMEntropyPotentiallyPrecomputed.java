@@ -78,18 +78,6 @@ public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMul
     }
 
     /**
-     * For backwards compatibility.
-     *
-     * @param cache
-     * @param cardinalities
-     * @param hierarchies
-     */
-    protected void initialize(double[][] cache, int[][][] cardinalities, int[][][] hierarchies) {
-        ((MetricMDNUNMEntropy)this.getDefaultMetric()).initialize(cache, cardinalities, hierarchies);
-        ((MetricMDNUNMEntropyPrecomputed)this.getPrecomputedMetric()).initialize(cache, cardinalities, hierarchies);
-    }
-
-    /**
      * Does this metric handle microaggregation
      * @return
      */
