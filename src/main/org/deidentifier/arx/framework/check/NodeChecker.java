@@ -282,7 +282,8 @@ public class NodeChecker {
         final HashGroupify temp = lastGroupify;
         lastGroupify = currentGroupify;
         currentGroupify = temp;
-        
+        currentGroupify.stateClear();
+
         // Apply transition
         switch (transition.type) {
         case UNOPTIMIZED:
