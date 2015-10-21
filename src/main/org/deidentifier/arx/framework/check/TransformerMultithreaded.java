@@ -51,15 +51,13 @@ public class TransformerMultithreaded extends Transformer {
      * @param config
      * @param dictionarySensValue
      * @param dictionarySensFreq
-     * @param threads
      */
     public TransformerMultithreaded(final int[][] inputGeneralized,
                                     final int[][] inputAnalyzed,
                                     final GeneralizationHierarchy[] hierarchies,
                                     final ARXConfigurationInternal config,
                                     final IntArrayDictionary dictionarySensValue,
-                                    final IntArrayDictionary dictionarySensFreq,
-                                    final int threads) {
+                                    final IntArrayDictionary dictionarySensFreq) {
         
         super(inputGeneralized,
               inputAnalyzed,
@@ -68,7 +66,7 @@ public class TransformerMultithreaded extends Transformer {
               dictionarySensValue,
               dictionarySensFreq);
         
-        this.threads = threads;
+        this.threads = config.getNumThreads();
         this.transformers = new AbstractTransformer[threads][];
         this.transformers[0] = super.getTransformers(); // Reuse
         for (int i=1; i<threads; i++) {

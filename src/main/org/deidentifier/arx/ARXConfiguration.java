@@ -157,6 +157,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         /**
+         * Returns the number of threads
+         * @return
+         */
+        public int getNumThreads() {
+            return config.getNumThreads();
+        }
+
+        /**
          * Returns the criteria's requirements.
          *
          * @return

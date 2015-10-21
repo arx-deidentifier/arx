@@ -177,12 +177,25 @@ public class NodeChecker {
         this.stateMachine = new StateMachine(history);
         this.currentGroupify = new HashGroupify(initialSize, config);
         this.lastGroupify = new HashGroupify(initialSize, config);
-        this.transformer = new Transformer(manager.getDataGeneralized().getArray(),
-                                           manager.getDataAnalyzed().getArray(),
-                                           manager.getHierarchies(),
-                                           config,
-                                           dictionarySensValue,
-                                           dictionarySensFreq);
+        
+        if (config.getNumThreads() > 1) {
+            
+            this.transformer = new TransformerMultithreaded(manager.getDataGeneralized().getArray(),
+                                               manager.getDataAnalyzed().getArray(),
+                                               manager.getHierarchies(),
+                                               config,
+                                               dictionarySensValue,
+                                               dictionarySensFreq);
+            
+        } else {
+            
+            this.transformer = new Transformer(manager.getDataGeneralized().getArray(),
+                                               manager.getDataAnalyzed().getArray(),
+                                               manager.getHierarchies(),
+                                               config,
+                                               dictionarySensValue,
+                                               dictionarySensFreq);
+        }
     }
 
     

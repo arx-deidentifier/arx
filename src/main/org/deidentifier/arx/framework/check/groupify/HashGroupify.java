@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.framework.check.groupify;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
@@ -26,6 +28,7 @@ import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.framework.check.groupify.LockManager.SpinLock.Lock;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -41,58 +44,61 @@ import com.carrotsearch.hppc.ObjectIntOpenHashMap;
  * @author Florian Kohlmayer
  */
 public class HashGroupify {
-        
+
     /** Criteria. */
     private final PrivacyCriterion[]     classBasedCriteria;
-    
+
     /** The current number of outliers. */
-    private int                          currentNumOutliers;
-    
+    private AtomicInteger                currentNumOutliers;
+
     /** The entry array. */
     private HashGroupifyEntry[]          hashTableBuckets;
-    
+
     /** Current number of elements. */
-    private int                          hashTableElementCount;
-    
+    private AtomicInteger                hashTableElementCount;
+
     /** The first entry. */
     private HashGroupifyEntry            hashTableFirstEntry;
-    
+
     /** The last entry. */
     private HashGroupifyEntry            hashTableLastEntry;
-    
+
     /** Load factor. */
     private final float                  hashTableLoadFactor = 0.75f;
-    
+
     /** Maximum number of elements that can be put in this map before having to rehash. */
     private int                          hashTableThreshold;
-    
+
     /** Do we ensure optimality for sample-based criteria */
     private final boolean                heuristicForSampleBasedCriteria;
-    
+
     /** The parameter k, if k-anonymity is contained in the set of criteria. */
     private final int                    minimalClassSize;
-    
+
     /** Is the result k-anonymous?. */
     private boolean                      minimalClassSizeFulfilled;
-    
+
     /** True, if the contained d-presence criterion is not inclusion. */
     private final boolean                privacyModelContainsDPresence;
-    
+
     /** The research subset, if d-presence is contained in the set of criteria. */
     private final RowSet                 privacyModelDefinesSubset;
-    
+
     /** Is the result anonymous. */
     private boolean                      privacyModelFulfilled;
-    
+
     /** Criteria. */
     private final SampleBasedCriterion[] sampleBasedCriteria;
-    
+
     /** Allowed tuple outliers. */
     private final int                    suppressionLimit;
-    
+
     /** Utility measure */
     private final Metric<?>              utilityMeasure;
-    
+
+    /** Lock manager */
+    private final LockManager            lockManager;
+
     /**
      * Constructs a new hash groupify operator.
      *
@@ -103,12 +109,17 @@ public class HashGroupify {
         
         // Set capacity
         capacity = HashTableUtil.calculateCapacity(capacity);
-        this.hashTableElementCount = 0;
+        this.hashTableElementCount = new AtomicInteger(0);
         this.hashTableBuckets = new HashGroupifyEntry[capacity];
         this.hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
+        if (config.getNumThreads() > 1) {
+            lockManager = new LockManager(capacity);
+        } else {
+            lockManager = null;
+        }
         
         // Set params
-        this.currentNumOutliers = 0;
+        this.currentNumOutliers = new AtomicInteger(0);
         this.suppressionLimit = config.getAbsoluteMaxOutliers();
         this.utilityMeasure = config.getMetric();
         this.heuristicForSampleBasedCriteria = config.isUseHeuristicForSampleBasedCriteria();
@@ -149,29 +160,48 @@ public class HashGroupify {
      */
     public void addFromBuffer(int[] generalized, int[] other, int representative, int count, int pcount) {
         
-        // Add
+        // Hash
         final int hash = HashTableUtil.hashcode(generalized);
-        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
         
-        // Is a other attribute provided
-        if (other != null) {
-            if (entry.distributions == null) {
-                entry.distributions = new Distribution[other.length];
-                
-                // TODO: Improve!
-                for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i] = new Distribution();
-                }
-            }
+        // Wait
+        if (this.lockManager != null) {
+            this.lockManager.waitForLockRehash();
+        }
+        
+        // Compute bucket
+        final int index = hash & (hashTableBuckets.length - 1);
+
+        // Acquire lock for bucket
+        try(Lock lock = lockManager != null ? lockManager.lockBucket(index) : null){
+    
+            // Add
+            final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
             
-            // Only add other value if in research subset
-            if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(representative)) {
+            // Is a other attribute provided
+            if (other != null) {
+                if (entry.distributions == null) {
+                    entry.distributions = new Distribution[other.length];
+                    
+                    // TODO: Improve!
+                    for (int i = 0; i < entry.distributions.length; i++) {
+                        entry.distributions[i] = new Distribution();
+                    }
+                }
                 
-                // TODO: Improve!
-                for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i].add(other[i]);
+                // Only add other value if in research subset
+                if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(representative)) {
+                    
+                    // TODO: Improve!
+                    for (int i = 0; i < entry.distributions.length; i++) {
+                        entry.distributions[i].add(other[i]);
+                    }
                 }
             }
+        }
+        
+        // Rehash
+        if (hashTableElementCount.get() > hashTableThreshold) {
+            rehash();
         }
     }
     
@@ -185,21 +215,41 @@ public class HashGroupify {
      */
     public void addFromGroupify(int[] generalized, Distribution[] distributions, int representative, int count, int pcount) {
         
-        // Add
+
+        // Hash
         final int hash = HashTableUtil.hashcode(generalized);
-        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
         
-        // Is a distribution provided
-        if (distributions != null) {
-            if (entry.distributions == null) {
-                entry.distributions = distributions;
-            } else {
-                
-                // TODO: Improve!
-                for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i].merge(distributions[i]);
+        // Wait
+        if (this.lockManager != null) {
+            this.lockManager.waitForLockRehash();
+        }
+        
+        // Compute bucket
+        final int index = hash & (hashTableBuckets.length - 1);
+
+        // Acquire lock for bucket
+        try(Lock lock = lockManager != null ? lockManager.lockBucket(index) : null){
+        
+             // Add
+            final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
+            
+            // Is a distribution provided
+            if (distributions != null) {
+                if (entry.distributions == null) {
+                    entry.distributions = distributions;
+                } else {
+                    
+                    // TODO: Improve!
+                    for (int i = 0; i < entry.distributions.length; i++) {
+                        entry.distributions[i].merge(distributions[i]);
+                    }
                 }
             }
+        }
+        
+        // Rehash
+        if (hashTableElementCount.get() > hashTableThreshold) {
+            rehash();
         }
     }
     
@@ -214,27 +264,47 @@ public class HashGroupify {
      */
     public void addFromSnapshot(int[] generalized, int[][] elements, int[][] frequencies, int representative, int count, int pcount) {
         
-        // Add
+
+        // Hash
         final int hash = HashTableUtil.hashcode(generalized);
-        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
         
-        // Is a distribution provided
-        if (elements != null) {
-            if (entry.distributions == null) {
-                
-                entry.distributions = new Distribution[elements.length];
-                
-                // TODO: Improve!
-                for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i] = new Distribution(elements[i], frequencies[i]);
-                }
-            } else {
-                
-                // TODO: Improve!
-                for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i].merge(elements[i], frequencies[i]);
+        // Wait
+        if (this.lockManager != null) {
+            this.lockManager.waitForLockRehash();
+        }
+        
+        // Compute bucket
+        final int index = hash & (hashTableBuckets.length - 1);
+
+        // Acquire lock for bucket
+        try(Lock lock = lockManager != null ? lockManager.lockBucket(index) : null){
+            
+            // Add
+            final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
+            
+            // Is a distribution provided
+            if (elements != null) {
+                if (entry.distributions == null) {
+                    
+                    entry.distributions = new Distribution[elements.length];
+                    
+                    // TODO: Improve!
+                    for (int i = 0; i < entry.distributions.length; i++) {
+                        entry.distributions[i] = new Distribution(elements[i], frequencies[i]);
+                    }
+                } else {
+                    
+                    // TODO: Improve!
+                    for (int i = 0; i < entry.distributions.length; i++) {
+                        entry.distributions[i].merge(elements[i], frequencies[i]);
+                    }
                 }
             }
+        }
+        
+        // Rehash
+        if (hashTableElementCount.get() > hashTableThreshold) {
+            rehash();
         }
     }
     
@@ -262,7 +332,7 @@ public class HashGroupify {
      * @return
      */
     public int getNumberOfEquivalenceClasses() {
-        return hashTableElementCount;
+        return hashTableElementCount.get();
     }
     
     /**
@@ -377,9 +447,9 @@ public class HashGroupify {
      * Clears all entries
      */
     public void stateClear() {
-        if (hashTableElementCount > 0) {
-            this.hashTableElementCount = 0;
-            this.currentNumOutliers = 0;
+        if (hashTableElementCount.get() > 0) {
+            this.hashTableElementCount.set(0);
+            this.currentNumOutliers.set(0);
             this.hashTableFirstEntry = null;
             this.hashTableLastEntry = null;
             HashTableUtil.nullifyArray(hashTableBuckets);
@@ -395,29 +465,26 @@ public class HashGroupify {
             entry.isNotOutlier = true;
             entry = entry.nextOrdered;
         }
-        this.currentNumOutliers = 0;
+        this.currentNumOutliers.set(0);
     }
     
     /**
      * Internal adder method.
      *
      * @param generalized the key
+     * @param index
      * @param hash the hash
      * @param representative
      * @param count
      * @param pcount
      * @return the hash groupify entry
      */
-    private HashGroupifyEntry addInternal(final int[] generalized, final int hash, final int representative, int count, final int pcount) {
+    private HashGroupifyEntry addInternal(final int[] generalized, final int index, final int hash, final int representative, int count, final int pcount) {
         
         // Find or create entry
-        int index = hash & (hashTableBuckets.length - 1);
         HashGroupifyEntry entry = findEntry(generalized, index, hash);
         if (entry == null) {
-            if (++hashTableElementCount > hashTableThreshold) {
-                rehash();
-                index = hash & (hashTableBuckets.length - 1);
-            }
+            hashTableElementCount.incrementAndGet();
             entry = createEntry(generalized, index, hash, representative);
         }
         
@@ -461,10 +528,10 @@ public class HashGroupify {
         if (entry.count >= minimalClassSize) {
             if (!entry.isNotOutlier) {
                 entry.isNotOutlier = true;
-                currentNumOutliers -= (entry.count - count);
+                currentNumOutliers.addAndGet(-(entry.count - count));
             }
         } else {
-            currentNumOutliers += count;
+            currentNumOutliers.addAndGet(count);
         }
         
         // Return
@@ -478,11 +545,11 @@ public class HashGroupify {
     private void analyzeAll(Transformation transformation) {
         
         // We have only checked k-anonymity so far
-        minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
+        minimalClassSizeFulfilled = (currentNumOutliers.get() <= suppressionLimit);
         
         // Iterate over all classes
         boolean dpresent = true;
-        currentNumOutliers = 0;
+        int currentNumOutliers = 0;
         HashGroupifyEntry entry = hashTableFirstEntry;
         while (entry != null) {
             
@@ -513,6 +580,7 @@ public class HashGroupify {
         
         this.analyzeSampleBasedCriteria(transformation, false);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit) && dpresent;
+        this.currentNumOutliers.set(currentNumOutliers);
     }
     
     /**
@@ -540,8 +608,9 @@ public class HashGroupify {
             criterion.enforce(distribution, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
             
             // Early abort
-            this.currentNumOutliers = distribution.getNumOfSuppressedTuples();
-            if (earlyAbort && currentNumOutliers > suppressionLimit) {
+            int suppressed = distribution.getNumOfSuppressedTuples();
+            this.currentNumOutliers.set(suppressed);
+            if (earlyAbort && suppressed > suppressionLimit) {
                 return;
             }
         }
@@ -554,7 +623,7 @@ public class HashGroupify {
     private void analyzeWithEarlyAbort(Transformation transformation) {
         
         // We have only checked k-anonymity so far
-        minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
+        minimalClassSizeFulfilled = (currentNumOutliers.get() <= suppressionLimit);
         
         // Abort early, if only k-anonymity was specified
         if (classBasedCriteria.length == 0 && sampleBasedCriteria.length == 0) {
@@ -571,7 +640,7 @@ public class HashGroupify {
         }
         
         // Iterate over all classes
-        currentNumOutliers = 0;
+        int currentNumOutliers = 0;
         HashGroupifyEntry entry = hashTableFirstEntry;
         while (entry != null) {
             
@@ -589,6 +658,7 @@ public class HashGroupify {
                 // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
                 // for non-anonymous transformations
                 if (privacyModelContainsDPresence && entry.count == 0 && anonymous == 1) {
+                    this.currentNumOutliers.set(currentNumOutliers);
                     this.privacyModelFulfilled = false;
                     return;
                 }
@@ -599,6 +669,7 @@ public class HashGroupify {
                 // for non-anonymous transformations
                 if (currentNumOutliers > suppressionLimit) {
                     this.privacyModelFulfilled = false;
+                    this.currentNumOutliers.set(currentNumOutliers);
                     return;
                 }
             }
@@ -611,6 +682,7 @@ public class HashGroupify {
         }
         
         this.analyzeSampleBasedCriteria(transformation, true);
+        this.currentNumOutliers.set(currentNumOutliers);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
     }
     
@@ -628,18 +700,22 @@ public class HashGroupify {
      * @return the hash groupify entry
      */
     private HashGroupifyEntry createEntry(final int[] key, final int index, final int hash, final int line) {
-        final HashGroupifyEntry entry = new HashGroupifyEntry(key, hash);
-        entry.next = hashTableBuckets[index];
-        entry.representative = line;
-        hashTableBuckets[index] = entry;
-        if (hashTableFirstEntry == null) {
-            hashTableFirstEntry = entry;
-            hashTableLastEntry = entry;
-        } else {
-            hashTableLastEntry.nextOrdered = entry;
-            hashTableLastEntry = entry;
+        
+        try(Lock lock = lockManager != null ? lockManager.lockCreate() : null){
+        
+            final HashGroupifyEntry entry = new HashGroupifyEntry(key, hash);
+            entry.next = hashTableBuckets[index];
+            entry.representative = line;
+            hashTableBuckets[index] = entry;
+            if (hashTableFirstEntry == null) {
+                hashTableFirstEntry = entry;
+                hashTableLastEntry = entry;
+            } else {
+                hashTableLastEntry.nextOrdered = entry;
+                hashTableLastEntry = entry;
+            }
+            return entry;
         }
-        return entry;
     }
     
     /**
@@ -707,16 +783,23 @@ public class HashGroupify {
      */
     private void rehash() {
         
-        final int length = HashTableUtil.calculateCapacity((hashTableBuckets.length == 0 ? 1 : hashTableBuckets.length << 1));
-        final HashGroupifyEntry[] newData = new HashGroupifyEntry[length];
-        HashGroupifyEntry entry = hashTableFirstEntry;
-        while (entry != null) {
-            final int index = entry.hashcode & (length - 1);
-            entry.next = newData[index];
-            newData[index] = entry;
-            entry = entry.nextOrdered;
+        if (lockManager != null && lockManager.isLockedRehash()) {
+            return;
         }
-        hashTableBuckets = newData;
-        hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
+        
+        try(Lock lock = lockManager != null ? lockManager.lockRehash() : null){
+
+            final int length = HashTableUtil.calculateCapacity((hashTableBuckets.length == 0 ? 1 : hashTableBuckets.length << 1));
+            final HashGroupifyEntry[] newData = new HashGroupifyEntry[length];
+            HashGroupifyEntry entry = hashTableFirstEntry;
+            while (entry != null) {
+                final int index = entry.hashcode & (length - 1);
+                entry.next = newData[index];
+                newData[index] = entry;
+                entry = entry.nextOrdered;
+            }
+            hashTableBuckets = newData;
+            hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
+        }
     }
 }
