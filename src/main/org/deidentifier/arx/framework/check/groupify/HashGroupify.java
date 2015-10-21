@@ -799,7 +799,9 @@ public class HashGroupify {
                 entry = entry.nextOrdered;
             }
             hashTableBuckets = newData;
-            lockManager.setNumberOfBuckets(hashTableBuckets.length);
+            if (lockManager != null) {
+                lockManager.setNumberOfBuckets(hashTableBuckets.length);
+            }
             hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
         }
     }
