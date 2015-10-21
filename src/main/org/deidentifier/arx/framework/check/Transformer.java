@@ -236,8 +236,7 @@ public class Transformer {
                  snapshot,
                  transition,
                  startIndex,
-                 stopIndex,
-                 outputGeneralized);
+                 stopIndex);
 
         app.call();
     }
@@ -248,101 +247,117 @@ public class Transformer {
     protected AbstractTransformer[] createTransformers() {
         AbstractTransformer[] result = new AbstractTransformer[16];
         result[15] = new Transformer15(inputGeneralized,
-                                          hierarchies,
-                                          inputAnalyzed,
-                                          dictionarySensValue,
-                                          dictionarySensFreq,
-                                          config);
+                                       outputGeneralized,
+                                       hierarchies,
+                                       inputAnalyzed,
+                                       dictionarySensValue,
+                                       dictionarySensFreq,
+                                       config);
         result[14] = new Transformer14(inputGeneralized,
-                                          hierarchies,
-                                          inputAnalyzed,
-                                          dictionarySensValue,
-                                          dictionarySensFreq,
-                                          config);
+                                       outputGeneralized,
+                                       hierarchies,
+                                       inputAnalyzed,
+                                       dictionarySensValue,
+                                       dictionarySensFreq,
+                                       config);
         result[13] = new Transformer13(inputGeneralized,
-                                          hierarchies,
-                                          inputAnalyzed,
-                                          dictionarySensValue,
-                                          dictionarySensFreq,
-                                          config);
+                                       outputGeneralized,
+                                       hierarchies,
+                                       inputAnalyzed,
+                                       dictionarySensValue,
+                                       dictionarySensFreq,
+                                       config);
         result[12] = new Transformer12(inputGeneralized,
-                                          hierarchies,
-                                          inputAnalyzed,
-                                          dictionarySensValue,
-                                          dictionarySensFreq,
-                                          config);
+                                       outputGeneralized,
+                                       hierarchies,
+                                       inputAnalyzed,
+                                       dictionarySensValue,
+                                       dictionarySensFreq,
+                                       config);
         result[11] = new Transformer11(inputGeneralized,
-                                          hierarchies,
-                                          inputAnalyzed,
-                                          dictionarySensValue,
-                                          dictionarySensFreq,
-                                          config);
+                                       outputGeneralized,
+                                       hierarchies,
+                                       inputAnalyzed,
+                                       dictionarySensValue,
+                                       dictionarySensFreq,
+                                       config);
         result[10] = new Transformer10(inputGeneralized,
-                                          hierarchies,
-                                          inputAnalyzed,
-                                          dictionarySensValue,
-                                          dictionarySensFreq,
-                                          config);
+                                       outputGeneralized,
+                                       hierarchies,
+                                       inputAnalyzed,
+                                       dictionarySensValue,
+                                       dictionarySensFreq,
+                                       config);
         result[9] = new Transformer09(inputGeneralized,
-                                         hierarchies,
-                                         inputAnalyzed,
-                                         dictionarySensValue,
-                                         dictionarySensFreq,
-                                         config);
+                                      outputGeneralized,
+                                      hierarchies,
+                                      inputAnalyzed,
+                                      dictionarySensValue,
+                                      dictionarySensFreq,
+                                      config);
         result[8] = new Transformer08(inputGeneralized,
-                                         hierarchies,
-                                         inputAnalyzed,
-                                         dictionarySensValue,
-                                         dictionarySensFreq,
-                                         config);
+                                      outputGeneralized,
+                                      hierarchies,
+                                      inputAnalyzed,
+                                      dictionarySensValue,
+                                      dictionarySensFreq,
+                                      config);
         result[7] = new Transformer07(inputGeneralized,
-                                         hierarchies,
-                                         inputAnalyzed,
-                                         dictionarySensValue,
-                                         dictionarySensFreq,
-                                         config);
+                                      outputGeneralized,
+                                      hierarchies,
+                                      inputAnalyzed,
+                                      dictionarySensValue,
+                                      dictionarySensFreq,
+                                      config);
         result[6] = new Transformer06(inputGeneralized,
-                                         hierarchies,
-                                         inputAnalyzed,
-                                         dictionarySensValue,
-                                         dictionarySensFreq,
-                                         config);
+                                      outputGeneralized,
+                                      hierarchies,
+                                      inputAnalyzed,
+                                      dictionarySensValue,
+                                      dictionarySensFreq,
+                                      config);
         result[5] = new Transformer05(inputGeneralized,
-                                         hierarchies,
-                                         inputAnalyzed,
-                                         dictionarySensValue,
-                                         dictionarySensFreq,
-                                         config);
+                                      outputGeneralized,
+                                      hierarchies,
+                                      inputAnalyzed,
+                                      dictionarySensValue,
+                                      dictionarySensFreq,
+                                      config);
         result[4] = new Transformer04(inputGeneralized,
-                                         hierarchies,
-                                         inputAnalyzed,
-                                         dictionarySensValue,
-                                         dictionarySensFreq,
-                                         config);
+                                      outputGeneralized,
+                                      hierarchies,
+                                      inputAnalyzed,
+                                      dictionarySensValue,
+                                      dictionarySensFreq,
+                                      config);
         result[3] = new Transformer03(inputGeneralized,
-                                         hierarchies,
-                                         inputAnalyzed,
-                                         dictionarySensValue,
-                                         dictionarySensFreq,
-                                         config);
+                                      outputGeneralized,
+                                      hierarchies,
+                                      inputAnalyzed,
+                                      dictionarySensValue,
+                                      dictionarySensFreq,
+                                      config);
         result[2] = new Transformer02(inputGeneralized,
-                                         hierarchies,
-                                         inputAnalyzed,
-                                         dictionarySensValue,
-                                         dictionarySensFreq,
-                                         config);
+                                      outputGeneralized,
+                                      hierarchies,
+                                      inputAnalyzed,
+                                      dictionarySensValue,
+                                      dictionarySensFreq,
+                                      config);
         result[1] = new Transformer01(inputGeneralized,
-                                         hierarchies,
-                                         inputAnalyzed,
-                                         dictionarySensValue,
-                                         dictionarySensFreq,
-                                         config);
+                                      outputGeneralized,
+                                      hierarchies,
+                                      inputAnalyzed,
+                                      dictionarySensValue,
+                                      dictionarySensFreq,
+                                      config);
         result[0] = new TransformerAll(inputGeneralized,
-                                          hierarchies,
-                                          inputAnalyzed,
-                                          dictionarySensValue,
-                                          dictionarySensFreq,
-                                          config);
+                                       outputGeneralized,
+                                       hierarchies,
+                                       inputAnalyzed,
+                                       dictionarySensValue,
+                                       dictionarySensFreq,
+                                       config);
         return result;
     }
 
@@ -354,14 +369,6 @@ public class Transformer {
         return this.inputGeneralized.length;
     }
     
-    /**
-     * Output
-     * @return
-     */
-    protected int[][] getOutput() {
-        return this.outputGeneralized;
-    }
-
     /**
      * Snapshot length
      * @return

@@ -176,8 +176,7 @@ public class TransformerMultithreaded extends Transformer {
                  snapshot,
                  transition,
                  startIndex,
-                 stopIndex,
-                 super.getOutput());
+                 stopIndex);
         
         return app;
     }

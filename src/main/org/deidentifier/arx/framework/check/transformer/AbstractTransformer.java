@@ -299,6 +299,7 @@ public abstract class AbstractTransformer {
      * Instantiates a new abstract transformer.
      *
      * @param data the data
+     * @param buffer the buffer
      * @param hierarchies the hierarchies
      * @param other
      * @param dictionarySensValue
@@ -306,12 +307,14 @@ public abstract class AbstractTransformer {
      * @param config
      */
     public AbstractTransformer(final int[][] data,
+                               final int[][] buffer,
                                final GeneralizationHierarchy[] hierarchies,
                                final int[][] other,
                                final IntArrayDictionary dictionarySensValue,
                                final IntArrayDictionary dictionarySensFreq,
                                final ARXConfigurationInternal config) {
         
+        this.buffer = buffer;
         this.config = config;
         this.data = data;
         this.hierarchies = hierarchies;
@@ -397,8 +400,6 @@ public abstract class AbstractTransformer {
      *            the start index
      * @param stopIndex
      *            the stop index
-     * @param buffer
-     *            the buffer
      */
     public void init(final long projection,
                      final int[] transformation,
@@ -407,10 +408,8 @@ public abstract class AbstractTransformer {
                      final int[] snapshot,
                      final TransitionType transition,
                      final int startIndex,
-                     final int stopIndex,
-                     final int[][] buffer) {
+                     final int stopIndex) {
 
-        this.buffer = buffer;
         this.startIndex = startIndex;
         this.stopIndex = stopIndex;
         this.generalization = transformation;

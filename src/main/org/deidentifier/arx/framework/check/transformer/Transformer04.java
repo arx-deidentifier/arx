@@ -34,6 +34,7 @@ public class Transformer04 extends AbstractTransformer {
      * Instantiates a new transformer.
      *
      * @param data the data
+     * @param buffer the buffer
      * @param hierarchies the hierarchies
      * @param otherValues
      * @param dictionarySensValue
@@ -41,12 +42,13 @@ public class Transformer04 extends AbstractTransformer {
      * @param config
      */
     public Transformer04(final int[][] data,
+                         final int[][] buffer,
                          final GeneralizationHierarchy[] hierarchies,
                          final int[][] otherValues,
                          final IntArrayDictionary dictionarySensValue,
                          final IntArrayDictionary dictionarySensFreq,
                          final ARXConfigurationInternal config) {
-        super(data, hierarchies, otherValues, dictionarySensValue, dictionarySensFreq, config);
+        super(data, buffer, hierarchies, otherValues, dictionarySensValue, dictionarySensFreq, config);
     }
 
     @Override
