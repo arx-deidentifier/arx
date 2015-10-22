@@ -17,11 +17,8 @@
 
 package org.deidentifier.arx.framework.check;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
@@ -75,7 +72,7 @@ public class TransformerMultithreaded extends Transformer {
         }
         
         // TODO: Shutdown
-        this.pool = Executors.newFixedThreadPool(threads, new ThreadFactory(){
+        this.pool = Executors.newFixedThreadPool(threads - 1, new ThreadFactory(){
 
             @Override
             public Thread newThread(Runnable r) {
@@ -137,35 +134,36 @@ public class TransformerMultithreaded extends Transformer {
             getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, 0).call();
             return;
         }
-        
-        // List
-        List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
 
+        // Start
+        target.start();
+        
         // For each thread
         for (int i = 0; i < threads; i++) {
 
             // Execute
             final int thread = i;
             final int stepping = total / this.threads;
-            futures.add(pool.submit(new Runnable() {
-                    public void run() {
-                        
-                        int startIndex = thread * stepping;
-                        int stopIndex = (thread + 1) * stepping;
-                        if (thread == threads - 1) {
-                            stopIndex = total;
-                        }                        
-                        getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, thread).call();
-                    }
-            }, true));
-        }
-        
-        // Wait
-        for (Future<Boolean> future : futures) {
-            try {
-                future.get();
-            } catch (Exception e) {
-                throw new RuntimeException("Error executing thread", e);
+            final int startIndex = thread * stepping;
+            final int stopIndex = thread == threads - 1 ? total : (thread + 1) * stepping;
+            
+            if (thread < threads - 1) {
+                // Worker thread
+                pool.execute(new Runnable() {
+                        public void run() {
+                            getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, thread).call();
+                            target.end();
+                        }
+                });
+            } else {
+                // Main thread
+                getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, thread).call();
+                target.end();
+                
+                // Busy wait for all threads to finish
+                while (!target.done()) {
+                    // Spin
+                }
             }
         }
     }

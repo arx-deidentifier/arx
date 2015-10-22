@@ -340,7 +340,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             // Create an instance of the anonymizer
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             testCase.config.setPracticalMonotonicity(testCase.practical);
-//            testCase.config.setNumThreads(threads);
+            testCase.config.setNumThreads(threads);
 
             // Test or warmup
             ARXResult result = anonymizer.anonymize(data, testCase.config);

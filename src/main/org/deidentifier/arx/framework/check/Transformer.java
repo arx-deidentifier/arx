@@ -238,7 +238,9 @@ public class Transformer {
                  startIndex,
                  stopIndex);
 
+        target.start();
         app.call();
+        target.end();
     }
     
     /**
