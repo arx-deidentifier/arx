@@ -169,7 +169,7 @@ public class HashGroupify {
         final int hash = HashTableUtil.hashcode(generalized);
 
         // Potentially rehash
-        _rehash();
+        synchronizedRehash();
 
         // Compute bucket
         int index = hash & (hashTableBuckets.length - 1);
@@ -220,7 +220,7 @@ public class HashGroupify {
         final int hash = HashTableUtil.hashcode(generalized);
 
         // Potentially rehash
-        _rehash();
+        synchronizedRehash();
 
         // Compute bucket
         int index = hash & (hashTableBuckets.length - 1);
@@ -263,7 +263,7 @@ public class HashGroupify {
         final int hash = HashTableUtil.hashcode(generalized);
 
         // Potentially rehash
-        _rehash();
+        synchronizedRehash();
 
         // Compute bucket
         int index = hash & (hashTableBuckets.length - 1);
@@ -523,7 +523,7 @@ public class HashGroupify {
      * This method tries to rehash
      * @param bucketLock 
      */
-    private void _rehash() {
+    private void synchronizedRehash() {
 
         // Rehash, if still necessary to rehash
         if (hashTableElementCount > hashTableThreshold) {
