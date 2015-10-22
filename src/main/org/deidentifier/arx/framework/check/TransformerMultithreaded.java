@@ -131,6 +131,7 @@ public class TransformerMultithreaded extends Transformer {
 
             int startIndex = 0;
             int stopIndex = total;
+            target.setSingleThreaded(true);
             getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, 0).call();
             return;
         }
@@ -139,6 +140,7 @@ public class TransformerMultithreaded extends Transformer {
         target.start();
         
         // For each thread
+        target.setSingleThreaded(false);
         for (int i = 0; i < threads; i++) {
 
             // Execute

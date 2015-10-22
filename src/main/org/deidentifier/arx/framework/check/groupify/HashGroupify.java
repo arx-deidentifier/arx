@@ -103,7 +103,10 @@ public class HashGroupify {
     
     /** The number of threads */
     private final int                    threads;
-    
+
+    /** Are we performing a single threaded run? */
+    private boolean                      singleThreaded   = true;
+
     /**
      * Constructs a new hash groupify operator.
      *
@@ -200,7 +203,7 @@ public class HashGroupify {
 
         // Release lock for bucket
         @SuppressWarnings("unused")
-        int lock = lockManager != null ? lockManager.releaseBucket(index) : 1;
+        int lock = !singleThreaded && lockManager != null ? lockManager.releaseBucket(index) : 1;
     }
     
     /**
@@ -239,7 +242,7 @@ public class HashGroupify {
         }
         // Release lock for bucket
         @SuppressWarnings("unused")
-        int lock = lockManager != null ? lockManager.releaseBucket(index) : 1;
+        int lock = !singleThreaded && lockManager != null ? lockManager.releaseBucket(index) : 1;
     }
     
     /**
@@ -285,7 +288,7 @@ public class HashGroupify {
         }
         // Release lock for bucket
         @SuppressWarnings("unused")
-        int lock = lockManager != null ? lockManager.releaseBucket(index) : 1;
+        int lock = !singleThreaded && lockManager != null ? lockManager.releaseBucket(index) : 1;
     }
     
     /**
@@ -295,7 +298,7 @@ public class HashGroupify {
     public boolean done() {
         return workingThreads.get() == 0;
     }
-
+    
     /**
      * One thread is done
      * @return the number of active threads
@@ -303,7 +306,7 @@ public class HashGroupify {
     public int end() {
         return workingThreads.decrementAndGet();
     }
-    
+
     /**
      * Returns the entry for the given tuple
      * @param tuple
@@ -428,6 +431,14 @@ public class HashGroupify {
             }
         }
     }
+    
+    /**
+     * Mark a single-threaded run
+     * @param value
+     */
+    public void setSingleThreaded(boolean value) {
+        this.singleThreaded = value;
+    }
 
     /**
      * We are starting the process
@@ -507,36 +518,6 @@ public class HashGroupify {
         while (entry != null) {
             entry.isNotOutlier = true;
             entry = entry.nextOrdered;
-        }
-    }
-    
-    /**
-     * This method tries to rehash
-     * @param bucketLock 
-     */
-    private void synchronizedRehash() {
-
-        // Rehash, if still necessary to rehash
-        if (hashTableElementCount > hashTableThreshold) {
-    
-            // Increment number of waiting threads
-            @SuppressWarnings("unused")
-            int lock = lockManager != null ? waitingThreads.incrementAndGet() : 1;
-    
-            // Acquire lock for rehashing
-            lock = lockManager != null ? lockManager.lockRehash() : 1;
-    
-            // Rehash, if still necessary to rehash
-            if (hashTableElementCount > hashTableThreshold) {
-    
-                // Rehash
-                rehash();
-            }
-            // Release lock for rehashing
-            lock = lockManager != null ? lockManager.releaseRehash() : 1;
-    
-            // Decrement number of waiting threads
-            lock = lockManager != null ? waitingThreads.decrementAndGet() : 1;
         }
     }
     
@@ -663,7 +644,7 @@ public class HashGroupify {
 
         // Acquire
         @SuppressWarnings("unused")
-        int lock = lockManager != null ? lockManager.lockCreate() : 1;
+        int lock = !singleThreaded && lockManager != null ? lockManager.lockCreate() : 1;
 
         hashTableElementCount++;
         if (hashTableFirstEntry == null) {
@@ -675,7 +656,7 @@ public class HashGroupify {
         }
 
         // Release
-        lock = lockManager != null ? lockManager.releaseCreate() : 1;
+        lock = !singleThreaded && lockManager != null ? lockManager.releaseCreate() : 1;
         return entry;
     }
     
@@ -694,7 +675,7 @@ public class HashGroupify {
         }
         return true;
     }
-        
+    
     /**
      * Returns the according entry.
      * 
@@ -711,14 +692,14 @@ public class HashGroupify {
 
         // Acquire lock for bucket
         @SuppressWarnings("unused")
-        int lock = lockManager != null ? lockManager.lockBucket(index) : 1;
+        int lock = !singleThreaded && lockManager != null ? lockManager.lockBucket(index) : 1;
         HashGroupifyEntry m = hashTableBuckets[index];
         while ((m != null) && ((m.hashcode != keyHash) || !HashTableUtil.equals(key, m.key))) {
             m = m.next;
         }
         return m;
     }
-
+        
     /**
      * Checks whether the given entry is anonymous.
      *
@@ -750,7 +731,7 @@ public class HashGroupify {
     private void rehash() {
 
         // Wait for all other threads to wait for rehashing
-        if (lockManager != null) {
+        if (!singleThreaded && lockManager != null) {
             while (waitingThreads.get() != workingThreads.get()) {
                 // Spin
             }
@@ -768,10 +749,40 @@ public class HashGroupify {
 
         // Update lock manager
         @SuppressWarnings("unused")
-        int lock = lockManager != null ? lockManager.resize(newData.length) : 1;
+        int lock = !singleThreaded && lockManager != null ? lockManager.resize(newData.length) : 1;
 
         // Update hash table
         hashTableBuckets = newData;
         hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
+    }
+
+    /**
+     * This method tries to rehash
+     * @param bucketLock 
+     */
+    private void synchronizedRehash() {
+
+        // Rehash, if still necessary to rehash
+        if (hashTableElementCount > hashTableThreshold) {
+    
+            // Increment number of waiting threads
+            @SuppressWarnings("unused")
+            int lock = !singleThreaded && lockManager != null ? waitingThreads.incrementAndGet() : 1;
+    
+            // Acquire lock for rehashing
+            lock = !singleThreaded && lockManager != null ? lockManager.lockRehash() : 1;
+    
+            // Rehash, if still necessary to rehash
+            if (hashTableElementCount > hashTableThreshold) {
+    
+                // Rehash
+                rehash();
+            }
+            // Release lock for rehashing
+            lock = !singleThreaded && lockManager != null ? lockManager.releaseRehash() : 1;
+    
+            // Decrement number of waiting threads
+            lock = !singleThreaded && lockManager != null ? waitingThreads.decrementAndGet() : 1;
+        }
     }
 }
