@@ -28,7 +28,6 @@ import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
-import org.deidentifier.arx.framework.check.groupify.LockManager.SpinLock.Lock;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -170,36 +169,42 @@ public class HashGroupify {
         _rehash();
 
         workingThreads.incrementAndGet();
-        
+
         // Compute bucket
         int index = hash & (hashTableBuckets.length - 1);
 
         // Acquire lock for bucket
-        try(Lock lock = lockManager != null ? lockManager.lockBucket(index) : null){
-        
-            // Add
-            final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
-            
-            // Is a other attribute provided
-            if (other != null) {
-                if (entry.distributions == null) {
-                    entry.distributions = new Distribution[other.length];
-                    
-                    // TODO: Improve!
-                    for (int i = 0; i < entry.distributions.length; i++) {
-                        entry.distributions[i] = new Distribution();
-                    }
-                }
-                
-                // Only add other value if in research subset
-                if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(representative)) {
-                    
-                    // TODO: Improve!
-                    for (int i = 0; i < entry.distributions.length; i++) {
-                        entry.distributions[i].add(other[i]);
-                    }
+        if (lockManager != null) {
+            lockManager.lockBucket(index);
+        }
+
+        // Add
+        final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
+
+        // Is a other attribute provided
+        if (other != null) {
+            if (entry.distributions == null) {
+                entry.distributions = new Distribution[other.length];
+
+                // TODO: Improve!
+                for (int i = 0; i < entry.distributions.length; i++) {
+                    entry.distributions[i] = new Distribution();
                 }
             }
+
+            // Only add other value if in research subset
+            if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(representative)) {
+
+                // TODO: Improve!
+                for (int i = 0; i < entry.distributions.length; i++) {
+                    entry.distributions[i].add(other[i]);
+                }
+            }
+        }
+
+        // Release lock for bucket
+        if (lockManager != null) {
+            lockManager.releaseBucket(index);
         }
 
         workingThreads.decrementAndGet();
@@ -223,28 +228,33 @@ public class HashGroupify {
         _rehash();
 
         workingThreads.incrementAndGet();
-        
+
         // Compute bucket
         int index = hash & (hashTableBuckets.length - 1);
 
         // Acquire lock for bucket
-        try(Lock lock = lockManager != null ? lockManager.lockBucket(index) : null){
-        
-             // Add
-            final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
-            
-            // Is a distribution provided
-            if (distributions != null) {
-                if (entry.distributions == null) {
-                    entry.distributions = distributions;
-                } else {
-                    
-                    // TODO: Improve!
-                    for (int i = 0; i < entry.distributions.length; i++) {
-                        entry.distributions[i].merge(distributions[i]);
-                    }
+        if (lockManager != null) {
+            lockManager.lockBucket(index);
+        }
+
+        // Add
+        final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
+
+        // Is a distribution provided
+        if (distributions != null) {
+            if (entry.distributions == null) {
+                entry.distributions = distributions;
+            } else {
+
+                // TODO: Improve!
+                for (int i = 0; i < entry.distributions.length; i++) {
+                    entry.distributions[i].merge(distributions[i]);
                 }
             }
+        }
+        // Release lock for bucket
+        if (lockManager != null) {
+            lockManager.releaseBucket(index);
         }
 
         workingThreads.decrementAndGet();
@@ -269,34 +279,39 @@ public class HashGroupify {
         _rehash();
 
         workingThreads.incrementAndGet();
-        
+
         // Compute bucket
         int index = hash & (hashTableBuckets.length - 1);
 
         // Acquire lock for bucket
-        try(Lock lock = lockManager != null ? lockManager.lockBucket(index) : null){
-        
-            // Add
-            final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
-            
-            // Is a distribution provided
-            if (elements != null) {
-                if (entry.distributions == null) {
-                    
-                    entry.distributions = new Distribution[elements.length];
-                    
-                    // TODO: Improve!
-                    for (int i = 0; i < entry.distributions.length; i++) {
-                        entry.distributions[i] = new Distribution(elements[i], frequencies[i]);
-                    }
-                } else {
-                    
-                    // TODO: Improve!
-                    for (int i = 0; i < entry.distributions.length; i++) {
-                        entry.distributions[i].merge(elements[i], frequencies[i]);
-                    }
+        if (lockManager != null) {
+            lockManager.lockBucket(index);
+        }
+
+        // Add
+        final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
+
+        // Is a distribution provided
+        if (elements != null) {
+            if (entry.distributions == null) {
+
+                entry.distributions = new Distribution[elements.length];
+
+                // TODO: Improve!
+                for (int i = 0; i < entry.distributions.length; i++) {
+                    entry.distributions[i] = new Distribution(elements[i], frequencies[i]);
+                }
+            } else {
+
+                // TODO: Improve!
+                for (int i = 0; i < entry.distributions.length; i++) {
+                    entry.distributions[i].merge(elements[i], frequencies[i]);
                 }
             }
+        }
+        // Release lock for bucket
+        if (lockManager != null) {
+            lockManager.releaseBucket(index);
         }
 
         workingThreads.decrementAndGet();
@@ -701,15 +716,22 @@ public class HashGroupify {
         entry.representative = line;
         hashTableBuckets[index] = entry;
 
-        try (Lock lock = lockManager != null ? lockManager.lockCreate() : null) {
+        // Acquire
+        if (lockManager != null) {
+            lockManager.lockCreate();
+        }
 
-            if (hashTableFirstEntry == null) {
-                hashTableFirstEntry = entry;
-                hashTableLastEntry = entry;
-            } else {
-                hashTableLastEntry.nextOrdered = entry;
-                hashTableLastEntry = entry;
-            }
+        if (hashTableFirstEntry == null) {
+            hashTableFirstEntry = entry;
+            hashTableLastEntry = entry;
+        } else {
+            hashTableLastEntry.nextOrdered = entry;
+            hashTableLastEntry = entry;
+        }
+
+        // Release
+        if (lockManager != null) {
+            lockManager.releaseCreate();
         }
         return entry;
     }
@@ -798,7 +820,7 @@ public class HashGroupify {
 
         // Update lock manager
         if (lockManager != null) {
-            lockManager.setNumberOfBuckets(newData.length);
+            lockManager.resize(newData.length);
         }
         
         // Update hash table
@@ -813,14 +835,19 @@ public class HashGroupify {
     private void _rehash() {
 
         // Acquire lock for rehashing
-        try (Lock lock = lockManager != null ? lockManager.lockRehash() : null) {
+        if (lockManager != null) {
+            lockManager.lockRehash();
+        }
 
-            // Rehash, if still necessary to rehash
-            if (hashTableElementCount.get() > hashTableThreshold.get()) {
+        // Rehash, if still necessary to rehash
+        if (hashTableElementCount.get() > hashTableThreshold.get()) {
 
-                // Rehash
-                rehash();
-            }
+            // Rehash
+            rehash();
+        }
+        // Release lock for rehashing
+        if (lockManager != null) {
+            lockManager.releaseRehash();
         }
     }
 }

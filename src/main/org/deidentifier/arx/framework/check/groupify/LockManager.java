@@ -16,83 +16,108 @@
  */
 package org.deidentifier.arx.framework.check.groupify;
 
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.deidentifier.arx.framework.check.groupify.LockManager.SpinLock.Lock;
-
-
+/**
+ * Lock manager
+ * 
+ * @author Florian Kohlmayer
+ * @author Fabian Prasser
+ */
 public class LockManager {
+
+    /** The locks */
+    private AtomicBoolean[]     locks;
+
+    /** The locks */               
+    private final AtomicBoolean rehashLock;
+
+    /** The locks */              
+    private final AtomicBoolean createLock;
+                                
+    /**
+     * Constructor
+     * @param buckets
+     */
+    public LockManager(int buckets) {
+        resize(buckets);
+        rehashLock = new AtomicBoolean(false);
+        createLock = new AtomicBoolean(false);
+    }
     
     /**
-     * try(SpinLock.Lock lock = spinlock.lock())
-     * {
-     *   // something very quick and non blocking
-     * }
+     * Acquire lock. Busy wait.
+     * @param bucket
      */
-    public static class SpinLock
-    {
-        private final AtomicReference<Thread> _lock   = new AtomicReference<>(null);
-        private final Lock                    _unlock = new Lock();
-
-        public Lock lock()
-        {
-            Thread thread = Thread.currentThread();
-            while (true)
-            {
-                if (!_lock.compareAndSet(null, thread))
-                {
-                    if (_lock.get() == thread) throw new IllegalStateException("SpinLock is not reentrant");
-                    continue;
-                }
-                return _unlock;
+    public void lockBucket(int bucket) {
+        AtomicBoolean lock = locks[bucket];
+        lock(lock);
+    }
+    
+    /**
+     * Lock new entry lock.
+     */
+    public void lockCreate() {
+        lock(createLock);
+    }
+    
+    /**
+     * Lock global lock.
+     */
+    public void lockRehash() {
+        lock(rehashLock);
+    }
+    
+    /**
+     * Sets a new size
+     * @param size
+     */
+    public void resize(int size) {
+        locks = new AtomicBoolean[size];
+        for (int i = 0; i < locks.length; i++) {
+            locks[i] = new AtomicBoolean(false);
+        }
+    }
+    
+    /**
+     * Release
+     * @param bucket
+     */
+    public void releaseBucket(int bucket) {
+        release(locks[bucket]);
+    }
+    
+    /**
+     * Release global lock.
+     */
+    public void releaseCreate() {
+        release(createLock);
+    }
+    
+    /**
+     * Release global lock.
+     */
+    public void releaseRehash() {
+        release(rehashLock);
+    }
+    
+    /**
+     * Acquires the lock. Busy wait.
+     * @param lock
+     */
+    private void lock(final AtomicBoolean lock) {
+        while (true) {
+            if (lock.compareAndSet(false, true)) {
+                return;
             }
         }
-
-        public class Lock implements AutoCloseable
-        {
-            @Override
-            public void close()
-            {
-                _lock.set(null);
-            }
-        }
     }
     
-    private SpinLock[] locksBucket;
-    private SpinLock   lockRehash = new SpinLock();
-    private SpinLock   lockCreate = new SpinLock();
-    
-    public LockManager(int buckets) {
-        this.locksBucket = new SpinLock[buckets];
-        for (int i=0; i<this.locksBucket.length; i++) {
-            this.locksBucket[i] = new SpinLock();
-        }
-    }
-    
-    public void setNumberOfBuckets(int size) {
-
-        if (size == this.locksBucket.length) {
-            return;
-        } else if (size < this.locksBucket.length) {
-            this.locksBucket = Arrays.copyOf(this.locksBucket, size);
-        } else {
-            this.locksBucket = new SpinLock[size];
-            for (int i=0; i<this.locksBucket.length; i++) {
-                this.locksBucket[i] = new SpinLock();
-            }
-        }
-    }
-    
-    public Lock lockBucket(int bucket) {
-        return locksBucket[bucket].lock();
-    }
-
-    public Lock lockCreate() {
-        return lockCreate.lock();
-    }
-    
-    public Lock lockRehash() {
-        return lockRehash.lock();
+    /**
+     * Unlocks the lock.
+     * @param lock
+     */
+    private void release(final AtomicBoolean lock) {
+        lock.set(false);
     }
 }
