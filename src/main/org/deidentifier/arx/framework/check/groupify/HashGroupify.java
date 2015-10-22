@@ -118,11 +118,11 @@ public class HashGroupify {
         this.hashTableBuckets = new HashGroupifyEntry[capacity];
         this.hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
         this.threads = config.getNumThreads();
-//        if (threads > 1) {
+        if (threads > 1) {
             lockManager = new LockManager(capacity);
-//        } else {
-//            lockManager = null;
-//        }
+        } else {
+            lockManager = null;
+        }
         
         // Set params
         this.suppressionLimit = config.getAbsoluteMaxOutliers();
@@ -174,10 +174,6 @@ public class HashGroupify {
         // Compute bucket
         int index = hash & (hashTableBuckets.length - 1);
 
-        // Acquire lock for bucket
-        @SuppressWarnings("unused")
-        int lock = lockManager != null ? lockManager.lockBucket(index) : 1;
-
         // Add
         final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
 
@@ -203,7 +199,8 @@ public class HashGroupify {
         }
 
         // Release lock for bucket
-        lock = lockManager != null ? lockManager.releaseBucket(index) : 1;
+        @SuppressWarnings("unused")
+        int lock = lockManager != null ? lockManager.releaseBucket(index) : 1;
     }
     
     /**
@@ -225,10 +222,6 @@ public class HashGroupify {
         // Compute bucket
         int index = hash & (hashTableBuckets.length - 1);
 
-        // Acquire lock for bucket
-        @SuppressWarnings("unused")
-        int lock = lockManager != null ? lockManager.lockBucket(index) : 1;
-
         // Add
         final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
 
@@ -245,7 +238,8 @@ public class HashGroupify {
             }
         }
         // Release lock for bucket
-        lock = lockManager != null ? lockManager.releaseBucket(index) : 1;
+        @SuppressWarnings("unused")
+        int lock = lockManager != null ? lockManager.releaseBucket(index) : 1;
     }
     
     /**
@@ -267,10 +261,6 @@ public class HashGroupify {
 
         // Compute bucket
         int index = hash & (hashTableBuckets.length - 1);
-
-        // Acquire lock for bucket
-        @SuppressWarnings("unused")
-        int lock = lockManager != null ? lockManager.lockBucket(index) : 1;
 
         // Add
         final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
@@ -294,7 +284,8 @@ public class HashGroupify {
             }
         }
         // Release lock for bucket
-        lock = lockManager != null ? lockManager.releaseBucket(index) : 1;
+        @SuppressWarnings("unused")
+        int lock = lockManager != null ? lockManager.releaseBucket(index) : 1;
     }
     
     /**
@@ -529,11 +520,11 @@ public class HashGroupify {
         if (hashTableElementCount > hashTableThreshold) {
     
             // Increment number of waiting threads
-            waitingThreads.incrementAndGet();
+            @SuppressWarnings("unused")
+            int lock = lockManager != null ? waitingThreads.incrementAndGet() : 1;
     
             // Acquire lock for rehashing
-            @SuppressWarnings("unused")
-            int lock = lockManager != null ? lockManager.lockRehash() : 1;
+            lock = lockManager != null ? lockManager.lockRehash() : 1;
     
             // Rehash, if still necessary to rehash
             if (hashTableElementCount > hashTableThreshold) {
@@ -545,7 +536,7 @@ public class HashGroupify {
             lock = lockManager != null ? lockManager.releaseRehash() : 1;
     
             // Decrement number of waiting threads
-            waitingThreads.decrementAndGet();
+            lock = lockManager != null ? waitingThreads.decrementAndGet() : 1;
         }
     }
     
@@ -561,15 +552,15 @@ public class HashGroupify {
      * @return the hash groupify entry
      */
     private HashGroupifyEntry addInternal(final int[] generalized, final int index, final int hash, final int representative, int count, final int pcount) {
+
+        // If we enforce d-presence and the tuple is not contained in the research subset: set its count to zero
+        count = (privacyModelDefinesSubset != null && !privacyModelDefinesSubset.contains(representative)) ? 0 : count;
         
         // Find or create entry
         HashGroupifyEntry entry = findEntry(generalized, index, hash);
         if (entry == null) {
             entry = createEntry(generalized, index, hash, representative);
         }
-        
-        // If we enforce d-presence and the tuple is not contained in the research subset: set its count to zero
-        count = (privacyModelDefinesSubset != null && !privacyModelDefinesSubset.contains(representative)) ? 0 : count;
         
         // Track size: private table for d-presence, overall table, else
         entry.count += count;
@@ -716,6 +707,11 @@ public class HashGroupify {
      * @return the hash groupify entry
      */
     private HashGroupifyEntry findEntry(final int[] key, final int index, final int keyHash) {
+        
+
+        // Acquire lock for bucket
+        @SuppressWarnings("unused")
+        int lock = lockManager != null ? lockManager.lockBucket(index) : 1;
         HashGroupifyEntry m = hashTableBuckets[index];
         while ((m != null) && ((m.hashcode != keyHash) || !HashTableUtil.equals(key, m.key))) {
             m = m.next;
