@@ -29,12 +29,12 @@ public class LockManager {
     /** The locks */
     private AtomicBoolean[]     locks;
 
-    /** The locks */               
+    /** The locks */
     private final AtomicBoolean rehashLock;
 
-    /** The locks */              
+    /** The locks */
     private final AtomicBoolean createLock;
-                                
+
     /**
      * Constructor
      * @param buckets
@@ -49,66 +49,67 @@ public class LockManager {
      * Acquire lock. Busy wait.
      * @param bucket
      */
-    public void lockBucket(int bucket) {
+    public int lockBucket(int bucket) {
         AtomicBoolean lock = locks[bucket];
-        lock(lock);
+        return lock(lock);
     }
     
     /**
      * Lock new entry lock.
      */
-    public void lockCreate() {
-        lock(createLock);
+    public int lockCreate() {
+        return lock(createLock);
     }
     
     /**
      * Lock global lock.
      */
-    public void lockRehash() {
-        lock(rehashLock);
+    public int lockRehash() {
+        return lock(rehashLock);
     }
     
     /**
      * Sets a new size
      * @param size
      */
-    public void resize(int size) {
+    public int resize(int size) {
         locks = new AtomicBoolean[size];
         for (int i = 0; i < locks.length; i++) {
             locks[i] = new AtomicBoolean(false);
         }
+        return 1;
     }
     
     /**
      * Release
      * @param bucket
      */
-    public void releaseBucket(int bucket) {
-        release(locks[bucket]);
+    public int releaseBucket(int bucket) {
+        return release(locks[bucket]);
     }
     
     /**
      * Release global lock.
      */
-    public void releaseCreate() {
-        release(createLock);
+    public int releaseCreate() {
+        return release(createLock);
     }
     
     /**
      * Release global lock.
      */
-    public void releaseRehash() {
-        release(rehashLock);
+    public int releaseRehash() {
+        return release(rehashLock);
     }
     
     /**
      * Acquires the lock. Busy wait.
      * @param lock
      */
-    private void lock(final AtomicBoolean lock) {
+    private int lock(final AtomicBoolean lock) {
         while (true) {
             if (lock.compareAndSet(false, true)) {
-                return;
+                return 1;
             }
         }
     }
@@ -117,7 +118,8 @@ public class LockManager {
      * Unlocks the lock.
      * @param lock
      */
-    private void release(final AtomicBoolean lock) {
+    private int release(final AtomicBoolean lock) {
         lock.set(false);
+        return 1;
     }
 }
