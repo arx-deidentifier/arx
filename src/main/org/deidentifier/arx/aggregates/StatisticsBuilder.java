@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandleStatistics;
@@ -654,6 +655,7 @@ public class StatisticsBuilder {
         Map<String, DescriptiveStatistics> statistics = new HashMap<String, DescriptiveStatistics>();
         Map<String, StatisticsSummaryOrdinal> ordinal = new HashMap<String, StatisticsSummaryOrdinal>();
         Map<String, DataScale> scales = new HashMap<String, DataScale>();
+        Map<String, GeometricMean> geomean = new HashMap<String, GeometricMean>();
         
         // Detect scales
         for (int col = 0; col < handle.getNumColumns(); col++) {
@@ -676,6 +678,7 @@ public class StatisticsBuilder {
             // Store
             scales.put(attribute, scale);
             statistics.put(attribute, new DescriptiveStatistics());
+            geomean.put(attribute, new GeometricMean());
             ordinal.put(attribute, getSummaryStatisticsOrdinal(handle.getGeneralization(attribute),
                                                                handle.getDataType(attribute),
                                                                handle.getBaseDataType(attribute),
@@ -714,7 +717,9 @@ public class StatisticsBuilder {
                     if (!value.equals(handle.getSuppressionString()) && !DataType.isNull(value)) {
                         ordinal.get(attribute).addValue(value);
                         if (type instanceof DataTypeWithRatioScale) {
-                            statistics.get(attribute).addValue(((DataTypeWithRatioScale) type).toDouble(type.parse(value)));
+                            double doubleValue = ((DataTypeWithRatioScale) type).toDouble(type.parse(value));
+                            statistics.get(attribute).addValue(doubleValue);
+                            geomean.get(attribute).increment(doubleValue + 1d);
                         }
                     }
                 }
@@ -793,6 +798,7 @@ public class StatisticsBuilder {
             } else if (scale == DataScale.RATIO) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 DescriptiveStatistics stats2 = statistics.get(attribute);
+                GeometricMean geo = geomean.get(attribute);
                 
                 // TODO: Something is wrong with commons math's kurtosis
                 double kurtosis = stats2.getKurtosis();
@@ -828,8 +834,8 @@ public class StatisticsBuilder {
                                                                toString(type, kurtosis, false, false),
                                                                toValue(type, kurtosis),
                                                                kurtosis,
-                                                               toString(type, stats2.getGeometricMean(), false, false),
-                                                               toValue(type, stats2.getGeometricMean()),
+                                                               toString(type, geo.getResult() - 1d, false, false),
+                                                               toValue(type, geo.getResult() - 1d),
                                                                stats2.getGeometricMean()));
             }
         }
