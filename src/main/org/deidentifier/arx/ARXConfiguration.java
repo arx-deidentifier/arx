@@ -844,10 +844,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * Allows for a certain percentage of outliers and thus
      * triggers tuple suppression.
      *
-     * @param supp
+     * @param max
      */
-    public void setMaxOutliers(double supp) {
-        this.relMaxOutliers = supp;
+    public void setMaxOutliers(double max) {
+        this.relMaxOutliers = max;
+    }
+    
+    /**
+     * Sets the suppression limit. This is an alias for setMaxOutliers().
+     * @param limit
+     */
+    public void setSuppressionLimit(double limit) {
+        this.relMaxOutliers = limit;
     }
 
     /**
