@@ -89,7 +89,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
             DataType<T> type = (DataType<T>)this.type;
             @SuppressWarnings("unchecked")
             DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
-            addAll(stats, distribution, rType);
+            addAll(stats, distribution, rType, 0d);
             return type.format(rType.fromDouble(stats.getMean()));
         }
 
@@ -111,7 +111,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
             stats.clear();
             @SuppressWarnings("unchecked")
             DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
-            addAll(stats, distribution, rType);
+            addAll(stats, distribution, rType, 0d);
             return getNMSE(minimum, maximum, stats.getValues(), stats.getMean());
         }
 
@@ -284,8 +284,8 @@ public abstract class DistributionAggregateFunction implements Serializable {
             DataType<T> type = (DataType<T>)this.type;
             @SuppressWarnings("unchecked")
             DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
-            addAll(stats, distribution, rType);
-            return type.format(rType.fromDouble(stats.getGeometricMean()));
+            addAll(stats, distribution, rType, 1d);
+            return type.format(rType.fromDouble(stats.getGeometricMean() - 1d));
         }
 
         /**
@@ -307,8 +307,8 @@ public abstract class DistributionAggregateFunction implements Serializable {
             stats.clear();
             @SuppressWarnings("unchecked")
             DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
-            addAll(stats, distribution, rType);
-            return getNMSE(minimum, maximum, stats.getValues(), stats.getGeometricMean());
+            addAll(stats, distribution, rType, 1d);
+            return getNMSE(minimum, maximum, stats.getValues(), stats.getGeometricMean() - 1d);
         }
         
         @Override
@@ -760,16 +760,18 @@ public abstract class DistributionAggregateFunction implements Serializable {
      * @param statistics
      * @param distribution
      * @param type
+     * @param offset will be added to values
      */
     protected <T> void addAll(DescriptiveStatistics statistics, 
                            Distribution distribution,
-                           DataTypeWithRatioScale<T> type) {
+                           DataTypeWithRatioScale<T> type,
+                           double offset) {
         Iterator<Double> it = DistributionIterator.createIteratorDouble(distribution, dictionary, type);
         while (it.hasNext()) {
             Double value = it.next();
             value = value == null ? (ignoreMissingData ? null : 0d) : value;
             if (value != null) {
-                statistics.addValue(value);
+                statistics.addValue(value + offset);
             }
         }
     }
