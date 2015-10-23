@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.framework.check.groupify;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
@@ -43,70 +41,58 @@ import com.carrotsearch.hppc.ObjectIntOpenHashMap;
  * @author Florian Kohlmayer
  */
 public class HashGroupify {
-
+        
     /** Criteria. */
     private final PrivacyCriterion[]     classBasedCriteria;
-
+    
+    /** The current number of outliers. */
+    private int                          currentNumOutliers;
+    
     /** The entry array. */
     private HashGroupifyEntry[]          hashTableBuckets;
-
+    
     /** Current number of elements. */
     private int                          hashTableElementCount;
-
+    
     /** The first entry. */
     private HashGroupifyEntry            hashTableFirstEntry;
-
+    
     /** The last entry. */
     private HashGroupifyEntry            hashTableLastEntry;
-
+    
     /** Load factor. */
     private final float                  hashTableLoadFactor = 0.75f;
-
+    
     /** Maximum number of elements that can be put in this map before having to rehash. */
     private int                          hashTableThreshold;
-
+    
     /** Do we ensure optimality for sample-based criteria */
     private final boolean                heuristicForSampleBasedCriteria;
-
+    
     /** The parameter k, if k-anonymity is contained in the set of criteria. */
     private final int                    minimalClassSize;
-
+    
     /** Is the result k-anonymous?. */
     private boolean                      minimalClassSizeFulfilled;
-
+    
     /** True, if the contained d-presence criterion is not inclusion. */
     private final boolean                privacyModelContainsDPresence;
-
+    
     /** The research subset, if d-presence is contained in the set of criteria. */
     private final RowSet                 privacyModelDefinesSubset;
-
+    
     /** Is the result anonymous. */
     private boolean                      privacyModelFulfilled;
-
+    
     /** Criteria. */
     private final SampleBasedCriterion[] sampleBasedCriteria;
-
+    
     /** Allowed tuple outliers. */
     private final int                    suppressionLimit;
-
+    
     /** Utility measure */
     private final Metric<?>              utilityMeasure;
-
-    /** Lock manager */
-    private final LockManager            lockManager;
-
-    /** Counts the number of active threads */
-    private final AtomicInteger          workingThreads      = new AtomicInteger(0);
-
-    /** Counts the number of threads waiting for the rehash lock*/
-    private final AtomicInteger          waitingThreads      = new AtomicInteger(0);
     
-    /** The number of threads */
-    private final int                    threads;
-
-    /** Are we performing a single threaded run? */
-    private boolean                      singleThreaded   = true;
-
     /**
      * Constructs a new hash groupify operator.
      *
@@ -120,14 +106,9 @@ public class HashGroupify {
         this.hashTableElementCount = 0;
         this.hashTableBuckets = new HashGroupifyEntry[capacity];
         this.hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
-        this.threads = config.getNumThreads();
-        if (threads > 1) {
-            lockManager = new LockManager(capacity);
-        } else {
-            lockManager = null;
-        }
         
         // Set params
+        this.currentNumOutliers = 0;
         this.suppressionLimit = config.getAbsoluteMaxOutliers();
         this.utilityMeasure = config.getMetric();
         this.heuristicForSampleBasedCriteria = config.isUseHeuristicForSampleBasedCriteria();
@@ -167,43 +148,31 @@ public class HashGroupify {
      * @param pcount
      */
     public void addFromBuffer(int[] generalized, int[] other, int representative, int count, int pcount) {
-
-        // Hash
-        final int hash = HashTableUtil.hashcode(generalized);
-
-        // Potentially rehash
-        synchronizedRehash();
-
-        // Compute bucket
-        int index = hash & (hashTableBuckets.length - 1);
-
+        
         // Add
-        final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
-
+        final int hash = HashTableUtil.hashcode(generalized);
+        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
+        
         // Is a other attribute provided
         if (other != null) {
             if (entry.distributions == null) {
                 entry.distributions = new Distribution[other.length];
-
+                
                 // TODO: Improve!
                 for (int i = 0; i < entry.distributions.length; i++) {
                     entry.distributions[i] = new Distribution();
                 }
             }
-
+            
             // Only add other value if in research subset
             if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(representative)) {
-
+                
                 // TODO: Improve!
                 for (int i = 0; i < entry.distributions.length; i++) {
                     entry.distributions[i].add(other[i]);
                 }
             }
         }
-
-        // Release lock for bucket
-        @SuppressWarnings("unused")
-        int lock = !singleThreaded && lockManager != null ? lockManager.releaseBucket(index) : 1;
     }
     
     /**
@@ -215,34 +184,50 @@ public class HashGroupify {
      * @param pcount
      */
     public void addFromGroupify(int[] generalized, Distribution[] distributions, int representative, int count, int pcount) {
-
-        // Hash
-        final int hash = HashTableUtil.hashcode(generalized);
-
-        // Potentially rehash
-        synchronizedRehash();
-
-        // Compute bucket
-        int index = hash & (hashTableBuckets.length - 1);
-
+        
         // Add
-        final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
-
+        final int hash = HashTableUtil.hashcode(generalized);
+        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
+        
         // Is a distribution provided
         if (distributions != null) {
             if (entry.distributions == null) {
                 entry.distributions = distributions;
             } else {
-
+                
                 // TODO: Improve!
                 for (int i = 0; i < entry.distributions.length; i++) {
                     entry.distributions[i].merge(distributions[i]);
                 }
             }
         }
-        // Release lock for bucket
-        @SuppressWarnings("unused")
-        int lock = !singleThreaded && lockManager != null ? lockManager.releaseBucket(index) : 1;
+    }
+
+    /**
+     * Adds an entry from another groupify operator
+     * @param generalized
+     * @param distributions
+     * @param representative
+     * @param count
+     * @param pcount
+     */
+    public void addFromThread(int hash, int[] generalized, Distribution[] distributions, int representative, int count, int pcount) {
+        
+        // Add
+        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
+        
+        // Is a distribution provided
+        if (distributions != null) {
+            if (entry.distributions == null) {
+                entry.distributions = distributions;
+            } else {
+                
+                // TODO: Improve!
+                for (int i = 0; i < entry.distributions.length; i++) {
+                    entry.distributions[i].merge(distributions[i]);
+                }
+            }
+        }
     }
     
     /**
@@ -255,58 +240,31 @@ public class HashGroupify {
      * @param pcount
      */
     public void addFromSnapshot(int[] generalized, int[][] elements, int[][] frequencies, int representative, int count, int pcount) {
-
-        // Hash
-        final int hash = HashTableUtil.hashcode(generalized);
-
-        // Potentially rehash
-        synchronizedRehash();
-
-        // Compute bucket
-        int index = hash & (hashTableBuckets.length - 1);
-
+        
         // Add
-        final HashGroupifyEntry entry = addInternal(generalized, index, hash, representative, count, pcount);
-
+        final int hash = HashTableUtil.hashcode(generalized);
+        final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
+        
         // Is a distribution provided
         if (elements != null) {
             if (entry.distributions == null) {
-
+                
                 entry.distributions = new Distribution[elements.length];
-
+                
                 // TODO: Improve!
                 for (int i = 0; i < entry.distributions.length; i++) {
                     entry.distributions[i] = new Distribution(elements[i], frequencies[i]);
                 }
             } else {
-
+                
                 // TODO: Improve!
                 for (int i = 0; i < entry.distributions.length; i++) {
                     entry.distributions[i].merge(elements[i], frequencies[i]);
                 }
             }
         }
-        // Release lock for bucket
-        @SuppressWarnings("unused")
-        int lock = !singleThreaded && lockManager != null ? lockManager.releaseBucket(index) : 1;
     }
     
-    /**
-     * Returns whether all threads are done
-     * @return
-     */
-    public boolean done() {
-        return workingThreads.get() == 0;
-    }
-    
-    /**
-     * One thread is done
-     * @return the number of active threads
-     */
-    public int end() {
-        return workingThreads.decrementAndGet();
-    }
-
     /**
      * Returns the entry for the given tuple
      * @param tuple
@@ -431,71 +389,15 @@ public class HashGroupify {
             }
         }
     }
-    
-    /**
-     * Mark a single-threaded run
-     * @param value
-     */
-    public void setSingleThreaded(boolean value) {
-        this.singleThreaded = value;
-    }
 
     /**
-     * We are starting the process
-     */
-    public void start() {
-        workingThreads.set(threads);
-    }
-    
-    /**
-     * Analyzes the content of the hash table. Checks the privacy criteria against each class.
+     * Analyzes the current state
      * @param transformation
      * @param force
      */
     public void stateAnalyze(Transformation transformation, boolean force) {
-
-        // Iterate over all classes
-        boolean dpresent = true;
-        int currentNumOutliers = 0;
-        HashGroupifyEntry entry = hashTableFirstEntry;
-        while (entry != null) {
-            
-            // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(entry);
-            
-            // Determine outliers
-            if (anonymous != -1) {
-                
-                // Note: If d-presence exists, it is stored at criteria[0] by convention.
-                // If it fails, isAnonymous(entry) thus returns 1.
-                // Tuples from the public table that have no matching candidates in the private table
-                // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
-                // transformation must be considered to not fulfill the privacy criteria.
-                if (privacyModelContainsDPresence && entry.count == 0 && anonymous == 1) {
-                    dpresent = false;
-                }
-                
-                currentNumOutliers += entry.count;
-                
-                // Early abort
-                if (!force && currentNumOutliers > suppressionLimit) {
-                    this.minimalClassSizeFulfilled = false;
-                    this.privacyModelFulfilled = false;
-                    return;
-                }
-            }
-            
-            // We only suppress classes that are contained in the research subset
-            entry.isNotOutlier = entry.count != 0 ? (anonymous == -1) : true;
-            
-            // Next class
-            entry = entry.nextOrdered;
-        }
-        
-        int outliers = this.analyzeSampleBasedCriteria(transformation, false);
-        currentNumOutliers = outliers != -1 ? outliers : currentNumOutliers;
-        this.minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
-        this.privacyModelFulfilled = minimalClassSizeFulfilled && dpresent;
+        if (force) analyzeAll(transformation);
+        else analyzeWithEarlyAbort(transformation);
     }
     
     /**
@@ -504,6 +406,7 @@ public class HashGroupify {
     public void stateClear() {
         if (hashTableElementCount > 0) {
             this.hashTableElementCount = 0;
+            this.currentNumOutliers = 0;
             this.hashTableFirstEntry = null;
             this.hashTableLastEntry = null;
             HashTableUtil.nullifyArray(hashTableBuckets);
@@ -519,29 +422,34 @@ public class HashGroupify {
             entry.isNotOutlier = true;
             entry = entry.nextOrdered;
         }
+        this.currentNumOutliers = 0;
     }
     
     /**
      * Internal adder method.
      *
      * @param generalized the key
-     * @param index
      * @param hash the hash
      * @param representative
      * @param count
      * @param pcount
      * @return the hash groupify entry
      */
-    private HashGroupifyEntry addInternal(final int[] generalized, final int index, final int hash, final int representative, int count, final int pcount) {
-
-        // If we enforce d-presence and the tuple is not contained in the research subset: set its count to zero
-        count = (privacyModelDefinesSubset != null && !privacyModelDefinesSubset.contains(representative)) ? 0 : count;
+    private HashGroupifyEntry addInternal(final int[] generalized, final int hash, final int representative, int count, final int pcount) {
         
         // Find or create entry
+        int index = hash & (hashTableBuckets.length - 1);
         HashGroupifyEntry entry = findEntry(generalized, index, hash);
         if (entry == null) {
+            if (++hashTableElementCount > hashTableThreshold) {
+                rehash();
+                index = hash & (hashTableBuckets.length - 1);
+            }
             entry = createEntry(generalized, index, hash, representative);
         }
+        
+        // If we enforce d-presence and the tuple is not contained in the research subset: set its count to zero
+        count = (privacyModelDefinesSubset != null && !privacyModelDefinesSubset.contains(representative)) ? 0 : count;
         
         // Track size: private table for d-presence, overall table, else
         entry.count += count;
@@ -580,23 +488,71 @@ public class HashGroupify {
         if (entry.count >= minimalClassSize) {
             if (!entry.isNotOutlier) {
                 entry.isNotOutlier = true;
+                currentNumOutliers -= (entry.count - count);
             }
+        } else {
+            currentNumOutliers += count;
         }
+        
         // Return
         return entry;
+    }
+    
+    /**
+     * Analyzes the content of the hash table. Checks the privacy criteria against each class.
+     * @param transformation
+     */
+    private void analyzeAll(Transformation transformation) {
+        
+        // We have only checked k-anonymity so far
+        minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
+        
+        // Iterate over all classes
+        boolean dpresent = true;
+        currentNumOutliers = 0;
+        HashGroupifyEntry entry = hashTableFirstEntry;
+        while (entry != null) {
+            
+            // Check for anonymity
+            int anonymous = isPrivacyModelFulfilled(entry);
+            
+            // Determine outliers
+            if (anonymous != -1) {
+                
+                // Note: If d-presence exists, it is stored at criteria[0] by convention.
+                // If it fails, isAnonymous(entry) thus returns 1.
+                // Tuples from the public table that have no matching candidates in the private table
+                // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
+                // transformation must be considered to not fulfill the privacy criteria.
+                if (privacyModelContainsDPresence && entry.count == 0 && anonymous == 1) {
+                    dpresent = false;
+                }
+                
+                currentNumOutliers += entry.count;
+            }
+            
+            // We only suppress classes that are contained in the research subset
+            entry.isNotOutlier = entry.count != 0 ? (anonymous == -1) : true;
+            
+            // Next class
+            entry = entry.nextOrdered;
+        }
+        
+        this.analyzeSampleBasedCriteria(transformation, false);
+        this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit) && dpresent;
     }
     
     /**
      * Analyze sample-based criteria
      * @param transformation
      * @param earlyAbort May we perform an early abort, if we reach the threshold
-     * @return the number of suppressed tuples
+     * @return
      */
-    private int analyzeSampleBasedCriteria(Transformation transformation, boolean earlyAbort) {
+    private void analyzeSampleBasedCriteria(Transformation transformation, boolean earlyAbort) {
         
         // Nothing to do
         if (this.sampleBasedCriteria.length == 0) {
-            return -1;
+            return;
         }
         
         // Build a distribution
@@ -605,21 +561,84 @@ public class HashGroupify {
                                                                              this.hashTableFirstEntry);
         
         // For each criterion
-        int suppressed = 0;
         for (SampleBasedCriterion criterion : this.sampleBasedCriteria) {
             
             // Enforce
             criterion.enforce(distribution, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
             
             // Early abort
-            suppressed = distribution.getNumOfSuppressedTuples();
-            if (earlyAbort && suppressed > suppressionLimit) {
-                return suppressed;
+            this.currentNumOutliers = distribution.getNumOfSuppressedTuples();
+            if (earlyAbort && currentNumOutliers > suppressionLimit) {
+                return;
             }
         }
+    }
+    
+    /**
+     * Analyzes the content of the hash table. Checks the privacy criteria against each class.
+     * @param transformation
+     */
+    private void analyzeWithEarlyAbort(Transformation transformation) {
         
-        // Return
-        return suppressed;
+        // We have only checked k-anonymity so far
+        minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
+        
+        // Abort early, if only k-anonymity was specified
+        if (classBasedCriteria.length == 0 && sampleBasedCriteria.length == 0) {
+            privacyModelFulfilled = minimalClassSizeFulfilled;
+            return;
+        }
+        
+        // Abort early, if k-anonymity sub-criterion is not fulfilled
+        // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
+        // for non-anonymous transformations
+        if (minimalClassSize != Integer.MAX_VALUE && !minimalClassSizeFulfilled) {
+            privacyModelFulfilled = false;
+            return;
+        }
+        
+        // Iterate over all classes
+        currentNumOutliers = 0;
+        HashGroupifyEntry entry = hashTableFirstEntry;
+        while (entry != null) {
+            
+            // Check for anonymity
+            int anonymous = isPrivacyModelFulfilled(entry);
+            
+            // Determine outliers
+            if (anonymous != -1) {
+                
+                // Note: If d-presence exists, it is stored at criteria[0] by convention.
+                // If it fails, isAnonymous(entry) thus returns 1.
+                // Tuples from the public table that have no matching candidates in the private table
+                // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
+                // transformation must be considered to not fulfill the privacy criteria.
+                // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
+                // for non-anonymous transformations
+                if (privacyModelContainsDPresence && entry.count == 0 && anonymous == 1) {
+                    this.privacyModelFulfilled = false;
+                    return;
+                }
+                currentNumOutliers += entry.count;
+                
+                // Break as soon as too many classes are not anonymous
+                // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
+                // for non-anonymous transformations
+                if (currentNumOutliers > suppressionLimit) {
+                    this.privacyModelFulfilled = false;
+                    return;
+                }
+            }
+            
+            // We only suppress classes that are contained in the research subset
+            entry.isNotOutlier = entry.count != 0 ? (anonymous == -1) : true;
+            
+            // Next class
+            entry = entry.nextOrdered;
+        }
+        
+        this.analyzeSampleBasedCriteria(transformation, true);
+        this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
     }
     
     /**
@@ -636,17 +655,10 @@ public class HashGroupify {
      * @return the hash groupify entry
      */
     private HashGroupifyEntry createEntry(final int[] key, final int index, final int hash, final int line) {
-
         final HashGroupifyEntry entry = new HashGroupifyEntry(key, hash);
         entry.next = hashTableBuckets[index];
         entry.representative = line;
         hashTableBuckets[index] = entry;
-
-        // Acquire
-        @SuppressWarnings("unused")
-        int lock = !singleThreaded && lockManager != null ? lockManager.lockCreate() : 1;
-
-        hashTableElementCount++;
         if (hashTableFirstEntry == null) {
             hashTableFirstEntry = entry;
             hashTableLastEntry = entry;
@@ -654,9 +666,6 @@ public class HashGroupify {
             hashTableLastEntry.nextOrdered = entry;
             hashTableLastEntry = entry;
         }
-
-        // Release
-        lock = !singleThreaded && lockManager != null ? lockManager.releaseCreate() : 1;
         return entry;
     }
     
@@ -688,11 +697,6 @@ public class HashGroupify {
      * @return the hash groupify entry
      */
     private HashGroupifyEntry findEntry(final int[] key, final int index, final int keyHash) {
-        
-
-        // Acquire lock for bucket
-        @SuppressWarnings("unused")
-        int lock = !singleThreaded && lockManager != null ? lockManager.lockBucket(index) : 1;
         HashGroupifyEntry m = hashTableBuckets[index];
         while ((m != null) && ((m.hashcode != keyHash) || !HashTableUtil.equals(key, m.key))) {
             m = m.next;
@@ -729,14 +733,7 @@ public class HashGroupify {
      * Rehashes this operator.
      */
     private void rehash() {
-
-        // Wait for all other threads to wait for rehashing
-        if (!singleThreaded && lockManager != null) {
-            while (waitingThreads.get() != workingThreads.get()) {
-                // Spin
-            }
-        }
-
+        
         final int length = HashTableUtil.calculateCapacity((hashTableBuckets.length == 0 ? 1 : hashTableBuckets.length << 1));
         final HashGroupifyEntry[] newData = new HashGroupifyEntry[length];
         HashGroupifyEntry entry = hashTableFirstEntry;
@@ -746,43 +743,7 @@ public class HashGroupify {
             newData[index] = entry;
             entry = entry.nextOrdered;
         }
-
-        // Update lock manager
-        @SuppressWarnings("unused")
-        int lock = !singleThreaded && lockManager != null ? lockManager.resize(newData.length) : 1;
-
-        // Update hash table
         hashTableBuckets = newData;
         hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
-    }
-
-    /**
-     * This method tries to rehash
-     * @param bucketLock 
-     */
-    private void synchronizedRehash() {
-
-        // Rehash, if still necessary to rehash
-        if (hashTableElementCount > hashTableThreshold) {
-    
-            // Increment number of waiting threads
-            @SuppressWarnings("unused")
-            int lock = !singleThreaded && lockManager != null ? waitingThreads.incrementAndGet() : 1;
-    
-            // Acquire lock for rehashing
-            lock = !singleThreaded && lockManager != null ? lockManager.lockRehash() : 1;
-    
-            // Rehash, if still necessary to rehash
-            if (hashTableElementCount > hashTableThreshold) {
-    
-                // Rehash
-                rehash();
-            }
-            // Release lock for rehashing
-            lock = !singleThreaded && lockManager != null ? lockManager.releaseRehash() : 1;
-    
-            // Decrement number of waiting threads
-            lock = !singleThreaded && lockManager != null ? waitingThreads.decrementAndGet() : 1;
-        }
     }
 }

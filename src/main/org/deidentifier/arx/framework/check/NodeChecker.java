@@ -183,6 +183,7 @@ public class NodeChecker {
             this.transformer = new TransformerMultithreaded(manager.getDataGeneralized().getArray(),
                                                manager.getDataAnalyzed().getArray(),
                                                manager.getHierarchies(),
+                                               initialSize,
                                                config,
                                                dictionarySensValue,
                                                dictionarySensFreq);

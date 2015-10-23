@@ -20,11 +20,13 @@ package org.deidentifier.arx.framework.check;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.transformer.AbstractTransformer;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
@@ -39,6 +41,7 @@ public class TransformerMultithreaded extends Transformer {
     private final int threads;
     private final AbstractTransformer[][] transformers;
     private final ExecutorService pool;
+    private final HashGroupify[] groupifies;
     
     /**
      * Instantiates a new transformer.
@@ -46,6 +49,7 @@ public class TransformerMultithreaded extends Transformer {
      * @param inputGeneralized
      * @param inputAnalyzed
      * @param hierarchies
+     * @param initialGroupifySize
      * @param config
      * @param dictionarySensValue
      * @param dictionarySensFreq
@@ -53,6 +57,7 @@ public class TransformerMultithreaded extends Transformer {
     public TransformerMultithreaded(final int[][] inputGeneralized,
                                     final int[][] inputAnalyzed,
                                     final GeneralizationHierarchy[] hierarchies,
+                                    final int initialGroupifySize,
                                     final ARXConfigurationInternal config,
                                     final IntArrayDictionary dictionarySensValue,
                                     final IntArrayDictionary dictionarySensFreq) {
@@ -69,6 +74,10 @@ public class TransformerMultithreaded extends Transformer {
         this.transformers[0] = super.getTransformers(); // Reuse
         for (int i=1; i<threads; i++) {
             this.transformers[i] = super.createTransformers();
+        }
+        this.groupifies = new HashGroupify[this.threads - 1];
+        for (int i = 0; i < groupifies.length; i++) {
+            this.groupifies[i] = new HashGroupify(initialGroupifySize / threads, config);
         }
         
         // TODO: Shutdown
@@ -88,18 +97,12 @@ public class TransformerMultithreaded extends Transformer {
     /**
      * Apply internal.
      * 
-     * @param projection
-     *            the projection
-     * @param transformation
-     *            the state
-     * @param source
-     *            the source
-     * @param target
-     *            the target
-     * @param snapshot
-     *            the snapshot
-     * @param transition
-     *            the transition
+     * @param projection the projection
+     * @param transformation the state
+     * @param source the source
+     * @param target the target
+     * @param snapshot the snapshot
+     * @param transition the transition
      * @return the hash groupify
      */
     protected void applyInternal(final long projection,
@@ -127,47 +130,86 @@ public class TransformerMultithreaded extends Transformer {
         }
 
         // Single threaded
-        if (total < 5000) {
+        if (total < 10) {
 
             int startIndex = 0;
             int stopIndex = total;
-            target.setSingleThreaded(true);
             getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, 0).call();
             return;
         }
-
-        // Start
-        target.start();
+        
+        long timeStart = System.currentTimeMillis();
+        long timeEndGroup = System.currentTimeMillis();
+        long timeEndMerge = System.currentTimeMillis();
+        
+        // Count write backs
+        final AtomicInteger mergeThreads = new AtomicInteger(0);
+        final int stepping = total / this.threads;
         
         // For each thread
-        target.setSingleThreaded(false);
-        for (int i = 0; i < threads; i++) {
+        for (int i = 1; i < threads; i++) {
 
             // Execute
             final int thread = i;
-            final int stepping = total / this.threads;
             final int startIndex = thread * stepping;
             final int stopIndex = thread == threads - 1 ? total : (thread + 1) * stepping;
-            
-            if (thread < threads - 1) {
-                // Worker thread
-                pool.execute(new Runnable() {
-                        public void run() {
-                            getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, thread).call();
-                            target.end();
-                        }
-                });
-            } else {
-                // Main thread
-                getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, thread).call();
-                target.end();
-                
-                // Busy wait for all threads to finish
-                while (!target.done()) {
-                    // Spin
+
+            // Worker thread
+            pool.execute(new Runnable() {
+                public void run() {
+                    getTransformer(projection,
+                                   transformation,
+                                   source,
+                                   groupifies[thread - 1],
+                                   snapshot,
+                                   transition,
+                                   startIndex,
+                                   stopIndex,
+                                   thread).call();
+
+                    // Busy wait for all threads with lower numbers to finish writing back
+                    while (mergeThreads.get() != thread) {
+                        // Spin
+                    }           
+                    
+                    // Write back
+                    HashGroupifyEntry element = groupifies[thread-1].getFirstEquivalenceClass();
+                    while (element != null) {
+                        
+                        // Add
+                        target.addFromThread(element.hashcode,
+                                             element.key,
+                                             element.distributions,
+                                             element.representative,
+                                             element.count,
+                                             element.pcount);
+                        
+                        // Next element
+                        element = element.nextOrdered;
+
+                    }
+                    
+                    groupifies[thread - 1].stateClear();
+                    
+                    // Next thread
+                    mergeThreads.incrementAndGet();
                 }
-            }
+            }); 
         }
+        
+        // Prepare main thread
+        final int thread = 0;
+        final int startIndex = thread * stepping;
+        final int stopIndex = (thread + 1) * stepping;
+
+        // Main thread
+        getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, thread).call();
+        mergeThreads.incrementAndGet();
+
+        // Busy wait for all threads to finish
+        while (mergeThreads.get() != threads) {
+            // Spin
+        }        
     }
     
     /**

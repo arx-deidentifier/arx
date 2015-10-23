@@ -333,7 +333,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
 
         System.out.println(testCase.toString());
 
-        for (int threads = 1; threads <= 8; threads++) {
+        for (int threads = 1; threads <= 4; threads++) {
 
             final Data data = getDataObject(testCase);
 
@@ -345,7 +345,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             // Test or warmup
             ARXResult result = anonymizer.anonymize(data, testCase.config);
 
-            final int REPETITIONS = 5;
+            final int REPETITIONS = 3;
             long time = System.currentTimeMillis();
             long time2 = 0;
             for (int i = 0; i < REPETITIONS; i++) {
