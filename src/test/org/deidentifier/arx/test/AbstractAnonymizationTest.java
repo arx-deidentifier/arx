@@ -333,7 +333,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
 
         System.out.println(testCase.toString());
 
-        for (int threads = 2; threads <= 4; threads++) {
+        for (int threads = 1; threads <= 4; threads++) {
 
             final Data data = getDataObject(testCase);
 
