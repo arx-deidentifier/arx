@@ -271,6 +271,8 @@ public class NodeChecker {
         return check(node, false);
     }
     
+    private long checkTime = 0;
+    
     /**
      * Checks the given transformation
      * @param node
@@ -278,6 +280,8 @@ public class NodeChecker {
      * @return
      */
     public NodeChecker.Result check(final Transformation node, final boolean forceMeasureInfoLoss) {
+        
+        long time = System.currentTimeMillis();
         
         // If the result is already know, simply return it
         if (node.getData() != null && node.getData() instanceof NodeChecker.Result) {
@@ -323,11 +327,18 @@ public class NodeChecker {
         InformationLoss<?> loss = result != null ? result.getInformationLoss() : null;
         InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
         
+        this.checkTime += (System.currentTimeMillis() - time);
+        
         // Return result;
         return new NodeChecker.Result(currentGroupify.isPrivacyModelFulfilled(),
                                       minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
                                       loss,
                                       bound);
+    }
+    
+    public void print() {
+        System.out.println("Time check: " + checkTime);
+        transformer.print();
     }
     
     /**

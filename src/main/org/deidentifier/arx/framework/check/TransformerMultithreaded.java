@@ -23,6 +23,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
+import org.deidentifier.arx.common.SpinLock;
+import org.deidentifier.arx.common.WrappedLong;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
@@ -93,6 +95,10 @@ public class TransformerMultithreaded extends Transformer {
             
         });
     }
+    
+    private long transformTime = 0;
+    private long groupTime = 0;
+    private long mergeTime = 0;
 
     /**
      * Apply internal.
@@ -112,6 +118,7 @@ public class TransformerMultithreaded extends Transformer {
                                           final int[] snapshot,
                                           final TransitionType transition) {
         
+        long time = System.currentTimeMillis();
 
         // Determine total
         final int total;
@@ -135,16 +142,17 @@ public class TransformerMultithreaded extends Transformer {
             int startIndex = 0;
             int stopIndex = total;
             getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, 0).call();
+            this.transformTime += (System.currentTimeMillis() - time);
             return;
         }
-        
-        long timeStart = System.currentTimeMillis();
-        long timeEndGroup = System.currentTimeMillis();
-        long timeEndMerge = System.currentTimeMillis();
         
         // Count write backs
         final AtomicInteger mergeThreads = new AtomicInteger(0);
         final int stepping = total / this.threads;
+        final SpinLock lock = new SpinLock();
+        
+        final WrappedLong timestampGroup = new WrappedLong();
+        final WrappedLong timestampMerge = new WrappedLong();
         
         // For each thread
         for (int i = 1; i < threads; i++) {
@@ -167,6 +175,13 @@ public class TransformerMultithreaded extends Transformer {
                                    stopIndex,
                                    thread).call();
 
+                    lock.acquire();
+                    if (timestampGroup.value < System.currentTimeMillis()) {
+                        timestampGroup.value = System.currentTimeMillis();
+                    }
+                    lock.release();
+                    
+                    
                     // Busy wait for all threads with lower numbers to finish writing back
                     while (mergeThreads.get() != thread) {
                         // Spin
@@ -193,6 +208,12 @@ public class TransformerMultithreaded extends Transformer {
                     
                     // Next thread
                     mergeThreads.incrementAndGet();
+
+                    lock.acquire();
+                    if (timestampMerge.value < System.currentTimeMillis()) {
+                        timestampMerge.value = System.currentTimeMillis();
+                    }
+                    lock.release();
                 }
             }); 
         }
@@ -206,12 +227,30 @@ public class TransformerMultithreaded extends Transformer {
         getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, thread).call();
         mergeThreads.incrementAndGet();
 
+        lock.acquire();
+        if (timestampGroup.value < System.currentTimeMillis()) {
+            timestampGroup.value = System.currentTimeMillis();
+        }
+        lock.release();
+
         // Busy wait for all threads to finish
         while (mergeThreads.get() != threads) {
             // Spin
-        }        
+        }   
+
+        if (timestampMerge.value < System.currentTimeMillis()) {
+            timestampMerge.value = System.currentTimeMillis();
+        }
+        this.groupTime += (timestampGroup.value - time);
+        this.mergeTime += (timestampMerge.value - timestampGroup.value);
+        this.transformTime += (System.currentTimeMillis() - time);
     }
-    
+
+    public void print() {
+        System.out.println("Time transform: " + transformTime);
+        System.out.println("Time group: " + groupTime);
+        System.out.println("Time merge: " + mergeTime);
+    }
     /**
      * Returns a transformer for a specific region of the dataset
      * @param projection

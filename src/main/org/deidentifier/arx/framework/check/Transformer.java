@@ -185,6 +185,8 @@ public class Transformer {
     public int[][] getBuffer() {
         return outputGeneralized;
     }
+    
+    long transformTime = 0;
 
     /**
      * Apply internal.
@@ -210,6 +212,8 @@ public class Transformer {
                                  final int[] snapshot,
                                  final TransitionType transition) {
 
+        long time = System.currentTimeMillis();
+        
         int startIndex = 0;
         int stopIndex = 0;
         switch (transition) {
@@ -239,6 +243,12 @@ public class Transformer {
                  stopIndex);
 
         app.call();
+        
+        this.transformTime += (System.currentTimeMillis() - time);
+    }
+    
+    public void print() {
+        System.out.println("Time transform: " + transformTime);
     }
     
     /**
