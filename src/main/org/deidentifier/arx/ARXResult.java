@@ -319,6 +319,7 @@ public class ARXResult {
         // Apply the transformation
         final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
         TransformedData information = checker.applyTransformation(transformation);
+        checker.shutdown();
         transformation.setChecked(information.properties);
 
         // Store
@@ -487,6 +488,22 @@ public class ARXResult {
      * @return The number of optimized records
      */
     public int optimize(DataHandle handle, double gsFactor, ARXListener listener) throws RollbackRequiredException {
+        return optimize(handle, gsFactor, listener, true);
+    }
+        
+    /**
+     * This method optimizes the given data output with local recoding to improve its utility
+     * @param handle
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @param listener 
+     * @return The number of optimized records
+     */
+    public int optimize(DataHandle handle, double gsFactor, ARXListener listener, boolean shutdown) throws RollbackRequiredException {
         
 
         if (gsFactor < 0d || gsFactor > 1d) {
@@ -563,6 +580,9 @@ public class ARXResult {
         
         // Else, merge the results back into the given handle
         TransformedData data = result.checker.applyTransformation(result.optimum, output.getOutputBufferMicroaggregated().getDictionary());
+        if (shutdown) {
+            checker.shutdown();
+        }
         int newIndex = -1;
         int[][] oldGeneralized = output.getOutputBufferGeneralized().getArray();
         int[][] oldMicroaggregated = output.getOutputBufferMicroaggregated().getArray();
@@ -679,7 +699,7 @@ public class ARXResult {
             };
 
             // Perform individual optimization
-            optimized = optimize(handle, gsFactor, wrapper);
+            optimized = optimize(handle, gsFactor, wrapper, false);
             
             // Try to adapt, if possible
             if (optimized == 0 && adaptionFactor > 0d) {
@@ -694,6 +714,9 @@ public class ARXResult {
             
             iterations++;
         }
+        
+        // Shutdown
+        checker.shutdown();
     }
     
     /**

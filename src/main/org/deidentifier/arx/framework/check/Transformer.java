@@ -75,6 +75,8 @@ public class Transformer {
     /** The buffer. */
     private int[][]                          outputGeneralized;
 
+    long transformTime = 0;
+    
     /**
      * Instantiates a new transformer.
      *
@@ -107,7 +109,7 @@ public class Transformer {
         this.dictionarySensFreq = dictionarySensFreq;
         this.inputAnalyzed = inputAnalyzed;
     }
-    
+
     /**
      * Apply.
      * 
@@ -152,7 +154,7 @@ public class Transformer {
                              null,
                              TransitionType.ROLLUP);
     }
-
+    
     /**
      * Apply snapshot.
      * 
@@ -186,8 +188,17 @@ public class Transformer {
         return outputGeneralized;
     }
     
-    long transformTime = 0;
+    public void print() {
+        System.out.println("Time transform: " + transformTime);
+    }
 
+    /**
+     * Shutdown
+     */
+    public void shutdown() {
+        // Nothing to do
+    }
+    
     /**
      * Apply internal.
      * 
@@ -245,10 +256,6 @@ public class Transformer {
         app.call();
         
         this.transformTime += (System.currentTimeMillis() - time);
-    }
-    
-    public void print() {
-        System.out.println("Time transform: " + transformTime);
     }
     
     /**

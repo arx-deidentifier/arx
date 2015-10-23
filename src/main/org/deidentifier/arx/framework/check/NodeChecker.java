@@ -122,6 +122,9 @@ public class NodeChecker {
     /** Is a minimal class size required */
     private final boolean                         minimalClassSizeRequired;
 
+    private long checkTime = 0;
+
+    
     /**
      * Creates a new NodeChecker instance.
      * 
@@ -198,8 +201,7 @@ public class NodeChecker {
                                                dictionarySensFreq);
         }
     }
-
-    
+        
     /**
      * Applies the given transformation and returns the dataset
      * @param transformation
@@ -209,7 +211,7 @@ public class NodeChecker {
         return applyTransformation(transformation,
                                    new Dictionary(microaggregationNumAttributes));
     }
-        
+    
     /**
      * Applies the given transformation and returns the dataset
      * @param transformation
@@ -270,8 +272,6 @@ public class NodeChecker {
     public NodeChecker.Result check(final Transformation node) {
         return check(node, false);
     }
-    
-    private long checkTime = 0;
     
     /**
      * Checks the given transformation
@@ -336,19 +336,6 @@ public class NodeChecker {
                                       bound);
     }
     
-    public void print() {
-        System.out.println("Time check: " + checkTime);
-        transformer.print();
-    }
-    
-    /**
-     * Returns the input buffer
-     * @return
-     */
-    public int[][] getInputBuffer() {
-        return this.dataGeneralized.getArray();
-    }
-
     /**
      * Returns the configuration
      * @return
@@ -365,6 +352,14 @@ public class NodeChecker {
     public History getHistory() {
         return history;
     }
+
+    /**
+     * Returns the input buffer
+     * @return
+     */
+    public int[][] getInputBuffer() {
+        return this.dataGeneralized.getArray();
+    }
     
     /**
      * Returns the utility measure
@@ -372,5 +367,19 @@ public class NodeChecker {
      */
     public Metric<?> getMetric() {
         return metric;
+    }
+    
+    public void print() {
+        System.out.println("Time check: " + checkTime);
+        transformer.print();
+    }
+    
+    /**
+     * Shuts down all backing threads
+     */
+    public void shutdown() {
+        if (this.transformer != null) {
+            this.transformer.shutdown();
+        }
     }
 }

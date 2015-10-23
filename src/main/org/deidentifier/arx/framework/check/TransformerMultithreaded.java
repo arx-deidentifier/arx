@@ -40,11 +40,17 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
  */
 public class TransformerMultithreaded extends Transformer {
 
+    private ExecutorService pool;
+    
     private final int threads;
     private final AbstractTransformer[][] transformers;
-    private final ExecutorService pool;
     private final HashGroupify[] groupifies;
     
+    private long transformTime = 0;
+
+    private long groupTime = 0;
+
+    private long mergeTime = 0;
     /**
      * Instantiates a new transformer.
      *
@@ -81,25 +87,55 @@ public class TransformerMultithreaded extends Transformer {
         for (int i = 0; i < groupifies.length; i++) {
             this.groupifies[i] = new HashGroupify(initialGroupifySize / threads, config);
         }
-        
-        // TODO: Shutdown
-        this.pool = Executors.newFixedThreadPool(threads - 1, new ThreadFactory(){
-
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setDaemon(true);
-                thread.setName("ARX Transformer & Analyzer");
-                return thread;
-            }
-            
-        });
     }
-    
-    private long transformTime = 0;
-    private long groupTime = 0;
-    private long mergeTime = 0;
+    public void print() {
+        System.out.println("Time transform: " + transformTime);
+        System.out.println("Time group: " + groupTime);
+        System.out.println("Time merge: " + mergeTime);
+    }
 
+    @Override
+    public void shutdown() {
+        if (pool != null) {
+            pool.shutdown();
+            pool = null;
+        }
+    }
+
+    /**
+     * Returns a transformer for a specific region of the dataset
+     * @param projection
+     * @param transformation
+     * @param source
+     * @param target
+     * @param snapshot
+     * @param transition
+     * @param thread
+     * @return
+     */
+    private AbstractTransformer getTransformer(long projection,
+                                               int[] transformation,
+                                               HashGroupify source,
+                                               HashGroupify target,
+                                               int[] snapshot,
+                                               TransitionType transition,
+                                               int startIndex,
+                                               int stopIndex,
+                                               int thread) {
+        
+
+        AbstractTransformer app = getTransformer(projection, transformers[thread]);
+        app.init(projection,
+                 transformation,
+                 target,
+                 source,
+                 snapshot,
+                 transition,
+                 startIndex,
+                 stopIndex);
+        
+        return app;
+    }
     /**
      * Apply internal.
      * 
@@ -137,13 +173,26 @@ public class TransformerMultithreaded extends Transformer {
         }
 
         // Single threaded
-        if (total < 10) {
+        if (total < 5000) {
 
             int startIndex = 0;
             int stopIndex = total;
             getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, 0).call();
             this.transformTime += (System.currentTimeMillis() - time);
             return;
+        }
+
+        // Create pool
+        if (this.pool == null) {
+            this.pool = Executors.newFixedThreadPool(threads - 1, new ThreadFactory(){
+                @Override
+                public Thread newThread(Runnable r) {
+                    Thread thread = new Thread(r);
+                    thread.setDaemon(true);
+                    thread.setName("ARX Transformer & Analyzer");
+                    return thread;
+                }            
+            });
         }
         
         // Count write backs
@@ -244,51 +293,5 @@ public class TransformerMultithreaded extends Transformer {
         this.groupTime += (timestampGroup.value - time);
         this.mergeTime += (timestampMerge.value - timestampGroup.value);
         this.transformTime += (System.currentTimeMillis() - time);
-    }
-
-    public void print() {
-        System.out.println("Time transform: " + transformTime);
-        System.out.println("Time group: " + groupTime);
-        System.out.println("Time merge: " + mergeTime);
-    }
-    /**
-     * Returns a transformer for a specific region of the dataset
-     * @param projection
-     * @param transformation
-     * @param source
-     * @param target
-     * @param snapshot
-     * @param transition
-     * @param thread
-     * @return
-     */
-    private AbstractTransformer getTransformer(long projection,
-                                               int[] transformation,
-                                               HashGroupify source,
-                                               HashGroupify target,
-                                               int[] snapshot,
-                                               TransitionType transition,
-                                               int startIndex,
-                                               int stopIndex,
-                                               int thread) {
-        
-
-        AbstractTransformer app = getTransformer(projection, transformers[thread]);
-        app.init(projection,
-                 transformation,
-                 target,
-                 source,
-                 snapshot,
-                 transition,
-                 startIndex,
-                 stopIndex);
-        
-        return app;
-    }
-    
-    @Override
-    public void finalize() {
-        this.pool.shutdown();
-        System.out.println("Shutting down");
     }
 }
