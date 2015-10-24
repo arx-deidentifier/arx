@@ -98,7 +98,6 @@ public class Transformer {
         this.inputGeneralized = inputGeneralized;
         this.hierarchies = hierarchies;
         this.outputGeneralized = new int[inputGeneralized.length][];
-        this.transformers = createTransformers();
         
         for (int i = 0; i < inputGeneralized.length; i++) {
             outputGeneralized[i] = new int[inputGeneralized[0].length];
@@ -108,6 +107,7 @@ public class Transformer {
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
         this.inputAnalyzed = inputAnalyzed;
+        this.transformers = createTransformers();
     }
 
     /**
