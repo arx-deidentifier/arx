@@ -88,7 +88,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
 
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new ILSingleDimensionalWithBound(entry.count);
+        return new ILSingleDimensionalWithBound(entry.getCount());
     }
 
     @Override
@@ -101,11 +101,11 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
-            if (m.count > 0) {
-                groupsWithSuppression += m.isNotOutlier ? 1 : 0;
+            if (m.getCount() > 0) {
+                groupsWithSuppression += m.isNotOutlier() ? 1 : 0;
                 groupsWithoutSuppression++;
             }
-            m = m.nextOrdered;
+            m = m.getNextOrdered();
         }
         
         // If there are suppressed tuples, they form one additional group
@@ -128,8 +128,8 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         int groups = 0;
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
-            groups += (m.count > 0) ? 1 : 0;
-            m = m.nextOrdered;
+            groups += (m.getCount() > 0) ? 1 : 0;
+            m = m.getNextOrdered();
         }
         
         // Compute AECS

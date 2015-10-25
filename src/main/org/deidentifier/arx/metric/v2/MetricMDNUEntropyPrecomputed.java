@@ -142,7 +142,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         double[] result = new double[getDimensions()];
-        Arrays.fill(result, entry.count);
+        Arrays.fill(result, entry.getCount());
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
     

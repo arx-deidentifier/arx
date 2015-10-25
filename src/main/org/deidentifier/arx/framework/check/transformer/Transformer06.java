@@ -75,8 +75,8 @@ public class Transformer06 extends AbstractTransformer {
         HashGroupifyEntry element = getElement(startIndex);
         while (element != null && elements > 0) {
 
-            intuple = data[element.representative];
-            outtuple = buffer[element.representative];
+            intuple = data[element.getRepresentative()];
+            outtuple = buffer[element.getRepresentative()];
             outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
             outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
             outtuple[outindex2] = idindex2[intuple[index2]][generalizationindex2];
@@ -89,7 +89,7 @@ public class Transformer06 extends AbstractTransformer {
 
             // Next element
             elements--;
-            element = element.nextOrdered;
+            element = element.getNextOrdered();
         }
     }
 

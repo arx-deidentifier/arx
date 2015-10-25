@@ -115,7 +115,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
     
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
-        double delta = entry.count == 0 ? 0d : (double) entry.count / (double) entry.pcount;
+        double delta = entry.getCount() == 0 ? 0d : (double) entry.getCount() / (double) entry.getPcount();
         return (delta >= dMin) && (delta <= dMax);
     }
     

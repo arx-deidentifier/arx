@@ -46,7 +46,7 @@ public abstract class AbstractTransformer {
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            target.addFromGroupify(outtuple, null, element.representative, element.count, -1);
+            target.addFromGroupify(outtuple, null, element.getRepresentative(), element.getCount(), -1);
         }
 
         @Override
@@ -68,7 +68,7 @@ public abstract class AbstractTransformer {
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            target.addFromGroupify(outtuple, element.distributions, element.representative, element.count, -1);
+            target.addFromGroupify(outtuple, element.getDistributions(), element.getRepresentative(), element.getCount(), -1);
         }
 
         @Override
@@ -102,7 +102,7 @@ public abstract class AbstractTransformer {
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            target.addFromGroupify(outtuple, null, element.representative, element.count, element.pcount);
+            target.addFromGroupify(outtuple, null, element.getRepresentative(), element.getCount(), element.getPcount());
         }
 
         @Override
@@ -125,7 +125,7 @@ public abstract class AbstractTransformer {
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            target.addFromGroupify(outtuple, element.distributions, element.representative, element.count, element.pcount);
+            target.addFromGroupify(outtuple, element.getDistributions(), element.getRepresentative(), element.getCount(), element.getPcount());
         }
 
         @Override
@@ -160,7 +160,7 @@ public abstract class AbstractTransformer {
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            target.addFromGroupify(outtuple, element.distributions, element.representative, element.count, -1);
+            target.addFromGroupify(outtuple, element.getDistributions(), element.getRepresentative(), element.getCount(), -1);
         }
 
         @Override
@@ -510,7 +510,7 @@ public abstract class AbstractTransformer {
     protected HashGroupifyEntry getElement(int startIndex) {
         HashGroupifyEntry result = source.getFirstEquivalenceClass();
         for (int i = 0; i < startIndex; i++) {
-            result = result.nextOrdered;
+            result = result.getNextOrdered();
         }
         return result;
     }

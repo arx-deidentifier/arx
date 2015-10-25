@@ -155,12 +155,12 @@ public class HashGroupify {
         
         // Is a other attribute provided
         if (other != null) {
-            if (entry.distributions == null) {
-                entry.distributions = new Distribution[other.length];
+            if (entry.getDistributions() == null) {
+                entry.setDistributions(new Distribution[other.length]);
                 
                 // TODO: Improve!
-                for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i] = new Distribution();
+                for (int i = 0; i < entry.getDistributions().length; i++) {
+                    entry.getDistributions()[i] = new Distribution();
                 }
             }
             
@@ -168,8 +168,8 @@ public class HashGroupify {
             if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(representative)) {
                 
                 // TODO: Improve!
-                for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i].add(other[i]);
+                for (int i = 0; i < entry.getDistributions().length; i++) {
+                    entry.getDistributions()[i].add(other[i]);
                 }
             }
         }
@@ -191,13 +191,13 @@ public class HashGroupify {
         
         // Is a distribution provided
         if (distributions != null) {
-            if (entry.distributions == null) {
-                entry.distributions = distributions;
+            if (entry.getDistributions() == null) {
+                entry.setDistributions(distributions);
             } else {
                 
                 // TODO: Improve!
-                for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i].merge(distributions[i]);
+                for (int i = 0; i < entry.getDistributions().length; i++) {
+                    entry.getDistributions()[i].merge(distributions[i]);
                 }
             }
         }
@@ -218,13 +218,13 @@ public class HashGroupify {
         
         // Is a distribution provided
         if (distributions != null) {
-            if (entry.distributions == null) {
-                entry.distributions = distributions;
+            if (entry.getDistributions() == null) {
+                entry.setDistributions(distributions);
             } else {
                 
                 // TODO: Improve!
-                for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i].merge(distributions[i]);
+                for (int i = 0; i < entry.getDistributions().length; i++) {
+                    entry.getDistributions()[i].merge(distributions[i]);
                 }
             }
         }
@@ -247,19 +247,19 @@ public class HashGroupify {
         
         // Is a distribution provided
         if (elements != null) {
-            if (entry.distributions == null) {
+            if (entry.getDistributions() == null) {
                 
-                entry.distributions = new Distribution[elements.length];
+                entry.setDistributions(new Distribution[elements.length]);
                 
                 // TODO: Improve!
-                for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i] = new Distribution(elements[i], frequencies[i]);
+                for (int i = 0; i < entry.getDistributions().length; i++) {
+                    entry.getDistributions()[i] = new Distribution(elements[i], frequencies[i]);
                 }
             } else {
                 
                 // TODO: Improve!
-                for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i].merge(elements[i], frequencies[i]);
+                for (int i = 0; i < entry.getDistributions().length; i++) {
+                    entry.getDistributions()[i].merge(elements[i], frequencies[i]);
                 }
             }
         }
@@ -338,19 +338,19 @@ public class HashGroupify {
                 final int hash = HashTableUtil.hashcode(key);
                 final int index = hash & (hashTableBuckets.length - 1);
                 HashGroupifyEntry m = hashTableBuckets[index];
-                while ((m != null) && ((m.hashcode != hash) || !equalsIgnoringOutliers(key, m.key))) {
-                    m = m.next;
+                while ((m != null) && ((m.getHashcode() != hash) || !equalsIgnoringOutliers(key, m.getKey()))) {
+                    m = m.getNext();
                 }
                 if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before microaggregation!"); }
                 int dimension = 0;
                 result.getArray()[row] = new int[num];
                 for (int i = start; i < start + num; i++) {
-                    if (!cache.containsKey(m.distributions[i])) {
-                        String value = functions[dimension].aggregate(m.distributions[i]);
+                    if (!cache.containsKey(m.getDistributions()[i])) {
+                        String value = functions[dimension].aggregate(m.getDistributions()[i]);
                         int code = result.getDictionary().register(dimension, value);
-                        cache.put(m.distributions[i], code);
+                        cache.put(m.getDistributions()[i], code);
                     }
-                    result.getArray()[row][dimension] = cache.get(m.distributions[i]);
+                    result.getArray()[row][dimension] = cache.get(m.getDistributions()[i]);
                     dimension++;
                 }
             }
@@ -375,13 +375,13 @@ public class HashGroupify {
                 final int hash = HashTableUtil.hashcode(key);
                 final int index = hash & (hashTableBuckets.length - 1);
                 HashGroupifyEntry m = hashTableBuckets[index];
-                while ((m != null) && ((m.hashcode != hash) || !equalsIgnoringOutliers(key, m.key))) {
-                    m = m.next;
+                while ((m != null) && ((m.getHashcode() != hash) || !equalsIgnoringOutliers(key, m.getKey()))) {
+                    m = m.getNext();
                 }
                 if (m == null) {
                     throw new RuntimeException("Invalid state! Groupify the data before marking outliers!");
                 }
-                if (!m.isNotOutlier) {
+                if (!m.isNotOutlier()) {
                     key[0] |= Data.OUTLIER_MASK;
                 }
             } else {
@@ -419,8 +419,8 @@ public class HashGroupify {
     public void stateResetSuppression() {
         HashGroupifyEntry entry = hashTableFirstEntry;
         while (entry != null) {
-            entry.isNotOutlier = true;
-            entry = entry.nextOrdered;
+            entry.setNotOutlier(true);
+            entry = entry.getNextOrdered();
         }
         this.currentNumOutliers = 0;
     }
@@ -452,13 +452,13 @@ public class HashGroupify {
         count = (privacyModelDefinesSubset != null && !privacyModelDefinesSubset.contains(representative)) ? 0 : count;
         
         // Track size: private table for d-presence, overall table, else
-        entry.count += count;
+        entry.addCount(count);
         
         // Indirectly check if we enforce d-presence
         if (privacyModelDefinesSubset != null) {
             
             // Increase size of tuples from public table
-            entry.pcount += pcount;
+            entry.addPcount(pcount);
             
             // This is a tuple from the research subset, but the class is not represented by a tuple from the subset.
             // Or this is a tuple from the subset with a representative that is smaller than the current representative of the tuple (which is also from the subset)
@@ -480,15 +480,15 @@ public class HashGroupify {
             // If we iterate over a snapshot, G1 will be iterated over before G2 (although it has the larger representative), resetting the representative index 3
             //
             // To prevent this, we always choose the smallest index:
-            entry.representative = (count > 0 && (entry.count == count || entry.representative < representative)) ? representative : entry.representative;
+            entry.setRepresentative((count > 0 && (entry.getCount() == count || entry.getRepresentative() < representative)) ? representative : entry.getRepresentative());
         }
         
         // Compute current total number of outliers, if k-anonymity is contained in the set of criteria
         // TODO: Replace with conditional moves
-        if (entry.count >= minimalClassSize) {
-            if (!entry.isNotOutlier) {
-                entry.isNotOutlier = true;
-                currentNumOutliers -= (entry.count - count);
+        if (entry.getCount() >= minimalClassSize) {
+            if (!entry.isNotOutlier()) {
+                entry.setNotOutlier(true);
+                currentNumOutliers -= (entry.getCount() - count);
             }
         } else {
             currentNumOutliers += count;
@@ -524,18 +524,18 @@ public class HashGroupify {
                 // Tuples from the public table that have no matching candidates in the private table
                 // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
                 // transformation must be considered to not fulfill the privacy criteria.
-                if (privacyModelContainsDPresence && entry.count == 0 && anonymous == 1) {
+                if (privacyModelContainsDPresence && entry.getCount() == 0 && anonymous == 1) {
                     dpresent = false;
                 }
                 
-                currentNumOutliers += entry.count;
+                currentNumOutliers += entry.getCount();
             }
             
             // We only suppress classes that are contained in the research subset
-            entry.isNotOutlier = entry.count != 0 ? (anonymous == -1) : true;
+            entry.setNotOutlier(entry.getCount() != 0 ? (anonymous == -1) : true);
             
             // Next class
-            entry = entry.nextOrdered;
+            entry = entry.getNextOrdered();
         }
         
         this.analyzeSampleBasedCriteria(transformation, false);
@@ -615,11 +615,11 @@ public class HashGroupify {
                 // transformation must be considered to not fulfill the privacy criteria.
                 // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
                 // for non-anonymous transformations
-                if (privacyModelContainsDPresence && entry.count == 0 && anonymous == 1) {
+                if (privacyModelContainsDPresence && entry.getCount() == 0 && anonymous == 1) {
                     this.privacyModelFulfilled = false;
                     return;
                 }
-                currentNumOutliers += entry.count;
+                currentNumOutliers += entry.getCount();
                 
                 // Break as soon as too many classes are not anonymous
                 // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
@@ -631,10 +631,10 @@ public class HashGroupify {
             }
             
             // We only suppress classes that are contained in the research subset
-            entry.isNotOutlier = entry.count != 0 ? (anonymous == -1) : true;
+            entry.setNotOutlier(entry.getCount() != 0 ? (anonymous == -1) : true);
             
             // Next class
-            entry = entry.nextOrdered;
+            entry = entry.getNextOrdered();
         }
         
         this.analyzeSampleBasedCriteria(transformation, true);
@@ -656,14 +656,14 @@ public class HashGroupify {
      */
     private HashGroupifyEntry createEntry(final int[] key, final int index, final int hash, final int line) {
         final HashGroupifyEntry entry = new HashGroupifyEntry(key, hash);
-        entry.next = hashTableBuckets[index];
-        entry.representative = line;
+        entry.setNext(hashTableBuckets[index]);
+        entry.setRepresentative(line);
         hashTableBuckets[index] = entry;
         if (hashTableFirstEntry == null) {
             hashTableFirstEntry = entry;
             hashTableLastEntry = entry;
         } else {
-            hashTableLastEntry.nextOrdered = entry;
+            hashTableLastEntry.setNextOrdered(entry);
             hashTableLastEntry = entry;
         }
         return entry;
@@ -698,8 +698,8 @@ public class HashGroupify {
      */
     private HashGroupifyEntry findEntry(final int[] key, final int index, final int keyHash) {
         HashGroupifyEntry m = hashTableBuckets[index];
-        while ((m != null) && ((m.hashcode != keyHash) || !HashTableUtil.equals(key, m.key))) {
-            m = m.next;
+        while ((m != null) && ((m.getHashcode() != keyHash) || !HashTableUtil.equals(key, m.getKey()))) {
+            m = m.getNext();
         }
         return m;
     }
@@ -714,7 +714,7 @@ public class HashGroupify {
     private int isPrivacyModelFulfilled(HashGroupifyEntry entry) {
         
         // Check minimal group size
-        if (minimalClassSize != Integer.MAX_VALUE && entry.count < minimalClassSize) {
+        if (minimalClassSize != Integer.MAX_VALUE && entry.getCount() < minimalClassSize) {
             return 0;
         }
         
@@ -738,10 +738,10 @@ public class HashGroupify {
         final HashGroupifyEntry[] newData = new HashGroupifyEntry[length];
         HashGroupifyEntry entry = hashTableFirstEntry;
         while (entry != null) {
-            final int index = entry.hashcode & (length - 1);
-            entry.next = newData[index];
+            final int index = entry.getHashcode() & (length - 1);
+            entry.setNext(newData[index]);
             newData[index] = entry;
-            entry = entry.nextOrdered;
+            entry = entry.getNextOrdered();
         }
         hashTableBuckets = newData;
         hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);

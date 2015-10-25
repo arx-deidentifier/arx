@@ -117,7 +117,7 @@ public class MetricEntropy extends MetricDefault {
 
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
+        return new InformationLossDefaultWithBound(entry.getCount(), entry.getCount());
     }
 
     @Override

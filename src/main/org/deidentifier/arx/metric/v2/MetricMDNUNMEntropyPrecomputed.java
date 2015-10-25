@@ -97,13 +97,13 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         // m.count only counts tuples from the research subset
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
-            if (!m.isNotOutlier && m.count > 0) {
-                suppressed += m.count;
+            if (!m.isNotOutlier() && m.getCount() > 0) {
+                suppressed += m.getCount();
                 for (int i = 0; i < original.length; i++) {
-                    original[i].putOrAdd(m.key[i], m.count, m.count);
+                    original[i].putOrAdd(m.getKey()[i], m.getCount(), m.getCount());
                 }
             }
-            m = m.nextOrdered;
+            m = m.getNextOrdered();
         }
 
         // Evaluate non-uniform entropy for suppressed tuples

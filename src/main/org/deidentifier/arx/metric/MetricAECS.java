@@ -73,7 +73,7 @@ public class MetricAECS extends MetricDefault {
     
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
+        return new InformationLossDefaultWithBound(entry.getCount(), entry.getCount());
     }
 
     @Override
@@ -90,13 +90,13 @@ public class MetricAECS extends MetricDefault {
         
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
-            if (m.count > 0) {
-                tuples += m.count;
-                groupsWithSuppression += m.isNotOutlier ? 1 : 0;
+            if (m.getCount() > 0) {
+                tuples += m.getCount();
+                groupsWithSuppression += m.isNotOutlier() ? 1 : 0;
                 groupsWithoutSuppression++;
-                suppressed |= !m.isNotOutlier;
+                suppressed |= !m.isNotOutlier();
             }
-            m = m.nextOrdered;
+            m = m.getNextOrdered();
         }
         
         // If there are suppressed tuples, they form one additional group
@@ -120,11 +120,11 @@ public class MetricAECS extends MetricDefault {
         int groups = 0;
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
-            if (m.count > 0) {
-                tuples += m.count;
+            if (m.getCount() > 0) {
+                tuples += m.getCount();
                 groups++;
             }
-            m = m.nextOrdered;
+            m = m.getNextOrdered();
         }
         // Compute AECS
         return new InformationLossDefault((double)tuples / (double)groups);

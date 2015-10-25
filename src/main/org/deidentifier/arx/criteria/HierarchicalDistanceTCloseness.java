@@ -92,7 +92,7 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
 
         // Copy and count
         int totalElementsQ = 0;
-        int[] buckets = entry.distributions[index].getBuckets();
+        int[] buckets = entry.getDistributions()[index].getBuckets();
         for (int i = 0; i < buckets.length; i += 2) {
             if (buckets[i] != -1) { // bucket not empty
                 final int value = buckets[i];

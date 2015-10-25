@@ -54,7 +54,7 @@ public class EntropyLDiversity extends LDiversity {
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
-        Distribution d = entry.distributions[index];
+        Distribution d = entry.getDistributions()[index];
 
         // If less than l values are present skip
         if (d.size() < minSize) { return false; }

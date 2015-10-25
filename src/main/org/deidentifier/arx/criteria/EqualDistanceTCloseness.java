@@ -57,8 +57,8 @@ public class EqualDistanceTCloseness extends TCloseness {
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
         // Calculate EMD with equal distance
-        int[] buckets = entry.distributions[index].getBuckets();
-        double count = entry.count;
+        int[] buckets = entry.getDistributions()[index].getBuckets();
+        double count = entry.getCount();
         
         /* 
          * P = Set of ids of values in local frequency set

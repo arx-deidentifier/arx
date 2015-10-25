@@ -100,14 +100,14 @@ public class HashGroupifyDistribution {
         // Initialize
         List<HashGroupifyEntry> list = new ArrayList<HashGroupifyEntry>();
         while(entry != null) {
-            if (entry.isNotOutlier && entry.count > 0) {
-                addToDistribution(entry.count);
+            if (entry.isNotOutlier() && entry.getCount() > 0) {
+                addToDistribution(entry.getCount());
                 list.add(entry);
             } else {
-                this.suppressed += entry.count;
+                this.suppressed += entry.getCount();
             }
-            numTuples += entry.count;
-            entry = entry.nextOrdered;
+            numTuples += entry.getCount();
+            entry = entry.getNextOrdered();
         }
         
         // Suppressed tuples form one equivalence class
@@ -137,8 +137,8 @@ public class HashGroupifyDistribution {
             // Create comparator
             comparator = new Comparator<HashGroupifyEntry>(){
                 public int compare(HashGroupifyEntry o1, HashGroupifyEntry o2) {
-                    int cmp = Integer.compare(o1.count, o2.count);
-                    return cmp != 0 ? cmp : Integer.compare(o1.representative, o2.representative);
+                    int cmp = Integer.compare(o1.getCount(), o2.getCount());
+                    return cmp != 0 ? cmp : Integer.compare(o1.getRepresentative(), o2.getRepresentative());
                 }
             };
         } else {
@@ -151,7 +151,7 @@ public class HashGroupifyDistribution {
             comparator = new Comparator<HashGroupifyEntry>(){
                 public int compare(HashGroupifyEntry o1, HashGroupifyEntry o2) {
                     
-                    int cmp = Integer.compare(o1.count, o2.count);
+                    int cmp = Integer.compare(o1.getCount(), o2.getCount());
                     if (cmp != 0) {
                         return cmp;
                     }
@@ -169,7 +169,7 @@ public class HashGroupifyDistribution {
                     }
                     
                     cmp = loss1.getInformationLoss().compareTo(loss2.getInformationLoss());
-                    return cmp != 0 ? cmp : Integer.compare(o1.representative, o2.representative);
+                    return cmp != 0 ? cmp : Integer.compare(o1.getRepresentative(), o2.getRepresentative());
                 }
             };
         }
@@ -256,7 +256,7 @@ public class HashGroupifyDistribution {
                 mid = (low + high) / 2;
                 
                 // Clear suppression from mid
-                for (int i = mid + 1; i < entries.length && !entries[i].isNotOutlier; i++) {
+                for (int i = mid + 1; i < entries.length && !entries[i].isNotOutlier(); i++) {
                     unSuppressEntry(entries[i]);
                 }
                 
@@ -275,7 +275,7 @@ public class HashGroupifyDistribution {
         // Finally check mid+1
         if (state != State.ABORT) {
             state = condition.isFulfilled(this);
-            if (state == State.NOT_FULFILLED && mid + 1 < entries.length && entries[mid + 1].isNotOutlier) {
+            if (state == State.NOT_FULFILLED && mid + 1 < entries.length && entries[mid + 1].isNotOutlier()) {
                 suppressEntry(entries[mid + 1]);
             }
         }
@@ -331,12 +331,12 @@ public class HashGroupifyDistribution {
      * @param entry
      */
     private void suppressEntry(HashGroupifyEntry entry) {
-        entry.isNotOutlier = false;
-        removeFromDistribution(entry.count);
+        entry.setNotOutlier(false);
+        removeFromDistribution(entry.getCount());
         if (this.suppressed != 0) {
             removeFromDistribution(this.suppressed);
         }
-        this.suppressed += entry.count;
+        this.suppressed += entry.getCount();
         addToDistribution(this.suppressed);
     }
 
@@ -350,12 +350,12 @@ public class HashGroupifyDistribution {
             throw new IllegalStateException("Must not happed");
         }
         
-        entry.isNotOutlier = true;
+        entry.setNotOutlier(true);
         removeFromDistribution(this.suppressed);
-        this.suppressed -= entry.count;
+        this.suppressed -= entry.getCount();
         if (this.suppressed != 0) {
             addToDistribution(this.suppressed);
         }
-        addToDistribution(entry.count);
+        addToDistribution(entry.getCount());
     }
 }

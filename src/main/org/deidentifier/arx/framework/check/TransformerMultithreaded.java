@@ -220,15 +220,15 @@ public class TransformerMultithreaded extends Transformer {
                     while (element != null) {
                         
                         // Add
-                        target.addFromThread(element.hashcode,
-                                             element.key,
-                                             element.distributions,
-                                             element.representative,
-                                             element.count,
-                                             element.pcount);
+                        target.addFromThread(element.getHashcode(),
+                                             element.getKey(),
+                                             element.getDistributions(),
+                                             element.getRepresentative(),
+                                             element.getCount(),
+                                             element.getPcount());
                                              
                         // Next element
-                        element = element.nextOrdered;
+                        element = element.getNextOrdered();
                         
                     }
                     lock.unlock();

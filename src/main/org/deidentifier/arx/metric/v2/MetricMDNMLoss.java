@@ -168,24 +168,24 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Compute NDS and lower bound
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
-            if (m.count>0) {
+            if (m.getCount()>0) {
                 for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-                    int value = m.key[dimension];
+                    int value = m.getKey()[dimension];
                     int level = transformation[dimension];
-                    double share = (double)m.count * shares[dimension].getShare(value, level);
-                    result[dimension] += m.isNotOutlier ? share * gFactor :
-                                         (sFactor == 1d ? m.count : share + sFactor * ((double)m.count - share));
+                    double share = (double)m.getCount() * shares[dimension].getShare(value, level);
+                    result[dimension] += m.isNotOutlier() ? share * gFactor :
+                                         (sFactor == 1d ? m.getCount() : share + sFactor * ((double)m.getCount() - share));
                     bound[dimension] += share * gFactor;
                 }
                 for (int dimension=0; dimension<dimensionsAggregated; dimension++){
                     
-                    double share = (double)m.count * microaggregationFunctions[dimension].getMeanError(m.distributions[microaggregationStart + dimension]);
-                    result[dimensionsGeneralized + dimension] += m.isNotOutlier ? share * gFactor :
-                                         (sFactor == 1d ? m.count : share + sFactor * ((double)m.count - share));
+                    double share = (double)m.getCount() * microaggregationFunctions[dimension].getMeanError(m.getDistributions()[microaggregationStart + dimension]);
+                    result[dimensionsGeneralized + dimension] += m.isNotOutlier() ? share * gFactor :
+                                         (sFactor == 1d ? m.getCount() : share + sFactor * ((double)m.getCount() - share));
                     // Note: we ignore the bound, as we cannot compute it
                 }
             }
-            m = m.nextOrdered;
+            m = m.getNextOrdered();
         }
         
         // Normalize
@@ -220,14 +220,14 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
         // Compute
         for (int dimension = 0; dimension < dimensionsGeneralized; dimension++) {
-            int value = entry.key[dimension];
+            int value = entry.getKey()[dimension];
             int level = transformation[dimension];
-            result[dimension] = (double) entry.count * shares[dimension].getShare(value, level);
+            result[dimension] = (double) entry.getCount() * shares[dimension].getShare(value, level);
         }
 
         // Compute
         for (int dimension=0; dimension<dimensionsAggregated; dimension++){
-            result[dimensionsGeneralized + dimension] = (double)entry.count * microaggregationFunctions[dimension].getMeanError(entry.distributions[microaggregationStart + dimension]);
+            result[dimensionsGeneralized + dimension] = (double)entry.getCount() * microaggregationFunctions[dimension].getMeanError(entry.getDistributions()[microaggregationStart + dimension]);
         }
         
         // Return
@@ -252,16 +252,16 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Compute lower bound
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
-            if (m.count>0) {
+            if (m.getCount()>0) {
                 for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-                    int value = m.key[dimension];
+                    int value = m.getKey()[dimension];
                     int level = transformation[dimension];
-                    double share = (double)m.count * shares[dimension].getShare(value, level);
+                    double share = (double)m.getCount() * shares[dimension].getShare(value, level);
                     bound[dimension] += share * gFactor;
                 }
                 // Note: we ignore microaggregation, as we cannot compute a bound for it
             }
-            m = m.nextOrdered;
+            m = m.getNextOrdered();
         }
         
         // Normalize

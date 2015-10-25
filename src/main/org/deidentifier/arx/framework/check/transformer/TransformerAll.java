@@ -74,8 +74,8 @@ public class TransformerAll extends AbstractTransformer {
         HashGroupifyEntry element = getElement(startIndex);
         while (element != null && elements > 0) {
 
-            intuple = data[element.representative];
-            outtuple = buffer[element.representative];
+            intuple = data[element.getRepresentative()];
+            outtuple = buffer[element.getRepresentative()];
             for (int d = 0; d < dimensions; d++) {
                 final int state = generalization[d];
                 outtuple[d] = map[d][intuple[d]][state];
@@ -86,7 +86,7 @@ public class TransformerAll extends AbstractTransformer {
 
             // Next element
             elements--;
-            element = element.nextOrdered;
+            element = element.getNextOrdered();
         }
     }
 

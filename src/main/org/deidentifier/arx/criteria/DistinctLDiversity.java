@@ -45,7 +45,7 @@ public class DistinctLDiversity extends LDiversity{
 
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
-        return entry.distributions[index].size() >= minSize; // minSize=(int)l;
+        return entry.getDistributions()[index].size() >= minSize; // minSize=(int)l;
     }
 
 	@Override

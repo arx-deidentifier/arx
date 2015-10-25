@@ -108,9 +108,9 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             // if (m.count > 0) is given implicitly
-            unsuppressedTuples += m.isNotOutlier ? m.count : 0;
-            suppressedTuples += m.isNotOutlier ? 0 : m.count;
-            m = m.nextOrdered;
+            unsuppressedTuples += m.isNotOutlier() ? m.getCount() : 0;
+            suppressedTuples += m.isNotOutlier() ? 0 : m.getCount();
+            m = m.getNextOrdered();
         }
         
         double[] result = new double[getDimensions()];
@@ -128,7 +128,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         double[] result = new double[getDimensions()];
-        Arrays.fill(result, entry.count);
+        Arrays.fill(result, entry.getCount());
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
 

@@ -300,7 +300,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
 
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
-        return entry.count >= k;
+        return entry.getCount() >= k;
     }
 
     @Override

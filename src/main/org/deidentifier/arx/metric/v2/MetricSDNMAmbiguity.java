@@ -111,23 +111,23 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
         // Compute loss and lower bound
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
-            if (m.count>0) {
+            if (m.getCount()>0) {
                 double classResult = 1d;
                 double classBound = 1d;
                 // Compute
                 for (int dimension = 0; dimension < transformation.length; dimension++) {
-                    int value = m.key[dimension];
+                    int value = m.getKey()[dimension];
                     int level = transformation[dimension];
                     double share = shares[dimension].getShare(value, level);
-                    classResult *= (m.isNotOutlier ? share : 1d) * shares[dimension].getDomainSize();
+                    classResult *= (m.isNotOutlier() ? share : 1d) * shares[dimension].getDomainSize();
                     classBound *= share * shares[dimension].getDomainSize();
                 }
-                classResult *= m.count;
-                classBound *= m.count;
+                classResult *= m.getCount();
+                classBound *= m.getCount();
                 result += classResult;
                 bound += classBound;
             }
-            m = m.nextOrdered;
+            m = m.getNextOrdered();
         }
                 
         // Return
@@ -143,11 +143,11 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
 
         // Compute
         for (int dimension = 0; dimension < transformation.length; dimension++) {
-            int value = entry.key[dimension];
+            int value = entry.getKey()[dimension];
             int level = transformation[dimension];
             result *= shares[dimension].getShare(value, level) * shares[dimension].getDomainSize();
         }
-        result *= entry.count;
+        result *= entry.getCount();
         
         // Return
         return new ILSingleDimensionalWithBound(result, result);
@@ -170,19 +170,19 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
         // Compute loss and lower bound
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
-            if (m.count>0) {
+            if (m.getCount()>0) {
                 double classResult = 1d;
                 // Compute
                 for (int dimension = 0; dimension < transformation.length; dimension++) {
-                    int value = m.key[dimension];
+                    int value = m.getKey()[dimension];
                     int level = transformation[dimension];
                     double share = shares[dimension].getShare(value, level);
                     classResult *= share * shares[dimension].getDomainSize();
                 }
-                classResult *= m.count;
+                classResult *= m.getCount();
                 result += classResult;
             }
-            m = m.nextOrdered;
+            m = m.getNextOrdered();
         }
         
         // Return

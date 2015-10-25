@@ -91,7 +91,7 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
 
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new ILSingleDimensionalWithBound(entry.count);
+        return new ILSingleDimensionalWithBound(entry.getCount());
     }
     
     @Override
@@ -102,13 +102,13 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         double dmStar = 0;
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
-            if (m.count>0){
-                double count = (double)m.count;
+            if (m.getCount()>0){
+                double count = (double)m.getCount();
                 double current = count * count;
                 dmStar += current;
-                dm += m.isNotOutlier ? current : rows * count;
+                dm += m.isNotOutlier() ? current : rows * count;
             }
-            m = m.nextOrdered;
+            m = m.getNextOrdered();
         }
         return new ILSingleDimensionalWithBound(dm, dmStar);
     }
@@ -124,8 +124,8 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         double lowerBound = 0;
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
-            lowerBound += (m.count>0) ? ((double) m.count * (double) m.count) : 0;
-            m = m.nextOrdered;
+            lowerBound += (m.getCount()>0) ? ((double) m.getCount() * (double) m.getCount()) : 0;
+            m = m.getNextOrdered();
         }
         return new ILSingleDimensional(lowerBound);
     }

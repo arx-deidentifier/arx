@@ -173,8 +173,8 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
         double outliers = 0d;
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
-            outliers += !m.isNotOutlier ? m.count : 0d;
-            m = m.nextOrdered;
+            outliers += !m.isNotOutlier() ? m.getCount() : 0d;
+            m = m.getNextOrdered();
         }
         
         // Init
@@ -191,9 +191,9 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
                 
                 int[] generalization = node.getGeneralization();
                 HashGroupifyEntry entry = this.matcher.getEntry(row, generalization, g);
-                double outputFrequency = entry.isNotOutlier ? entry.count : outliers;
+                double outputFrequency = entry.isNotOutlier() ? entry.getCount() : outliers;
                 outputFrequency /= this.tuples;
-                outputFrequency /= entry.isNotOutlier ? getArea(entry.key, generalization) : maximalArea;
+                outputFrequency /= entry.isNotOutlier() ? getArea(entry.getKey(), generalization) : maximalArea;
                 
                 // Compute KL-Divergence
                 result += inputFrequency * log2(inputFrequency / outputFrequency);
@@ -206,7 +206,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
 
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new ILSingleDimensionalWithBound(entry.count, entry.count);
+        return new ILSingleDimensionalWithBound(entry.getCount(), entry.getCount());
     }
     
     @Override

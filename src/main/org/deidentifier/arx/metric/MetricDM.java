@@ -75,7 +75,7 @@ public class MetricDM extends MetricDefault {
 
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
+        return new InformationLossDefaultWithBound(entry.getCount(), entry.getCount());
     }
 
     @Override
@@ -85,17 +85,17 @@ public class MetricDM extends MetricDefault {
         double lowerBound = 0; // DM*
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
-            if (m.count > 0) {
-                if (m.isNotOutlier) {
-                    double current = ((double) m.count * (double) m.count);
+            if (m.getCount() > 0) {
+                if (m.isNotOutlier()) {
+                    double current = ((double) m.getCount() * (double) m.getCount());
                     value += current;
                     lowerBound += current;
                 } else {
-                    value += ((double) rowCount * (double) m.count);
-                    lowerBound += ((double) m.count * (double) m.count);
+                    value += ((double) rowCount * (double) m.getCount());
+                    lowerBound += ((double) m.getCount() * (double) m.getCount());
                 }
             }
-            m = m.nextOrdered;
+            m = m.getNextOrdered();
         }
         return new InformationLossDefaultWithBound(value, lowerBound);
     }
@@ -111,10 +111,10 @@ public class MetricDM extends MetricDefault {
         double lowerBound = 0; // DM*
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
-            if (m.count > 0) {
-                lowerBound += ((double) m.count * (double) m.count);
+            if (m.getCount() > 0) {
+                lowerBound += ((double) m.getCount() * (double) m.getCount());
             }
-            m = m.nextOrdered;
+            m = m.getNextOrdered();
         }
         return new InformationLossDefault(lowerBound);
     }

@@ -91,7 +91,7 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
 
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
+        return new InformationLossDefaultWithBound(entry.getCount(), entry.getCount());
     }
     
     @Override
@@ -103,9 +103,9 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             // if (m.count > 0) is given implicitly
-            unsuppressedTuples += m.isNotOutlier ? m.count : 0;
-            suppressedTuples += m.isNotOutlier ? 0 : m.count;
-            m = m.nextOrdered;
+            unsuppressedTuples += m.isNotOutlier() ? m.getCount() : 0;
+            suppressedTuples += m.isNotOutlier() ? 0 : m.getCount();
+            m = m.getNextOrdered();
         }
         
         double precision = 0;

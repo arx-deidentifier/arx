@@ -81,8 +81,8 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
         //         abs(log(freq(s, c)/freq(s, t)) < delta
         
         // Init
-        int[] buckets = entry.distributions[index].getBuckets();
-        double count = entry.count;
+        int[] buckets = entry.getDistributions()[index].getBuckets();
+        double count = entry.getCount();
         
         // For each value in c
         for (int i = 0; i < buckets.length; i += 2) {

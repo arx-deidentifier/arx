@@ -328,20 +328,20 @@ public class History {
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             // Store element
-            data[index] = m.representative;
-            data[index + 1] = m.count;
+            data[index] = m.getRepresentative();
+            data[index + 1] = m.getCount();
             // Add data for different requirements
             switch (requirements) {
             case ARXConfiguration.REQUIREMENT_COUNTER:
                 // do nothing
                 break;
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
-                data[index + 2] = m.pcount;
+                data[index + 2] = m.getPcount();
                 break;
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                data[index + 2] = m.pcount;
-                for (int i=0; i<m.distributions.length; i++) {
-                    Distribution distribution = m.distributions[i];
+                data[index + 2] = m.getPcount();
+                for (int i=0; i<m.getDistributions().length; i++) {
+                    Distribution distribution = m.getDistributions()[i];
                     distribution.pack();
                     data[index + 3 + i * 2] = dictionarySensValue.probe(distribution.getPackedElements());
                     data[index + 4 + i * 2] = dictionarySensFreq.probe(distribution.getPackedFrequency());
@@ -350,8 +350,8 @@ public class History {
             // TODO: If we only need a distribution, we should get rid of the primary counter
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                for (int i=0; i<m.distributions.length; i++) {
-                    Distribution distribution = m.distributions[i];
+                for (int i=0; i<m.getDistributions().length; i++) {
+                    Distribution distribution = m.getDistributions()[i];
                     distribution.pack();
                     data[index + 2 + i * 2] = dictionarySensValue.probe(distribution.getPackedElements());
                     data[index + 3 + i * 2] = dictionarySensFreq.probe(distribution.getPackedFrequency());
@@ -362,7 +362,7 @@ public class History {
             }
             index += config.getSnapshotLength();
             // Next element
-            m = m.nextOrdered;
+            m = m.getNextOrdered();
         }
         return data;
     }
