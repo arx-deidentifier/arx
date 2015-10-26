@@ -257,6 +257,5 @@ public class TransformerMultithreaded extends Transformer {
         } catch (InterruptedException e) {
             throw new RuntimeException("Waiting interrupted: " + e);
         }
-        
     }
 }
