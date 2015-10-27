@@ -65,7 +65,7 @@ class ModelSNB extends RiskModelPopulation {
                                                       c1, super.getSamplingFraction());
         double f = getSamplingFraction();
 
-        // Solve the Maximum Likelihood Estimates
+        // Solve the maximum likelihood estimates
         Vector2D result = new NewtonRaphson2D(getObjectFunction(k, f, c1, c2),
                                               getDerivatives(k, f, c1, c2))
                                              .configure(config)

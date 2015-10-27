@@ -360,7 +360,7 @@ class ModelPitman extends RiskModelPopulation {
     }
 
     /**
-     * Compiles the result of the Newton-Rhapson-Algorithm
+     * Compiles the result of running the solver
      * 
      * @return
      */
