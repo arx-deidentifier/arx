@@ -272,15 +272,15 @@ public class NodeChecker {
     
     /**
      * Checks the given transformation
-     * @param node
+     * @param transformation
      * @param forceMeasureInfoLoss
      * @return
      */
-    public NodeChecker.Result check(final Transformation node, final boolean forceMeasureInfoLoss) {
+    public NodeChecker.Result check(final Transformation transformation, final boolean forceMeasureInfoLoss) {
         
         // If the result is already know, simply return it
-        if (node.getData() != null && node.getData() instanceof NodeChecker.Result) {
-            return (NodeChecker.Result) node.getData();
+        if (transformation.getData() != null && transformation.getData() instanceof NodeChecker.Result) {
+            return (NodeChecker.Result) transformation.getData();
         }
         
         // Store snapshot from last check
@@ -289,7 +289,7 @@ public class NodeChecker {
         }
         
         // Transition
-        Transition transition = stateMachine.transition(node.getGeneralization());
+        Transition transition = stateMachine.transition(transformation.getGeneralization());
         
         // Switch groupifies
         HashGroupify temp = lastGroupify;
@@ -300,27 +300,27 @@ public class NodeChecker {
         // Apply transition
         switch (transition.type) {
         case UNOPTIMIZED:
-            transformer.apply(transition.projection, node.getGeneralization(), currentGroupify);
+            transformer.apply(transition.projection, transformation.getGeneralization(), currentGroupify);
             break;
         case ROLLUP:
-            transformer.applyRollup(transition.projection, node.getGeneralization(), lastGroupify, currentGroupify);
+            transformer.applyRollup(transition.projection, transformation.getGeneralization(), lastGroupify, currentGroupify);
             break;
         case SNAPSHOT:
-            transformer.applySnapshot(transition.projection, node.getGeneralization(), currentGroupify, transition.snapshot);
+            transformer.applySnapshot(transition.projection, transformation.getGeneralization(), currentGroupify, transition.snapshot);
             break;
         }
         
         // We are done with transforming and adding
-        currentGroupify.stateAnalyze(node, forceMeasureInfoLoss);
+        currentGroupify.stateAnalyze(transformation, forceMeasureInfoLoss);
         if (forceMeasureInfoLoss && !currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
         }
         
         // Compute information loss and lower bound
         InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
-                                              metric.getInformationLoss(node, currentGroupify) : null;
+                                              metric.getInformationLoss(transformation, currentGroupify) : null;
         InformationLoss<?> loss = result != null ? result.getInformationLoss() : null;
-        InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
+        InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(transformation, currentGroupify);
         
         // Return result;
         return new NodeChecker.Result(currentGroupify.isPrivacyModelFulfilled(),
