@@ -44,6 +44,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
+import org.deidentifier.arx.framework.check.TransformerMultithreaded;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.junit.Before;
@@ -343,7 +344,9 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             testCase.config.setNumThreads(threads);
 
             // Test or warmup
+            TransformerMultithreaded.MULTITHREADED = 0;
             ARXResult result = anonymizer.anonymize(data, testCase.config);
+            System.out.println(TransformerMultithreaded.MULTITHREADED);
 
             final int REPETITIONS = 3;
             long time = System.currentTimeMillis();

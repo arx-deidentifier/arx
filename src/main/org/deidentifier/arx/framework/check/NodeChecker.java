@@ -27,6 +27,7 @@ import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
+import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -122,6 +123,12 @@ public class NodeChecker {
     /** Is a minimal class size required */
     private final boolean                         minimalClassSizeRequired;
 
+    /** Are we using multithreading */
+    private final boolean                         multithreading;
+
+    /** Prediction factors*/
+    private final double[][]                      predictionfactors;
+
     /**
      * Creates a new NodeChecker instance.
      * 
@@ -152,7 +159,23 @@ public class NodeChecker {
         this.microaggregationHeader = manager.getMicroaggregationHeader();
         this.solutionSpace = solutionSpace;
         this.minimalClassSizeRequired = config.getMinimalGroupSize() != Integer.MAX_VALUE;
+        this.multithreading = config.getNumThreads() > 1;
         
+        // Initialize prediction method
+        predictionfactors = new double[manager.getDataGeneralized().getHeader().length][];
+        int index = 0;
+        for (GeneralizationHierarchy hierarchy : manager.getHierarchies()) {
+            predictionfactors[index] = new double[hierarchy.getHeight()];
+            for (int level = 0; level < hierarchy.getHeight(); level++) {
+                predictionfactors[index][level] = hierarchy.getDistinctValues(level).length;
+            }
+            for (int level = hierarchy.getHeight() - 1; level >= 0; level--) {
+                predictionfactors[index][level] /= predictionfactors[index][0];
+            }
+            index++;
+        }
+        
+        // Initialize dictionaries
         int initialSize = (int) (manager.getDataGeneralized().getDataLength() * 0.01d);
         IntArrayDictionary dictionarySensValue;
         IntArrayDictionary dictionarySensFreq;
@@ -220,9 +243,15 @@ public class NodeChecker {
         
         // Prepare
         microaggregationDictionary.definalizeAll();
+
+        // Maintain information needed for multi-threading
+        double collapse = 1d;
+        if (multithreading) {
+            collapse = getCollapseFactor(transformation.getGeneralization());
+        }
         
         // Apply transition and groupify
-        transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
+        transformer.apply(0L, transformation.getGeneralization(), collapse, currentGroupify);
         currentGroupify.stateAnalyze(transformation, true);
         if (!currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
@@ -297,16 +326,22 @@ public class NodeChecker {
         currentGroupify = temp;
         currentGroupify.stateClear();
 
+        // Maintain information needed for multi-threading
+        double collapse = 1d;
+        if (multithreading) {
+            collapse = getCollapseFactor(transformation.getGeneralization());
+        }
+        
         // Apply transition
         switch (transition.type) {
         case UNOPTIMIZED:
-            transformer.apply(transition.projection, transformation.getGeneralization(), currentGroupify);
+            transformer.apply(transition.projection, transformation.getGeneralization(), collapse, currentGroupify);
             break;
         case ROLLUP:
-            transformer.applyRollup(transition.projection, transformation.getGeneralization(), lastGroupify, currentGroupify);
+            transformer.applyRollup(transition.projection, transformation.getGeneralization(), collapse, lastGroupify, currentGroupify);
             break;
         case SNAPSHOT:
-            transformer.applySnapshot(transition.projection, transformation.getGeneralization(), currentGroupify, transition.snapshot);
+            transformer.applySnapshot(transition.projection, transformation.getGeneralization(), collapse, currentGroupify, transition.snapshot);
             break;
         }
         
@@ -329,6 +364,19 @@ public class NodeChecker {
                                       bound);
     }
     
+    /**
+     * Predict the collapse factor
+     * @param generalization
+     * @return
+     */
+    private double getCollapseFactor(int[] generalization) {
+        double result = Double.MAX_VALUE;
+        for (int index = 0; index < generalization.length; index++) {
+            result = Math.min(result, predictionfactors[index][generalization[index]]);
+        }
+        return result;
+    }
+
     /**
      * Returns the configuration
      * @return
