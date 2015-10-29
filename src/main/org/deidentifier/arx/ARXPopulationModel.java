@@ -91,6 +91,16 @@ public class ARXPopulationModel implements Serializable {
 
     /**
      * Creates a new instance
+     * @param data
+     * @param populationSize
+     * @return
+     */
+    public static ARXPopulationModel create(DataHandle data, double populationSize){
+        return new ARXPopulationModel(data, populationSize);
+    }
+
+    /**
+     * Creates a new instance
      * @param region
      * @return
      */
