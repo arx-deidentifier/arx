@@ -318,7 +318,7 @@ public class NodeChecker {
         
         // Compute information loss and lower bound
         InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
-                metric.getInformationLoss(node, currentGroupify) : null;
+                                              metric.getInformationLoss(node, currentGroupify) : null;
         InformationLoss<?> loss = result != null ? result.getInformationLoss() : null;
         InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
         
