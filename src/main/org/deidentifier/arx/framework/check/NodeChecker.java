@@ -289,10 +289,10 @@ public class NodeChecker {
         }
         
         // Transition
-        final Transition transition = stateMachine.transition(node.getGeneralization());
+        Transition transition = stateMachine.transition(node.getGeneralization());
         
         // Switch groupifies
-        final HashGroupify temp = lastGroupify;
+        HashGroupify temp = lastGroupify;
         lastGroupify = currentGroupify;
         currentGroupify = temp;
         currentGroupify.stateClear();
