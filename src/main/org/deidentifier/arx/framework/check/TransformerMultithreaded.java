@@ -42,7 +42,7 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 public class TransformerMultithreaded extends Transformer {
 
     /** Minimal workload per thread */
-    private static final int                  MINIMAL_NUMER_OF_ENTRIES_PER_THREAD = 5000;
+    private static final int                      MINIMAL_NUMER_OF_ENTRIES_PER_THREAD = 5000;
 
     /** Thread pool */
     private ExecutorService                       pool;
