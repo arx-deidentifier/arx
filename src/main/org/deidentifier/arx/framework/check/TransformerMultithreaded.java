@@ -17,11 +17,13 @@
 
 package org.deidentifier.arx.framework.check;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
@@ -32,19 +34,26 @@ import org.deidentifier.arx.framework.check.transformer.AbstractTransformer;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
 /**
- * The class Transformer.
+ * A multi-threaded implementation of the Transformer class.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class TransformerMultithreaded extends Transformer {
-    
-    private static final int              MINIMAL_NUMER_OF_ENTRIES_PER_THREAD = 5000;
-                                                                              
-    private ExecutorService               pool;
-    private final int                     threads;
-    private final AbstractTransformer[][] transformers;                                        
-    private final HashGroupify[]          groupifies;
+
+    /** Minimal workload per thread */
+    private static final int                  MINIMAL_NUMER_OF_ENTRIES_PER_THREAD = 5000;
+
+    /** Thread pool */
+    private ExecutorService                       pool;
+    /** Number of threads */
+    private final int                             threads;
+    /** Transformers */
+    private final AbstractTransformer[][]         transformers;
+    /** Groupifies */
+    private final HashGroupify[]                  groupifies;
+    /** Futures */
+    private final List<Future<HashGroupifyEntry>> futures;
                                           
     /**
      * Instantiates a new transformer.
@@ -79,6 +88,7 @@ public class TransformerMultithreaded extends Transformer {
             this.transformers[i] = super.createTransformers();
         }
         this.groupifies = new HashGroupify[this.threads - 1];
+        this.futures = new ArrayList<Future<HashGroupifyEntry>>();
         for (int i = 0; i < groupifies.length; i++) {
             this.groupifies[i] = new HashGroupify(initialGroupifySize / threads, config);
         }
@@ -174,33 +184,34 @@ public class TransformerMultithreaded extends Transformer {
         }
         
         // calculate number of threads to use
-        int numTreads = (int) ((double) total / (double) MINIMAL_NUMER_OF_ENTRIES_PER_THREAD);
+        int numThreads = (int) ((double) total / (double) MINIMAL_NUMER_OF_ENTRIES_PER_THREAD);
         
         // Always use at least one thread, but not more than specified
-        if (numTreads == 0) {
-            numTreads = 1;
-        } else if (numTreads > threads) {
-            numTreads = threads;
+        if (numThreads == 0) {
+            numThreads = 1;
+        } else if (numThreads > threads) {
+            numThreads = threads;
         }
         
-        // sync on lock
-        final ReentrantLock lock = new ReentrantLock();
-        final CountDownLatch runningThreads = new CountDownLatch(numTreads);
+        // Number of items per thread
+        final int stepping = total / numThreads;
         
-        // number of items per thread
-        final int stepping = total / numTreads;
+        // Clear futures
+        futures.clear();
         
         // For each thread (if more than one)
-        for (int i = 1; i < numTreads; i++) {
+        for (int i = 1; i < numThreads; i++) {
             
             // Execute
             final int thread = i;
             final int startIndex = thread * stepping;
             final int stopIndex = thread == threads - 1 ? total : (thread + 1) * stepping;
-            
+
             // Worker thread
-            pool.execute(new Runnable() {
-                public void run() {
+            futures.add(pool.submit(new Callable<HashGroupifyEntry>() {
+
+                @Override
+                public HashGroupifyEntry call() throws Exception {
                     getTransformer(projection,
                                    transformation,
                                    source,
@@ -211,50 +222,51 @@ public class TransformerMultithreaded extends Transformer {
                                    stopIndex,
                                    thread).call();
                                    
-                    // Write back
-                    HashGroupifyEntry element = groupifies[thread - 1].getFirstEquivalenceClass();
+                    // Store result
+                    HashGroupifyEntry result = groupifies[thread - 1].getFirstEquivalenceClass();
                     
-                    // Only one thread at a time
-                    lock.lock();
-                    while (element != null) {
-                        
-                        // Add
-                        target.addFromThread(element.getHashcode(),
-                                             element.getKey(),
-                                             element.getDistributions(),
-                                             element.getRepresentative(),
-                                             element.getCount(),
-                                             element.getPcount());
-                                             
-                        // Next element
-                        element = element.getNextOrdered();
-                        
-                    }
-                    lock.unlock();
-                    
+                    // Free resources
                     groupifies[thread - 1].stateClear();
-                    runningThreads.countDown();
                     
+                    // Return
+                    return result;
                 }
-            });
+            }));
         }
         
         // Prepare main thread
         final int thread = 0;
         final int startIndex = 0;
-        final int stopIndex = numTreads == 1 ? total : (thread + 1) * stepping;
+        final int stopIndex = numThreads == 1 ? total : (thread + 1) * stepping;
         
         // Main thread
-        lock.lock();
         getTransformer(projection, transformation, source, target, snapshot, transition, startIndex, stopIndex, thread).call();
-        lock.unlock();
         
-        runningThreads.countDown();
-        // Wait for all threads to finish
-        try {
-            runningThreads.await();
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Waiting interrupted: " + e);
+        // Collect results
+        for (Future<HashGroupifyEntry> future : futures) {
+            
+            // Collect for this thread
+            HashGroupifyEntry element = null;
+            try {
+                element = future.get();
+            } catch (Exception e) {
+                throw new RuntimeException("Error transforming data", e);
+            }
+
+            // Merge with main
+            while (element != null) {
+                
+                // Add
+                target.addFromThread(element.getHashcode(),
+                                     element.getKey(),
+                                     element.getDistributions(),
+                                     element.getRepresentative(),
+                                     element.getCount(),
+                                     element.getPcount());
+                                     
+                // Next element
+                element = element.getNextOrdered();
+            }
         }
     }
 }
