@@ -113,16 +113,13 @@ public class Transformer {
      * 
      * @param projection the projection
      * @param transformation the transformation
-     * @param collapseFactor the factor
      * @param target the target
      */
     public void apply(final long projection, 
                       final int[] transformation,
-                      final double collapseFactor,
                       final HashGroupify target) {
         applyInternal(projection,
                       transformation,
-                      collapseFactor,
                       null,
                       target,
                       null,
@@ -134,18 +131,15 @@ public class Transformer {
      * 
      * @param projection the projection
      * @param transformation the state
-     * @param collapseFactor the factor
      * @param source the source
      * @param target the target
      */
     public void applyRollup(final long projection,
                             final int[] transformation,
-                            final double collapseFactor,
                             final HashGroupify source,
                             final HashGroupify target) {
         applyInternal(projection,
                       transformation,
-                      collapseFactor,
                       source,
                       target,
                       null,
@@ -157,18 +151,15 @@ public class Transformer {
      * 
      * @param projection the projection
      * @param transformation the state
-     * @param collapseFactor the factor
      * @param target the target
      * @param snapshot the snapshot
      */
     public void applySnapshot(final long projection,
                               final int[] transformation,
-                              final double collapseFactor,
                               final HashGroupify target,
                               final int[] snapshot) {
         applyInternal(projection,
                       transformation,
-                      collapseFactor,
                       null,
                       target,
                       snapshot,
@@ -196,7 +187,6 @@ public class Transformer {
      * 
      * @param projection the projection
      * @param transformation the state
-     * @param collapseFactor the factor
      * @param source the source
      * @param target the target
      * @param snapshot the snapshot
@@ -205,7 +195,6 @@ public class Transformer {
      */
     protected void applyInternal(final long projection,
                                  final int[] transformation,
-                                 final double collapseFactor,
                                  final HashGroupify source,
                                  final HashGroupify target,
                                  final int[] snapshot,

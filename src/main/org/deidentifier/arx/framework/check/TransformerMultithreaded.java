@@ -41,8 +41,8 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
  */
 public class TransformerMultithreaded extends Transformer {
 
-    /** Overhead */
-    private static final double                   OVERHEAD = 0.2d;
+    /** Minimum */
+    private static final int                      MINIMUM_WORKLOAD = 5000;
 
     /** Thread pool */
     private ExecutorService                       pool;
@@ -136,12 +136,13 @@ public class TransformerMultithreaded extends Transformer {
         return app;
     }
     
-    public static int MULTITHREADED = 0;
+    public static int THREADS = 0;
+    public static double COUNT = 0;
+    public static double MULTITHREADED = 0;
     
     @Override
     protected void applyInternal(final long projection,
                                  final int[] transformation,
-                                 final double collapseFactor,
                                  final HashGroupify source,
                                  final HashGroupify target,
                                  final int[] snapshot,
@@ -177,17 +178,9 @@ public class TransformerMultithreaded extends Transformer {
         }
         
         // Calculate number of threads
-        double factor = (collapseFactor * (double)getDataLength()) / (double)total; 
-        int numThreads = getNumberOfThreads(factor, OVERHEAD);
-        
-        // Always use at least one thread, but not more than specified
-        if (numThreads <= 0) {
-            numThreads = 1;
-        } else if (numThreads > threads) {
-            numThreads = threads;
-        }
-        
-        // Number of items per thread
+        int numThreads = getNumberOfThreads(total);
+
+        // Calculate stepping
         final int stepping = total / numThreads;
         
         // Clear futures
@@ -228,7 +221,8 @@ public class TransformerMultithreaded extends Transformer {
             }));
         }
         
-        MULTITHREADED+=futures.size();
+        THREADS+=futures.isEmpty() ? 1 : futures.size() + 1;
+        MULTITHREADED += futures.isEmpty() ? 0 : 1;
         
         // Prepare main thread
         final int thread = 0;
@@ -264,32 +258,28 @@ public class TransformerMultithreaded extends Transformer {
                 element = element.getNextOrdered();
             }
         }
+        
+        COUNT++;
     }
 
     /**
-     * Uses a model to compute the optimal number of threads for this operation
-     * @param factor
-     * @param overhead
+     * Returns the number of threads for the given number of records
+     * @param records
      * @return
      */
-    private int getNumberOfThreads(double factor, double overhead) {
+    private int getNumberOfThreads(int records) {
         
-        if (factor >= 1d) {
-            return 1;
+        // Compute
+        int result = records / MINIMUM_WORKLOAD;
+
+        // Always use at least one thread, but not more than specified
+        if (result <= 0) {
+            result = 1;
+        } else if (result > threads) {
+            result = threads;
         }
         
-        double threads = Math.floor((1d - factor) / (2d * overhead));
-        double improvement = threads * threads * overhead + (factor - 1d) * threads + 1d;
-        
-        if (improvement < 0 && threads > 1) {
-//            System.out.println("Computing number of threads");
-//            System.out.println(" - Estimated collapse factor: " + factor);
-//            System.out.println(" - Overhead: " + overhead);
-//            System.out.println(" - Threads: " + threads);
-//            System.out.println(" - Improvement: " + improvement);
-            return (int)threads;
-        } else {
-            return 1;
-        }
+        // Return
+        return result;
     }
 }

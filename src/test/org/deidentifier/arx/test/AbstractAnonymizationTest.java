@@ -344,9 +344,14 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             testCase.config.setNumThreads(threads);
 
             // Test or warmup
+            TransformerMultithreaded.THREADS = 0;
             TransformerMultithreaded.MULTITHREADED = 0;
+            TransformerMultithreaded.COUNT=0;
             ARXResult result = anonymizer.anonymize(data, testCase.config);
-            System.out.println(TransformerMultithreaded.MULTITHREADED);
+            System.out.println("Statistics");
+            System.out.println(" - Executions: " + TransformerMultithreaded.COUNT);
+            System.out.println(" - Multithreaded executions: " + TransformerMultithreaded.MULTITHREADED);
+            System.out.println(" - Threads: " + TransformerMultithreaded.THREADS);
 
             final int REPETITIONS = 3;
             long time = System.currentTimeMillis();

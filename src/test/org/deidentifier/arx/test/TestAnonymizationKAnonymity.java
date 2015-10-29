@@ -45,6 +45,7 @@ public class TestAnonymizationKAnonymity extends AbstractAnonymizationTest {
     public static Collection<Object[]> cases() {
         return Arrays.asList(new Object[][] {
 
+{ new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addCriterion(new KAnonymity(5)), "../arx-data/data-junit/cup.csv", 1764006.4033760305, new int[] { 2, 4, 0, 1, 0, 4, 4, 4 }, false) },
 /* 0 */{ new ARXAnonymizationTestCase(ARXConfiguration.create(1.0d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addCriterion(new KAnonymity(5)), "../arx-data/data-junit/adult.csv", 255559.85455731067, new int[] { 1, 0, 1, 1, 3, 2, 2, 0, 1 }, false) },
 /* 40 */{ new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addCriterion(new KAnonymity(5)), "../arx-data/data-junit/ihis.csv", 9503511.261799559, new int[] { 0, 0, 2, 3, 0, 2, 0, 1 }, false) },
                                              
