@@ -66,14 +66,12 @@ public class SolutionSpace {
     /** Potentially changing property */
     private PredictiveProperty                        propertyNotAnonymous        = new PredictiveProperty("Not anonymous",
                                                                                                            Direction.NONE);
-
     /** Static property */
     private final PredictiveProperty                  propertyNotKAnonymous       = new PredictiveProperty("Not k-anonymous",
                                                                                                            Direction.DOWN);
     /** Static property */
     private final PredictiveProperty                  propertySuccessorsPruned    = new PredictiveProperty("Successors pruned",
                                                                                                            Direction.UP); // TODO: Was NONE?
-
     /** Static property */
     private final PredictiveProperty                  propertyVisited             = new PredictiveProperty("Visited",
                                                                                                            Direction.NONE);
