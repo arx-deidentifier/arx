@@ -75,8 +75,6 @@ public class Transformer {
     /** The buffer. */
     private int[][]                          outputGeneralized;
 
-    long transformTime = 0;
-    
     /**
      * Instantiates a new transformer.
      *
@@ -188,10 +186,6 @@ public class Transformer {
         return outputGeneralized;
     }
     
-    public void print() {
-        System.out.println("Time transform: " + transformTime);
-    }
-
     /**
      * Shutdown
      */
@@ -223,8 +217,6 @@ public class Transformer {
                                  final int[] snapshot,
                                  final TransitionType transition) {
 
-        long time = System.currentTimeMillis();
-        
         int startIndex = 0;
         int stopIndex = 0;
         switch (transition) {
@@ -254,8 +246,6 @@ public class Transformer {
                  stopIndex);
 
         app.call();
-        
-        this.transformTime += (System.currentTimeMillis() - time);
     }
     
     /**

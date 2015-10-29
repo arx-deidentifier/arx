@@ -43,8 +43,7 @@ public class TransformerMultithreaded extends Transformer {
                                                                               
     private ExecutorService               pool;
     private final int                     threads;
-    private final AbstractTransformer[][] transformers;
-                                          
+    private final AbstractTransformer[][] transformers;                                        
     private final HashGroupify[]          groupifies;
                                           
     /**
