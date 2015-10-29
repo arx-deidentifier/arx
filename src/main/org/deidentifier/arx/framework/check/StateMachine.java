@@ -69,7 +69,7 @@ public class StateMachine {
     private History    history  = null;
 
     /** The last node, which has been checked for k-anonymity. */
-    private int[]      lastNode;
+    private int[]      lastTransformation;
 
     /** The last transition, which has been performed. */
     private Transition lastTransition;
@@ -77,28 +77,27 @@ public class StateMachine {
     /** The current snapshot, if any. */
     private int[]      snapshot = null;
 
-    /** The node for the current snapshot. */
-    private int[]      snapshotNode;
+    /** The transformation for the current snapshot. */
+    private int[]      snapshotTransformation;
 
     /**
      * Instantiates a new state machine.
      * 
-     * @param history
-     *            the history
+     * @param history the history
      */
     public StateMachine(final History history) {
-        this.lastNode = null;
+        this.lastTransformation = null;
         this.lastTransition = null;
         this.history = history;
     }
 
     /**
-     * Returns the last node.
+     * Returns the last transformation.
      *
-     * @return the last node, which has been checked for k-anonymity
+     * @return the last transformation, which has been checked for k-anonymity
      */
-    public int[] getLastNode() {
-        return lastNode;
+    public int[] getLastTransformation() {
+        return lastTransformation;
     }
 
     /**
@@ -114,7 +113,7 @@ public class StateMachine {
      * Resets the state machine.
      */
     public void reset() {
-        lastNode = null;
+        lastTransformation = null;
         lastTransition = null;
     }
 
@@ -152,7 +151,7 @@ public class StateMachine {
             case ROLLUP:
             case SNAPSHOT:
                 if (isPossibleSnapshot(currentNode)) {
-                    result.projection = isPredecessor(snapshotNode, lastNode) ? getProjection(currentNode) : 0L;
+                    result.projection = isPredecessor(snapshotTransformation, lastTransformation) ? getProjection(currentNode) : 0L;
                     result.type = TransitionType.SNAPSHOT;
                     result.snapshot = snapshot;
                 } else if (isPossibleRollup(currentNode)) {
@@ -169,7 +168,7 @@ public class StateMachine {
         }
 
         // Store
-        lastNode = currentNode;
+        lastTransformation = currentNode;
         lastTransition = result;
 
         // Return
@@ -187,7 +186,7 @@ public class StateMachine {
     private long getProjection(final int[] currentNode) {
         long projection = 0L;
         for (int i = 0; i < currentNode.length; i++) {
-            if (currentNode[i] == lastNode[i]) {
+            if (currentNode[i] == lastTransformation[i]) {
                 projection |= 1L << i;
             }
         }
@@ -202,8 +201,8 @@ public class StateMachine {
      * @return true, if is possible rollup
      */
     private boolean isPossibleRollup(final int[] currentNode) {
-        for (int i = 0; i < lastNode.length; i++) {
-            if (currentNode[i] < lastNode[i]) { return false; }
+        for (int i = 0; i < lastTransformation.length; i++) {
+            if (currentNode[i] < lastTransformation[i]) { return false; }
         }
         return true;
 
@@ -218,7 +217,7 @@ public class StateMachine {
      */
     private boolean isPossibleSnapshot(final int[] currentNode) {
         snapshot = history.get(currentNode);
-        snapshotNode = history.getTransformation();
+        snapshotTransformation = history.getTransformation();
         if (snapshot != null) { return true; }
         return false;
     }

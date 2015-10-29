@@ -284,8 +284,8 @@ public class NodeChecker {
         }
         
         // Store snapshot from last check
-        if (stateMachine.getLastNode() != null) {
-            history.store(solutionSpace.getTransformation(stateMachine.getLastNode()), currentGroupify, stateMachine.getLastTransition().snapshot);
+        if (stateMachine.getLastTransformation() != null) {
+            history.store(solutionSpace.getTransformation(stateMachine.getLastTransformation()), currentGroupify, stateMachine.getLastTransition().snapshot);
         }
         
         // Transition
