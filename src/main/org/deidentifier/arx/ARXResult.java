@@ -671,8 +671,8 @@ public class ARXResult {
             ARXListener wrapper = new ARXListener() {
                 @Override
                 public void progress(double progress) {
-                    double _max = (max > 1d && !Double.isInfinite(max) ? max : 1d);
-                    double _base = (base > 0d && !Double.isNaN(base) ? base : 0d);
+                    double _max = (max > 1d && !Double.isInfinite(max) && !Double.isNaN(max) ? max : 1d);
+                    double _base = (base > 0d && !Double.isInfinite(base) && !Double.isNaN(base)? base : 0d);
                     double value = (progress + _base) / _max;
                     listener.progress(value);
                 }
