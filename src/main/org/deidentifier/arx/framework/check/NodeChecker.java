@@ -222,6 +222,9 @@ public class NodeChecker {
         // Prepare
         microaggregationDictionary.definalizeAll();
 
+        // Clear groupify
+        currentGroupify.stateClear();
+
         // Apply transition and groupify
         transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
         currentGroupify.stateAnalyze(transformation, true);
