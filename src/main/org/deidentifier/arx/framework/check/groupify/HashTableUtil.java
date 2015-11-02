@@ -176,7 +176,7 @@ public class HashTableUtil {
         final int len = array.length;
         int result = 23;
         int i = 0;
-        // do blocks of four ints unrolled.
+        // Do blocks of four ints unrolled.
         for (; (i + 3) < len; i += 4) {
             result = (1874161 * result) + // 37 * 37 * 37 * 37 
                      (50653 * array[i]) + // 37 * 37 * 37
@@ -184,7 +184,7 @@ public class HashTableUtil {
                      (37 * array[i + 2]) +
                      array[i + 3];
         }
-        // do the rest
+        // Do the rest
         for (; i < len; i++) {
             result = (37 * result) + array[i];
         }
