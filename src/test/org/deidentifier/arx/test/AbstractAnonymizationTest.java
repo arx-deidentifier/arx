@@ -494,24 +494,24 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                 line.append(";");
                 line.append("");
                 line.append(";");
-                line.append("Execution time");
+                line.append("Execution Time");
                 line.append(";");
-                line.append("Internal execution time");
+                line.append("Internal Execution Time");
                 writer.write(line.toString());
                 writer.write(System.lineSeparator());
                 
                 line = new StringBuilder();
                 line.append("Version");
                 line.append(";");
-                line.append("Git commit");
+                line.append("Git Commit");
                 line.append(";");
                 line.append("Test");
                 line.append(";");
                 line.append("Testid");
                 line.append(";");
-                line.append("Arithmetic mean");
+                line.append("Arithmetic Mean");
                 line.append(";");
-                line.append("Arithmetic mean");
+                line.append("Arithmetic Mean");
                 writer.write(line.toString());
                 writer.write(System.lineSeparator());
                 
