@@ -354,7 +354,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             
             String version = System.getProperty("Version");
             String path = System.getProperty("Benchmark");
-            if (path == null) {
+            if (path == null || path.length()==0) {
                 path = ".";
             }
             String testClass = this.getClass().getSimpleName();
@@ -382,7 +382,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             line.append(time);
             line.append(";");
             line.append(time2);
-            appendToFile(line.toString(), path + "/benchmark_" + version + "_" + timestamp + "_" + testClass + ".csv");
+            output(line.toString(), path + "/benchmark_" + version + "_" + timestamp + "_" + testClass + ".csv");
         }
         
         // check if no solution
@@ -451,7 +451,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
      * @param value
      * @param file
      */
-    private void appendToFile(String value, String file) {
+    private void output(String value, String file) {
         Writer writer = null;
         try {
             createHeader(file);
@@ -459,6 +459,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             writer = new BufferedWriter(writer);
             writer.write(value);
             writer.write(System.lineSeparator());
+            System.out.println(value);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -508,9 +509,9 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                 line.append(";");
                 line.append("Testid");
                 line.append(";");
-                line.append("Arithmetic Mean");
+                line.append("Arithmetic mean");
                 line.append(";");
-                line.append("Arithmetic Mean");
+                line.append("Arithmetic mean");
                 writer.write(line.toString());
                 writer.write(System.lineSeparator());
                 
