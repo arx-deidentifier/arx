@@ -30,6 +30,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import de.linearbits.swt.widgets.Knob;
 
@@ -47,10 +48,10 @@ public class EditorCriterionDPresence extends EditorCriterion<ModelDPresenceCrit
     private Knob<Double> knobDMax;
 
     /** View */
-    private Label        labelDMin;
+    private Text         labelDMin;
 
     /** View */
-    private Label        labelDMax;
+    private Text         labelDMax;
 
     /**
      * Creates a new instance.

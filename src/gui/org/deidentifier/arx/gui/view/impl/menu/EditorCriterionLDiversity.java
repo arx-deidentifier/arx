@@ -32,6 +32,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import de.linearbits.swt.widgets.Knob;
 
@@ -55,10 +56,10 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
     private Combo               comboVariant;
 
     /** View */
-    private Label               labelC;
+    private Text                labelC;
 
     /** View */
-    private Label               labelL;
+    private Text                labelL;
 
     /**
      * Creates a new instance.

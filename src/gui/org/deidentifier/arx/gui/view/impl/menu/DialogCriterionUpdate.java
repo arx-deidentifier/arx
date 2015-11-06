@@ -48,6 +48,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -329,7 +330,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
         this.root = folder.createItem(Resources.getMessage("DialogCriterionUpdate.15"), null); //$NON-NLS-1$
         this.root.setLayout(SWTUtil.createGridLayout(1));
         folder.setSelection(0);
-
+        
         if (selection != null) {
             table.setSelection(elements.indexOf(selection));
         } else if (table.getItemCount() != 0){
@@ -337,7 +338,11 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
             selection = elements.get(0);
         }
         update();
-        
+
+        Label label = new Label(parent, SWT.CENTER);
+        label.setLayoutData(SWTUtil.createFillGridData());
+        label.setText(Resources.getMessage("DialogCriterionUpdate.20")); //$NON-NLS-1$
+
         return parent;
     }
 

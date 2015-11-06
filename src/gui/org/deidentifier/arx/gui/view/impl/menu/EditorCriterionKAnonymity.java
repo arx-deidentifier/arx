@@ -30,6 +30,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import de.linearbits.swt.widgets.Knob;
 
@@ -41,7 +42,7 @@ import de.linearbits.swt.widgets.Knob;
 public class EditorCriterionKAnonymity extends EditorCriterion<ModelKAnonymityCriterion>{
 
     /** View */
-    private Label         labelK;
+    private Text          labelK;
 
     /** View */
     private Knob<Integer> knobK;

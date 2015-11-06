@@ -17,7 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 import org.deidentifier.arx.gui.model.ModelCriterion;
@@ -29,6 +28,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import de.linearbits.swt.widgets.Knob;
 import de.linearbits.swt.widgets.KnobColorProfile;
@@ -49,8 +49,6 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
     private final KnobColorProfile defaultColorProfile;
     /** Color profile */
     private final KnobColorProfile focusedColorProfile;
-    /** Format */
-    private final DecimalFormat    format = new DecimalFormat("0.00000E0###");
 
     /**
      * Creates a new instance.
@@ -152,10 +150,12 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
      * Creates a label
      * @return
      */
-    protected Label createLabel(Composite parent) {
-        Label label = new Label(parent, SWT.BORDER | SWT.LEFT);
+    protected Text createLabel(Composite parent) {
+
+        final Text label = new Text(parent, SWT.BORDER | SWT.LEFT);
         GridData data = SWTUtil.createFillHorizontallyGridData(false);
         label.setLayoutData(data);
+        label.setEditable(false);
         return label;
     }
 
@@ -187,12 +187,24 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
      * @param label
      * @param value
      */
-    protected void updateLabel(Label label, double value) {
-        String text = format.format(value).replace(",", ".").replace("E", "e");
+    protected void updateLabel(Text label, double value) {
+        String text = SWTUtil.getPrettyString(value);
+        label.setText(" " + text);
+        label.setToolTipText(String.valueOf(value));
+    }
+
+    /**
+     * Updates the label and tool tip text.
+     *
+     * @param label
+     * @param value
+     */
+    protected void updateLabel(Text label, int value) {
+        String text = SWTUtil.getPrettyString(value);
         label.setText(" " + text);
         label.setToolTipText(text);
     }
-
+    
     /**
      * Updates the label and tool tip text.
      *

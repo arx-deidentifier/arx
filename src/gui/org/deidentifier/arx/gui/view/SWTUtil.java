@@ -17,6 +17,11 @@
 
 package org.deidentifier.arx.gui.view;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
+import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -52,9 +57,15 @@ import de.linearbits.swt.table.DynamicTable;
  * @author Fabian Prasser
  */
 public class SWTUtil {
-    
-    /** Static settings. */
-    public static final int SLIDER_MAX = 1000;
+
+    /** Constant */
+    public static final int     SLIDER_MAX = 1000;
+
+    /** Constant */
+    private static final double LN2        = new Log().value(2);
+
+    /** Constant */
+    private static final double LN3        = new Log().value(3);
 
     /**
      * Centers the shell on the given monitor.
@@ -110,6 +121,15 @@ public class SWTUtil {
      *
      * @return
      */
+    public static GridData createFillGridData() {
+        return createFillGridData(1);
+    }
+
+    /**
+     * Creates grid data.
+     *
+     * @return
+     */
     public static GridData createFillGridData(int span) {
         final GridData data = new GridData();
         data.horizontalAlignment = SWT.FILL;
@@ -120,15 +140,6 @@ public class SWTUtil {
         data.verticalIndent=0;
         data.horizontalSpan = span;
         return data;
-    }
-
-    /**
-     * Creates grid data.
-     *
-     * @return
-     */
-    public static GridData createFillGridData() {
-        return createFillGridData(1);
     }
 
     /**
@@ -325,29 +336,6 @@ public class SWTUtil {
     }
 
     /**
-     * Fixes bugs on OSX when scrolling in tables
-     * @param table
-     */
-    private static void fixOSXTableBug(final Table table) {
-        if (isMac()) {
-            SelectionListener bugFixer = new SelectionListener(){
-                
-                @Override
-                public void widgetSelected(SelectionEvent arg0) {
-                    table.redraw();
-                }
-
-                @Override
-                public void widgetDefaultSelected(SelectionEvent arg0) {
-                    widgetSelected(arg0);
-                }
-            };
-            table.getVerticalBar().addSelectionListener(bugFixer);
-            table.getHorizontalBar().addSelectionListener(bugFixer);
-        }
-    }
-
-    /**
      * Returns a dynamic table. Implements hacks for fixing OSX bugs.
      * @param parent
      * @param style
@@ -441,6 +429,39 @@ public class SWTUtil {
     }
 
     /**
+     * Returns a pretty string representing the given double
+     * @param value
+     * @return
+     */
+    public static String getPrettyString(double value) {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+        if (value == LN2) {
+            return "ln(2)";
+        } else if (value == LN3) {
+            return "ln(3)";
+        } else if (value == 0) {
+            return "0";
+        } else if (Math.abs(value) < 0.00001) {
+            return new DecimalFormat("#.#####E0", symbols).format(value).replace('E', 'e');
+        } else if (Math.abs(value) < 1) {
+            return new DecimalFormat("#.#####", symbols).format(value);
+        } else if (Math.abs(value) < 100000) {
+            return new DecimalFormat("######.#####", symbols).format(value);
+        } else {
+            return String.valueOf(value).replace('E', 'e');
+        }
+    }
+
+    /**
+     * Returns a pretty string representing the given value
+     * @param value
+     * @return
+     */
+    public static String getPrettyString(int value) {
+        return String.valueOf(value);
+    }
+
+    /**
      * Converts the integer value to a slider selection.
      *
      * @param min
@@ -450,6 +471,14 @@ public class SWTUtil {
      */
     public static int intToSlider(final int min, final int max, final int value) {
         return doubleToSlider(min, max, value);
+    }
+
+    /**
+     * Are we running on an OSX system
+     * @return
+     */
+    public static boolean isMac() {
+        return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -472,7 +501,7 @@ public class SWTUtil {
         }
         return val;
     }
-
+    
     /**
      * Converts the slider value to an integer.
      *
@@ -484,13 +513,28 @@ public class SWTUtil {
     public static int sliderToInt(final int min, final int max, final int value) {
         return (int)Math.round(sliderToDouble(min, max, value));
     }
-
+    
     /**
-     * Are we running on an OSX system
-     * @return
+     * Fixes bugs on OSX when scrolling in tables
+     * @param table
      */
-    public static boolean isMac() {
-        return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0; //$NON-NLS-1$ //$NON-NLS-2$
+    private static void fixOSXTableBug(final Table table) {
+        if (isMac()) {
+            SelectionListener bugFixer = new SelectionListener(){
+                
+                @Override
+                public void widgetDefaultSelected(SelectionEvent arg0) {
+                    widgetSelected(arg0);
+                }
+
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    table.redraw();
+                }
+            };
+            table.getVerticalBar().addSelectionListener(bugFixer);
+            table.getHorizontalBar().addSelectionListener(bugFixer);
+        }
     }
     
     /**

@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import de.linearbits.swt.widgets.Knob;
 
@@ -45,7 +46,7 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
     private Knob<Double> knobThreshold;
 
     /** View */
-    private Label        labelThreshold;
+    private Text         labelThreshold;
 
     /** View */
     private Combo        cmbModel;

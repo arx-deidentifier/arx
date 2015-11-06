@@ -40,6 +40,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import de.linearbits.swt.widgets.Knob;
 
@@ -60,11 +61,10 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
     private Combo                 comboGeneralization;
 
     /** View */
-    private Label                 labelEpsilon;
+    private Text                  labelEpsilon;
 
     /** View */
-    private Label                 labelDelta;
-    
+    private Text                  labelDelta;
 
     /**
      * Some epsilon values mentioned in "Practicing Differential Privacy in Health Care: A Review"

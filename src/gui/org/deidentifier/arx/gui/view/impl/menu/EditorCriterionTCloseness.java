@@ -32,6 +32,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import de.linearbits.swt.widgets.Knob;
 
@@ -52,7 +53,7 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
     private Combo               comboVariant;
 
     /** View */
-    private Label               labelT;
+    private Text                labelT;
 
     /**
      * Creates a new instance.

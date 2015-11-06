@@ -30,6 +30,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import de.linearbits.swt.widgets.Knob;
 
@@ -41,10 +42,10 @@ import de.linearbits.swt.widgets.Knob;
 public class EditorCriterionDDisclosurePrivacy extends EditorCriterion<ModelDDisclosurePrivacyCriterion> {
 
     /** View */
-    private Knob<Double>        knobD;
+    private Knob<Double> knobD;
 
     /** View */
-    private Label               labelD;
+    private Text         labelD;
 
     /**
      * Creates a new instance.
