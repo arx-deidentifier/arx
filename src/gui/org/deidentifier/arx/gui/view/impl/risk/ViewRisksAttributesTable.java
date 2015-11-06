@@ -16,7 +16,6 @@
  */
 package org.deidentifier.arx.gui.view.impl.risk;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,9 +51,6 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * @author Fabian Prasser
  */
 public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
-
-    /** View */
-    private DecimalFormat     format = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
     /** View */
     private Composite         root;
@@ -109,9 +105,9 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
             }
         }
         item.setText(0, builder.toString());
-        item.setText(1, format.format(risks.getFractionOfUniqueTuples() * 100d));
-        item.setText(2, format.format(risks.getHighestReidentificationRisk() * 100d));
-        item.setText(3, format.format(risks.getAverageReidentificationRisk() * 100d));
+        item.setText(1, SWTUtil.getPrettyString(risks.getFractionOfUniqueTuples() * 100d));
+        item.setText(2, SWTUtil.getPrettyString(risks.getHighestReidentificationRisk() * 100d));
+        item.setText(3, SWTUtil.getPrettyString(risks.getAverageReidentificationRisk() * 100d));
     }
 
     @Override

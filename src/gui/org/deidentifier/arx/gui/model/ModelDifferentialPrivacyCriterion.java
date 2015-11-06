@@ -17,12 +17,12 @@
 
 package org.deidentifier.arx.gui.model;
 
-import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataGeneralizationScheme.GeneralizationDegree;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 
 /**
  * This class implements a model for the (e,d)-DP criterion.
@@ -33,12 +33,6 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     /** SVUID */
     private static final long        serialVersionUID = 1803345324372136700L;
-
-    /** Constant */
-    private static final double      LN2            = new Log().value(2);
-
-    /** Constant */
-    private static final double      LN3            = new Log().value(3);
 
     /** Epsilon */
     private double                   epsilon          = 2d;
@@ -150,14 +144,6 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     @Override
     public String toString() {
-        
-        String e = String.valueOf(epsilon);
-        if (epsilon == LN2) {
-            e = "ln(2)";
-        } else if (epsilon == LN3) {
-            e = "ln(3)";
-        }
-        
-        return "("+e+", "+delta+")" + Resources.getMessage("ModelCriterion.2"); //$NON-NLS-1$
+        return "(" + SWTUtil.getPrettyString(epsilon) + ", " + SWTUtil.getPrettyString(delta) + ")" + Resources.getMessage("ModelCriterion.2"); //$NON-NLS-1$
     }
 }

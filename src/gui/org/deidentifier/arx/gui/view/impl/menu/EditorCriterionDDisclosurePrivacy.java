@@ -79,7 +79,7 @@ public class EditorCriterionDDisclosurePrivacy extends EditorCriterion<ModelDDis
         knobD.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.setT(knobD.getValue());
+                model.setD(knobD.getValue());
                 updateLabel(labelD, model.getD());
             }
         });

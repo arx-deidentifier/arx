@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.utility;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,16 +47,16 @@ public abstract class ViewProperties implements IView {
      */
     protected class Property {
         
-        /**  TODO */
+        /**  Parent */
         public Property       parent;
         
-        /**  TODO */
+        /**  Children */
         public List<Property> children = new ArrayList<Property>();
         
-        /**  TODO */
+        /**  Label */
         public String         property;
         
-        /**  TODO */
+        /**  Values */
         public String[]       values;
 
         /**
@@ -104,9 +102,6 @@ public abstract class ViewProperties implements IView {
 
     /** Internal stuff. */
     protected final Composite      root;
-
-    /** Internal stuff. */
-    protected final NumberFormat   format  = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
     /** Internal stuff. */
     protected Model                model;

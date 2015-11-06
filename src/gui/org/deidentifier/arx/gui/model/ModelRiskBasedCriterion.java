@@ -22,6 +22,7 @@ import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleUniqueness;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**
@@ -165,17 +166,17 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
     public String toString() {
         switch (variant) {
         case VARIANT_AVERAGE_RISK:
-            return Resources.getMessage("Model.8a") + threshold + Resources.getMessage("Model.9a"); //$NON-NLS-1$ //$NON-NLS-2$
+            return Resources.getMessage("Model.8a") + SWTUtil.getPrettyString(threshold) + Resources.getMessage("Model.9a"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_POPULATION_UNIQUES_DANKAR:
-            return Resources.getMessage("Model.10a") + threshold + Resources.getMessage("Model.11"); //$NON-NLS-1$ //$NON-NLS-2$
+            return Resources.getMessage("Model.10a") + SWTUtil.getPrettyString(threshold) + Resources.getMessage("Model.11"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_POPULATION_UNIQUES_PITMAN:
-            return Resources.getMessage("Model.12") + threshold + Resources.getMessage("Model.13"); //$NON-NLS-1$ //$NON-NLS-2$
+            return Resources.getMessage("Model.12") + SWTUtil.getPrettyString(threshold) + Resources.getMessage("Model.13"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_POPULATION_UNIQUES_SNB:
-            return Resources.getMessage("Model.14") + threshold + Resources.getMessage("Model.15"); //$NON-NLS-1$ //$NON-NLS-2$
+            return Resources.getMessage("Model.14") + SWTUtil.getPrettyString(threshold) + Resources.getMessage("Model.15"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_POPULATION_UNIQUES_ZAYATZ:
-            return Resources.getMessage("Model.16") + threshold + Resources.getMessage("Model.17"); //$NON-NLS-1$ //$NON-NLS-2$
+            return Resources.getMessage("Model.16") + SWTUtil.getPrettyString(threshold) + Resources.getMessage("Model.17"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_SAMPLE_UNIQUES:
-            return Resources.getMessage("Model.18") + threshold + Resources.getMessage("Model.19"); //$NON-NLS-1$ //$NON-NLS-2$
+            return Resources.getMessage("Model.18") + SWTUtil.getPrettyString(threshold) + Resources.getMessage("Model.19"); //$NON-NLS-1$ //$NON-NLS-2$
         default:
             throw new RuntimeException(Resources.getMessage("Model.20")); //$NON-NLS-1$
         }

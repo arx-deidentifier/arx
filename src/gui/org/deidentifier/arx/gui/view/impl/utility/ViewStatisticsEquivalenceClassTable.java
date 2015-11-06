@@ -16,8 +16,6 @@
  */
 package org.deidentifier.arx.gui.view.impl.utility;
 
-import java.text.DecimalFormat;
-
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.gui.Controller;
@@ -53,8 +51,6 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
 
     /** Internal stuff. */
     private AnalysisManager            manager;
-
-    private static final DecimalFormat format = new DecimalFormat("0.####");
 
     /**
      * Creates a new instance.
@@ -167,16 +163,16 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
                            format(summary.getMinimalEquivalenceClassSize(), summary.getNumberOfTuples()));
 
                 createItem(Resources.getMessage("EquivalenceClassStatistics.7"), //$NON-NLS-1$
-                           format(summary.getNumberOfEquivalenceClassesIncludingOutliers()),
-                           format(summary.getNumberOfEquivalenceClasses()));
+                           SWTUtil.getPrettyString(summary.getNumberOfEquivalenceClassesIncludingOutliers()),
+                           SWTUtil.getPrettyString(summary.getNumberOfEquivalenceClasses()));
 
                 createItem(Resources.getMessage("EquivalenceClassStatistics.8"), //$NON-NLS-1$
-                           format(summary.getNumberOfTuplesIncludingOutliers()),
+                           SWTUtil.getPrettyString(summary.getNumberOfTuplesIncludingOutliers()),
                            format(summary.getNumberOfTuples(), summary.getNumberOfTuplesIncludingOutliers()));
 
                 createItem(Resources.getMessage("EquivalenceClassStatistics.9"), //$NON-NLS-1$
                            format(summary.getNumberOfOutlyingTuples(), summary.getNumberOfTuplesIncludingOutliers()),
-                           format(0));
+                           SWTUtil.getPrettyString(0));
                 
                 table.setRedraw(true);
                 
@@ -216,23 +212,14 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
     /**
      * Formats the given string
      * @param value
-     * @return
-     */
-    private String format(double value) {
-        return format.format(value).replace(",", "."); 
-    }
-
-    /**
-     * Formats the given string
-     * @param value
      * @param baseline
      * @return
      */
     private String format(double value, double baseline) {
         StringBuilder builder = new StringBuilder();
-        builder.append(format(value));
+        builder.append(SWTUtil.getPrettyString(value));
         builder.append(" (");
-        builder.append(format(value / baseline * 100d));
+        builder.append(SWTUtil.getPrettyString(value / baseline * 100d));
         builder.append("%)");
         return builder.toString();
     }

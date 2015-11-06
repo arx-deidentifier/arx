@@ -18,8 +18,6 @@
 package org.deidentifier.arx.gui.view.impl.risk;
 
 
-import java.text.DecimalFormat;
-
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.DataHandle;
@@ -66,8 +64,6 @@ public class ViewRisksPopulationModel implements IView {
     private Text             textSampleFraction;
     /** View */
     private Text             textPopulationSize;
-    /** View */
-    private DecimalFormat    format = new DecimalFormat("0.########################################"); //$NON-NLS-1$
     /** View */
     private Button           buttonUse;
     
@@ -257,9 +253,9 @@ public class ViewRisksPopulationModel implements IView {
             }
             table.getParent().setFocus();
             DataHandle handle = model.getInputConfig().getInput().getHandle();
-            textSampleFraction.setText(format.format(popmodel.getSamplingFraction(handle)));
+            textSampleFraction.setText(SWTUtil.getPrettyString(popmodel.getSamplingFraction(handle)));
             textSampleFraction.setEnabled(true);
-            textPopulationSize.setText(format.format(popmodel.getPopulationSize(handle)));
+            textPopulationSize.setText(SWTUtil.getPrettyString(popmodel.getPopulationSize(handle)));
             textPopulationSize.setEnabled(true);
         }
         root.setRedraw(true);

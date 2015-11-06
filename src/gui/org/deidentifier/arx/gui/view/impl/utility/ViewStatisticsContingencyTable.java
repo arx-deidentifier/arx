@@ -17,7 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.utility;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +26,7 @@ import org.deidentifier.arx.aggregates.StatisticsContingencyTable;
 import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTable;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
@@ -133,8 +133,6 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
                     return;
                 }
 
-                final DecimalFormat format = new DecimalFormat("##0.00000"); //$NON-NLS-1$
-
                 // Set data
                 table.setData(new IDataProvider(){
 
@@ -146,7 +144,7 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
                     @Override
                     public Object getDataValue(int arg0, int arg1) {
                         int index = Sorting.binarySearchFromTo(outputValues[arg0], arg1, 0, outputValues[arg0].length - 1);
-                        return format.format((index >= 0 ? outputFrequencies[arg0][index] : 0)*100d)+"%"; //$NON-NLS-1$
+                        return SWTUtil.getPrettyString((index >= 0 ? outputFrequencies[arg0][index] : 0)*100d)+"%"; //$NON-NLS-1$
                     }
 
                     @Override

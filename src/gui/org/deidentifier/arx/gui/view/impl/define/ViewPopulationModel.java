@@ -18,8 +18,6 @@
 package org.deidentifier.arx.gui.view.impl.define;
 
 
-import java.text.DecimalFormat;
-
 import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
@@ -59,8 +57,6 @@ public class ViewPopulationModel implements IView {
     private Text             text;
     /** View */
     private Text             text2;
-    /** View */
-    private DecimalFormat    format = new DecimalFormat("0.########################################"); //$NON-NLS-1$
     /** Model */
     private Model            model;
 
@@ -155,8 +151,8 @@ public class ViewPopulationModel implements IView {
                     if (selected != null) {
                         model.getRiskModel().setRegion(selected);
                         controller.update(new ModelEvent(ViewPopulationModel.this, ModelPart.POPULATION_MODEL, model.getRiskModel()));
-                        text.setText(format.format(model.getRiskModel().getSampleFraction(sampleSize)));
-                        text2.setText(format.format(model.getRiskModel().getPopulationSize(sampleSize)));
+                        text.setText(SWTUtil.getPrettyString(model.getRiskModel().getSampleFraction(sampleSize)));
+                        text2.setText(SWTUtil.getPrettyString(model.getRiskModel().getPopulationSize(sampleSize)));
                     }
                 }
             }
@@ -166,7 +162,7 @@ public class ViewPopulationModel implements IView {
             public void modifyText(ModifyEvent arg0) {
                 double value;
                 try {
-                    value = format.parse(text.getText()).doubleValue();
+                    value = Double.valueOf(text.getText()).doubleValue();
                 } catch (Exception e) {
                     value = -1;
                 }
@@ -191,7 +187,7 @@ public class ViewPopulationModel implements IView {
                         break;
                     }
                 }
-                text2.setText(format.format(model.getRiskModel().getPopulationSize(handle.getNumRows())));
+                text2.setText(SWTUtil.getPrettyString(model.getRiskModel().getPopulationSize(handle.getNumRows())));
                 controller.update(new ModelEvent(ViewPopulationModel.this, ModelPart.POPULATION_MODEL, model.getRiskModel()));
             } 
         });
@@ -200,7 +196,7 @@ public class ViewPopulationModel implements IView {
             public void modifyText(ModifyEvent arg0) {
                 double value;
                 try {
-                    value = format.parse(text2.getText()).doubleValue();
+                    value = Double.valueOf(text2.getText()).doubleValue();
                 } catch (Exception e) {
                     value = -1;
                 }
@@ -230,7 +226,7 @@ public class ViewPopulationModel implements IView {
                         break;
                     }
                 }
-                text.setText(format.format(model.getRiskModel().getSampleFraction(handle)));
+                text.setText(SWTUtil.getPrettyString(model.getRiskModel().getSampleFraction(handle)));
                 controller.update(new ModelEvent(ViewPopulationModel.this, ModelPart.POPULATION_MODEL, model.getRiskModel()));
             } 
         });
@@ -259,8 +255,8 @@ public class ViewPopulationModel implements IView {
         }
         
         DataHandle handle = model.getInputConfig().getInput().getHandle();
-        text.setText(format.format(model.getRiskModel().getSampleFraction(handle)));
-        text2.setText(format.format(model.getRiskModel().getPopulationSize(handle)));
+        text.setText(SWTUtil.getPrettyString(model.getRiskModel().getSampleFraction(handle)));
+        text2.setText(SWTUtil.getPrettyString(model.getRiskModel().getPopulationSize(handle)));
         
         root.setRedraw(true);
         SWTUtil.enable(root);

@@ -16,8 +16,6 @@
  */
 package org.deidentifier.arx.gui.view.impl.risk;
 
-import java.text.DecimalFormat;
-
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -54,9 +52,6 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
     /** View */
     private DynamicTable             table;
 
-    /** View */
-    private DecimalFormat            format;
-
     /** Internal stuff. */
     private AnalysisManager          manager;
 
@@ -89,7 +84,6 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
     @Override
     protected Control createControl(Composite parent) {
 
-        this.format = new DecimalFormat("##0.00000"); //$NON-NLS-1$
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
         
@@ -180,7 +174,7 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(0, String.valueOf(distribution[i]));
                     item.setText(1, String.valueOf(distribution[i + 1]));
-                    item.setText(2, format.format((double) distribution[i + 1] / numClasses * 100d));
+                    item.setText(2, SWTUtil.getPrettyString((double) distribution[i + 1] / numClasses * 100d));
                 }
 
                 root.layout();

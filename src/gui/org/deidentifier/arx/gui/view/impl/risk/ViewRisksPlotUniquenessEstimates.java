@@ -16,7 +16,6 @@
  */
 package org.deidentifier.arx.gui.view.impl.risk;
 
-import java.text.DecimalFormat;
 import java.util.Arrays;
 
 import org.deidentifier.arx.ARXPopulationModel;
@@ -25,6 +24,7 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
@@ -66,9 +66,6 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
     /** Minimal width of a category label. */
     private static final int           MIN_CATEGORY_WIDTH = 10;
 
-    /** View */
-    private static final DecimalFormat FORMAT             = new DecimalFormat("##0.0###################"); //$NON-NLS-1$
-
     /** Labels for the plot. */
     private static final double[]      POINTS             = getPoints();
 
@@ -83,7 +80,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
     private static String[] getLabels(double[] points) {
         String[] result = new String[points.length];
         for (int i = 0; i < points.length; i++) {
-            result[i] = FORMAT.format(points[i]);
+            result[i] = SWTUtil.getPrettyString(points[i]);
         }
         return result;
     }

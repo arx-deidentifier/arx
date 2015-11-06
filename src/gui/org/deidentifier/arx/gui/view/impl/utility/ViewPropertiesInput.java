@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.utility;
 
-import java.text.DecimalFormat;
-
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
@@ -27,6 +25,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTree;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -243,7 +242,7 @@ public class ViewPropertiesInput extends ViewProperties {
         
         // Print basic properties
         new Property(Resources.getMessage("PropertiesView.9"), new String[] { String.valueOf(data.getNumRows()) }); //$NON-NLS-1$
-        new Property(Resources.getMessage("PropertiesView.10"), new String[] { String.valueOf(config.getAllowedOutliers() * 100d) + Resources.getMessage("PropertiesView.11") }); //$NON-NLS-1$ //$NON-NLS-2$
+        new Property(Resources.getMessage("PropertiesView.10"), new String[] { SWTUtil.getPrettyString(config.getAllowedOutliers() * 100d) + Resources.getMessage("PropertiesView.11") }); //$NON-NLS-1$ //$NON-NLS-2$
         new Property(Resources.getMessage("PropertiesView.114"), new String[] { config.getMetric().toString() }); //$NON-NLS-1$
         final Property attributes = new Property(Resources.getMessage("PropertiesView.12"), new String[] { String.valueOf(data.getNumColumns()) }); //$NON-NLS-1$
         
@@ -261,7 +260,6 @@ public class ViewPropertiesInput extends ViewProperties {
         }
 
         // Print quasi-identifying attributes
-        final DecimalFormat format = new DecimalFormat("0.000"); //$NON-NLS-1$
         final Property quasiIdentifying = new Property(attributes, Resources.getMessage("PropertiesView.20"), new String[] { String.valueOf(definition.getQuasiIdentifyingAttributes().size()) }); //$NON-NLS-1$
         index = 0;
         for (int i = 0; i < data.getNumColumns(); i++) {
@@ -290,7 +288,7 @@ public class ViewPropertiesInput extends ViewProperties {
                 if (definition.getMicroAggregationFunction(s) != null){
                     values[7] = definition.getMicroAggregationFunction(s).getLabel();
                 }
-                values[6] = format.format(config.getAttributeWeight(s));
+                values[6] = SWTUtil.getPrettyString(config.getAttributeWeight(s));
                 new Property(quasiIdentifying, Resources.getMessage("PropertiesView.26") + (index++), values); //$NON-NLS-1$
             }
         }

@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.define;
 
-import java.text.DecimalFormat;
-
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -74,9 +72,6 @@ public class ViewSubsetDefinition implements IView{
     
     /**  View */
     private ToolItem filter;
-    
-    /**  View */
-    private DecimalFormat format = new DecimalFormat("##0.00"); //$NON-NLS-1$
     
     /**
      * Creates a new instance.
@@ -260,9 +255,9 @@ public class ViewSubsetDefinition implements IView{
         int size = model.getInputConfig().getResearchSubset().size();
         int total = model.getInputConfig().getInput().getHandle().getNumRows();
         double percent = (double)size / (double)total * 100d;
-        this.size.setText(String.valueOf(size));
-        this.total.setText(String.valueOf(total));
-        this.percent.setText(format.format(percent));
+        this.size.setText(SWTUtil.getPrettyString(size));
+        this.total.setText(SWTUtil.getPrettyString(total));
+        this.percent.setText(SWTUtil.getPrettyString(percent));
         this.origin.setText(model.getSubsetOrigin());
     }
 }

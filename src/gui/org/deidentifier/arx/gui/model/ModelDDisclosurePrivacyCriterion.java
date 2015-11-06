@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.model;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 
 /**
  * This class implements a model for the d-disclosure privacy criterion
@@ -104,12 +105,12 @@ public class ModelDDisclosurePrivacyCriterion extends ModelExplicitCriterion{
      *
      * @param d
      */
-	public void setT(double d) {
+	public void setD(double d) {
 		this.d = d;
 	}
     
     @Override
     public String toString() {
-        return String.valueOf(d)+Resources.getMessage("Model.30"); //$NON-NLS-1$
+        return SWTUtil.getPrettyString(d)+Resources.getMessage("Model.30"); //$NON-NLS-1$
     }
 }

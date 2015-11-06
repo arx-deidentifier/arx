@@ -17,7 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -154,7 +153,6 @@ public class MainToolBar extends AbstractMenu {
         public String toString() {
 
             // Prepare
-            DecimalFormat format = new DecimalFormat("#########0.000"); //$NON-NLS-1$
             double prunedPercentage = (double) this.numTransformationsPruned /
                                       (double) this.numMaterializedTransformations * 100d;
             
@@ -171,17 +169,17 @@ public class MainToolBar extends AbstractMenu {
             sb.append(Resources.getMessage("MainToolBar.41")) //$NON-NLS-1$
             .append(this.numMaterializedTransformations);
             sb.append(" [") //$NON-NLS-1$
-            .append(format.format(materializedPercentage))
+            .append(SWTUtil.getPrettyString(materializedPercentage))
             .append("%]\n"); //$NON-NLS-1$
             
             sb.append(Resources.getMessage("MainToolBar.12")) //$NON-NLS-1$
               .append(this.numTransformationsPruned);
             sb.append(" [") //$NON-NLS-1$
-              .append(format.format(prunedPercentage))
+              .append(SWTUtil.getPrettyString(prunedPercentage))
               .append("%]\n"); //$NON-NLS-1$
             
             sb.append(Resources.getMessage("MainToolBar.18")) //$NON-NLS-1$
-              .append(format.format(this.executionTime))
+              .append(SWTUtil.getPrettyString(this.executionTime))
               .append("s\n"); //$NON-NLS-1$
             
             if (this.numTransformationsAnonymous != 0 ||
@@ -349,7 +347,7 @@ public class MainToolBar extends AbstractMenu {
                 // Update labels
                 toolbar.setRedraw(false);
                 labelTransformations.setText(Resources.getMessage("MainToolBar.6") + //$NON-NLS-1$
-                                     String.valueOf(stats.numTransformationsInSearchSpace));
+                                             SWTUtil.getPrettyString(stats.numTransformationsInSearchSpace));
                 labelTransformations.pack();
                 
                 labelApplied.setText(Resources.getMessage("MainToolBar.4") + //$NON-NLS-1$
@@ -372,7 +370,7 @@ public class MainToolBar extends AbstractMenu {
                 // Update labels
                 toolbar.setRedraw(false);
                 labelTransformations.setText(Resources.getMessage("MainToolBar.6") + //$NON-NLS-1$
-                                     String.valueOf(stats.numTransformationsInSearchSpace)); 
+                                             SWTUtil.getPrettyString(stats.numTransformationsInSearchSpace)); 
                 labelTransformations.pack();
 
                 labelSelected.setText(Resources.getMessage("MainToolBar.7")); //$NON-NLS-1$

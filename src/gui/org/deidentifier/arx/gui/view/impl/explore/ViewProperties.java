@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.explore;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.Arrays;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
@@ -49,12 +47,8 @@ public class ViewProperties implements IView {
 
     /** Model */
     private ARXResult               result;
-
     /** Controller */
     private final Controller        controller;
-
-    /** View */
-    private final NumberFormat      format  = new DecimalFormat("##0.000"); //$NON-NLS-1$
     /** View */
     private final Composite         root;
     /** View */
@@ -192,7 +186,7 @@ public class ViewProperties implements IView {
         c.setText(0, Resources.getMessage("NodePropertiesView.19")); //$NON-NLS-1$
         if (node.getMinimumInformationLoss() != null) {
             c.setText(1, node.getMinimumInformationLoss().toString() +
-                         " [" + format.format(asRelativeValue(node.getMinimumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getMinimumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             c.setText(1, Resources.getMessage("NodePropertiesView.22")); //$NON-NLS-1$
         }
@@ -200,7 +194,7 @@ public class ViewProperties implements IView {
         c.setText(0, Resources.getMessage("NodePropertiesView.23")); //$NON-NLS-1$
         if (node.getMaximumInformationLoss() != null) {
             c.setText(1, node.getMaximumInformationLoss().toString() +
-                         " [" + format.format(asRelativeValue(node.getMaximumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getMaximumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             c.setText(1, Resources.getMessage("NodePropertiesView.26")); //$NON-NLS-1$
         }

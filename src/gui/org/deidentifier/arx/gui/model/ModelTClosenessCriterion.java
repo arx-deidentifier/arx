@@ -21,6 +21,7 @@ import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 
 /**
  * This class implements a model for the t-closeness criterion.
@@ -150,8 +151,8 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
     @Override
     public String toString() {
         switch (variant) {
-            case VARIANT_EQUAL: return String.valueOf(t)+Resources.getMessage("Model.3b"); //$NON-NLS-1$
-            case VARIANT_HIERARCHICAL: return String.valueOf(t)+Resources.getMessage("Model.4b"); //$NON-NLS-1$
+            case VARIANT_EQUAL: return SWTUtil.getPrettyString(t)+Resources.getMessage("Model.3b"); //$NON-NLS-1$
+            case VARIANT_HIERARCHICAL: return SWTUtil.getPrettyString(t)+Resources.getMessage("Model.4b"); //$NON-NLS-1$
             default: throw new RuntimeException(Resources.getMessage("Model.5b")); //$NON-NLS-1$
         }
     }

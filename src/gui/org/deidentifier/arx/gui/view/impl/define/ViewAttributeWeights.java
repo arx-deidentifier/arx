@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.define;
 
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +28,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -74,9 +73,6 @@ public class ViewAttributeWeights implements IView {
 
     /** View. */
     private final ScrolledComposite root;
-
-    /** Misc. */
-    private final DecimalFormat     format     = new DecimalFormat("0.000"); //$NON-NLS-1$
 
     /** Color profile */
     private final KnobColorProfile  defaultColorProfile;
@@ -245,13 +241,13 @@ public class ViewAttributeWeights implements IView {
                 public void widgetSelected(SelectionEvent arg0) {
                     
                     double value = knob.getValue();
-                    label.setText(format.format(value));
+                    label.setText(SWTUtil.getPrettyString(value));
                     label.setToolTipText(String.valueOf(value));
                     
                     try {
                         
                         // Correctly indicate weights slightly > 0
-                        double parsedValue = format.parse(format.format(value)).doubleValue();
+                        double parsedValue = Double.valueOf(SWTUtil.getPrettyString(value)).doubleValue();
                         if (parsedValue == 0d && value > 0d) {
                             label.setText(">0"); //$NON-NLS-1$
                         }
@@ -261,7 +257,7 @@ public class ViewAttributeWeights implements IView {
                             label.setText("<1"); //$NON-NLS-1$
                         }
                         
-                    } catch (ParseException e) {
+                    } catch (Exception e) {
                         // Drop silently
                     }
                     

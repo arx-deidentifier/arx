@@ -19,8 +19,6 @@ package org.deidentifier.arx.gui.view.impl.explore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
@@ -58,9 +56,6 @@ import de.linearbits.swt.tiles.DecoratorString;
  */
 public abstract class ViewSolutionSpace implements IView {
 
-    /** Number format. */
-    private final NumberFormat       format;
-
     /** The controller. */
     private final Controller         controller;
 
@@ -81,7 +76,7 @@ public abstract class ViewSolutionSpace implements IView {
 
     /** View component */
     private Composite                secondary;
-    
+
     /** View component */
     private StackLayout              layout;
 
@@ -98,56 +93,38 @@ public abstract class ViewSolutionSpace implements IView {
     private ARXNode                  optimum           = null;
 
     /** Color. */
-    private static final Color       COLOR_GREEN       = GUIHelper.getColor(50,
-                                                                            205,
-                                                                            50);
+    private static final Color       COLOR_GREEN       = GUIHelper.getColor(50, 205, 50);
 
     /** Color. */
-    private static final Color       COLOR_LIGHT_GREEN = GUIHelper.getColor(150,
-                                                                            255,
-                                                                            150);
+    private static final Color       COLOR_LIGHT_GREEN = GUIHelper.getColor(150, 255, 150);
 
     /** Color. */
-    private static final Color       COLOR_RED         = GUIHelper.getColor(255,
-                                                                            99,
-                                                                            71);
+    private static final Color       COLOR_RED         = GUIHelper.getColor(255, 99, 71);
 
     /** Color. */
-    private static final Color       COLOR_LIGHT_RED   = GUIHelper.getColor(255,
-                                                                            150,
-                                                                            150);
+    private static final Color       COLOR_LIGHT_RED   = GUIHelper.getColor(255, 150, 150);
 
     /** Color. */
-    private static final Color       COLOR_BLUE        = GUIHelper.getColor(0,
-                                                                            0,
-                                                                            255);
+    private static final Color       COLOR_BLUE        = GUIHelper.getColor(0, 0, 255);
 
     /** Color. */
-    private static final Color       COLOR_YELLOW      = GUIHelper.getColor(255,
-                                                                            215,
-                                                                            0);
+    private static final Color       COLOR_YELLOW      = GUIHelper.getColor(255, 215, 0);
 
     /** Color. */
-    private static final Color       COLOR_DARK_GRAY   = GUIHelper.getColor(180,
-                                                                            180,
-                                                                            180);
+    private static final Color       COLOR_DARK_GRAY   = GUIHelper.getColor(180, 180, 180);
 
     /** Color. */
-    private static final Color       COLOR_GRAY        = GUIHelper.getColor(160,
-                                                                            160,
-                                                                            160);
+    private static final Color       COLOR_GRAY        = GUIHelper.getColor(160, 160, 160);
 
     /** Color. */
-    private static final Color       COLOR_BLACK       = GUIHelper.getColor(0,
-                                                                            0,
-                                                                            0);
+    private static final Color       COLOR_BLACK       = GUIHelper.getColor(0, 0, 0);
 
     /** Decorator */
     private Gradient                 gradient;
 
-    /** Maximal length of a label in characters*/
-    private static final int MAX_LABEL_LENGTH = 20;
-    
+    /** Maximal length of a label in characters */
+    private static final int         MAX_LABEL_LENGTH  = 20;
+
     /**
      * Constructor
      * @param parent
@@ -165,7 +142,6 @@ public abstract class ViewSolutionSpace implements IView {
         // Store
         this.parent = parent;
         this.controller = controller;
-        this.format = new DecimalFormat("##0.000"); //$NON-NLS-1$
         
         // Initialize
         initializeMenu();
@@ -300,9 +276,9 @@ public abstract class ViewSolutionSpace implements IView {
             public String decorate(ARXNode node) {
                 final StringBuffer b = new StringBuffer();
                 b.append(Resources.getMessage("LatticeView.1")); //$NON-NLS-1$
-                b.append(format.format(asRelativeValue(node.getMinimumInformationLoss())));
+                b.append(SWTUtil.getPrettyString(asRelativeValue(node.getMinimumInformationLoss())));
                 b.append(" - "); //$NON-NLS-1$
-                b.append(format.format(asRelativeValue(node.getMaximumInformationLoss())));
+                b.append(SWTUtil.getPrettyString(asRelativeValue(node.getMaximumInformationLoss())));
                 b.append(" [%]\n"); //$NON-NLS-1$
                 if (model.getOutputDefinition() != null) {
                     for (final String qi : node.getQuasiIdentifyingAttributes()) {
@@ -313,7 +289,7 @@ public abstract class ViewSolutionSpace implements IView {
                         b.append(" * "); //$NON-NLS-1$
                         b.append(qi);
                         b.append(": "); //$NON-NLS-1$
-                        b.append(format.format(asRelativeValue(node.getGeneralization(qi), height - 1)));
+                        b.append(SWTUtil.getPrettyString(asRelativeValue(node.getGeneralization(qi), height - 1)));
                         b.append(" [%]\n"); //$NON-NLS-1$
                     }
                 }
@@ -440,14 +416,6 @@ public abstract class ViewSolutionSpace implements IView {
      */
     protected Controller getController() {
         return this.controller;
-    }
-    
-    /**
-     * Returns the number formatter
-     * @return
-     */
-    protected NumberFormat getFormat() {
-        return this.format;
     }
     
     /**

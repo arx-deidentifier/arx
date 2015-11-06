@@ -158,7 +158,7 @@ public class ViewTransformationSettings implements IView {
                      .setAllowedOutliers(SWTUtil.sliderToDouble(0d,
                                                             1d,
                                                             sliderOutliers.getSelection()));
-                labelOutliers.setText(String.valueOf(model.getInputConfig()
+                labelOutliers.setText(SWTUtil.getPrettyString(model.getInputConfig()
                                                              .getAllowedOutliers()));
                 if (model.getInputConfig().getAllowedOutliers() != 0) {
                     buttonPracticalMonotonicity.setEnabled(true);
@@ -210,7 +210,7 @@ public class ViewTransformationSettings implements IView {
                 if (precomputedVariant.getSelection()) {
                     precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getPrecomputationThreshold()));
                     precomputationThreshold.setEnabled(true);
-                    labelThreshold.setText(String.valueOf((model.getMetricConfiguration().getPrecomputationThreshold())));
+                    labelThreshold.setText(SWTUtil.getPrettyString((model.getMetricConfiguration().getPrecomputationThreshold())));
                 } else {
                     precomputationThreshold.setEnabled(false);
                 }
@@ -235,7 +235,7 @@ public class ViewTransformationSettings implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getMetricConfiguration().setPrecomputationThreshold(SWTUtil.sliderToDouble(0d, 1d, precomputationThreshold.getSelection()));
-                labelThreshold.setText(String.valueOf(model.getMetricConfiguration().getPrecomputationThreshold()));
+                labelThreshold.setText(SWTUtil.getPrettyString(model.getMetricConfiguration().getPrecomputationThreshold()));
             }
         });
 
@@ -258,11 +258,11 @@ public class ViewTransformationSettings implements IView {
         this.precomputedVariant.setEnabled(supported);
         this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, threshold));
         this.precomputationThreshold.setEnabled(supported);
-        this.labelThreshold.setText(String.valueOf(threshold));
+        this.labelThreshold.setText(SWTUtil.getPrettyString(threshold));
         
         // Other stuff
         sliderOutliers.setSelection(SWTUtil.doubleToSlider(0d, 0.999d, model.getInputConfig().getAllowedOutliers()));
-        labelOutliers.setText(String.valueOf(model.getInputConfig().getAllowedOutliers()));
+        labelOutliers.setText(SWTUtil.getPrettyString(model.getInputConfig().getAllowedOutliers()));
         buttonPracticalMonotonicity.setSelection(model.getInputConfig().isPracticalMonotonicity());
         
         // Enable

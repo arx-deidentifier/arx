@@ -21,6 +21,7 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 
 /**
  * This class implements a model for the d-presence criterion.
@@ -126,7 +127,10 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
     
     @Override
     public String toString() {
-        // TODO: Move to messages.properties
-        return Resources.getMessage("Model.2c")+String.valueOf(dmin)+Resources.getMessage("Model.3c")+String.valueOf(dmax)+Resources.getMessage("Model.4c"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return Resources.getMessage("Model.2c") + //$NON-NLS-1$
+               SWTUtil.getPrettyString(dmin) +
+               Resources.getMessage("Model.3c") + //$NON-NLS-1$
+               SWTUtil.getPrettyString(dmax) +
+               Resources.getMessage("Model.4c"); //$NON-NLS-1$
     }
 }

@@ -16,8 +16,6 @@
  */
 package org.deidentifier.arx.gui.view.impl.risk;
 
-import java.text.DecimalFormat;
-
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -57,9 +55,6 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
     /** View */
     private DynamicTable      table;
 
-    /** View */
-    private DecimalFormat     format;
-
     /** Internal stuff. */
     private AnalysisManager   manager;
 
@@ -98,7 +93,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
     private void createItem(String label, double value) {
         TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, label);
-        item.setText(1, format.format(value * 100d));
+        item.setText(1, SWTUtil.getPrettyString(value * 100d));
     }
 
     /**
@@ -128,8 +123,6 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
-        
-        format  = new DecimalFormat("##0.00000"); //$NON-NLS-1$
         
         table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setHeaderVisible(true);

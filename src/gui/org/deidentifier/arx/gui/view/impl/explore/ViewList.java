@@ -237,7 +237,7 @@ public class ViewList extends ViewSolutionSpace {
         String min = null;
         if (node.getMinimumInformationLoss() != null) {
             min = node.getMinimumInformationLoss().toString() +
-                  " [" + getFormat().format(asRelativeValue(node.getMinimumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
+                  " [" + SWTUtil.getPrettyString(asRelativeValue(node.getMinimumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             min = Resources.getMessage("ListView.7"); //$NON-NLS-1$
         }
@@ -245,7 +245,7 @@ public class ViewList extends ViewSolutionSpace {
         String max = null;
         if (node.getMaximumInformationLoss() != null) {
             max = node.getMaximumInformationLoss().toString() +
-                  " [" + getFormat().format(asRelativeValue(node.getMaximumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
+                  " [" + SWTUtil.getPrettyString(asRelativeValue(node.getMaximumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             max = Resources.getMessage("ListView.10"); //$NON-NLS-1$
         }

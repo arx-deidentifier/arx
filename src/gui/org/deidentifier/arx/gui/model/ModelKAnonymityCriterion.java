@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.model;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 
 /**
  * This class implements a model for the k-anonymity criterion.
@@ -96,6 +97,6 @@ public class ModelKAnonymityCriterion extends ModelImplicitCriterion{
     
     @Override
     public String toString() {
-        return k + Resources.getMessage("ModelCriterion.1"); //$NON-NLS-1$
+        return SWTUtil.getPrettyString(k) + Resources.getMessage("ModelCriterion.1"); //$NON-NLS-1$
     }
 }
