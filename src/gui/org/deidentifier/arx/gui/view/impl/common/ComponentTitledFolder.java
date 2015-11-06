@@ -370,7 +370,7 @@ public class ComponentTitledFolder implements IComponent {
 
             ToolItem item = new ToolItem( toolbar, SWT.PUSH );
             item.setImage(controller.getResources().getManagedImage("manage.png"));  //$NON-NLS-1$
-            item.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
+            item.setToolTipText(Resources.getMessage("General.1")); //$NON-NLS-1$
             SWTUtil.createDisabledImage(item);
             item.addSelectionListener(new SelectionAdapter(){
                 @Override
