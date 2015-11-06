@@ -1,7 +1,7 @@
 ARX - Powerful Data Anonymization
 ====
 
-ARX is a comprehensive open source software for anonymizing sensitive personal data. 
+ARX is a comprehensive open source software for de-identifying sensitive personal data. 
 It has been designed from the ground up to provide high scalability, ease of use and a 
 tight integration of the many different aspects relevant to data anonymization. Its highlights include:
 
