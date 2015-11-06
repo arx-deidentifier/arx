@@ -253,9 +253,13 @@ public class ViewRisksPopulationModel implements IView {
             }
             table.getParent().setFocus();
             DataHandle handle = model.getInputConfig().getInput().getHandle();
-            textSampleFraction.setText(SWTUtil.getPrettyString(popmodel.getSamplingFraction(handle)));
+            long population = (long)popmodel.getPopulationSize(handle);
+            double fraction = popmodel.getSamplingFraction(handle);
+            textSampleFraction.setText(SWTUtil.getPrettyString(fraction));
+            textSampleFraction.setToolTipText(String.valueOf(fraction));
             textSampleFraction.setEnabled(true);
-            textPopulationSize.setText(SWTUtil.getPrettyString(popmodel.getPopulationSize(handle)));
+            textPopulationSize.setText(SWTUtil.getPrettyString(population));
+            textPopulationSize.setToolTipText(String.valueOf(population));
             textPopulationSize.setEnabled(true);
         }
         root.setRedraw(true);

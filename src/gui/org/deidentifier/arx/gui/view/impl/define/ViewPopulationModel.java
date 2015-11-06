@@ -27,13 +27,12 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -77,7 +76,7 @@ public class ViewPopulationModel implements IView {
 
         // Create group
         root = new Composite(parent, SWT.NONE);
-        root.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
+        root.setLayout(GridLayoutFactory.swtDefaults().numColumns(3).create());
         create(root);
         
         reset();
@@ -112,34 +111,18 @@ public class ViewPopulationModel implements IView {
      */
     private void create(final Composite parent) {
 
+        // Region
         Label lbl1 = new Label(parent, SWT.NONE);
         lbl1.setText(Resources.getMessage("ViewPopulationModel.3")); //$NON-NLS-1$
-        
         combo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY);
         for (Region region : Region.values()) {
             combo.add(region.getName());
         }
         combo.setEnabled(false);
-        combo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        
-        Label lbl2 = new Label(parent, SWT.NONE);
-        lbl2.setText(Resources.getMessage("ViewPopulationModel.4")); //$NON-NLS-1$
-        
-        text = new Text(parent, SWT.BORDER | SWT.SINGLE);
-        text.setText("0"); //$NON-NLS-1$
-        text.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        
-        Label lbl3 = new Label(parent, SWT.NONE);
-        lbl3.setText(Resources.getMessage("ViewPopulationModel.6")); //$NON-NLS-1$
-        
-        text2 = new Text(parent, SWT.BORDER | SWT.SINGLE);
-        text2.setText("0"); //$NON-NLS-1$
-        text2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        
+        combo.setLayoutData(SWTUtil.createFillHorizontallyGridData(true, 2));
         combo.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
                 if (model.getInputConfig() != null && model.getInputConfig().getInput() != null && combo.getSelectionIndex() != -1) {
-                    long sampleSize = model.getInputConfig().getInput().getHandle().getNumRows();
                     Region selected = null;
                     String sselected = combo.getItem(combo.getSelectionIndex());
                     for (Region region : Region.values()) {
@@ -150,88 +133,127 @@ public class ViewPopulationModel implements IView {
                     }
                     if (selected != null) {
                         model.getRiskModel().setRegion(selected);
+                        updateLabels();
                         controller.update(new ModelEvent(ViewPopulationModel.this, ModelPart.POPULATION_MODEL, model.getRiskModel()));
-                        text.setText(SWTUtil.getPrettyString(model.getRiskModel().getSampleFraction(sampleSize)));
-                        text2.setText(SWTUtil.getPrettyString(model.getRiskModel().getPopulationSize(sampleSize)));
                     }
                 }
             }
         });
         
-        text.addModifyListener(new ModifyListener(){
-            public void modifyText(ModifyEvent arg0) {
-                double value;
-                try {
-                    value = Double.valueOf(text.getText()).doubleValue();
-                } catch (Exception e) {
-                    value = -1;
-                }
-                
-                if (value <= 0d || value > 1d) {
-                    text.setForeground(GUIHelper.COLOR_RED);
-                    return;
-                } else {
-                    text.setForeground(GUIHelper.COLOR_BLACK);
-                }
-
-                DataHandle handle = model.getInputConfig().getInput().getHandle();
-                if (value == model.getRiskModel().getSampleFraction(handle)) {
-                    return;
-                }
-                
-                model.getRiskModel().setSampleFraction(value);
-                
-                for (int i=0; i<combo.getItemCount(); i++) {
-                    if (combo.getItem(i).equals(Region.NONE.getName())) {
-                        combo.select(i);
-                        break;
+        // Sampling fraction
+        Label lbl2 = new Label(parent, SWT.NONE);
+        lbl2.setText(Resources.getMessage("ViewPopulationModel.4")); //$NON-NLS-1$
+        text = new Text(parent, SWT.BORDER | SWT.SINGLE);
+        text.setText("0"); //$NON-NLS-1$
+        text.setToolTipText("0"); //$NON-NLS-1$
+        text.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        text.setEditable(false);
+        
+        // Button for updating
+        Button btn1 = new Button(parent, SWT.PUSH);
+        btn1.setText(Resources.getMessage("ViewPopulationModel.0")); //$NON-NLS-1$
+        btn1.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                String _value = controller.actionShowInputDialog(parent.getShell(), 
+                                                                Resources.getMessage("ViewPopulationModel.1"),  //$NON-NLS-1$
+                                                                Resources.getMessage("ViewPopulationModel.2"),  //$NON-NLS-1$
+                                                                text.getToolTipText(), 
+                                                                new IInputValidator(){
+                                                                    @Override
+                                                                    public String isValid(String arg0) {
+                                                                        double value = 0d;
+                                                                        try {
+                                                                            value = Double.valueOf(arg0);
+                                                                        } catch (Exception e) {
+                                                                            return Resources.getMessage("ViewPopulationModel.5"); //$NON-NLS-1$
+                                                                        }
+                                                                        if (value > 0d && value <= 1d) {
+                                                                            return null;
+                                                                        } else {
+                                                                            return Resources.getMessage("ViewPopulationModel.7"); //$NON-NLS-1$
+                                                                        }
+                                                                    }});
+                if (_value != null) {
+                    double value = Double.valueOf(_value);
+                    DataHandle handle = model.getInputConfig().getInput().getHandle();
+                    if (value == model.getRiskModel().getSampleFraction(handle)) {
+                        return;
                     }
+                    
+                    model.getRiskModel().setSampleFraction(value);
+                    
+                    for (int i=0; i<combo.getItemCount(); i++) {
+                        if (combo.getItem(i).equals(Region.NONE.getName())) {
+                            combo.select(i);
+                            break;
+                        }
+                    }
+                    updateLabels();
+                    controller.update(new ModelEvent(ViewPopulationModel.this, ModelPart.POPULATION_MODEL, model.getRiskModel()));
                 }
-                text2.setText(SWTUtil.getPrettyString(model.getRiskModel().getPopulationSize(handle.getNumRows())));
-                controller.update(new ModelEvent(ViewPopulationModel.this, ModelPart.POPULATION_MODEL, model.getRiskModel()));
-            } 
+            }
         });
         
-        text2.addModifyListener(new ModifyListener(){
-            public void modifyText(ModifyEvent arg0) {
-                double value;
-                try {
-                    value = Double.valueOf(text2.getText()).doubleValue();
-                } catch (Exception e) {
-                    value = -1;
-                }
+        Label lbl3 = new Label(parent, SWT.NONE);
+        lbl3.setText(Resources.getMessage("ViewPopulationModel.6")); //$NON-NLS-1$
+        
+        text2 = new Text(parent, SWT.BORDER | SWT.SINGLE);
+        text2.setText("0"); //$NON-NLS-1$
+        text2.setToolTipText("0"); //$NON-NLS-1$
+        text2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        text2.setEditable(false);
 
+        // Button for updating
+        Button btn2 = new Button(parent, SWT.PUSH);
+        btn2.setText(Resources.getMessage("ViewPopulationModel.8")); //$NON-NLS-1$
+        btn2.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                
                 if (model == null || model.getInputConfig() == null || model.getInputConfig().getInput() == null) {
                     return;
                 }
                 
-                DataHandle handle = model.getInputConfig().getInput().getHandle();
+                final DataHandle handle = model.getInputConfig().getInput().getHandle();
                 
-                if (value < handle.getNumRows()) {
-                    text2.setForeground(GUIHelper.COLOR_RED);
-                    return;
-                } else {
-                    text2.setForeground(GUIHelper.COLOR_BLACK);
-                }
+                String _value = controller.actionShowInputDialog(parent.getShell(), 
+                                                                Resources.getMessage("ViewPopulationModel.9"),  //$NON-NLS-1$
+                                                                Resources.getMessage("ViewPopulationModel.10") + handle.getNumRows(),  //$NON-NLS-1$
+                                                                text2.getToolTipText(), 
+                                                                new IInputValidator(){
+                                                                    @Override
+                                                                    public String isValid(String arg0) {
+                                                                        int value = 0;
+                                                                        try {
+                                                                            value = Integer.valueOf(arg0);
+                                                                        } catch (Exception e) {
+                                                                            return Resources.getMessage("ViewPopulationModel.11"); //$NON-NLS-1$
+                                                                        }
+                                                                        if (value >= handle.getNumRows()) {
+                                                                            return null;
+                                                                        } else {
+                                                                            return Resources.getMessage("ViewPopulationModel.12"); //$NON-NLS-1$
+                                                                        }
+                                                                    }});
+                if (_value != null) {
+                    
+                    int value = Integer.valueOf(_value);
+                    model.getRiskModel().setPopulationSize(handle, value);
 
-                if (value == model.getRiskModel().getPopulationSize(handle)) {
-                    return;
-                }
-                
-                model.getRiskModel().setPopulationSize(handle, value);
-
-                for (int i=0; i<combo.getItemCount(); i++) {
-                    if (combo.getItem(i).equals(Region.NONE.getName())) {
-                        combo.select(i);
-                        break;
+                    for (int i=0; i<combo.getItemCount(); i++) {
+                        if (combo.getItem(i).equals(Region.NONE.getName())) {
+                            combo.select(i);
+                            break;
+                        }
                     }
+                    updateLabels();
+                    controller.update(new ModelEvent(ViewPopulationModel.this, ModelPart.POPULATION_MODEL, model.getRiskModel()));
                 }
-                text.setText(SWTUtil.getPrettyString(model.getRiskModel().getSampleFraction(handle)));
-                controller.update(new ModelEvent(ViewPopulationModel.this, ModelPart.POPULATION_MODEL, model.getRiskModel()));
-            } 
+            }
         });
     }
-
+    
     /**
      * Updates the view.
      * 
@@ -254,11 +276,26 @@ public class ViewPopulationModel implements IView {
             }
         }
         
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-        text.setText(SWTUtil.getPrettyString(model.getRiskModel().getSampleFraction(handle)));
-        text2.setText(SWTUtil.getPrettyString(model.getRiskModel().getPopulationSize(handle)));
-        
+        updateLabels();
         root.setRedraw(true);
         SWTUtil.enable(root);
+    }
+
+    /**
+     * Updates both labels
+     */
+    private void updateLabels() {
+
+        if (model == null || model.getInputConfig() == null || model.getInputConfig().getInput() == null) {
+            return;
+        }
+
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        double fraction = model.getRiskModel().getSampleFraction(handle);
+        text.setText(SWTUtil.getPrettyString(fraction));
+        text.setToolTipText(String.valueOf(fraction));
+        long population = (long)model.getRiskModel().getPopulationSize(handle);
+        text2.setText(SWTUtil.getPrettyString(population));
+        text2.setToolTipText(String.valueOf(population));
     }
 }

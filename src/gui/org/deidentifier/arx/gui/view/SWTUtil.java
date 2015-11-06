@@ -462,6 +462,15 @@ public class SWTUtil {
     }
 
     /**
+     * Returns a pretty string representing the given value
+     * @param value
+     * @return
+     */
+    public static String getPrettyString(long value) {
+        return String.valueOf(value);
+    }
+
+    /**
      * Converts the integer value to a slider selection.
      *
      * @param min
