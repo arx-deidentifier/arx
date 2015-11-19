@@ -20,7 +20,6 @@ package org.deidentifier.arx.metric.v2;
 import java.util.Arrays;
 import java.util.Set;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
@@ -285,7 +284,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         return this.shares;
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -312,7 +310,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                 
              // Create shares for interval-based hierarchies
             } else if (builder instanceof HierarchyBuilderIntervalBased){
-                shares[i] = new DomainShareInterval<T>((HierarchyBuilderIntervalBased<T>)builder,
+                shares[i] = new DomainShareInterval<>((HierarchyBuilderIntervalBased<?>)builder,
                                                         hierarchies[i].getArray(),
                                                         input.getDictionary().getMapping()[i]);
                 
