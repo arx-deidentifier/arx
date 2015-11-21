@@ -90,7 +90,7 @@ public class Example39 extends Example {
     public static void main(final String[] args) throws ParseException, IOException {
 
         String[] features = new String[] {
-                "age", "education", "native-country", "occupation", "race", "salary-class", "sex", "workclass"
+                "age", "sex", "education", "native-country", "occupation", "race", "salary-class", "workclass"
         };
         
         String clazz = "marital-status";

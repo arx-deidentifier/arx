@@ -189,7 +189,8 @@ public class StatisticsClassification {
         }
         
         // Train and cross validate
-        this.accuracy = performKFoldCrossValidation(handle, map, 10, random);
+        int k = handle.getNumRows() > 10 ? 10 : handle.getNumRows();
+        this.accuracy = getAccuracyAccordingToKFoldCrossValidation(handle, map, k, random);
     }
 
     /**
@@ -209,109 +210,6 @@ public class StatisticsClassification {
     }
 
     /**
-     * Returns the indexes of all relevant attributes
-     * @param handle
-     * @param features
-     * @param clazz
-     * @return
-     */
-    private int[] getAttributeIndexes(DataHandleStatistics handle, String[] features, String clazz) {
-        // Collect
-        List<Integer> list = new ArrayList<>();
-        for (int column = 0; column < handle.getNumColumns(); column++) {
-            String attribute = handle.getAttributeName(column);
-            if (isContained(features, attribute)) {
-                list.add(column);
-            }
-        }
-        list.add(handle.getColumnIndexOf(clazz));
-        
-        // Convert
-        int[] result = new int[list.size()];
-        for (int i=0; i<list.size(); i++) {
-            result[i] = list.get(i);
-        }
-        
-        // Return
-        return result;
-    }
-    
-    /**
-     * Returns the feature vector for the given row
-     * @param handle
-     * @param row
-     * @param interceptEncoder
-     * @param featureEncoder
-     * @return
-     * @throws ParseException
-     */
-    private Vector getFeatures(DataHandleStatistics handle, int row,
-                               ConstantValueEncoder interceptEncoder,
-                               StaticWordValueEncoder featureEncoder) throws ParseException {
-        
-        // Prepare
-        DenseVector vector = new DenseVector(this.indexes.length-1);
-        interceptEncoder.addToVector("1", vector);
-        
-        // For each attribute
-        for (int index = 0; index < this.indexes.length-1; index++) {
-            
-            // Obtain data
-            int column = indexes[index];
-            String name = handle.getAttributeName(column);
-            DataType<?> type = this.type[index];
-            double minimum = this.minimum[index];
-            double maximum = this.maximum[index];
-            
-            // Set value
-            if (type instanceof ARXDecimal) {
-                featureEncoder.addToVector(name, (handle.getDouble(row, column) - minimum) / (maximum - minimum), vector);
-            } else if (type instanceof ARXInteger) {
-                featureEncoder.addToVector(name, (handle.getDouble(row, column) - minimum) / (maximum - minimum), vector);
-            } else if (type instanceof ARXDate) {
-                featureEncoder.addToVector(name, ((long)handle.getDate(row, column).getTime() - minimum) / (maximum - minimum), vector);
-            } else {
-                featureEncoder.addToVector(name + ":" + handle.getValue(row, column), 1, vector);
-            }
-        }
-        
-        // Return
-        return vector;
-    }
-
-    /**
-     * Returns the index of the most probable value
-     * @param probabilities
-     * @return
-     */
-    private int getMostProbableValue(Vector probabilities) {
-        int largest = 0;
-        double probability = probabilities.get(0);
-        for (int i = 1; i < probabilities.size(); i++) {
-            if (probabilities.get(i) > probability) {
-                largest = i;
-                probability = probabilities.get(i);
-            }
-        }
-        return largest;
-    }
-
-    /**
-     * Returns whether the given array contains the given value
-     * @param array
-     * @param value
-     * @return
-     */
-    private boolean isContained(String[] array, String value) {
-        for (String element : array) {
-            if (element.equals(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Performs k-fold cross validation
      * @param handle
      * @param map
@@ -320,7 +218,7 @@ public class StatisticsClassification {
      * @return
      * @throws ParseException 
      */
-    private double performKFoldCrossValidation(DataHandleStatistics handle, 
+    private double getAccuracyAccordingToKFoldCrossValidation(DataHandleStatistics handle, 
                                                Map<String, Integer> map, 
                                                int k,
                                                Random random) throws ParseException {
@@ -339,6 +237,7 @@ public class StatisticsClassification {
         // Create folds
         List<List<Integer>> folds = new ArrayList<>();
         int size = handle.getNumRows() / k;
+        size = size > 1 ? size : 1;
         for (int i = 0; i < k; i++) {
             
             // Check
@@ -373,8 +272,9 @@ public class StatisticsClassification {
         for (int i = 0; i < folds.size(); i++) {
             
             // Prepare classifier
+            int features = indexes.length - 1 > 0 ? indexes.length - 1 : 0;
             OnlineLogisticRegression lr = new OnlineLogisticRegression(map.size(), // Classes
-                                                                       indexes.length-1, // Features
+                                                                       features, // Features
                                                                        new L1()); // Function
             
             // Configure
@@ -394,13 +294,15 @@ public class StatisticsClassification {
                         checkInterrupt();
                         
                         // Train
-                        lr.train(map.get(handle.getValue(row, indexes[indexes.length-1])), 
+                        lr.train(getClass(handle, row, map), 
                                  getFeatures(handle, row, interceptEncoder, featureEncoder));
                     }
                 }
             }
             
             // Now validate
+            // How is AUC computed for multinomial logistic regression?
+            // It seems that the one-vs.-rest strategy is the solution
             // Auc eval = new Auc(0.5);
             List<Integer> validationset = folds.get(i);
             for (int row : validationset) {
@@ -410,8 +312,7 @@ public class StatisticsClassification {
                 
                 // Count
                 total ++;
-                correct += map.get(handle.getValue(row, indexes[indexes.length-1])) == 
-                           getMostProbableValue(lr.classifyFull(getFeatures(handle, row, interceptEncoder, featureEncoder))) ? 1 : 0;
+                correct += getClass(handle, row, map) == lr.classifyFull(getFeatures(handle, row, interceptEncoder, featureEncoder)).maxValueIndex() ? 1 : 0;
                 
                 // Validate
                 // eval.add(map.get(handle.getValue(row, indexes[indexes.length-1])), 
@@ -427,5 +328,109 @@ public class StatisticsClassification {
         
         // Return mean
         return correct / total;
+    }
+    
+    /**
+     * Returns the indexes of all relevant attributes
+     * @param handle
+     * @param features
+     * @param clazz
+     * @return
+     */
+    private int[] getAttributeIndexes(DataHandleStatistics handle, String[] features, String clazz) {
+        // Collect
+        List<Integer> list = new ArrayList<>();
+        for (int column = 0; column < handle.getNumColumns(); column++) {
+            String attribute = handle.getAttributeName(column);
+            if (isContained(features, attribute)) {
+                list.add(column);
+            }
+        }
+        list.add(handle.getColumnIndexOf(clazz));
+        
+        // Convert
+        int[] result = new int[list.size()];
+        for (int i=0; i<list.size(); i++) {
+            result[i] = list.get(i);
+        }
+        
+        // Return
+        return result;
+    }
+
+    /**
+     * Returns the class for the given row
+     * @param handle
+     * @param row
+     * @param map
+     * @return
+     */
+    private int getClass(DataHandleStatistics handle, int row, Map<String, Integer> map) {
+        return map.get(handle.getValue(row, indexes[indexes.length - 1]));
+    }
+
+    /**
+     * Returns the feature vector for the given row
+     * @param handle
+     * @param row
+     * @param interceptEncoder
+     * @param featureEncoder
+     * @return
+     * @throws ParseException
+     */
+    private Vector getFeatures(DataHandleStatistics handle, int row,
+                               ConstantValueEncoder interceptEncoder,
+                               StaticWordValueEncoder featureEncoder) throws ParseException {
+        
+        // Prepare
+        int length = this.indexes.length - 1;
+        DenseVector vector = new DenseVector(length != 0 ? length : 1);
+        interceptEncoder.addToVector("1", vector);
+        
+        // Special case where there are no features
+        if (length == 0) {
+            featureEncoder.addToVector("Feature", 1, vector);
+            return vector;
+        }
+        
+        // For each attribute
+        for (int index = 0; index < length; index++) {
+            
+            // Obtain data
+            int column = indexes[index];
+            String name = handle.getAttributeName(column);
+            DataType<?> type = this.type[index];
+            double minimum = this.minimum[index];
+            double maximum = this.maximum[index];
+            
+            // Set value
+            if (type instanceof ARXDecimal) {
+                featureEncoder.addToVector(name, (handle.getDouble(row, column) - minimum) / (maximum - minimum), vector);
+            } else if (type instanceof ARXInteger) {
+                featureEncoder.addToVector(name, (handle.getDouble(row, column) - minimum) / (maximum - minimum), vector);
+            } else if (type instanceof ARXDate) {
+                featureEncoder.addToVector(name, ((long)handle.getDate(row, column).getTime() - minimum) / (maximum - minimum), vector);
+            } else {
+                featureEncoder.addToVector(name + ":" + handle.getValue(row, column), 1, vector);
+            }
+        }
+        
+        // Return
+        return vector;
+    }
+
+    /**
+     * Returns whether the given array contains the given value
+     * @param array
+     * @param value
+     * @return
+     */
+    private boolean isContained(String[] array, String value) {
+        for (String element : array) {
+            if (element.equals(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
