@@ -41,6 +41,7 @@ import org.deidentifier.arx.aggregates.StatisticsSummary.StatisticsSummaryOrdina
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
+import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 import cern.colt.GenericSorting;
@@ -55,11 +56,11 @@ import cern.colt.function.IntComparator;
 public class StatisticsBuilder {
 
     /** The handle. */
-    private DataHandleStatistics         handle;
-    
+    private DataHandleStatistics    handle;
+
     /** The stop flag. */
-    private volatile boolean             interrupt;
-    
+    private volatile WrappedBoolean interrupt = new WrappedBoolean(false);
+
     /**
      * Creates a new instance.
      *
@@ -67,6 +68,63 @@ public class StatisticsBuilder {
      */
     public StatisticsBuilder(DataHandleStatistics handle) {
         this.handle = handle;
+    }
+    
+    /**
+     * Creates a new set of statistics for the given classification task
+     * @param clazz - The class attributes
+     * @param samplingFraction - The sampling fraction
+     * @throws ParseException
+     */
+    public StatisticsClassification getClassificationPerformance(String clazz,
+                                                                 double samplingFraction) throws ParseException {
+        return getClassificationPerformance(new String[] {}, clazz, null, samplingFraction);
+    }
+    
+    /**
+     * Creates a new set of statistics for the given classification task
+     * @param clazz - The class attributes
+     * @param seed - The random seed, null, if the process should be randomized
+     * @param samplingFraction - The sampling fraction
+     * @throws ParseException
+     */
+    public StatisticsClassification getClassificationPerformance(String clazz,
+                                                                 Integer seed,
+                                                                 double samplingFraction) throws ParseException {
+        return getClassificationPerformance(new String[] {}, clazz, seed, samplingFraction);
+    }
+    
+    /**
+     * Creates a new set of statistics for the given classification task
+     * @param features - The feature attributes
+     * @param clazz - The class attributes
+     * @param samplingFraction - The sampling fraction
+     * @throws ParseException
+     */
+    public StatisticsClassification getClassificationPerformance(String[] features,
+                                                                 String clazz,
+                                                                 double samplingFraction) throws ParseException {
+        return getClassificationPerformance(features, clazz, null, samplingFraction);
+    }
+    
+    /**
+     * Creates a new set of statistics for the given classification task
+     * @param features - The feature attributes
+     * @param clazz - The class attributes
+     * @param seed - The random seed, null, if the process should be randomized
+     * @param samplingFraction - The sampling fraction
+     * @throws ParseException
+     */
+    public StatisticsClassification getClassificationPerformance(String[] features,
+                                                                 String clazz,
+                                                                 Integer seed,
+                                                                 double samplingFraction) throws ParseException {
+
+        // Reset stop flag
+        interrupt.value = false;
+
+        // Return
+        return new StatisticsClassification(handle, features, clazz, seed, samplingFraction, interrupt);
     }
     
     /**
@@ -166,7 +224,7 @@ public class StatisticsBuilder {
                                                           String[][] hierarchy2) {
         
         // Reset stop flag
-        interrupt = false;
+        interrupt.value = false;
         
         // Check
         if (size1 <= 0 || size2 <= 0) {
@@ -280,7 +338,7 @@ public class StatisticsBuilder {
                                                           String[][] hierarchy2) {
         
         // Reset stop flag
-        interrupt = false;
+        interrupt.value = false;
         
         // Init
         String[] values1 = getDistinctValuesOrdered(column1, hierarchy1);
@@ -378,7 +436,7 @@ public class StatisticsBuilder {
     public String[] getDistinctValuesOrdered(int column) {
         return this.getDistinctValuesOrdered(column, true);
     }
-    
+
     /**
      * Returns an ordered list of the distinct set of data items from the given column.
      *
@@ -403,7 +461,7 @@ public class StatisticsBuilder {
     public String[] getDistinctValuesOrdered(int column, String[][] hierarchy) {
         
         // Reset stop flag
-        interrupt = false;
+        interrupt.value = false;
         
         // Obtain list and data type
         final String[] list = getDistinctValues(column);
@@ -478,7 +536,7 @@ public class StatisticsBuilder {
     public StatisticsEquivalenceClasses getEquivalenceClassStatistics() {
 
         // Reset stop flag
-        interrupt = false;
+        interrupt.value = false;
 
         // Prepare
         Set<String> attributes = handle.getDefinition().getQuasiIdentifyingAttributes();
@@ -499,7 +557,7 @@ public class StatisticsBuilder {
 
             TupleWrapper tuple = new TupleWrapper(handle, indices, row);
             map.add(tuple);
-            if (interrupt) { throw new ComputationInterruptedException(); }
+            checkInterrupt();
         }
 
         // Now compute the following values
@@ -519,8 +577,7 @@ public class StatisticsBuilder {
         Group<TupleWrapper> element = map.first();
         while (element != null) {
             
-            if (interrupt) { throw new ComputationInterruptedException(); }
-            
+            checkInterrupt();
             maximalEquivalenceClassSizeIncludingOutliers = Math.max(element.getCount(), maximalEquivalenceClassSizeIncludingOutliers);
             minimalEquivalenceClassSizeIncludingOutliers = Math.min(element.getCount(), minimalEquivalenceClassSizeIncludingOutliers);
             averageEquivalenceClassSizeIncludingOutliers += element.getCount();
@@ -587,7 +644,7 @@ public class StatisticsBuilder {
     public StatisticsFrequencyDistribution getFrequencyDistribution(int column, boolean orderFromDefinition) {
         return getFrequencyDistribution(column, getHierarchy(column, orderFromDefinition));
     }
-    
+
     /**
      * Returns a frequency distribution for the values in the given column. The order for string data items
      * is derived from the provided hierarchy
@@ -597,9 +654,9 @@ public class StatisticsBuilder {
      * @return
      */
     public StatisticsFrequencyDistribution getFrequencyDistribution(int column, String[][] hierarchy) {
-        
+
         // Reset stop flag
-        interrupt = false;
+        interrupt.value = false;
         
         // Init
         String[] values = getDistinctValuesOrdered(column, hierarchy);
@@ -629,7 +686,7 @@ public class StatisticsBuilder {
         // Return
         return new StatisticsFrequencyDistribution(values, frequencies, count);
     }
-    
+
     /**
      * 
      * Returns an interruptible instance of this object.
@@ -639,7 +696,7 @@ public class StatisticsBuilder {
     public StatisticsBuilderInterruptible getInterruptibleInstance() {
         return new StatisticsBuilderInterruptible(handle);
     }
-    
+
     /**
      * Returns summary statistics for all attributes.
      * 
@@ -648,6 +705,9 @@ public class StatisticsBuilder {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public <T> Map<String, StatisticsSummary<?>> getSummaryStatistics(boolean listwiseDeletion) {
+
+        // Reset stop flag
+        interrupt.value = false;
         
         Map<String, DescriptiveStatistics> statistics = new HashMap<String, DescriptiveStatistics>();
         Map<String, StatisticsSummaryOrdinal> ordinal = new HashMap<String, StatisticsSummaryOrdinal>();
@@ -839,12 +899,12 @@ public class StatisticsBuilder {
         
         return result;
     }
-    
+
     /**
      * Checks whether an interruption happened.
      */
     private void checkInterrupt() {
-        if (interrupt) {
+        if (interrupt.value) {
             throw new ComputationInterruptedException("Interrupted");
         }
     }
@@ -1145,6 +1205,6 @@ public class StatisticsBuilder {
      * Stops all computations. May lead to exceptions being thrown. Use with care.
      */
     void interrupt() {
-        this.interrupt = true;
+        this.interrupt.value = true;
     }
 }

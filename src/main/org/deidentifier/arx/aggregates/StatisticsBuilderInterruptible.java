@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.aggregates;
 
+import java.text.ParseException;
 import java.util.Map;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -43,6 +44,90 @@ public class StatisticsBuilderInterruptible {
      */
     StatisticsBuilderInterruptible(DataHandleStatistics handle) {
         this.builder = new StatisticsBuilder(handle);
+    }
+
+    /**
+     * Creates a new set of statistics for the given classification task
+     * @param clazz - The class attributes
+     * @param samplingFraction - The sampling fraction
+     * @throws ParseException
+     */
+    public StatisticsClassification getClassificationPerformance(String clazz,
+                                                                 double samplingFraction) throws InterruptedException {
+        try {
+            return builder.getClassificationPerformance(clazz, samplingFraction);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Creates a new set of statistics for the given classification task
+     * @param clazz - The class attributes
+     * @param seed - The random seed, null, if the process should be randomized
+     * @param samplingFraction - The sampling fraction
+     * @throws ParseException
+     */
+    public StatisticsClassification getClassificationPerformance(String clazz,
+                                                                 Integer seed,
+                                                                 double samplingFraction) throws InterruptedException {
+        try {
+            return builder.getClassificationPerformance(clazz, seed, samplingFraction);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Creates a new set of statistics for the given classification task
+     * @param features - The feature attributes
+     * @param clazz - The class attributes
+     * @param samplingFraction - The sampling fraction
+     * @throws ParseException
+     */
+    public StatisticsClassification getClassificationPerformance(String[] features,
+                                                                 String clazz,
+                                                                 double samplingFraction) throws InterruptedException {
+        try {
+            return builder.getClassificationPerformance(features, clazz, samplingFraction);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Creates a new set of statistics for the given classification task
+     * @param features - The feature attributes
+     * @param clazz - The class attributes
+     * @param seed - The random seed, null, if the process should be randomized
+     * @param samplingFraction - The sampling fraction
+     * @throws ParseException
+     */
+    public StatisticsClassification getClassificationPerformance(String[] features,
+                                                                 String clazz,
+                                                                 Integer seed,
+                                                                 double samplingFraction) throws InterruptedException {
+        try {
+            return builder.getClassificationPerformance(features, clazz, seed, samplingFraction);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+            }
+        }
     }
 
     /**

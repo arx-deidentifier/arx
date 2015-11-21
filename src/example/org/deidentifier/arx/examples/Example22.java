@@ -43,8 +43,7 @@ import org.deidentifier.arx.metric.Metric;
 public class Example22 extends Example {
 
     /**
-     * 
-     *
+     * Loads a dataset from disk
      * @param dataset
      * @return
      * @throws IOException
@@ -53,7 +52,7 @@ public class Example22 extends Example {
 
         final Data data = Data.create("data/" + dataset + ".csv", ';');
 
-        // Read generalization hierachies
+        // Read generalization hierarchies
         final FilenameFilter hierarchyFilter = new FilenameFilter() {
             @Override
             public boolean accept(final File dir, final String name) {
@@ -65,11 +64,10 @@ public class Example22 extends Example {
             }
         };
 
+        // Create definition
         final File testDir = new File("data/");
         final File[] genHierFiles = testDir.listFiles(hierarchyFilter);
-
         final Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
-
         for (final File file : genHierFiles) {
             final Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {

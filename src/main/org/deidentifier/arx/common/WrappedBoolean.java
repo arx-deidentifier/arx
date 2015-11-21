@@ -22,5 +22,22 @@ package org.deidentifier.arx.common;
  * @author Fabian Prasser
  */
 public final class WrappedBoolean {
+
+    /**
+     * Creates a new instance with initial value "false"
+     */
+    public WrappedBoolean() {
+        this.value = false;
+    }
+
+    /**
+     * Creates a new instance
+     * @param initialValue
+     */
+    public WrappedBoolean(boolean initialValue) {
+        this.value = initialValue;
+    }
+
+    /** The value*/
     public boolean value = false;
 }

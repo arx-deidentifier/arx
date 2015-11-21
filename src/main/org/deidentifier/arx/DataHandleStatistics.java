@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx;
 
+import java.text.ParseException;
+import java.util.Date;
+
 /**
  * Wrapper class that provides information to StatisticsBuilder.
  *
@@ -62,6 +65,15 @@ public class DataHandleStatistics {
     }
 
     /**
+     * Delegate
+     * @param attribute
+     * @return
+     */
+    public int getColumnIndexOf(String attribute) {
+        return handle.getColumnIndexOf(attribute);
+    }
+
+    /**
      * Method
      * @param attribute
      * @return
@@ -71,11 +83,31 @@ public class DataHandleStatistics {
     }
 
     /**
+     * Delegate
+     * @param row
+     * @param column
+     * @return
+     * @throws ParseException
+     */
+    public Date getDate(int row, int column) throws ParseException {
+        return handle.getDate(row, column);
+    }
+
+    /**
      * Method
      * @return
      */
     public DataDefinition getDefinition() {
         return handle.getDefinition();
+    }
+
+    /**
+     * Delegate
+     * @param column
+     * @return
+     */
+    public String[] getDistinctValues(int column) {
+        return handle.getDistinctValues(column);
     }
 
     /**
@@ -89,12 +121,34 @@ public class DataHandleStatistics {
     }
 
     /**
+     * Delegate
+     * @param row
+     * @param column
+     * @return
+     * @throws ParseException
+     */
+    public Double getDouble(int row, int column) throws ParseException {
+        return handle.getDouble(row, column);
+    }
+
+    /**
      * Method
      * @param attribute
      * @return
      */
     public int getGeneralization(String attribute) {
         return handle.getGeneralization(attribute);
+    }
+    
+    /**
+     * Delegate
+     * @param row
+     * @param column
+     * @return
+     * @throws ParseException
+     */
+    public Long getLong(int row, int column) throws ParseException {
+        return handle.getLong(row, column);
     }
 
     /**
@@ -130,7 +184,7 @@ public class DataHandleStatistics {
     public String getValue(int row, int column) {
         return handle.getValue(row, column);
     }
-    
+
     /**
      * Returns whether the handle is optimized
      * @return
