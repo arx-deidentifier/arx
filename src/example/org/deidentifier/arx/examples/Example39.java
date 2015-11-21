@@ -100,7 +100,7 @@ public class Example39 extends Example {
 
         double inputAccuracy = data.getHandle().getStatistics()
                                     .getClassificationPerformance(features, clazz, 0xDEADBEEF, 1d)
-                                    .getPctCorrect();
+                                    .getAccuracy();
         
         System.out.println("Input dataset");
         System.out.println(" - Classification accuracy: " + inputAccuracy);
@@ -115,10 +115,10 @@ public class Example39 extends Example {
 
         double outputAccuracy = result.getOutput().getStatistics()
                                         .getClassificationPerformance(features, clazz, 0xDEADBEEF, 1d)
-                                        .getPctCorrect();
+                                        .getAccuracy();
         
         System.out.println("5-anonymous dataset");
         System.out.println(" - Classification accuracy: " + outputAccuracy);
-        System.out.println(" - Reduction compared to input: " + (1d - outputAccuracy / inputAccuracy) * 100d + "[%]");
+        System.out.println(" - Difference to input: " + (outputAccuracy / inputAccuracy - 1d) * 100d + "[%]");
     }
 }
