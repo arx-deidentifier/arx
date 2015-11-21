@@ -99,9 +99,9 @@ public class StatisticsBuilderInterruptible {
 
         try {
             return builder.getContingencyTable(column1,
-                                               hierarchy1,
+                                               hierarchy1 == null ? null : hierarchy1.getHierarchy(),
                                                column2,
-                                               hierarchy2);
+                                               hierarchy2 == null ? null : hierarchy2.getHierarchy());
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
@@ -114,7 +114,7 @@ public class StatisticsBuilderInterruptible {
 
     /**
      * Returns a contingency table for the given columns. This method assumes
-     * that the order of string data items can (and should) be derived from the
+     * that the order of string data items will be derived from the
      * hierarchies provided in the data definition (if any)
      *
      * @param column1 The first column
@@ -196,13 +196,14 @@ public class StatisticsBuilderInterruptible {
                                 int column2,
                                 int size2,
                                 Hierarchy hierarchy2) throws InterruptedException {
+        
         try {
             return builder.getContingencyTable(column1,
                                                size1,
-                                               hierarchy1,
+                                               hierarchy1 == null ? null : hierarchy1.getHierarchy(),
                                                column2,
                                                size2,
-                                               hierarchy2);
+                                               hierarchy2 == null ? null : hierarchy2.getHierarchy());
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
@@ -320,8 +321,9 @@ public class StatisticsBuilderInterruptible {
      */
     public String[]
             getDistinctValuesOrdered(int column, Hierarchy hierarchy) throws InterruptedException {
+        
         try {
-            return builder.getDistinctValuesOrdered(column, hierarchy);
+            return builder.getDistinctValuesOrdered(column, hierarchy == null ? null : hierarchy.getHierarchy());
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
@@ -408,10 +410,10 @@ public class StatisticsBuilderInterruptible {
      * @return
      * @throws InterruptedException
      */
-    public StatisticsFrequencyDistribution
-            getFrequencyDistribution(int column, Hierarchy hierarchy) throws InterruptedException {
+    public StatisticsFrequencyDistribution getFrequencyDistribution(int column, Hierarchy hierarchy) throws InterruptedException {
+        
         try {
-            return builder.getFrequencyDistribution(column, hierarchy);
+            return builder.getFrequencyDistribution(column, hierarchy == null ? null : hierarchy.getHierarchy());
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");

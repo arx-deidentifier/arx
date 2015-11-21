@@ -30,8 +30,6 @@ import java.util.Set;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
-import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandleStatistics;
 import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.DataScale;
@@ -92,96 +90,8 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Returns a contingency table for the given columns. The order for string data items is derived
-     * from the provided hierarchies
-     * 
-     * @param column1 The first column
-     * @param hierarchy1 The hierarchy for the first column, may be null
-     * @param column2 The second column
-     * @param hierarchy2 The hierarchy for the second column, may be null
-     * @return
-     */
-    public StatisticsContingencyTable getContingencyTable(int column1,
-                                                          Hierarchy hierarchy1,
-                                                          int column2,
-                                                          Hierarchy hierarchy2) {
-        
-        // Reset stop flag
-        interrupt = false;
-        
-        // Init
-        String[] values1 = getDistinctValuesOrdered(column1, hierarchy1);
-        String[] values2 = getDistinctValuesOrdered(column2, hierarchy2);
-        
-        // Create maps of indexes
-        Map<String, Integer> indexes1 = new HashMap<String, Integer>();
-        for (int i = 0; i < values1.length; i++) {
-            checkInterrupt();
-            indexes1.put(values1[i], i);
-        }
-        Map<String, Integer> indexes2 = new HashMap<String, Integer>();
-        for (int i = 0; i < values2.length; i++) {
-            checkInterrupt();
-            indexes2.put(values2[i], i);
-        }
-        
-        // Create entry set
-        int max = Integer.MIN_VALUE;
-        final Map<Entry, Integer> entries = new HashMap<Entry, Integer>();
-        for (int row = 0; row < handle.getNumRows(); row++) {
-            checkInterrupt();
-            int index1 = indexes1.get(handle.getValue(row, column1));
-            int index2 = indexes2.get(handle.getValue(row, column2));
-            Entry entry = new Entry(index1, index2);
-            Integer previous = entries.get(entry);
-            int value = previous != null ? previous + 1 : 1;
-            max = Math.max(max, value);
-            entries.put(entry, value);
-        }
-        
-        // Create iterator
-        final int count = handle.getNumRows();
-        final Iterator<Entry> internal = entries.keySet().iterator();
-        final Iterator<Entry> iterator = new Iterator<Entry>() {
-            
-            private Map<Entry, Integer> _entries  = entries;
-            private Iterator<Entry>     _internal = internal;
-            
-            @Override
-            public boolean hasNext() {
-                
-                if (_internal == null) return false;
-                boolean result = _internal.hasNext();
-                
-                // Try to release resources as early as possible
-                if (!result) {
-                    _internal = null;
-                    _entries = null;
-                }
-                return result;
-            }
-            
-            @Override
-            public Entry next() {
-                if (_internal == null) return null;
-                Entry e = _internal.next();
-                e.frequency = (double) _entries.get(e) / (double) count;
-                return e;
-            }
-            
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
-        
-        // Result result
-        return new StatisticsContingencyTable(values1, values2, count, (double) max / (double) count, iterator);
-    }
-    
-    /**
      * Returns a contingency table for the given columns. This method assumes that the
-     * order of string data items can (and should) be derived from the hierarchies provided
+     * order of string data items will be derived from the hierarchies provided
      * in the data definition (if any)
      * 
      * @param column1 The first column
@@ -219,6 +129,24 @@ public class StatisticsBuilder {
     }
     
     /**
+     * Returns a contingency table for the given columns. This method assumes that the
+     * order of string data items can (and should) be derived from the hierarchies provided
+     * in the data definition (if any)
+     * 
+     * @param column1 The first column
+     * @param size1 The maximal size in this dimension
+     * @param column2 The second column
+     * @param size2 The maximal size in this dimension
+     * @return
+     */
+    public StatisticsContingencyTable getContingencyTable(int column1,
+                                                          int size1,
+                                                          int column2,
+                                                          int size2) {
+        return getContingencyTable(column1, size1, true, column2, size2, true);
+    }
+    
+    /**
      * Returns a contingency table for the given columns. The order for string data items is derived
      * from the provided hierarchies
      * 
@@ -232,10 +160,10 @@ public class StatisticsBuilder {
      */
     public StatisticsContingencyTable getContingencyTable(int column1,
                                                           int size1,
-                                                          Hierarchy hierarchy1,
+                                                          String[][] hierarchy1,
                                                           int column2,
                                                           int size2,
-                                                          Hierarchy hierarchy2) {
+                                                          String[][] hierarchy2) {
         
         // Reset stop flag
         interrupt = false;
@@ -337,21 +265,91 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Returns a contingency table for the given columns. This method assumes that the
-     * order of string data items can (and should) be derived from the hierarchies provided
-     * in the data definition (if any)
+     * Returns a contingency table for the given columns. The order for string data items is derived
+     * from the provided hierarchies
      * 
      * @param column1 The first column
-     * @param size1 The maximal size in this dimension
+     * @param hierarchy1 The hierarchy for the first column, may be null
      * @param column2 The second column
-     * @param size2 The maximal size in this dimension
+     * @param hierarchy2 The hierarchy for the second column, may be null
      * @return
      */
     public StatisticsContingencyTable getContingencyTable(int column1,
-                                                          int size1,
+                                                          String[][] hierarchy1,
                                                           int column2,
-                                                          int size2) {
-        return getContingencyTable(column1, size1, true, column2, size2, true);
+                                                          String[][] hierarchy2) {
+        
+        // Reset stop flag
+        interrupt = false;
+        
+        // Init
+        String[] values1 = getDistinctValuesOrdered(column1, hierarchy1);
+        String[] values2 = getDistinctValuesOrdered(column2, hierarchy2);
+        
+        // Create maps of indexes
+        Map<String, Integer> indexes1 = new HashMap<String, Integer>();
+        for (int i = 0; i < values1.length; i++) {
+            checkInterrupt();
+            indexes1.put(values1[i], i);
+        }
+        Map<String, Integer> indexes2 = new HashMap<String, Integer>();
+        for (int i = 0; i < values2.length; i++) {
+            checkInterrupt();
+            indexes2.put(values2[i], i);
+        }
+        
+        // Create entry set
+        int max = Integer.MIN_VALUE;
+        final Map<Entry, Integer> entries = new HashMap<Entry, Integer>();
+        for (int row = 0; row < handle.getNumRows(); row++) {
+            checkInterrupt();
+            int index1 = indexes1.get(handle.getValue(row, column1));
+            int index2 = indexes2.get(handle.getValue(row, column2));
+            Entry entry = new Entry(index1, index2);
+            Integer previous = entries.get(entry);
+            int value = previous != null ? previous + 1 : 1;
+            max = Math.max(max, value);
+            entries.put(entry, value);
+        }
+        
+        // Create iterator
+        final int count = handle.getNumRows();
+        final Iterator<Entry> internal = entries.keySet().iterator();
+        final Iterator<Entry> iterator = new Iterator<Entry>() {
+            
+            private Map<Entry, Integer> _entries  = entries;
+            private Iterator<Entry>     _internal = internal;
+            
+            @Override
+            public boolean hasNext() {
+                
+                if (_internal == null) return false;
+                boolean result = _internal.hasNext();
+                
+                // Try to release resources as early as possible
+                if (!result) {
+                    _internal = null;
+                    _entries = null;
+                }
+                return result;
+            }
+            
+            @Override
+            public Entry next() {
+                if (_internal == null) return null;
+                Entry e = _internal.next();
+                e.frequency = (double) _entries.get(e) / (double) count;
+                return e;
+            }
+            
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+        
+        // Result result
+        return new StatisticsContingencyTable(values1, values2, count, (double) max / (double) count, iterator);
     }
     
     /**
@@ -402,7 +400,7 @@ public class StatisticsBuilder {
      * @param hierarchy The hierarchy, may be null
      * @return
      */
-    public String[] getDistinctValuesOrdered(int column, Hierarchy hierarchy) {
+    public String[] getDistinctValuesOrdered(int column, String[][] hierarchy) {
         
         // Reset stop flag
         interrupt = false;
@@ -412,10 +410,9 @@ public class StatisticsBuilder {
         final String attribute = handle.getAttributeName(column);
         final DataType<?> datatype = handle.getDataType(attribute);
         final int level = handle.getGeneralization(attribute);
-        final String[][] _hierarchy = hierarchy != null ? hierarchy.getHierarchy() : null;
         
         // Sort by data type
-        if (_hierarchy == null || level == 0) {
+        if (hierarchy == null || level == 0) {
             sort(list, datatype, handle.getSuppressionString());
             // Sort by hierarchy and data type
         } else {
@@ -426,8 +423,8 @@ public class StatisticsBuilder {
             // Create base order
             Set<String> baseSet = new HashSet<String>();
             DataType<?> baseType = handle.getBaseDataType(attribute);
-            for (int i = 0; i < _hierarchy.length; i++) {
-                String element = _hierarchy[i][0];
+            for (int i = 0; i < hierarchy.length; i++) {
+                String element = hierarchy[i][0];
                 checkInterrupt();
                 // Make sure that only elements from the hierarchy
                 // are added that are included in the data
@@ -444,17 +441,17 @@ public class StatisticsBuilder {
             
             // Handle optimized handles
             int lower = handle.isOptimized() ? 1 : level;
-            int upper = handle.isOptimized() ? _hierarchy[0].length: level + 1;
+            int upper = handle.isOptimized() ? hierarchy[0].length: level + 1;
             
             // Build higher level order from base order
-            for (int i = 0; i < _hierarchy.length; i++) {
+            for (int i = 0; i < hierarchy.length; i++) {
                 checkInterrupt();
                 
                 for (int j = lower; j < upper; j++) {
-                    if (!order.containsKey(_hierarchy[i][j])) {
-                        Integer position = baseOrder.get(_hierarchy[i][0]);
+                    if (!order.containsKey(hierarchy[i][j])) {
+                        Integer position = baseOrder.get(hierarchy[i][0]);
                         if (position != null) {
-                            order.put(_hierarchy[i][j], position);
+                            order.put(hierarchy[i][j], position);
                             max = Math.max(position, max) + 1;
                         }
                     }
@@ -599,7 +596,7 @@ public class StatisticsBuilder {
      * @param hierarchy The hierarchy, may be null
      * @return
      */
-    public StatisticsFrequencyDistribution getFrequencyDistribution(int column, Hierarchy hierarchy) {
+    public StatisticsFrequencyDistribution getFrequencyDistribution(int column, String[][] hierarchy) {
         
         // Reset stop flag
         interrupt = false;
@@ -859,22 +856,19 @@ public class StatisticsBuilder {
      * @param orderFromDefinition
      * @return
      */
-    private Hierarchy getHierarchy(int column, boolean orderFromDefinition) {
+    private String[][] getHierarchy(int column, boolean orderFromDefinition) {
         
         // Init
         final String attribute = handle.getAttributeName(column);
-        final AttributeType type = handle.getDefinition().getAttributeType(attribute);
+        final String[][] hierarchy = handle.getDefinition().getHierarchy(attribute);
         final DataType<?> datatype = handle.getDataType(attribute);
-        final Hierarchy hierarchy;
         
         // Check if hierarchy available
-        if (orderFromDefinition && datatype instanceof ARXString && type instanceof Hierarchy) {
-            hierarchy = ((Hierarchy) type);
+        if (orderFromDefinition && datatype instanceof ARXString && hierarchy != null) {
+            return hierarchy;
         } else {
-            hierarchy = null;
+            return null;
         }
-        
-        return hierarchy;
     }
     
     /**
@@ -924,7 +918,7 @@ public class StatisticsBuilder {
     private <U, V> StatisticsSummaryOrdinal getSummaryStatisticsOrdinal(final int generalization,
                                                                         final DataType<U> dataType,
                                                                         final DataType<V> baseDataType,
-                                                                        final Hierarchy hierarchy) {
+                                                                        final String[][] hierarchy) {
         
         // TODO: It would be cleaner to return an ARXOrderedString for generalized variables
         // TODO: that have a suitable data type directly from the DataHandle
@@ -935,10 +929,9 @@ public class StatisticsBuilder {
         } else if (hierarchy == null) {
             return new StatisticsSummaryOrdinal(dataType);
         } else {
-            final String[][] array = hierarchy.getHierarchy();
             final Map<String, String> map = new HashMap<String, String>();
-            for (int i = 0; i < array.length; i++) {
-                map.put(array[i][generalization], array[i][0]);
+            for (int i = 0; i < hierarchy.length; i++) {
+                map.put(hierarchy[i][generalization], hierarchy[i][0]);
             }
             return new StatisticsSummaryOrdinal(new Comparator<String>() {
                 public int compare(String o1, String o2) {
