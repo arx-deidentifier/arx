@@ -45,44 +45,47 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 public abstract class ViewData implements IView {
     
-    /**  TODO */
-    private final Image                IMAGE_ASCENDING;
-    
-    /**  TODO */
-    private final Image                IMAGE_DESCENDING;
-    
-    /**  TODO */
-    private final Image                IMAGE_INSENSITIVE;
-    
-    /**  TODO */
-    private final Image                IMAGE_SENSITIVE;
-    
-    /**  TODO */
-    private final Image                IMAGE_QUASI_IDENTIFYING;
-    
-    /**  TODO */
-    private final Image                IMAGE_IDENTIFYING;
+    /** Image */
+    private final Image                 IMAGE_ASCENDING;
 
-    /**  TODO */
-    private final ToolItem             groupsButton;
-    
-    /**  TODO */
-    private final ToolItem             subsetButton;
-    
-    /**  TODO */
-    private final ToolItem             ascendingButton;
-    
-    /**  TODO */
-    private final ToolItem             descendingButton;
+    /** Image */
+    private final Image                 IMAGE_DESCENDING;
 
-    /**  TODO */
-    protected final ComponentDataTable table;
-    
-    /**  TODO */
-    protected final Controller         controller;
+    /** Image */
+    private final Image                 IMAGE_INSENSITIVE;
 
-    /**  TODO */
-    protected Model                    model;
+    /** Image */
+    private final Image                 IMAGE_SENSITIVE;
+
+    /** Image */
+    private final Image                 IMAGE_QUASI_IDENTIFYING;
+
+    /** Image */
+    private final Image                 IMAGE_IDENTIFYING;
+
+    /** Widget*/
+    private final ToolItem              groupsButton;
+
+    /** Widget*/
+    private final ToolItem              subsetButton;
+
+    /** Widget*/
+    private final ToolItem              ascendingButton;
+
+    /** Widget*/
+    private final ToolItem              descendingButton;
+
+    /** Widget*/
+    private final ComponentTitledFolder folder;
+
+    /** Widget*/
+    protected final ComponentDataTable  table;
+
+    /** Controller*/
+    protected final Controller          controller;
+
+    /** Model*/
+    protected Model                     model;
 
     /**
      * 
@@ -154,7 +157,7 @@ public abstract class ViewData implements IView {
                 });
         
         // Build border
-        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, null);
+        folder = new ComponentTitledFolder(parent, controller, bar, null);
         folder.setLayoutData(SWTUtil.createFillGridData());
         Composite c = folder.createItem(title, null);
         folder.setSelection(0);
@@ -195,6 +198,15 @@ public abstract class ViewData implements IView {
         table.addScrollBarListener(listener);
     }
     
+    /**
+     * Adds an additional item to the folder
+     * @param title
+     * @return
+     */
+    public Composite createAdditionalItem(String title) {
+        return folder.createItem(title, null);
+    }
+    
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -209,7 +221,7 @@ public abstract class ViewData implements IView {
     public ViewportLayer getViewportLayer() {
         return table.getViewportLayer();
     }
-
+    
     @Override
     public void reset() {
         table.reset();
@@ -217,6 +229,14 @@ public abstract class ViewData implements IView {
         subsetButton.setEnabled(false);
         ascendingButton.setEnabled(false);
         descendingButton.setEnabled(false);
+    }
+
+    /**
+     * Sets the selection
+     * @param index
+     */
+    public void setSelectedItem(int index) {
+        folder.setSelection(index);
     }
 
     @Override

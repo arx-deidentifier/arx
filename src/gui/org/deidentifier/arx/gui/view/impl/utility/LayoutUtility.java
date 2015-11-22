@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.utility;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.impl.common.ViewData;
@@ -245,6 +246,14 @@ public class LayoutUtility implements ILayout {
                 }
             }
         });
+        
+        Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10")); //$NON-NLS-1$
+        classificationInput.setLayout(new FillLayout());
+        new ViewStatisticsClassificationInput(classificationInput, controller);
+        
+        Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10")); //$NON-NLS-1$
+        classificationOutput.setLayout(new FillLayout());
+        new ViewStatisticsClassificationOutput(classificationOutput, controller);
 
         // Create bottom composite
         final Composite compositeBottom = new Composite(centerSash, SWT.NONE);

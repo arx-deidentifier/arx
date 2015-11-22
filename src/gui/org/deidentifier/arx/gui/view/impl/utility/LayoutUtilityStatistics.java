@@ -43,28 +43,31 @@ import org.eclipse.swt.widgets.ToolItem;
 public class LayoutUtilityStatistics implements ILayout, IView {
 
     /** Constant */
-    private static final String         TAB_SUMMARY            = Resources.getMessage("StatisticsView.6"); //$NON-NLS-1$
+    private static final String         TAB_SUMMARY                 = Resources.getMessage("StatisticsView.6"); //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_DISTRIBUTION       = Resources.getMessage("StatisticsView.0"); //$NON-NLS-1$
+    private static final String         TAB_DISTRIBUTION            = Resources.getMessage("StatisticsView.0"); //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_DISTRIBUTION_TABLE = Resources.getMessage("StatisticsView.4"); //$NON-NLS-1$
+    private static final String         TAB_DISTRIBUTION_TABLE      = Resources.getMessage("StatisticsView.4"); //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_CONTINGENCY        = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
+    private static final String         TAB_CONTINGENCY             = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_CONTINGENCY_TABLE  = Resources.getMessage("StatisticsView.5"); //$NON-NLS-1$
+    private static final String         TAB_CONTINGENCY_TABLE       = Resources.getMessage("StatisticsView.5"); //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_CLASSES_TABLE      = Resources.getMessage("StatisticsView.7"); //$NON-NLS-1$
+    private static final String         TAB_CLASSES_TABLE           = Resources.getMessage("StatisticsView.7"); //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_PROPERTIES         = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
+    private static final String         TAB_PROPERTIES              = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_LOCAL_RECODING     = Resources.getMessage("StatisticsView.8"); //$NON-NLS-1$
+    private static final String         TAB_LOCAL_RECODING          = Resources.getMessage("StatisticsView.8"); //$NON-NLS-1$
+
+    /** Constant */
+    private static final String         TAB_CLASSIFICATION_ANALYSIS = Resources.getMessage("StatisticsView.9"); //$NON-NLS-1$
 
     /**  View */
     private final ComponentTitledFolder folder;
@@ -128,11 +131,17 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         item3a.setLayout(new FillLayout());
         final Composite item3 = folder.createItem(TAB_PROPERTIES, null, true);
         item3.setLayout(new FillLayout());
-        
+
         Composite item4 = null;
         if (target == ModelPart.OUTPUT) {
             item4 = folder.createItem(TAB_LOCAL_RECODING, null, false);
             item4.setLayout(new FillLayout());
+        } 
+
+        Composite item5 = null;
+        if (target == ModelPart.INPUT) {
+            item5 = folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false);
+            item5.setLayout(new FillLayout());
         } 
         
         folder.setSelection(0);
@@ -154,6 +163,10 @@ public class LayoutUtilityStatistics implements ILayout, IView {
 
         if (target == ModelPart.OUTPUT) {
             new ViewLocalRecoding(item4, controller);
+        }
+        
+        if (target == ModelPart.INPUT) {
+            new ViewClassificationAttributes(item5, controller);
         }
         
         // Set initial visibility

@@ -255,6 +255,7 @@ public class Model implements Serializable {
     /* *****************************************
      * RISK ANALYSIS
      ******************************************/
+    /** Selected quasi identifiers*/
     private Set<String>                           selectedQuasiIdentifiers        = null;
     
 
@@ -263,7 +264,19 @@ public class Model implements Serializable {
      ******************************************/
     /** The local recoding model*/
     private ModelLocalRecoding                    localRecodingModel              = new ModelLocalRecoding();
-    
+
+    /* *****************************************
+     * Data Mining
+     ******************************************/
+    /** Selected attributes */
+    private Set<String>                                   selectedFeatures                = null;
+    /** Selected attributes */
+    private Set<String>                                   selectedClasses                 = null;
+    /** Max records */
+    private Integer                                       classificationMaxRecords        = Integer.MAX_VALUE;
+    /** Seed */
+    private Integer                                       classificationSeed              = Integer.MAX_VALUE;
+
     /**
      * Creates a new instance.
      *
@@ -493,6 +506,34 @@ public class Model implements Serializable {
 	}
 
 	/**
+     * Returns the max recordsfor classification
+     * @return
+     */
+    public Integer getClassificationMaxRecords() {
+
+        if (this.classificationMaxRecords == null) {
+            this.classificationMaxRecords = Integer.MAX_VALUE;
+        }
+        return this.classificationMaxRecords;
+        
+    }
+    
+	/**
+     * Returns the seed for classification
+     * @return
+     */
+    public Integer getClassificationSeed() {
+
+        if (this.classificationSeed == null) {
+            return Integer.MAX_VALUE;
+        }
+        if (this.classificationSeed == Integer.MAX_VALUE) {
+            return null;
+        }
+        return this.classificationSeed;
+    }
+	
+	/**
      * Returns the clipboard.
      *
      * @return
@@ -503,7 +544,7 @@ public class Model implements Serializable {
         }
         return clipboard;
     }
-    
+	
 	/**
      * Gets the csv config model.
      * @return
@@ -515,7 +556,7 @@ public class Model implements Serializable {
         }
         return csvSyntax;
     }
-	
+
 	/**
      * Returns the d-disclosure privacy model.
      *
@@ -532,7 +573,7 @@ public class Model implements Serializable {
         }
         return dDisclosurePrivacyModel;
     }
-	
+
 	/**
      * Returns the project description.
      *
@@ -629,7 +670,7 @@ public class Model implements Serializable {
 	    return getRiskModel().getPopulationModel();
 	}
 
-	/**
+    /**
      * Returns the k-anonymity model.
      *
      * @return
@@ -637,7 +678,7 @@ public class Model implements Serializable {
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
 	}
-
+    
 	/**
      * Returns the l-diversity model.
      *
@@ -649,8 +690,8 @@ public class Model implements Serializable {
 	        }
 		return lDiversityModel;
 	}
-
-    /**
+	
+	/**
      * Returns the project locale.
      *
      * @return
@@ -662,7 +703,7 @@ public class Model implements Serializable {
 	        return locale;
 	    }
 	}
-    
+
 	/**
      * Returns the model for local recoding
      * @return
@@ -673,7 +714,7 @@ public class Model implements Serializable {
         }
         return localRecodingModel;
     }
-	
+
 	/**
      * When a dataset has more records than this threshold,
      * visualization of statistics will be disabled.
@@ -789,7 +830,7 @@ public class Model implements Serializable {
 		return outputNode;
 	}
 
-	/**
+    /**
      * Returns a string representation of the currently applied transformation.
      *
      * @return
@@ -813,7 +854,7 @@ public class Model implements Serializable {
         return null;
     }
 
-    /**
+	/**
      * Returns the path of the project.
      *
      * @return
@@ -821,7 +862,7 @@ public class Model implements Serializable {
 	public String getPath() {
 		return path;
 	}
-
+	
 	/**
      * @return the perspective
      */
@@ -831,7 +872,7 @@ public class Model implements Serializable {
         }
         return perspective;
     }
-
+	
 	/**
      * Returns the current query.
      *
@@ -840,7 +881,7 @@ public class Model implements Serializable {
 	public String getQuery() {
         return query;
     }
-	
+
 	/**
      * Returns the current result.
      *
@@ -849,7 +890,7 @@ public class Model implements Serializable {
 	public ARXResult getResult() {
 		return result;
 	}
-	
+
 	/**
      * Returns the risk-based model.
      *
@@ -865,7 +906,7 @@ public class Model implements Serializable {
         return riskBasedModel;
     }
 
-	/**
+    /**
      * Returns the risk model
      * @return the risk model
      */
@@ -875,7 +916,7 @@ public class Model implements Serializable {
         }
         return riskModel;
     }
-
+	
 	/**
      * Returns the currently selected attribute.
      *
@@ -885,7 +926,61 @@ public class Model implements Serializable {
 		return selectedAttribute;
 	}
 
+
     /**
+     * Returns the selected features
+     * @return
+     */
+    public Set<String> getSelectedClasses() {
+
+        if (this.selectedClasses == null) {
+
+            // Add attributes
+            if (this.getInputConfig() != null && this.getInputConfig().getInput() != null) {
+                DataHandle handle = this.getInputConfig().getInput().getHandle();
+
+                this.selectedClasses = new HashSet<String>();
+                for (int i = 0; i < handle.getNumColumns(); i++) {
+                    this.selectedClasses.add(handle.getAttributeName(i));
+                }
+
+            } else {
+
+                // Return empty set
+                return new HashSet<String>();
+            }
+        }
+        return this.selectedClasses;
+    }
+
+	
+    /**
+	 * Returns the selected features
+	 * @return
+	 */
+	public Set<String> getSelectedFeatures() {
+
+        if (this.selectedFeatures == null) {
+
+            // Add attributes
+            if (this.getInputConfig() != null && this.getInputConfig().getInput() != null) {
+                DataHandle handle = this.getInputConfig().getInput().getHandle();
+
+                this.selectedFeatures = new HashSet<String>();
+                for (int i = 0; i < handle.getNumColumns(); i++) {
+                    this.selectedFeatures.add(handle.getAttributeName(i));
+                }
+
+            } else {
+
+                // Return empty set
+                return new HashSet<String>();
+            }
+        }
+        return this.selectedFeatures;
+	}
+
+	/**
      * Returns the selected transformation.
      *
      * @return
@@ -893,7 +988,7 @@ public class Model implements Serializable {
 	public ARXNode getSelectedNode() {
 		return selectedNode;
 	}
-    
+
     /**
      * Returns a set of quasi identifiers selected for risk analysis
      * @return
@@ -936,7 +1031,7 @@ public class Model implements Serializable {
         return this.selectedQuasiIdentifiers;
     }
 
-	/**
+    /**
      * Returns the separator.
      *
      * @return
@@ -963,7 +1058,7 @@ public class Model implements Serializable {
 		return snapshotSizeSnapshot;
 	}
 
-    /**
+	/**
      * Returns the origin of the subset.
      *
      * @return
@@ -972,7 +1067,7 @@ public class Model implements Serializable {
         return this.subsetOrigin;
     }
 
-    /**
+	/**
      * Returns the t-closeness model.
      *
      * @return
@@ -984,7 +1079,7 @@ public class Model implements Serializable {
 		return tClosenessModel;
 	}
 
-	/**
+    /**
      * Returns the execution time of the last anonymization process.
      *
      * @return
@@ -993,7 +1088,7 @@ public class Model implements Serializable {
 		return time;
 	}
 
-	/**
+    /**
      * Returns whether functional hierarchies should be used
      * @return
      */
@@ -1006,7 +1101,7 @@ public class Model implements Serializable {
         return useFunctionalHierarchies;
     }
 
-    /**
+	/**
      * Returns whether list-wise deletion is used for summary statistics
      * @return
      */
@@ -1019,7 +1114,7 @@ public class Model implements Serializable {
         return useListwiseDeletion;
     }
 
-    /**
+	/**
      * Returns the view configuration.
      *
      * @return
@@ -1028,7 +1123,7 @@ public class Model implements Serializable {
         return this.viewConfig;
     }
 
-	/**
+    /**
      * Returns whether debugging is enabled.
      *
      * @return
@@ -1075,8 +1170,8 @@ public class Model implements Serializable {
 	public boolean isSensitiveAttributeSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
-
-    /**
+	
+	/**
      * Returns whether visualization is enabled.
      *
      * @return
@@ -1101,11 +1196,13 @@ public class Model implements Serializable {
         this.result = null;
         if (auditTrail != null) auditTrail.clear();
         this.selectedQuasiIdentifiers = null;
+        this.selectedFeatures = null;
+        this.selectedClasses = null;
         this.subsetOrigin = Resources.getMessage("Model.0"); //$NON-NLS-1$
         this.groups = null;
 	}
-	
-	/**
+    
+    /**
      * Returns the last two selected attributes.
      */
     public void resetAttributePair() {
@@ -1114,8 +1211,8 @@ public class Model implements Serializable {
 		pair[0] = null;
 		pair[1] = null;
 	}
-
-	/**
+    
+    /**
      * Resets the configuration of the privacy criteria.
      */
 	public void resetCriteria() {
@@ -1140,8 +1237,8 @@ public class Model implements Serializable {
 		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
 		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR));
 	}
-    
-    /**
+
+	/**
      * Sets the anonymizer.
      *
      * @param anonymizer
@@ -1150,8 +1247,24 @@ public class Model implements Serializable {
 		setModified();
 		this.anonymizer = anonymizer;
 	}
-    
-    /**
+
+	/**
+     * Sets the max records for classification
+     * @param records
+     */
+    public void setClassificationMaxRecords(Integer records) {
+        this.classificationMaxRecords = records;
+    }
+
+	/**
+     * Sets the seed. Set to Integer.MAX_VALUE for randomization
+     * @param seed
+     */
+    public void setClassificationSeed(Integer seed) {
+        this.classificationSeed = seed;
+    }
+
+	/**
      * Enables debugging.
      *
      * @param value
@@ -1171,7 +1284,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	/**
+    /**
      * Sets the indices of equivalence classes.
      *
      * @param groups
@@ -1210,7 +1323,7 @@ public class Model implements Serializable {
 		this.inputBytes = inputBytes;
 	}
 
-    /**
+	/**
      * Sets the input config.
      *
      * @param config
@@ -1228,7 +1341,7 @@ public class Model implements Serializable {
         this.locale = locale;
         this.setModified();
     }
-
+	
 	/**
      * Sets the according parameter.
      *
@@ -1238,7 +1351,7 @@ public class Model implements Serializable {
         this.maximalSizeForComplexOperations = numberOfRows;
         this.setModified();
     }
-
+	
 	/**
      * Sets the according parameter.
      *
@@ -1248,7 +1361,7 @@ public class Model implements Serializable {
 		this.maxNodesInViewer = maxNodesInViewer;
 		setModified();
 	}
-
+	
 	/**
      * Sets the description of the metric.
      *
@@ -1264,7 +1377,7 @@ public class Model implements Serializable {
     public void setModified() {
 		modified = true;
 	}
-	
+
 	/**
      * Sets the project name.
      *
@@ -1274,7 +1387,7 @@ public class Model implements Serializable {
 		this.name = name;
 		setModified();
 	}
-	
+
 	/**
      * Sets a filter.
      *
@@ -1284,7 +1397,7 @@ public class Model implements Serializable {
 		nodeFilter = filter;
 		setModified();
 	}
-	
+
 	/**
      * Sets the current output.
      *
@@ -1311,7 +1424,7 @@ public class Model implements Serializable {
 		outputConfig = config;
 	}
 
-	/**
+    /**
      * Sets the project path.
      *
      * @param path
@@ -1319,15 +1432,15 @@ public class Model implements Serializable {
 	public void setPath(final String path) {
 		this.path = path;
 	}
-
+    
 	/**
      * @param perspective the perspective to set
      */
     public void setPerspective(Perspective perspective) {
         this.perspective = perspective;
     }
-
-	/**
+    
+    /**
      * Sets the query.
      *
      * @param query
@@ -1336,8 +1449,8 @@ public class Model implements Serializable {
         this.query = query;
         setModified();
     }
-
-	/**
+    
+    /**
      * Sets the result.
      *
      * @param result
@@ -1357,8 +1470,8 @@ public class Model implements Serializable {
 	public void setSaved() {
 		modified = false;
 	}
-    
-	/**
+
+    /**
      * Sets the selected attribute.
      *
      * @param attribute
@@ -1381,7 +1494,25 @@ public class Model implements Serializable {
 
 		setModified();
 	}
-    
+
+	/**
+     * Sets a set of selected attributes
+     * @param set
+     */
+    public void setSelectedClasses(Set<String> set) {
+        this.selectedClasses = set;
+        this.setModified();
+    }
+
+    /**
+     * Sets a set of selected attributes
+     * @param set
+     */
+    public void setSelectedFeatures(Set<String> set) {
+        this.selectedFeatures = set;
+        this.setModified();
+    }
+
     /**
      * Sets the selected node.
      *
@@ -1391,7 +1522,7 @@ public class Model implements Serializable {
 		selectedNode = node;
 		setModified();
 	}
-    
+
     /**
      * Sets a set of quasi identifiers selected for risk analysis
      * @param set
@@ -1401,7 +1532,7 @@ public class Model implements Serializable {
         this.setModified();
     }
 
-	/**
+    /**
      * 
      *
      * @param snapshotSize
@@ -1438,7 +1569,7 @@ public class Model implements Serializable {
     public void setSubsetOrigin(String origin){
         this.subsetOrigin = origin;
     }
-
+    
     /**
      * Sets the execution time of the last anonymization process.
      *
@@ -1447,7 +1578,7 @@ public class Model implements Serializable {
     public void setTime(final long time) {
 		this.time = time;
 	}
-
+    
     /**
      * Marks this model as unmodified.
      */

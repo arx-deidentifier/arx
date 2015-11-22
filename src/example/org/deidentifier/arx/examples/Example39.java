@@ -116,7 +116,7 @@ public class Example39 extends Example {
         ARXResult result = anonymizer.anonymize(data, config);
 
         double outputAccuracy = result.getOutput().getStatistics()
-                                        .getClassificationPerformance(features, clazz, 0xDEADBEEF, 1d)
+                                        .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, 1d)
                                         .getFractionCorrect();
         
         System.out.println("5-anonymous dataset");

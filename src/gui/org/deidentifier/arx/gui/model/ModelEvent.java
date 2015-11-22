@@ -101,7 +101,10 @@ public class ModelEvent {
         SELECTED_QUASI_IDENTIFIERS,
 
         /**  EXPAND */
-        EXPAND
+        EXPAND,
+
+        /**  SELECTED_FEATURES_OR_CLASSES */
+        SELECTED_FEATURES_OR_CLASSES,
     }
 
     /** The part of the model that has changed. */
