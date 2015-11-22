@@ -66,6 +66,7 @@ public class StatisticsClassification {
 
     /**
      * Creates a new set of statistics for the given classification task
+     * @param builder - The statistics builder
      * @param handle - The handle
      * @param features - The feature attributes
      * @param clazz - The class attributes
@@ -73,7 +74,8 @@ public class StatisticsClassification {
      * @param samplingFraction - The sampling fraction
      * @throws ParseException 
      */
-    StatisticsClassification(DataHandleStatistics handle,
+    StatisticsClassification(StatisticsBuilder builder,
+                             DataHandleStatistics handle,
                              String[] features,
                              String clazz,
                              Integer seed,
@@ -122,6 +124,10 @@ public class StatisticsClassification {
 
         // Map for the target attribute
         Map<String, Integer> map = new HashMap<String, Integer>();
+        
+        // Maps for the features
+        @SuppressWarnings("unchecked")
+        Map<String, Integer>[] maps = new HashMap[indexes.length-1];
         
         // Obtain meta data
         type = new DataType[indexes.length];
@@ -182,15 +188,22 @@ public class StatisticsClassification {
                     
                 // Ordinal or nominal
                 } else {
+                    
+                    maps[index] = new HashMap<String, Integer>();
+                    int position = 0;
+                    for (String value : builder.getDistinctValuesOrdered(column)) {
+                        maps[index].put(value, position++);
+                    }
+                    
                     minimum[index] = 0d;
-                    maximum[index] = 0d;
+                    maximum[index] = maps[index].size();
                 }   
             }
         }
         
         // Train and cross validate
         int k = handle.getNumRows() > 10 ? 10 : handle.getNumRows();
-        this.accuracy = getAccuracyAccordingToKFoldCrossValidation(handle, map, k, random, samplingFraction);
+        this.accuracy = getAccuracyAccordingToKFoldCrossValidation(handle, map, maps, k, random, samplingFraction);
     }
 
     /**
@@ -213,6 +226,7 @@ public class StatisticsClassification {
      * Performs k-fold cross validation
      * @param handle
      * @param map
+     * @param maps 
      * @param k
      * @param random
      * @param samplingFraction 
@@ -221,6 +235,7 @@ public class StatisticsClassification {
      */
     private double getAccuracyAccordingToKFoldCrossValidation(DataHandleStatistics handle, 
                                                Map<String, Integer> map, 
+                                               Map<String, Integer>[] maps, 
                                                int k,
                                                Random random,
                                                double samplingFraction) throws ParseException {
@@ -288,7 +303,7 @@ public class StatisticsClassification {
                         checkInterrupt();
 
                         // Train
-                        classifier.train(getFeatures(handle, row, interceptEncoder, featureEncoder),
+                        classifier.train(getFeatures(handle, row, maps, interceptEncoder, featureEncoder),
                                          getClass(handle, row, map));
                     }
                 }
@@ -303,7 +318,7 @@ public class StatisticsClassification {
                 
                 // Count
                 total ++;
-                correct += getClass(handle, row, map) == classifier.classify(getFeatures(handle, row, interceptEncoder, featureEncoder)) ? 1 : 0;
+                correct += getClass(handle, row, map) == classifier.classify(getFeatures(handle, row,  maps, interceptEncoder, featureEncoder)) ? 1 : 0;
             }
             
             // Close
@@ -357,12 +372,14 @@ public class StatisticsClassification {
      * Returns the feature vector for the given row
      * @param handle
      * @param row
+     * @param maps
      * @param interceptEncoder
      * @param featureEncoder
      * @return
      * @throws ParseException
      */
     private Vector getFeatures(DataHandleStatistics handle, int row,
+                               Map<String, Integer>[] maps,
                                ConstantValueEncoder interceptEncoder,
                                StaticWordValueEncoder featureEncoder) throws ParseException {
         
@@ -388,15 +405,17 @@ public class StatisticsClassification {
             double maximum = this.maximum[index];
             
             // Set value
+            double value = 0d;
             if (type instanceof ARXDecimal) {
-                featureEncoder.addToVector(name, (handle.getDouble(row, column) - minimum) / (maximum - minimum), vector);
+                value = handle.getDouble(row, column);
             } else if (type instanceof ARXInteger) {
-                featureEncoder.addToVector(name, (handle.getDouble(row, column) - minimum) / (maximum - minimum), vector);
+                value = handle.getDouble(row, column);
             } else if (type instanceof ARXDate) {
-                featureEncoder.addToVector(name, ((long)handle.getDate(row, column).getTime() - minimum) / (maximum - minimum), vector);
+                value = handle.getDate(row, column).getTime();
             } else {
-                featureEncoder.addToVector(name + ":" + handle.getValue(row, column), 1, vector);
+                value = maps[index].get(handle.getValue(row, column));
             }
+            featureEncoder.addToVector(name, (value - minimum) / (maximum - minimum), vector);
         }
         
         // Return

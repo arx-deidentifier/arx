@@ -124,7 +124,7 @@ public class StatisticsBuilder {
         interrupt.value = false;
 
         // Return
-        return new StatisticsClassification(handle, features, clazz, seed, samplingFraction, interrupt);
+        return new StatisticsClassification(this, handle, features, clazz, seed, samplingFraction, interrupt);
     }
     
     /**
