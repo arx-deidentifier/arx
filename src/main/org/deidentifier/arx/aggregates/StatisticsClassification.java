@@ -275,8 +275,8 @@ public class StatisticsClassification {
         // For each fold as a validation set
         for (int i = 0; i < folds.size(); i++) {
             
-            int features = indexes.length - 1 > 0 ? indexes.length - 1 : 0;
-            Classifier classifier = new MultiClassLogisticRegression(features, map.size());
+            // Create classifier
+            Classifier classifier = new MultiClassLogisticRegression(indexes.length - 1, map.size());
            
             // For all training sets
             for (int j = 0; j < folds.size(); j++) {
@@ -373,7 +373,7 @@ public class StatisticsClassification {
         
         // Special case where there are no features
         if (length == 0) {
-            featureEncoder.addToVector("Feature", 1, vector);
+            featureEncoder.addToVector("Feature:1", 1, vector);
             return vector;
         }
         

@@ -35,7 +35,13 @@ public class OneVsRestLogisticRegression implements Classifier{
      * @param classes
      */
     public OneVsRestLogisticRegression(int features, int classes) {
-        
+
+        // Check
+        if (features == 0) {
+            features = 1;
+        }
+
+        // Initialize
         this.classifiers = new OnlineLogisticRegression[classes];
         for (int i = 0; i < classes; i++) {
 

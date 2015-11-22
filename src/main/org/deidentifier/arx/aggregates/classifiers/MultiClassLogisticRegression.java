@@ -35,7 +35,12 @@ public class MultiClassLogisticRegression implements Classifier{
      * @param classes
      */
     public MultiClassLogisticRegression(int features, int classes) {
-        
+
+        // Check
+        if (features == 0) {
+            features = 1;
+        }
+
         // Prepare classifier
         this.lr = new OnlineLogisticRegression(classes, features, new L1());
         

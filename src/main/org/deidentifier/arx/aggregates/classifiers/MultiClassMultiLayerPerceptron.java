@@ -33,6 +33,11 @@ public class MultiClassMultiLayerPerceptron implements Classifier{
      * @author Fabian Prasser
      */
     public MultiClassMultiLayerPerceptron(int features, int classes) {
+        
+        // Check
+        if (features == 0) {
+            features = 1;
+        }
 
         // Prepare classifier
         this.lr = new MultilayerPerceptron();
