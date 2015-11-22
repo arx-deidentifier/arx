@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.mahout.classifier.sgd.L1;
-import org.apache.mahout.classifier.sgd.OnlineLogisticRegression;
 import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.Vector;
 import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
@@ -36,6 +34,8 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
+import org.deidentifier.arx.aggregates.classifiers.Classifier;
+import org.deidentifier.arx.aggregates.classifiers.MultiClassLogisticRegression;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
@@ -156,8 +156,8 @@ public class StatisticsClassification {
             } else {
                 // Numeric
                 if (type[index] instanceof ARXDecimal ||
-                    type[index] instanceof ARXDecimal ||
-                    type[index] instanceof ARXDecimal) {
+                    type[index] instanceof ARXInteger ||
+                    type[index] instanceof ARXDate) {
                     
                     // Compute minimum and maximum for feature scaling
                     minimum[index] = Double.MAX_VALUE;
@@ -190,13 +190,13 @@ public class StatisticsClassification {
         
         // Train and cross validate
         int k = handle.getNumRows() > 10 ? 10 : handle.getNumRows();
-        this.accuracy = getAccuracyAccordingToKFoldCrossValidation(handle, map, k, random);
+        this.accuracy = getAccuracyAccordingToKFoldCrossValidation(handle, map, k, random, samplingFraction);
     }
 
     /**
      * Returns the accuracy of the classifier
      */
-    public double getAccuracy() {
+    public double getFractionCorrect() {
         return accuracy;
     }
 
@@ -215,13 +215,15 @@ public class StatisticsClassification {
      * @param map
      * @param k
      * @param random
+     * @param samplingFraction 
      * @return
      * @throws ParseException 
      */
     private double getAccuracyAccordingToKFoldCrossValidation(DataHandleStatistics handle, 
                                                Map<String, Integer> map, 
                                                int k,
-                                               Random random) throws ParseException {
+                                               Random random,
+                                               double samplingFraction) throws ParseException {
 
         // Prepare encoders
         ConstantValueEncoder interceptEncoder = new ConstantValueEncoder("intercept");
@@ -253,7 +255,9 @@ public class StatisticsClassification {
             // Collect rows
             List<Integer> fold = new ArrayList<>();
             for (int j = min; j < max; j++) {
-                fold.add(rows.get(j));
+                if (random.nextDouble() <= samplingFraction) {
+                    fold.add(rows.get(j));
+                }
             }
             
             // Store
@@ -271,19 +275,9 @@ public class StatisticsClassification {
         // For each fold as a validation set
         for (int i = 0; i < folds.size(); i++) {
             
-            // Prepare classifier
             int features = indexes.length - 1 > 0 ? indexes.length - 1 : 0;
-            OnlineLogisticRegression lr = new OnlineLogisticRegression(map.size(), // Classes
-                                                                       features, // Features
-                                                                       new L1()); // Function
-            
-            // Configure
-            lr.learningRate(1);
-            lr.alpha(1);
-            lr.lambda(0.000001);
-            lr.stepOffset(10000);
-            lr.decayExponent(0.2);
-            
+            Classifier classifier = new MultiClassLogisticRegression(features, map.size());
+           
             // For all training sets
             for (int j = 0; j < folds.size(); j++) {
                 if (j != i) {
@@ -292,18 +286,15 @@ public class StatisticsClassification {
 
                         // Check
                         checkInterrupt();
-                        
+
                         // Train
-                        lr.train(getClass(handle, row, map), 
-                                 getFeatures(handle, row, interceptEncoder, featureEncoder));
+                        classifier.train(getFeatures(handle, row, interceptEncoder, featureEncoder),
+                                         getClass(handle, row, map));
                     }
                 }
             }
             
             // Now validate
-            // How is AUC computed for multinomial logistic regression?
-            // It seems that the one-vs.-rest strategy is the solution
-            // Auc eval = new Auc(0.5);
             List<Integer> validationset = folds.get(i);
             for (int row : validationset) {
 
@@ -312,18 +303,11 @@ public class StatisticsClassification {
                 
                 // Count
                 total ++;
-                correct += getClass(handle, row, map) == lr.classifyFull(getFeatures(handle, row, interceptEncoder, featureEncoder)).maxValueIndex() ? 1 : 0;
-                
-                // Validate
-                // eval.add(map.get(handle.getValue(row, indexes[indexes.length-1])), 
-                // getMostProbableValue(lr.classify(getFeatures(handle, row, interceptEncoder, featureEncoder))));
+                correct += getClass(handle, row, map) == classifier.classify(getFeatures(handle, row, interceptEncoder, featureEncoder)) ? 1 : 0;
             }
             
-            // Store
-            //accuracy += eval.auc();
-            
             // Close
-            lr.close();
+            classifier.close();
         }
         
         // Return mean

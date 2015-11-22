@@ -30,6 +30,7 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
@@ -97,10 +98,11 @@ public class Example39 extends Example {
         
         Data data = createData("adult");
         data.getDefinition().setAttributeType("marital-status", AttributeType.INSENSITIVE_ATTRIBUTE);
+        data.getDefinition().setDataType("age", DataType.INTEGER);
 
         double inputAccuracy = data.getHandle().getStatistics()
                                     .getClassificationPerformance(features, clazz, 0xDEADBEEF, 1d)
-                                    .getAccuracy();
+                                    .getFractionCorrect();
         
         System.out.println("Input dataset");
         System.out.println(" - Classification accuracy: " + inputAccuracy);
@@ -115,7 +117,7 @@ public class Example39 extends Example {
 
         double outputAccuracy = result.getOutput().getStatistics()
                                         .getClassificationPerformance(features, clazz, 0xDEADBEEF, 1d)
-                                        .getAccuracy();
+                                        .getFractionCorrect();
         
         System.out.println("5-anonymous dataset");
         System.out.println(" - Classification accuracy: " + outputAccuracy);
