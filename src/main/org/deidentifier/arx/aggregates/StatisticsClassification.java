@@ -282,49 +282,57 @@ public class StatisticsClassification {
         // Free
         rows.clear();
         rows = null;
-        
+
         // Perform cross validation
         double correct = 0d;
         double total = 0d;
-        
+
         // For each fold as a validation set
         for (int i = 0; i < folds.size(); i++) {
-            
+
             // Create classifier
             Classifier classifier = new MultiClassLogisticRegression(indexes.length - 1, map.size());
-           
-            // For all training sets
-            for (int j = 0; j < folds.size(); j++) {
-                if (j != i) {
-                    List<Integer> trainingset = folds.get(i);
-                    for (int row : trainingset) {
 
-                        // Check
-                        checkInterrupt();
+            try {
 
-                        // Train
-                        classifier.train(getFeatures(handle, row, maps, interceptEncoder, featureEncoder),
-                                         getClass(handle, row, map));
+                // For all training sets
+                for (int j = 0; j < folds.size(); j++) {
+                    if (j != i) {
+                        List<Integer> trainingset = folds.get(i);
+                        for (int row : trainingset) {
+
+                            // Check
+                            checkInterrupt();
+
+                            // Train
+                            classifier.train(getFeatures(handle, row, maps, interceptEncoder, featureEncoder),
+                                             getClass(handle, row, map));
+                        }
                     }
                 }
-            }
-            
-            // Now validate
-            List<Integer> validationset = folds.get(i);
-            for (int row : validationset) {
 
-                // Check
-                checkInterrupt();
-                
-                // Count
-                total ++;
-                correct += getClass(handle, row, map) == classifier.classify(getFeatures(handle, row,  maps, interceptEncoder, featureEncoder)) ? 1 : 0;
+                // Now validate
+                List<Integer> validationset = folds.get(i);
+                for (int row : validationset) {
+
+                    // Check
+                    checkInterrupt();
+
+                    // Count
+                    total++;
+                    correct += getClass(handle, row, map) == classifier.classify(getFeatures(handle,
+                                                                                             row,
+                                                                                             maps,
+                                                                                             interceptEncoder,
+                                                                                             featureEncoder)) ? 1 : 0;
+                }
+            } catch (Exception e) {
+                throw (e);
+            } finally {
+                classifier.close();
             }
-            
-            // Close
-            classifier.close();
         }
-        
+
         // Return mean
         return correct / total;
     }
