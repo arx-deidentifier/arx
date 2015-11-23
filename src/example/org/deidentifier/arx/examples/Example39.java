@@ -91,7 +91,7 @@ public class Example39 extends Example {
     public static void main(final String[] args) throws ParseException, IOException {
 
         String[] features = new String[] {
-                "age", "sex", "education", "native-country", "occupation", "race", "salary-class", "workclass"
+                "sex", "age", "race", "marital-status", "education", "native-country", "workclass", "occupation", "salary-class"
         };
         
         String clazz = "marital-status";
@@ -101,7 +101,7 @@ public class Example39 extends Example {
         data.getDefinition().setDataType("age", DataType.INTEGER);
 
         double inputAccuracy = data.getHandle().getStatistics()
-                                    .getClassificationPerformance(features, clazz, 0xDEADBEEF, 1d)
+                                    .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, 1d)
                                     .getFractionCorrect();
         
         System.out.println("Input dataset");
