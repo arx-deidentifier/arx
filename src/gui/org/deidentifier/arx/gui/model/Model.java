@@ -262,21 +262,19 @@ public class Model implements Serializable {
     /* *****************************************
      * LOCAL RECODING
      ******************************************/
-    /** The local recoding model*/
-    private ModelLocalRecoding                    localRecodingModel              = new ModelLocalRecoding();
+    /** The local recoding model */
+    private ModelLocalRecoding                            localRecodingModel              = new ModelLocalRecoding();
 
     /* *****************************************
      * Data Mining
-     ******************************************/
+     *******************************************/
     /** Selected attributes */
     private Set<String>                                   selectedFeatures                = null;
     /** Selected attributes */
     private Set<String>                                   selectedClasses                 = null;
-    /** Max records */
-    private Integer                                       classificationMaxRecords        = Integer.MAX_VALUE;
-    /** Seed */
-    private Integer                                       classificationSeed              = Integer.MAX_VALUE;
-
+    /** Model */
+    private ModelClassification                           classificationModel             = new ModelClassification();
+    
     /**
      * Creates a new instance.
      *
@@ -506,32 +504,15 @@ public class Model implements Serializable {
 	}
 
 	/**
-     * Returns the max recordsfor classification
-     * @return
-     */
-    public Integer getClassificationMaxRecords() {
-
-        if (this.classificationMaxRecords == null) {
-            this.classificationMaxRecords = Integer.MAX_VALUE;
-        }
-        return this.classificationMaxRecords;
-        
-    }
-    
-	/**
-     * Returns the seed for classification
-     * @return
-     */
-    public Integer getClassificationSeed() {
-
-        if (this.classificationSeed == null) {
-            return Integer.MAX_VALUE;
-        }
-        if (this.classificationSeed == Integer.MAX_VALUE) {
-            return null;
-        }
-        return this.classificationSeed;
-    }
+	 * Returns the classification model
+	 * @return
+	 */
+	public ModelClassification getClassificationModel() {
+	    if (this.classificationModel == null) {
+	        this.classificationModel = new ModelClassification();
+	    }
+	    return this.classificationModel;
+	}
 	
 	/**
      * Returns the clipboard.
@@ -544,7 +525,7 @@ public class Model implements Serializable {
         }
         return clipboard;
     }
-	
+
 	/**
      * Gets the csv config model.
      * @return
@@ -662,15 +643,15 @@ public class Model implements Serializable {
 	    else return inputConfig.getInput().getDefinition();
 	}
 
-	/**
+    /**
 	 * Returns the input population model
 	 * @return
 	 */
 	public ARXPopulationModel getInputPopulationModel() {
 	    return getRiskModel().getPopulationModel();
 	}
-
-    /**
+    
+	/**
      * Returns the k-anonymity model.
      *
      * @return
@@ -678,7 +659,7 @@ public class Model implements Serializable {
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
 	}
-    
+	
 	/**
      * Returns the l-diversity model.
      *
@@ -690,7 +671,7 @@ public class Model implements Serializable {
 	        }
 		return lDiversityModel;
 	}
-	
+
 	/**
      * Returns the project locale.
      *
@@ -821,7 +802,7 @@ public class Model implements Serializable {
 		else return this.output.getDefinition();
 	}
 
-	/**
+    /**
      * Returns the currently applied transformation.
      *
      * @return
@@ -830,7 +811,7 @@ public class Model implements Serializable {
 		return outputNode;
 	}
 
-    /**
+	/**
      * Returns a string representation of the currently applied transformation.
      *
      * @return
@@ -853,7 +834,7 @@ public class Model implements Serializable {
         }
         return null;
     }
-
+	
 	/**
      * Returns the path of the project.
      *
@@ -872,7 +853,7 @@ public class Model implements Serializable {
         }
         return perspective;
     }
-	
+
 	/**
      * Returns the current query.
      *
@@ -891,7 +872,7 @@ public class Model implements Serializable {
 		return result;
 	}
 
-	/**
+    /**
      * Returns the risk-based model.
      *
      * @return
@@ -905,8 +886,8 @@ public class Model implements Serializable {
         }
         return riskBasedModel;
     }
-
-    /**
+	
+	/**
      * Returns the risk model
      * @return the risk model
      */
@@ -916,8 +897,9 @@ public class Model implements Serializable {
         }
         return riskModel;
     }
-	
-	/**
+
+
+    /**
      * Returns the currently selected attribute.
      *
      * @return
@@ -926,7 +908,7 @@ public class Model implements Serializable {
 		return selectedAttribute;
 	}
 
-
+	
     /**
      * Returns the selected features
      * @return
@@ -953,8 +935,7 @@ public class Model implements Serializable {
         return this.selectedClasses;
     }
 
-	
-    /**
+	/**
 	 * Returns the selected features
 	 * @return
 	 */
@@ -980,7 +961,7 @@ public class Model implements Serializable {
         return this.selectedFeatures;
 	}
 
-	/**
+    /**
      * Returns the selected transformation.
      *
      * @return
@@ -1049,7 +1030,7 @@ public class Model implements Serializable {
 		return snapshotSizeDataset;
 	}
 
-    /**
+	/**
      * Returns the according parameter.
      *
      * @return
@@ -1067,7 +1048,7 @@ public class Model implements Serializable {
         return this.subsetOrigin;
     }
 
-	/**
+    /**
      * Returns the t-closeness model.
      *
      * @return
@@ -1088,7 +1069,7 @@ public class Model implements Serializable {
 		return time;
 	}
 
-    /**
+	/**
      * Returns whether functional hierarchies should be used
      * @return
      */
@@ -1114,7 +1095,7 @@ public class Model implements Serializable {
         return useListwiseDeletion;
     }
 
-	/**
+    /**
      * Returns the view configuration.
      *
      * @return
@@ -1123,7 +1104,7 @@ public class Model implements Serializable {
         return this.viewConfig;
     }
 
-    /**
+	/**
      * Returns whether debugging is enabled.
      *
      * @return
@@ -1132,28 +1113,21 @@ public class Model implements Serializable {
 	    return debugEnabled;
 	}
 
-	/**
+    /**
      * Returns whether this project is modified.
      *
      * @return
      */
     public boolean isModified() {
-		if (inputConfig.isModified()) {
-			return true;
-		}
-		if (riskModel.isModified()) {
-            return true;
-        }
-		if ((outputConfig != null) && outputConfig.isModified()) {
-			return true;
-		}
-        if ((clipboard != null) && clipboard.isModified()) { 
-            return true; 
-        }
-		return modified;
+        if (inputConfig.isModified()) { return true; }
+        if (getRiskModel().isModified()) { return true; }
+        if (getClassificationModel().isModified()) { return true; }
+        if ((outputConfig != null) && outputConfig.isModified()) { return true; }
+        if ((clipboard != null) && clipboard.isModified()) { return true; }
+        return modified;
 	}
 
-    /**
+	/**
      * Returns whether a quasi-identifier is selected.
      *
      * @return
@@ -1161,7 +1135,7 @@ public class Model implements Serializable {
 	public boolean isQuasiIdentifierSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
 	}
-
+	
 	/**
      * Returns whether a sensitive attribute is selected.
      *
@@ -1170,7 +1144,7 @@ public class Model implements Serializable {
 	public boolean isSensitiveAttributeSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
-	
+
 	/**
      * Returns whether visualization is enabled.
      *
@@ -1183,7 +1157,7 @@ public class Model implements Serializable {
 	        return this.showVisualization;
 	    }
 	}
-
+	
 	/**
      * Resets the model.
      */
@@ -1200,6 +1174,7 @@ public class Model implements Serializable {
         this.selectedClasses = null;
         this.subsetOrigin = Resources.getMessage("Model.0"); //$NON-NLS-1$
         this.groups = null;
+        this.classificationModel = new ModelClassification();
 	}
     
     /**
@@ -1247,22 +1222,6 @@ public class Model implements Serializable {
 		setModified();
 		this.anonymizer = anonymizer;
 	}
-
-	/**
-     * Sets the max records for classification
-     * @param records
-     */
-    public void setClassificationMaxRecords(Integer records) {
-        this.classificationMaxRecords = records;
-    }
-
-	/**
-     * Sets the seed. Set to Integer.MAX_VALUE for randomization
-     * @param seed
-     */
-    public void setClassificationSeed(Integer seed) {
-        this.classificationSeed = seed;
-    }
 
 	/**
      * Enables debugging.
@@ -1585,13 +1544,14 @@ public class Model implements Serializable {
     public void setUnmodified() {
 		modified = false;
 		inputConfig.setUnmodified();
-		riskModel.setUnmodified();
+		getRiskModel().setUnmodified();
 		if (outputConfig != null) {
 			outputConfig.setUnmodified();
 		}
 		if (clipboard != null) {
 		    clipboard.setUnmodified();
 		}
+		getClassificationModel().setUnmodified();
 	}
 
     /**

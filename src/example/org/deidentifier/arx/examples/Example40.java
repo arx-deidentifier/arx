@@ -89,7 +89,7 @@ public class Example40 extends Example {
         data.getDefinition().setAttributeType("zipcode", zipcode);
 
         double inputAccuracy = data.getHandle().getStatistics()
-                                    .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, 1d)
+                                    .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, true, 1d)
                                     .getFractionCorrect();
         
         System.out.println("Input dataset");
@@ -108,7 +108,7 @@ public class Example40 extends Example {
         }
         
         double outputAccuracy = result.getOutput().getStatistics()
-                .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, 1d)
+                .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, true, 1d)
                 .getFractionCorrect();
         
 

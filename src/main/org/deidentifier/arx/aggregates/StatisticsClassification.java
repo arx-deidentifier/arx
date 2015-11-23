@@ -68,6 +68,7 @@ public class StatisticsClassification {
      * Creates a new set of statistics for the given classification task
      * @param builder - The statistics builder
      * @param handle - The handle
+     * @param ignoreSuppressedRows - Ignore suppressed records
      * @param features - The feature attributes
      * @param clazz - The class attributes
      * @param seed - The random seed, null, if the process should be randomized
@@ -76,6 +77,7 @@ public class StatisticsClassification {
      */
     StatisticsClassification(StatisticsBuilder builder,
                              DataHandleStatistics handle,
+                             boolean ignoreSuppressedRows,
                              String[] features,
                              String clazz,
                              Integer seed,
@@ -203,7 +205,7 @@ public class StatisticsClassification {
         
         // Train and cross validate
         int k = handle.getNumRows() > 10 ? 10 : handle.getNumRows();
-        this.accuracy = getAccuracyAccordingToKFoldCrossValidation(handle, map, maps, k, random, samplingFraction);
+        this.accuracy = getAccuracyAccordingToKFoldCrossValidation(handle, ignoreSuppressedRows, map, maps, k, random, samplingFraction);
     }
 
     /**
@@ -225,6 +227,7 @@ public class StatisticsClassification {
     /**
      * Performs k-fold cross validation
      * @param handle
+     * @param ignoreSuppressedRows
      * @param map
      * @param maps 
      * @param k
@@ -233,7 +236,8 @@ public class StatisticsClassification {
      * @return
      * @throws ParseException 
      */
-    private double getAccuracyAccordingToKFoldCrossValidation(DataHandleStatistics handle, 
+    private double getAccuracyAccordingToKFoldCrossValidation(DataHandleStatistics handle,
+                                                              boolean ignoreSuppressedRows,
                                                Map<String, Integer> map, 
                                                Map<String, Integer>[] maps, 
                                                int k,
@@ -247,7 +251,8 @@ public class StatisticsClassification {
         // Prepare indexes
         List<Integer> rows = new ArrayList<>();
         for (int row = 0; row < handle.getNumRows(); row++) {
-            if (!handle.isSuppressed(row) && random.nextDouble() <= samplingFraction) {
+            if ((!ignoreSuppressedRows || !handle.isSuppressed(row)) 
+                 && random.nextDouble() <= samplingFraction) {
                 rows.add(row);
             }
         }

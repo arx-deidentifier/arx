@@ -114,9 +114,10 @@ public class ViewStatisticsRegressionInput  extends ViewStatistics<AnalysisConte
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
         final String[] features = context.model.getSelectedFeatures().toArray(new String[0]);
         final String[] classes = context.model.getSelectedClasses().toArray(new String[0]);
-        final double fraction = context.handle.getNumRows() > context.model.getClassificationMaxRecords() ?
-                                (double)context.model.getClassificationMaxRecords() / (double)context.handle.getNumRows() : 1d;
-        final Integer seed = context.model.getClassificationSeed();
+        final double fraction = context.handle.getNumRows() > context.model.getClassificationModel().getMaximalNumberOfRecords() ?
+                                (double)context.model.getClassificationModel().getMaximalNumberOfRecords() / (double)context.handle.getNumRows() : 1d;
+        final Integer seed = context.model.getClassificationModel().getSeed();
+        final boolean ignoreSuppressedRecords = context.model.getClassificationModel().isIgnoreSuppressedRecords();
         
         // Create an analysis
         Analysis analysis = new Analysis(){
@@ -191,6 +192,7 @@ public class ViewStatisticsRegressionInput  extends ViewStatistics<AnalysisConte
                     accuracies.add(builder.getClassificationPerformance(features,
                                                                         clazz,
                                                                         seed,
+                                                                        ignoreSuppressedRecords,
                                                                         fraction).getFractionCorrect());
                     progress++;
                     if (stopped) {
@@ -198,6 +200,7 @@ public class ViewStatisticsRegressionInput  extends ViewStatistics<AnalysisConte
                     }
                     baselineAccuracies.add(builder.getClassificationPerformance(clazz,
                                                                        seed,
+                                                                       ignoreSuppressedRecords,
                                                                        fraction).getFractionCorrect());
                     progress++;
                     if (stopped) {

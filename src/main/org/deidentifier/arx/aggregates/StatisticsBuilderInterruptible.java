@@ -49,13 +49,15 @@ public class StatisticsBuilderInterruptible {
     /**
      * Creates a new set of statistics for the given classification task
      * @param clazz - The class attributes
+     * @param ignoreSuppressedRecords - Ignore suppressed records
      * @param samplingFraction - The sampling fraction
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String clazz,
+                                                                 boolean ignoreSuppressedRecords,
                                                                  double samplingFraction) throws InterruptedException {
         try {
-            return builder.getClassificationPerformance(clazz, samplingFraction);
+            return builder.getClassificationPerformance(clazz, ignoreSuppressedRecords, samplingFraction);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
@@ -69,14 +71,16 @@ public class StatisticsBuilderInterruptible {
      * Creates a new set of statistics for the given classification task
      * @param clazz - The class attributes
      * @param seed - The random seed, null, if the process should be randomized
+     * @param ignoreSuppressedRecords - Ignore suppressed records
      * @param samplingFraction - The sampling fraction
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String clazz,
                                                                  Integer seed,
+                                                                 boolean ignoreSuppressedRecords,
                                                                  double samplingFraction) throws InterruptedException {
         try {
-            return builder.getClassificationPerformance(clazz, seed, samplingFraction);
+            return builder.getClassificationPerformance(clazz, seed, ignoreSuppressedRecords, samplingFraction);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
@@ -90,14 +94,16 @@ public class StatisticsBuilderInterruptible {
      * Creates a new set of statistics for the given classification task
      * @param features - The feature attributes
      * @param clazz - The class attributes
+     * @param ignoreSuppressedRecords - Ignore suppressed records
      * @param samplingFraction - The sampling fraction
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
+                                                                 boolean ignoreSuppressedRecords,
                                                                  double samplingFraction) throws InterruptedException {
         try {
-            return builder.getClassificationPerformance(features, clazz, samplingFraction);
+            return builder.getClassificationPerformance(features, clazz, ignoreSuppressedRecords, samplingFraction);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
@@ -112,15 +118,17 @@ public class StatisticsBuilderInterruptible {
      * @param features - The feature attributes
      * @param clazz - The class attributes
      * @param seed - The random seed, null, if the process should be randomized
+     * @param ignoreSuppressedRecords - Ignore suppressed records
      * @param samplingFraction - The sampling fraction
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
                                                                  Integer seed,
+                                                                 boolean ignoreSuppressedRecords,
                                                                  double samplingFraction) throws InterruptedException {
         try {
-            return builder.getClassificationPerformance(features, clazz, seed, samplingFraction);
+            return builder.getClassificationPerformance(features, clazz, seed, ignoreSuppressedRecords, samplingFraction);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");

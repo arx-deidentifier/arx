@@ -101,7 +101,7 @@ public class Example39 extends Example {
         data.getDefinition().setDataType("age", DataType.INTEGER);
 
         double inputAccuracy = data.getHandle().getStatistics()
-                                    .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, 1d)
+                                    .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, true, 1d)
                                     .getFractionCorrect();
         
         System.out.println("Input dataset");
@@ -116,7 +116,7 @@ public class Example39 extends Example {
         ARXResult result = anonymizer.anonymize(data, config);
 
         double outputAccuracy = result.getOutput().getStatistics()
-                                        .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, 1d)
+                                        .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, true, 1d)
                                         .getFractionCorrect();
         
         System.out.println("5-anonymous dataset");
