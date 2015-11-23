@@ -298,8 +298,7 @@ public class StatisticsClassification {
                 // For all training sets
                 for (int j = 0; j < folds.size(); j++) {
                     if (j != i) {
-                        List<Integer> trainingset = folds.get(i);
-                        for (int row : trainingset) {
+                        for (int row : folds.get(j)) {
 
                             // Check
                             checkInterrupt();
@@ -312,8 +311,7 @@ public class StatisticsClassification {
                 }
 
                 // Now validate
-                List<Integer> validationset = folds.get(i);
-                for (int row : validationset) {
+                for (int row : folds.get(i)) {
 
                     // Check
                     checkInterrupt();
