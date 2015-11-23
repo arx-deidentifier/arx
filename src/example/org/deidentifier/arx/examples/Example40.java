@@ -114,7 +114,6 @@ public class Example40 extends Example {
 
         System.out.println("3-anonymous dataset");
         System.out.println(" - Classification accuracy: " + outputAccuracy);
-        System.out.println(" - Difference to input: " + (outputAccuracy / inputAccuracy - 1d) * 100d + "[%]");
 
     }
 }

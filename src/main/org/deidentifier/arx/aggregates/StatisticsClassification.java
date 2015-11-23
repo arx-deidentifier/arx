@@ -247,13 +247,15 @@ public class StatisticsClassification {
         // Prepare indexes
         List<Integer> rows = new ArrayList<>();
         for (int row = 0; row < handle.getNumRows(); row++) {
-            rows.add(row);
+            if (!handle.isSuppressed(row) && random.nextDouble() <= samplingFraction) {
+                rows.add(row);
+            }
         }
         Collections.shuffle(rows, random);
         
         // Create folds
         List<List<Integer>> folds = new ArrayList<>();
-        int size = handle.getNumRows() / k;
+        int size = rows.size() / k;
         size = size > 1 ? size : 1;
         for (int i = 0; i < k; i++) {
             
@@ -264,19 +266,21 @@ public class StatisticsClassification {
             int min = i * size;
             int max = (i + 1) * size;
             if (i == k - 1) {
-                max = handle.getNumRows();
+                max = rows.size();
             }
             
-            // Collect rows
-            List<Integer> fold = new ArrayList<>();
-            for (int j = min; j < max; j++) {
-                if (random.nextDouble() <= samplingFraction) {
+            // Check
+            if (max < rows.size()) {
+                
+                // Collect rows
+                List<Integer> fold = new ArrayList<>();
+                for (int j = min; j < max; j++) {
                     fold.add(rows.get(j));
                 }
+                
+                // Store
+                folds.add(fold);
             }
-            
-            // Store
-            folds.add(fold);
         }
         
         // Free
