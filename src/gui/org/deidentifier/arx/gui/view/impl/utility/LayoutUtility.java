@@ -45,6 +45,20 @@ import org.eclipse.swt.widgets.Listener;
  */
 public class LayoutUtility implements ILayout {
 
+    public static enum ViewUtilityType {
+        CLASSIFICATION,
+        LOGISTIC_REGRESSION,
+        DATA,
+        CONTINGENCY,
+        CONTINGENCY_TABLE,
+        HISTOGRAM,
+        HISTOGRAM_TABLE,
+        EQUIVALENCE_CLASSES,
+        SUMMARY,
+        PROPERTIES,
+        LOCAL_RECODING
+    }
+
     /**
      * A runnable for synchronizing both tables.
      *
@@ -249,11 +263,11 @@ public class LayoutUtility implements ILayout {
         
         Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10")); //$NON-NLS-1$
         classificationInput.setLayout(new FillLayout());
-        new ViewStatisticsClassificationInput(classificationInput, controller);
+        new ViewStatisticsRegressionInput(classificationInput, controller);
         
         Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10")); //$NON-NLS-1$
         classificationOutput.setLayout(new FillLayout());
-        new ViewStatisticsClassificationOutput(classificationOutput, controller);
+        new ViewStatisticsRegressionOutput(classificationOutput, controller);
 
         // Create bottom composite
         final Composite compositeBottom = new Composite(centerSash, SWT.NONE);
@@ -277,10 +291,45 @@ public class LayoutUtility implements ILayout {
                                                   ModelPart.INPUT);
 
         // Sync folders
+        dataInputView.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                dataOutputView.setSelectionIndex(dataInputView.getSelectionIndex());
+                
+                // Hack to show classification stuff
+                if (dataInputView.getSelectionIndex()==1) {
+                    statisticsInputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
+                    statisticsOutputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
+                }
+                // Hack to update visualizations
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
+            }
+        });
+        dataOutputView.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                dataInputView.setSelectionIndex(dataOutputView.getSelectionIndex());
+                
+                // Hack to show classification stuff
+                if (dataOutputView.getSelectionIndex()==1) {
+                    statisticsInputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
+                    statisticsOutputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
+                }
+                // Hack to update visualizations
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
+            }
+        });
         statisticsInputLayout.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                statisticsOutputLayout.setSelectionIdex(statisticsInputLayout.getSelectionIndex());
+                statisticsOutputLayout.setSelectedView(statisticsInputLayout.getSelectedView());
+
+                // Hack to show classification stuff
+                if (statisticsInputLayout.getSelectedView() == ViewUtilityType.CLASSIFICATION) {
+                    dataOutputView.setSelectionIndex(1);
+                    dataInputView.setSelectionIndex(1);
+                }
+                
                 // Hack to update visualizations
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
             }
@@ -288,7 +337,14 @@ public class LayoutUtility implements ILayout {
         statisticsOutputLayout.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                statisticsInputLayout.setSelectionIdex(statisticsOutputLayout.getSelectionIndex());
+                statisticsInputLayout.setSelectedView(statisticsOutputLayout.getSelectedView());
+
+                // Hack to show classification stuff
+                if (statisticsOutputLayout.getSelectedView() == ViewUtilityType.CLASSIFICATION) {
+                    dataOutputView.setSelectionIndex(1);
+                    dataInputView.setSelectionIndex(1);
+                }
+                
                 // Hack to update visualizations
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
             }

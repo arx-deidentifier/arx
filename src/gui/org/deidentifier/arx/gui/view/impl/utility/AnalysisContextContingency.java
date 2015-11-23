@@ -22,56 +22,73 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
+import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization;
+
 
 /**
  * The current context.
  *
  * @author Fabian Prasser
  */
-public class AnalysisContextVisualizationDistribution implements AnalysisContextVisualization{
+public class AnalysisContextContingency implements AnalysisContextVisualization {
 
     /** Context information. */
-    public String        attribute     = null;
+    public String        attribute1     = null;
     
     /** Context information. */
-    public DataType<?>   dataType      = null;
+    public String        attribute2     = null;
     
     /** Context information. */
-    public AttributeType attributeType = null;
+    public DataType<?>   dataType1      = null;
+    
+    /** Context information. */
+    public DataType<?>   dataType2      = null;
+    
+    /** Context information. */
+    public AttributeType attributeType1 = null;
+    
+    /** Context information. */
+    public AttributeType attributeType2 = null;
     
     /** Context information. */
     public DataHandle    handle         = null;
     
     /** Context information. */
     public Model         model          = null;
-    
-    /** Context information. */
-    public AnalysisContext context       = null;
-    
+
     /**
      * Creates a new context from the given context.
      *
      * @param context
      */
-    public AnalysisContextVisualizationDistribution(AnalysisContext context){
+    public AnalysisContextContingency(AnalysisContext context){
         if (context.getData()==null) return;
         this.handle = context.getData().handle;
-        this.context = context;
         if (handle == null) return;
         this.model = context.getModel();
         if (model==null) return;
         if (model.getAttributePair() == null) return;
-        this.attribute = context.getModel().getSelectedAttribute();
-        this.dataType = handle.getDefinition().getDataType(attribute);
-        this.attributeType = handle.getDefinition().getAttributeType(attribute); 
+        this.attribute1 = context.getModel().getAttributePair()[0];
+        this.attribute2 = context.getModel().getAttributePair()[1];
+        this.dataType1 = handle.getDefinition().getDataType(attribute1);
+        this.dataType2 = handle.getDefinition().getDataType(attribute2);
+        this.attributeType1 = handle.getDefinition().getAttributeType(attribute1);
+        this.attributeType2 = handle.getDefinition().getAttributeType(attribute2); 
     }
     
-    @Override
-    public boolean isAttributeSelected(String attribute) {
-        if (attribute==null) return false;
-        else return attribute.equals(this.attribute);
+    /**
+     * Is the provided attribute selected according to the config?.
+     *
+     * @param attribute
+     * @return
+     */
+    public boolean isAttributeSelected(String attribute){
+        if (attribute == null) return false;
+        if (attribute.equals(attribute1)) return true;
+        if (attribute.equals(attribute2)) return true;
+        return false;
     }
-
+    
     /**
      * Is this a valid context.
      *
@@ -80,9 +97,12 @@ public class AnalysisContextVisualizationDistribution implements AnalysisContext
     public boolean isValid(){
         if (this.handle == null) return false;
         else if (this.model == null) return false;
-        else if (this.attribute == null) return false;
-        else if (this.dataType == null) return false;
-        else if (this.attributeType == null) return false;
+        else if (this.attribute1 == null) return false;
+        else if (this.attribute2 == null) return false;
+        else if (this.dataType1 == null) return false;
+        else if (this.dataType2 == null) return false;
+        else if (this.attributeType1 == null) return false;
+        else if (this.attributeType2 == null) return false;
         else return true;
     }
 }

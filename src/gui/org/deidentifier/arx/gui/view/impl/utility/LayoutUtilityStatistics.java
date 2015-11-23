@@ -18,7 +18,10 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -29,10 +32,12 @@ import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
+import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
@@ -43,49 +48,52 @@ import org.eclipse.swt.widgets.ToolItem;
 public class LayoutUtilityStatistics implements ILayout, IView {
 
     /** Constant */
-    private static final String         TAB_SUMMARY                 = Resources.getMessage("StatisticsView.6"); //$NON-NLS-1$
+    private static final String                         TAB_SUMMARY                 = Resources.getMessage("StatisticsView.6");             //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_DISTRIBUTION            = Resources.getMessage("StatisticsView.0"); //$NON-NLS-1$
+    private static final String                         TAB_DISTRIBUTION            = Resources.getMessage("StatisticsView.0");             //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_DISTRIBUTION_TABLE      = Resources.getMessage("StatisticsView.4"); //$NON-NLS-1$
+    private static final String                         TAB_DISTRIBUTION_TABLE      = Resources.getMessage("StatisticsView.4");             //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_CONTINGENCY             = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
+    private static final String                         TAB_CONTINGENCY             = Resources.getMessage("StatisticsView.1");             //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_CONTINGENCY_TABLE       = Resources.getMessage("StatisticsView.5"); //$NON-NLS-1$
+    private static final String                         TAB_CONTINGENCY_TABLE       = Resources.getMessage("StatisticsView.5");             //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_CLASSES_TABLE           = Resources.getMessage("StatisticsView.7"); //$NON-NLS-1$
+    private static final String                         TAB_CLASSES_TABLE           = Resources.getMessage("StatisticsView.7");             //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_PROPERTIES              = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
+    private static final String                         TAB_PROPERTIES              = Resources.getMessage("StatisticsView.2");             //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_LOCAL_RECODING          = Resources.getMessage("StatisticsView.8"); //$NON-NLS-1$
+    private static final String                         TAB_LOCAL_RECODING          = Resources.getMessage("StatisticsView.8");             //$NON-NLS-1$
 
     /** Constant */
-    private static final String         TAB_CLASSIFICATION_ANALYSIS = Resources.getMessage("StatisticsView.9"); //$NON-NLS-1$
+    private static final String                         TAB_CLASSIFICATION_ANALYSIS = Resources.getMessage("StatisticsView.9");             //$NON-NLS-1$
 
-    /**  View */
-    private final ComponentTitledFolder folder;
-    
-    /**  View */
-    private final ToolItem              enable;
-    
-    /**  View */
-    private final Image                 enabled;
-    
-    /**  View */
-    private final Image                 disabled;
-    
+    /** View */
+    private final ComponentTitledFolder                 folder;
+
+    /** View */
+    private final ToolItem                              enable;
+
+    /** View */
+    private final Image                                 enabled;
+
+    /** View */
+    private final Image                                 disabled;
+
     /** Controller */
-    private final Controller            controller;
+    private final Controller                            controller;
 
     /** Model */
-    private Model                       model                  = null;
+    private Model                                       model                       = null;
+
+    /** Control to type */
+    private Map<Control, LayoutUtility.ViewUtilityType> types                       = new HashMap<Control, LayoutUtility.ViewUtilityType>();
 
     /**
      * Creates a new instance.
@@ -149,24 +157,34 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         this.enable.setEnabled(false);
         
         // Create the views
-        new ViewStatisticsSummaryTable(item0, controller, target, reset);
-        new ViewStatisticsDistributionHistogram(item1, controller, target, reset);
-        new ViewStatisticsDistributionTable(item1b, controller, target, reset);
-        new ViewStatisticsContingencyHeatmap(item2, controller, target, reset);
-        new ViewStatisticsContingencyTable(item2b, controller, target, reset);
-        new ViewStatisticsEquivalenceClassTable(item3a, controller, target, reset);
+        ViewStatistics<?> view = new ViewStatisticsSummaryTable(item0, controller, target, reset);
+        types.put(item0, view.getType());
+        view = new ViewStatisticsDistributionHistogram(item1, controller, target, reset);
+        types.put(item1, view.getType());
+        view = new ViewStatisticsDistributionTable(item1b, controller, target, reset);
+        types.put(item1b, view.getType());
+        view = new ViewStatisticsContingencyHeatmap(item2, controller, target, reset);
+        types.put(item2, view.getType());
+        view = new ViewStatisticsContingencyTable(item2b, controller, target, reset);
+        types.put(item2b, view.getType());
+        view = new ViewStatisticsEquivalenceClassTable(item3a, controller, target, reset);
+        types.put(item3a, view.getType());
         if (target == ModelPart.INPUT) {
-            new ViewPropertiesInput(item3, controller);
+            ViewPropertiesInput view2 = new ViewPropertiesInput(item3, controller);
+            types.put(item3, view2.getType());
         } else {
-            new ViewPropertiesOutput(item3, controller);
+            ViewPropertiesOutput view2 = new ViewPropertiesOutput(item3, controller);
+            types.put(item3, view2.getType());
         }
 
         if (target == ModelPart.OUTPUT) {
-            new ViewLocalRecoding(item4, controller);
+            ViewLocalRecoding view2 = new ViewLocalRecoding(item4, controller);
+            types.put(item4, view2.getType());
         }
         
         if (target == ModelPart.INPUT) {
-            new ViewClassificationAttributes(item5, controller);
+            ViewClassificationAttributes view2 = new ViewClassificationAttributes(item5, controller);
+            types.put(item5, view2.getType());
         }
         
         // Set initial visibility
@@ -196,10 +214,10 @@ public class LayoutUtilityStatistics implements ILayout, IView {
      *
      * @return
      */
-    public int getSelectionIndex() {
-        return folder.getSelectionIndex();
+    public ViewUtilityType getSelectedView() {
+        return types.get(folder.getSelectedControl());
     }
-
+    
     /**
      * Returns all visible items
      * @return
@@ -207,7 +225,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     public List<String> getVisibleItems() {
         return this.folder.getVisibleItems();
     }
-    
+
     @Override
     public void reset() {
         model = null;
@@ -223,14 +241,18 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     public void setItemVisibilityListener(final SelectionListener listener) {
         folder.setItemVisibilityListener(listener);
     }
-
+    
     /**
-     * Sets the selection index.
-     *
-     * @param index
+     * Sets the selected view type
+     * @param type
      */
-    public void setSelectionIdex(final int index) {
-        folder.setSelection(index);
+    public void setSelectedView(ViewUtilityType type) {
+        for (Entry<Control, ViewUtilityType> entry : types.entrySet()) {
+            if (entry.getValue() == type) {
+                this.folder.setSelectedControl(entry.getKey());
+                return;
+            }
+        }
     }
 
     /**

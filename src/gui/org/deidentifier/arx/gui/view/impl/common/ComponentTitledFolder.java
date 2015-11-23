@@ -251,6 +251,14 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
+     * Returns the selected control
+     * @return
+     */
+    public Control getSelectedControl() {
+        return folder.getSelection().getControl();
+    }
+    
+    /**
      * Returns the currently selected index.
      *
      * @return
@@ -258,7 +266,7 @@ public class ComponentTitledFolder implements IComponent {
     public int getSelectionIndex() {
         return folder.getSelectionIndex();
     }
-
+    
     /**
      * @return
      * @see org.eclipse.swt.widgets.Control#getSize()
@@ -318,6 +326,19 @@ public class ComponentTitledFolder implements IComponent {
      */
     public void setLayoutData(Object data){
         folder.setLayoutData(data);
+    }
+
+    /**
+     * Selects the item with the given control
+     * @param c
+     */
+    public void setSelectedControl(Control c) {
+        for (CTabItem item : folder.getItems()) {
+            if (item.getControl() == c) {
+                folder.setSelection(item);
+                return;
+            }
+        }
     }
     
     /**

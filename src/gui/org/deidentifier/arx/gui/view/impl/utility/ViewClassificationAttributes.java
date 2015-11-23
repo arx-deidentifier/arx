@@ -29,6 +29,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -110,6 +111,14 @@ public class ViewClassificationAttributes implements IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
+    }
+
+    /**
+     * Returns the type
+     * @return
+     */
+    public ViewUtilityType getType() {
+        return ViewUtilityType.CLASSIFICATION;
     }
 
     @Override

@@ -55,7 +55,7 @@ import org.swtchart.Range;
  *
  * @author Fabian Prasser
  */
-public class ViewStatisticsDistributionHistogram extends ViewStatistics<AnalysisContextVisualizationDistribution> {
+public class ViewStatisticsDistributionHistogram extends ViewStatistics<AnalysisContextDistribution> {
 
     /** Minimal width of a category label. */
     private static final int MIN_CATEGORY_WIDTH = 10;
@@ -86,6 +86,11 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
         this.manager = new AnalysisManager(parent.getDisplay());
     }
 
+    @Override
+    public LayoutUtility.ViewUtilityType getType() {
+        return LayoutUtility.ViewUtilityType.HISTOGRAM;
+    }
+
     /**
      * Makes the chart show category labels or not.
      */
@@ -114,8 +119,8 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
     }
 
     @Override
-    protected AnalysisContextVisualizationDistribution createViewConfig(AnalysisContext context) {
-        return new AnalysisContextVisualizationDistribution(context);
+    protected AnalysisContextDistribution createViewConfig(AnalysisContext context) {
+        return new AnalysisContextDistribution(context);
     }
 
     @Override
@@ -226,7 +231,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
     }
 
     @Override
-    protected void doUpdate(AnalysisContextVisualizationDistribution context) {
+    protected void doUpdate(AnalysisContextDistribution context) {
 
         // The statistics builder
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
@@ -315,5 +320,12 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
         };
         
         this.manager.start(analysis);
+    }
+    
+    /**
+     * Is an analysis running
+     */
+    protected boolean isRunning() {
+        return manager != null && manager.isRunning();
     }
 }

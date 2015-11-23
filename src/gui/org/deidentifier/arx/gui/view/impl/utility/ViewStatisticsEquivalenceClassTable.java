@@ -41,7 +41,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author Fabian Prasser
  */
-public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<AnalysisContextVisualizationDistribution> {
+public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<AnalysisContextDistribution> {
 
     /** View */
     private Composite                  root;
@@ -69,6 +69,44 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     
+    @Override
+    public LayoutUtility.ViewUtilityType getType() {
+        return LayoutUtility.ViewUtilityType.EQUIVALENCE_CLASSES;
+    }
+
+    /**
+     * Creates a table item
+     * @param key
+     * @param value1
+     * @param value2
+     */
+    private void createItem(String key,
+                            String value1,
+                            String value2) {
+        
+        TableItem item = new TableItem(table, SWT.NONE);
+        item.setText(0, key);
+        item.setText(1, value1);
+        if (super.getTarget() == ModelPart.OUTPUT) {
+            item.setText(2, value2);
+        }
+    }
+
+    /**
+     * Formats the given string
+     * @param value
+     * @param baseline
+     * @return
+     */
+    private String format(double value, double baseline) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(SWTUtil.getPrettyString(value));
+        builder.append(" (");
+        builder.append(SWTUtil.getPrettyString(value / baseline * 100d));
+        builder.append("%)");
+        return builder.toString();
+    }
+
     @Override
     protected Control createControl(Composite parent) {
 
@@ -102,12 +140,11 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
         SWTUtil.createGenericTooltip(table);
         return root;
     }
-
+    
     @Override
-    protected AnalysisContextVisualizationDistribution createViewConfig(AnalysisContext context) {
-        return new AnalysisContextVisualizationDistribution(context);
+    protected AnalysisContextDistribution createViewConfig(AnalysisContext context) {
+        return new AnalysisContextDistribution(context);
     }
-
     @Override
     protected void doReset() {
         table.setRedraw(false);
@@ -118,7 +155,7 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
     }
 
     @Override
-    protected void doUpdate(AnalysisContextVisualizationDistribution context) {
+    protected void doUpdate(AnalysisContextDistribution context) {
 
         // The statistics builder
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
@@ -208,36 +245,11 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
         
         this.manager.start(analysis);
     }
-    
+
     /**
-     * Formats the given string
-     * @param value
-     * @param baseline
-     * @return
+     * Is an analysis running
      */
-    private String format(double value, double baseline) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(SWTUtil.getPrettyString(value));
-        builder.append(" (");
-        builder.append(SWTUtil.getPrettyString(value / baseline * 100d));
-        builder.append("%)");
-        return builder.toString();
-    }
-    /**
-     * Creates a table item
-     * @param key
-     * @param value1
-     * @param value2
-     */
-    private void createItem(String key,
-                            String value1,
-                            String value2) {
-        
-        TableItem item = new TableItem(table, SWT.NONE);
-        item.setText(0, key);
-        item.setText(1, value1);
-        if (super.getTarget() == ModelPart.OUTPUT) {
-            item.setText(2, value2);
-        }
+    protected boolean isRunning() {
+        return manager != null && manager.isRunning();
     }
 }

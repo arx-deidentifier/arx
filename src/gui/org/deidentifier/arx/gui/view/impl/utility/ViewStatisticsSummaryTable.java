@@ -41,7 +41,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author Fabian Prasser
  */
-public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextVisualizationDistribution> {
+public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextDistribution> {
     
     /** View */
     private Composite                      root;
@@ -70,6 +70,24 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextVi
     }
     
     @Override
+    public LayoutUtility.ViewUtilityType getType() {
+        return LayoutUtility.ViewUtilityType.SUMMARY;
+    }
+
+    /**
+     * Creates a table item
+     * @param key
+     * @param value
+     */
+    private void createItem(String key,
+                            String value) {
+        
+        TableItem item = new TableItem(table, SWT.NONE);
+        item.setText(0, key);
+        item.setText(1, value);
+    }
+
+    @Override
     protected Control createControl(Composite parent) {
 
         this.root = new Composite(parent, SWT.NONE);
@@ -94,8 +112,8 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextVi
     }
 
     @Override
-    protected AnalysisContextVisualizationDistribution createViewConfig(AnalysisContext context) {
-        return new AnalysisContextVisualizationDistribution(context);
+    protected AnalysisContextDistribution createViewConfig(AnalysisContext context) {
+        return new AnalysisContextDistribution(context);
     }
 
     @Override
@@ -108,7 +126,7 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextVi
     }
 
     @Override
-    protected void doUpdate(AnalysisContextVisualizationDistribution context) {
+    protected void doUpdate(AnalysisContextDistribution context) {
 
         // The statistics builder
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
@@ -195,15 +213,9 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextVi
     }
 
     /**
-     * Creates a table item
-     * @param key
-     * @param value
+     * Is an analysis running
      */
-    private void createItem(String key,
-                            String value) {
-        
-        TableItem item = new TableItem(table, SWT.NONE);
-        item.setText(0, key);
-        item.setText(1, value);
+    protected boolean isRunning() {
+        return manager != null && manager.isRunning();
     }
 }

@@ -40,7 +40,7 @@ import de.linearbits.jhc.JHCLayout;
  * TODO: Make the stuff in this class interruptible like anything else
  * @author Fabian Prasser
  */
-public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisContextVisualizationContingency> {
+public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisContextContingency> {
 
     /** Static stuff. */
     private static final int MAX_SIZE = 500;
@@ -68,6 +68,11 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
                                   final ModelPart reset) {
         
         super(parent, controller, target, reset, true);
+    }
+
+    @Override
+    public LayoutUtility.ViewUtilityType getType() {
+        return LayoutUtility.ViewUtilityType.CONTINGENCY;
     }
 
     @Override
@@ -106,17 +111,17 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
     }
 
     @Override
-    protected AnalysisContextVisualizationContingency createViewConfig(AnalysisContext context) {
-        return new AnalysisContextVisualizationContingency(context);
+    protected AnalysisContextContingency createViewConfig(AnalysisContext context) {
+        return new AnalysisContextContingency(context);
     }
 
     @Override
     protected void doReset() {
         jhc.setData(null, new JHCConfiguration("", "", MAX_SIZE, MAX_SIZE, gradient, layout)); //$NON-NLS-1$ //$NON-NLS-2$
     }
-
+    
     @Override
-    protected void doUpdate(AnalysisContextVisualizationContingency context) {
+    protected void doUpdate(AnalysisContextContingency context) {
         int column1 = context.handle.getColumnIndexOf(context.attribute1);
         int column2 = context.handle.getColumnIndexOf(context.attribute2);
         jhc.setData(new DensityData(context.handle, column1, column2), new JHCConfiguration(context.attribute1,
@@ -126,5 +131,12 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
                                                                                             gradient,
                                                                                             layout));
 
+    }
+
+    /**
+     * Is an analysis running
+     */
+    protected boolean isRunning() {
+        return false;
     }
 }

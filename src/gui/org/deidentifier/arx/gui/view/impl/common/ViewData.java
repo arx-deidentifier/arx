@@ -32,6 +32,7 @@ import org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent;
 import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
 import org.eclipse.nebula.widgets.nattable.selection.event.ColumnSelectionEvent;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -357,5 +358,29 @@ public abstract class ViewData implements IView {
         } else {
             table.getHeaderImages().set(index, IMAGE_QUASI_IDENTIFYING);
         }
+    }
+
+    /**
+     * Adds a listener to the folder
+     * @param listener
+     */
+    public void addSelectionListener(SelectionListener listener) {
+        this.folder.addSelectionListener(listener);
+    }
+
+    /**
+     * Returns the selection index of the folder
+     * @return
+     */
+    public int getSelectionIndex() {
+        return folder.getSelectionIndex();
+    }
+
+    /**
+     * Sets the selection index of the folder
+     * @param index
+     */
+    public void setSelectionIndex(int index) {
+        folder.setSelection(index);
     }
 }

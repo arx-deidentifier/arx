@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.gui.view.impl.utility;
+package org.deidentifier.arx.gui.view.impl.common.async;
 
 /**
  * The current context.

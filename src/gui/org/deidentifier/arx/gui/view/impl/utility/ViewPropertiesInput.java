@@ -152,6 +152,14 @@ public class ViewPropertiesInput extends ViewProperties {
     }
 
     /**
+     * Returns the view type
+     * @return
+     */
+    public LayoutUtility.ViewUtilityType getType() {
+        return LayoutUtility.ViewUtilityType.PROPERTIES;
+    }
+
+    /**
      * Creates the view.
      *
      * @param group

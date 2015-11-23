@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Control;
  *
  * @author Fabian Prasser
  */
-public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisContextVisualizationDistribution> {
+public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisContextDistribution> {
 
     /** Internal stuff. */
     private ComponentTable  table;
@@ -65,6 +65,11 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
     }
     
     @Override
+    public LayoutUtility.ViewUtilityType getType() {
+        return LayoutUtility.ViewUtilityType.HISTOGRAM_TABLE;
+    }
+
+    @Override
     protected Control createControl(Composite parent) {
 
         // Configure table
@@ -81,8 +86,8 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
     }
 
     @Override
-    protected AnalysisContextVisualizationDistribution createViewConfig(AnalysisContext context) {
-        return new AnalysisContextVisualizationDistribution(context);
+    protected AnalysisContextDistribution createViewConfig(AnalysisContext context) {
+        return new AnalysisContextDistribution(context);
     }
 
     @Override
@@ -94,7 +99,7 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
     }
 
     @Override
-    protected void doUpdate(AnalysisContextVisualizationDistribution context) {
+    protected void doUpdate(AnalysisContextDistribution context) {
 
         // The statistics builder
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
@@ -171,5 +176,12 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
         };
         
         this.manager.start(analysis);
+    }
+    
+    /**
+     * Is an analysis running
+     */
+    protected boolean isRunning() {
+        return manager != null && manager.isRunning();
     }
 }

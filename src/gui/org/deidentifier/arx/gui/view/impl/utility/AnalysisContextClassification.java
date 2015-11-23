@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.gui.view.impl.risk;
+package org.deidentifier.arx.gui.view.impl.utility;
 
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.model.Model;
@@ -27,7 +27,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualizat
  *
  * @author Fabian Prasser
  */
-public class AnalysisContextRisk implements AnalysisContextVisualization{
+public class AnalysisContextClassification implements AnalysisContextVisualization{
     
     /** Context information. */
     public DataHandle    handle         = null;
@@ -43,7 +43,7 @@ public class AnalysisContextRisk implements AnalysisContextVisualization{
      *
      * @param context
      */
-    public AnalysisContextRisk(AnalysisContext context){
+    public AnalysisContextClassification(AnalysisContext context){
         if (context.getData()==null) return;
         this.handle = context.getData().handle;
         this.context = context;

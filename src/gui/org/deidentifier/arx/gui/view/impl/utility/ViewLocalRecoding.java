@@ -87,6 +87,31 @@ public class ViewLocalRecoding implements IView {
     }
     
 
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+    
+    public LayoutUtility.ViewUtilityType getType() {
+        return LayoutUtility.ViewUtilityType.LOCAL_RECODING;
+    }
+
+    @Override
+    public void reset() {
+        slider.setSelection(0.5d);
+        SWTUtil.disable(root);
+    }
+    
+    @Override
+    public void update(final ModelEvent event) {
+
+        if (event.part == ModelPart.MODEL) {
+            this.model = (Model) event.data;
+        }
+        
+        this.update();
+    }
+    
     /**
      * Creates the view.
      *
@@ -165,7 +190,32 @@ public class ViewLocalRecoding implements IView {
             }
         });
     }
-    
+
+    /**
+     * Returns the index of the given element in the given array
+     * @param array
+     * @param element
+     * @return
+     */
+    private int getIndexOf(String[] array, String element) {
+        for (int i=0; i<array.length; i++) {
+            if (array[i].equals(element)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Returns a string label for the mode
+     * @param mode
+     * @return
+     */
+    private String getLabelForMode(LocalRecodingMode mode) {
+        String label = mode.toString().replace("_", "-").toLowerCase();
+        return label.substring(0, 1).toUpperCase() + label.substring(1);
+    }
+
     /**
      * Returns a label for the given configuration
      * @param mode
@@ -210,52 +260,7 @@ public class ViewLocalRecoding implements IView {
         }
         return result.toArray(new String[result.size()]);
     }
-    
-    /**
-     * Returns the index of the given element in the given array
-     * @param array
-     * @param element
-     * @return
-     */
-    private int getIndexOf(String[] array, String element) {
-        for (int i=0; i<array.length; i++) {
-            if (array[i].equals(element)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-    
-    /**
-     * Returns a string label for the mode
-     * @param mode
-     * @return
-     */
-    private String getLabelForMode(LocalRecodingMode mode) {
-        String label = mode.toString().replace("_", "-").toLowerCase();
-        return label.substring(0, 1).toUpperCase() + label.substring(1);
-    }
 
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
-
-    @Override
-    public void reset() {
-        slider.setSelection(0.5d);
-        SWTUtil.disable(root);
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-
-        if (event.part == ModelPart.MODEL) {
-            this.model = (Model) event.data;
-        }
-        
-        this.update();
-    }
 
     /**
      * Updates all controlls

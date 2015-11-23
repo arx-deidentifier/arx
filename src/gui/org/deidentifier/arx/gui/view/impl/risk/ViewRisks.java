@@ -33,7 +33,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatus;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
-import org.deidentifier.arx.gui.view.impl.utility.AnalysisContextVisualization;
+import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelHistogram;
 import org.eclipse.swt.custom.StackLayout;
@@ -267,6 +267,55 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     }
 
     /**
+     * Creates a risk estimate builder
+     * @param context
+     * @param model
+     * @param classes
+     * @return
+     */
+    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context, 
+                                                          ARXPopulationModel model, 
+                                                          RiskModelHistogram classes) {
+
+        AnalysisContext analysisContext = context.context;
+        return context.handle.getRiskEstimator(model, 
+                                               classes, 
+                                               analysisContext.getModel().getRiskModel().getSolverConfiguration())
+                                               .getInterruptibleInstance();
+    }
+    
+    /**
+     * Creates a risk estimate builder
+     * @param context
+     * @param identifiers
+     * @return
+     */
+    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context,
+                                                          Set<String> identifiers) {
+        
+        AnalysisContext analysisContext = context.context;
+        return context.handle.getRiskEstimator(analysisContext.getPopulationModel(),
+                                               identifiers,
+                                               analysisContext.getModel().getRiskModel().getSolverConfiguration())
+                                               .getInterruptibleInstance();
+    }
+
+    /**
+     * Returns the model
+     * @return
+     */
+    protected Model getModel() {
+        return this.model;
+    }
+
+    
+    /**
+     * May return a progress provider, if any
+     * @return
+     */
+    protected abstract ComponentStatusLabelProgressProvider getProgressProvider();
+
+    /**
      * Returns a string containing all quasi-identifiers
      * @param context
      * @return
@@ -285,55 +334,6 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         }
         return builder.toString();
     }
-    
-    /**
-     * Creates a risk estimate builder
-     * @param context
-     * @param model
-     * @param classes
-     * @return
-     */
-    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context, 
-                                                          ARXPopulationModel model, 
-                                                          RiskModelHistogram classes) {
-
-        AnalysisContext analysisContext = context.context;
-        return context.handle.getRiskEstimator(model, 
-                                               classes, 
-                                               analysisContext.getModel().getRiskModel().getSolverConfiguration())
-                                               .getInterruptibleInstance();
-    }
-
-    /**
-     * Creates a risk estimate builder
-     * @param context
-     * @param identifiers
-     * @return
-     */
-    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context,
-                                                          Set<String> identifiers) {
-        
-        AnalysisContext analysisContext = context.context;
-        return context.handle.getRiskEstimator(analysisContext.getPopulationModel(),
-                                               identifiers,
-                                               analysisContext.getModel().getRiskModel().getSolverConfiguration())
-                                               .getInterruptibleInstance();
-    }
-
-    
-    /**
-     * Returns the model
-     * @return
-     */
-    protected Model getModel() {
-        return this.model;
-    }
-
-    /**
-     * May return a progress provider, if any
-     * @return
-     */
-    protected abstract ComponentStatusLabelProgressProvider getProgressProvider();
 
     /**
      * Returns the according type of view

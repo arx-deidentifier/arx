@@ -47,7 +47,7 @@ import cern.colt.function.IntComparator;
  *
  * @author Fabian Prasser
  */
-public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisContextVisualizationContingency> {
+public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisContextContingency> {
 
     /** Internal stuff. */
     private ComponentTable  table;
@@ -73,6 +73,11 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
     }
     
     @Override
+    public LayoutUtility.ViewUtilityType getType() {
+        return LayoutUtility.ViewUtilityType.CONTINGENCY_TABLE;
+    }
+
+    @Override
     protected Control createControl(Composite parent) {
         
         // Configure table
@@ -89,8 +94,8 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
     }
 
     @Override
-    protected AnalysisContextVisualizationContingency createViewConfig(AnalysisContext context) {
-        return new AnalysisContextVisualizationContingency(context);
+    protected AnalysisContextContingency createViewConfig(AnalysisContext context) {
+        return new AnalysisContextContingency(context);
     }
 
     @Override
@@ -102,7 +107,7 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
     }
 
     @Override
-    protected void doUpdate(AnalysisContextVisualizationContingency context) {
+    protected void doUpdate(AnalysisContextContingency context) {
 
         final int column1 = context.handle.getColumnIndexOf(context.attribute1);
         final int column2 = context.handle.getColumnIndexOf(context.attribute2);
@@ -256,5 +261,12 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
         };
         
         this.manager.start(analysis);
+    }
+    
+    /**
+     * Is an analysis running
+     */
+    protected boolean isRunning() {
+        return manager != null && manager.isRunning();
     }
 }

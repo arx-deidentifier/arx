@@ -23,7 +23,6 @@ import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
@@ -32,8 +31,6 @@ import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.gui.view.impl.common.table.CTConfiguration;
-import org.deidentifier.arx.gui.view.impl.risk.AnalysisContextRisk;
-import org.deidentifier.arx.gui.view.impl.risk.ViewRisks;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -44,7 +41,7 @@ import org.eclipse.swt.widgets.Control;
  *
  * @author Fabian Prasser
  */
-public class ViewStatisticsClassificationOutput  extends ViewRisks<AnalysisContextRisk> {
+public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisContextClassification> {
 
     /** View */
     private ComponentTable  table;
@@ -58,15 +55,19 @@ public class ViewStatisticsClassificationOutput  extends ViewRisks<AnalysisConte
      * @param parent
      * @param controller
      */
-    public ViewStatisticsClassificationOutput(final Composite parent,
+    public ViewStatisticsRegressionOutput(final Composite parent,
                                              final Controller controller) {
 
-        super(parent, controller, ModelPart.OUTPUT, null);
+        super(parent, controller, ModelPart.OUTPUT, null, false);
         this.manager = new AnalysisManager(parent.getDisplay());
         controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
     }
 
+    @Override
+    public LayoutUtility.ViewUtilityType getType() {
+        return LayoutUtility.ViewUtilityType.LOGISTIC_REGRESSION;
+    }
     @Override
     public void update(ModelEvent event) {
         super.update(event);
@@ -75,6 +76,7 @@ public class ViewStatisticsClassificationOutput  extends ViewRisks<AnalysisConte
             triggerUpdate();
         }
     }
+
     @Override
     protected Control createControl(Composite parent) {
 
@@ -92,8 +94,8 @@ public class ViewStatisticsClassificationOutput  extends ViewRisks<AnalysisConte
     }
 
     @Override
-    protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
-        return new AnalysisContextRisk(context);
+    protected AnalysisContextClassification createViewConfig(AnalysisContext context) {
+        return new AnalysisContextClassification(context);
     }
 
     @Override
@@ -106,7 +108,7 @@ public class ViewStatisticsClassificationOutput  extends ViewRisks<AnalysisConte
     }
 
     @Override
-    protected void doUpdate(final AnalysisContextRisk context) {
+    protected void doUpdate(final AnalysisContextClassification context) {
 
         // The statistics builder
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
@@ -249,11 +251,6 @@ public class ViewStatisticsClassificationOutput  extends ViewRisks<AnalysisConte
                 }
             }
         };
-    }
-
-    @Override
-    protected ViewRiskType getViewType() {
-        return null;
     }
 
     /**
