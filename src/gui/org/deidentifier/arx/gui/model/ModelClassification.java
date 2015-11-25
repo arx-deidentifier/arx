@@ -32,7 +32,7 @@ public class ModelClassification implements Serializable {
     /** Modified */
     private boolean           modified                 = false;
     /** Max records */
-    private int               classificationMaxRecords = Integer.MAX_VALUE;
+    private int               classificationMaxRecords = 100000;
     /** Seed */
     private Integer           classificationSeed       = Integer.MAX_VALUE;
     /** Ignore suppressed records */
