@@ -21,6 +21,7 @@ import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 
+import de.linearbits.newtonraphson.Constraint2D;
 import de.linearbits.newtonraphson.Function;
 import de.linearbits.newtonraphson.NewtonRaphson2D;
 import de.linearbits.newtonraphson.NewtonRaphsonConfiguration;
@@ -73,13 +74,15 @@ class ModelPitman extends RiskModelPopulation {
         double a = ((t * (c1 - n)) + ((n - 1) * c1)) / (n * u);
 
         // Solve the Maximum Likelihood Estimates with Polygamma functions
-        NewtonRaphson2D solver = new NewtonRaphson2D(getMasterFunctionClosed(histogram.getHistogram(), u, n)).configure(config);
+        NewtonRaphson2D solver = new NewtonRaphson2D(getMasterFunctionClosed(histogram.getHistogram(), u, n),
+                                                     getConstraint()).configure(config);
         Vector2D result = solver.solve(new Vector2D(t, a));
 
         // If no result found, use iterative implementation
         if (Double.isNaN(result.x) || Double.isNaN(result.y)) {
 
-            solver = new NewtonRaphson2D(getMasterFunctionIterative(histogram.getHistogram(), u, n)).configure(config);
+            solver = new NewtonRaphson2D(getMasterFunctionIterative(histogram.getHistogram(), u, n),
+                                         getConstraint()).configure(config);
             result = solver.solve(new Vector2D(t, a));
 
             // Else check the result against the iterative implementation
@@ -94,9 +97,8 @@ class ModelPitman extends RiskModelPopulation {
                 Math.abs(test.y) > config.getAccuracy()) {
 
                 // Use iterative implementation
-                solver = new NewtonRaphson2D(getMasterFunctionIterative(histogram.getHistogram(),
-                                                                        u,
-                                                                        n)).configure(config);
+                solver = new NewtonRaphson2D(getMasterFunctionIterative(histogram.getHistogram(), u, n),
+                                                                        getConstraint()).configure(config);
                 result = solver.solve(new Vector2D(t, a));
             }
         }
@@ -112,6 +114,19 @@ class ModelPitman extends RiskModelPopulation {
      */
     public double getNumUniques() {
         return this.numUniques;
+    }
+
+    /**
+     * Returns a constraint on theta
+     * @return
+     */
+    private Constraint2D getConstraint() {
+        return new Constraint2D() {
+            @Override
+            public Boolean evaluate(Vector2D arg0) {
+                return arg0.x >= 0;
+            }
+        };
     }
 
     /**

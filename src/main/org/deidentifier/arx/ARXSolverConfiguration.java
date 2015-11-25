@@ -102,7 +102,9 @@ public class ARXSolverConfiguration extends NewtonRaphsonConfiguration<ARXSolver
 
     @Override
     public ARXSolverConfiguration preparedStartValues(double[][] values) {
-        if (super.getStartValues() == null || (values != null && !Arrays.equals(super.getStartValues(), values))) {
+        if ((super.getStartValues() == null && values != null) || 
+            (values == null && super.getStartValues() != null) ||
+            (values != null && !Arrays.equals(super.getStartValues(), values))) {
             modified = true;
         }
         return super.preparedStartValues(values);

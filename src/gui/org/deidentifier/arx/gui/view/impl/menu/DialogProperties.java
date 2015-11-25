@@ -342,8 +342,8 @@ public class DialogProperties implements IDialog {
     private double[][] getSolverStartValues() {
         double[][] result = new double[16][];
         int index = 0;
-        for (double d1 = 0d; d1 < 1d; d1 += 0.33d) {
-            for (double d2 = 0d; d2 < 1d; d2 += 0.33d) {
+        for (double d1 = 0.25d; d1 <= 1d; d1 += 0.25d) {
+            for (double d2 = 0.25d; d2 <= 1d; d2 += 0.25d) {
                 result[index++] = new double[] { d1, d2 };
             }
         }
