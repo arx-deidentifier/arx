@@ -101,12 +101,15 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
         c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.2")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.4")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.1")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.4")); //$NON-NLS-1$
         for (final TableColumn col : table.getColumns()) {
@@ -184,11 +187,9 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(0, classes[i]);
                     item.setText(1, String.valueOf(classNumbers.get(i)));
-                    double value = (double) classNumbers.get(i) / (double) baselineClassNumbers.get(i) - 1d;
-                    item.setText(2, SWTUtil.getPrettyString(value * 100d) + "%"); //$NON-NLS-1$
-                    item.setText(3, SWTUtil.getPrettyString(accuracies.get(i) * 100d) + "%"); //$NON-NLS-1$
-                    value = (double) accuracies.get(i) / (double) baselineAccuracies.get(i) - 1d;
-                    item.setText(4, SWTUtil.getPrettyString(value * 100d) + "%"); //$NON-NLS-1$
+                    item.setData("2", (double) classNumbers.get(i) / (double) baselineClassNumbers.get(i) - 1d);
+                    item.setData("3", accuracies.get(i));
+                    item.setData("4", (double) accuracies.get(i) / (double) baselineAccuracies.get(i) - 1d);
                 }
 
                 // Status

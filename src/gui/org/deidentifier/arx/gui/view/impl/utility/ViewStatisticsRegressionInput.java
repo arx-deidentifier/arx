@@ -45,7 +45,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author Fabian Prasser
  */
-public class ViewStatisticsRegressionInput  extends ViewStatistics<AnalysisContextClassification> {
+public class ViewStatisticsRegressionInput extends ViewStatistics<AnalysisContextClassification> {
 
     /** View */
     private DynamicTable    table;
@@ -95,17 +95,23 @@ public class ViewStatisticsRegressionInput  extends ViewStatistics<AnalysisConte
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
         
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("25%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.0")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("25%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.2")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("25%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        SWTUtil.createColumnWithBarCharts(table, c);
+        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.3")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("25%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        SWTUtil.createColumnWithBarCharts(table, c);
+        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.1")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
+        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.5")); //$NON-NLS-1$
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
@@ -179,8 +185,9 @@ public class ViewStatisticsRegressionInput  extends ViewStatistics<AnalysisConte
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(0, classes[i]);
                     item.setText(1, String.valueOf(classNumbers.get(i)));
-                    item.setText(2, SWTUtil.getPrettyString(baselineAccuracies.get(i) * 100d) + "%"); //$NON-NLS-1$
-                    item.setText(3, SWTUtil.getPrettyString(accuracies.get(i) * 100d) + "%"); //$NON-NLS-1$
+                    item.setData("2", baselineAccuracies.get(i));
+                    item.setData("3", accuracies.get(i));
+                    item.setData("4", accuracies.get(i) - baselineAccuracies.get(i));
                 }
 
                 // Status

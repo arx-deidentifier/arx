@@ -26,6 +26,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.DisposeEvent;
@@ -35,6 +36,8 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -42,9 +45,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -80,7 +87,6 @@ public class SWTUtil {
         int y = (displayRect.height - shellRect.height) / 2;
         shell.setLocation(displayRect.x + x, displayRect.y + y);
     }
-    
     /**
      * Centers the given shell.
      *
@@ -94,6 +100,67 @@ public class SWTUtil {
         final int left = (bounds.width - p.x) / 2;
         final int top = (bounds.height - p.y) / 2;
         shell.setBounds(left + bounds.x, top + bounds.y, p.x, p.y);
+    }
+    
+    /**
+     * Adds a bar chart to a column
+     * @param table
+     * @param column
+     */
+    public static void createColumnWithBarCharts(final Table table, final TableColumn column) {
+        
+        int index = -1;
+        for (int i=0; i< table.getColumnCount(); i++) {
+            if (table.getColumn(i)==column) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            return;
+        }
+        final Display display = table.getDisplay();
+        final int columnIndex = index;
+        table.addListener(SWT.PaintItem, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (event.index == columnIndex) {
+                    GC gc = event.gc;
+                    TableItem item = (TableItem) event.item;
+                    Object object = item.getData(String.valueOf(columnIndex));
+                    if (object == null || !(object instanceof Double)) {
+                        object = new Double(0);
+                    }
+                    Double percent = (Double)object;
+                    if (percent.isNaN()) {
+                        percent = 0d;
+                    }
+                    String text = SWTUtil.getPrettyString((Double)object * 100d) + "%";
+                    if (percent < 0d) {
+                        percent = 0d;
+                    }
+                    if (percent.isInfinite() || percent > 1d) {
+                        percent = 1d;
+                    }
+                    Color foreground = gc.getForeground();
+                    Color background = gc.getBackground();
+                    gc.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
+                    gc.setForeground(GUIHelper.getColor(240, 240, 240));
+                    int width = (int) Math.round((column.getWidth() - 1) * percent);
+                    width = width >= 1 ? width : 1;
+                    gc.fillGradientRectangle(event.x, event.y, width, event.height, true);
+                    Rectangle rect2 = new Rectangle(event.x, event.y, width - 1, event.height - 1);
+                    gc.setForeground(GUIHelper.getColor(150, 150, 150));
+                    gc.drawRectangle(rect2);
+                    gc.setForeground(display.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+                    Point size = event.gc.textExtent(text);
+                    int offset = Math.max(0, (event.height - size.y) / 2);
+                    gc.drawText(text, event.x + 2, event.y + offset, true);
+                    gc.setForeground(background);
+                    gc.setBackground(foreground);
+                }
+            }
+        });     
     }
 
     /**
