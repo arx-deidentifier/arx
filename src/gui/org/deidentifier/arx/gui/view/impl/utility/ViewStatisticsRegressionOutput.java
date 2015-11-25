@@ -25,16 +25,20 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTable;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
-import org.deidentifier.arx.gui.view.impl.common.table.CTConfiguration;
-import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+
+import de.linearbits.swt.table.DynamicTable;
+import de.linearbits.swt.table.DynamicTableColumn;
 
 /**
  * This view displays a statistics about classification
@@ -44,7 +48,9 @@ import org.eclipse.swt.widgets.Control;
 public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisContextClassification> {
 
     /** View */
-    private ComponentTable  table;
+    private DynamicTable    table;
+    /** View */
+    private Composite       root;
 
     /** Internal stuff. */
     private AnalysisManager manager;
@@ -80,17 +86,34 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
     @Override
     protected Control createControl(Composite parent) {
 
-        // Configure table
-        CTConfiguration config = new CTConfiguration(parent, CTConfiguration.STYLE_TABLE);
-        config.setHorizontalAlignment(SWT.CENTER);
-        config.setCellSelectionEnabled(false);
-        config.setColumnSelectionEnabled(false);
-        config.setRowSelectionEnabled(false);
-        config.setColumnHeaderLayout(CTConfiguration.COLUMN_HEADER_LAYOUT_FILL_EQUAL);
-        config.setRowHeaderLayout(CTConfiguration.ROW_HEADER_LAYOUT_DEFAULT);
-
-        this.table = new ComponentTable(parent, SWT.NONE, config);
-        return this.table.getControl();
+        this.root = new Composite(parent, SWT.NONE);
+        this.root.setLayout(new FillLayout());
+        
+        table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true);
+        table.setMenu(new ClipboardHandlerTable(table).getMenu());
+        
+        DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.0")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.2")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.4")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.1")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.4")); //$NON-NLS-1$
+        for (final TableColumn col : table.getColumns()) {
+            col.pack();
+        }
+        SWTUtil.createGenericTooltip(table);
+        return this.root;
     }
 
     @Override
@@ -103,7 +126,11 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
         if (this.manager != null) {
             this.manager.stop();
         }
-        table.clear();
+        table.setRedraw(false);
+        for (final TableItem i : table.getItems()) {
+            i.dispose();
+        }
+        table.setRedraw(true);
         setStatusEmpty();
     }
 
@@ -147,39 +174,25 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
                     return;
                 }
 
-                // Now update the table
-                table.setData(new IDataProvider() {
-                    public int getColumnCount() {
-                        return 5;
-                    }
-                    public Object getDataValue(int arg0, int arg1) {
-                        switch(arg0){
-                        case 0:
-                            return classes[arg1];
-                        case 1:
-                            return String.valueOf(classNumbers.get(arg1));
-                        case 2:
-                            double value = (double)classNumbers.get(arg1) / (double)baselineClassNumbers.get(arg1) - 1d;
-                            return SWTUtil.getPrettyString(value*100d)+"%"; //$NON-NLS-1$
-                        case 3:
-                            return SWTUtil.getPrettyString(accuracies.get(arg1)*100d)+"%"; //$NON-NLS-1$
-                        case 4:
-                            value = (double)accuracies.get(arg1) / (double)baselineAccuracies.get(arg1) - 1d;
-                            return SWTUtil.getPrettyString(value*100d)+"%"; //$NON-NLS-1$
-                        }
-                        return "";
-                    }
-                    public int getRowCount() {
-                        return classes.length;
-                    }
-                    public void setDataValue(int arg0, int arg1, Object arg2) { 
-                        /* Ignore */
-                    }
-                }, new String[] { Resources.getMessage("ViewStatisticsClassificationInput.0"), //$NON-NLS-1$
-                                  Resources.getMessage("ViewStatisticsClassificationInput.2"), //$NON-NLS-1$
-                                  Resources.getMessage("ViewStatisticsClassificationInput.4"), //$NON-NLS-1$
-                                  Resources.getMessage("ViewStatisticsClassificationInput.1"), //$NON-NLS-1$
-                                  Resources.getMessage("ViewStatisticsClassificationInput.4") }); //$NON-NLS-1$
+                // Update chart
+                for (final TableItem i : table.getItems()) {
+                    i.dispose();
+                }
+
+                // Create entries
+                for (int i = 0; i < classes.length; i++) {
+                    TableItem item = new TableItem(table, SWT.NONE);
+                    item.setText(0, classes[i]);
+                    item.setText(1, String.valueOf(classNumbers.get(i)));
+                    double value = (double) classNumbers.get(i) / (double) baselineClassNumbers.get(i) - 1d;
+                    item.setText(2, SWTUtil.getPrettyString(value * 100d) + "%"); //$NON-NLS-1$
+                    item.setText(3, SWTUtil.getPrettyString(accuracies.get(i) * 100d) + "%"); //$NON-NLS-1$
+                    value = (double) accuracies.get(i) / (double) baselineAccuracies.get(i) - 1d;
+                    item.setText(4, SWTUtil.getPrettyString(value * 100d) + "%"); //$NON-NLS-1$
+                }
+
+                // Status
+                root.layout();
                 setStatusDone();
             }
 
