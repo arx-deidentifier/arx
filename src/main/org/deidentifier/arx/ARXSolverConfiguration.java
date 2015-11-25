@@ -63,6 +63,20 @@ public class ARXSolverConfiguration extends NewtonRaphsonConfiguration<ARXSolver
     }
 
     /**
+     * Clones this config
+     */
+    public ARXSolverConfiguration clone() {
+        ARXSolverConfiguration result = ARXSolverConfiguration.create();
+        result.accuracy(this.getAccuracy());
+        result.iterationsPerTry(this.getIterationsPerTry());
+        result.iterationsTotal(this.getIterationsTotal());
+        result.timePerTry(this.getTimePerTry());
+        result.timeTotal(this.getTimeTotal());
+        result.preparedStartValues(this.getStartValues().clone());
+        return result;
+    }
+
+    /**
      * Modified
      * @return
      */
@@ -86,6 +100,14 @@ public class ARXSolverConfiguration extends NewtonRaphsonConfiguration<ARXSolver
         return super.iterationsTotal(arg0);
     }
 
+    @Override
+    public ARXSolverConfiguration preparedStartValues(double[][] values) {
+        if (super.getStartValues() == null || (values != null && !Arrays.equals(super.getStartValues(), values))) {
+            modified = true;
+        }
+        return super.preparedStartValues(values);
+    }
+
     /**
      * Modified
      */
@@ -100,20 +122,12 @@ public class ARXSolverConfiguration extends NewtonRaphsonConfiguration<ARXSolver
         }
         return super.timePerTry(arg0);
     }
-
+    
     @Override
     public ARXSolverConfiguration timeTotal(int arg0) {
         if (arg0 != super.getTimeTotal()) {
             modified = true;
         }
         return super.timeTotal(arg0);
-    }
-
-    @Override
-    public ARXSolverConfiguration preparedStartValues(double[][] values) {
-        if (super.getStartValues() == null || (values != null && !Arrays.equals(super.getStartValues(), values))) {
-            modified = true;
-        }
-        return super.preparedStartValues(values);
     }
 }
