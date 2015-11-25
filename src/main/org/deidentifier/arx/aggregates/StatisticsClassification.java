@@ -203,6 +203,43 @@ public class StatisticsClassification {
             }
         }
         
+        /*
+         
+        // Create classifier
+        int numfeatures = indexes.length - 1;
+        numfeatures = numfeatures != 0 ? numfeatures : 1;
+        int numclasses = map.size();
+        AdaptiveLogisticRegression lr = new AdaptiveLogisticRegression(numclasses, numfeatures, new L1(), 1, 
+                                                                       AdaptiveLogisticRegression.DEFAULT_POOL_SIZE);
+
+        // Prepare encoders
+        ConstantValueEncoder interceptEncoder = new ConstantValueEncoder("intercept");
+        StaticWordValueEncoder featureEncoder = new StaticWordValueEncoder("feature");
+
+        // Train and cross validate
+        for (int row = 0; row < handle.getNumRows(); row++) {
+            if ((!ignoreSuppressedRows || !handle.isSuppressed(row)) 
+                 && random.nextDouble() <= samplingFraction) {
+
+                // Check
+                checkInterrupt();
+
+                // Train
+                lr.train(getClass(handle, row, map), getFeatures(handle, row, maps, interceptEncoder, featureEncoder));
+            }
+        }
+        
+        // Obtain the best learner
+        CrossFoldLearner best = lr.getBest().getPayload().getLearner();
+        this.auc = best.auc();
+        this.percentCorrect = best.percentCorrect();
+        this.logLikelihood = best.getLogLikelihood();
+        
+        // Close
+        lr.close();
+         
+         */
+        
         // Train and cross validate
         int k = handle.getNumRows() > 10 ? 10 : handle.getNumRows();
         this.accuracy = getAccuracyAccordingToKFoldCrossValidation(handle, ignoreSuppressedRows, map, maps, k, random, samplingFraction);
