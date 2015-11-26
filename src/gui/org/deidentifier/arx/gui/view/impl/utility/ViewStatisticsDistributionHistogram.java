@@ -225,7 +225,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
 
         // Initialize y-axis
         ITitle yAxisTitle = yAxis.getTitle();
-        yAxisTitle.setText("Frequency"); //$NON-NLS-1$
+        yAxisTitle.setText(Resources.getMessage("ViewRisksClassDistributionPlot.0")); //$NON-NLS-1$
         chart.setEnabled(false);
         updateCategories();
     }
