@@ -38,6 +38,35 @@ import org.deidentifier.arx.DataType;
 abstract class HIPAAMatcherAttributeValue {
     
     /**
+     * Pattern which matches numbers and checks whether they are ages
+     * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
+     */
+    static class HIPAAMatcherAge extends HIPAAMatcherAttributeValue {
+
+        /**
+         * Creates a new instance
+         * @param constants
+         */
+        HIPAAMatcherAge(HIPAAConstants constants) {
+            super(constants);
+        }
+        
+        @Override
+        public boolean matches(String value) {
+            if (value.isEmpty()) {
+                return false;
+            }
+            
+            try {
+                int number = Integer.valueOf(value);
+                return (number >= 0 && number <= 130);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+    }
+
+    /**
      * Pattern which matches a city with a predefined list of cities
      * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */

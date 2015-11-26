@@ -18,7 +18,6 @@
 package org.deidentifier.arx.risk;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.deidentifier.arx.DataHandle;
@@ -26,6 +25,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 import org.deidentifier.arx.risk.HIPAAIdentifierMatch.HIPAAIdentifier;
 import org.deidentifier.arx.risk.HIPAAIdentifierMatch.MatchType;
+import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherAge;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherCity;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherDate;
 import org.deidentifier.arx.risk.HIPAAMatcherAttributeValue.HIPAAMatcherEMail;
@@ -59,26 +59,25 @@ class RiskModelHIPAASafeHarbor {
      * Returns a list of matches with HIPAA identifiers
      * 
      * @param handle
+     * @param threshold
      * @param stop
      * @return An array of warnings
      */
     public HIPAAIdentifierMatch[] getMatches(DataHandle handle, 
+                                             double threshold,
                                              WrappedBoolean stop) {
         
         // Prepare
         List<HIPAAIdentifierMatch> results = new ArrayList<HIPAAIdentifierMatch>();
         
-        // Build list of columns
-        List<Integer> columns = new ArrayList<Integer>();
-        for (int i = 0; i < handle.getNumColumns(); i++) {
-            columns.add(i);
-        }
-        
-        // Match attribute names
-        Iterator<Integer> iter = columns.iterator();
-        while (iter.hasNext()) {
-            Integer column = iter.next();
+        // Check each attribute
+        for (int column = 0; column < handle.getNumColumns(); column++) {
+
+            // Init
             String attribute = handle.getAttributeName(column);
+            String[] values = handle.getDistinctValues(column);
+            
+            // Match attribute name
             for (HIPAAIdentifierConfig config : configurations) {
                 if (stop.value) {
                     throw new ComputationInterruptedException();
@@ -90,33 +89,38 @@ class RiskModelHIPAASafeHarbor {
                                                          config.getInstance(),
                                                          MatchType.ATTRIBUTE_NAME, 
                                                          match));
-                    iter.remove();
-                    break;
                 }
             }
-        }
-        
-        // Match attribute values
-        iter = columns.iterator();
-        while (iter.hasNext()) {
-            Integer column = iter.next();
-            String attribute = handle.getAttributeName(column);
-            outer: for (HIPAAIdentifierConfig config : configurations) {
-                String[] values = handle.getDistinctValues(column);
+            
+            // Match attribute values
+            for (HIPAAIdentifierConfig config : configurations) {
+                int matches = 0;
+                int nonmatches = 0;
                 for (String value : values) {
                     if (stop.value) {
                         throw new ComputationInterruptedException();
                     }
-                    String match = config.getMatchingAttributeValue(value);
-                    if (match != null) {
-                        results.add(new HIPAAIdentifierMatch(attribute, 
-                                                             config.getIdentifier(), 
-                                                             config.getInstance(),
-                                                             MatchType.ATTRIBUTE_VALUE, 
-                                                             match));
-                        iter.remove();
-                        break outer;
+                    
+                    // Count matching values
+                    if (config.getMatchingAttributeValue(value) != null) {
+                        matches++;
+                    } else {
+                        
+                        // Break if too many non-matching values
+                        nonmatches++;
+                        double nonpercentage = (double)nonmatches / (double)values.length;
+                        if (nonpercentage > 1d - threshold) {
+                            break;
+                        }
                     }
+                }
+                double percentage = (double)matches / (double)values.length;
+                if (percentage > threshold) {
+                    results.add(new HIPAAIdentifierMatch(attribute, 
+                                                         config.getIdentifier(), 
+                                                         config.getInstance(),
+                                                         MatchType.ATTRIBUTE_VALUE, 
+                                                         String.valueOf(percentage)));
                 }
             }
         }
@@ -161,6 +165,10 @@ class RiskModelHIPAASafeHarbor {
         configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.DATE,
                                                      "Date/Time",
                                                      new HIPAAMatcherDate(constants)));
+
+        configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.DATE,
+                                                     "Age",
+                                                     new HIPAAMatcherAge(constants)));
 
         configurations.add(new HIPAAIdentifierConfig(HIPAAIdentifier.EMAIL_ADDRESS, 
                                                      "Email address",

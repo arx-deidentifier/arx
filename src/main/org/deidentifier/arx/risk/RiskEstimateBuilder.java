@@ -189,14 +189,24 @@ public class RiskEstimateBuilder {
     }
 
     /**
-     * Returns the identified HIPAA identifiers.
+     * Returns the a set of potential HIPAA identifiers. Values are matched with a
+     * confidence threshold of 50%
      * 
      * @return
      */
     public HIPAAIdentifierMatch[] getHIPAAIdentifiers() {
-        return new RiskModelHIPAASafeHarbor().getMatches(handle, stop);
+        return new RiskModelHIPAASafeHarbor().getMatches(handle, 0.5d, stop);
     }
 
+    /**
+     * Returns the a set of potential HIPAA identifiers. Values are matched with the
+     * given confidence threshold.
+     * @param threshold Confidence threshold
+     * @return
+     */
+    public HIPAAIdentifierMatch[] getHIPAAIdentifiers(double threshold) {
+        return new RiskModelHIPAASafeHarbor().getMatches(handle, threshold, stop);
+    }
     /**
      * Returns an interruptible instance of this object.
      * 

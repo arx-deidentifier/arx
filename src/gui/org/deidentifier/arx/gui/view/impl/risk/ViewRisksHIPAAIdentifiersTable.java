@@ -88,10 +88,25 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
     private void createItem(HIPAAIdentifierMatch identifier) {
         final TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, identifier.getColumn());
-        item.setText(1, identifier.getIdentifier().toString());
+        item.setText(1, format(identifier.getIdentifier().toString()));
         item.setText(2, identifier.getInstance());
-        item.setText(3, identifier.getMatchType().toString());
-        item.setText(4, identifier.getValue());
+        item.setText(3, format(identifier.getMatchType().toString()));
+        if (identifier.getConfidence() != null) {
+            item.setData("4", identifier.getConfidence());
+        } else {
+            item.setText(4, identifier.getValue());
+        }
+    }
+    
+    /**
+     * Converts the given value
+     * @param value
+     * @return
+     */
+    private String format(String value) {
+        value = value.toLowerCase().replace("_", " ");
+        value = value.substring(0, 1).toUpperCase() + value.substring(1);
+        return value;
     }
     
     @Override
@@ -122,6 +137,7 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
         c.setText(Resources.getMessage("RiskAnalysis.29")); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("20%"); //$NON-NLS-1$
         c.setText(Resources.getMessage("RiskAnalysis.30")); //$NON-NLS-1$
         c.setResizable(true);
