@@ -105,9 +105,9 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
             }
         }
         item.setText(0, builder.toString());
-        item.setText(1, SWTUtil.getPrettyString(risks.getFractionOfUniqueTuples() * 100d));
-        item.setText(2, SWTUtil.getPrettyString(risks.getHighestReidentificationRisk() * 100d));
-        item.setText(3, SWTUtil.getPrettyString(risks.getAverageReidentificationRisk() * 100d));
+        item.setData("1", risks.getFractionOfUniqueTuples());
+        item.setData("2", risks.getHighestReidentificationRisk());
+        item.setData("3", risks.getAverageReidentificationRisk());
     }
 
     @Override
@@ -127,14 +127,17 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
         c.setText(Resources.getMessage("RiskAnalysis.19")); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.20")); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.21")); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.22")); //$NON-NLS-1$
         c.setResizable(true);

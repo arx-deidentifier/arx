@@ -99,6 +99,7 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
         c.setWidth("33%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.2")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("33%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.3")); //$NON-NLS-1$
         for (final TableColumn col : table.getColumns()) {
@@ -174,7 +175,7 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(0, String.valueOf(distribution[i]));
                     item.setText(1, String.valueOf(distribution[i + 1]));
-                    item.setText(2, SWTUtil.getPrettyString((double) distribution[i + 1] / numClasses * 100d));
+                    item.setData("2", (double) distribution[i + 1] / numClasses);
                 }
 
                 root.layout();

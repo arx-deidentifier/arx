@@ -93,7 +93,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
     private void createItem(String label, double value) {
         TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, label);
-        item.setText(1, SWTUtil.getPrettyString(value * 100d));
+        item.setData("1", value);
     }
 
     /**
@@ -133,6 +133,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         c.setWidth("50%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.6")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("50%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.7")); //$NON-NLS-1$
         for (final TableColumn col : table.getColumns()) {

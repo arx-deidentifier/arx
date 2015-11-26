@@ -129,35 +129,52 @@ public class SWTUtil {
                     TableItem item = (TableItem) event.item;
                     Object object = item.getData(String.valueOf(columnIndex));
                     if (object == null || !(object instanceof Double)) {
-                        object = new Double(0);
+                        return;
                     }
-                    Double percent = (Double)object;
-                    if (percent.isNaN()) {
-                        percent = 0d;
-                    }
-                    String text = SWTUtil.getPrettyString((Double)object * 100d) + "%";
-                    if (percent < 0d) {
-                        percent = 0d;
-                    }
-                    if (percent.isInfinite() || percent > 1d) {
-                        percent = 1d;
-                    }
+
+                    // Store
                     Color foreground = gc.getForeground();
                     Color background = gc.getBackground();
-                    gc.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
-                    gc.setForeground(GUIHelper.getColor(240, 240, 240));
-                    int width = (int) Math.round((column.getWidth() - 1) * percent);
-                    width = width >= 1 ? width : 1;
-                    gc.fillGradientRectangle(event.x, event.y, width, event.height, true);
-                    Rectangle rect2 = new Rectangle(event.x, event.y, width - 1, event.height - 1);
-                    gc.setForeground(GUIHelper.getColor(150, 150, 150));
-                    gc.drawRectangle(rect2);
-                    gc.setForeground(display.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
-                    Point size = event.gc.textExtent(text);
-                    int offset = Math.max(0, (event.height - size.y) / 2);
-                    gc.drawText(text, event.x + 2, event.y + offset, true);
+                    
+                    // Draw NaN
+                    Double percent = (Double)object;
+                    if (percent.isNaN() || percent.isInfinite()) {
+                        String text = percent.isNaN() ? "NaN" : "Infinite";
+                        gc.setForeground(display.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+                        Point size = event.gc.textExtent(text);
+                        int offset = Math.max(0, (event.height - size.y) / 2);
+                        gc.drawText(text, event.x + 2, event.y + offset, true);
+                        
+                    // Draw value
+                    } else {
+                        
+                        // Initialize
+                        String text = SWTUtil.getPrettyString((Double)object * 100d) + "%";
+                        percent = percent >= 0d ? percent : 0d;
+                        percent = percent <= 1d ? percent : 1d;
+                        
+                        // Draw bar
+                        gc.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
+                        gc.setForeground(GUIHelper.getColor(240, 240, 240));
+                        int width = (int) Math.round((column.getWidth() - 1) * percent);
+                        width = width >= 1 ? width : 1;
+                        gc.fillGradientRectangle(event.x, event.y, width, event.height, true);
+                        
+                        // Draw border
+                        Rectangle rect2 = new Rectangle(event.x, event.y, width - 1, event.height - 1);
+                        gc.setForeground(GUIHelper.getColor(150, 150, 150));
+                        gc.drawRectangle(rect2);
+                        
+                        // Draw text
+                        gc.setForeground(display.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+                        Point size = event.gc.textExtent(text);
+                        int offset = Math.max(0, (event.height - size.y) / 2);
+                        gc.drawText(text, event.x + 2, event.y + offset, true);
+                    }
+
+                    // Reset
                     gc.setForeground(background);
-                    gc.setBackground(foreground);
+                    gc.setBackground(foreground);   
                 }
             }
         });     
