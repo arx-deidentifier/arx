@@ -60,6 +60,8 @@
             <filename name="**/postgresql-9.3-1101.jdbc41.jar" />
             <filename name="**/sqlite-jdbc-3.7.2.jar" />
             <filename name="**/ojdbc7.jar" />
+            <filename name="**/org.eclipse.nebula.visualization.widgets_1.0.0.201511041902.jar" />
+            <filename name="**/org.eclipse.nebula.visualization.xygraph_1.0.0.201511041902.jar" />
         </or>
     </fileset>
 
