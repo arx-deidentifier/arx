@@ -197,7 +197,7 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
 
         // Initialize y-axis
         ITitle yAxisTitle = yAxis.getTitle();
-        yAxisTitle.setText("Frequency"); //$NON-NLS-1$
+        yAxisTitle.setText(Resources.getMessage("ViewRisksClassDistributionPlot.0")); //$NON-NLS-1$
         chart.setEnabled(false);
         updateCategories();
     }
@@ -287,7 +287,7 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
 
                 ISeriesSet seriesSet = chart.getSeriesSet();
                 IBarSeries series = (IBarSeries) seriesSet.createSeries(SeriesType.BAR,
-                                                                        Resources.getMessage("DistributionView.9")); //$NON-NLS-1$
+                                                                        "[%]"); //$NON-NLS-1$
                 series.getLabel().setVisible(false);
                 series.getLabel().setFont(chart.getFont());
                 series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
