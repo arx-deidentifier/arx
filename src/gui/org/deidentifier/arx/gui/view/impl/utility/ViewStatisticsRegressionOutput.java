@@ -111,7 +111,7 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.4")); //$NON-NLS-1$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.5")); //$NON-NLS-1$
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
