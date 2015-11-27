@@ -25,7 +25,7 @@ import java.util.Date;
  *
  * @author Fabian Prasser
  */
-public class DataHandleStatistics {
+public class DataHandleInternal {
 
     /** Interface */
     public static interface InterruptHandler {
@@ -41,7 +41,7 @@ public class DataHandleStatistics {
      * Constructor
      * @param handle
      */
-    protected DataHandleStatistics(DataHandle handle){
+    protected DataHandleInternal(DataHandle handle){
         this.handle = handle;
     }
 
@@ -186,19 +186,43 @@ public class DataHandleStatistics {
     }
 
     /**
+     * Gets the value
+     */
+    public String getValue(final int row, final int col, final boolean ignoreSuppression) {
+        return handle.internalGetValue(row, col, ignoreSuppression);
+    }
+
+    /**
+     * Returns the view
+     * @return
+     */
+    public DataHandleInternal getView() {
+        return new DataHandleInternal(handle.getView());
+    }
+    
+
+    /**
+     * Returns whether the handle has a subset
+     * @return
+     */
+    public boolean hasSubset() {
+        return handle.getView() != handle;
+    }
+
+    /**
      * Returns whether the handle is optimized
      * @return
      */
     public boolean isOptimized() {
         return handle.isOptimized();
     }
-
+    
     /**
      * Returns whether the given row is suppressed
      * @param row
      * @return
      */
-    public boolean isSuppressed(int row) {
+    public boolean isOutlier(int row) {
         return handle.isOutlier(row);
     }
 }

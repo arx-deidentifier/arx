@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
+import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 
 
@@ -49,7 +49,7 @@ public class DataHandleSubset extends DataHandle {
         this.definition = source.definition;
         this.header = source.header;
         this.subset = subset;
-        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this));
+        this.statistics = new StatisticsBuilder(new DataHandleInternal(this));
     }
 
     @Override
@@ -199,8 +199,8 @@ public class DataHandleSubset extends DataHandle {
     }
     
     @Override
-    protected String internalGetValue(int row, int col) {
-        return source.internalGetValue(this.subset.getArray()[row], col);
+    protected String internalGetValue(int row, int col, boolean ignoreSuppression) {
+        return source.internalGetValue(this.subset.getArray()[row], col, ignoreSuppression);
     }
 
     /**

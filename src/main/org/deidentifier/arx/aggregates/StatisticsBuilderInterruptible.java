@@ -21,7 +21,7 @@ import java.text.ParseException;
 import java.util.Map;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.DataHandleStatistics;
+import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 
@@ -42,7 +42,7 @@ public class StatisticsBuilderInterruptible {
      * @param handle
      * @param ecStatistics
      */
-    StatisticsBuilderInterruptible(DataHandleStatistics handle) {
+    StatisticsBuilderInterruptible(DataHandleInternal handle) {
         this.builder = new StatisticsBuilder(handle);
     }
 

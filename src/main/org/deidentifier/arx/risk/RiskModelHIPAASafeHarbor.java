@@ -20,7 +20,7 @@ package org.deidentifier.arx.risk;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 import org.deidentifier.arx.risk.HIPAAIdentifierMatch.HIPAAIdentifier;
@@ -63,7 +63,7 @@ class RiskModelHIPAASafeHarbor {
      * @param stop
      * @return An array of warnings
      */
-    public HIPAAIdentifierMatch[] getMatches(DataHandle handle, 
+    public HIPAAIdentifierMatch[] getMatches(DataHandleInternal handle, 
                                              double threshold,
                                              WrappedBoolean stop) {
         

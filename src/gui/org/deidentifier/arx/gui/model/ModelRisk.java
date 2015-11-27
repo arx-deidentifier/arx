@@ -52,6 +52,7 @@ public class ModelRisk implements Serializable {
     public static enum ViewRiskType {
         CLASSES_PLOT,
         CLASSES_TABLE,
+        CELL_BASED,
         ATTRIBUTES,
         HIPAA_ATTRIBUTES,
         UNIQUES_DANKAR,

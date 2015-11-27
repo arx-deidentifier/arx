@@ -39,7 +39,7 @@ public class RiskEstimateBuilderInterruptible {
     RiskEstimateBuilderInterruptible(RiskEstimateBuilder parent) {
         this.parent = parent;
     }
-    
+
     /**
      * Returns a model of the equivalence classes in this data set
      * 
@@ -53,7 +53,7 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-    
+
     /**
      * Returns a class providing access to the identifier HIPAA identifiers.
      * 
@@ -146,6 +146,20 @@ public class RiskEstimateBuilderInterruptible {
     public RiskModelSampleRisks getSampleBasedReidentificationRisk() throws InterruptedException {
         try {
             return parent.getSampleBasedReidentificationRisk();
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
+    
+    /**
+     * Returns a risk summary
+     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @return
+     * @throws InterruptedException 
+     */
+    public RiskModelSampleSummary getSampleBasedRiskSummary(double threshold) throws InterruptedException {
+        try {
+            return parent.getSampleBasedRiskSummary(threshold);
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }

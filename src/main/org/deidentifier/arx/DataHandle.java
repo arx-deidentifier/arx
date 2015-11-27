@@ -36,7 +36,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
+import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
@@ -485,7 +485,7 @@ public abstract class DataHandle {
      * @return
      */
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, RiskModelHistogram classes) {
-        return new RiskEstimateBuilder(model, this, classes);
+        return new RiskEstimateBuilder(model, new DataHandleInternal(this), classes);
     }
 
     /**
@@ -496,7 +496,7 @@ public abstract class DataHandle {
      * @return
      */
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, RiskModelHistogram classes, ARXSolverConfiguration config) {
-        return new RiskEstimateBuilder(model, this, classes, config);
+        return new RiskEstimateBuilder(model, new DataHandleInternal(this), classes, config);
     }
 
     /**
@@ -506,7 +506,7 @@ public abstract class DataHandle {
      * @return
      */
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, Set<String> qis) {
-        return new RiskEstimateBuilder(model, this, qis);
+        return new RiskEstimateBuilder(model, new DataHandleInternal(this), qis);
     }
 
     /**
@@ -517,7 +517,7 @@ public abstract class DataHandle {
      * @return
      */
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, Set<String> qis, ARXSolverConfiguration config) {
-        return new RiskEstimateBuilder(model, this, qis, config);
+        return new RiskEstimateBuilder(model, new DataHandleInternal(this), qis, config);
     }
 
     /**
@@ -941,8 +941,8 @@ public abstract class DataHandle {
             for (int i = 0; i < columns.length; i++) {
 
                 int index = columns[i];
-                int cmp = dataTypes[0][index].compare(internalGetValue(row1, index),
-                                                      internalGetValue(row2, index));
+                int cmp = dataTypes[0][index].compare(internalGetValue(row1, index, false),
+                                                      internalGetValue(row2, index, false));
                 if (cmp != 0) {
                     return ascending ? cmp : -cmp;
                 }
@@ -960,7 +960,7 @@ public abstract class DataHandle {
      * @param col the col
      * @return the string
      */
-    protected abstract String internalGetValue(int row, int col);
+    protected abstract String internalGetValue(int row, int col, boolean ignoreSuppression);
 
     /**
      * Internal replacement method.

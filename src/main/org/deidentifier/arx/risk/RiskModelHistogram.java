@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Set;
 
-import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
@@ -52,7 +52,7 @@ public class RiskModelHistogram {
      * 
      * @param handle
      */
-    public RiskModelHistogram(final DataHandle handle) {
+    public RiskModelHistogram(final DataHandleInternal handle) {
         this(handle, handle.getDefinition().getQuasiIdentifyingAttributes());
     }
 
@@ -62,7 +62,7 @@ public class RiskModelHistogram {
      * @param handle
      * @param qis
      */
-    public RiskModelHistogram(final DataHandle handle, final Set<String> qis) {
+    public RiskModelHistogram(final DataHandleInternal handle, final Set<String> qis) {
         this(handle, qis, new WrappedBoolean(), new WrappedInteger(), 1.0d);
     }
 
@@ -83,7 +83,7 @@ public class RiskModelHistogram {
      * @param handle
      * @param qis
      */
-    RiskModelHistogram(final DataHandle handle,
+    RiskModelHistogram(final DataHandleInternal handle,
                        final Set<String> qis,
                        final WrappedBoolean stop,
                        final WrappedInteger progress,
@@ -120,7 +120,7 @@ public class RiskModelHistogram {
                 progress.value = prog;
             }
 
-            TupleWrapper tuple = new TupleWrapper(handle, indices, row);
+            TupleWrapper tuple = new TupleWrapper(handle, indices, row, false);
             map.add(tuple);
             if (stop.value) { throw new ComputationInterruptedException(); }
         }

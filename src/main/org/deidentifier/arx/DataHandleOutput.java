@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
+import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -69,7 +69,7 @@ public class DataHandleOutput extends DataHandle {
                 // Create row
                 result = new String[header.length];
                 for (int i = 0; i < result.length; i++) {
-                    result[i] = internalGetValue(row, i);
+                    result[i] = internalGetValue(row, i, false);
                 }
             }
             
@@ -148,7 +148,7 @@ public class DataHandleOutput extends DataHandle {
         this.suppressedAttributeTypes = convert(config.getSuppressedAttributeTypes());
         this.result = result;
         this.definition = definition;
-        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this));
+        this.statistics = new StatisticsBuilder(new DataHandleInternal(this));
         this.node = node;
         
         // Extract data
@@ -290,7 +290,7 @@ public class DataHandleOutput extends DataHandle {
         checkRow(row, outputGeneralized.getDataLength());
         
         // Perform
-        return internalGetValue(row, col);
+        return internalGetValue(row, col, false);
     }
     
     @Override
@@ -505,8 +505,8 @@ public class DataHandleOutput extends DataHandle {
             int cmp = 0;
             
             try {
-                String s1 = internalGetValue(row1, index);
-                String s2 = internalGetValue(row2, index);
+                String s1 = internalGetValue(row1, index, false);
+                String s2 = internalGetValue(row2, index, false);
                 cmp = (s1 == suppressionString && s2 == suppressionString) ? 0
                         : (s1 == suppressionString ? +1
                                 : (s2 == suppressionString ? -1
@@ -532,7 +532,9 @@ public class DataHandleOutput extends DataHandle {
      * @return the value internal
      */
     @Override
-    protected String internalGetValue(final int row, final int col) {
+    protected String internalGetValue(final int row, 
+                                      final int col,
+                                      final boolean ignoreSuppression) {
         
         // Return the according values
         final int key = col * 2;
@@ -544,7 +546,7 @@ public class DataHandleOutput extends DataHandle {
             final int index = inverseMap[key + 1];
             final int[][] data = inverseData[type];
             
-            if ((suppressedAttributeTypes & (1 << type)) != 0 &&
+            if (!ignoreSuppression && (suppressedAttributeTypes & (1 << type)) != 0 &&
                 ((outputGeneralized.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) {
                 return suppressionString;
             }
@@ -729,7 +731,7 @@ public class DataHandleOutput extends DataHandle {
                 // Update
                 for (int row = previous; row < index; row++) {
                     
-                    String value = input.internalGetValue(row, columnindex);
+                    String value = input.internalGetValue(row, columnindex, false);
                     int identifier = dictionary.register(column, value);
                     data[row][column] = identifier;                    
                 }
@@ -741,7 +743,7 @@ public class DataHandleOutput extends DataHandle {
             // Update remaining tuples
             for (int row = previous; row < input.getNumRows(); row++) {
                 
-                String value = input.internalGetValue(row, columnindex);
+                String value = input.internalGetValue(row, columnindex, false);
                 int identifier = dictionary.register(column, value);
                 data[row][column] = identifier;                    
             }

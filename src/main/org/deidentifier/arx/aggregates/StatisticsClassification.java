@@ -29,7 +29,7 @@ import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.Vector;
 import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
 import org.apache.mahout.vectorizer.encoders.StaticWordValueEncoder;
-import org.deidentifier.arx.DataHandleStatistics;
+import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
@@ -76,7 +76,7 @@ public class StatisticsClassification {
      * @throws ParseException 
      */
     StatisticsClassification(StatisticsBuilder builder,
-                             DataHandleStatistics handle,
+                             DataHandleInternal handle,
                              boolean ignoreSuppressedRows,
                              String[] features,
                              String clazz,
@@ -236,7 +236,7 @@ public class StatisticsClassification {
      * @return
      * @throws ParseException 
      */
-    private double getAccuracyAccordingToKFoldCrossValidation(DataHandleStatistics handle,
+    private double getAccuracyAccordingToKFoldCrossValidation(DataHandleInternal handle,
                                                               boolean ignoreSuppressedRows,
                                                Map<String, Integer> map, 
                                                Map<String, Integer>[] maps, 
@@ -251,7 +251,7 @@ public class StatisticsClassification {
         // Prepare indexes
         List<Integer> rows = new ArrayList<>();
         for (int row = 0; row < handle.getNumRows(); row++) {
-            if ((!ignoreSuppressedRows || !handle.isSuppressed(row)) 
+            if ((!ignoreSuppressedRows || !handle.isOutlier(row)) 
                  && random.nextDouble() <= samplingFraction) {
                 rows.add(row);
             }
@@ -351,7 +351,7 @@ public class StatisticsClassification {
      * @param clazz
      * @return
      */
-    private int[] getAttributeIndexes(DataHandleStatistics handle, String[] features, String clazz) {
+    private int[] getAttributeIndexes(DataHandleInternal handle, String[] features, String clazz) {
         // Collect
         List<Integer> list = new ArrayList<>();
         for (int column = 0; column < handle.getNumColumns(); column++) {
@@ -379,7 +379,7 @@ public class StatisticsClassification {
      * @param map
      * @return
      */
-    private int getClass(DataHandleStatistics handle, int row, Map<String, Integer> map) {
+    private int getClass(DataHandleInternal handle, int row, Map<String, Integer> map) {
         return map.get(handle.getValue(row, indexes[indexes.length - 1]));
     }
 
@@ -393,7 +393,7 @@ public class StatisticsClassification {
      * @return
      * @throws ParseException
      */
-    private Vector getFeatures(DataHandleStatistics handle, int row,
+    private Vector getFeatures(DataHandleInternal handle, int row,
                                Map<String, Integer>[] maps,
                                ConstantValueEncoder interceptEncoder,
                                StaticWordValueEncoder featureEncoder) throws ParseException {

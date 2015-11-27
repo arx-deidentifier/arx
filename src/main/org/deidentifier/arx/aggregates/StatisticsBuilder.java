@@ -30,8 +30,8 @@ import java.util.Set;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
-import org.deidentifier.arx.DataHandleStatistics;
-import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
+import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.DataScale;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXString;
@@ -56,7 +56,7 @@ import cern.colt.function.IntComparator;
 public class StatisticsBuilder {
 
     /** The handle. */
-    private DataHandleStatistics    handle;
+    private DataHandleInternal    handle;
 
     /** The stop flag. */
     private volatile WrappedBoolean interrupt = new WrappedBoolean(false);
@@ -66,7 +66,7 @@ public class StatisticsBuilder {
      *
      * @param handle
      */
-    public StatisticsBuilder(DataHandleStatistics handle) {
+    public StatisticsBuilder(DataHandleInternal handle) {
         this.handle = handle;
     }
     
@@ -563,7 +563,7 @@ public class StatisticsBuilder {
         int numRows = handle.getNumRows();
         for (int row = 0; row < numRows; row++) {
 
-            TupleWrapper tuple = new TupleWrapper(handle, indices, row);
+            TupleWrapper tuple = new TupleWrapper(handle, indices, row, false);
             map.add(tuple);
             checkInterrupt();
         }
@@ -757,7 +757,7 @@ public class StatisticsBuilder {
             boolean include = true;
             if (listwiseDeletion) {
                 for (int col = 0; col < handle.getNumColumns(); col++) {
-                    if (handle.isSuppressed(row) || DataType.isNull(handle.getValue(row, col))) {
+                    if (handle.isOutlier(row) || DataType.isNull(handle.getValue(row, col))) {
                         include = false;
                         break;
                     }

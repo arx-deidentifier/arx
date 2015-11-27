@@ -16,6 +16,7 @@
  */
 package org.deidentifier.arx.common;
 
+
 /**
  * A hash groupify operator. It implements a hash table with chaining and keeps
  * track of additional properties per equivalence class
@@ -164,6 +165,17 @@ public class Groupify<T> {
     }
 
     /**
+     * Returns the matching entry, if any
+     * @param element
+     * @return
+     */
+    public Group<T> get(T element) {
+        int hash = element.hashCode();
+        int index = hash & (buckets.length - 1);
+        return findEntry(element, index, hash);
+    }
+
+    /**
      * Returns the current number of entries
      * 
      * @return
@@ -238,8 +250,7 @@ public class Groupify<T> {
                                      final int index,
                                      final int hashcode) {
         Group<T> m = buckets[index];
-        while ((m != null) &&
-               ((m.hashcode != hashcode) || !element.equals(m.element))) {
+        while ((m != null) && ((m.hashcode != hashcode) || !element.equals(m.element))) {
             m = m.next;
         }
         return m;

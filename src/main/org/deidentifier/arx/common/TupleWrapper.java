@@ -19,7 +19,7 @@ package org.deidentifier.arx.common;
 import java.util.Arrays;
 
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.DataHandleStatistics;
+import org.deidentifier.arx.DataHandleInternal;
 
 /**
  * For hash tables
@@ -32,6 +32,8 @@ public class TupleWrapper {
     private final int      hashcode;
     /** Indices */
     private final String[] values;
+    /** Suppressed */
+    private final boolean  suppressed;
 
     /**
      * Constructor
@@ -49,6 +51,7 @@ public class TupleWrapper {
             values[idx++] = value;
         }
         this.hashcode = hashcode;
+        this.suppressed = handle.isOutlier(row);
     }
     
     /**
@@ -57,16 +60,17 @@ public class TupleWrapper {
      * @param handle
      * @param row
      */
-    public TupleWrapper(DataHandleStatistics handle, int[] indices, int row) {
+    public TupleWrapper(DataHandleInternal handle, int[] indices, int row, boolean ignoreSuppression) {
         this.values = new String[indices.length];
         int hashcode = 1;
         int idx = 0;
         for (int index : indices) {
-            String value = handle.getValue(row, index);
+            String value = handle.getValue(row, index, ignoreSuppression);
             hashcode = 31 * hashcode + value.hashCode();
             values[idx++] = value;
         }
         this.hashcode = hashcode;
+        this.suppressed = handle.isOutlier(row);
     }
 
     @Override
@@ -85,5 +89,13 @@ public class TupleWrapper {
     @Override
     public int hashCode() {
         return hashcode;
+    }
+    
+    /**
+     * Is this tuple suppressed
+     * @return
+     */
+    public boolean isOutlier() {
+        return suppressed;
     }
 }

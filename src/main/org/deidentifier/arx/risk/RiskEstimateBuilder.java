@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXSolverConfiguration;
-import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
@@ -37,7 +37,7 @@ public class RiskEstimateBuilder {
     /** Fields */
     private final ARXPopulationModel     population;
     /** Fields */
-    private final DataHandle             handle;
+    private final DataHandleInternal   handle;
     /** Fields */
     private final Set<String>            identifiers;
     /** Classes */
@@ -57,7 +57,7 @@ public class RiskEstimateBuilder {
      * @param classes
      */
     public RiskEstimateBuilder(ARXPopulationModel population,
-                               DataHandle handle,
+                               DataHandleInternal handle,
                                RiskModelHistogram classes) {
         this(population, handle, null, classes, ARXSolverConfiguration.create());
     }
@@ -71,7 +71,7 @@ public class RiskEstimateBuilder {
      * @param config
      */
     public RiskEstimateBuilder(ARXPopulationModel population,
-                               DataHandle handle,
+                               DataHandleInternal handle,
                                RiskModelHistogram classes,
                                ARXSolverConfiguration config) {
         this(population, handle, null, classes, config);
@@ -85,7 +85,7 @@ public class RiskEstimateBuilder {
      * @param identifiers
      */
     public RiskEstimateBuilder(ARXPopulationModel population,
-                               DataHandle handle,
+                               DataHandleInternal handle,
                                Set<String> identifiers) {
         this(population,
              handle,
@@ -103,7 +103,7 @@ public class RiskEstimateBuilder {
      * @param config
      */
     public RiskEstimateBuilder(ARXPopulationModel population,
-                               DataHandle handle,
+                               DataHandleInternal handle,
                                Set<String> identifiers,
                                ARXSolverConfiguration config) {
         this(population, handle, identifiers, (RiskModelHistogram) null, config);
@@ -118,7 +118,7 @@ public class RiskEstimateBuilder {
      * @param config
      */
     private RiskEstimateBuilder(ARXPopulationModel population,
-                                DataHandle handle,
+                                DataHandleInternal handle,
                                 RiskModelHistogram classes,
                                 WrappedBoolean stop,
                                 ARXSolverConfiguration config) {
@@ -142,7 +142,7 @@ public class RiskEstimateBuilder {
      * @param config
      */
     private RiskEstimateBuilder(ARXPopulationModel population,
-                                DataHandle handle,
+                                DataHandleInternal handle,
                                 Set<String> identifiers,
                                 RiskModelHistogram classes,
                                 ARXSolverConfiguration config) {
@@ -165,7 +165,7 @@ public class RiskEstimateBuilder {
      * @param config
      */
     private RiskEstimateBuilder(ARXPopulationModel population,
-                                DataHandle handle,
+                                DataHandleInternal handle,
                                 Set<String> identifiers,
                                 WrappedBoolean stop,
                                 ARXSolverConfiguration config) {
@@ -283,6 +283,16 @@ public class RiskEstimateBuilder {
     public RiskModelSampleUniqueness getSampleBasedUniquenessRisk() {
         progress.value = 0;
         return new RiskModelSampleUniqueness(getEquivalenceClassModel());
+    }
+    
+    /**
+     * Returns a risk summary
+     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @return
+     */
+    public RiskModelSampleSummary getSampleBasedRiskSummary(double threshold) {
+        progress.value = 0;
+        return new RiskModelSampleSummary(handle, identifiers, threshold, stop, progress);
     }
 
     /**

@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
+import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.framework.data.Dictionary;
 
@@ -100,7 +100,7 @@ public class DataHandleInput extends DataHandle {
         this.dataTypes = getDataTypeArray();
         
         // Create statistics
-        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this));
+        this.statistics = new StatisticsBuilder(new DataHandleInternal(this));
     }
 
     @Override
@@ -133,7 +133,7 @@ public class DataHandleInput extends DataHandle {
         checkRegistry();
         checkColumn(column);
         checkRow(row, data.length);
-        return internalGetValue(row, column);
+        return internalGetValue(row, column, false);
     }
 
     @Override
@@ -242,7 +242,7 @@ public class DataHandleInput extends DataHandle {
     }
     
     @Override
-    protected String internalGetValue(final int row, final int column) {
+    protected String internalGetValue(final int row, final int column, final boolean ignoreSuppression) {
         return dictionary.getMapping()[column][data[row][column]];
     }
 

@@ -91,8 +91,10 @@ public class AnalysisManager {
                     }
                 }
             } catch (InterruptedException e){
+                e.printStackTrace();
                 onInterrupt();
             } catch (Exception e){
+                e.printStackTrace();
                 onError();
             }
         }
