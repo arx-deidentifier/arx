@@ -47,7 +47,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author Fabian Prasser
  */
-public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
+public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRisk> {
 
     /** View */
     private Composite         root;
@@ -60,16 +60,16 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
 
     /**
      * Creates a new instance.
-     *
+     * 
      * @param parent
      * @param controller
      * @param target
      * @param reset
      */
-    public ViewRisksBasicEstimates(final Composite parent,
-                                   final Controller controller,
-                                   final ModelPart target,
-                                   final ModelPart reset) {
+    public ViewRisksReIdentificationTable(final Composite parent,
+                                          final Controller controller,
+                                          final ModelPart target,
+                                          final ModelPart reset) {
         
         super(parent, controller, target, reset);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
@@ -186,7 +186,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
             private double                     fractionOfTuplesAffectedByHighestRisk;
             private double                     fractionOfUniqueTuples;
             private double                     fractionOfUniqueTuplesDankar;
-            private PopulationUniquenessModel dankarModel;
+            private PopulationUniquenessModel populationModel;
 
             @Override
             public int getProgress() {
@@ -217,7 +217,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
                 createItem(Resources.getMessage("RiskAnalysis.10"), fractionOfTuplesAffectedByHighestRisk); //$NON-NLS-1$
                 createItem(Resources.getMessage("RiskAnalysis.11"), fractionOfUniqueTuples); //$NON-NLS-1$
                 createItem(Resources.getMessage("RiskAnalysis.12"), fractionOfUniqueTuplesDankar); //$NON-NLS-1$
-                createItem(Resources.getMessage("RiskAnalysis.18"), dankarModel); //$NON-NLS-1$
+                createItem(Resources.getMessage("RiskAnalysis.18"), populationModel); //$NON-NLS-1$
                 createItem(Resources.getMessage("RiskAnalysis.25"), getQuasiIdentifiers(context)); //$NON-NLS-1$
 
                 table.setRedraw(true);
@@ -253,7 +253,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
                 fractionOfTuplesAffectedByHighestRisk = samReidModel.getFractionOfTuplesAffectedByHighestRisk();
                 fractionOfUniqueTuples = samUniqueModel.getFractionOfUniqueTuples();
                 fractionOfUniqueTuplesDankar = popUniqueModel.getFractionOfUniqueTuplesDankar();
-                dankarModel = popUniqueModel.getPopulationUniquenessModel();
+                populationModel = popUniqueModel.getPopulationUniquenessModel();
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){

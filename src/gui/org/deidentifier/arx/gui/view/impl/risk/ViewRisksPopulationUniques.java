@@ -61,7 +61,7 @@ import org.swtchart.Range;
  *
  * @author Fabian Prasser
  */
-public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextRisk> {
+public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
 
     /** Minimal width of a category label. */
     private static final int           MIN_CATEGORY_WIDTH = 10;
@@ -116,7 +116,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
      * @param target
      * @param reset
      */
-    public ViewRisksPlotUniquenessEstimates(final Composite parent,
+    public ViewRisksPopulationUniques(final Composite parent,
                                             final Controller controller,
                                             final ModelPart target,
                                             final ModelPart reset,

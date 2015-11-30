@@ -45,9 +45,9 @@ public class LayoutRisksBottom extends LayoutRisksAbstract {
         
         super(parent, controller, target == ModelPart.INPUT, false);
 
-        registerView(0, new ViewRisksBasicEstimates(createTab(Resources.getMessage("RiskAnalysis.5")), controller, target, reset)); //$NON-NLS-1$
-        registerView(1, new ViewRisksPlotUniquenessEstimates(createTab(Resources.getMessage("RiskAnalysis.13")), controller, target, reset, false)); //$NON-NLS-1$
-        registerView(2, new ViewRisksPlotUniquenessEstimates(createTab(Resources.getMessage("RiskAnalysis.24")), controller, target, reset, true)); //$NON-NLS-1$
+        registerView(0, new ViewRisksReIdentificationTable(createTab(Resources.getMessage("RiskAnalysis.5")), controller, target, reset)); //$NON-NLS-1$
+        registerView(1, new ViewRisksPopulationUniques(createTab(Resources.getMessage("RiskAnalysis.13")), controller, target, reset, false)); //$NON-NLS-1$
+        registerView(2, new ViewRisksPopulationUniques(createTab(Resources.getMessage("RiskAnalysis.24")), controller, target, reset, true)); //$NON-NLS-1$
         new ViewRisksPopulationModel(createTab(Resources.getMessage("RiskAnalysis.16")), controller, target != ModelPart.INPUT); //$NON-NLS-1$
 
         if (target == ModelPart.INPUT) {
