@@ -61,8 +61,9 @@ public class ComponentRiskSlider {
         // Label 1
         Label label = new Label(root, SWT.CENTER);
         label.setText("Threshold");
-        GridData labeldata = SWTUtil.createFillHorizontallyGridData(true);
+        GridData labeldata = SWTUtil.createFillHorizontallyGridData();
         labeldata.horizontalAlignment = SWT.CENTER;
+        labeldata.minimumWidth = 100;
         label.setLayoutData(labeldata);
         SWTUtil.createNewFont(label, SWT.BOLD);
         
@@ -94,7 +95,7 @@ public class ComponentRiskSlider {
         this.bar.setShowHihi(false);
         this.bar.setShowLo(false);
         this.bar.setShowLolo(false);
-        this.bar.setShowScale(false);
+        this.bar.setShowScale(true);
         lws.setContents(bar);
         
         // Label 3
