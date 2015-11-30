@@ -55,7 +55,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     private AnalysisContext       context              = new AnalysisContext();
 
     /** Internal stuff. */
-    private final Controller      controller;
+    protected final Controller    controller;
 
     /** Internal stuff. */
     private Model                 model;
@@ -70,11 +70,11 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     private final ComponentStatus status;
 
     /** Internal stuff. */
-    private boolean               enabled = true;
+    private boolean               enabled              = true;
 
     /** Internal stuff. */
     private T                     viewContext;
-    
+
 	/**
      * Creates a new instance.
      *

@@ -20,6 +20,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ComponentRiskMonitor;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
@@ -44,6 +45,25 @@ import org.eclipse.swt.widgets.Control;
  * @author Fabian Prasser
  */
 public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
+
+    /** View */
+    private static final String  MESSAGE_CAPTION1 = Resources.getMessage("ViewRisksReIdentification.0"); //$NON-NLS-1$
+    /** View */
+    private static final String  MESSAGE_CAPTION2 = Resources.getMessage("ViewRisksReIdentification.1"); //$NON-NLS-1$
+    /** View */
+    private static final String  MESSAGE_CAPTION3 = Resources.getMessage("ViewRisksReIdentification.2"); //$NON-NLS-1$
+    /** View */
+    private static final String  MESSAGE_LABEL1   = Resources.getMessage("ViewRisksReIdentification.3"); //$NON-NLS-1$
+    /** View */
+    private static final String  MESSAGE_LABEL2   = Resources.getMessage("ViewRisksReIdentification.4"); //$NON-NLS-1$
+    /** View */
+    private static final String  MESSAGE_LABEL3   = Resources.getMessage("ViewRisksReIdentification.5"); //$NON-NLS-1$
+    /** View */
+    private static final String  MESSAGE_SHORT1   = Resources.getMessage("ViewRisksReIdentification.6"); //$NON-NLS-1$
+    /** View */
+    private static final String  MESSAGE_SHORT2   = Resources.getMessage("ViewRisksReIdentification.7"); //$NON-NLS-1$
+    /** View */
+    private static final String  MESSAGE_SHORT3   = Resources.getMessage("ViewRisksReIdentification.8"); //$NON-NLS-1$
 
     /** View */
     private Composite            root;
@@ -74,9 +94,9 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
      * @param reset
      */
     public ViewRisksReIdentification(final Composite parent,
-                                   final Controller controller,
-                                   final ModelPart target,
-                                   final ModelPart reset) {
+                                     final Controller controller,
+                                     final ModelPart target,
+                                     final ModelPart reset) {
         
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
@@ -105,26 +125,18 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         this.root.setLayout(layout);
         
         // Prepare
-        String CAPTION1 = "Prosecutor attacker model";
-        String CAPTION2 = "Journalist attacker model";
-        String CAPTION3 = "Marketer attacker model";
-        String LABEL1 = "Proportion of records with risk above the threshold";
-        String LABEL2 = "Highest risk of a single record";
-        String LABEL3 = "Proportion of records that can be re-identified on average";
-        String SHORT1 = "Records at risk";
-        String SHORT2 = "Highest risk";
-        String SHORT3 = "Success rate";
         GridData separatordata = SWTUtil.createFillHorizontallyGridData(true, 3);
         separatordata.verticalIndent = 0;
 
         // Prosecutor
         ComponentTitledSeparator separator = new ComponentTitledSeparator(root, SWT.NONE);
         separator.setLayoutData(separatordata);
-        separator.setText(CAPTION1);
+        separator.setText(MESSAGE_CAPTION1);
+        separator.setImage(controller.getResources().getManagedImage("prosecutor.png")); //$NON-NLS-1$
         
-        prosecutor1 = new ComponentRiskMonitor(root, LABEL1, SHORT1);
-        prosecutor2 = new ComponentRiskMonitor(root, LABEL2, SHORT2);
-        prosecutor3 = new ComponentRiskMonitor(root, LABEL3, SHORT3);        
+        prosecutor1 = new ComponentRiskMonitor(root, MESSAGE_LABEL1, MESSAGE_SHORT1);
+        prosecutor2 = new ComponentRiskMonitor(root, MESSAGE_LABEL2, MESSAGE_SHORT2);
+        prosecutor3 = new ComponentRiskMonitor(root, MESSAGE_LABEL3, MESSAGE_SHORT3);        
         prosecutor1.setLayoutData(SWTUtil.createFillGridData());
         prosecutor2.setLayoutData(SWTUtil.createFillGridData());
         prosecutor3.setLayoutData(SWTUtil.createFillGridData());
@@ -132,11 +144,12 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         // Journalist
         separator = new ComponentTitledSeparator(root, SWT.NONE);
         separator.setLayoutData(separatordata);
-        separator.setText(CAPTION2);
+        separator.setText(MESSAGE_CAPTION2);
+        separator.setImage(controller.getResources().getManagedImage("journalist.png")); //$NON-NLS-1$
         
-        journalist1 = new ComponentRiskMonitor(root, LABEL1, SHORT1);
-        journalist2 = new ComponentRiskMonitor(root, LABEL2, SHORT2);
-        journalist3 = new ComponentRiskMonitor(root, LABEL3, SHORT3);
+        journalist1 = new ComponentRiskMonitor(root, MESSAGE_LABEL1, MESSAGE_SHORT1);
+        journalist2 = new ComponentRiskMonitor(root, MESSAGE_LABEL2, MESSAGE_SHORT2);
+        journalist3 = new ComponentRiskMonitor(root, MESSAGE_LABEL3, MESSAGE_SHORT3);
         journalist1.setLayoutData(SWTUtil.createFillGridData());
         journalist2.setLayoutData(SWTUtil.createFillGridData());
         journalist3.setLayoutData(SWTUtil.createFillGridData());
@@ -144,11 +157,11 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         // Marketer
         separator = new ComponentTitledSeparator(root, SWT.NONE);
         separator.setLayoutData(separatordata);
-        separator.setText(CAPTION3);
+        separator.setText(MESSAGE_CAPTION3);
+        separator.setImage(controller.getResources().getManagedImage("marketer.png")); //$NON-NLS-1$
         
-        marketer1 = new ComponentRiskMonitor(root, LABEL3, SHORT3);
+        marketer1 = new ComponentRiskMonitor(root, MESSAGE_LABEL3, MESSAGE_SHORT3);
         marketer1.setLayoutData(SWTUtil.createFillGridData());
-
         return this.root;
     }
 
