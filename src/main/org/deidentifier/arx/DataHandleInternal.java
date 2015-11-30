@@ -168,6 +168,18 @@ public class DataHandleInternal {
     }
 
     /**
+     * Returns the superset, if this handle is a subset
+     * @return
+     */
+    public DataHandleInternal getSuperset() {
+        if (!(handle instanceof DataHandleSubset)) {
+            return null;
+        } else {
+            return new DataHandleInternal(((DataHandleSubset)handle).getSource());
+        }
+    }
+
+    /**
      * Method
      * @return
      */
@@ -191,22 +203,13 @@ public class DataHandleInternal {
     public String getValue(final int row, final int col, final boolean ignoreSuppression) {
         return handle.internalGetValue(row, col, ignoreSuppression);
     }
-
+  
     /**
      * Returns the view
      * @return
      */
     public DataHandleInternal getView() {
         return new DataHandleInternal(handle.getView());
-    }
-    
-
-    /**
-     * Returns whether the handle has a subset
-     * @return
-     */
-    public boolean hasSubset() {
-        return handle.getView() != handle;
     }
 
     /**

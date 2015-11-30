@@ -177,9 +177,9 @@ public class RiskModelSampleSummary {
         // Prepare
         Groupify<TupleWrapper> sample;
         Groupify<TupleWrapper> population;
-        if (handle.hasSubset()) {
-            sample = getGroups(handle.getView(), identifiers, 0d, 0.45d, stop, progress);
-            population = getGroups(handle, identifiers,  0.45d, 0.45d, stop, progress);
+        if (handle.getSuperset() != null) {
+            sample = getGroups(handle, identifiers, 0d, 0.45d, stop, progress);
+            population = getGroups(handle.getSuperset(), identifiers,  0.45d, 0.45d, stop, progress);
         } else {
             sample = getGroups(handle, identifiers, 0d, 0.9d, stop, progress);
             population = sample;
