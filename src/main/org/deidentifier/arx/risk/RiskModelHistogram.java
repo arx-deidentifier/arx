@@ -48,26 +48,7 @@ public class RiskModelHistogram {
     private double numClasses;
 
     /**
-     * Creates a new instance
-     * 
-     * @param handle
-     */
-    public RiskModelHistogram(final DataHandleInternal handle) {
-        this(handle, handle.getDefinition().getQuasiIdentifyingAttributes());
-    }
-
-    /**
-     * Creates a new instance
-     * 
-     * @param handle
-     * @param qis
-     */
-    public RiskModelHistogram(final DataHandleInternal handle, final Set<String> qis) {
-        this(handle, qis, new WrappedBoolean(), new WrappedInteger(), 1.0d);
-    }
-
-    /**
-     * Creates a new instance
+     * Creates a new instance from the given distribution
      * 
      * @param distribution
      */
@@ -78,7 +59,8 @@ public class RiskModelHistogram {
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance by analyzing the given data handle. 
+     * IMPORTANT: Suppressed records will be ignored!
      * 
      * @param handle
      * @param qis
@@ -120,8 +102,10 @@ public class RiskModelHistogram {
                 progress.value = prog;
             }
 
-            TupleWrapper tuple = new TupleWrapper(handle, indices, row, false);
-            map.add(tuple);
+            if (!handle.isOutlier(row)) {
+                TupleWrapper tuple = new TupleWrapper(handle, indices, row, false);
+                map.add(tuple);
+            }
             if (stop.value) { throw new ComputationInterruptedException(); }
         }
 

@@ -241,7 +241,6 @@ public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRis
                 long time = System.currentTimeMillis();
                 
                 // Perform work
-                // TODO: This can be made more efficient
                 RiskModelSampleRisks samReidModel = builder.getSampleBasedReidentificationRisk();
                 RiskModelSampleUniqueness samUniqueModel = builder.getSampleBasedUniquenessRisk();
                 RiskModelPopulationUniqueness popUniqueModel = builder.getPopulationBasedUniquenessRisk();

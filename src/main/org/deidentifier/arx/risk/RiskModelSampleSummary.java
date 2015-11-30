@@ -178,10 +178,10 @@ public class RiskModelSampleSummary {
         Groupify<TupleWrapper> sample;
         Groupify<TupleWrapper> population;
         if (handle.getSuperset() != null) {
-            sample = getGroups(handle, identifiers, 0d, 0.45d, stop, progress);
-            population = getGroups(handle.getSuperset(), identifiers,  0.45d, 0.45d, stop, progress);
+            sample = getGroups(handle, identifiers, 0d, 0.45d, stop, progress, false);
+            population = getGroups(handle.getSuperset(), identifiers,  0.45d, 0.45d, stop, progress, true);
         } else {
-            sample = getGroups(handle, identifiers, 0d, 0.9d, stop, progress);
+            sample = getGroups(handle, identifiers, 0d, 0.9d, stop, progress, false);
             population = sample;
         }
         
@@ -230,6 +230,7 @@ public class RiskModelSampleSummary {
      * @param factor
      * @param stop
      * @param progress
+     * @param ignoreOutliers 
      * @return
      */
     private Groupify<TupleWrapper> getGroups(DataHandleInternal handle,
@@ -237,7 +238,8 @@ public class RiskModelSampleSummary {
                                              double offset,
                                              double factor,
                                              WrappedBoolean stop,
-                                             WrappedInteger progress) {
+                                             WrappedInteger progress,
+                                             boolean ignoreOutliers) {
 
         /* ********************************
          * Check 
@@ -270,7 +272,7 @@ public class RiskModelSampleSummary {
                 progress.value = prog;
             }
 
-            TupleWrapper tuple = new TupleWrapper(handle, indices, row, true);
+            TupleWrapper tuple = new TupleWrapper(handle, indices, row, ignoreOutliers);
             map.add(tuple);
             if (stop.value) { throw new ComputationInterruptedException(); }
         }
@@ -302,7 +304,7 @@ public class RiskModelSampleSummary {
         double numRecordsInSample = 0d;
         double numClassesInSample = 0d;
         double smallestClassSizeInPopulation = Integer.MAX_VALUE;
-        int sampleSize = sample.size();
+        int maxindex = sample.size();
         int index = 0;
         
         // For each group
@@ -310,7 +312,7 @@ public class RiskModelSampleSummary {
         while (element != null) {
             
             // Track progress
-            int prog = (int) Math.round(offset + (double) index++ / (double) sampleSize * 3.3d);
+            int prog = (int) Math.round(offset + (double) index++ / (double) maxindex * 3.3d);
             if (prog != progress.value) {
                 progress.value = prog;
             }
@@ -379,7 +381,7 @@ public class RiskModelSampleSummary {
         // Init
         double rC = 0d;
         double numRecordsInSample = 0d;
-        int sampleSize = sample.size();
+        int maxindex = sample.size();
         int index = 0;
         
         // For each group
@@ -387,7 +389,7 @@ public class RiskModelSampleSummary {
         while (element != null) {
             
             // Track progress
-            int prog = (int) Math.round(offset + (double) index++ / (double) sampleSize * 3.3d);
+            int prog = (int) Math.round(offset + (double) index++ / (double) maxindex * 3.3d);
             if (prog != progress.value) {
                 progress.value = prog;
             }
@@ -442,7 +444,7 @@ public class RiskModelSampleSummary {
         double numRecords = 0d;
         double numClasses = 0d;
         double smallestClassSize = Integer.MAX_VALUE;
-        int size = sample.size();
+        int maxindex = sample.size();
         int index = 0;
         
         // For each group
@@ -450,7 +452,7 @@ public class RiskModelSampleSummary {
         while (element != null) {
             
             // Track progress
-            int prog = (int) Math.round(offset + (double) index++ / (double) size * 3.3d);
+            int prog = (int) Math.round(offset + (double) index++ / (double) maxindex * 3.3d);
             if (prog != progress.value) {
                 progress.value = prog;
             }
