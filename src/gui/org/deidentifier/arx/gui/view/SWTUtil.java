@@ -24,6 +24,7 @@ import java.util.Locale;
 import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
@@ -37,6 +38,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -47,6 +49,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
@@ -321,7 +324,7 @@ public class SWTUtil {
         data.grabExcessVerticalSpace = false;
         return data;
     }
-
+    
     /**
      * Creates a grid layout.
      *
@@ -355,6 +358,17 @@ public class SWTUtil {
     }
 
     /**
+     * Creates a grid layout with equal-width columns
+     * @param columns
+     * @return
+     */
+    public static GridLayout createGridLayoutWithEqualWidth(int columns) {
+        GridLayout layout = createGridLayout(columns);
+        layout.makeColumnsEqualWidth = true;
+        return layout;
+    }
+
+    /**
      * Creates a help button in the given folder.
      *
      * @param controller
@@ -376,6 +390,26 @@ public class SWTUtil {
             public void widgetSelected(SelectionEvent arg0) {
                 controller.actionShowHelpDialog(id);
             }
+        });
+    }
+
+    /**
+     * Changes a labels font
+     * @param label
+     * @param style
+     */
+    public static void createNewFont(Label label, int style) {
+        FontDescriptor boldDescriptor = FontDescriptor.createFrom(label.getFont()).setStyle(style);
+        final Font boldFont = boldDescriptor.createFont(label.getDisplay());
+        label.setFont(boldFont);
+        label.addDisposeListener(new DisposeListener() {
+            @Override
+            public void widgetDisposed(DisposeEvent arg0) {
+                if (boldFont != null && !boldFont.isDisposed()) {
+                    boldFont.dispose();
+                }
+            }
+            
         });
     }
 
@@ -573,7 +607,7 @@ public class SWTUtil {
     public static boolean isMac() {
         return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0; //$NON-NLS-1$ //$NON-NLS-2$
     }
-
+    
     /**
      * Converts the slider value to a double.
      *

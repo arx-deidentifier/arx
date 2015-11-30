@@ -23,6 +23,7 @@ import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ComponentRiskMonitor;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledSeparator;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
@@ -32,9 +33,10 @@ import org.deidentifier.arx.risk.RiskModelSampleSummary.JournalistRisk;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.MarketerRisk;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 
 /**
  * This view displays basic risk estimates.
@@ -92,48 +94,61 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
     @Override
     protected Control createControl(Composite parent) {
 
+        GridLayout layout = SWTUtil.createGridLayoutWithEqualWidth(3);
+        layout.marginHeight = 0;
+        layout.marginTop = 0;
+        layout.marginBottom = 0;
+        layout.verticalSpacing = 0;
+        layout.makeColumnsEqualWidth = true;
+        
         this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(SWTUtil.createGridLayout(1));
+        this.root.setLayout(layout);
         
-        Group group = new Group(root, SWT.SHADOW_ETCHED_IN);
-        group.setText("Prosecutor");
-        group.setLayoutData(SWTUtil.createFillGridData());
-        group.setLayout(SWTUtil.createGridLayout(3));
+        // Prepare
+        String CAPTION1 = "Prosecutor attacker model";
+        String CAPTION2 = "Journalist attacker model";
+        String CAPTION3 = "Marketer attacker model";
+        String LABEL1 = "Proportion of records with risk above the threshold";
+        String LABEL2 = "Highest risk of a single record";
+        String LABEL3 = "Proportion of records that can be re-identified on average";
+        String SHORT1 = "Records at risk";
+        String SHORT2 = "Highest risk";
+        String SHORT3 = "Success rate";
+        GridData separatordata = SWTUtil.createFillHorizontallyGridData(true, 3);
+        separatordata.verticalIndent = 0;
+
+        // Prosecutor
+        ComponentTitledSeparator separator = new ComponentTitledSeparator(root, SWT.NONE);
+        separator.setLayoutData(separatordata);
+        separator.setText(CAPTION1);
         
-        final String LABEL1 = "Proportion of records with risk higher than treshold";
-        final String LABEL2 = "Highest risk of a single record";
-        final String LABEL3 = "Proportion of records than can be re-identified on average";
-        
-        prosecutor1 = new ComponentRiskMonitor(group, LABEL1);
-        prosecutor2 = new ComponentRiskMonitor(group, LABEL2);
-        prosecutor3 = new ComponentRiskMonitor(group, LABEL3);
-        
+        prosecutor1 = new ComponentRiskMonitor(root, LABEL1, SHORT1);
+        prosecutor2 = new ComponentRiskMonitor(root, LABEL2, SHORT2);
+        prosecutor3 = new ComponentRiskMonitor(root, LABEL3, SHORT3);        
         prosecutor1.setLayoutData(SWTUtil.createFillGridData());
         prosecutor2.setLayoutData(SWTUtil.createFillGridData());
         prosecutor3.setLayoutData(SWTUtil.createFillGridData());
         
-        group = new Group(root, SWT.SHADOW_ETCHED_IN);
-        group.setText("Journalist");
-        group.setLayoutData(SWTUtil.createFillGridData());
-        group.setLayout(SWTUtil.createGridLayout(3));
-
-        journalist1 = new ComponentRiskMonitor(group, LABEL1);
-        journalist2 = new ComponentRiskMonitor(group, LABEL2);
-        journalist3 = new ComponentRiskMonitor(group, LABEL3);
-
+        // Journalist
+        separator = new ComponentTitledSeparator(root, SWT.NONE);
+        separator.setLayoutData(separatordata);
+        separator.setText(CAPTION2);
+        
+        journalist1 = new ComponentRiskMonitor(root, LABEL1, SHORT1);
+        journalist2 = new ComponentRiskMonitor(root, LABEL2, SHORT2);
+        journalist3 = new ComponentRiskMonitor(root, LABEL3, SHORT3);
         journalist1.setLayoutData(SWTUtil.createFillGridData());
         journalist2.setLayoutData(SWTUtil.createFillGridData());
         journalist3.setLayoutData(SWTUtil.createFillGridData());
-        
-        group = new Group(root, SWT.SHADOW_ETCHED_IN);
-        group.setText("Marketer");
-        group.setLayoutData(SWTUtil.createFillGridData());
-        group.setLayout(SWTUtil.createGridLayout(3));
-        
-        marketer1 = new ComponentRiskMonitor(group, LABEL3);
 
-        marketer1.setLayoutData(SWTUtil.createFillGridData());
+        // Marketer
+        separator = new ComponentTitledSeparator(root, SWT.NONE);
+        separator.setLayoutData(separatordata);
+        separator.setText(CAPTION3);
         
+        marketer1 = new ComponentRiskMonitor(root, LABEL3, SHORT3);
+        marketer1.setLayoutData(SWTUtil.createFillGridData());
+
         return this.root;
     }
 

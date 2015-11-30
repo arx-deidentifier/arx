@@ -17,11 +17,14 @@
 package org.deidentifier.arx.gui.view.impl.common;
 
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
+import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 /**
  * A risk monitor
@@ -30,41 +33,62 @@ import org.eclipse.swt.widgets.Text;
  */
 public class ComponentRiskMonitor {
 
-    /** The root canvas*/
-    private final Composite root;
-    /** The gauge*/
-    private final ComponentGauge gauge;
-    /** The text*/
-    private final Text text;
+    /** View */
+    private final Composite                root;
+    /** View */
+    private final ComponentMeterFigure     meter;
+
     /**
      * Creates a new instance
      * @param parent
+     * @param shortText 
      */
-    public ComponentRiskMonitor(Composite parent, String text) {
+    public ComponentRiskMonitor(final Composite parent, 
+                                final String text, 
+                                final String shortText) {
         
+        // Layout
+        GridLayout layout = SWTUtil.createGridLayout(1);
+        layout.marginHeight = 0;
+        layout.marginTop = 0;
+        layout.marginBottom = 0;
+        layout.verticalSpacing = 0;
+        
+        // Root
         this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(SWTUtil.createGridLayout(2));
+        this.root.setLayout(layout);
+        this.root.setToolTipText(text);
         
-        Label label = new Label(root, SWT.CENTER);
-        label.setText(text);
-        GridData data = SWTUtil.createFillGridData(2);
-        data.horizontalAlignment = SWT.CENTER;
-        data.horizontalSpan = 2;
-        label.setLayoutData(data);
-        
-        this.gauge = new ComponentGauge(root);
-        data = SWTUtil.createFillGridData(2);
-        data.horizontalAlignment = SWT.CENTER;
-        data.heightHint = 100;
-        data.widthHint = 100;
-        data.minimumHeight = 100;
-        data.minimumWidth = 100;
-        this.gauge.setLayoutData(data);
+        // Label
+        Label caption = new Label(root, SWT.CENTER);
+        caption.setText(shortText);
+        caption.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        caption.setToolTipText(text);
+        SWTUtil.createNewFont(caption, SWT.BOLD);
 
-        this.text = new Text(root, SWT.BORDER | SWT.CENTER);
-        this.text.setText("0 %"); 
-        this.text.setLayoutData(SWTUtil.createFillHorizontallyGridData(true, 1));
-        this.text.setEditable(false);
+        // Create canvas
+        Canvas canvas = new Canvas(root, SWT.DOUBLE_BUFFERED);
+        canvas.setLayoutData(SWTUtil.createFillGridData());
+        canvas.setToolTipText(text);
+        
+        // Create meter
+        this.meter = new ComponentMeterFigure();
+        this.meter.setNeedleColor(XYGraphMediaFactory.getInstance().getColor(0, 0, 0));
+        this.meter.setValueLabelVisibility(true);
+        this.meter.setRange(new Range(0, 100));
+        this.meter.setLoLevel(0);
+        this.meter.setLoColor(XYGraphMediaFactory.getInstance().getColor(0, 150, 0));
+        this.meter.setLoloLevel(25);
+        this.meter.setLoloColor(XYGraphMediaFactory.getInstance().getColor(255, 255, 0));
+        this.meter.setHiLevel(50);
+        this.meter.setHiColor(XYGraphMediaFactory.getInstance().getColor(255, 200, 25));
+        this.meter.setHihiLevel(100);
+        this.meter.setHihiColor(XYGraphMediaFactory.getInstance().getColor(255, 0, 0));
+        this.meter.setMajorTickMarkStepHint(50);
+
+        // Pack and set
+        LightweightSystem lws = new LightweightSystem(canvas);
+        lws.setContents(this.meter);
     }
     
     /**
@@ -87,7 +111,6 @@ public class ComponentRiskMonitor {
         if (value > 1d) {
             value = 1d;
         }
-        gauge.setValue(value);
-        text.setText(SWTUtil.getPrettyString(value * 100d) + "[%]");
+        meter.setValue(value * 100d);
     }
 }
