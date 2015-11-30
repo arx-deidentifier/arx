@@ -23,6 +23,7 @@ import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ComponentRiskMonitor;
+import org.deidentifier.arx.gui.view.impl.common.ComponentRiskSlider;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledSeparator;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
@@ -38,6 +39,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 /**
  * This view displays basic risk estimates.
@@ -162,6 +164,18 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         
         marketer1 = new ComponentRiskMonitor(root, MESSAGE_LABEL3, MESSAGE_SHORT3);
         marketer1.setLayoutData(SWTUtil.createFillGridData());
+        
+        // Slider
+        if (isInput()) {
+            new Label(root, SWT.NONE);
+            GridData data = SWTUtil.createFillGridData();
+            data.horizontalAlignment = SWT.RIGHT;
+            ComponentRiskSlider slider = new ComponentRiskSlider(root);
+            slider.setLayoutData(data);
+            
+        }
+        
+        
         return this.root;
     }
 

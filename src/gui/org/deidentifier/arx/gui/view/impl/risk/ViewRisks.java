@@ -117,7 +117,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         // Reset
         this.reset();
     }
-
+    
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -136,7 +136,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         this.doReset();
         status.setEmpty();
     }
-    
+
     /**
      * Enables or disables this view
      * @param enabled
@@ -148,7 +148,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
             this.update();
         }
     }
-
+    
     @Override
     public void update(final ModelEvent event) {
 
@@ -183,7 +183,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
             return;
         }
     }
-    
+
     /**
      * Redraws the plot.
      */
@@ -219,7 +219,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
             status.setWorking();
         }
     }
-
+    
     /**
      * 
      * Implement this to create the widget.
@@ -228,7 +228,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @return
      */
     protected abstract Control createControl(Composite parent);
-    
+
     /**
      * Creates a view config
      *
@@ -248,7 +248,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @param context
      */
     protected abstract void doUpdate(T context);
-
+    
     /**
      * Creates a risk estimate builder
      * @param context
@@ -283,7 +283,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
                                                analysisContext.getModel().getRiskModel().getSolverConfiguration())
                                                .getInterruptibleInstance();
     }
-    
+
     /**
      * Creates a risk estimate builder
      * @param context
@@ -299,7 +299,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
                                                analysisContext.getModel().getRiskModel().getSolverConfiguration())
                                                .getInterruptibleInstance();
     }
-
+    
     /**
      * Returns the model
      * @return
@@ -308,13 +308,13 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         return this.model;
     }
 
-    
     /**
      * May return a progress provider, if any
      * @return
      */
     protected abstract ComponentStatusLabelProgressProvider getProgressProvider();
 
+    
     /**
      * Returns a string containing all quasi-identifiers
      * @param context
@@ -340,6 +340,14 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @return
      */
     protected abstract ViewRiskType getViewType();
+
+    /**
+     * Is this an input data oriented control
+     * @return
+     */
+    protected boolean isInput() {
+        return target == ModelPart.INPUT;
+    }
     
     /**
      * Is a job running

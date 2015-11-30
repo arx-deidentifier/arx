@@ -33,7 +33,6 @@ import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquen
 import org.deidentifier.arx.risk.RiskModelSampleRisks;
 import org.deidentifier.arx.risk.RiskModelSampleUniqueness;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableColumn;
@@ -50,13 +49,13 @@ import de.linearbits.swt.table.DynamicTableColumn;
 public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRisk> {
 
     /** View */
-    private Composite         root;
+    private Composite       root;
 
     /** View */
-    private DynamicTable      table;
+    private DynamicTable    table;
 
     /** Internal stuff. */
-    private AnalysisManager   manager;
+    private AnalysisManager manager;
 
     /**
      * Creates a new instance.
@@ -122,12 +121,13 @@ public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRis
     protected Control createControl(Composite parent) {
         
         this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(new FillLayout());
+        this.root.setLayout(SWTUtil.createGridLayout(1));
         
         table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
+        table.setLayoutData(SWTUtil.createFillGridData());
 
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("50%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
