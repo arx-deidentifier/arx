@@ -21,10 +21,10 @@ import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 
 /**
  * A risk monitor
@@ -34,9 +34,11 @@ import org.eclipse.swt.widgets.Label;
 public class ComponentRiskMonitor {
 
     /** View */
-    private final Composite                root;
+    private final Composite            root;
     /** View */
-    private final ComponentMeterFigure     meter;
+    private final ComponentMeterFigure meter;
+    /** View */
+    private final CLabel               label;
 
     /**
      * Creates a new instance
@@ -59,19 +61,21 @@ public class ComponentRiskMonitor {
         this.root.setLayout(layout);
         this.root.setToolTipText(text);
         
-        // Label
-        Label caption = new Label(root, SWT.CENTER);
+        // Caption
+        CLabel caption = new CLabel(root, SWT.CENTER);
         caption.setText(shortText);
         caption.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         caption.setToolTipText(text);
-        SWTUtil.createNewFont(caption, SWT.BOLD);
-
-        // Create canvas
-        Canvas canvas = new Canvas(root, SWT.DOUBLE_BUFFERED);
-        canvas.setLayoutData(SWTUtil.createFillGridData());
-        canvas.setToolTipText(text);
+        SWTUtil.changeFont(caption, SWT.BOLD);
         
+        // Content
+        Composite content = new Composite(root, SWT.NONE);
+        content.setLayoutData(SWTUtil.createFillGridData());
+        content.setToolTipText(text);
+
         // Create meter
+        Canvas canvas = new Canvas(content, SWT.DOUBLE_BUFFERED);
+        canvas.setToolTipText(text);
         this.meter = new ComponentMeterFigure();
         this.meter.setNeedleColor(XYGraphMediaFactory.getInstance().getColor(0, 0, 0));
         this.meter.setValueLabelVisibility(true);
@@ -85,10 +89,16 @@ public class ComponentRiskMonitor {
         this.meter.setHihiLevel(100);
         this.meter.setHihiColor(XYGraphMediaFactory.getInstance().getColor(255, 0, 0));
         this.meter.setMajorTickMarkStepHint(50);
-
-        // Pack and set
         LightweightSystem lws = new LightweightSystem(canvas);
         lws.setContents(this.meter);
+        
+        // Create label
+        label = new CLabel(content, SWT.CENTER);
+        label.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        label.setToolTipText(text);
+        
+        // Create responsive layout
+        new ComponentResponsiveLayout(content, 100, 50, canvas, label);
     }
     
     /**
@@ -111,6 +121,9 @@ public class ComponentRiskMonitor {
         if (value > 1d) {
             value = 1d;
         }
+        String text = SWTUtil.getPrettyString(value * 100d) + "%";
         meter.setValue(value * 100d);
+        label.setText(text);
+        label.setToolTipText(text);
     }
 }

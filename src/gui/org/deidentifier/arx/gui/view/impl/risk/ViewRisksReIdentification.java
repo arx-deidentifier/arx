@@ -167,11 +167,10 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         
         // Slider
         if (isInput()) {
-            new Label(root, SWT.NONE);
-            GridData data = SWTUtil.createFillGridData();
-            data.horizontalAlignment = SWT.RIGHT;
+            Label placeholder = new Label(root, SWT.NONE);
+            placeholder.setLayoutData(SWTUtil.createFillGridData());
             ComponentRiskSlider slider = new ComponentRiskSlider(root);
-            slider.setLayoutData(data);
+            slider.setLayoutData(SWTUtil.createFillGridData());
             
         }
         

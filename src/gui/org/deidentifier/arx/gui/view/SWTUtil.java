@@ -394,15 +394,15 @@ public class SWTUtil {
     }
 
     /**
-     * Changes a labels font
-     * @param label
+     * Changes a control's font
+     * @param control
      * @param style
      */
-    public static void createNewFont(Label label, int style) {
-        FontDescriptor boldDescriptor = FontDescriptor.createFrom(label.getFont()).setStyle(style);
-        final Font boldFont = boldDescriptor.createFont(label.getDisplay());
-        label.setFont(boldFont);
-        label.addDisposeListener(new DisposeListener() {
+    public static void changeFont(Control control, int style) {
+        FontDescriptor boldDescriptor = FontDescriptor.createFrom(control.getFont()).setStyle(style);
+        final Font boldFont = boldDescriptor.createFont(control.getDisplay());
+        control.setFont(boldFont);
+        control.addDisposeListener(new DisposeListener() {
             @Override
             public void widgetDisposed(DisposeEvent arg0) {
                 if (boldFont != null && !boldFont.isDisposed()) {
