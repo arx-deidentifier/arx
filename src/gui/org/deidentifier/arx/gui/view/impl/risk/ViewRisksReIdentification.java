@@ -23,7 +23,7 @@ import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ComponentRiskMonitor;
-import org.deidentifier.arx.gui.view.impl.common.ComponentRiskSlider;
+import org.deidentifier.arx.gui.view.impl.common.ComponentRiskThresholds;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledSeparator;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
@@ -168,9 +168,11 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         // Slider
         if (isInput()) {
             Label placeholder = new Label(root, SWT.NONE);
-            placeholder.setLayoutData(SWTUtil.createFillGridData());
-            ComponentRiskSlider slider = new ComponentRiskSlider(root);
-            slider.setLayoutData(SWTUtil.createFillGridData());
+            placeholder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+            ComponentRiskThresholds slider = new ComponentRiskThresholds(root);
+            GridData data = SWTUtil.createFillGridData();
+            data.heightHint = 30;
+            slider.setLayoutData(data);
             
         }
         
