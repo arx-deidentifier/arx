@@ -39,7 +39,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 
 /**
  * This view displays basic risk estimates.
@@ -167,16 +166,14 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         
         // Slider
         if (isInput()) {
-            Label placeholder = new Label(root, SWT.NONE);
-            placeholder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-            ComponentRiskThresholds slider = new ComponentRiskThresholds(root);
+            
             GridData data = SWTUtil.createFillGridData();
             data.heightHint = 30;
-            slider.setLayoutData(data);
+            data.horizontalSpan = 2;
             
+            ComponentRiskThresholds slider = new ComponentRiskThresholds(root);
+            slider.setLayoutData(data);
         }
-        
-        
         return this.root;
     }
 

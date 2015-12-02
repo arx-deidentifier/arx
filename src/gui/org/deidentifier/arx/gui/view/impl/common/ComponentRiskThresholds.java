@@ -115,24 +115,26 @@ public class ComponentRiskThresholds {
         base.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).create());
 
         // Layout
-        GridLayout layout = SWTUtil.createGridLayout(4);
+        GridLayout layout = SWTUtil.createGridLayout(8);
+        layout.makeColumnsEqualWidth = true;
         layout.marginHeight = 0;
         layout.marginTop = 0;
         layout.marginBottom = 0;
         layout.verticalSpacing = 0;
         base.setLayout(layout);
         
+        createSeparator(base, "Main", 2);
+        createSeparator(base, "Derived", 6);
+        
         createLabel(base, LABEL1);
         createLabel(base, LABEL2);
+        createLabel(base, LABEL3);
+        createLabel(base, LABEL4);
         
         bar1 = createKnob(base, LABEL1);
         createLabel(base, bar1);
         bar2 = createKnob(base, LABEL2);
         createLabel(base, bar2);
-
-        createLabel(base, LABEL3);
-        createLabel(base, LABEL4);
-
         bar3 = createKnob(base, LABEL3);
         createLabel(base, bar3);
         bar4 = createKnob(base, LABEL4);
@@ -170,7 +172,7 @@ public class ComponentRiskThresholds {
     public double getThresholdRecordsAtRisk() {
         return bar2.getValue();
     }
-    
+
     /**
      * Gets a threshold
      * @return
@@ -178,7 +180,7 @@ public class ComponentRiskThresholds {
     public double getThresholdSuccessRate() {
         return bar4.getValue();
     }
-
+    
     /**
      * Sets layout data
      * @param data
@@ -246,7 +248,7 @@ public class ComponentRiskThresholds {
         String text = "100%"; //$NON-NLS-1$
         final CLabel label = new CLabel(root, SWT.LEFT);
         label.setText(text);
-        GridData data = SWTUtil.createFillHorizontallyGridData();
+        GridData data = SWTUtil.createFillGridData();
         data.horizontalAlignment = SWT.LEFT;
         label.setLayoutData(data);
         label.setToolTipText(text);
@@ -279,5 +281,20 @@ public class ComponentRiskThresholds {
         label.setText(text);
         label.setLayoutData(SWTUtil.createFillHorizontallyGridData(true, 2));
         label.setToolTipText(text);
+    }
+
+    /**
+     * Creates a separator
+     * @param root
+     * @param text
+     * @param span
+     */
+    private void createSeparator(Composite root, String text, int span) {
+        ComponentTitledSeparator separator = new ComponentTitledSeparator(root, SWT.NONE);
+        GridData data = SWTUtil.createFillHorizontallyGridData(true,  span);
+        data.horizontalIndent = 0;
+        data.verticalIndent = 0;
+        separator.setLayoutData(data);
+        separator.setText(text);
     }
 }
