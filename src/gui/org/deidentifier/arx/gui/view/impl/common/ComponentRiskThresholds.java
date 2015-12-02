@@ -123,11 +123,11 @@ public class ComponentRiskThresholds {
         createLabel(base, LABEL2);
         createLabel(base, LABEL3);
         
-        knob1 = createKnob(base, LABEL1);
+        knob1 = createKnob(base);
         label1 = createLabel(base, knob1);
-        knob2 = createKnob(base, LABEL2);
+        knob2 = createKnob(base);
         label2 = createLabel(base, knob2);
-        knob3 = createKnob(base, LABEL3);
+        knob3 = createKnob(base);
         label3 = createLabel(base, knob3);
     }
     
@@ -220,12 +220,11 @@ public class ComponentRiskThresholds {
      * @param text
      * @return
      */
-    private Knob<Double> createKnob(Composite root, String text) {
+    private Knob<Double> createKnob(Composite root) {
         Knob<Double> knob = new Knob<Double>(root, SWT.NULL, new KnobRange.Double(0d, 100d));
         knob.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).hint(MIN_KNOB, MIN_KNOB).create());
         knob.setDefaultColorProfile(defaultColorProfile);
         knob.setFocusedColorProfile(focusedColorProfile);
-        knob.setToolTipText(text);
         return knob;
     }
 
@@ -235,7 +234,7 @@ public class ComponentRiskThresholds {
      * @param knob
      */
     private CLabel createLabel(final Composite root, 
-                             final Knob<Double> knob) {
+                               final Knob<Double> knob) {
 
         // Label
         String text = "100%"; //$NON-NLS-1$
