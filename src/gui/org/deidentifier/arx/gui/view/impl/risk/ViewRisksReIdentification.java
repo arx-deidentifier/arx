@@ -135,9 +135,9 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         separator.setText(MESSAGE_CAPTION1);
         separator.setImage(controller.getResources().getManagedImage("prosecutor.png")); //$NON-NLS-1$
         
-        prosecutor1 = new ComponentRiskMonitor(root, MESSAGE_LABEL1, MESSAGE_SHORT1);
-        prosecutor2 = new ComponentRiskMonitor(root, MESSAGE_LABEL2, MESSAGE_SHORT2);
-        prosecutor3 = new ComponentRiskMonitor(root, MESSAGE_LABEL3, MESSAGE_SHORT3);        
+        prosecutor1 = new ComponentRiskMonitor(root, controller, MESSAGE_LABEL1, MESSAGE_SHORT1);
+        prosecutor2 = new ComponentRiskMonitor(root, controller, MESSAGE_LABEL2, MESSAGE_SHORT2);
+        prosecutor3 = new ComponentRiskMonitor(root, controller, MESSAGE_LABEL3, MESSAGE_SHORT3);        
         prosecutor1.setLayoutData(SWTUtil.createFillGridData());
         prosecutor2.setLayoutData(SWTUtil.createFillGridData());
         prosecutor3.setLayoutData(SWTUtil.createFillGridData());
@@ -148,9 +148,9 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         separator.setText(MESSAGE_CAPTION2);
         separator.setImage(controller.getResources().getManagedImage("journalist.png")); //$NON-NLS-1$
         
-        journalist1 = new ComponentRiskMonitor(root, MESSAGE_LABEL1, MESSAGE_SHORT1);
-        journalist2 = new ComponentRiskMonitor(root, MESSAGE_LABEL2, MESSAGE_SHORT2);
-        journalist3 = new ComponentRiskMonitor(root, MESSAGE_LABEL3, MESSAGE_SHORT3);
+        journalist1 = new ComponentRiskMonitor(root, controller, MESSAGE_LABEL1, MESSAGE_SHORT1);
+        journalist2 = new ComponentRiskMonitor(root, controller, MESSAGE_LABEL2, MESSAGE_SHORT2);
+        journalist3 = new ComponentRiskMonitor(root, controller, MESSAGE_LABEL3, MESSAGE_SHORT3);
         journalist1.setLayoutData(SWTUtil.createFillGridData());
         journalist2.setLayoutData(SWTUtil.createFillGridData());
         journalist3.setLayoutData(SWTUtil.createFillGridData());
@@ -161,16 +161,14 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         separator.setText(MESSAGE_CAPTION3);
         separator.setImage(controller.getResources().getManagedImage("marketer.png")); //$NON-NLS-1$
         
-        marketer1 = new ComponentRiskMonitor(root, MESSAGE_LABEL3, MESSAGE_SHORT3);
+        marketer1 = new ComponentRiskMonitor(root, controller, MESSAGE_LABEL3, MESSAGE_SHORT3);
         marketer1.setLayoutData(SWTUtil.createFillGridData());
         
         // Slider
         if (isInput()) {
-            
             GridData data = SWTUtil.createFillGridData();
             data.heightHint = 30;
             data.horizontalSpan = 2;
-            
             ComponentRiskThresholds slider = new ComponentRiskThresholds(root);
             slider.setLayoutData(data);
         }
@@ -231,17 +229,17 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
                 }
 
                 // Update views
-                prosecutor1.setValue(prosecutor.getProportionOfRecordsWithRiskAboveThreshold());
-                prosecutor2.setValue(prosecutor.getMaximumProbabilityOfReIdentification());
-                prosecutor3.setValue(prosecutor.getProportionOfRecordsThatCanBeReIdentifiedOnAverage());
+                prosecutor1.setRisk(prosecutor.getProportionOfRecordsWithRiskAboveThreshold());
+                prosecutor2.setRisk(prosecutor.getMaximumProbabilityOfReIdentification());
+                prosecutor3.setRisk(prosecutor.getProportionOfRecordsThatCanBeReIdentifiedOnAverage());
 
                 // Update views
-                journalist1.setValue(journalist.getProportionOfRecordsWithRiskAboveThreshold());
-                journalist2.setValue(journalist.getMaximumProbabilityOfReIdentification());
-                journalist3.setValue(journalist.getProportionOfRecordsThatCanBeReIdentifiedOnAverage());
+                journalist1.setRisk(journalist.getProportionOfRecordsWithRiskAboveThreshold());
+                journalist2.setRisk(journalist.getMaximumProbabilityOfReIdentification());
+                journalist3.setRisk(journalist.getProportionOfRecordsThatCanBeReIdentifiedOnAverage());
                 
                 // Update views
-                marketer1.setValue(marketer.getProportionOfRecordsThatCanBeReIdentifiedOnAverage());
+                marketer1.setRisk(marketer.getProportionOfRecordsThatCanBeReIdentifiedOnAverage());
 
                 // Layout
                 root.layout();

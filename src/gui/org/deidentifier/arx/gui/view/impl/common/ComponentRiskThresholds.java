@@ -45,36 +45,36 @@ import de.linearbits.swt.widgets.KnobRange;
  */
 public class ComponentRiskThresholds {
 
-    /** View */
-    private static final String    CAPTION  = Resources.getMessage("ComponentRiskThresholds.4"); //$NON-NLS-1$
-    /** View */
-    private static final String    LABEL1   = Resources.getMessage("ComponentRiskThresholds.0"); //$NON-NLS-1$
-    /** View */
-    private static final String    LABEL2   = Resources.getMessage("ComponentRiskThresholds.1"); //$NON-NLS-1$
-    /** View */
-    private static final String    LABEL3   = Resources.getMessage("ComponentRiskThresholds.2"); //$NON-NLS-1$
-    /** View */
-    private static final String    LABEL4   = Resources.getMessage("ComponentRiskThresholds.3"); //$NON-NLS-1$
-
     /** Constant */
-    private static final int       MIN_KNOB = 30;
+    private static final String           CAPTION   = Resources.getMessage("ComponentRiskThresholds.4"); //$NON-NLS-1$
+    /** Constant */
+    private static final String           LABEL1    = Resources.getMessage("ComponentRiskThresholds.0"); //$NON-NLS-1$
+    /** Constant */
+    private static final String           LABEL2    = Resources.getMessage("ComponentRiskThresholds.1"); //$NON-NLS-1$
+    /** Constant */
+    private static final String           LABEL3    = Resources.getMessage("ComponentRiskThresholds.2"); //$NON-NLS-1$
+    /** Constant */
+    private static final String           LABEL4    = Resources.getMessage("ComponentRiskThresholds.3"); //$NON-NLS-1$
+    /** Constant */
+    private static final int              MIN_KNOB  = 30;
+    
     /** View */
-    private final Knob<Double>     bar1;
+    private final Knob<Double>            bar1;
     /** View */
-    private final Knob<Double>     bar2;
+    private final Knob<Double>            bar2;
     /** View */
-    private final Knob<Double>     bar3;
+    private final Knob<Double>            bar3;
     /** View */
-    private final Knob<Double>     bar4;
+    private final Knob<Double>            bar4;
     /** View */
-    private final Composite        root;
+    private final Composite               root;
 
     /** Color profile */
-    private final KnobColorProfile defaultColorProfile;
+    private final KnobColorProfile        defaultColorProfile;
     /** Color profile */
-    private final KnobColorProfile focusedColorProfile;
-    
-    /** Model*/
+    private final KnobColorProfile        focusedColorProfile;
+
+    /** Model */
     private final List<SelectionListener> listeners = new ArrayList<SelectionListener>();
 
     /**

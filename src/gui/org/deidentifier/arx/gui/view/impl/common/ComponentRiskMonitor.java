@@ -16,12 +16,14 @@
  */
 package org.deidentifier.arx.gui.view.impl.common;
 
+import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -38,16 +40,33 @@ public class ComponentRiskMonitor {
     /** View */
     private final ComponentMeterFigure meter;
     /** View */
+    private final CLabel               caption;
+    /** View */
     private final CLabel               label;
+    /** View */
+    private double                     threshold = 0d;
+    /** View */
+    private double                     risk = 0d;
+    /** View */
+    private final Image                imageLow;
+    /** View */
+    private final Image                imageHigh;
 
     /**
      * Creates a new instance
      * @param parent
-     * @param shortText 
+     * @param controller
+     * @param text
+     * @param shortText
      */
     public ComponentRiskMonitor(final Composite parent, 
+                                final Controller controller,
                                 final String text, 
                                 final String shortText) {
+        
+        // Images
+        imageLow = controller.getResources().getManagedImage("bullet_green.png"); //$NON-NLS-1$
+        imageHigh = controller.getResources().getManagedImage("bullet_red.png"); //$NON-NLS-1$
         
         // Layout
         GridLayout layout = SWTUtil.createGridLayout(1);
@@ -62,10 +81,11 @@ public class ComponentRiskMonitor {
         this.root.setToolTipText(text);
         
         // Caption
-        CLabel caption = new CLabel(root, SWT.CENTER);
-        caption.setText(shortText);
-        caption.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        caption.setToolTipText(text);
+        this.caption = new CLabel(root, SWT.CENTER);
+        this.caption.setText(shortText);
+        this.caption.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.caption.setToolTipText(text);
+        this.caption.setImage(imageHigh);
         SWTUtil.changeFont(caption, SWT.BOLD);
         
         // Content
@@ -114,16 +134,41 @@ public class ComponentRiskMonitor {
      * @param value
      * @return
      */
-    public void setValue(double value) {
+    public void setRisk(double value) {
         if (value < 0d) {
             value = 0d;
         }
         if (value > 1d) {
             value = 1d;
         }
+        this.risk = value;
         String text = SWTUtil.getPrettyString(value * 100d) + "%";
         meter.setValue(value * 100d);
         label.setText(text);
         label.setToolTipText(text);
+        if (this.risk > this.threshold) {
+            caption.setImage(imageHigh);
+        } else {
+            caption.setImage(imageLow);
+        }
+    }
+    
+    /**
+     * Sets the risk threshold
+     * @param value
+     */
+    public void setThreshold(double value) {
+        if (value < 0d) {
+            value = 0d;
+        }
+        if (value > 1d) {
+            value = 1d;
+        }
+        this.threshold = value;
+        if (this.risk > this.threshold) {
+            caption.setImage(imageHigh);
+        } else {
+            caption.setImage(imageLow);
+        }
     }
 }
