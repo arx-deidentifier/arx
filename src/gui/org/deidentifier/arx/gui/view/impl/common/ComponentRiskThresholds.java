@@ -56,9 +56,15 @@ public class ComponentRiskThresholds {
     /** View */
     private final Knob<Double>     knob1;
     /** View */
+    private final CLabel           label1;
+    /** View */
     private final Knob<Double>     knob2;
     /** View */
+    private final CLabel           label2;
+    /** View */
     private final Knob<Double>     knob3;
+    /** View */
+    private final CLabel           label3;
     /** View */
     private final Composite        root;
 
@@ -121,11 +127,11 @@ public class ComponentRiskThresholds {
         createLabel(base, LABEL3);
         
         knob1 = createKnob(base, LABEL1);
-        createLabel(base, knob1);
+        label1 = createLabel(base, knob1);
         knob2 = createKnob(base, LABEL2);
-        createLabel(base, knob2);
+        label2 = createLabel(base, knob2);
         knob3 = createKnob(base, LABEL3);
-        createLabel(base, knob3);
+        label3 = createLabel(base, knob3);
     }
     
     /**
@@ -189,7 +195,8 @@ public class ComponentRiskThresholds {
      * @param arg0
      */
     public void setThresholdHighestRisk(double arg0) {
-        knob1.setValue(arg0 * 100d);
+        knob1.setValue(arg0 * 100d, false);
+        updateLabel(knob1, label1);
     }
 
     /**
@@ -197,7 +204,8 @@ public class ComponentRiskThresholds {
      * @param arg0
      */
     public void setThresholdRecordsAtRisk(double arg0) {
-        knob2.setValue(arg0 * 100d);
+        knob2.setValue(arg0 * 100d, false);
+        updateLabel(knob2, label2);
     }
 
     /**
@@ -205,7 +213,8 @@ public class ComponentRiskThresholds {
      * @param arg0
      */
     public void setThresholdSuccessRate(double arg0) {
-        knob3.setValue(arg0 * 100d);
+        knob3.setValue(arg0 * 100d, false);
+        updateLabel(knob3, label3);
     }
 
     /**
@@ -228,7 +237,7 @@ public class ComponentRiskThresholds {
      * @param root
      * @param knob
      */
-    private void createLabel(final Composite root, 
+    private CLabel createLabel(final Composite root, 
                              final Knob<Double> knob) {
 
         // Label
@@ -244,11 +253,12 @@ public class ComponentRiskThresholds {
         knob.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                String text = SWTUtil.getPrettyString(knob.getValue())+"%"; //$NON-NLS-1$
-                label.setText(text);
-                label.setToolTipText(text);
+                updateLabel(knob, label);
             }
         });
+        
+        // Return
+        return label;
     }
 
     /**
@@ -278,5 +288,16 @@ public class ComponentRiskThresholds {
         data.verticalIndent = 0;
         separator.setLayoutData(data);
         separator.setText(text);
+    }
+
+    /**
+     * Updates the value on the label
+     * @param knob
+     * @param label
+     */
+    private void updateLabel(Knob<Double> knob, CLabel label) {
+        String text = SWTUtil.getPrettyString(knob.getValue())+"%"; //$NON-NLS-1$
+        label.setText(text);
+        label.setToolTipText(text);
     }
 }

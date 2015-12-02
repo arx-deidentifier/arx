@@ -212,16 +212,26 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
             data.horizontalSpan = 2;
             riskThresholds = new ComponentRiskThresholds(root);
             riskThresholds.setLayoutData(data);
-            riskThresholds.addSelectionListenerThresholdHighestRisk(new DelayedSelectionListener(1000) {
-                public void widgetDelayedSelected(SelectionEvent arg0) {
+            riskThresholds.addSelectionListenerThresholdHighestRisk(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
                     if (riskThresholds.getThresholdHighestRisk() != getModel().getRiskModel().getRiskThresholdHighestRisk()) {
                         getModel().getRiskModel().setRiskThresholdHighestRisk(riskThresholds.getThresholdHighestRisk());
-                        controller.update(new ModelEvent(this, ModelPart.RISK_THRESHOLD_MAIN, null));
-                        triggerUpdate();
+                        controller.update(new ModelEvent(this, ModelPart.RISK_THRESHOLD_DERIVED, null));
+                        handleThresholdUpdateInMonitors();
                     }
                 }
             });
+            riskThresholds.addSelectionListenerThresholdHighestRisk(new DelayedSelectionListener(1000) {
+                @Override
+                public void widgetDelayedSelected(SelectionEvent arg0) {
+                    getModel().getRiskModel().setRiskThresholdHighestRisk(riskThresholds.getThresholdHighestRisk());
+                    controller.update(new ModelEvent(this, ModelPart.RISK_THRESHOLD_MAIN, null));
+                    triggerUpdate();
+                }
+            });
             riskThresholds.addSelectionListenerThresholdRecordsAtRisk(new SelectionAdapter() {
+                @Override
                 public void widgetSelected(SelectionEvent arg0) {
                     if (riskThresholds.getThresholdRecordsAtRisk() != getModel().getRiskModel().getRiskThresholdRecordsAtRisk()) {
                         getModel().getRiskModel().setRiskThresholdRecordsAtRisk(riskThresholds.getThresholdRecordsAtRisk());
@@ -231,6 +241,7 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
                 }
             });
             riskThresholds.addSelectionListenerThresholdSuccessRate(new SelectionAdapter() {
+                @Override
                 public void widgetSelected(SelectionEvent arg0) {
                     if (riskThresholds.getThresholdSuccessRate() != getModel().getRiskModel().getRiskThresholdSuccessRate()) {
                         getModel().getRiskModel().setRiskThresholdSuccessRate(riskThresholds.getThresholdSuccessRate());
