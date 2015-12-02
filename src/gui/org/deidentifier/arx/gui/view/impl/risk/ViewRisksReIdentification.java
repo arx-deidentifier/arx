@@ -17,6 +17,7 @@
 package org.deidentifier.arx.gui.view.impl.risk;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
@@ -35,6 +36,8 @@ import org.deidentifier.arx.risk.RiskModelSampleSummary.JournalistRisk;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.MarketerRisk;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -67,21 +70,23 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
     private static final String  MESSAGE_SHORT3   = Resources.getMessage("ViewRisksReIdentification.8"); //$NON-NLS-1$
 
     /** View */
-    private Composite            root;
+    private Composite               root;
     /** View */
-    private ComponentRiskMonitor prosecutor1;
+    private ComponentRiskMonitor    prosecutor1;
     /** View */
-    private ComponentRiskMonitor prosecutor2;
+    private ComponentRiskMonitor    prosecutor2;
     /** View */
-    private ComponentRiskMonitor prosecutor3;
+    private ComponentRiskMonitor    prosecutor3;
     /** View */
-    private ComponentRiskMonitor journalist1;
+    private ComponentRiskMonitor    journalist1;
     /** View */
-    private ComponentRiskMonitor journalist2;
+    private ComponentRiskMonitor    journalist2;
     /** View */
-    private ComponentRiskMonitor journalist3;
+    private ComponentRiskMonitor    journalist3;
     /** View */
-    private ComponentRiskMonitor marketer1;
+    private ComponentRiskMonitor    marketer1;
+    /** View */
+    private ComponentRiskThresholds riskThresholds;
 
     /** Internal stuff. */
     private AnalysisManager      manager;
@@ -102,16 +107,51 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.RISK_THRESHOLD_MAIN, this);
+        controller.addListener(ModelPart.RISK_THRESHOLD_DERIVED, this);
     }
     
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+        if (event.part == ModelPart.ATTRIBUTE_TYPE) {            
             triggerUpdate();
         }
+        if (event.part == ModelPart.RISK_THRESHOLD_MAIN) {
+            handleThresholdUpdateInSettings();
+            triggerUpdate();
+        }
+        
+        if (event.part == ModelPart.RISK_THRESHOLD_DERIVED) {
+            handleThresholdUpdateInSettings();
+            handleThresholdUpdateInMonitors();
+        }
     }
-    
+
+    /**
+     * Handles updates of risk thresholds
+     */
+    private void handleThresholdUpdateInSettings() {
+        if (riskThresholds != null) {
+            riskThresholds.setThresholdHighestRisk(super.getModel().getRiskModel().getRiskThresholdHighestRisk());
+            riskThresholds.setThresholdRecordsAtRisk(super.getModel().getRiskModel().getRiskThresholdRecordsAtRisk());
+            riskThresholds.setThresholdSuccessRate(super.getModel().getRiskModel().getRiskThresholdSuccessRate());
+        }
+    }
+
+    /**
+     * Handles updates of risk thresholds
+     */
+    private void handleThresholdUpdateInMonitors() {
+        prosecutor1.setThreshold(super.getModel().getRiskModel().getRiskThresholdRecordsAtRisk());
+        prosecutor2.setThreshold(super.getModel().getRiskModel().getRiskThresholdHighestRisk());
+        prosecutor3.setThreshold(super.getModel().getRiskModel().getRiskThresholdSuccessRate());
+        journalist1.setThreshold(super.getModel().getRiskModel().getRiskThresholdRecordsAtRisk());
+        journalist2.setThreshold(super.getModel().getRiskModel().getRiskThresholdHighestRisk());
+        journalist3.setThreshold(super.getModel().getRiskModel().getRiskThresholdSuccessRate());
+        marketer1.setThreshold(super.getModel().getRiskModel().getRiskThresholdSuccessRate());
+    }
+
     @Override
     protected Control createControl(Composite parent) {
 
@@ -169,12 +209,41 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
             GridData data = SWTUtil.createFillGridData();
             data.heightHint = 30;
             data.horizontalSpan = 2;
-            ComponentRiskThresholds slider = new ComponentRiskThresholds(root);
-            slider.setLayoutData(data);
+            riskThresholds = new ComponentRiskThresholds(root);
+            riskThresholds.setLayoutData(data);
+            riskThresholds.addSelectionListenerThresholdHighestRisk(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent arg0) {
+                    if (riskThresholds.getThresholdHighestRisk() != getModel().getRiskModel().getRiskThresholdHighestRisk()) {
+                        getModel().getRiskModel().setRiskThresholdHighestRisk(riskThresholds.getThresholdHighestRisk());
+                        controller.update(new ModelEvent(this, ModelPart.RISK_THRESHOLD_MAIN, null));
+                        triggerUpdate();
+                    }
+                }
+            });
+            riskThresholds.addSelectionListenerThresholdRecordsAtRisk(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent arg0) {
+                    if (riskThresholds.getThresholdRecordsAtRisk() != getModel().getRiskModel().getRiskThresholdRecordsAtRisk()) {
+                        getModel().getRiskModel().setRiskThresholdRecordsAtRisk(riskThresholds.getThresholdRecordsAtRisk());
+                        controller.update(new ModelEvent(this, ModelPart.RISK_THRESHOLD_DERIVED, null));
+                        handleThresholdUpdateInMonitors();
+                    }
+                }
+            });
+            riskThresholds.addSelectionListenerThresholdSuccessRate(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent arg0) {
+                    if (riskThresholds.getThresholdSuccessRate() != getModel().getRiskModel().getRiskThresholdSuccessRate()) {
+                        getModel().getRiskModel().setRiskThresholdSuccessRate(riskThresholds.getThresholdSuccessRate());
+                        controller.update(new ModelEvent(this, ModelPart.RISK_THRESHOLD_DERIVED, null));
+                        handleThresholdUpdateInMonitors();
+                    }
+                }
+            });
+        } else {
+            riskThresholds = null;
         }
         return this.root;
     }
-
+    
     @Override
     protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
         return new AnalysisContextRisk(context);
@@ -185,7 +254,6 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         if (this.manager != null) {
             this.manager.stop();
         }
-        
         setStatusEmpty();
     }
 
@@ -202,6 +270,7 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
             this.setStatusEmpty();
             return;
         }
+        final Model model = super.getModel();
 
         // Create an analysis
         Analysis analysis = new Analysis() {
@@ -227,19 +296,29 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
                 if (stopped || !isEnabled()) {
                     return;
                 }
+                
+                // Update thresholds
+                handleThresholdUpdateInSettings();
 
                 // Update views
                 prosecutor1.setRisk(prosecutor.getProportionOfRecordsWithRiskAboveThreshold());
+                prosecutor1.setThreshold(model.getRiskModel().getRiskThresholdRecordsAtRisk());
                 prosecutor2.setRisk(prosecutor.getMaximumProbabilityOfReIdentification());
+                prosecutor2.setThreshold(model.getRiskModel().getRiskThresholdHighestRisk());
                 prosecutor3.setRisk(prosecutor.getProportionOfRecordsThatCanBeReIdentifiedOnAverage());
+                prosecutor3.setThreshold(model.getRiskModel().getRiskThresholdSuccessRate());
 
                 // Update views
                 journalist1.setRisk(journalist.getProportionOfRecordsWithRiskAboveThreshold());
+                journalist1.setThreshold(model.getRiskModel().getRiskThresholdRecordsAtRisk());
                 journalist2.setRisk(journalist.getMaximumProbabilityOfReIdentification());
+                journalist2.setThreshold(model.getRiskModel().getRiskThresholdHighestRisk());
                 journalist3.setRisk(journalist.getProportionOfRecordsThatCanBeReIdentifiedOnAverage());
+                journalist3.setThreshold(model.getRiskModel().getRiskThresholdSuccessRate());
                 
                 // Update views
                 marketer1.setRisk(marketer.getProportionOfRecordsThatCanBeReIdentifiedOnAverage());
+                marketer1.setThreshold(model.getRiskModel().getRiskThresholdSuccessRate());
 
                 // Layout
                 root.layout();
@@ -262,7 +341,7 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
                 long time = System.currentTimeMillis();
 
                 // Perform work
-                RiskModelSampleSummary summary = builder.getSampleBasedRiskSummary(0.2d);
+                RiskModelSampleSummary summary = builder.getSampleBasedRiskSummary(model.getRiskModel().getRiskThresholdHighestRisk());
                 prosecutor = summary.getProsecutorRisk();
                 journalist = summary.getJournalistRisk();
                 marketer = summary.getMarketerRisk();

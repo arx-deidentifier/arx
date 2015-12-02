@@ -16,9 +16,6 @@
  */
 package org.deidentifier.arx.gui.view.impl.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -46,36 +43,29 @@ import de.linearbits.swt.widgets.KnobRange;
 public class ComponentRiskThresholds {
 
     /** Constant */
-    private static final String           CAPTION   = Resources.getMessage("ComponentRiskThresholds.4"); //$NON-NLS-1$
+    private static final String    CAPTION  = Resources.getMessage("ComponentRiskThresholds.4"); //$NON-NLS-1$
     /** Constant */
-    private static final String           LABEL1    = Resources.getMessage("ComponentRiskThresholds.0"); //$NON-NLS-1$
+    private static final String    LABEL1   = Resources.getMessage("ComponentRiskThresholds.2"); //$NON-NLS-1$
     /** Constant */
-    private static final String           LABEL2    = Resources.getMessage("ComponentRiskThresholds.1"); //$NON-NLS-1$
+    private static final String    LABEL2   = Resources.getMessage("ComponentRiskThresholds.1"); //$NON-NLS-1$
     /** Constant */
-    private static final String           LABEL3    = Resources.getMessage("ComponentRiskThresholds.2"); //$NON-NLS-1$
+    private static final String    LABEL3   = Resources.getMessage("ComponentRiskThresholds.3"); //$NON-NLS-1$
     /** Constant */
-    private static final String           LABEL4    = Resources.getMessage("ComponentRiskThresholds.3"); //$NON-NLS-1$
-    /** Constant */
-    private static final int              MIN_KNOB  = 30;
-    
+    private static final int       MIN_KNOB = 30;
+
     /** View */
-    private final Knob<Double>            bar1;
+    private final Knob<Double>     knob1;
     /** View */
-    private final Knob<Double>            bar2;
+    private final Knob<Double>     knob2;
     /** View */
-    private final Knob<Double>            bar3;
+    private final Knob<Double>     knob3;
     /** View */
-    private final Knob<Double>            bar4;
-    /** View */
-    private final Composite               root;
+    private final Composite        root;
 
     /** Color profile */
-    private final KnobColorProfile        defaultColorProfile;
+    private final KnobColorProfile defaultColorProfile;
     /** Color profile */
-    private final KnobColorProfile        focusedColorProfile;
-
-    /** Model */
-    private final List<SelectionListener> listeners = new ArrayList<SelectionListener>();
+    private final KnobColorProfile focusedColorProfile;
 
     /**
      * Creates a new instance
@@ -115,7 +105,7 @@ public class ComponentRiskThresholds {
         base.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).create());
 
         // Layout
-        GridLayout layout = SWTUtil.createGridLayout(8);
+        GridLayout layout = SWTUtil.createGridLayout(6);
         layout.makeColumnsEqualWidth = true;
         layout.marginHeight = 0;
         layout.marginTop = 0;
@@ -124,29 +114,42 @@ public class ComponentRiskThresholds {
         base.setLayout(layout);
         
         createSeparator(base, "Main", 2);
-        createSeparator(base, "Derived", 6);
+        createSeparator(base, "Derived", 4);
         
         createLabel(base, LABEL1);
         createLabel(base, LABEL2);
         createLabel(base, LABEL3);
-        createLabel(base, LABEL4);
         
-        bar1 = createKnob(base, LABEL1);
-        createLabel(base, bar1);
-        bar2 = createKnob(base, LABEL2);
-        createLabel(base, bar2);
-        bar3 = createKnob(base, LABEL3);
-        createLabel(base, bar3);
-        bar4 = createKnob(base, LABEL4);
-        createLabel(base, bar4);
+        knob1 = createKnob(base, LABEL1);
+        createLabel(base, knob1);
+        knob2 = createKnob(base, LABEL2);
+        createLabel(base, knob2);
+        knob3 = createKnob(base, LABEL3);
+        createLabel(base, knob3);
     }
     
     /**
      * Adds a selection listener
      * @param listener
      */
-    public void addSelectionListener(SelectionListener listener) {
-        this.listeners.add(listener);
+    public void addSelectionListenerThresholdHighestRisk(SelectionListener listener) {
+        this.knob1.addSelectionListener(listener);
+    }
+
+    /**
+     * Adds a selection listener
+     * @param listener
+     */
+    public void addSelectionListenerThresholdRecordsAtRisk(SelectionListener listener) {
+        this.knob2.addSelectionListener(listener);
+    }
+
+    /**
+     * Adds a selection listener
+     * @param listener
+     */
+    public void addSelectionListenerThresholdSuccessRate(SelectionListener listener) {
+        this.knob3.addSelectionListener(listener);
     }
 
     /**
@@ -154,15 +157,7 @@ public class ComponentRiskThresholds {
      * @return
      */
     public double getThresholdHighestRisk() {
-        return bar3.getValue();
-    }
-
-    /**
-     * Gets a threshold
-     * @return
-     */
-    public double getThresholdIndividualRecords() {
-        return bar1.getValue();
+        return knob1.getValue() / 100d;
     }
 
     /**
@@ -170,7 +165,7 @@ public class ComponentRiskThresholds {
      * @return
      */
     public double getThresholdRecordsAtRisk() {
-        return bar2.getValue();
+        return knob2.getValue() / 100d;
     }
 
     /**
@@ -178,7 +173,7 @@ public class ComponentRiskThresholds {
      * @return
      */
     public double getThresholdSuccessRate() {
-        return bar4.getValue();
+        return knob3.getValue() / 100d;
     }
     
     /**
@@ -194,15 +189,7 @@ public class ComponentRiskThresholds {
      * @param arg0
      */
     public void setThresholdHighestRisk(double arg0) {
-        bar3.setValue(arg0);
-    }
-
-    /**
-     * Sets a threshold
-     * @param arg0
-     */
-    public void setThresholdIndividualRecords(double arg0) {
-        bar1.setValue(arg0);
+        knob1.setValue(arg0 * 100d);
     }
 
     /**
@@ -210,7 +197,7 @@ public class ComponentRiskThresholds {
      * @param arg0
      */
     public void setThresholdRecordsAtRisk(double arg0) {
-        bar2.setValue(arg0);
+        knob2.setValue(arg0 * 100d);
     }
 
     /**
@@ -218,7 +205,7 @@ public class ComponentRiskThresholds {
      * @param arg0
      */
     public void setThresholdSuccessRate(double arg0) {
-        bar4.setValue(arg0);
+        knob3.setValue(arg0 * 100d);
     }
 
     /**
@@ -260,11 +247,6 @@ public class ComponentRiskThresholds {
                 String text = SWTUtil.getPrettyString(knob.getValue())+"%"; //$NON-NLS-1$
                 label.setText(text);
                 label.setToolTipText(text);
-                
-                // Cascade
-                for (SelectionListener listener : listeners) {
-                    listener.widgetSelected(arg0);
-                }
             }
         });
     }

@@ -105,6 +105,12 @@ public class ModelEvent {
 
         /**  SELECTED_FEATURES_OR_CLASSES */
         SELECTED_FEATURES_OR_CLASSES,
+        
+        /** RISK THRESHOLDS*/
+        RISK_THRESHOLD_MAIN,
+        
+        /** RISK THRESHOLD*/
+        RISK_THRESHOLD_DERIVED
     }
 
     /** The part of the model that has changed. */

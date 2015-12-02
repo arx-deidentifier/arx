@@ -62,7 +62,7 @@ public class ModelRisk implements Serializable {
 
     /** SVUID */
     private static final long          serialVersionUID          = 5405871228130041796L;
-    /** The default sample size*/
+    /** The default sample size */
     private static final double        DEFAULT_SMAPLE_SIZE       = 0.01d;
     /** Modified */
     private boolean                    modified                  = false;
@@ -80,6 +80,12 @@ public class ModelRisk implements Serializable {
     private boolean                    useOutputModelIfAvailable = true;
     /** Model */
     private RiskModelForAttributes     riskModelForAttributes    = RiskModelForAttributes.POPULATION_UNIQUENESS_DANKAR;
+    /** Model */
+    private Double                     riskThresholdRecordsAtRisk;
+    /** Model */
+    private Double                     riskThresholdHighestRisk;
+    /** Model */
+    private Double                     riskThresholdSuccessRate;
 
     /**
      * Creates a new instance
@@ -87,14 +93,7 @@ public class ModelRisk implements Serializable {
     public ModelRisk() {
         this.populationModel = new ARXPopulationModel(DEFAULT_SMAPLE_SIZE);
     }
-    
-    /**
-     * Returns the solver configuration
-     */
-    public ARXSolverConfiguration getSolverConfiguration() {
-        return config;
-    }
-    
+
     /**
      * @return the maxQiSize
      */
@@ -109,7 +108,7 @@ public class ModelRisk implements Serializable {
     public ARXPopulationModel getPopulationModel() {
         return this.populationModel;
     }
-
+    
     /**
      * @param handle
      * @return
@@ -127,7 +126,7 @@ public class ModelRisk implements Serializable {
     public double getPopulationSize(double sampleSize) {
         return populationModel.getPopulationSize(sampleSize);
     }
-    
+
     /**
      * Returns the region
      * @return
@@ -135,7 +134,7 @@ public class ModelRisk implements Serializable {
     public Region getRegion() {
         return this.populationModel.getRegion();
     }
-    
+
     /**
      * Returns the risk model used for attribute analyses
      * @return
@@ -144,6 +143,39 @@ public class ModelRisk implements Serializable {
         return this.riskModelForAttributes;
     }
     
+    /**
+     * Returns a threshold
+     * @return
+     */
+    public double getRiskThresholdHighestRisk() {
+        if (riskThresholdHighestRisk == null) {
+            riskThresholdHighestRisk = 0.2d;
+        }
+        return riskThresholdHighestRisk;
+    }
+    
+    /**
+     * Returns a threshold
+     * @return
+     */
+    public double getRiskThresholdRecordsAtRisk() {
+        if (riskThresholdRecordsAtRisk == null) {
+            riskThresholdRecordsAtRisk = 0.05d;
+        }
+        return riskThresholdRecordsAtRisk;
+    }
+
+    /**
+     * Returns a threshold
+     * @return
+     */
+    public double getRiskThresholdSuccessRate() {
+        if (riskThresholdSuccessRate == null) {
+            riskThresholdSuccessRate = 0.05d;
+        }
+        return riskThresholdSuccessRate;
+    }
+
     /**
      * Returns the sample fraction
      * @param handle
@@ -160,6 +192,13 @@ public class ModelRisk implements Serializable {
      */
     public double getSampleFraction(double sampleSize) {
         return populationModel.getSamplingFraction(sampleSize);
+    }
+    
+    /**
+     * Returns the solver configuration
+     */
+    public ARXSolverConfiguration getSolverConfiguration() {
+        return config;
     }
     
     /**
@@ -189,7 +228,7 @@ public class ModelRisk implements Serializable {
             return viewEnabledForInput.get(view);
         }
     }
-
+    
     /***
      * Returns whether a view is enabled
      * @param view
@@ -202,7 +241,7 @@ public class ModelRisk implements Serializable {
             return viewEnabledForOutput.get(view);
         }
     }
-
+    
     /**
      * @param maxQiSize the maxQiSize to set
      */
@@ -242,6 +281,42 @@ public class ModelRisk implements Serializable {
      */
     public void setRiskModelForAttributes(RiskModelForAttributes model) {
         this.riskModelForAttributes = model;
+    }
+
+    /**
+     * Sets a threshold
+     * @param threshold
+     */
+    public void setRiskThresholdHighestRisk(double threshold) {
+        if (this.riskThresholdHighestRisk == null ||
+            this.riskThresholdHighestRisk.doubleValue() != threshold) {
+            this.modified = true;
+        }
+        this.riskThresholdHighestRisk = threshold;
+    }
+
+    /**
+     * Sets a threshold
+     * @param threshold
+     */
+    public void setRiskThresholdRecordsAtRisk(double threshold) {
+        if (this.riskThresholdRecordsAtRisk == null ||
+            this.riskThresholdRecordsAtRisk.doubleValue() != threshold) {
+            this.modified = true;
+        }
+        this.riskThresholdRecordsAtRisk = threshold;
+    }
+
+    /**
+     * Sets a threshold
+     * @param threshold
+     */
+    public void setRiskThresholdSuccessRate(double threshold) {
+        if (this.riskThresholdSuccessRate == null ||
+            this.riskThresholdSuccessRate.doubleValue() != threshold) {
+            this.modified = true;
+        }
+        this.riskThresholdSuccessRate = threshold;
     }
 
     /**
