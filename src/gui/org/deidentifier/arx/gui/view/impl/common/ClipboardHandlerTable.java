@@ -17,10 +17,8 @@
 
 package org.deidentifier.arx.gui.view.impl.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -59,8 +57,7 @@ public class ClipboardHandlerTable {
         if (table != null && table.getItemCount()>0) {
             Clipboard clipboard = new Clipboard(table.getDisplay());
             TextTransfer textTransfer = TextTransfer.getInstance();
-            clipboard.setContents(new String[]{getText(table)}, 
-                                  new Transfer[]{textTransfer});
+            clipboard.setContents(new String[]{getText(table)}, new Transfer[]{textTransfer});
             clipboard.dispose();
         }
     }
@@ -89,27 +86,33 @@ public class ClipboardHandlerTable {
      * @return
      */
     private String getText(Table table){
-        
-        List<String> properties = new ArrayList<String>();
-        for (TableColumn column : table.getColumns()){
-            properties.add(column.getText());
-        }
-        
+
         StringBuilder builder = new StringBuilder();
         
-        for (TableItem item : table.getItems()) {
-            if (builder.length() != 0) {
-                builder.append("\n"); //$NON-NLS-1$
+        TableColumn[] columns = table.getColumns();
+        for (int i = 0; i < columns.length; i++) {
+            TableColumn column = columns[i];
+            builder.append(column.getText());
+            if (i < columns.length - 1) {
+                builder.append(";");
+            } else {
+                builder.append("\n");
             }
-            int added = 0;
-            for (int i=0; i<properties.size(); i++) {
+        }
+        
+        for (TableItem item : table.getItems()) {
+            for (int i = 0; i < columns.length; i++) {
                 String value = item.getText(i);
                 if (value != null && !value.equals("")) { //$NON-NLS-1$
-                    if (added!=0) {
-                        builder.append(", "); //$NON-NLS-1$
-                    }
-                    added++;
-                    builder.append(properties.get(i)).append(": ").append(value); //$NON-NLS-1$
+                    builder.append(value); //$NON-NLS-1$
+                } else if (item.getData(String.valueOf(i)) != null && 
+                           item.getData(String.valueOf(i)) instanceof Double) {
+                    builder.append(SWTUtil.getPrettyString(((Double) item.getData(String.valueOf(i))).doubleValue() * 100d) + "%"); //$NON-NLS-1$
+                }
+                if (i < columns.length - 1) {
+                    builder.append(";");
+                } else {
+                    builder.append("\n");
                 }
             }
         }

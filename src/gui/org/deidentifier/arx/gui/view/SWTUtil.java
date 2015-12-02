@@ -301,6 +301,12 @@ public class SWTUtil {
                             if (i < columns - 1) {
                                 builder.append(", "); //$NON-NLS-1$
                             }
+                        } else if (item.getData(String.valueOf(i)) != null && 
+                                   item.getData(String.valueOf(i)) instanceof Double) {
+                            builder.append(getPrettyString(((Double) item.getData(String.valueOf(i))).doubleValue() * 100d) + "%"); //$NON-NLS-1$
+                            if (i < columns - 1) {
+                                builder.append(", "); //$NON-NLS-1$
+                            }
                         }
                     }
                     builder.append(")"); //$NON-NLS-1$
