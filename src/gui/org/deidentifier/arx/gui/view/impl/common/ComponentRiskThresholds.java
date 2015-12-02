@@ -16,6 +16,9 @@
  */
 package org.deidentifier.arx.gui.view.impl.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -25,6 +28,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -35,22 +39,22 @@ import de.linearbits.swt.widgets.KnobColorProfile;
 import de.linearbits.swt.widgets.KnobRange;
 
 /**
- * A risk slider
+ * A component for configuring risk thresholds
  * 
  * @author Fabian Prasser
  */
 public class ComponentRiskThresholds {
 
     /** View */
-    private static final String CAPTION = Resources.getMessage("ComponentRiskThresholds.4"); //$NON-NLS-1$
+    private static final String    CAPTION  = Resources.getMessage("ComponentRiskThresholds.4"); //$NON-NLS-1$
     /** View */
-    private static final String LABEL1 = Resources.getMessage("ComponentRiskThresholds.0"); //$NON-NLS-1$
+    private static final String    LABEL1   = Resources.getMessage("ComponentRiskThresholds.0"); //$NON-NLS-1$
     /** View */
-    private static final String LABEL2 = Resources.getMessage("ComponentRiskThresholds.1"); //$NON-NLS-1$
+    private static final String    LABEL2   = Resources.getMessage("ComponentRiskThresholds.1"); //$NON-NLS-1$
     /** View */
-    private static final String LABEL3 = Resources.getMessage("ComponentRiskThresholds.2"); //$NON-NLS-1$
+    private static final String    LABEL3   = Resources.getMessage("ComponentRiskThresholds.2"); //$NON-NLS-1$
     /** View */
-    private static final String LABEL4 = Resources.getMessage("ComponentRiskThresholds.3"); //$NON-NLS-1$
+    private static final String    LABEL4   = Resources.getMessage("ComponentRiskThresholds.3"); //$NON-NLS-1$
 
     /** Constant */
     private static final int       MIN_KNOB = 30;
@@ -69,6 +73,9 @@ public class ComponentRiskThresholds {
     private final KnobColorProfile defaultColorProfile;
     /** Color profile */
     private final KnobColorProfile focusedColorProfile;
+    
+    /** Model*/
+    private final List<SelectionListener> listeners = new ArrayList<SelectionListener>();
 
     /**
      * Creates a new instance
@@ -132,21 +139,111 @@ public class ComponentRiskThresholds {
         createLabel(base, bar4);
     }
     
-    private void createLabel(Composite root, String text) {
-
-        // Label
-        CLabel label = new CLabel(root, SWT.CENTER);
-        label.setText(text);
-        label.setLayoutData(SWTUtil.createFillHorizontallyGridData(true, 2));
-        label.setToolTipText(text);
-
+    /**
+     * Adds a selection listener
+     * @param listener
+     */
+    public void addSelectionListener(SelectionListener listener) {
+        this.listeners.add(listener);
     }
 
+    /**
+     * Gets a threshold
+     * @return
+     */
+    public double getThresholdHighestRisk() {
+        return bar3.getValue();
+    }
+
+    /**
+     * Gets a threshold
+     * @return
+     */
+    public double getThresholdIndividualRecords() {
+        return bar1.getValue();
+    }
+
+    /**
+     * Gets a threshold
+     * @return
+     */
+    public double getThresholdRecordsAtRisk() {
+        return bar2.getValue();
+    }
+    
+    /**
+     * Gets a threshold
+     * @return
+     */
+    public double getThresholdSuccessRate() {
+        return bar4.getValue();
+    }
+
+    /**
+     * Sets layout data
+     * @param data
+     */
+    public void setLayoutData(Object data) {
+        this.root.setLayoutData(data);
+    }
+
+    /**
+     * Sets a threshold
+     * @param arg0
+     */
+    public void setThresholdHighestRisk(double arg0) {
+        bar3.setValue(arg0);
+    }
+
+    /**
+     * Sets a threshold
+     * @param arg0
+     */
+    public void setThresholdIndividualRecords(double arg0) {
+        bar1.setValue(arg0);
+    }
+
+    /**
+     * Sets a threshold
+     * @param arg0
+     */
+    public void setThresholdRecordsAtRisk(double arg0) {
+        bar2.setValue(arg0);
+    }
+
+    /**
+     * Sets a threshold
+     * @param arg0
+     */
+    public void setThresholdSuccessRate(double arg0) {
+        bar4.setValue(arg0);
+    }
+
+    /**
+     * Creates a knob
+     * @param root
+     * @param text
+     * @return
+     */
+    private Knob<Double> createKnob(Composite root, String text) {
+        Knob<Double> knob = new Knob<Double>(root, SWT.NULL, new KnobRange.Double(0d, 100d));
+        knob.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).hint(MIN_KNOB, MIN_KNOB).create());
+        knob.setDefaultColorProfile(defaultColorProfile);
+        knob.setFocusedColorProfile(focusedColorProfile);
+        knob.setToolTipText(text);
+        return knob;
+    }
+
+    /**
+     * Creates a label for a knob
+     * @param root
+     * @param knob
+     */
     private void createLabel(final Composite root, 
                              final Knob<Double> knob) {
 
         // Label
-        String text = SWTUtil.getPrettyString(knob.getValue())+"%"; //$NON-NLS-1$
+        String text = "100%"; //$NON-NLS-1$
         final CLabel label = new CLabel(root, SWT.LEFT);
         label.setText(text);
         GridData data = SWTUtil.createFillHorizontallyGridData();
@@ -161,24 +258,26 @@ public class ComponentRiskThresholds {
                 String text = SWTUtil.getPrettyString(knob.getValue())+"%"; //$NON-NLS-1$
                 label.setText(text);
                 label.setToolTipText(text);
+                
+                // Cascade
+                for (SelectionListener listener : listeners) {
+                    listener.widgetSelected(arg0);
+                }
             }
         });
     }
 
-    private Knob<Double> createKnob(Composite root, String text) {
-        Knob<Double> knob = new Knob<Double>(root, SWT.NULL, new KnobRange.Double(0d, 100d));
-        knob.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).hint(MIN_KNOB, MIN_KNOB).create());
-        knob.setDefaultColorProfile(defaultColorProfile);
-        knob.setFocusedColorProfile(focusedColorProfile);
-        knob.setToolTipText(text);
-        return knob;
-    }
-
     /**
-     * Sets layout data
-     * @param data
+     * Creates a label
+     * @param root
+     * @param text
      */
-    public void setLayoutData(Object data) {
-        this.root.setLayoutData(data);
+    private void createLabel(Composite root, String text) {
+
+        // Label
+        CLabel label = new CLabel(root, SWT.CENTER);
+        label.setText(text);
+        label.setLayoutData(SWTUtil.createFillHorizontallyGridData(true, 2));
+        label.setToolTipText(text);
     }
 }
