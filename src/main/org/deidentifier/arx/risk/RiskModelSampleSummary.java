@@ -75,7 +75,7 @@ public class RiskModelSampleSummary {
          * Proportion of records that can be re-identified on average
          * @return
          */
-        public double getProportionOfRecordsThatCanBeReIdentifiedOnAverage() {
+        public double getSuccessRate() {
             return rC;
         }
     }
@@ -126,7 +126,7 @@ public class RiskModelSampleSummary {
          * Maximum probability of re-identification
          * @return
          */
-        public double getMaximumProbabilityOfReIdentification() {
+        public double getHighestRisk() {
             return rB;
         }
 
@@ -134,7 +134,7 @@ public class RiskModelSampleSummary {
          * Proportion of records that can be re-identified on average
          * @return
          */
-        public double getProportionOfRecordsThatCanBeReIdentifiedOnAverage() {
+        public double getSuccessRate() {
             return rC;
         }
 
@@ -142,7 +142,7 @@ public class RiskModelSampleSummary {
          * Proportion of records with risk above threshold
          * @return
          */
-        public double getProportionOfRecordsWithRiskAboveThreshold() {
+        public double getRecordsAtRisk() {
             return rA;
         }
     }

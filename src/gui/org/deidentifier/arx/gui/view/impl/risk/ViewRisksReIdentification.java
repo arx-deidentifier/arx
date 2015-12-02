@@ -301,23 +301,23 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
                 handleThresholdUpdateInSettings();
 
                 // Update views
-                prosecutor1.setRisk(prosecutor.getProportionOfRecordsWithRiskAboveThreshold());
+                prosecutor1.setRisk(prosecutor.getRecordsAtRisk());
                 prosecutor1.setThreshold(model.getRiskModel().getRiskThresholdRecordsAtRisk());
-                prosecutor2.setRisk(prosecutor.getMaximumProbabilityOfReIdentification());
+                prosecutor2.setRisk(prosecutor.getHighestRisk());
                 prosecutor2.setThreshold(model.getRiskModel().getRiskThresholdHighestRisk());
-                prosecutor3.setRisk(prosecutor.getProportionOfRecordsThatCanBeReIdentifiedOnAverage());
+                prosecutor3.setRisk(prosecutor.getSuccessRate());
                 prosecutor3.setThreshold(model.getRiskModel().getRiskThresholdSuccessRate());
 
                 // Update views
-                journalist1.setRisk(journalist.getProportionOfRecordsWithRiskAboveThreshold());
+                journalist1.setRisk(journalist.getRecordsAtRisk());
                 journalist1.setThreshold(model.getRiskModel().getRiskThresholdRecordsAtRisk());
-                journalist2.setRisk(journalist.getMaximumProbabilityOfReIdentification());
+                journalist2.setRisk(journalist.getHighestRisk());
                 journalist2.setThreshold(model.getRiskModel().getRiskThresholdHighestRisk());
-                journalist3.setRisk(journalist.getProportionOfRecordsThatCanBeReIdentifiedOnAverage());
+                journalist3.setRisk(journalist.getSuccessRate());
                 journalist3.setThreshold(model.getRiskModel().getRiskThresholdSuccessRate());
                 
                 // Update views
-                marketer1.setRisk(marketer.getProportionOfRecordsThatCanBeReIdentifiedOnAverage());
+                marketer1.setRisk(marketer.getSuccessRate());
                 marketer1.setThreshold(model.getRiskModel().getRiskThresholdSuccessRate());
 
                 // Layout
