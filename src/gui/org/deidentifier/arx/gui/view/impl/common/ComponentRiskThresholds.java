@@ -111,11 +111,8 @@ public class ComponentRiskThresholds {
         base.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).create());
 
         // Layout
-        GridLayout layout = SWTUtil.createGridLayout(6);
-        layout.makeColumnsEqualWidth = true;
-        layout.marginHeight = 0;
-        layout.marginTop = 0;
-        layout.marginBottom = 0;
+        GridLayout layout = SWTUtil.createGridLayout(6, true);
+        layout.horizontalSpacing = 0;
         layout.verticalSpacing = 0;
         base.setLayout(layout);
         
@@ -242,11 +239,10 @@ public class ComponentRiskThresholds {
 
         // Label
         String text = "100%"; //$NON-NLS-1$
-        final CLabel label = new CLabel(root, SWT.LEFT);
+        final CLabel label = new CLabel(root, SWT.NONE);
         label.setText(text);
-        GridData data = SWTUtil.createFillGridData();
-        data.horizontalAlignment = SWT.LEFT;
-        label.setLayoutData(data);
+        label.setAlignment(SWT.LEFT);
+        label.setLayoutData(SWTUtil.createFillGridData());
         label.setToolTipText(text);
         
         // Listen
