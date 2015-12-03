@@ -18,14 +18,12 @@
 package org.deidentifier.arx.metric.v2;
 
 import java.util.Arrays;
-import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -323,14 +321,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         }
    
         // Determine total number of tuples
-        this.tuples = input.getDataLength();
-        if (config.containsCriterion(DPresence.class)) {
-            Set<DPresence> criteria = config.getCriteria(DPresence.class);
-            if (criteria.size() > 1) { 
-                throw new IllegalStateException("Only one d-presence criterion supported!"); 
-            } 
-            this.tuples = criteria.iterator().next().getSubset().getArray().length;   
-        } 
+        this.tuples = (double)super.getNumRecords(config, input);
         
         // Min and max
         double[] min = new double[getDimensions()];

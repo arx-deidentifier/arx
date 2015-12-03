@@ -24,6 +24,10 @@ import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.RowSet;
+import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -964,7 +968,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public boolean isIndependent() {
         return independent;
     }
-
     /**
      * Returns false if the metric is non-monotone using suppression.
      *
@@ -982,7 +985,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public final boolean isMultiDimensional(){
         return (this instanceof AbstractMetricMultiDimensional);
     }
-    
+
     /**
      * Returns true if the metric is weighted.
      *
@@ -1000,7 +1003,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public String toString() {
         return this.getClass().getSimpleName();
     }
-
+    
     /**
      * Evaluates the metric for the given node.
      *
@@ -1009,8 +1012,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return the double
      */
     protected abstract InformationLossWithBound<T> getInformationLossInternal(final Transformation node, final HashGroupify groupify);
-    
- 
+
     /**
      * Returns the information loss that would be induced by suppressing the given entry. The loss
      * is not necessarily consistent with the loss that is computed by 
@@ -1021,7 +1023,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     protected abstract InformationLossWithBound<T> getInformationLossInternal(final Transformation node, HashGroupifyEntry entry);
-
+    
+ 
     /**
      * Returns a lower bound for the information loss for the given node. 
      * This can be used to expose the results of monotonic shares of a metric,
@@ -1049,6 +1052,42 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     protected abstract T getLowerBoundInternal(final Transformation node, final HashGroupify groupify);
+
+    /**
+     * Returns the number of records
+     * @param config
+     * @param input
+     * @return
+     */
+    protected int getNumRecords(ARXConfiguration config, Data input) {
+        if (config.containsCriterion(DPresence.class)) {
+            return config.getCriterion(DPresence.class).getSubset().getArray().length;
+        } else if (config.containsCriterion(KMap.class)) {
+            return config.getCriterion(KMap.class).getSubset().getArray().length;
+        } else if (config.containsCriterion(EDDifferentialPrivacy.class)) {
+            return config.getCriterion(EDDifferentialPrivacy.class).getSubset().getArray().length;
+        } else{
+            return input.getDataLength();
+        }
+    }
+
+    /**
+     * Returns the subset
+     * @param config
+     * @param input
+     * @return
+     */
+    protected RowSet getSubset(ARXConfiguration config) {
+        if (config.containsCriterion(DPresence.class)) {
+            return config.getCriterion(DPresence.class).getSubset().getSet();
+        } else if (config.containsCriterion(KMap.class)) {
+            return config.getCriterion(KMap.class).getSubset().getSet();
+        } else if (config.containsCriterion(EDDifferentialPrivacy.class)) {
+            return config.getCriterion(EDDifferentialPrivacy.class).getSubset().getSet();
+        } else{
+            return null;
+        }
+    }
 
     /**
      * Implement this to initialize the metric.

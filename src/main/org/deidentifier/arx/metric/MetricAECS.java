@@ -17,11 +17,8 @@
 
 package org.deidentifier.arx.metric;
 
-import java.util.Set;
-
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -146,14 +143,6 @@ public class MetricAECS extends MetricDefault {
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
         super.initializeInternal(manager, definition, input, hierarchies, config);
-        if (config.containsCriterion(DPresence.class)) {
-            Set<DPresence> crits = config.getCriteria(DPresence.class);
-            if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
-            for (DPresence dPresence : crits) {
-                rowCount = dPresence.getSubset().getArray().length;
-            }
-        } else {
-            rowCount = input.getDataLength();
-        }
+        rowCount = (double)super.getNumRecords(config, input);
     }
 }

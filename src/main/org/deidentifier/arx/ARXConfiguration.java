@@ -19,6 +19,7 @@ package org.deidentifier.arx;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleBasedCriterion;
@@ -227,6 +229,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         public boolean requires(int requirement) {
             return config.requires(requirement);
         }
+
+        /**
+         * Returns the data subset, if any
+         * @return
+         */
+        public DataSubset getSubset() {
+            return config.getSubset();
+        }
     }
 
     /**
@@ -408,17 +418,30 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public ARXConfiguration addCriterion(PrivacyCriterion c) {
         checkArgument(c);
                 
-        if ((c instanceof DPresence) && 
-            this.containsCriterion(DPresence.class)) {
-            throw new RuntimeException("Must not add more than one d-presence criterion");
-        } else if ((c instanceof KAnonymity) && 
-               this.containsCriterion(KAnonymity.class)) { 
-               throw new RuntimeException("Must not add more than one k-anonymity criterion"); 
+        if ((c instanceof DPresence) && this.containsCriterion(DPresence.class)) {
+            throw new RuntimeException("You must not add more than one d-presence criterion");
+        } 
+        if ((c instanceof DPresence) && this.containsCriterion(KMap.class)) {
+            if (!Arrays.equals(((DPresence)c).getSubset().getArray(), this.getCriterion(KMap.class).getSubset().getArray())) {
+                throw new IllegalArgumentException("You must not use two different research subsets");
+            }
+        } 
+        if ((c instanceof KMap) && this.containsCriterion(DPresence.class)) {
+            if (!Arrays.equals(((KMap)c).getSubset().getArray(), this.getCriterion(DPresence.class).getSubset().getArray())) {
+                throw new IllegalArgumentException("You must not use two different research subsets");
+            }
+        } 
+        if ((c instanceof KMap) && this.containsCriterion(KMap.class)) { 
+            throw new RuntimeException("You must not add more than one k-map criterion"); 
+        } 
+        if ((c instanceof KAnonymity) && this.containsCriterion(KAnonymity.class)) { 
+               throw new RuntimeException("You must not add more than one k-anonymity criterion"); 
         }
         criteria.add(c);
         
         if (this.containsCriterion(EDDifferentialPrivacy.class) && 
-           (this.containsCriterion(DPresence.class) || this.containsCriterion(Inclusion.class))) {
+           (this.containsCriterion(DPresence.class) || this.containsCriterion(Inclusion.class) || 
+            this.containsCriterion(KMap.class))) {
             criteria.remove(c);
             throw new RuntimeException("Differential privacy must not be combined with a research subset");
         }
@@ -478,6 +501,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
                 clone = new DPresence(((DPresence)criterion).getDMin(),
                                       ((DPresence)criterion).getDMax(),
                                       ((DPresence)criterion).getSubset().getSubsetInstance(rowset));
+            } else if (criterion instanceof KMap) {
+                clone = new KMap(((KMap)criterion).getK(),
+                                 ((KMap)criterion).getSubset().getSubsetInstance(rowset));
             } else {
                 clone = criterion.clone();
             }
@@ -501,6 +527,24 @@ public class ARXConfiguration implements Serializable, Cloneable {
             if (clazz.isInstance(c)) { return true; }
         }
         return false;
+    }
+    
+    /**
+     * Returns the data subset, if any subset is defined.
+     * You may only call this, after the config has be initialized.
+     * @return
+     */
+    protected DataSubset getSubset() {
+        if (this.containsCriterion(DPresence.class)) {
+            return getCriterion(DPresence.class).getSubset();
+        }
+        if (this.containsCriterion(KMap.class)) {
+            return getCriterion(KMap.class).getSubset();
+        }
+        if (this.containsCriterion(EDDifferentialPrivacy.class)) {
+            return getCriterion(EDDifferentialPrivacy.class).getSubset();
+        }
+        return null;
     }
     
     /**
@@ -1040,20 +1084,16 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.requirements |= ARXConfiguration.REQUIREMENT_DISTRIBUTION;
         }
 
-        // Initialize: Always make sure that d-presence is initialized first, because
-        // the research subset needs to be available for initializing t-closeness
-        if (this.containsCriterion(DPresence.class)) {
-            this.getCriterion(DPresence.class).initialize(manager);
-        }
+        // Initialize
         for (PrivacyCriterion c : criteria) {
-            if (!(c instanceof DPresence)) {
-                c.initialize(manager);
-            }
+            c.initialize(manager);
         }
 
         int dataLength = 0;
         if (this.containsCriterion(DPresence.class)) {
             dataLength = this.getCriterion(DPresence.class).getSubset().getArray().length;
+        } else if (this.containsCriterion(KMap.class)) {
+            dataLength = this.getCriterion(KMap.class).getSubset().getArray().length;
         } else if (this.containsCriterion(EDDifferentialPrivacy.class)) {
             dataLength = this.getCriterion(EDDifferentialPrivacy.class).getSubset().getArray().length;
         } else {
@@ -1072,6 +1112,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
         List<PrivacyCriterion> list = new ArrayList<PrivacyCriterion>();
         if (this.containsCriterion(DPresence.class)) {
             list.add(this.getCriterion(DPresence.class));
+        }
+        if (this.containsCriterion(KMap.class)) {
+            list.add(this.getCriterion(KMap.class));
         }
         if (this.containsCriterion(DDisclosurePrivacy.class)) {
             list.addAll(this.getCriteria(DDisclosurePrivacy.class));

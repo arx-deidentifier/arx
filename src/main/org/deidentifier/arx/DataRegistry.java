@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.criteria.DPresence;
 
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
@@ -222,8 +221,8 @@ class DataRegistry {
      */
     protected void createInputSubset(ARXConfiguration config){
         
-        if (config.containsCriterion(DPresence.class)) {
-            this.inputSubset = createSubset(this.input, config.getCriterion(DPresence.class).getSubset());
+        if (config.getSubset() != null) {
+            this.inputSubset = createSubset(this.input, config.getSubset());
         } else {
             this.inputSubset = null;
         }
@@ -237,8 +236,8 @@ class DataRegistry {
      * @param config
      */
     protected void createOutputSubset(ARXNode node, ARXConfiguration config){
-        if (config.containsCriterion(DPresence.class)) {
-            this.outputSubset.put(node, createSubset(this.output.get(node), config.getCriterion(DPresence.class).getSubset()));
+        if (config.getSubset() != null) {
+            this.outputSubset.put(node, createSubset(this.output.get(node), config.getSubset()));
         } else {
             this.outputSubset.remove(node);
         }

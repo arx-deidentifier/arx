@@ -17,11 +17,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
-import java.util.Set;
-
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -223,14 +220,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
         }
 
         // Determine total number of tuples
-        this.tuples = (double) input.getDataLength();
-        if (config.containsCriterion(DPresence.class)) {
-            Set<DPresence> criteria = config.getCriteria(DPresence.class);
-            if (criteria.size() > 1) { 
-                throw new IllegalStateException("Only one d-presence criterion supported!"); 
-            }
-            this.tuples = (double) criteria.iterator().next().getSubset().getArray().length;
-        }
+        this.tuples = (double)super.getNumRecords(config, input);
         this.max *= this.tuples;
     }
 }

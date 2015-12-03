@@ -18,12 +18,10 @@
 package org.deidentifier.arx.metric.v2;
 
 import java.util.Arrays;
-import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -269,12 +267,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super.initializeInternal(manager, definition, input, hierarchies, config);
 
         // Obtain subset
-        RowSet subset = null;
-        if (config.containsCriterion(DPresence.class)) {
-            Set<DPresence> criterion = config.getCriteria(DPresence.class);
-            if (criterion.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported"); }
-            subset = criterion.iterator().next().getSubset().getSet();
-        } 
+        RowSet subset = super.getSubset(config);
         
         // Cardinalities
         this.cardinalities = new Cardinalities(input, subset, hierarchies);

@@ -17,11 +17,8 @@
 
 package org.deidentifier.arx.metric;
 
-import java.util.Set;
-
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -157,16 +154,7 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
             height[j] = hierarchies[j].getArray()[0].length - 1;
         }
         
-        int rowCount = 0;
-        if (config.containsCriterion(DPresence.class)) {
-            Set<DPresence> crits = config.getCriteria(DPresence.class);
-            if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
-            for (DPresence dPresence : crits) {
-                rowCount = dPresence.getSubset().getArray().length;
-            }
-        } else {
-            rowCount = input.getDataLength();
-        }
+        int rowCount = super.getNumRecords(config, input);
         this.cells = (double)rowCount * (double)input.getHeader().length;
     }
 }

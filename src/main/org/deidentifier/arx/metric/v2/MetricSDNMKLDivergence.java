@@ -20,12 +20,10 @@ package org.deidentifier.arx.metric.v2;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -243,16 +241,8 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
         }
 
         // Determine total number of tuples
-        this.tuples = (double) input.getDataLength();
-        DataSubset subset = null;
-        if (config.containsCriterion(DPresence.class)) {
-            Set<DPresence> criteria = config.getCriteria(DPresence.class);
-            if (criteria.size() > 1) { 
-                throw new IllegalStateException("Only one d-presence criterion supported!"); 
-            }
-            subset = criteria.iterator().next().getSubset();
-            this.tuples = (double) subset.getArray().length;
-        }
+        this.tuples = (double)super.getNumRecords(config, input);
+        RowSet subset = super.getSubset(config);
         
         // Tuple matcher
         this.matcher = new TupleMatcher(hierarchies, input.getArray());
@@ -266,7 +256,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
         // Groupify
        Map<TupleWrapper, Integer> groupify = new HashMap<TupleWrapper, Integer>();
        for (int row = 0; row < input.getDataLength(); row++) {
-           if (subset == null || subset.getSet().contains(row)) {
+           if (subset == null || subset.contains(row)) {
                TupleWrapper wrapper = new TupleWrapper(input.getArray()[row]);
                Integer count = groupify.get(wrapper);
                count = count == null ? 1 : count + 1;
@@ -278,7 +268,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
        this.max = 0d;
        this.inputDistribution = new double[input.getArray().length];
        for (int row = 0; row < input.getDataLength(); row++) {
-           if (subset == null || subset.getSet().contains(row)) {
+           if (subset == null || subset.contains(row)) {
                TupleWrapper wrapper = new TupleWrapper(input.getArray()[row]);
                double frequency = groupify.get(wrapper).doubleValue() / this.tuples;
                this.inputDistribution[row] = frequency ;

@@ -18,11 +18,9 @@
 package org.deidentifier.arx.metric.v2;
 
 import java.util.Arrays;
-import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -187,14 +185,8 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         setMax(max);
         
         // Store row count
-        if (config.containsCriterion(DPresence.class)) {
-            Set<DPresence> criterion = config.getCriteria(DPresence.class);
-            if (criterion.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported"); }
-            rowCount = (double)criterion.iterator().next().getSubset().getArray().length;
-        } else {
-            rowCount = (double)input.getDataLength();
-        }
-
+        rowCount = (double)super.getNumRecords(config, input);
+        
         // Store heights
         this.heights = new int[hierarchies.length];
         for (int j = 0; j < heights.length; j++) {
