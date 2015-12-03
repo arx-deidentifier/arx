@@ -118,6 +118,7 @@ public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisCon
     @Override
     protected void doReset() {
         jhc.setData(null, new JHCConfiguration("", "", MAX_SIZE, MAX_SIZE, gradient, layout)); //$NON-NLS-1$ //$NON-NLS-2$
+        setStatusEmpty();
     }
     
     @Override

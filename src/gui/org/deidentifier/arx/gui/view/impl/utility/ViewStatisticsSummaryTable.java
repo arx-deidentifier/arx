@@ -118,11 +118,15 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextDi
 
     @Override
     protected void doReset() {
-        table.setRedraw(false);
+        root.setRedraw(false);
+        if (this.manager != null) {
+            this.manager.stop();
+        }
         for (final TableItem i : table.getItems()) {
             i.dispose();
         }
-        table.setRedraw(true);
+        root.setRedraw(true);
+        setStatusEmpty();
     }
 
     @Override
@@ -151,7 +155,8 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextDi
             @Override
             public void onFinish() {
 
-                if (stopped) {
+                // Check
+                if (stopped || !isEnabled()) {
                     return;
                 }
 
@@ -181,7 +186,11 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextDi
 
             @Override
             public void onInterrupt() {
-                setStatusWorking();
+                if (!isEnabled()) {
+                    setStatusEmpty();
+                } else {
+                    setStatusWorking();
+                }
             }
 
             @Override

@@ -183,7 +183,8 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
             @Override
             public void onFinish() {
 
-                if (stopped) {
+                // Check
+                if (stopped || !isEnabled()) {
                     return;
                 }
 
@@ -222,7 +223,11 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
 
             @Override
             public void onInterrupt() {
-                setStatusWorking();
+                if (!isEnabled()) {
+                    setStatusEmpty();
+                } else {
+                    setStatusWorking();
+                }
             }
 
             @Override

@@ -125,10 +125,19 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
 
     @Override
     protected void doReset() {
-        
+        root.setRedraw(false);
         if (this.manager != null) {
             this.manager.stop();
         }
+        resetChart();
+        root.setRedraw(true);
+        setStatusEmpty();
+    }
+
+    /**
+     * Resets the chart
+     */
+    private void resetChart() {
         
         if (chart != null) {
             chart.dispose();
@@ -258,7 +267,8 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
             @Override
             public void onFinish() {
 
-                if (stopped) {
+                // Check
+                if (stopped || !isEnabled()) {
                     return;
                 }
 
@@ -294,7 +304,11 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
 
             @Override
             public void onInterrupt() {
-                setStatusWorking();
+                if (!isEnabled()) {
+                    setStatusEmpty();
+                } else {
+                    setStatusWorking();
+                }
             }
 
             @Override

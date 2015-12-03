@@ -173,7 +173,8 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
             @Override
             public void onFinish() {
 
-                if (stopped) {
+                // Check
+                if (stopped || !isEnabled()) {
                     return;
                 }
 
@@ -199,7 +200,11 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
 
             @Override
             public void onInterrupt() {
-                setStatusWorking();
+                if (!isEnabled()) {
+                    setStatusEmpty();
+                } else {
+                    setStatusWorking();
+                }
             }
 
             @Override

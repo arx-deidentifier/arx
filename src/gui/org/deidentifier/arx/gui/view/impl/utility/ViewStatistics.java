@@ -206,18 +206,17 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * Redraws the plot.
      */
     private void update() {
-        
 
         if (!this.status.isVisible()){
             return;
         }
 
-        if (!model.isVisualizationEnabled()) {
+        if (!this.isEnabled()) {
             this.doReset();
             this.setStatusEmpty();
             return;
         }
-
+        
         if (this.viewContext != null) {
             if (!isRunning()) {
                 this.status.setDone();
@@ -290,6 +289,14 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      */
     protected ModelPart getTarget() {
         return target;
+    }
+
+    /**
+     * Is this view enabled
+     * @return
+     */
+    protected boolean isEnabled() {
+        return (model != null && model.isVisualizationEnabled());
     }
 
     /**

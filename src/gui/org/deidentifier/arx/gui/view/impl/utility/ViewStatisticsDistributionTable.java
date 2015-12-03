@@ -96,6 +96,7 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
             this.manager.stop();
         }
         this.table.clear();
+        setStatusEmpty();
     }
 
     @Override
@@ -126,7 +127,8 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
             @Override
             public void onFinish() {
 
-                if (stopped) {
+                // Check
+                if (stopped || !isEnabled()) {
                     return;
                 }
 
@@ -150,7 +152,11 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
 
             @Override
             public void onInterrupt() {
-                setStatusWorking();
+                if (!isEnabled()) {
+                    setStatusEmpty();
+                } else {
+                    setStatusWorking();
+                }
             }
 
             @Override

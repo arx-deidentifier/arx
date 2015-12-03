@@ -171,7 +171,8 @@ public class ViewStatisticsRegressionInput extends ViewStatistics<AnalysisContex
             @Override
             public void onFinish() {
 
-                if (stopped) {
+                // Check
+                if (stopped || !isEnabled()) {
                     return;
                 }
 
@@ -197,7 +198,11 @@ public class ViewStatisticsRegressionInput extends ViewStatistics<AnalysisContex
 
             @Override
             public void onInterrupt() {
-                setStatusWorking();
+                if (!isEnabled()) {
+                    setStatusEmpty();
+                } else {
+                    setStatusWorking();
+                }
             }
 
             @Override

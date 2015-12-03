@@ -104,6 +104,7 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
             this.manager.stop();
         }
         this.table.clear();
+        setStatusEmpty();
     }
 
     @Override
@@ -134,7 +135,8 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
             @Override
             public void onFinish() {
                 
-                if (stopped) {
+                // Check
+                if (stopped || !isEnabled()) {
                     return;
                 }
 
@@ -168,7 +170,11 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
 
             @Override
             public void onInterrupt() {
-                setStatusWorking();
+                if (!isEnabled()) {
+                    setStatusEmpty();
+                } else {
+                    setStatusWorking();
+                }
             }
 
             @Override
