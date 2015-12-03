@@ -26,7 +26,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.risk.HIPAAIdentifierMatch;
 
 /**
- * This class implements an example of how to use the HIPAA identifier validator.
+ * This class implements an example of how to find HIPAA identifiers.
  * @author David Gassmann
  * @author Fabian Prasser
  * @author Florian Kohlmayer
