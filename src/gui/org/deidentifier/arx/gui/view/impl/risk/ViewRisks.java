@@ -189,16 +189,19 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      */
     private void update() {
         
-        if (!this.status.isVisible()){
-            return;
-        }
-
+        // Disable the view
         if (!this.isEnabled()) {
             this.doReset();
             this.setStatusEmpty();
             return;
         }
 
+        // Check visibility
+        if (!this.status.isVisible()){
+            return;
+        }
+
+        // Check if already done
         if (this.viewContext != null) {
             if (!isRunning()) {
                 this.status.setDone();
@@ -206,6 +209,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
             return;
         }
 
+        // Update
         T context = createViewConfig(this.context);
         if (context.isValid()) {
 

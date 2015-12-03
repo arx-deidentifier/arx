@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Control;
  * @param <T>
  */
 public abstract class ViewStatistics<T extends AnalysisContextVisualization> implements IView {
-    
+
     /** Our users are patient. */
     public static final int       MINIMAL_WORKING_TIME = 500;
 
@@ -65,7 +65,10 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
 
     /** Internal stuff. */
     private final boolean         dependsOnAttribute;
-    
+
+    /** Is this view enabled */
+    private boolean               enabled              = false;
+
 	/**
      * Creates a new instance.
      *
@@ -201,22 +204,32 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
             this.update();
         }
     }
-    
+
     /**
      * Redraws the plot.
      */
     private void update() {
 
+        // Disable the view
+        if (model != null && !model.isVisualizationEnabled()) {
+            this.doReset();
+            this.setStatusEmpty();
+            this.enabled = false;
+            return;
+        }
+
+        // Check visibility
         if (!this.status.isVisible()){
             return;
         }
 
-        if (!this.isEnabled()) {
-            this.doReset();
-            this.setStatusEmpty();
-            return;
+        // Enable the view
+        if (model != null && model.isVisualizationEnabled() && !this.enabled) {
+            this.enabled = true;
+            this.viewContext = null;
         }
         
+        // Check if already done
         if (this.viewContext != null) {
             if (!isRunning()) {
                 this.status.setDone();
@@ -224,6 +237,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
             return;
         }
         
+        // Update
         T context = createViewConfig(this.context);
         if (context.isValid()) {
             
@@ -266,7 +280,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * @param context
      */
     protected abstract void doUpdate(T context);
-
+    
     /**
      * Returns the model
      * @return
@@ -274,7 +288,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected Model getModel() {
         return this.model;
     }
-    
+
     /**
      * Overwrite this to return a progress provider
      * @return
@@ -290,13 +304,13 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected ModelPart getTarget() {
         return target;
     }
-
+    
     /**
      * Is this view enabled
      * @return
      */
     protected boolean isEnabled() {
-        return (model != null && model.isVisualizationEnabled());
+        return enabled;
     }
 
     /**
