@@ -130,6 +130,9 @@ public class LayoutRisks implements ILayout {
                 if (layoutBottomLeft.getSelectionIndex() == 4) {
                     layoutTopLeft.setSelectionIdex(2);
                     layoutTopRight.setSelectionIdex(2);
+                } else if (layoutBottomLeft.getSelectionIndex() == 0) {
+                    layoutTopLeft.setSelectionIdex(3);
+                    layoutTopRight.setSelectionIdex(3);
                 }
                 
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
@@ -139,6 +142,12 @@ public class LayoutRisks implements ILayout {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 layoutBottomLeft.setSelectionIdex(layoutBottomRight.getSelectionIndex());
+                
+                if (layoutBottomRight.getSelectionIndex() == 0) {
+                    layoutTopLeft.setSelectionIdex(3);
+                    layoutTopRight.setSelectionIdex(3);
+                }
+                
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
             }
         });
@@ -150,6 +159,9 @@ public class LayoutRisks implements ILayout {
                 
                 if (layoutTopLeft.getSelectionIndex() == 2) {
                     layoutBottomLeft.setSelectionIdex(4);
+                } else if (layoutTopLeft.getSelectionIndex() == 3) {
+                    layoutBottomLeft.setSelectionIdex(0);
+                    layoutBottomRight.setSelectionIdex(0);
                 }
                 
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
@@ -162,6 +174,9 @@ public class LayoutRisks implements ILayout {
 
                 if (layoutTopRight.getSelectionIndex() == 2) {
                     layoutBottomLeft.setSelectionIdex(4);
+                } else if (layoutTopRight.getSelectionIndex() == 3) {
+                    layoutBottomLeft.setSelectionIdex(0);
+                    layoutBottomRight.setSelectionIdex(0);
                 }
                 
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
