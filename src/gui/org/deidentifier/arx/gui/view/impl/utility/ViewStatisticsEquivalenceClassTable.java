@@ -61,9 +61,9 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
      * @param reset
      */
     public ViewStatisticsEquivalenceClassTable(final Composite parent,
-                                     final Controller controller,
-                                     final ModelPart target,
-                                     final ModelPart reset) {
+                                               final Controller controller,
+                                               final ModelPart target,
+                                               final ModelPart reset) {
         
         super(parent, controller, target, reset, false);
         this.manager = new AnalysisManager(parent.getDisplay());
@@ -147,11 +147,15 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
     }
     @Override
     protected void doReset() {
+        if (this.manager != null) {
+            this.manager.stop();
+        }
         table.setRedraw(false);
         for (final TableItem i : table.getItems()) {
             i.dispose();
         }
         table.setRedraw(true);
+        setStatusEmpty();
     }
 
     @Override
@@ -224,7 +228,7 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
             @Override
             public void run() throws InterruptedException {
                 
-                // Timestamp
+                // Time stamp
                 long time = System.currentTimeMillis();
                 
                 // Perform work
