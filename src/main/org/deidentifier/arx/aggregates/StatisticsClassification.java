@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.mahout.classifier.sgd.L1;
+import org.apache.mahout.classifier.sgd.OnlineLogisticRegression;
 import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.Vector;
 import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
@@ -34,8 +36,6 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
-import org.deidentifier.arx.aggregates.classifiers.Classifier;
-import org.deidentifier.arx.aggregates.classifiers.MultiClassLogisticRegression;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
@@ -46,6 +46,80 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
  * @author Fabian Prasser
  */
 public class StatisticsClassification {
+    
+    /**
+     * Implements a classifier
+     * @author Fabian Prasser
+     */
+    private interface Classifier {
+
+        /**
+         * Classify
+         * @param features
+         * @return
+         */
+        public int classify(Vector features);
+
+        /**
+         * Close
+         */
+        public void close();
+
+        /**
+         * Train
+         * @param features
+         * @param clazz
+         */
+        public void train(Vector features, int clazz);
+    }
+    
+    /**
+     * Implements a classifier
+     * @author Fabian Prasser
+     */
+    private class MultiClassLogisticRegression implements Classifier {
+        
+        /** Instance*/
+        private final OnlineLogisticRegression lr;
+
+        /**
+         * Creates a new instance
+         * @param features
+         * @param classes
+         */
+        public MultiClassLogisticRegression(int features, int classes) {
+
+            // Check
+            if (features == 0) {
+                features = 1;
+            }
+
+            // Prepare classifier
+            this.lr = new OnlineLogisticRegression(classes, features, new L1());
+            
+            // Configure
+            this.lr.learningRate(1);
+            this.lr.alpha(1);
+            this.lr.lambda(0.000001);
+            this.lr.stepOffset(10000);
+            this.lr.decayExponent(0.2);
+        }
+
+        @Override
+        public int classify(Vector features) {
+            return lr.classifyFull(features).maxValueIndex();
+        }
+
+        @Override
+        public void close() {
+            lr.close();
+        }
+
+        @Override
+        public void train(Vector features, int clazz) {
+            lr.train(clazz, features);
+        }
+    }
 
     /** Features and class: last element is the class */
     private final int[]          indexes;
