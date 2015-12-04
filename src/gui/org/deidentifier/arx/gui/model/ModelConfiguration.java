@@ -30,6 +30,7 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
 
@@ -101,6 +102,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
         c.hierarchies = new HashMap<String, Hierarchy>(hierarchies);
         if (this.containsCriterion(DPresence.class)) {
             c.researchSubset = this.getCriterion(DPresence.class).getSubset().getSet();
+        } else if (this.containsCriterion(KMap.class)) {
+            c.researchSubset = this.getCriterion(KMap.class).getSubset().getSet();
         } else {
             c.researchSubset = this.researchSubset.clone();
         }

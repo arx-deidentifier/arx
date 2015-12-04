@@ -42,6 +42,7 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
+import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -403,6 +404,11 @@ public class Model implements Serializable {
 		    config.addCriterion(this.kAnonymityModel.getCriterion(this));
 		}
 
+        if (this.kMapModel != null &&
+            this.kMapModel.isEnabled()) {
+            config.addCriterion(this.kMapModel.getCriterion(this));
+        }
+
         if (this.dPresenceModel != null && 
             this.dPresenceModel.isEnabled()) {
             config.addCriterion(this.dPresenceModel.getCriterion(this));
@@ -447,11 +453,11 @@ public class Model implements Serializable {
         }
 
         // Allow adding and removing tuples
-        if (!config.containsCriterion(DPresence.class)){
+        if (!config.containsCriterion(DPresence.class) || 
+            !config.containsCriterion(KMap.class)){
             if (config.getInput() != null && config.getResearchSubset() != null && 
                 config.getResearchSubset().size() != config.getInput().getHandle().getNumRows()) {
-                    DataSubset subset = DataSubset.create(config.getInput(), 
-                                                          config.getResearchSubset());
+                    DataSubset subset = DataSubset.create(config.getInput(), config.getResearchSubset());
                     config.addCriterion(new Inclusion(subset));
             }
         }
