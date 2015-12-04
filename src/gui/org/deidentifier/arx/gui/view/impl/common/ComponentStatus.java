@@ -154,9 +154,9 @@ public class ComponentStatus {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout());
         ComponentStatusLabel label = new ComponentStatusLabel(composite, SWT.CENTER);
-        InputStream stream = controller.getResources().getStream("working.gif");
+        InputStream stream = controller.getResources().getStream("working.gif"); //$NON-NLS-1$
         try {
-            label.setGIF(stream); //$NON-NLS-1$
+            label.setGIF(stream);
         } finally {
             if (stream != null) {
                 try {
