@@ -144,7 +144,7 @@ public class ViewTransformationSettings implements IView {
         d2.widthHint = LABEL_WIDTH;
         d2.heightHint = LABEL_HEIGHT;
         labelOutliers.setLayoutData(d2);
-        labelOutliers.setText("0"); //$NON-NLS-1$
+        labelOutliers.setText("0%"); //$NON-NLS-1$
 
         sliderOutliers = new Scale(outliersBase, SWT.HORIZONTAL);
         sliderOutliers.setLayoutData(SWTUtil.createFillHorizontallyGridData());
@@ -158,8 +158,7 @@ public class ViewTransformationSettings implements IView {
                      .setAllowedOutliers(SWTUtil.sliderToDouble(0d,
                                                             1d,
                                                             sliderOutliers.getSelection()));
-                labelOutliers.setText(SWTUtil.getPrettyString(model.getInputConfig()
-                                                             .getAllowedOutliers()));
+                labelOutliers.setText(SWTUtil.getPrettyString(model.getInputConfig().getAllowedOutliers()*100d)+"%");
                 if (model.getInputConfig().getAllowedOutliers() != 0) {
                     buttonPracticalMonotonicity.setEnabled(true);
                 } else {
@@ -210,7 +209,7 @@ public class ViewTransformationSettings implements IView {
                 if (precomputedVariant.getSelection()) {
                     precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getPrecomputationThreshold()));
                     precomputationThreshold.setEnabled(true);
-                    labelThreshold.setText(SWTUtil.getPrettyString((model.getMetricConfiguration().getPrecomputationThreshold())));
+                    labelThreshold.setText(SWTUtil.getPrettyString((model.getMetricConfiguration().getPrecomputationThreshold()*100d))+"%");
                 } else {
                     precomputationThreshold.setEnabled(false);
                 }
@@ -223,7 +222,7 @@ public class ViewTransformationSettings implements IView {
         d24.widthHint = LABEL_WIDTH;
         d24.heightHint = LABEL_HEIGHT;
         labelThreshold.setLayoutData(d24);
-        labelThreshold.setText("0"); //$NON-NLS-1$
+        labelThreshold.setText("0%"); //$NON-NLS-1$
 
         precomputationThreshold = new Scale(group, SWT.HORIZONTAL);
         precomputationThreshold.setLayoutData(SWTUtil.createFillHorizontallyGridData());
@@ -235,7 +234,7 @@ public class ViewTransformationSettings implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getMetricConfiguration().setPrecomputationThreshold(SWTUtil.sliderToDouble(0d, 1d, precomputationThreshold.getSelection()));
-                labelThreshold.setText(SWTUtil.getPrettyString(model.getMetricConfiguration().getPrecomputationThreshold()));
+                labelThreshold.setText(SWTUtil.getPrettyString(model.getMetricConfiguration().getPrecomputationThreshold()*100d)+"%");
             }
         });
 
@@ -258,11 +257,11 @@ public class ViewTransformationSettings implements IView {
         this.precomputedVariant.setEnabled(supported);
         this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, threshold));
         this.precomputationThreshold.setEnabled(supported);
-        this.labelThreshold.setText(SWTUtil.getPrettyString(threshold));
+        this.labelThreshold.setText(SWTUtil.getPrettyString(threshold*100d)+"%");
         
         // Other stuff
         sliderOutliers.setSelection(SWTUtil.doubleToSlider(0d, 0.999d, model.getInputConfig().getAllowedOutliers()));
-        labelOutliers.setText(SWTUtil.getPrettyString(model.getInputConfig().getAllowedOutliers()));
+        labelOutliers.setText(SWTUtil.getPrettyString(model.getInputConfig().getAllowedOutliers()*100d)+"%");
         buttonPracticalMonotonicity.setSelection(model.getInputConfig().isPracticalMonotonicity());
         
         // Enable
