@@ -98,7 +98,7 @@ public class ViewSubsetDefinition implements IView{
     public void reset() {
         size.setText("0"); //$NON-NLS-1$
         total.setText("0"); //$NON-NLS-1$
-        percent.setText("0"); //$NON-NLS-1$
+        percent.setText("0%"); //$NON-NLS-1$
         origin.setText(""); //$NON-NLS-1$
         disable();
     }
@@ -179,7 +179,7 @@ public class ViewSubsetDefinition implements IView{
         Composite group = folder.createItem(Resources.getMessage("SubsetDefinitionView.0"), null); //$NON-NLS-1$
         folder.setSelection(0);
         GridLayout layout = new GridLayout();
-        layout.numColumns = 9;
+        layout.numColumns = 8;
         layout.makeColumnsEqualWidth = false;
         group.setLayout(layout);
         group.setLayoutData(SWTUtil.createFillGridData());
@@ -199,11 +199,9 @@ public class ViewSubsetDefinition implements IView{
         l = new Label(group, SWT.NONE);
         l.setText("="); //$NON-NLS-1$
         percent = new Text(group, SWT.BORDER);
-        percent.setText("0"); //$NON-NLS-1$
+        percent.setText("0%"); //$NON-NLS-1$
         percent.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         percent.setEditable(false);
-        l = new Label(group, SWT.NONE);
-        l.setText("%"); //$NON-NLS-1$
         l = new Label(group, SWT.NONE);
         l.setText(Resources.getMessage("SubsetDefinitionView.5")); //$NON-NLS-1$
         origin = new Text(group, SWT.BORDER);
@@ -257,7 +255,7 @@ public class ViewSubsetDefinition implements IView{
         double percent = (double)size / (double)total * 100d;
         this.size.setText(SWTUtil.getPrettyString(size));
         this.total.setText(SWTUtil.getPrettyString(total));
-        this.percent.setText(SWTUtil.getPrettyString(percent));
+        this.percent.setText(SWTUtil.getPrettyString(percent)+"%");
         this.origin.setText(model.getSubsetOrigin());
     }
 }
