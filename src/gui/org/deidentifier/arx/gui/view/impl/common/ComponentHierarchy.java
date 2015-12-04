@@ -129,12 +129,18 @@ public class ComponentHierarchy {
         this.listener = listener;
         this.createTable(parent);
     }
+
+    /**
+     * Clears the hierarchy.
+     */
+    public void actionReset() {
+        setHierarchy(null);
+    }
     
     /**
      * Clears the hierarchy.
      */
     public void actionClear() {
-        
         setHierarchy(null);
         this.triggerChangedEvent();
     }
