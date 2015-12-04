@@ -283,6 +283,7 @@ public class ViewAttributeTransformation implements IView {
         if (cmbMin != null && cmbMin.getItemCount() != 0) cmbMin.select(0);
         if (cmbMax != null && cmbMax.getItemCount() != 0) cmbMax.select(cmbMax.getItemCount() - 1);
         if (cmbFunction != null && cmbFunction.getItemCount() != 0) cmbFunction.select(0);
+        if (hierarchy != null) hierarchy.actionClear();
         SWTUtil.disable(root);
     }
     
