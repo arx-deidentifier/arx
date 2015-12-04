@@ -259,6 +259,13 @@ public class ViewCriteriaList implements IView {
             item.setData(model.getKAnonymityModel());
         }
 
+        if (model.getKMapModel().isEnabled()) {
+            TableItem item = new TableItem(table, SWT.NONE);
+            item.setText(new String[] { "", model.getKMapModel().toString(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
+            item.setImage(0, symbolK);
+            item.setData(model.getKMapModel());
+        }
+
         if (model.getDPresenceModel().isEnabled()) {
             TableItem item = new TableItem(table, SWT.NONE);
             item.setText(new String[] { "", model.getDPresenceModel().toString(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
