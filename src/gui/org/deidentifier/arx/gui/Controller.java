@@ -307,6 +307,9 @@ public class Controller implements IView {
         if (model.getKAnonymityModel().isEnabled()) {
             criteria.add(model.getKAnonymityModel());
         }
+        if (model.getKMapModel().isEnabled()) {
+            criteria.add(model.getKMapModel());
+        }
         if (model.getDPresenceModel().isEnabled()) {
             criteria.add(model.getDPresenceModel());
         }
