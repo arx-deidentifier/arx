@@ -213,29 +213,32 @@ public class Model implements Serializable {
     private ModelRisk                             riskModel                       = null;
 
     /* *****************************************
-     * PRIVACY CRITERIA
-     ******************************************/
+     * PRIVACY CRITERIA****************************************
+     */
 
     /** Model for a specific privacy criterion. */
-    private ModelDPresenceCriterion               dPresenceModel                  = new ModelDPresenceCriterion();
+    private ModelDPresenceCriterion                       dPresenceModel                  = new ModelDPresenceCriterion();
 
     /** Model for a specific privacy criterion. */
-    private ModelKAnonymityCriterion              kAnonymityModel                 = new ModelKAnonymityCriterion();
+    private ModelKMapCriterion                            kMapModel                       = new ModelKMapCriterion();
 
     /** Model for a specific privacy criterion. */
-    private Map<String, ModelLDiversityCriterion> lDiversityModel                 = new HashMap<String, ModelLDiversityCriterion>();
+    private ModelKAnonymityCriterion                      kAnonymityModel                 = new ModelKAnonymityCriterion();
 
     /** Model for a specific privacy criterion. */
-    private Map<String, ModelTClosenessCriterion> tClosenessModel                 = new HashMap<String, ModelTClosenessCriterion>();
+    private Map<String, ModelLDiversityCriterion>         lDiversityModel                 = new HashMap<String, ModelLDiversityCriterion>();
 
     /** Model for a specific privacy criterion. */
-    private Set<ModelRiskBasedCriterion>          riskBasedModel                  = new HashSet<ModelRiskBasedCriterion>();
+    private Map<String, ModelTClosenessCriterion>         tClosenessModel                 = new HashMap<String, ModelTClosenessCriterion>();
 
     /** Model for a specific privacy criterion. */
-    private ModelDifferentialPrivacyCriterion     differentialPrivacyModel        = new ModelDifferentialPrivacyCriterion();
+    private Set<ModelRiskBasedCriterion>                  riskBasedModel                  = new HashSet<ModelRiskBasedCriterion>();
 
     /** Model for a specific privacy criterion. */
-    private Map<String, ModelDDisclosurePrivacyCriterion> dDisclosurePrivacyModel = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
+    private ModelDifferentialPrivacyCriterion             differentialPrivacyModel        = new ModelDifferentialPrivacyCriterion();
+
+    /** Model for a specific privacy criterion. */
+    private Map<String, ModelDDisclosurePrivacyCriterion> dDisclosurePrivacyModel         = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
 
     /* *****************************************
      * UTILITY ANALYSIS
@@ -585,6 +588,18 @@ public class Model implements Serializable {
 		return dPresenceModel;
 	}
 
+    /**
+     * Returns the k-map model.
+     *
+     * @return
+     */
+    public ModelKMapCriterion getKMapModel() {
+        if (kMapModel != null) {
+            kMapModel = new ModelKMapCriterion();
+        }
+        return kMapModel;
+    }
+    
 	/**
      * Returns a list of indices of all equivalence classes.
      *
@@ -1197,6 +1212,7 @@ public class Model implements Serializable {
 		differentialPrivacyModel = new ModelDifferentialPrivacyCriterion();
 		kAnonymityModel = new ModelKAnonymityCriterion();
 		dPresenceModel = new ModelDPresenceCriterion();
+		kMapModel = new ModelKMapCriterion();
 		lDiversityModel.clear();
 		tClosenessModel.clear();
 		riskBasedModel.clear();

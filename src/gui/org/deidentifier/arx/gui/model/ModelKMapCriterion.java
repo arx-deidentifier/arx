@@ -18,7 +18,7 @@
 package org.deidentifier.arx.gui.model;
 
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -28,40 +28,34 @@ import org.deidentifier.arx.gui.view.SWTUtil;
  *
  * @author Fabian Prasser
  */
-public class ModelDPresenceCriterion extends ModelImplicitCriterion{
+public class ModelKMapCriterion extends ModelImplicitCriterion{
 
     /** SVUID. */
-	private static final long serialVersionUID = -1765428286262869856L;
-	
-	/** Dmin. */
-	private double dmin = 0.0d;
-	
-	/** Dmax. */
-	private double dmax = 0.0d;
+    private static final long serialVersionUID = 2268947734419591705L;
+    
+    /** Dmin. */
+	private int k = 5;
 	
 	/**
 	 * Creates a new instance
 	 */
-    public ModelDPresenceCriterion() {
+    public ModelKMapCriterion() {
         // Empty by design
     }
 	
     /**
      * Creates a new instance
-     * @param dmin
-     * @param dmax
+     * @param k
      */
-	public ModelDPresenceCriterion(double dmin, double dmax) {
+	public ModelKMapCriterion(int k) {
         super();
-        this.dmin = dmin;
-        this.dmax = dmax;
+        this.k = k;
     }
 
     @Override
-    public ModelDPresenceCriterion clone() {
-        ModelDPresenceCriterion result = new ModelDPresenceCriterion();
-        result.dmax = this.dmax;
-        result.dmin = this.dmin;
+    public ModelKMapCriterion clone() {
+        ModelKMapCriterion result = new ModelKMapCriterion();
+        result.k = this.k;
         result.setEnabled(this.isEnabled());
         return result;
     }
@@ -69,67 +63,44 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {
 	    DataSubset subset = DataSubset.create(model.getInputConfig().getInput(), model.getInputConfig().getResearchSubset());
-		return new DPresence(dmin, dmax, subset);
+		return new KMap(k, subset);
 	}
 	
 	/**
-     * Returns dmax.
+     * Returns k.
      *
      * @return
      */
-	public double getDmax() {
-		return dmax;
-	}
-	
-	/**
-     * Returns dmin.
-     *
-     * @return
-     */
-	public double getDmin() {
-		return dmin;
+	public int getK() {
+		return k;
 	}
 	
 	@Override
     public String getLabel() {
-        return Resources.getMessage("Model.0d") + '\u03B4' + Resources.getMessage("Model.1c"); //$NON-NLS-1$ //$NON-NLS-2$
+        return Resources.getMessage("Model.32"); //$NON-NLS-1$
     }
 
     @Override
     public void parse(ModelCriterion criterion, boolean _default) {
-        if (!(criterion instanceof ModelDPresenceCriterion)) {
+        if (!(criterion instanceof ModelKMapCriterion)) {
             return;
         }
-        ModelDPresenceCriterion other = (ModelDPresenceCriterion)criterion;
-        this.dmax = other.dmax;
-        this.dmin = other.dmin;
+        ModelKMapCriterion other = (ModelKMapCriterion)criterion;
+        this.k = other.k;
         this.setEnabled(other.isEnabled());
     }
 
     /**
-     * Sets dmax.
+     * Sets k.
      *
-     * @param dmax
+     * @param k
      */
-	public void setDmax(double dmax) {
-		this.dmax = dmax;
+	public void setK(int k) {
+		this.k = k;
 	}
 
-    /**
-     * Sets dmin.
-     *
-     * @param dmin
-     */
-	public void setDmin(double dmin) {
-		this.dmin = dmin;
-	}
-    
     @Override
     public String toString() {
-        return Resources.getMessage("Model.2c") + //$NON-NLS-1$
-               SWTUtil.getPrettyString(dmin) +
-               Resources.getMessage("Model.3c") + //$NON-NLS-1$
-               SWTUtil.getPrettyString(dmax) +
-               Resources.getMessage("Model.4c"); //$NON-NLS-1$
+        return SWTUtil.getPrettyString(k) + Resources.getMessage("Model.33"); //$NON-NLS-1$
     }
 }

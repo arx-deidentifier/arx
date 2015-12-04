@@ -26,6 +26,7 @@ import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelDPresenceCriterion;
 import org.deidentifier.arx.gui.model.ModelDifferentialPrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelKAnonymityCriterion;
+import org.deidentifier.arx.gui.model.ModelKMapCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
@@ -163,6 +164,8 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
                 editor = new EditorCriterionDDisclosurePrivacy(root, (ModelDDisclosurePrivacyCriterion)selection);
             } else if (selection instanceof ModelKAnonymityCriterion) {
                 editor = new EditorCriterionKAnonymity(root, (ModelKAnonymityCriterion)selection);
+            } else if (selection instanceof ModelKMapCriterion) {
+                editor = new EditorCriterionKMap(root, (ModelKMapCriterion)selection);
             } else if (selection instanceof ModelDPresenceCriterion) {
                 editor = new EditorCriterionDPresence(root, (ModelDPresenceCriterion)selection);
             } else if (selection instanceof ModelRiskBasedCriterion) {
@@ -281,6 +284,9 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
             } else if (c instanceof ModelDPresenceCriterion) {
                 item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
                 item.setImage(0, symbolD);
+            } else if (c instanceof ModelKMapCriterion) {
+                item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
+                item.setImage(0, symbolK);
             } else if (c instanceof ModelRiskBasedCriterion) {
                 item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
                 item.setImage(0, symbolR);
