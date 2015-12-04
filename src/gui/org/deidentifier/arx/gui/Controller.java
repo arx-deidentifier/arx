@@ -1121,6 +1121,7 @@ public class Controller implements IView {
      */
     public void actionMenuFileOpen() {
 
+        // Check
         if ((model != null) && model.isModified()) {
             if (main.showQuestionDialog(main.getShell(),
                                         Resources.getMessage("Controller.63"), //$NON-NLS-1$
@@ -1135,11 +1136,11 @@ public class Controller implements IView {
             return;
         }
 
-        // Set project
+        // Reset
         reset();
 
+        // Load
         actionOpenProject(path);
-
     }
 
     /**

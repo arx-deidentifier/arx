@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -510,7 +511,12 @@ public class MainWindow implements IView {
         final FileDialog dialog = new FileDialog(shell, SWT.OPEN);
         dialog.setFilterExtensions(new String[] { filter });
         dialog.setFilterIndex(0);
-        return dialog.open();
+        String file = dialog.open();
+        if (file == null || !new File(file).exists()) {
+            return null;
+        } else {
+            return file;
+        }
     }
 
     /**
