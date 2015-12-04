@@ -512,7 +512,10 @@ public class MainWindow implements IView {
         dialog.setFilterExtensions(new String[] { filter });
         dialog.setFilterIndex(0);
         String file = dialog.open();
-        if (file == null || !new File(file).exists()) {
+        if (file == null) {
+            return null;
+        } else if (!new File(file).exists()) {
+            showErrorDialog(shell, Resources.getMessage("MainWindow.5"), Resources.getMessage("MainWindow.14")); //$NON-NLS-1$ //$NON-NLS-2$
             return null;
         } else {
             return file;
