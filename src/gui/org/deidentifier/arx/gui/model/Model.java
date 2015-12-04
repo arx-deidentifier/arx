@@ -594,7 +594,7 @@ public class Model implements Serializable {
      * @return
      */
     public ModelKMapCriterion getKMapModel() {
-        if (kMapModel != null) {
+        if (kMapModel == null) {
             kMapModel = new ModelKMapCriterion();
         }
         return kMapModel;
