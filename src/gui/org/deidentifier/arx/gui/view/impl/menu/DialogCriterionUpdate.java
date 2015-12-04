@@ -39,6 +39,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
@@ -49,7 +50,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -345,7 +345,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
         }
         update();
 
-        Label label = new Label(parent, SWT.CENTER);
+        CLabel label = new CLabel(parent, SWT.CENTER);
         label.setLayoutData(SWTUtil.createFillGridData());
         label.setText(Resources.getMessage("DialogCriterionUpdate.20")); //$NON-NLS-1$
 
