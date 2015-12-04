@@ -346,7 +346,9 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
         update();
 
         CLabel label = new CLabel(parent, SWT.CENTER);
-        label.setLayoutData(SWTUtil.createFillGridData());
+        GridData data = SWTUtil.createFillGridData();
+        data.minimumHeight = 10;
+        label.setLayoutData(data);
         label.setText(Resources.getMessage("DialogCriterionUpdate.20")); //$NON-NLS-1$
 
         return parent;
