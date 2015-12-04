@@ -121,11 +121,11 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
      * @param selection
      */
     public DialogCriterionUpdate(final Controller controller,
-                                   final Shell parent,
-                                   List<ModelCriterion> elements,
-                                   Model model,
-                                   boolean cancel,
-                                   ModelCriterion selection) {
+                                 final Shell parent,
+                                 List<ModelCriterion> elements,
+                                 Model model,
+                                 boolean cancel,
+                                 ModelCriterion selection) {
         this(controller, parent, elements, model, cancel);
         this.selection = selection;
     }
