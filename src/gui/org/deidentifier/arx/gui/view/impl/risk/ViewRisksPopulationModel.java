@@ -107,6 +107,7 @@ public class ViewRisksPopulationModel implements IView {
     @Override
     public void reset() {
         table.select(0);
+        table.showSelection();
         textSampleFraction.setText(""); //$NON-NLS-1$
         textPopulationSize.setText(""); //$NON-NLS-1$
         SWTUtil.disable(root);
