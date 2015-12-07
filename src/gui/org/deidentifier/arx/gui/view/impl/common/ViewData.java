@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.gui.view.impl.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
@@ -45,48 +48,51 @@ import org.eclipse.swt.widgets.ToolItem;
  * @author Fabian Prasser
  */
 public abstract class ViewData implements IView {
-    
-    /** Image */
-    private final Image                 IMAGE_ASCENDING;
 
     /** Image */
-    private final Image                 IMAGE_DESCENDING;
+    private final Image                  IMAGE_ASCENDING;
 
     /** Image */
-    private final Image                 IMAGE_INSENSITIVE;
+    private final Image                  IMAGE_DESCENDING;
 
     /** Image */
-    private final Image                 IMAGE_SENSITIVE;
+    private final Image                  IMAGE_INSENSITIVE;
 
     /** Image */
-    private final Image                 IMAGE_QUASI_IDENTIFYING;
+    private final Image                  IMAGE_SENSITIVE;
 
     /** Image */
-    private final Image                 IMAGE_IDENTIFYING;
+    private final Image                  IMAGE_QUASI_IDENTIFYING;
 
-    /** Widget*/
-    private final ToolItem              groupsButton;
+    /** Image */
+    private final Image                  IMAGE_IDENTIFYING;
 
-    /** Widget*/
-    private final ToolItem              subsetButton;
+    /** Widget */
+    private final ToolItem               groupsButton;
 
-    /** Widget*/
-    private final ToolItem              ascendingButton;
+    /** Widget */
+    private final ToolItem               subsetButton;
 
-    /** Widget*/
-    private final ToolItem              descendingButton;
+    /** Widget */
+    private final ToolItem               ascendingButton;
 
-    /** Widget*/
-    private final ComponentTitledFolder folder;
+    /** Widget */
+    private final ToolItem               descendingButton;
 
-    /** Widget*/
-    protected final ComponentDataTable  table;
+    /** Widget */
+    private final ComponentTitledFolder  folder;
 
-    /** Controller*/
-    protected final Controller          controller;
+    /** Widget */
+    protected final ComponentDataTable   table;
 
-    /** Model*/
-    protected Model                     model;
+    /** Controller */
+    protected final Controller           controller;
+
+    /** Model */
+    protected Model                      model;
+
+    /** View */
+    private final Map<Composite, String> helpids = new HashMap<Composite, String>();
 
     /**
      * 
@@ -120,7 +126,7 @@ public abstract class ViewData implements IView {
         IMAGE_DESCENDING        = controller.getResources().getManagedImage("sort_descending.png");//$NON-NLS-1$
 
         // Create title bar
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-140"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-140", helpids); //$NON-NLS-1$
         bar.add(Resources.getMessage("DataView.1"), //$NON-NLS-1$ 
                 IMAGE_ASCENDING,
                 new Runnable() {
@@ -202,10 +208,13 @@ public abstract class ViewData implements IView {
     /**
      * Adds an additional item to the folder
      * @param title
+     * @param helpid 
      * @return
      */
-    public Composite createAdditionalItem(String title) {
-        return folder.createItem(title, null);
+    public Composite createAdditionalItem(String title, String helpid) {
+        Composite result = folder.createItem(title, null);
+        helpids.put(result, helpid);
+        return result;
     }
     
     @Override

@@ -261,11 +261,11 @@ public class LayoutUtility implements ILayout {
             }
         });
         
-        Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10")); //$NON-NLS-1$
+        Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.top1"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationInput.setLayout(new FillLayout());
         new ViewStatisticsRegressionInput(classificationInput, controller);
         
-        Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10")); //$NON-NLS-1$
+        Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.top1"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationOutput.setLayout(new FillLayout());
         new ViewStatisticsRegressionOutput(classificationOutput, controller);
 
