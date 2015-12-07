@@ -146,18 +146,34 @@ public class DialogHelpConfig {
         entries.add(new Entry("id-50", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.43"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/utility/visualization.html")); //$NON-NLS-1$
-        
-        entries.add(new Entry("id-3000", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.46"), //$NON-NLS-1$
+
+        entries.add(new Entry("help.risk.overview", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.50"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/risk/overview.html")); //$NON-NLS-1$
-        
-        entries.add(new Entry("id-3001", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.49"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/help/v" + version + "/risk/equivalence_classes.html")); //$NON-NLS-1$
-        
-        entries.add(new Entry("id-3002", //$NON-NLS-1$
+
+        entries.add(new Entry("help.risk.classsizes", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.51"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/risk/classsizes.html")); //$NON-NLS-1$
+
+        entries.add(new Entry("help.risk.quasiidentifiers", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.52"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/help/v" + version + "/risk/risk_estimates.html")); //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/risk/quasiidentifiers.html")); //$NON-NLS-1$
+
+        entries.add(new Entry("help.risk.reidentification", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.53"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/risk/reidentification.html")); //$NON-NLS-1$
+
+        entries.add(new Entry("help.risk.hipaa", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.54"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/risk/hipaa.html")); //$NON-NLS-1$
+
+        entries.add(new Entry("help.risk.uniques", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.55"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/risk/uniques.html")); //$NON-NLS-1$
+
+        entries.add(new Entry("help.risk.population", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.56"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/risk/population.html")); //$NON-NLS-1$
     }
     
     /**

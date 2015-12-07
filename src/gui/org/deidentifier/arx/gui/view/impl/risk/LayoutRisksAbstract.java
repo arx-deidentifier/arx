@@ -30,6 +30,7 @@ import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
+import org.deidentifier.arx.gui.view.impl.menu.help;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -90,7 +91,7 @@ public class LayoutRisksAbstract implements ILayout, IView {
         controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
         controller.addListener(ModelPart.MODEL, this);
         
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(isTop ? "id-3001" : "id-3002", helpids); //$NON-NLS-1$ //$NON-NLS-2$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(isTop ? "help.risk.overview" : "help.risk.overview", helpids); //$NON-NLS-1$ //$NON-NLS-2$
         
         if (isTop) {
             bar.add(Resources.getMessage("DataView.3"), //$NON-NLS-1$ 

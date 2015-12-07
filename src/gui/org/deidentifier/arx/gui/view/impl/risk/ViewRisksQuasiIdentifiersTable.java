@@ -50,7 +50,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author Fabian Prasser
  */
-public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
+public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRisk> {
 
     /** View */
     private Composite         root;
@@ -69,7 +69,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
      * @param target
      * @param reset
      */
-    public ViewRisksAttributesTable(final Composite parent,
+    public ViewRisksQuasiIdentifiersTable(final Composite parent,
                                     final Controller controller,
                                     final ModelPart target,
                                     final ModelPart reset) {
