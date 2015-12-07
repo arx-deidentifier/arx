@@ -129,21 +129,21 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         folder = new ComponentTitledFolder(parent, controller, bar, null, false, true);
         
         // Register tabs
-        this.registerView(new ViewStatisticsSummaryTable(folder.createItem(TAB_SUMMARY, null, true), controller, target, reset), "help.utility.bottom.0"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsDistributionHistogram(folder.createItem(TAB_DISTRIBUTION, null, true), controller, target, reset), "help.utility.bottom.1"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsDistributionTable(folder.createItem(TAB_DISTRIBUTION_TABLE, null, true), controller, target, reset), "help.utility.bottom.2"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsContingencyHeatmap(folder.createItem(TAB_CONTINGENCY, null, true), controller, target, reset), "help.utility.bottom.3"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsContingencyTable(folder.createItem(TAB_CONTINGENCY_TABLE, null, true), controller, target, reset), "help.utility.bottom.4"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsEquivalenceClassTable(folder.createItem(TAB_CLASSES_TABLE, null, true), controller, target, reset), "help.utility.bottom.5"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsSummaryTable(folder.createItem(TAB_SUMMARY, null, true), controller, target, reset), "help.utility.summary"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsDistributionHistogram(folder.createItem(TAB_DISTRIBUTION, null, true), controller, target, reset), "help.utility.distribution"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsDistributionTable(folder.createItem(TAB_DISTRIBUTION_TABLE, null, true), controller, target, reset), "help.utility.distribution"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsContingencyHeatmap(folder.createItem(TAB_CONTINGENCY, null, true), controller, target, reset), "help.utility.contingency"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsContingencyTable(folder.createItem(TAB_CONTINGENCY_TABLE, null, true), controller, target, reset), "help.utility.contingency"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsEquivalenceClassTable(folder.createItem(TAB_CLASSES_TABLE, null, true), controller, target, reset), "help.utility.classes"); //$NON-NLS-1$
         if (target == ModelPart.INPUT) {
-            this.registerView(new ViewPropertiesInput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.bottom.6input"); //$NON-NLS-1$
+            this.registerView(new ViewPropertiesInput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.inputproperties"); //$NON-NLS-1$
         } else {
-            this.registerView(new ViewPropertiesOutput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.bottom.6output"); //$NON-NLS-1$
+            this.registerView(new ViewPropertiesOutput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.outputproperties"); //$NON-NLS-1$
         }
         if (target == ModelPart.INPUT) {
-            this.registerView(new ViewClassificationAttributes(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false), controller), "help.utility.bottom.7"); //$NON-NLS-1$
+            this.registerView(new ViewClassificationAttributes(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false), controller), "help.utlity.accuracy"); //$NON-NLS-1$
         } else {
-            this.registerView(new ViewLocalRecoding(folder.createItem(TAB_LOCAL_RECODING, null, false), controller), "help.utility.bottom.8"); //$NON-NLS-1$
+            this.registerView(new ViewLocalRecoding(folder.createItem(TAB_LOCAL_RECODING, null, false), controller), "help.utility.localrecoding"); //$NON-NLS-1$
         }
         
         // Init folder
