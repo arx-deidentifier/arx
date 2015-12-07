@@ -141,7 +141,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
             this.registerView(new ViewPropertiesOutput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.outputproperties"); //$NON-NLS-1$
         }
         if (target == ModelPart.INPUT) {
-            this.registerView(new ViewClassificationAttributes(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false), controller), "help.utlity.accuracy"); //$NON-NLS-1$
+            this.registerView(new ViewClassificationAttributes(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false), controller), "help.utility.accuracy"); //$NON-NLS-1$
         } else {
             this.registerView(new ViewLocalRecoding(folder.createItem(TAB_LOCAL_RECODING, null, false), controller), "help.utility.localrecoding"); //$NON-NLS-1$
         }
