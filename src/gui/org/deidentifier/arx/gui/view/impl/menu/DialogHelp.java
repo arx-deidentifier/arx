@@ -179,6 +179,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         // Init
         int index = id == null ? 0 : config.getIndexForId(id);
         list.select(index);
+        list.showSelection();
         try{browser.setUrl(getUrlOf(index));} catch (Exception e){}
         return parent;
     }
