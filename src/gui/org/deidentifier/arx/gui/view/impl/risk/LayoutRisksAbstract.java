@@ -30,7 +30,6 @@ import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
-import org.deidentifier.arx.gui.view.impl.menu.help;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
