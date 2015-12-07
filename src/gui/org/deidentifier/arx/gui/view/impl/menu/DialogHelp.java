@@ -149,7 +149,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         list.setLayoutData(SWTUtil.createFillVerticallyGridData());
         
         // Browser
-        browser = new HTMLBrowser(base, SWT.BORDER);
+        browser = new HTMLBrowser(base, SWT.BORDER | SWT.DOUBLE_BUFFERED);
         browser.setLayoutData(SWTUtil.createFillGridData());
 
         // Listeners
