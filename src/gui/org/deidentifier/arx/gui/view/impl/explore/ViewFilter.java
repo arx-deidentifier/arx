@@ -36,7 +36,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentFilterTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -124,7 +124,7 @@ public class ViewFilter implements IView {
         Image imageOptimum = controller.getResources().getManagedImage("bullet_yellow.png"); //$NON-NLS-1$
 
         // Bar
-        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-21"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-21"); //$NON-NLS-1$
         bar.add(Resources.getMessage("ViewFilter.0"), imageOptimum, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionShowOptimum();

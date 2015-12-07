@@ -24,36 +24,52 @@ import java.util.Map;
 
 import org.deidentifier.arx.gui.view.def.IComponent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * A basic title bar, which offers some buttons.
  *
  * @author Fabian Prasser
  */
-public class ComponentTitledFolderButton implements IComponent{
+public class ComponentTitledFolderButtonBar implements IComponent{
     
-    /**  TODO */
+    /**  View */
     private List<String> titles = new ArrayList<String>();
     
-    /**  TODO */
+    /**  View */
     private Map<String, Image> images = new HashMap<String, Image>();
     
-    /**  TODO */
+    /**  View */
     private Map<String, Boolean> toggle = new HashMap<String, Boolean>();
     
-    /**  TODO */
+    /**  View */
     private Map<String, Runnable> runnables = new HashMap<String, Runnable>();
     
-    /**  TODO */
+    /**  View */
     private String id;
+    
+    /**  View */
+    private final Map<Composite, String> helpids;
     
     /**
      * Creates a new instance.
      *
      * @param id
      */
-    public ComponentTitledFolderButton(String id) {    
+    public ComponentTitledFolderButtonBar(String id) {    
         this.id = id;
+        this.helpids = null;
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param id
+     * @param helpids
+     */
+    public ComponentTitledFolderButtonBar(String id, Map<Composite, String> helpids) {    
+        this.id = id;
+        this.helpids = helpids;
     }
 
     /**
@@ -87,8 +103,17 @@ public class ComponentTitledFolderButton implements IComponent{
      *
      * @return
      */
-    public String getId(){
+    public String getHelpId(){
         return id;
+    }
+
+    /**
+     * Returns the help ids for each composite
+     *
+     * @return
+     */
+    public Map<Composite, String> getHelpIds(){
+        return helpids;
     }
 
     /**

@@ -120,7 +120,7 @@ public abstract class ViewData implements IView {
         IMAGE_DESCENDING        = controller.getResources().getManagedImage("sort_descending.png");//$NON-NLS-1$
 
         // Create title bar
-        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-140"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-140"); //$NON-NLS-1$
         bar.add(Resources.getMessage("DataView.1"), //$NON-NLS-1$ 
                 IMAGE_ASCENDING,
                 new Runnable() {

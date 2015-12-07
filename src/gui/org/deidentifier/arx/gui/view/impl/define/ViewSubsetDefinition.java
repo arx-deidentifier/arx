@@ -25,7 +25,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -132,7 +132,7 @@ public class ViewSubsetDefinition implements IView{
      */
     private Composite build(Composite parent) {
 
-        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-40"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-40"); //$NON-NLS-1$
         bar.add(Resources.getMessage("SubsetDefinitionView.1"),  //$NON-NLS-1$
                 controller.getResources().getManagedImage("page_white.png"), //$NON-NLS-1$
                 new Runnable() {

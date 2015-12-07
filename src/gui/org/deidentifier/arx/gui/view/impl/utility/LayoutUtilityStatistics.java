@@ -31,11 +31,11 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
+import org.deidentifier.arx.gui.view.impl.utility.ViewStatistics;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolItem;
@@ -86,6 +86,9 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     /** View */
     private final Image                                 disabled;
 
+    /** View */
+    private final Map<Composite, String>                helpids                     = new HashMap<Composite, String>();
+
     /** Controller */
     private final Controller                            controller;
 
@@ -117,7 +120,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
 
         // Create enable/disable button
         final String label = Resources.getMessage("StatisticsView.3"); //$NON-NLS-1$
-        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-50"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-50", helpids); //$NON-NLS-1$
         bar.add(label, disabled, true, new Runnable() { @Override public void run() {
             toggleEnabled();
             toggleImage(); 
@@ -125,67 +128,29 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         
         // Create the tab folder
         folder = new ComponentTitledFolder(parent, controller, bar, null, false, true);
-        final Composite item0 = folder.createItem(TAB_SUMMARY, null, true);
-        item0.setLayout(new FillLayout());
-        final Composite item1 = folder.createItem(TAB_DISTRIBUTION, null, true);
-        item1.setLayout(new FillLayout());
-        final Composite item1b = folder.createItem(TAB_DISTRIBUTION_TABLE, null, true);
-        item1b.setLayout(new FillLayout());
-        final Composite item2 = folder.createItem(TAB_CONTINGENCY, null, true);
-        item2.setLayout(new FillLayout());
-        final Composite item2b = folder.createItem(TAB_CONTINGENCY_TABLE, null, true);
-        item2b.setLayout(new FillLayout());
-        final Composite item3a = folder.createItem(TAB_CLASSES_TABLE, null, true);
-        item3a.setLayout(new FillLayout());
-        final Composite item3 = folder.createItem(TAB_PROPERTIES, null, true);
-        item3.setLayout(new FillLayout());
-
-        Composite item4 = null;
-        if (target == ModelPart.OUTPUT) {
-            item4 = folder.createItem(TAB_LOCAL_RECODING, null, false);
-            item4.setLayout(new FillLayout());
-        } 
-
-        Composite item5 = null;
-        if (target == ModelPart.INPUT) {
-            item5 = folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false);
-            item5.setLayout(new FillLayout());
-        } 
         
-        folder.setSelection(0);
+        // Register tabs
+        this.registerView(new ViewStatisticsSummaryTable(folder.createItem(TAB_SUMMARY, null, true), controller, target, reset), "help.utility.bottom.0"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsDistributionHistogram(folder.createItem(TAB_DISTRIBUTION, null, true), controller, target, reset), "help.utility.bottom.1"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsDistributionTable(folder.createItem(TAB_DISTRIBUTION_TABLE, null, true), controller, target, reset), "help.utility.bottom.2"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsContingencyHeatmap(folder.createItem(TAB_CONTINGENCY, null, true), controller, target, reset), "help.utility.bottom.3"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsContingencyTable(folder.createItem(TAB_CONTINGENCY_TABLE, null, true), controller, target, reset), "help.utility.bottom.4"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsEquivalenceClassTable(folder.createItem(TAB_CLASSES_TABLE, null, true), controller, target, reset), "help.utility.bottom.5"); //$NON-NLS-1$
+        if (target == ModelPart.INPUT) {
+            this.registerView(new ViewPropertiesInput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.bottom.6input"); //$NON-NLS-1$
+        } else {
+            this.registerView(new ViewPropertiesOutput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.bottom.6output"); //$NON-NLS-1$
+        }
+        if (target == ModelPart.INPUT) {
+            this.registerView(new ViewClassificationAttributes(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false), controller), "help.utility.bottom.7"); //$NON-NLS-1$
+        } else {
+            this.registerView(new ViewLocalRecoding(folder.createItem(TAB_LOCAL_RECODING, null, false), controller), "help.utility.bottom.8"); //$NON-NLS-1$
+        }
+        
+        // Init folder
+        this.folder.setSelection(0);
         this.enable = folder.getButtonItem(label);
         this.enable.setEnabled(false);
-        
-        // Create the views
-        ViewStatistics<?> view = new ViewStatisticsSummaryTable(item0, controller, target, reset);
-        types.put(item0, view.getType());
-        view = new ViewStatisticsDistributionHistogram(item1, controller, target, reset);
-        types.put(item1, view.getType());
-        view = new ViewStatisticsDistributionTable(item1b, controller, target, reset);
-        types.put(item1b, view.getType());
-        view = new ViewStatisticsContingencyHeatmap(item2, controller, target, reset);
-        types.put(item2, view.getType());
-        view = new ViewStatisticsContingencyTable(item2b, controller, target, reset);
-        types.put(item2b, view.getType());
-        view = new ViewStatisticsEquivalenceClassTable(item3a, controller, target, reset);
-        types.put(item3a, view.getType());
-        if (target == ModelPart.INPUT) {
-            ViewPropertiesInput view2 = new ViewPropertiesInput(item3, controller);
-            types.put(item3, view2.getType());
-        } else {
-            ViewPropertiesOutput view2 = new ViewPropertiesOutput(item3, controller);
-            types.put(item3, view2.getType());
-        }
-
-        if (target == ModelPart.OUTPUT) {
-            ViewLocalRecoding view2 = new ViewLocalRecoding(item4, controller);
-            types.put(item4, view2.getType());
-        }
-        
-        if (target == ModelPart.INPUT) {
-            ViewClassificationAttributes view2 = new ViewClassificationAttributes(item5, controller);
-            types.put(item5, view2.getType());
-        }
         
         // Set initial visibility
         folder.setVisibleItems(Arrays.asList(new String[] { TAB_SUMMARY,
@@ -193,6 +158,16 @@ public class LayoutUtilityStatistics implements ILayout, IView {
                                                             TAB_CONTINGENCY,
                                                             TAB_CLASSES_TABLE,
                                                             TAB_PROPERTIES }));
+    }
+
+    /**
+     * Registers a new view
+     * @param view
+     * @param helpid
+     */
+    private void registerView(ViewStatistics<?> view, String helpid) {
+        types.put(view.getParent(), view.getType());
+        helpids.put(view.getParent(), helpid);
     }
 
     /**

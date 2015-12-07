@@ -30,7 +30,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -99,7 +99,7 @@ public class ViewClipboard implements IView {
         controller.addListener(ModelPart.SELECTED_NODE, this);
         this.controller = controller;
 
-        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-23"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-23"); //$NON-NLS-1$
         bar.add(Resources.getMessage("ViewClipboard.0"), imageRemove, new Runnable(){ //$NON-NLS-1$
             public void run() {
                 actionRemove();

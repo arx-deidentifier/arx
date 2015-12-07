@@ -69,6 +69,9 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     /** Is this view enabled */
     private boolean               enabled              = false;
 
+    /** Parent */
+    private final Composite       parent;
+
 	/**
      * Creates a new instance.
      *
@@ -97,11 +100,12 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
             controller.addListener(reset, this);
         }
         
-        // Remember
+        // Init
         this.controller = controller;
         this.reset = reset;
         this.target = target;
         this.dependsOnAttribute = dependsOnAttribute;
+        this.parent = parent;
 
         // Create controls
         parent.setLayout(new StackLayout());
@@ -290,13 +294,21 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     }
 
     /**
+     * Returns the parent composite
+     */
+    protected Composite getParent() {
+        return this.parent;
+                
+    }
+
+    /**
      * Overwrite this to return a progress provider
      * @return
      */
     protected ComponentStatusLabelProgressProvider getProgressProvider() {
         return null;
     }
-
+    
     /**
      * Returns the target
      * @return
@@ -304,7 +316,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected ModelPart getTarget() {
         return target;
     }
-    
+
     /**
      * Is this view enabled
      * @return
@@ -324,14 +336,14 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      */
     protected void setStatusDone(){
         this.status.setDone();
-    }
-
+    }           
+    
     /**
      * Status empty.
      */
     protected void setStatusEmpty(){
         this.status.setEmpty();
-    }           
+    }
     
     /**
      * Status working.
@@ -339,7 +351,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected void setStatusWorking(){
         this.status.setWorking();
     }
-    
+
     /**
      * Triggers an update
      */

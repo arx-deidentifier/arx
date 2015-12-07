@@ -29,7 +29,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -45,7 +45,9 @@ import org.eclipse.swt.widgets.ToolItem;
 public class LayoutRisksAbstract implements ILayout, IView {
 
     /** Model */
-    private final Map<Integer, ViewRisks<?>> views = new HashMap<Integer, ViewRisks<?>>();
+    private final Map<Integer, ViewRisks<?>> views   = new HashMap<Integer, ViewRisks<?>>();
+    /** Model */
+    private final Map<Composite, String>     helpids = new HashMap<Composite, String>();
     /** Model */
     private final boolean                    isInput;
     /** Model */
@@ -88,7 +90,7 @@ public class LayoutRisksAbstract implements ILayout, IView {
         controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
         controller.addListener(ModelPart.MODEL, this);
         
-        ComponentTitledFolderButton bar = new ComponentTitledFolderButton(isTop ? "id-3001" : "id-3002"); //$NON-NLS-1$ //$NON-NLS-2$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(isTop ? "id-3001" : "id-3002", helpids); //$NON-NLS-1$ //$NON-NLS-2$
         
         if (isTop) {
             bar.add(Resources.getMessage("DataView.3"), //$NON-NLS-1$ 
@@ -302,9 +304,10 @@ public class LayoutRisksAbstract implements ILayout, IView {
      * @param title
      * @return
      */
-    protected Composite createTab(String title) {
+    protected Composite createTab(String title, String helpid) {
         final Composite item = folder.createItem(title, null); 
         item.setLayout(new FillLayout());
+        helpids.put(item, helpid);
         return item;
     }
 

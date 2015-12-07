@@ -104,7 +104,7 @@ public class ComponentTitledFolder implements IComponent {
      * @param bar
      * @param id
      */
-    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButton bar, String id){
+    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButtonBar bar, String id){
         this(parent, controller, bar, id, false, false);
     }
 
@@ -119,7 +119,7 @@ public class ComponentTitledFolder implements IComponent {
      */
     public ComponentTitledFolder(Composite parent, 
                                  Controller controller, 
-                                 ComponentTitledFolderButton bar, 
+                                 ComponentTitledFolderButtonBar bar, 
                                  String id, 
                                  boolean bottom,
                                  boolean supportsHidingElements){
@@ -383,7 +383,7 @@ public class ComponentTitledFolder implements IComponent {
      * @param folder
      * @param bar
      */
-    private void createBar(final Controller controller, final CTabFolder folder, final ComponentTitledFolderButton bar) {
+    private void createBar(final Controller controller, final CTabFolder folder, final ComponentTitledFolderButtonBar bar) {
         ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
         folder.setTopRight( toolbar, SWT.RIGHT );
 
@@ -433,7 +433,11 @@ public class ComponentTitledFolder implements IComponent {
         item.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                controller.actionShowHelpDialog(bar.getId());
+                if (bar.getHelpIds() == null || bar.getHelpIds().get(folder.getSelection().getControl()) == null) {
+                    controller.actionShowHelpDialog(bar.getHelpId());
+                } else {
+                    controller.actionShowHelpDialog(bar.getHelpIds().get(folder.getSelection().getControl()));
+                }
             }
         });
         

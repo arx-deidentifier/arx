@@ -45,13 +45,13 @@ public class LayoutRisksBottom extends LayoutRisksAbstract {
         
         super(parent, controller, target == ModelPart.INPUT, false);
 
-        registerView(0, new ViewRisksReIdentificationTable(createTab(Resources.getMessage("RiskAnalysis.5")), controller, target, reset)); //$NON-NLS-1$
-        registerView(1, new ViewRisksPopulationUniques(createTab(Resources.getMessage("RiskAnalysis.13")), controller, target, reset, false)); //$NON-NLS-1$
-        registerView(2, new ViewRisksPopulationUniques(createTab(Resources.getMessage("RiskAnalysis.24")), controller, target, reset, true)); //$NON-NLS-1$
-        new ViewRisksPopulationModel(createTab(Resources.getMessage("RiskAnalysis.16")), controller, target != ModelPart.INPUT); //$NON-NLS-1$
+        registerView(0, new ViewRisksReIdentificationTable(createTab(Resources.getMessage("RiskAnalysis.5"), "help.risk.bottom.0"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(1, new ViewRisksPopulationUniques(createTab(Resources.getMessage("RiskAnalysis.13"), "help.risk.bottom.1"), controller, target, reset, false)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(2, new ViewRisksPopulationUniques(createTab(Resources.getMessage("RiskAnalysis.24"), "help.risk.bottom.2"), controller, target, reset, true)); //$NON-NLS-1$ //$NON-NLS-2$
+        new ViewRisksPopulationModel(createTab(Resources.getMessage("RiskAnalysis.16"), "help.risk.bottom.3"), controller, target != ModelPart.INPUT); //$NON-NLS-1$ //$NON-NLS-2$
 
         if (target == ModelPart.INPUT) {
-            new ViewRisksQuasiIdentifiers(createTab(Resources.getMessage("RiskAnalysis.23")), controller); //$NON-NLS-1$
+            new ViewRisksQuasiIdentifiers(createTab(Resources.getMessage("RiskAnalysis.23"), "help.risk.bottom.4"), controller); //$NON-NLS-1$ //$NON-NLS-2$
         } 
         
         setSelectionIdex(0);
