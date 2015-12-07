@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.TableItem;
  * 
  * @author Fabian Prasser
  */
-public class ViewClassificationAttributes implements IView {
+public class ViewClassificationAttributes implements IView, ViewStatisticsBasic {
 
     /** Controller */
     private final Controller controller;
@@ -111,6 +111,11 @@ public class ViewClassificationAttributes implements IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
+    }
+
+    @Override
+    public Composite getParent() {
+        return this.root;
     }
 
     /**

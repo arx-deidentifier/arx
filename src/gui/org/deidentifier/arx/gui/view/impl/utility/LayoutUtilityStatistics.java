@@ -33,7 +33,6 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
-import org.deidentifier.arx.gui.view.impl.utility.ViewStatistics;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -161,16 +160,6 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     }
 
     /**
-     * Registers a new view
-     * @param view
-     * @param helpid
-     */
-    private void registerView(ViewStatistics<?> view, String helpid) {
-        types.put(view.getParent(), view.getType());
-        helpids.put(view.getParent(), helpid);
-    }
-
-    /**
      * Adds a selection listener.
      *
      * @param listener
@@ -178,7 +167,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     public void addSelectionListener(final SelectionListener listener) {
         folder.addSelectionListener(listener);
     }
-    
+
     @Override
     public void dispose() {
         // Empty by design
@@ -216,7 +205,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     public void setItemVisibilityListener(final SelectionListener listener) {
         folder.setItemVisibilityListener(listener);
     }
-    
+
     /**
      * Sets the selected view type
      * @param type
@@ -229,7 +218,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
             }
         }
     }
-
+    
     /**
      * Sets all visible items
      * @param items
@@ -237,7 +226,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     public void setVisibleItems(List<String> items) {
         this.folder.setVisibleItems(items);
     }
-
+    
     @Override
     public void update(ModelEvent event) {
 
@@ -250,6 +239,26 @@ public class LayoutUtilityStatistics implements ILayout, IView {
             this.enable.setSelection(model.isVisualizationEnabled());
             this.toggleImage();
         }
+    }
+
+    /**
+     * Registers a new view
+     * @param view
+     * @param helpid
+     */
+    private void registerView(ViewStatistics<?> view, String helpid) {
+        types.put(view.getParent(), view.getType());
+        helpids.put(view.getParent(), helpid);
+    }
+
+    /**
+     * Registers a new view
+     * @param view
+     * @param helpid
+     */
+    private void registerView(ViewStatisticsBasic view, String helpid) {
+        types.put(view.getParent(), view.getType());
+        helpids.put(view.getParent(), helpid);
     }
 
     /**

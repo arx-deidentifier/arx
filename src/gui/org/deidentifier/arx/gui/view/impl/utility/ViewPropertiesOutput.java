@@ -51,6 +51,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -174,11 +175,13 @@ public class ViewPropertiesOutput extends ViewProperties {
     /**
      * Creates the view.
      *
-     * @param group
+     * @param root
      */
-    private void create(final Composite group) {
+    private void create(final Composite root) {
 
-        final Tree tree = new Tree(group, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        root.setLayout(new FillLayout());
+        
+        final Tree tree = new Tree(root, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
         tree.setHeaderVisible(true);
         
         treeViewer = new TreeViewer(tree);

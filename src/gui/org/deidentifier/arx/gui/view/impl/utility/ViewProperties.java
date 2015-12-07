@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.TreeColumn;
  *
  * @author Fabian Prasser
  */
-public abstract class ViewProperties implements IView {
+public abstract class ViewProperties implements IView, ViewStatisticsBasic {
 
     /**
      * A class for properties displayed in the tree view.
@@ -155,6 +155,11 @@ public abstract class ViewProperties implements IView {
     }
 
     @Override
+    public Composite getParent() {
+        return this.root;
+    }
+
+    @Override
     public void reset() {
 
         root.setRedraw(false);
@@ -191,7 +196,7 @@ public abstract class ViewProperties implements IView {
         return infoLoss.relativeTo(model.getResult().getLattice().getMinimumInformationLoss(), 
                                    model.getResult().getLattice().getMaximumInformationLoss()) * 100d;
     }
-
+    
     /**
      * Returns the context.
      *
@@ -200,7 +205,7 @@ public abstract class ViewProperties implements IView {
     protected AnalysisContext getContext(){
         return context;
     }
-    
+
     /**
      * Refreshes the tree
      */

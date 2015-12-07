@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @author Fabian Prasser
  */
-public class ViewLocalRecoding implements IView {
+public class ViewLocalRecoding implements IView, ViewStatisticsBasic {
 
     /** Internal stuff. */
     private Model                 model;
@@ -92,10 +92,15 @@ public class ViewLocalRecoding implements IView {
         controller.removeListener(this);
     }
     
+    @Override
+    public Composite getParent() {
+        return this.root;
+    }
+
     public LayoutUtility.ViewUtilityType getType() {
         return LayoutUtility.ViewUtilityType.LOCAL_RECODING;
     }
-
+    
     @Override
     public void reset() {
         slider.setSelection(0.5d);
@@ -111,7 +116,7 @@ public class ViewLocalRecoding implements IView {
         
         this.update();
     }
-    
+
     /**
      * Creates the view.
      *
@@ -236,6 +241,7 @@ public class ViewLocalRecoding implements IView {
             throw new RuntimeException("Unknown mode");
         }
     }
+
 
     /**
      * Returns a list of entries for the combo box
