@@ -126,8 +126,7 @@ public class ViewClipboard implements IView {
         border.setLayoutData(SWTUtil.createFillGridData());
         
         // Create root
-        root = border.createItem(Resources.getMessage("NodeClipboardView.0"), //$NON-NLS-1$
-                                 null);
+        root = border.createItem(Resources.getMessage("NodeClipboardView.0"), null); //$NON-NLS-1$
         root.setLayout(new FillLayout());
         border.setSelection(0);
         border.setEnabled(true);
