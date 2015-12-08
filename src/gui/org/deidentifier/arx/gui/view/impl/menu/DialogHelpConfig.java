@@ -90,6 +90,10 @@ public class DialogHelpConfig {
         entries.add(new Entry("id-75", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.6"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/perspectives_import.html")); //$NON-NLS-1$
+
+        entries.add(new Entry("help.overview.settings", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.-1"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/global_settings.html")); //$NON-NLS-1$
         
         entries.add(new Entry("id-140", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.1"), //$NON-NLS-1$
