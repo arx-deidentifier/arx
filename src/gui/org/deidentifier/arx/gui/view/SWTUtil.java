@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.gui.Controller;
@@ -372,28 +373,49 @@ public class SWTUtil {
         layout.makeColumnsEqualWidth = true;
         return layout;
     }
+    
 
     /**
      * Creates a help button in the given folder.
      *
      * @param controller
-     * @param tabFolder
+     * @param folder
      * @param id
      */
-    public static void createHelpButton(final Controller controller, final CTabFolder tabFolder, final String id) {
-        ToolBar toolbar = new ToolBar(tabFolder, SWT.FLAT);
-        tabFolder.setTopRight( toolbar, SWT.RIGHT );
+    public static void createHelpButton(final Controller controller, final CTabFolder folder, final String id) {
+        createHelpButton(controller, folder, id, null);
+    }
+
+
+    /**
+     * Creates a help button in the given folder.
+     *
+     * @param controller
+     * @param folder
+     * @param id
+     * @param helpids
+     */
+    public static void createHelpButton(final Controller controller,
+                                        final CTabFolder folder,
+                                        final String id,
+                                        final Map<Composite, String> helpids) {
+        ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
+        folder.setTopRight( toolbar, SWT.RIGHT );
         ToolItem item = new ToolItem( toolbar, SWT.PUSH );
         item.setImage(controller.getResources().getManagedImage("help.png"));  //$NON-NLS-1$
         item.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
         createDisabledImage(item);
         int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-        tabFolder.setTabHeight(Math.max(height, tabFolder.getTabHeight()));
+        folder.setTabHeight(Math.max(height, folder.getTabHeight()));
         item.addSelectionListener(new SelectionAdapter(){
-
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                controller.actionShowHelpDialog(id);
+                if (helpids != null && folder.getSelectionIndex() >= 0 &&
+                    helpids.get(folder.getItem(folder.getSelectionIndex()).getControl()) != null) {
+                    controller.actionShowHelpDialog(helpids.get(folder.getItem(folder.getSelectionIndex()).getControl()));
+                } else {
+                    controller.actionShowHelpDialog(id);
+                }
             }
         });
     }

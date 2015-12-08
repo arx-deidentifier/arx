@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.common;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -85,16 +86,17 @@ public class ComponentTitledFolder implements IComponent {
         }
     }
 
-    private List<TitledFolderEntry> entries = new ArrayList<TitledFolderEntry>();
+    /** Entries*/
+    private List<TitledFolderEntry>    entries = new ArrayList<TitledFolderEntry>();
 
     /** The folder */
-    private final CTabFolder        folder;
+    private final CTabFolder           folder;
 
     /** Flag */
-    private final boolean           supportsHidingElements;
+    private final boolean              supportsHidingElements;
 
     /** Listener */
-    private SelectionListener       itemVisibilityListener;
+    private SelectionListener          itemVisibilityListener;
 
     /**
      * Creates a new instance.
@@ -105,7 +107,19 @@ public class ComponentTitledFolder implements IComponent {
      * @param id
      */
     public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButtonBar bar, String id){
-        this(parent, controller, bar, id, false, false);
+        this(parent, controller, bar, id, null, false, false);
+    }
+    /**
+     * Creates a new instance.
+     *
+     * @param parent
+     * @param controller
+     * @param bar
+     * @param id
+     * @param helpids
+     */
+    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButtonBar bar, String id, Map<Composite, String> helpids){
+        this(parent, controller, bar, id, helpids, false, false);
     }
 
     /**
@@ -123,6 +137,26 @@ public class ComponentTitledFolder implements IComponent {
                                  String id, 
                                  boolean bottom,
                                  boolean supportsHidingElements){
+        this(parent, controller, bar, id, null, bottom, supportsHidingElements);
+    }
+
+    
+    /**
+     * Creates a new instance.
+     *
+     * @param parent
+     * @param controller
+     * @param bar
+     * @param id
+     * @param bottom
+     */
+    public ComponentTitledFolder(Composite parent, 
+                                 Controller controller, 
+                                 ComponentTitledFolderButtonBar bar, 
+                                 String id, 
+                                 Map<Composite, String> helpids,
+                                 boolean bottom,
+                                 boolean supportsHidingElements){
 
         int flags = SWT.BORDER | SWT.FLAT;
         if (bottom) flags |= SWT.BOTTOM;
@@ -135,7 +169,7 @@ public class ComponentTitledFolder implements IComponent {
         this.folder.setSimple(false);
         
         // Create help button
-        if (bar == null) SWTUtil.createHelpButton(controller, folder, id);
+        if (bar == null) SWTUtil.createHelpButton(controller, folder, id, helpids);
         else createBar(controller, folder, bar);
 
         // Prevent closing

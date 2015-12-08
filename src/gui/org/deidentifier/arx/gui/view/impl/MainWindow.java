@@ -22,8 +22,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.Data;
@@ -144,17 +146,22 @@ public class MainWindow implements IView {
         shell.setLayout(SWTUtil.createGridLayout(1));
 
         // Create the tab folder
-        root = new ComponentTitledFolder(shell, controller, null, "id-70"); //$NON-NLS-1$
+        Map<Composite, String> helpids = new HashMap<Composite, String>();
+        root = new ComponentTitledFolder(shell, controller, null, "id-70", helpids); //$NON-NLS-1$
         root.setLayoutData(SWTUtil.createFillGridData());
 
         // Create the subviews
         Composite item1 = root.createItem(Resources.getMessage("MainWindow.2"), controller.getResources().getManagedImage("perspective_define.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        helpids.put(item1, "id-3");
         new LayoutDefinition(item1, controller);
         Composite item2 = root.createItem(Resources.getMessage("MainWindow.3"), controller.getResources().getManagedImage("perspective_explore.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        helpids.put(item2, "id-4");
         this.layoutExplore = new LayoutExplore(item2, controller);
         Composite item3 = root.createItem(Resources.getMessage("MainWindow.1"), controller.getResources().getManagedImage("perspective_analyze.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        helpids.put(item3, "help.utility.overview");
         new LayoutUtility(item3, controller);
         Composite item4 = root.createItem(Resources.getMessage("MainWindow.4"), controller.getResources().getManagedImage("perspective_risk.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        helpids.put(item4, "help.risk.overview");
         new LayoutRisks(item4, controller);
 
         // Hack to update visualizations
