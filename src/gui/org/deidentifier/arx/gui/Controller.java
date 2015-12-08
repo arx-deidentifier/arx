@@ -708,6 +708,7 @@ public class Controller implements IView {
             // Update model
             update(new ModelEvent(this, ModelPart.FILTER, filter));
             update(new ModelEvent(this, ModelPart.RESULT, result));
+            model.getClipboard().addInterestingTransformations(model);
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
             if (result.isResultAvailable()) {
                 model.setOutput(result.getOutput(false), result.getGlobalOptimum());
@@ -835,6 +836,7 @@ public class Controller implements IView {
         model.setOutputConfig(null);
         model.setOutput(null, null);
         model.setSelectedNode(null);
+        model.getClipboard().clearClipboard();
 
         update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, null));
         update(new ModelEvent(this, ModelPart.RESULT, null));
@@ -1314,7 +1316,11 @@ public class Controller implements IView {
         // Update subsets of the model
         if (tempClipboard != null) {
             model.getClipboard().clearClipboard();
-            model.getClipboard().addAllToClipboard(tempClipboard);
+            if (tempClipboard.isEmpty() && model.getResult() != null) {
+                model.getClipboard().addInterestingTransformations(model);
+            } else {
+                model.getClipboard().addAllToClipboard(tempClipboard);
+            }
             update(new ModelEvent(this,
                                   ModelPart.CLIPBOARD,
                                   model.getClipboard().getClipboardEntries()));

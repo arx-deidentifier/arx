@@ -94,7 +94,7 @@ public class Model implements Serializable {
     /** The currently selected node. */
     private transient ARXNode                     selectedNode                    = null;
     
-    /** The clipboard. */
+    /** The clip board. */
     private transient ModelClipboard              clipboard                       = null;
     
     /** The perspective */
