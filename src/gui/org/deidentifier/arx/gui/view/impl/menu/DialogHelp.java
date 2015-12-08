@@ -196,7 +196,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
     
     @Override
     protected Point getInitialSize() {
-        return new Point(900,600);
+        return new Point(930,600);
     }
 
     /**
