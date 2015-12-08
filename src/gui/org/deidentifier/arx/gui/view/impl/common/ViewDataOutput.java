@@ -42,9 +42,10 @@ public class ViewDataOutput extends ViewData {
      * @param controller
      */
     public ViewDataOutput(final Composite parent,
-                         final Controller controller) {
+                          final Controller controller,
+                          final String helpid) {
         
-        super(parent, controller, Resources.getMessage("AnalyzeView.0")); //$NON-NLS-1 //$NON-NLS-1$
+        super(parent, controller, helpid, Resources.getMessage("AnalyzeView.0")); //$NON-NLS-1 //$NON-NLS-1$
     }
     
     @Override

@@ -229,9 +229,11 @@ public class LayoutUtility implements ILayout {
 
         // Create views
         dataInputView = new ViewDataInput(centerLeft,
-                                          controller);
+                                          controller, 
+                                          "help.utility.data"); //$NON-NLS-1$
         dataOutputView = new ViewDataOutput(centerRight,
-                                            controller);
+                                            controller, 
+                                            "help.utility.data"); //$NON-NLS-1$
 
         // Sync tables
         dataInputView.addScrollBarListener(new Listener() {

@@ -52,8 +52,9 @@ public class ViewDataInput extends ViewData {
      * @param controller
      */
     public ViewDataInput(final Composite parent,
-                         final Controller controller) {
-        this (parent, controller, false);
+                         final Controller controller,
+                         final String helpid) {
+        this (parent, controller, helpid, false);
     }
     
     /**
@@ -66,9 +67,10 @@ public class ViewDataInput extends ViewData {
      */
     public ViewDataInput(final Composite parent,
                          final Controller controller,
-                         boolean editable) {
+                         final String helpid,
+                         final boolean editable) {
         
-        super(parent, controller, Resources.getMessage("AnalyzeView.1")); //$NON-NLS-1$
+        super(parent, controller, helpid, Resources.getMessage("AnalyzeView.1")); //$NON-NLS-1$
         
         // Register
         controller.addListener(ModelPart.RESEARCH_SUBSET, this);

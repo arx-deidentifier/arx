@@ -84,7 +84,7 @@ public class LayoutDefinition implements ILayout {
         compositeBottomRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
-        new ViewDataInput(compositeLeft, controller, true);
+        new ViewDataInput(compositeLeft, controller, "id-140", true); //$NON-NLS-1$
         new ViewSubsetDefinition(compositeLeft, controller);
         new LayoutAttributeSettings(compositeTopRight, controller);
         new LayoutCriteria(compositeCenterRight, controller);

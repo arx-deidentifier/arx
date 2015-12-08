@@ -101,9 +101,11 @@ public abstract class ViewData implements IView {
      * @param parent
      * @param controller
      * @param title
+     * @param helpid
      */
     public ViewData(final Composite parent,
                     final Controller controller,
+                    final String helpid,
                     final String title) {
 
         // Register
@@ -126,7 +128,7 @@ public abstract class ViewData implements IView {
         IMAGE_DESCENDING        = controller.getResources().getManagedImage("sort_descending.png");//$NON-NLS-1$
 
         // Create title bar
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("help.utility.data", helpids); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(helpid, helpids); //$NON-NLS-1$
         bar.add(Resources.getMessage("DataView.1"), //$NON-NLS-1$ 
                 IMAGE_ASCENDING,
                 new Runnable() {
