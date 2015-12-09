@@ -44,6 +44,9 @@ import org.deidentifier.arx.metric.Metric;
  * @author Florian Kohlmayer
  */
 public class NodeChecker {
+    
+    /** TODO: Temporary switch to disable parallel transform & groupify for benchmarking */
+    public static boolean DISABLE_PARALLEL_TRANSFORM = false;
 
     /**
      * The result of a check.
@@ -191,7 +194,7 @@ public class NodeChecker {
         
         this.numThreads = config.getNumThreads();
         
-        if (this.numThreads > 1) {
+        if (this.numThreads > 1 && !DISABLE_PARALLEL_TRANSFORM) {
             
             this.transformer = new TransformerMultithreaded(manager.getDataGeneralized().getArray(),
                                                manager.getDataAnalyzed().getArray(),
