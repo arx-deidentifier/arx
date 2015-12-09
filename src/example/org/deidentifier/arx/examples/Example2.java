@@ -38,38 +38,26 @@ public class Example2 extends Example {
     /**
      * Entry point.
      * 
-     * @param args
-     *            the arguments
+     * @param args the arguments
      * @throws IOException
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
-        try {
-
-            final Data data = Data.create("data/test.csv", ';');
+            Data data = Data.create("data/test.csv", ';');
 
             // Define input files
-            data.getDefinition()
-                .setAttributeType("age",
-                                  Hierarchy.create("data/test_hierarchy_age.csv",
-                                                   ';'));
-            data.getDefinition()
-                .setAttributeType("gender",
-                                  Hierarchy.create("data/test_hierarchy_gender.csv",
-                                                   ';'));
-            data.getDefinition()
-                .setAttributeType("zipcode",
-                                  Hierarchy.create("data/test_hierarchy_zipcode.csv",
-                                                   ';'));
+            data.getDefinition().setAttributeType("age", Hierarchy.create("data/test_hierarchy_age.csv", ';'));
+            data.getDefinition().setAttributeType("gender", Hierarchy.create("data/test_hierarchy_gender.csv", ';'));
+            data.getDefinition().setAttributeType("zipcode", Hierarchy.create("data/test_hierarchy_zipcode.csv", ';'));
 
             // Create an instance of the anonymizer
-            final ARXAnonymizer anonymizer = new ARXAnonymizer();
+            ARXAnonymizer anonymizer = new ARXAnonymizer();
 
             // Execute the algorithm
-            final ARXConfiguration config = ARXConfiguration.create();
+            ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(0d);
-            final ARXResult result = anonymizer.anonymize(data, config);
+            ARXResult result = anonymizer.anonymize(data, config);
             
             // Print info
             printResult(result, data);
@@ -78,11 +66,5 @@ public class Example2 extends Example {
             System.out.print(" - Writing data...");
             result.getOutput(false).save("data/test_anonymized.csv", ';');
             System.out.println("Done!");
-
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

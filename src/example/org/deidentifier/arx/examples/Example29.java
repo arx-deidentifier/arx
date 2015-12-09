@@ -50,10 +50,9 @@ public class Example29 extends Example {
     /**
      * Entry point.
      * 
-     * @param args
-     *            the arguments
+     * @param args the arguments
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) throws IOException {
 
         // Define data
         DefaultData data = Data.create();
@@ -101,22 +100,15 @@ public class Example29 extends Example {
         ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new AverageReidentificationRisk(0.5d));
         config.setMaxOutliers(1d);
-        try {
-            
-            // Anonymize
-            ARXResult result = anonymizer.anonymize(data, config);
-            
-            // Perform risk analysis
-            System.out.println("\n - Output data");
-            print(result.getOutput());
-            System.out.println("\n - Risk analysis:");
-            analyzeData(result.getOutput());
-            
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        // Anonymize
+        ARXResult result = anonymizer.anonymize(data, config);
+
+        // Perform risk analysis
+        System.out.println("\n - Output data");
+        print(result.getOutput());
+        System.out.println("\n - Risk analysis:");
+        analyzeData(result.getOutput());
     }
 
     /**

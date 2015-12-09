@@ -51,7 +51,7 @@ public class Example43 extends Example {
      *            the arguments
      * @throws IOException 
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
         // Define data
         DefaultData data = Data.create();
@@ -65,7 +65,7 @@ public class Example43 extends Example {
         data.add("45", "male", "81931");
 
         // Define research subset
-        final DataSubset subset = DataSubset.create(data, new HashSet<Integer>(Arrays.asList(1, 2, 5)));
+        DataSubset subset = DataSubset.create(data, new HashSet<Integer>(Arrays.asList(1, 2, 5)));
 
         // Define hierarchies
         DefaultHierarchy age = Hierarchy.create();
@@ -120,7 +120,7 @@ public class Example43 extends Example {
      */
     private static void analyzeData(DataHandle handle) {
         
-        final double THRESHOLD = 0.5d;
+        double THRESHOLD = 0.5d;
         
         ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
         RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);

@@ -47,10 +47,10 @@ public class Example41 extends Example {
      *            the arguments
      * @throws IOException 
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
         // Define public dataset
-        final DefaultData data = Data.create();
+        DefaultData data = Data.create();
         data.add("identifier", "name", "zip", "age", "nationality", "sen");
         data.add("a", "Alice", "47906", "35", "USA", "0");
         data.add("b", "Bob", "47903", "59", "Canada", "1");
@@ -63,10 +63,10 @@ public class Example41 extends Example {
         data.add("i", "Iris", "48970", "52", "France", "1");
 
         // Define research subset
-        final DataSubset subset = DataSubset.create(data, new HashSet<Integer>(Arrays.asList(1, 2, 5, 7, 8)));
+        DataSubset subset = DataSubset.create(data, new HashSet<Integer>(Arrays.asList(1, 2, 5, 7, 8)));
 
         // Define hierarchies
-        final DefaultHierarchy age = Hierarchy.create();
+        DefaultHierarchy age = Hierarchy.create();
         age.add("18", "1*", "<=40", "*");
         age.add("22", "2*", "<=40", "*");
         age.add("33", "3*", "<=40", "*");
@@ -77,7 +77,7 @@ public class Example41 extends Example {
         age.add("59", "5*", ">40", "*");
         age.add("63", "6*", ">40", "*");
 
-        final DefaultHierarchy nationality = Hierarchy.create();
+        DefaultHierarchy nationality = Hierarchy.create();
         nationality.add("Canada", "N. America", "America", "*");
         nationality.add("USA", "N. America", "America", "*");
         nationality.add("Peru", "S. America", "America", "*");
@@ -86,7 +86,7 @@ public class Example41 extends Example {
         nationality.add("France", "W. Europe", "Europe", "*");
         nationality.add("Spain", "W. Europe", "Europe", "*");
 
-        final DefaultHierarchy zip = Hierarchy.create();
+        DefaultHierarchy zip = Hierarchy.create();
         zip.add("47630", "4763*", "476*", "47*", "4*", "*");
         zip.add("47633", "4763*", "476*", "47*", "4*", "*");
         zip.add("47903", "4790*", "479*", "47*", "4*", "*");
@@ -104,14 +104,14 @@ public class Example41 extends Example {
         data.getDefinition().setAttributeType("sen", AttributeType.INSENSITIVE_ATTRIBUTE);
 
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = ARXConfiguration.create();
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KMap(3, subset));
         config.setMaxOutliers(1d);
         config.setMetric(Metric.createLossMetric());
 
         // Now anonymize
-        final ARXResult result = anonymizer.anonymize(data, config);
+        ARXResult result = anonymizer.anonymize(data, config);
 
         // Print input
         System.out.println(" - Input data:");

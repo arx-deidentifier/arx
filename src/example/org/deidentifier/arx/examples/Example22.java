@@ -50,12 +50,12 @@ public class Example22 extends Example {
      */
     public static Data createData(final String dataset) throws IOException {
 
-        final Data data = Data.create("data/" + dataset + ".csv", ';');
+        Data data = Data.create("data/" + dataset + ".csv", ';');
 
         // Read generalization hierarchies
-        final FilenameFilter hierarchyFilter = new FilenameFilter() {
+        FilenameFilter hierarchyFilter = new FilenameFilter() {
             @Override
-            public boolean accept(final File dir, final String name) {
+            public boolean accept(File dir, String name) {
                 if (name.matches(dataset + "_hierarchy_(.)+.csv")) {
                     return true;
                 } else {
@@ -65,14 +65,14 @@ public class Example22 extends Example {
         };
 
         // Create definition
-        final File testDir = new File("data/");
-        final File[] genHierFiles = testDir.listFiles(hierarchyFilter);
-        final Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
-        for (final File file : genHierFiles) {
-            final Matcher matcher = pattern.matcher(file.getName());
+        File testDir = new File("data/");
+        File[] genHierFiles = testDir.listFiles(hierarchyFilter);
+        Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
+        for (File file : genHierFiles) {
+            Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
-                final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
-                final String attributeName = matcher.group(1);
+                CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
+                String attributeName = matcher.group(1);
                 data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
             }
         }
@@ -86,12 +86,12 @@ public class Example22 extends Example {
      * @param args the arguments
      * @throws IOException
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         
         Data data = createData("adult");
         data.getDefinition().setAttributeType("occupation", AttributeType.SENSITIVE_ATTRIBUTE);
         
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new EntropyLDiversity("occupation", 5));
         config.setMaxOutliers(0.04d);

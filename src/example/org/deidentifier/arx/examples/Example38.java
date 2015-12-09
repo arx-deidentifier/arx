@@ -108,7 +108,6 @@ public class Example38 extends Example {
         System.out.println(" - Global recoding:");
         printHandle(optimum);
 
-
         try {
             
             // Now apply local recoding to the result

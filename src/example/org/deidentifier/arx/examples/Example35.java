@@ -39,7 +39,7 @@ public class Example35 {
      * @param args
      * @throws IOException
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         Data.DefaultData data = createData();
         
         DataHandle handle = data.getHandle();
@@ -55,7 +55,7 @@ public class Example35 {
      * @return
      */
     private static Data.DefaultData createData() {
-        final Data.DefaultData data = Data.create();
+        Data.DefaultData data = Data.create();
         data.add("first name", "age", "gender", "code", "birth", "email-address", "SSN", "Bank", "Vehicle", "URL", "IP", "phone");
         data.add("Max", "34", "male", "81667", "2008-09-02", "", "123-45-6789", "GR16 0110 1250 0000 0001 2300 695", "", "http://demodomain.com", "8.8.8.8", "+49 1234566");
         data.add("Max", "45", "female", "81675", "2008-09-02", "user@arx.org", "", "", "WDD 169 007-1J-236589", "", "2001:db8::1428:57ab", "");

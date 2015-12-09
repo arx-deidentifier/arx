@@ -44,13 +44,13 @@ public class Example5 extends Example {
     /**
      * Entry point.
      * 
-     * @param args
-     *            the arguments
+     * @param args the arguments
+     * @throws IOException 
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) throws IOException {
 
         // Define data
-        final DefaultData data = Data.create();
+        DefaultData data = Data.create();
         data.add("age", "gender", "zipcode");
         data.add("34", "male", "81667");
         data.add("45", "female", "81675");
@@ -60,50 +60,41 @@ public class Example5 extends Example {
         data.add("70", "male", "81931");
         data.add("45", "male", "81931");
 
-        final DefaultHierarchy gender = Hierarchy.create();
+        DefaultHierarchy gender = Hierarchy.create();
         gender.add("male", "*");
         gender.add("female", "*");
 
         // Only excerpts for readability
-        final DefaultHierarchy zipcode = Hierarchy.create();
+        DefaultHierarchy zipcode = Hierarchy.create();
         zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
         zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
         zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
         zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
 
         // Create a data definition
-        data.getDefinition()
-            .setAttributeType("age", AttributeType.SENSITIVE_ATTRIBUTE);
+        data.getDefinition().setAttributeType("age", AttributeType.SENSITIVE_ATTRIBUTE);
         data.getDefinition().setAttributeType("gender", gender);
         data.getDefinition().setAttributeType("zipcode", zipcode);
 
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = ARXConfiguration.create();
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new RecursiveCLDiversity("age", 3, 2));
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
-        try {
 
-            // Now anonymize
-            final ARXResult result = anonymizer.anonymize(data, config);
+        // Now anonymize
+        ARXResult result = anonymizer.anonymize(data, config);
 
-            // Print info
-            printResult(result, data);
+        // Print info
+        printResult(result, data);
 
-            // Process results
-            System.out.println(" - Transformed data:");
-            final Iterator<String[]> transformed = result.getOutput(false)
-                                                         .iterator();
-            while (transformed.hasNext()) {
-                System.out.print("   ");
-                System.out.println(Arrays.toString(transformed.next()));
-            }
-
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+        // Process results
+        System.out.println(" - Transformed data:");
+        Iterator<String[]> transformed = result.getOutput(false).iterator();
+        while (transformed.hasNext()) {
+            System.out.print("   ");
+            System.out.println(Arrays.toString(transformed.next()));
         }
     }
 }

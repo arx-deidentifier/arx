@@ -51,12 +51,13 @@ public class Example39 extends Example {
      */
     public static Data createData(final String dataset) throws IOException {
 
-        final Data data = Data.create("data/" + dataset + ".csv", ';');
+        // Load data
+        Data data = Data.create("data/" + dataset + ".csv", ';');
 
         // Read generalization hierarchies
-        final FilenameFilter hierarchyFilter = new FilenameFilter() {
+        FilenameFilter hierarchyFilter = new FilenameFilter() {
             @Override
-            public boolean accept(final File dir, final String name) {
+            public boolean accept(File dir, String name) {
                 if (name.matches(dataset + "_hierarchy_(.)+.csv")) {
                     return true;
                 } else {
@@ -66,14 +67,14 @@ public class Example39 extends Example {
         };
 
         // Create definition
-        final File testDir = new File("data/");
-        final File[] genHierFiles = testDir.listFiles(hierarchyFilter);
-        final Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
-        for (final File file : genHierFiles) {
-            final Matcher matcher = pattern.matcher(file.getName());
+        File testDir = new File("data/");
+        File[] genHierFiles = testDir.listFiles(hierarchyFilter);
+        Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
+        for (File file : genHierFiles) {
+            Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
-                final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
-                final String attributeName = matcher.group(1);
+                CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
+                String attributeName = matcher.group(1);
                 data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
             }
         }
@@ -88,7 +89,7 @@ public class Example39 extends Example {
      * @throws ParseException 
      * @throws IOException 
      */
-    public static void main(final String[] args) throws ParseException, IOException {
+    public static void main(String[] args) throws ParseException, IOException {
 
         String[] features = new String[] {
                 "sex", "age", "race", "marital-status", "education", "native-country", "workclass", "occupation", "salary-class"

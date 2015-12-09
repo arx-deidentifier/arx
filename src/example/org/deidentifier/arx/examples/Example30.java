@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.examples;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public class Example30 extends Example {
      *            the arguments
      */
     @SuppressWarnings("unchecked")
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException {
 
         // Define data
         DefaultData data = Data.create();

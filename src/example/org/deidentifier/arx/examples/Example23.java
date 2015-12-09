@@ -47,10 +47,10 @@ public class Example23 extends Example {
      * @param args
      *            the arguments
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) throws IOException {
 
         // Define data
-        final DefaultData data = Data.create();
+        DefaultData data = Data.create();
         data.add("zipcode", "age", "disease");
         data.add("47677", "22", "gastric ulcer");
         data.add("47602", "23", "gastritis");
@@ -63,7 +63,7 @@ public class Example23 extends Example {
         data.add("47906", "25", "bronchitis");
 
         // Define hierarchies
-        final DefaultHierarchy age = Hierarchy.create();
+        DefaultHierarchy age = Hierarchy.create();
         age.add("29", "<=40", "*");
         age.add("22", "<=40", "*");
         age.add("27", "<=40", "*");
@@ -75,7 +75,7 @@ public class Example23 extends Example {
         age.add("32", "<=40", "*");
 
         // Only excerpts for readability
-        final DefaultHierarchy zipcode = Hierarchy.create();
+        DefaultHierarchy zipcode = Hierarchy.create();
         zipcode.add("47677", "4767*", "476**", "47***", "4****", "*****");
         zipcode.add("47602", "4760*", "476**", "47***", "4****", "*****");
         zipcode.add("47678", "4767*", "476**", "47***", "4****", "*****");
@@ -87,7 +87,7 @@ public class Example23 extends Example {
         zipcode.add("47607", "4760*", "476**", "47***", "4****", "*****");
 
         // Define sensitive value hierarchy
-        final DefaultHierarchy disease = Hierarchy.create();
+        DefaultHierarchy disease = Hierarchy.create();
         disease.add("flu",
                     "respiratory infection",
                     "vascular lung disease",
@@ -134,34 +134,28 @@ public class Example23 extends Example {
         data.getDefinition().setAttributeType("age", AttributeType.SENSITIVE_ATTRIBUTE);
 
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = ARXConfiguration.create();
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(3));
         config.addCriterion(new DistinctLDiversity("disease", 2));
         config.addCriterion(new DistinctLDiversity("age", 2));
         config.setMaxOutliers(0.1d);
         config.setMetric(Metric.createEntropyMetric());
-        try {
 
-            // Now anonymize
-            final ARXResult result = anonymizer.anonymize(data, config);
-        
-            // Print info
-            printResult(result, data);
+        // Now anonymize
+        ARXResult result = anonymizer.anonymize(data, config);
 
-            // Process results
-            if (result.isResultAvailable()) {
-                System.out.println(" - Transformed data:");
-                final Iterator<String[]> transformed = result.getOutput(false).iterator();
-                while (transformed.hasNext()) {
-                    System.out.print("   ");
-                    System.out.println(Arrays.toString(transformed.next()));
-                }
+        // Print info
+        printResult(result, data);
+
+        // Process results
+        if (result.isResultAvailable()) {
+            System.out.println(" - Transformed data:");
+            Iterator<String[]> transformed = result.getOutput(false).iterator();
+            while (transformed.hasNext()) {
+                System.out.print("   ");
+                System.out.println(Arrays.toString(transformed.next()));
             }
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }

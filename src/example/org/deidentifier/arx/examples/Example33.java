@@ -45,10 +45,9 @@ public class Example33 extends Example {
     /**
      * Entry point.
      * 
-     * @param args
-     *            the arguments
+     * @param args the arguments
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) throws IOException {
         
         /* *******************************
          * Define data
@@ -67,7 +66,7 @@ public class Example33 extends Example {
          * Define hierarchies
          *********************************/
         
-        final DefaultHierarchy hierarchy = Hierarchy.create();
+        DefaultHierarchy hierarchy = Hierarchy.create();
         hierarchy.add("male", "*");
         hierarchy.add("female", "*");
 
@@ -95,29 +94,23 @@ public class Example33 extends Example {
         
         
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = ARXConfiguration.create();
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0.5d);
-        try {
-            final ARXResult result = anonymizer.anonymize(data, config);
-            
-            // Print info
-            printResult(result, data);
-            
-            // Process results
-            System.out.println(" - Transformed data:");
-            final Iterator<String[]> transformed = result.getOutput(false).iterator();
-            while (transformed.hasNext()) {
-                System.out.print("   ");
-                System.out.println(Arrays.toString(transformed.next()));
-            }
-            
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+
+        // Obtain result
+        ARXResult result = anonymizer.anonymize(data, config);
+
+        // Print info
+        printResult(result, data);
+
+        // Process results
+        System.out.println(" - Transformed data:");
+        Iterator<String[]> transformed = result.getOutput(false).iterator();
+        while (transformed.hasNext()) {
+            System.out.print("   ");
+            System.out.println(Arrays.toString(transformed.next()));
         }
-        
     }
 }

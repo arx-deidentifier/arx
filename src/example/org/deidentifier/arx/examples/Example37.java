@@ -46,10 +46,10 @@ public class Example37 extends Example {
      * @param args
      *            the arguments
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) throws IOException {
 
         // Define data
-        final DefaultData data = Data.create();
+        DefaultData data = Data.create();
         data.add("age", "gender", "zipcode");
         data.add("34", "male", "81667");
         data.add("45", "female", "81675");
@@ -60,18 +60,18 @@ public class Example37 extends Example {
         data.add("45", "male", "81931");
 
         // Define hierarchies
-        final DefaultHierarchy age = Hierarchy.create();
+        DefaultHierarchy age = Hierarchy.create();
         age.add("34", "<50", "*");
         age.add("45", "<50", "*");
         age.add("66", ">=50", "*");
         age.add("70", ">=50", "*");
 
-        final DefaultHierarchy gender = Hierarchy.create();
+        DefaultHierarchy gender = Hierarchy.create();
         gender.add("male", "*");
         gender.add("female", "*");
 
         // Only excerpts for readability
-        final DefaultHierarchy zipcode = Hierarchy.create();
+        DefaultHierarchy zipcode = Hierarchy.create();
         zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
         zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
         zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
@@ -84,35 +84,28 @@ public class Example37 extends Example {
         data.getDefinition().setHierarchy("gender", gender);
         data.getDefinition().setHierarchy("zipcode", zipcode);
 
-        try {
-            // Create an instance of the anonymizer
-            ARXAnonymizer anonymizer = new ARXAnonymizer();
+        // Create an instance of the anonymizer
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
 
-            // Create a differential privacy criterion
-            EDDifferentialPrivacy criterion =  new EDDifferentialPrivacy(2d, 0.00001d, 
-                                                                         DataGeneralizationScheme.create(data, GeneralizationDegree.MEDIUM));
-            
-            ARXConfiguration config = ARXConfiguration.create();
-            config.addCriterion(criterion);
-            config.setMaxOutliers(1d);
-            ARXResult result = anonymizer.anonymize(data, config);
+        // Create a differential privacy criterion
+        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(2d, 0.00001d,
+                                                                    DataGeneralizationScheme.create(data,GeneralizationDegree.MEDIUM));
 
-            // Access output
-            DataHandle optimal = result.getOutput();
-            
-            System.out.println(result.isResultAvailable());
+        ARXConfiguration config = ARXConfiguration.create();
+        config.addCriterion(criterion);
+        config.setMaxOutliers(1d);
+        ARXResult result = anonymizer.anonymize(data, config);
 
-            // Print input
-            System.out.println(" - Input data:");
-            printHandle(data.getHandle());
+        // Access output
+        DataHandle optimal = result.getOutput();
 
-            System.out.println(" - Result:");
-            printHandle(optimal);
+        System.out.println(result.isResultAvailable());
 
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+        // Print input
+        System.out.println(" - Input data:");
+        printHandle(data.getHandle());
+
+        System.out.println(" - Result:");
+        printHandle(optimal);
     }
 }

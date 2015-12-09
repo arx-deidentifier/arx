@@ -51,7 +51,7 @@ public class Example28 extends Example {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public static void main(final String[] args) throws IOException,
+    public static void main(String[] args) throws IOException,
                                                 SQLException,
                                                 ClassNotFoundException {
 
@@ -69,8 +69,7 @@ public class Example28 extends Example {
 
         // Define hierarchies
         // Define hierarchies
-        HierarchyBuilderIntervalBased<Long> builder1 = HierarchyBuilderIntervalBased.create(
-                                                                                            DataType.INTEGER,
+        HierarchyBuilderIntervalBased<Long> builder1 = HierarchyBuilderIntervalBased.create(DataType.INTEGER,
                                                                                             new Range<Long>(0l, 0l, 0l),
                                                                                             new Range<Long>(99l, 99l, 99l));
 
@@ -123,10 +122,10 @@ public class Example28 extends Example {
         source.addColumn("age", DataType.INTEGER, true);
 
         // Create data object
-        final Data data = Data.create(source);
+        Data data = Data.create(source);
 
         // Define hierarchies
-        final DefaultHierarchy age = Hierarchy.create();
+        DefaultHierarchy age = Hierarchy.create();
         age.add("34", "<50", "*");
         age.add("45", "<50", "*");
         age.add("66", ">=50", "*");
@@ -141,11 +140,11 @@ public class Example28 extends Example {
         System.out.println("\n");
 
         // Anonymize
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = ARXConfiguration.create();
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(3));
         config.setMaxOutliers(0d);
-        final ARXResult result = anonymizer.anonymize(data, config);
+        ARXResult result = anonymizer.anonymize(data, config);
 
         // Print results
         System.out.println("Output:");
@@ -178,7 +177,7 @@ public class Example28 extends Example {
         source.addColumn("age", DataType.INTEGER, true);
 
         // Create data object
-        final Data data = Data.create(source);
+        Data data = Data.create(source);
 
         // Define hierarchies
         HierarchyBuilderIntervalBased<Long> builder1 = HierarchyBuilderIntervalBased.create(
@@ -205,11 +204,11 @@ public class Example28 extends Example {
         printArray(builder1.build(data.getHandle().getDistinctValues(0)).getHierarchy());
 
         // Anonymize
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = ARXConfiguration.create();
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(3));
         config.setMaxOutliers(0d);
-        final ARXResult result = anonymizer.anonymize(data, config);
+        ARXResult result = anonymizer.anonymize(data, config);
 
         // Print results
         System.out.println("Output:");

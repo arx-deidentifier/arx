@@ -45,10 +45,10 @@ public class Example14 extends Example {
      * @param args
      *            the arguments
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) throws IOException {
 
         // Define data
-        final DefaultData data = Data.create();
+        DefaultData data = Data.create();
         data.add("age", "gender", "zipcode");
         data.add("34", "male", "81667");
         data.add("45", "female", "81675");
@@ -59,18 +59,18 @@ public class Example14 extends Example {
         data.add("45", "male", "81931");
 
         // Define hierarchies
-        final DefaultHierarchy age = Hierarchy.create();
+        DefaultHierarchy age = Hierarchy.create();
         age.add("34", "<50", "*");
         age.add("45", "<50", "*");
         age.add("66", ">=50", "*");
         age.add("70", ">=50", "*");
 
-        final DefaultHierarchy gender = Hierarchy.create();
+        DefaultHierarchy gender = Hierarchy.create();
         gender.add("male", "*");
         gender.add("female", "*");
 
         // Only excerpts for readability
-        final DefaultHierarchy zipcode = Hierarchy.create();
+        DefaultHierarchy zipcode = Hierarchy.create();
         zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
         zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
         zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
@@ -81,8 +81,8 @@ public class Example14 extends Example {
         data.getDefinition().setAttributeType("zipcode", zipcode);
 
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = ARXConfiguration.create();
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(3));
         
         // NDS-specific settings
@@ -91,26 +91,18 @@ public class Example14 extends Example {
         config.setAttributeWeight("gender", 0.3d); // attribute weight
         config.setAttributeWeight("zipcode", 0.5d); // attribute weight
         config.setMetric(Metric.createLossMetric(0.5d)); // suppression/generalization-factor
-        
-        try {
-            final ARXResult result = anonymizer.anonymize(data, config);
 
-            // Print info
-            printResult(result, data);
+        ARXResult result = anonymizer.anonymize(data, config);
 
-            // Process results
-            System.out.println(" - Transformed data:");
-            final Iterator<String[]> transformed = result.getOutput(false)
-                                                         .iterator();
-            while (transformed.hasNext()) {
-                System.out.print("   ");
-                System.out.println(Arrays.toString(transformed.next()));
-            }
+        // Print info
+        printResult(result, data);
 
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+        // Process results
+        System.out.println(" - Transformed data:");
+        Iterator<String[]> transformed = result.getOutput(false).iterator();
+        while (transformed.hasNext()) {
+            System.out.print("   ");
+            System.out.println(Arrays.toString(transformed.next()));
         }
     }
 }

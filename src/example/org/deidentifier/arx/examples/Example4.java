@@ -47,10 +47,10 @@ public class Example4 extends Example {
      * @param args
      *            the arguments
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) throws IOException {
 
         // Define data
-        final DefaultData data = Data.create();
+        DefaultData data = Data.create();
         data.add("age", "gender", "zipcode");
         data.add("34", "male", "81667");
         data.add("45", "female", "81675");
@@ -61,7 +61,7 @@ public class Example4 extends Example {
         data.add("45", "male", "81931");
 
         // Obtain a handle
-        final DataHandle inHandle = data.getHandle();
+        DataHandle inHandle = data.getHandle();
 
         // Read the encoded data
         inHandle.getNumRows();
@@ -70,7 +70,7 @@ public class Example4 extends Example {
         inHandle.getValue(0, 0);
 
         // Define hierarchy. Only excerpts for readability
-        final DefaultHierarchy zipcode = Hierarchy.create();
+        DefaultHierarchy zipcode = Hierarchy.create();
         zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
         zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
         zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
@@ -86,38 +86,30 @@ public class Example4 extends Example {
         data.getDefinition().setDataType("zipcode", DataType.DECIMAL);
 
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = ARXConfiguration.create();
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
-        try {
 
-            // Now anonymize the data utilizing the pre-encoded data
-            final ARXResult result = anonymizer.anonymize(data, config);
+        // Now anonymize the data utilizing the pre-encoded data
+        ARXResult result = anonymizer.anonymize(data, config);
 
-            // Obtain a handle for the transformed data
-            final DataHandle outHandle = result.getOutput(false);
+        // Obtain a handle for the transformed data
+        DataHandle outHandle = result.getOutput(false);
 
-            // Sort the data. This operation is implicitly performed on both
-            // representations of the dataset.
-            outHandle.sort(false, 2);
+        // Sort the data. This operation is implicitly performed on both
+        // representations of the dataset.
+        outHandle.sort(false, 2);
 
-            // Print info
-            printResult(result, data);
+        // Print info
+        printResult(result, data);
 
-            // Process results
-            System.out.println(" - Transformed data:");
-            final Iterator<String[]> transformed = result.getOutput(false)
-                                                         .iterator();
-            while (transformed.hasNext()) {
-                System.out.print("   ");
-                System.out.println(Arrays.toString(transformed.next()));
-            }
-
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+        // Process results
+        System.out.println(" - Transformed data:");
+        Iterator<String[]> transformed = result.getOutput(false).iterator();
+        while (transformed.hasNext()) {
+            System.out.print("   ");
+            System.out.println(Arrays.toString(transformed.next()));
         }
     }
 }

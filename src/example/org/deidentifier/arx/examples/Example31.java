@@ -46,7 +46,7 @@ public class Example31 extends Example {
      * @param args
      *            the arguments
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) throws IOException {
         
         // Define data
         DefaultData data = Data.create();
@@ -63,12 +63,12 @@ public class Example31 extends Example {
         data.getDefinition().setDataType("zipcode", DataType.DECIMAL);
         data.getDefinition().setDataType("date", DataType.DATE);
         
-        final DefaultHierarchy gender = Hierarchy.create();
+        DefaultHierarchy gender = Hierarchy.create();
         gender.add("male", "*");
         gender.add("female", "*");
         
         // Only excerpts for readability
-        final DefaultHierarchy zipcode = Hierarchy.create();
+        DefaultHierarchy zipcode = Hierarchy.create();
         zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
         zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
         zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
@@ -81,29 +81,23 @@ public class Example31 extends Example {
         data.getDefinition().setAttributeType("date", MicroAggregationFunction.createArithmeticMean());
         
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = ARXConfiguration.create();
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0.5d);
-        try {
-            final ARXResult result = anonymizer.anonymize(data, config);
-            
-            // Print info
-            printResult(result, data);
-            
-            // Process results
-            System.out.println(" - Transformed data:");
-            final Iterator<String[]> transformed = result.getOutput(false).iterator();
-            while (transformed.hasNext()) {
-                System.out.print("   ");
-                System.out.println(Arrays.toString(transformed.next()));
-            }
-            
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+
+        // Obtain result
+        ARXResult result = anonymizer.anonymize(data, config);
+
+        // Print info
+        printResult(result, data);
+
+        // Process results
+        System.out.println(" - Transformed data:");
+        Iterator<String[]> transformed = result.getOutput(false).iterator();
+        while (transformed.hasNext()) {
+            System.out.print("   ");
+            System.out.println(Arrays.toString(transformed.next()));
         }
-        
     }
 }

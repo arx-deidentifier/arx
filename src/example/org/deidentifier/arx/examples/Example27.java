@@ -50,10 +50,10 @@ public class Example27 extends Example {
      *            the arguments
      * @throws IOException 
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
         // Define data
-        final DefaultData data = Data.create();
+        DefaultData data = Data.create();
         data.add("age", "gender", "zipcode", "dob");
         data.add("34", "male", "81667", "3.2.1913");
         data.add("45", "female", "81675", "5.5.1955");
@@ -64,19 +64,19 @@ public class Example27 extends Example {
         data.add("45", "male", "81931", "28.6.2013");
 
         // Define hierarchies
-        final DefaultHierarchy age = Hierarchy.create();
+        DefaultHierarchy age = Hierarchy.create();
         age.add("34", "<50", "*");
         age.add("45", "<50", "*");
         age.add("66", ">=50", "*");
         age.add("70", ">=50", "*");
         age.add("99", ">=50", "*");
 
-        final DefaultHierarchy gender = Hierarchy.create();
+        DefaultHierarchy gender = Hierarchy.create();
         gender.add("male", "*");
         gender.add("female", "*");
 
         // Only excerpts for readability
-        final DefaultHierarchy zipcode = Hierarchy.create();
+        DefaultHierarchy zipcode = Hierarchy.create();
         zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
         zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
         zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
@@ -88,8 +88,8 @@ public class Example27 extends Example {
         data.getDefinition().setAttributeType("dob", AttributeType.INSENSITIVE_ATTRIBUTE);
 
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = ARXConfiguration.create();
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(3));
         config.setMaxOutliers(0d);
         
@@ -109,7 +109,7 @@ public class Example27 extends Example {
         System.out.println("New input:");
         print(data.getHandle());
         
-        final ARXResult result = anonymizer.anonymize(data, config);
+        ARXResult result = anonymizer.anonymize(data, config);
 
         // Process results
         System.out.println("Output:");

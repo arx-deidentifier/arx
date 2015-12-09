@@ -35,9 +35,8 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
  */
 public class Example26 extends Example {
     
-    /**
-     * 
-     *
+    /** 
+     * Main
      * @param args
      */
     public static void main(final String[] args) {

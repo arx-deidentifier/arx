@@ -49,10 +49,10 @@ public class Example13 extends Example {
      * @param args
      *            the arguments
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) throws IOException {
 
         // Define data
-        final Data data = getData();
+        Data data = getData();
 
         // Define attribute types
         data.getDefinition().setAttributeType("age", getHierarchyAge());
@@ -61,35 +61,28 @@ public class Example13 extends Example {
         data.getDefinition().setAttributeType("disease2", AttributeType.SENSITIVE_ATTRIBUTE);
 
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = ARXConfiguration.create();
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(3));
         config.addCriterion(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
         config.addCriterion(new RecursiveCLDiversity("disease2", 3d, 2));
         config.setMaxOutliers(0d);
         config.setMetric(Metric.createEntropyMetric());
-        try {
 
-            // Now anonymize
-            final ARXResult result = anonymizer.anonymize(data, config);
-        
-            // Print info
-            printResult(result, data);
+        // Now anonymize
+        ARXResult result = anonymizer.anonymize(data, config);
 
-            // Process results
-            if (result.getGlobalOptimum() != null){
-                System.out.println(" - Transformed data:");
-                final Iterator<String[]> transformed = result.getOutput(false)
-                                                             .iterator();
-                while (transformed.hasNext()) {
-                    System.out.print("   ");
-                    System.out.println(Arrays.toString(transformed.next()));
-                }
+        // Print info
+        printResult(result, data);
+
+        // Process results
+        if (result.getGlobalOptimum() != null) {
+            System.out.println(" - Transformed data:");
+            Iterator<String[]> transformed = result.getOutput(false).iterator();
+            while (transformed.hasNext()) {
+                System.out.print("   ");
+                System.out.println(Arrays.toString(transformed.next()));
             }
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -119,7 +112,7 @@ public class Example13 extends Example {
      * @return
      */
     private static Hierarchy getHierarchyAge() {
-        final DefaultHierarchy age = Hierarchy.create();
+        DefaultHierarchy age = Hierarchy.create();
         age.add("29", "<=40", "*");
         age.add("22", "<=40", "*");
         age.add("27", "<=40", "*");
@@ -138,7 +131,7 @@ public class Example13 extends Example {
      * @return
      */
     private static Hierarchy getHierarchyDisease() {
-        final DefaultHierarchy disease = Hierarchy.create();
+        DefaultHierarchy disease = Hierarchy.create();
         disease.add("flu",
                     "respiratory infection",
                     "vascular lung disease",
@@ -188,7 +181,7 @@ public class Example13 extends Example {
      * @return
      */
     private static Hierarchy getHierarchyZipcode() {
-        final DefaultHierarchy zipcode = Hierarchy.create();
+        DefaultHierarchy zipcode = Hierarchy.create();
         zipcode.add("47677", "4767*", "476**", "47***", "4****", "*****");
         zipcode.add("47602", "4760*", "476**", "47***", "4****", "*****");
         zipcode.add("47678", "4767*", "476**", "47***", "4****", "*****");

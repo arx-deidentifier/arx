@@ -47,7 +47,7 @@ public class Example40 extends Example {
      * @throws IOException 
      * @throws ParseException 
      */
-    public static void main(final String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException, ParseException {
 
         String[] features = new String[] {
                 "gender", "zipcode"
@@ -101,7 +101,7 @@ public class Example40 extends Example {
         config.addCriterion(new KAnonymity(3));
         ARXResult result = anonymizer.anonymize(data, config);
 
-        final Iterator<String[]> transformed = result.getOutput().iterator();
+        Iterator<String[]> transformed = result.getOutput().iterator();
         while (transformed.hasNext()) {
             System.out.print("   ");
             System.out.println(Arrays.toString(transformed.next()));
@@ -110,10 +110,8 @@ public class Example40 extends Example {
         double outputAccuracy = result.getOutput().getStatistics()
                 .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, true, 1d)
                 .getFractionCorrect();
-        
 
         System.out.println("3-anonymous dataset");
         System.out.println(" - Classification accuracy: " + outputAccuracy);
-
     }
 }

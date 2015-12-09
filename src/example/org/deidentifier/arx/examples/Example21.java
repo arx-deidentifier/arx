@@ -45,7 +45,7 @@ public class Example21 extends Example {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public static void main(final String[] args) throws IOException,
+    public static void main(String[] args) throws IOException,
                                                 SQLException,
                                                 ClassNotFoundException {
 
@@ -91,7 +91,7 @@ public class Example21 extends Example {
         // specified by the order of calls to addColumn().
 
         // Create data object
-        final Data data = Data.create(source);
+        Data data = Data.create(source);
 
         // Print to console
         print(data.getHandle());
@@ -124,7 +124,7 @@ public class Example21 extends Example {
         source.addColumn("age", "renamed", DataType.INTEGER); // age (named addressing + alias name)
 
         // Create data object
-        final Data data = Data.create(source);
+        Data data = Data.create(source);
 
         // Print to console
         print(data.getHandle());
@@ -169,7 +169,7 @@ public class Example21 extends Example {
         source.addColumn("age", "renamed", DataType.INTEGER); // age (named addressing + alias name)
 
         // Create data object
-        final Data data = Data.create(source);
+        Data data = Data.create(source);
 
         // Print to console
         print(data.getHandle());
