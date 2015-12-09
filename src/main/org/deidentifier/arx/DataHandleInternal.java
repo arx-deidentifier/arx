@@ -228,4 +228,16 @@ public class DataHandleInternal {
     public boolean isOutlier(int row) {
         return handle.isOutlier(row);
     }
+    
+    /**
+     * Returns whether this is an output handle
+     * @return
+     */
+    public boolean isOutput() {
+        if (this.getSuperset() != null) {
+            return this.getSuperset().isOutput();
+        } else {
+            return this.handle instanceof DataHandleOutput;
+        }
+    }
 }

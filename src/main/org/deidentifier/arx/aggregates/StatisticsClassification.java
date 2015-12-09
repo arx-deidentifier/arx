@@ -251,16 +251,26 @@ public class StatisticsClassification {
                         checkInterrupt();
                         
                         // Do
-                        double numericValue = 0d;
-                        if (type[index] instanceof ARXDecimal) {
-                            numericValue = (Double)type[index].parse(value);
-                        } else if (type[index] instanceof ARXInteger) {
-                            numericValue = (Long)type[index].parse(value);
-                        } else if (type[index] instanceof ARXDate) {
-                            numericValue = ((Date)type[index].parse(value)).getTime();
+                        try {
+                            double numericValue = 0d;
+                            if (type[index] instanceof ARXDecimal) {
+                                numericValue = (Double)type[index].parse(value);
+                            } else if (type[index] instanceof ARXInteger) {
+                                numericValue = (Long)type[index].parse(value);
+                            } else if (type[index] instanceof ARXDate) {
+                                numericValue = ((Date)type[index].parse(value)).getTime();
+                            }
+                            minimum[index] = Math.min(minimum[index], numericValue);
+                            maximum[index] = Math.max(maximum[index], numericValue);
+                        } catch (Exception e) {
+                            // Ignore: this is for the handling of suppressed values
                         }
-                        minimum[index] = Math.min(minimum[index], numericValue);
-                        maximum[index] = Math.max(maximum[index], numericValue);
+                    }
+                    if (minimum[index] == Double.MAX_VALUE) {
+                        minimum[index] = 0d;
+                    }
+                    if (maximum[index] == - Double.MAX_VALUE) {
+                        maximum[index] = 1d;
                     }
                     
                 // Ordinal or nominal
@@ -289,98 +299,6 @@ public class StatisticsClassification {
         } else {
             this.accuracy = getAccuracyAccordingToKFoldCrossValidation(handle, ignoreSuppressedRows, map, maps, k, random, samplingFraction);
         }
-    }
-
-    /**
-     * Returns the baseline accuracy according to the zeroR method
-     * @param handle
-     * @param ignoreSuppressedRows
-     * @param map 
-     * @param k
-     * @param random
-     * @param samplingFraction
-     * @return
-     */
-    private double getBaselineAccordingToKFoldCrossValidation(DataHandleInternal handle,
-                                                              boolean ignoreSuppressedRows,
-                                                              Map<String, Integer> map, 
-                                                              int k,
-                                                              Random random,
-                                                              double samplingFraction) {
-
-        // Obtain the folds
-        List<List<Integer>> folds = getFolds(handle,
-                                             ignoreSuppressedRows,
-                                             k,
-                                             random,
-                                             samplingFraction);
-
-        // Encode all features and classes
-        List<int[]> classes = new ArrayList<int[]>();
-        
-        // For each fold as a validation set
-        for (List<Integer> fold : folds) {
-            int[] foldClasses = new int[fold.size()];
-            int index = 0;
-            for (int row : fold) {
-                foldClasses[index] = getClass(handle, row, map);
-                index++;
-            }
-            classes.add(foldClasses);
-            fold.clear();
-        }
-        folds.clear();
-        folds = null;
-        
-        // Perform cross validation
-        double correct = 0d;
-        double total = 0d;
-
-        // For each fold as a validation set
-        for (int i = 0; i < classes.size(); i++) {
-
-            // For all training sets
-            Map<Integer, Integer> counts = new HashMap<Integer, Integer>();
-            for (int j = 0; j < classes.size(); j++) {
-                if (j != i) {
-                    int[] foldClasses = classes.get(j);
-                    for (int index = 0; index < foldClasses.length; index++) {
-
-                        // Check
-                        checkInterrupt();
-
-                        // Train
-                        Integer previous = counts.get(foldClasses[index]);
-                        counts.put(foldClasses[index], previous != null ? previous + 1 : 1);
-                    }
-                }
-            }
-            
-            // Obtain most frequent element
-            int mostFrequentCount = 0;
-            int mostFrequentElement = -1;
-            for (Entry<Integer, Integer> entry : counts.entrySet()) {
-                if (entry.getValue() > mostFrequentCount) {
-                    mostFrequentElement = entry.getKey();
-                    mostFrequentCount = entry.getValue();
-                }
-            }
-            
-            // Now validate
-            int[] foldClasses = classes.get(i);
-            for (int index = 0; index < foldClasses.length; index++) {
-
-                // Check
-                checkInterrupt();
-
-                // Count
-                total++;
-                correct += foldClasses[index] == mostFrequentElement ? 1 : 0;
-            }
-        }
-
-        // Return mean
-        return correct / total;
     }
 
     /**
@@ -502,6 +420,196 @@ public class StatisticsClassification {
     }
 
     /**
+     * Returns the indexes of all relevant attributes
+     * @param handle
+     * @param features
+     * @param clazz
+     * @return
+     */
+    private int[] getAttributeIndexes(DataHandleInternal handle, String[] features, String clazz) {
+        // Collect
+        List<Integer> list = new ArrayList<>();
+        for (int column = 0; column < handle.getNumColumns(); column++) {
+            String attribute = handle.getAttributeName(column);
+            if (isContained(features, attribute)) {
+                list.add(column);
+            }
+        }
+        list.add(handle.getColumnIndexOf(clazz));
+        
+        // Convert
+        int[] result = new int[list.size()];
+        for (int i=0; i<list.size(); i++) {
+            result[i] = list.get(i);
+        }
+        
+        // Return
+        return result;
+    }
+
+    /**
+     * Returns the baseline accuracy according to the zeroR method
+     * @param handle
+     * @param ignoreSuppressedRows
+     * @param map 
+     * @param k
+     * @param random
+     * @param samplingFraction
+     * @return
+     */
+    private double getBaselineAccordingToKFoldCrossValidation(DataHandleInternal handle,
+                                                              boolean ignoreSuppressedRows,
+                                                              Map<String, Integer> map, 
+                                                              int k,
+                                                              Random random,
+                                                              double samplingFraction) {
+
+        // Obtain the folds
+        List<List<Integer>> folds = getFolds(handle,
+                                             ignoreSuppressedRows,
+                                             k,
+                                             random,
+                                             samplingFraction);
+
+        // Encode all features and classes
+        List<int[]> classes = new ArrayList<int[]>();
+        
+        // For each fold as a validation set
+        for (List<Integer> fold : folds) {
+            int[] foldClasses = new int[fold.size()];
+            int index = 0;
+            for (int row : fold) {
+                foldClasses[index] = getClass(handle, row, map);
+                index++;
+            }
+            classes.add(foldClasses);
+            fold.clear();
+        }
+        folds.clear();
+        folds = null;
+        
+        // Perform cross validation
+        double correct = 0d;
+        double total = 0d;
+
+        // For each fold as a validation set
+        for (int i = 0; i < classes.size(); i++) {
+
+            // For all training sets
+            Map<Integer, Integer> counts = new HashMap<Integer, Integer>();
+            for (int j = 0; j < classes.size(); j++) {
+                if (j != i) {
+                    int[] foldClasses = classes.get(j);
+                    for (int index = 0; index < foldClasses.length; index++) {
+
+                        // Check
+                        checkInterrupt();
+
+                        // Train
+                        Integer previous = counts.get(foldClasses[index]);
+                        counts.put(foldClasses[index], previous != null ? previous + 1 : 1);
+                    }
+                }
+            }
+            
+            // Obtain most frequent element
+            int mostFrequentCount = 0;
+            int mostFrequentElement = -1;
+            for (Entry<Integer, Integer> entry : counts.entrySet()) {
+                if (entry.getValue() > mostFrequentCount) {
+                    mostFrequentElement = entry.getKey();
+                    mostFrequentCount = entry.getValue();
+                }
+            }
+            
+            // Now validate
+            int[] foldClasses = classes.get(i);
+            for (int index = 0; index < foldClasses.length; index++) {
+
+                // Check
+                checkInterrupt();
+
+                // Count
+                total++;
+                correct += foldClasses[index] == mostFrequentElement ? 1 : 0;
+            }
+        }
+
+        // Return mean
+        return correct / total;
+    }
+    
+    /**
+     * Returns the class for the given row
+     * @param handle
+     * @param row
+     * @param map
+     * @return
+     */
+    private int getClass(DataHandleInternal handle, int row, Map<String, Integer> map) {
+        return map.get(handle.getValue(row, indexes[indexes.length - 1]));
+    }
+
+    /**
+     * Returns the feature vector for the given row
+     * @param handle
+     * @param row
+     * @param maps
+     * @param interceptEncoder
+     * @param featureEncoder
+     * @return
+     * @throws ParseException
+     */
+    private Vector getFeatures(DataHandleInternal handle, int row,
+                               Map<String, Integer>[] maps,
+                               ConstantValueEncoder interceptEncoder,
+                               StaticWordValueEncoder featureEncoder) throws ParseException {
+        
+        // Prepare
+        int length = this.indexes.length - 1;
+        DenseVector vector = new DenseVector(length != 0 ? length : 1);
+        interceptEncoder.addToVector("1", vector);
+        
+        // Special case where there are no features
+        if (length == 0) {
+            featureEncoder.addToVector("Feature:1", 1, vector);
+            return vector;
+        }
+        
+        // For each attribute
+        for (int index = 0; index < length; index++) {
+            
+            // Obtain data
+            int column = indexes[index];
+            String name = handle.getAttributeName(column);
+            DataType<?> type = this.type[index];
+            double minimum = this.minimum[index];
+            double maximum = this.maximum[index];
+            
+            // Set value
+            double value = 0d;
+            try {
+                if (type instanceof ARXDecimal) {
+                    value = handle.getDouble(row, column);
+                } else if (type instanceof ARXInteger) {
+                    value = handle.getDouble(row, column);
+                } else if (type instanceof ARXDate) {
+                    value = handle.getDate(row, column).getTime();
+                } else {
+                    value = maps[index].get(handle.getValue(row, column));
+                }
+            } catch (Exception e) {
+                // Handle suppressed values
+                value = maximum + 1;
+            }
+            featureEncoder.addToVector(name, (value - minimum) / (maximum - minimum), vector);
+        }
+        
+        // Return
+        return vector;
+    }
+
+    /**
      * Creates the folds
      * @param handle
      * @param ignoreSuppressedRows
@@ -559,99 +667,6 @@ public class StatisticsClassification {
         rows.clear();
         rows = null;
         return folds;
-    }
-    
-    /**
-     * Returns the indexes of all relevant attributes
-     * @param handle
-     * @param features
-     * @param clazz
-     * @return
-     */
-    private int[] getAttributeIndexes(DataHandleInternal handle, String[] features, String clazz) {
-        // Collect
-        List<Integer> list = new ArrayList<>();
-        for (int column = 0; column < handle.getNumColumns(); column++) {
-            String attribute = handle.getAttributeName(column);
-            if (isContained(features, attribute)) {
-                list.add(column);
-            }
-        }
-        list.add(handle.getColumnIndexOf(clazz));
-        
-        // Convert
-        int[] result = new int[list.size()];
-        for (int i=0; i<list.size(); i++) {
-            result[i] = list.get(i);
-        }
-        
-        // Return
-        return result;
-    }
-
-    /**
-     * Returns the class for the given row
-     * @param handle
-     * @param row
-     * @param map
-     * @return
-     */
-    private int getClass(DataHandleInternal handle, int row, Map<String, Integer> map) {
-        return map.get(handle.getValue(row, indexes[indexes.length - 1]));
-    }
-
-    /**
-     * Returns the feature vector for the given row
-     * @param handle
-     * @param row
-     * @param maps
-     * @param interceptEncoder
-     * @param featureEncoder
-     * @return
-     * @throws ParseException
-     */
-    private Vector getFeatures(DataHandleInternal handle, int row,
-                               Map<String, Integer>[] maps,
-                               ConstantValueEncoder interceptEncoder,
-                               StaticWordValueEncoder featureEncoder) throws ParseException {
-        
-        // Prepare
-        int length = this.indexes.length - 1;
-        DenseVector vector = new DenseVector(length != 0 ? length : 1);
-        interceptEncoder.addToVector("1", vector);
-        
-        // Special case where there are no features
-        if (length == 0) {
-            featureEncoder.addToVector("Feature:1", 1, vector);
-            return vector;
-        }
-        
-        // For each attribute
-        for (int index = 0; index < length; index++) {
-            
-            // Obtain data
-            int column = indexes[index];
-            String name = handle.getAttributeName(column);
-            DataType<?> type = this.type[index];
-            double minimum = this.minimum[index];
-            double maximum = this.maximum[index];
-            
-            // Set value
-            double value = 0d;
-            if (type instanceof ARXDecimal) {
-                value = handle.getDouble(row, column);
-            } else if (type instanceof ARXInteger) {
-                value = handle.getDouble(row, column);
-            } else if (type instanceof ARXDate) {
-                value = handle.getDate(row, column).getTime();
-            } else {
-                value = maps[index].get(handle.getValue(row, column));
-            }
-            featureEncoder.addToVector(name, (value - minimum) / (maximum - minimum), vector);
-        }
-        
-        // Return
-        return vector;
     }
 
     /**
