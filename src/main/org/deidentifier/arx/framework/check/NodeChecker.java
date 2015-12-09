@@ -17,6 +17,10 @@
 
 package org.deidentifier.arx.framework.check;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.StateMachine.Transition;
@@ -118,9 +122,15 @@ public class NodeChecker {
 
     /** The solution space */
     private final SolutionSpace                   solutionSpace;
-
+                                                  
     /** Is a minimal class size required */
     private final boolean                         minimalClassSizeRequired;
+                                                  
+    /** The thread pool */
+    private ExecutorService                       threadPool;
+                                                  
+    /** Number of threads */
+    private final int                             numThreads;
 
     /**
      * Creates a new NodeChecker instance.
@@ -179,7 +189,9 @@ public class NodeChecker {
         this.currentGroupify = new HashGroupify(initialSize, config);
         this.lastGroupify = new HashGroupify(initialSize, config);
         
-        if (config.getNumThreads() > 1) {
+        this.numThreads = config.getNumThreads();
+        
+        if (this.numThreads > 1) {
             
             this.transformer = new TransformerMultithreaded(manager.getDataGeneralized().getArray(),
                                                manager.getDataAnalyzed().getArray(),
@@ -199,7 +211,7 @@ public class NodeChecker {
                                                dictionarySensFreq);
         }
     }
-        
+    
     /**
      * Applies the given transformation and returns the dataset
      * @param transformation
@@ -227,7 +239,8 @@ public class NodeChecker {
 
         // Apply transition and groupify
         transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
-        currentGroupify.stateAnalyze(transformation, true);
+        createThreadPool();
+        currentGroupify.stateAnalyze(transformation, true, threadPool);
         if (!currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
         }
@@ -315,7 +328,8 @@ public class NodeChecker {
         }
 
         // We are done with transforming and adding
-        currentGroupify.stateAnalyze(transformation, forceMeasureInfoLoss);
+        createThreadPool();
+        currentGroupify.stateAnalyze(transformation, forceMeasureInfoLoss, threadPool);
         if (forceMeasureInfoLoss && !currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
         }
@@ -349,7 +363,7 @@ public class NodeChecker {
     public History getHistory() {
         return history;
     }
-
+    
     /**
      * Returns the input buffer
      * @return
@@ -357,7 +371,7 @@ public class NodeChecker {
     public int[][] getInputBuffer() {
         return this.dataGeneralized.getArray();
     }
-    
+
     /**
      * Returns the utility measure
      * @return
@@ -372,6 +386,27 @@ public class NodeChecker {
     public void shutdown() {
         if (this.transformer != null) {
             this.transformer.shutdown();
+        }
+        if (this.threadPool != null) {
+            this.threadPool.shutdown();
+        }
+    }
+    
+    /**
+     * Creates a new thread pool if needed.
+     */
+    private void createThreadPool() {
+        // Create pool
+        if (this.numThreads > 1 && this.threadPool == null) {
+            this.threadPool = Executors.newFixedThreadPool(numThreads, new ThreadFactory() {
+                @Override
+                public Thread newThread(Runnable r) {
+                    Thread thread = new Thread(r);
+                    thread.setDaemon(true);
+                    thread.setName("ARX Utility Analyzer");
+                    return thread;
+                }
+            });
         }
     }
 }

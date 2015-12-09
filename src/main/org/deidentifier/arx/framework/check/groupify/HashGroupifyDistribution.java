@@ -86,6 +86,9 @@ public class HashGroupifyDistribution {
     /** Number of classes in the data set */
     private double              numClasses          = 0;
     
+    HashGroupifyDistribution() {
+        // Empty by design.
+    }
     /**
      * Creates a new instance
      * 
@@ -96,89 +99,9 @@ public class HashGroupifyDistribution {
     HashGroupifyDistribution(final Metric<?> metric,
                              final Transformation transformation,
                              HashGroupifyEntry entry) {
-        
-        // Initialize
-        List<HashGroupifyEntry> list = new ArrayList<HashGroupifyEntry>();
-        while(entry != null) {
-            if (entry.isNotOutlier() && entry.getCount() > 0) {
-                addToDistribution(entry.getCount());
-                list.add(entry);
-            } else {
-                this.suppressed += entry.getCount();
-            }
-            numTuples += entry.getCount();
-            entry = entry.getNextOrdered();
-        }
-        
-        // Suppressed tuples form one equivalence class
-        if (suppressed != 0) {
-            addToDistribution(suppressed);
-        }
-        
-        Comparator<HashGroupifyEntry> comparator;
-        
-        // Blacklist metrics for which information loss of individual entries
-        // is equal to the size of the class
-        if ((metric == null) ||
-            (metric instanceof MetricMDHeight) ||
-            (metric instanceof MetricMDNMPrecision) ||
-            (metric instanceof MetricMDNUEntropy) ||
-            (metric instanceof MetricMDNUEntropyPotentiallyPrecomputed) ||
-            (metric instanceof MetricMDNUEntropyPrecomputed) ||
-            (metric instanceof MetricMDNUNMEntropy) ||
-            (metric instanceof MetricMDNUNMEntropyPotentiallyPrecomputed) ||
-            (metric instanceof MetricMDNUNMEntropyPrecomputed) ||
-            (metric instanceof MetricMDPrecision) ||
-            (metric instanceof MetricMDStatic) ||
-            (metric instanceof MetricSDAECS) ||
-            (metric instanceof MetricSDDiscernability) ||
-            (metric instanceof MetricSDNMDiscernability)) {
-            
-            // Create comparator
-            comparator = new Comparator<HashGroupifyEntry>(){
-                public int compare(HashGroupifyEntry o1, HashGroupifyEntry o2) {
-                    int cmp = Integer.compare(o1.getCount(), o2.getCount());
-                    return cmp != 0 ? cmp : Integer.compare(o1.getRepresentative(), o2.getRepresentative());
-                }
-            };
-        } else {
-            
-            // Cache for information loss
-            final Map<HashGroupifyEntry, InformationLossWithBound<?>> cache = 
-                    new HashMap<HashGroupifyEntry, InformationLossWithBound<?>>();
-            
-            // Create comparator
-            comparator = new Comparator<HashGroupifyEntry>(){
-                public int compare(HashGroupifyEntry o1, HashGroupifyEntry o2) {
-                    
-                    int cmp = Integer.compare(o1.getCount(), o2.getCount());
-                    if (cmp != 0) {
-                        return cmp;
-                    }
-                    
-                    InformationLossWithBound<?> loss1 = cache.get(o1);
-                    InformationLossWithBound<?> loss2 = cache.get(o2);
-                    if (loss1 == null) {
-                        loss1 = metric.getInformationLoss(transformation, o1); 
-                        cache.put(o1, loss1);
-                    }
-                    
-                    if (loss2 == null) {
-                        loss2 = metric.getInformationLoss(transformation, o2); 
-                        cache.put(o2, loss2);
-                    }
-                    
-                    cmp = loss1.getInformationLoss().compareTo(loss2.getInformationLoss());
-                    return cmp != 0 ? cmp : Integer.compare(o1.getRepresentative(), o2.getRepresentative());
-                }
-            };
-        }
-            
-        // Sort & store suppressible entries
-        Collections.sort(list, comparator);
-        this.entries = list.toArray(new HashGroupifyEntry[list.size()]);
+        init(metric, transformation, entry);
     }
-    
+
     /**
      * Returns the average class size
      * @return
@@ -186,14 +109,15 @@ public class HashGroupifyDistribution {
     public double getAverageClassSize() {
         return numTuples / numClasses;
     }
-
+    
     /**
      * Returns a set of classes as an input for the risk model
      */
     public RiskModelHistogram getEquivalenceClasses() {
         return new RiskModelHistogram(this.distribution);
     }
-
+    
+    
     /**
      * Returns the fraction of tuples that are in classes of the given size
      * @param size
@@ -210,7 +134,7 @@ public class HashGroupifyDistribution {
     public int getNumberOfTuples() {
         return (int)this.numTuples;
     }
-    
+
     /**
      * Returns the number of suppressed tuples
      * @return
@@ -218,7 +142,6 @@ public class HashGroupifyDistribution {
     public int getNumOfSuppressedTuples() {
         return this.suppressed;
     }
-    
 
     /**
      * Suppresses entries until the condition is fulfilled
@@ -282,7 +205,7 @@ public class HashGroupifyDistribution {
 
         return this.suppressed - initiallySuppressed;
     }
-
+    
     /**
      * Suppresses entries until the condition is fulfilled
      * @param condition
@@ -304,6 +227,7 @@ public class HashGroupifyDistribution {
         
         return this.suppressed - initiallySuppressed;
     }
+    
 
     /**
      * Adds an entry
@@ -357,5 +281,105 @@ public class HashGroupifyDistribution {
             addToDistribution(this.suppressed);
         }
         addToDistribution(entry.getCount());
+    }
+
+    /**
+     * Creates the information loss cache used for sorting.
+     * @param list 
+     * @param transformation 
+     * @param metric 
+     * @return
+     */
+    protected Map<HashGroupifyEntry, InformationLossWithBound<?>> createCache(List<HashGroupifyEntry> list, Transformation transformation, Metric<?> metric) {
+        return new HashMap<HashGroupifyEntry, InformationLossWithBound<?>>();
+    }
+
+    /**
+     * Initialize
+     * 
+     * @param metric
+     * @param transformation
+     * @param entry
+     */
+    protected void init(final Metric<?> metric, final Transformation transformation, HashGroupifyEntry entry) {
+        // Initialize
+        List<HashGroupifyEntry> list = new ArrayList<HashGroupifyEntry>();
+        while(entry != null) {
+            if (entry.isNotOutlier() && entry.getCount() > 0) {
+                addToDistribution(entry.getCount());
+                list.add(entry);
+            } else {
+                this.suppressed += entry.getCount();
+            }
+            numTuples += entry.getCount();
+            entry = entry.getNextOrdered();
+        }
+        
+        // Suppressed tuples form one equivalence class
+        if (suppressed != 0) {
+            addToDistribution(suppressed);
+        }
+        
+        Comparator<HashGroupifyEntry> comparator;
+        
+        // Blacklist metrics for which information loss of individual entries
+        // is equal to the size of the class
+        if ((metric == null) ||
+            (metric instanceof MetricMDHeight) ||
+            (metric instanceof MetricMDNMPrecision) ||
+            (metric instanceof MetricMDNUEntropy) ||
+            (metric instanceof MetricMDNUEntropyPotentiallyPrecomputed) ||
+            (metric instanceof MetricMDNUEntropyPrecomputed) ||
+            (metric instanceof MetricMDNUNMEntropy) ||
+            (metric instanceof MetricMDNUNMEntropyPotentiallyPrecomputed) ||
+            (metric instanceof MetricMDNUNMEntropyPrecomputed) ||
+            (metric instanceof MetricMDPrecision) ||
+            (metric instanceof MetricMDStatic) ||
+            (metric instanceof MetricSDAECS) ||
+            (metric instanceof MetricSDDiscernability) ||
+            (metric instanceof MetricSDNMDiscernability)) {
+            
+            // Create comparator
+            comparator = new Comparator<HashGroupifyEntry>(){
+                public int compare(HashGroupifyEntry o1, HashGroupifyEntry o2) {
+                    int cmp = Integer.compare(o1.getCount(), o2.getCount());
+                    return cmp != 0 ? cmp : Integer.compare(o1.getRepresentative(), o2.getRepresentative());
+                }
+            };
+        } else {
+            
+            // Cache for information loss
+            final Map<HashGroupifyEntry, InformationLossWithBound<?>> cache = createCache(list, transformation, metric);
+            
+            // Create comparator
+            comparator = new Comparator<HashGroupifyEntry>(){
+                public int compare(HashGroupifyEntry o1, HashGroupifyEntry o2) {
+                    
+                    int cmp = Integer.compare(o1.getCount(), o2.getCount());
+                    if (cmp != 0) {
+                        return cmp;
+                    }
+                    
+                    InformationLossWithBound<?> loss1 = cache.get(o1);
+                    InformationLossWithBound<?> loss2 = cache.get(o2);
+                    if (loss1 == null) {
+                        loss1 = metric.getInformationLoss(transformation, o1); 
+                        cache.put(o1, loss1);
+                    }
+                    
+                    if (loss2 == null) {
+                        loss2 = metric.getInformationLoss(transformation, o2); 
+                        cache.put(o2, loss2);
+                    }
+                    
+                    cmp = loss1.getInformationLoss().compareTo(loss2.getInformationLoss());
+                    return cmp != 0 ? cmp : Integer.compare(o1.getRepresentative(), o2.getRepresentative());
+                }
+            };
+        }
+            
+        // Sort & store suppressible entries
+        Collections.sort(list, comparator);
+        this.entries = list.toArray(new HashGroupifyEntry[list.size()]);
     }
 }

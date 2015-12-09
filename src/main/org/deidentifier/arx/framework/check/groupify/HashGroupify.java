@@ -18,6 +18,9 @@
 package org.deidentifier.arx.framework.check.groupify;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
+
+import java.util.concurrent.ExecutorService;
+
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
@@ -396,8 +399,17 @@ public class HashGroupify {
      * @param force
      */
     public void stateAnalyze(Transformation transformation, boolean force) {
-        if (force) analyzeAll(transformation);
-        else analyzeWithEarlyAbort(transformation);
+        stateAnalyze(transformation, force, null);
+    }
+    
+    /**
+     * Analyzes the current state
+     * @param transformation
+     * @param force
+     */
+    public void stateAnalyze(Transformation transformation, boolean force, ExecutorService threadPool) {
+        if (force) analyzeAll(transformation, threadPool);
+        else analyzeWithEarlyAbort(transformation, threadPool);
     }
     
     /**
@@ -501,8 +513,9 @@ public class HashGroupify {
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
+     * @param threadPool 
      */
-    private void analyzeAll(Transformation transformation) {
+    private void analyzeAll(Transformation transformation, ExecutorService threadPool) {
         
         // We have only checked k-anonymity so far
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
@@ -538,7 +551,7 @@ public class HashGroupify {
             entry = entry.getNextOrdered();
         }
         
-        this.analyzeSampleBasedCriteria(transformation, false);
+        this.analyzeSampleBasedCriteria(transformation, false, threadPool);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit) && dpresent;
     }
     
@@ -546,9 +559,10 @@ public class HashGroupify {
      * Analyze sample-based criteria
      * @param transformation
      * @param earlyAbort May we perform an early abort, if we reach the threshold
+     * @param threadPool 
      * @return
      */
-    private void analyzeSampleBasedCriteria(Transformation transformation, boolean earlyAbort) {
+    private void analyzeSampleBasedCriteria(Transformation transformation, boolean earlyAbort, ExecutorService threadPool) {
         
         // Nothing to do
         if (this.sampleBasedCriteria.length == 0) {
@@ -556,9 +570,16 @@ public class HashGroupify {
         }
         
         // Build a distribution
-        HashGroupifyDistribution distribution = new HashGroupifyDistribution(heuristicForSampleBasedCriteria ? null : utilityMeasure,
+        HashGroupifyDistribution distribution;
+        if (threadPool != null) {
+            distribution = new HashGroupifyDistributionMultithreaded(heuristicForSampleBasedCriteria ? null : utilityMeasure,
                                                                              transformation,
-                                                                             this.hashTableFirstEntry);
+                                                                             this.hashTableFirstEntry, threadPool);
+        } else {
+            distribution = new HashGroupifyDistribution(heuristicForSampleBasedCriteria ? null : utilityMeasure,
+                    transformation,
+                    this.hashTableFirstEntry);
+        }
         
         // For each criterion
         for (SampleBasedCriterion criterion : this.sampleBasedCriteria) {
@@ -577,8 +598,9 @@ public class HashGroupify {
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
+     * @param threadPool 
      */
-    private void analyzeWithEarlyAbort(Transformation transformation) {
+    private void analyzeWithEarlyAbort(Transformation transformation, ExecutorService threadPool) {
         
         // We have only checked k-anonymity so far
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
@@ -637,7 +659,7 @@ public class HashGroupify {
             entry = entry.getNextOrdered();
         }
         
-        this.analyzeSampleBasedCriteria(transformation, true);
+        this.analyzeSampleBasedCriteria(transformation, true, threadPool);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
     }
     
