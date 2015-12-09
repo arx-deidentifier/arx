@@ -213,19 +213,19 @@ public class ViewStatisticsRegressionInput extends ViewStatistics<AnalysisContex
                 
                 // Do work
                 for (String clazz : classes) {
+                    baselineAccuracies.add(builder.getClassificationPerformance(clazz,
+                                                                                seed,
+                                                                                ignoreSuppressedRecords,
+                                                                                fraction).getFractionCorrect());
+                    progress++;
+                    if (stopped) {
+                        break;
+                    }
                     accuracies.add(builder.getClassificationPerformance(features,
                                                                         clazz,
                                                                         seed,
                                                                         ignoreSuppressedRecords,
                                                                         fraction).getFractionCorrect());
-                    progress++;
-                    if (stopped) {
-                        break;
-                    }
-                    baselineAccuracies.add(builder.getClassificationPerformance(clazz,
-                                                                       seed,
-                                                                       ignoreSuppressedRecords,
-                                                                       fraction).getFractionCorrect());
                     progress++;
                     if (stopped) {
                         break;
