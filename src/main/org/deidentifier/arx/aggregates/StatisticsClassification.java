@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.apache.mahout.classifier.sgd.L1;
@@ -197,7 +198,7 @@ public class StatisticsClassification {
         
         // Create indexes
         this.indexes = getAttributeIndexes(handle, features, clazz);
-
+        
         // Map for the target attribute
         Map<String, Integer> map = new HashMap<String, Integer>();
         
@@ -277,9 +278,109 @@ public class StatisticsClassification {
             }
         }
         
-        // Train and cross validate
+        // Validate
         int k = handle.getNumRows() > 10 ? 10 : handle.getNumRows();
-        this.accuracy = getAccuracyAccordingToKFoldCrossValidation(handle, ignoreSuppressedRows, map, maps, k, random, samplingFraction);
+        
+        // ZeroR baseline
+        if (this.indexes.length == 1) {
+            this.accuracy = getBaselineAccordingToKFoldCrossValidation(handle, ignoreSuppressedRows, map, k, random, samplingFraction);
+            
+        // Train and cross validate
+        } else {
+            this.accuracy = getAccuracyAccordingToKFoldCrossValidation(handle, ignoreSuppressedRows, map, maps, k, random, samplingFraction);
+        }
+    }
+
+    /**
+     * Returns the baseline accuracy according to the zeroR method
+     * @param handle
+     * @param ignoreSuppressedRows
+     * @param map 
+     * @param k
+     * @param random
+     * @param samplingFraction
+     * @return
+     */
+    private double getBaselineAccordingToKFoldCrossValidation(DataHandleInternal handle,
+                                                              boolean ignoreSuppressedRows,
+                                                              Map<String, Integer> map, 
+                                                              int k,
+                                                              Random random,
+                                                              double samplingFraction) {
+
+        // Obtain the folds
+        List<List<Integer>> folds = getFolds(handle,
+                                             ignoreSuppressedRows,
+                                             k,
+                                             random,
+                                             samplingFraction);
+
+        // Encode all features and classes
+        List<int[]> classes = new ArrayList<int[]>();
+        
+        // For each fold as a validation set
+        for (List<Integer> fold : folds) {
+            int[] foldClasses = new int[fold.size()];
+            int index = 0;
+            for (int row : fold) {
+                foldClasses[index] = getClass(handle, row, map);
+                index++;
+            }
+            classes.add(foldClasses);
+            fold.clear();
+        }
+        folds.clear();
+        folds = null;
+        
+        // Perform cross validation
+        double correct = 0d;
+        double total = 0d;
+
+        // For each fold as a validation set
+        for (int i = 0; i < classes.size(); i++) {
+
+            // For all training sets
+            Map<Integer, Integer> counts = new HashMap<Integer, Integer>();
+            for (int j = 0; j < classes.size(); j++) {
+                if (j != i) {
+                    int[] foldClasses = classes.get(j);
+                    for (int index = 0; index < foldClasses.length; index++) {
+
+                        // Check
+                        checkInterrupt();
+
+                        // Train
+                        Integer previous = counts.get(foldClasses[index]);
+                        counts.put(foldClasses[index], previous != null ? previous + 1 : 1);
+                    }
+                }
+            }
+            
+            // Obtain most frequent element
+            int mostFrequentCount = 0;
+            int mostFrequentElement = -1;
+            for (Entry<Integer, Integer> entry : counts.entrySet()) {
+                if (entry.getValue() > mostFrequentCount) {
+                    mostFrequentElement = entry.getKey();
+                    mostFrequentCount = entry.getValue();
+                }
+            }
+            
+            // Now validate
+            int[] foldClasses = classes.get(i);
+            for (int index = 0; index < foldClasses.length; index++) {
+
+                // Check
+                checkInterrupt();
+
+                // Count
+                total++;
+                correct += foldClasses[index] == mostFrequentElement ? 1 : 0;
+            }
+        }
+
+        // Return mean
+        return correct / total;
     }
 
     /**
@@ -312,16 +413,108 @@ public class StatisticsClassification {
      */
     private double getAccuracyAccordingToKFoldCrossValidation(DataHandleInternal handle,
                                                               boolean ignoreSuppressedRows,
-                                               Map<String, Integer> map, 
-                                               Map<String, Integer>[] maps, 
-                                               int k,
-                                               Random random,
-                                               double samplingFraction) throws ParseException {
+                                                              Map<String, Integer> map,
+                                                              Map<String, Integer>[] maps,
+                                                              int k,
+                                                              Random random,
+                                                              double samplingFraction) throws ParseException {
 
-        // Prepare encoders
+        // Obtain the folds
+        List<List<Integer>> folds = getFolds(handle,
+                                             ignoreSuppressedRows,
+                                             k,
+                                             random,
+                                             samplingFraction);
+
+        // Encode all features and classes
+        List<Vector[]> features = new ArrayList<Vector[]>();
+        List<int[]> classes = new ArrayList<int[]>();
         ConstantValueEncoder interceptEncoder = new ConstantValueEncoder("intercept");
         StaticWordValueEncoder featureEncoder = new StaticWordValueEncoder("feature");
+        
+        // For each fold as a validation set
+        for (List<Integer> fold : folds) {
+            Vector[] foldFeatures = new Vector[fold.size()];
+            int[] foldClasses = new int[fold.size()];
+            int index = 0;
+            for (int row : fold) {
+                foldFeatures[index] = getFeatures(handle, row, maps, interceptEncoder, featureEncoder);
+                foldClasses[index] = getClass(handle, row, map);
+                index++;
+            }
+            features.add(foldFeatures);
+            classes.add(foldClasses);
+            fold.clear();
+        }
+        folds.clear();
+        folds = null;
+        
+        // Perform cross validation
+        double correct = 0d;
+        double total = 0d;
 
+        // For each fold as a validation set
+        for (int i = 0; i < features.size(); i++) {
+            
+            // Create classifier
+            Classifier classifier = new MultiClassLogisticRegression(indexes.length - 1, map.size());
+
+            try {
+
+                // For all training sets
+                for (int j = 0; j < features.size(); j++) {
+                    if (j != i) {
+                        Vector[] foldFeatures = features.get(j);
+                        int[] foldClasses = classes.get(j);
+                        for (int index = 0; index < foldFeatures.length; index++) {
+
+                            // Check
+                            checkInterrupt();
+
+                            // Train
+                            classifier.train(foldFeatures[index], foldClasses[index]);
+                        }
+                    }
+                }
+               
+                // Now validate
+                Vector[] foldFeatures = features.get(i);
+                int[] foldClasses = classes.get(i);
+                for (int index = 0; index < foldFeatures.length; index++) {
+
+                    // Check
+                    checkInterrupt();
+                    
+                    // Count
+                    total++;
+                    correct += foldClasses[index] == classifier.classify(foldFeatures[index]) ? 1 : 0;
+                }
+                
+            } catch (Exception e) {
+                throw (e);
+            } finally {
+                classifier.close();
+            }
+        }
+
+        // Return mean
+        return correct / total;
+    }
+
+    /**
+     * Creates the folds
+     * @param handle
+     * @param ignoreSuppressedRows
+     * @param k
+     * @param random
+     * @param samplingFraction
+     * @return
+     */
+    private List<List<Integer>> getFolds(DataHandleInternal handle,
+                                         boolean ignoreSuppressedRows,
+                                         int k,
+                                         Random random,
+                                         double samplingFraction) {
         // Prepare indexes
         List<Integer> rows = new ArrayList<>();
         for (int row = 0; row < handle.getNumRows(); row++) {
@@ -365,57 +558,7 @@ public class StatisticsClassification {
         // Free
         rows.clear();
         rows = null;
-
-        // Perform cross validation
-        double correct = 0d;
-        double total = 0d;
-
-        // For each fold as a validation set
-        for (int i = 0; i < folds.size(); i++) {
-
-            // Create classifier
-            Classifier classifier = new MultiClassLogisticRegression(indexes.length - 1, map.size());
-
-            try {
-
-                // For all training sets
-                for (int j = 0; j < folds.size(); j++) {
-                    if (j != i) {
-                        for (int row : folds.get(j)) {
-
-                            // Check
-                            checkInterrupt();
-
-                            // Train
-                            classifier.train(getFeatures(handle, row, maps, interceptEncoder, featureEncoder),
-                                             getClass(handle, row, map));
-                        }
-                    }
-                }
-
-                // Now validate
-                for (int row : folds.get(i)) {
-
-                    // Check
-                    checkInterrupt();
-
-                    // Count
-                    total++;
-                    correct += getClass(handle, row, map) == classifier.classify(getFeatures(handle,
-                                                                                             row,
-                                                                                             maps,
-                                                                                             interceptEncoder,
-                                                                                             featureEncoder)) ? 1 : 0;
-                }
-            } catch (Exception e) {
-                throw (e);
-            } finally {
-                classifier.close();
-            }
-        }
-
-        // Return mean
-        return correct / total;
+        return folds;
     }
     
     /**
