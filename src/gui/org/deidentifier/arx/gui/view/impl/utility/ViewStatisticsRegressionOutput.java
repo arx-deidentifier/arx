@@ -19,6 +19,8 @@ package org.deidentifier.arx.gui.view.impl.utility;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleSubset;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -142,7 +144,14 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
 
         // The statistics builder
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
-        final StatisticsBuilderInterruptible sourcebuilder = context.model.getInputConfig().getInput().getHandle().getStatistics().getInterruptibleInstance();
+        final DataHandle sourceHandle;
+        if (context.handle instanceof DataHandleSubset) {
+            sourceHandle = context.model.getInputConfig().getInput().getHandle().getView();    
+        } else {
+            sourceHandle = context.model.getInputConfig().getInput().getHandle();
+        }
+        final StatisticsBuilderInterruptible sourcebuilder = sourceHandle.getStatistics().getInterruptibleInstance();
+        
         final String[] features = context.model.getSelectedFeatures().toArray(new String[0]);
         final String[] classes = context.model.getSelectedClasses().toArray(new String[0]);
         final double fraction = context.handle.getNumRows() > context.model.getClassificationModel().getMaximalNumberOfRecords() ?
