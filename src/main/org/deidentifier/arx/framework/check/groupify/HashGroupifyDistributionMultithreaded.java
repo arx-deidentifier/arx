@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
+import org.deidentifier.arx.common.ThreadPoolMainWorker;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
@@ -47,6 +48,10 @@ class HashGroupifyDistributionMultithreaded extends HashGroupifyDistribution {
                     latch.countDown();
                 }
             });
+        }
+        
+        if (this.threadPool instanceof ThreadPoolMainWorker) {
+            ((ThreadPoolMainWorker) this.threadPool).enter();
         }
         
         try {

@@ -18,11 +18,10 @@
 package org.deidentifier.arx.framework.check;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
+import org.deidentifier.arx.common.ThreadPoolMainWorker;
 import org.deidentifier.arx.framework.check.StateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
@@ -47,24 +46,24 @@ public class NodeChecker {
     
     /** TODO: Temporary switch to disable parallel transform & groupify for benchmarking */
     public static boolean DISABLE_PARALLEL_TRANSFORM = false;
-
+    
     /**
      * The result of a check.
      */
     public static class Result {
         
         /** Overall anonymity. */
-        public final Boolean privacyModelFulfilled;
-        
+        public final Boolean            privacyModelFulfilled;
+                                        
         /** k-Anonymity sub-criterion. */
-        public final Boolean minimalClassSizeFulfilled;
-        
+        public final Boolean            minimalClassSizeFulfilled;
+                                        
         /** Information loss. */
         public final InformationLoss<?> informationLoss;
-        
+                                        
         /** Lower bound. */
         public final InformationLoss<?> lowerBound;
-
+                                        
         /**
          * Creates a new instance.
          * 
@@ -83,46 +82,46 @@ public class NodeChecker {
             this.lowerBound = lowerBound;
         }
     }
-
+    
     /** The config. */
     private final ARXConfigurationInternal        config;
-
+                                                  
     /** The data. */
     private final Data                            dataGeneralized;
-
+                                                  
     /** The microaggregation functions. */
     private final DistributionAggregateFunction[] microaggregationFunctions;
-
+                                                  
     /** The start index of the attributes with microaggregation in the data array */
     private final int                             microaggregationStartIndex;
-
+                                                  
     /** The number of attributes with microaggregation in the data array */
     private final int                             microaggregationNumAttributes;
-
+                                                  
     /** Map for the microaggregated data subset */
     private final int[]                           microaggregationMap;
-
+                                                  
     /** Header of the microaggregated data subset */
     private final String[]                        microaggregationHeader;
-
+                                                  
     /** The current hash groupify. */
     private HashGroupify                          currentGroupify;
-
+                                                  
     /** The last hash groupify. */
     private HashGroupify                          lastGroupify;
-
+                                                  
     /** The history. */
     private final History                         history;
-
+                                                  
     /** The metric. */
     private final Metric<?>                       metric;
-
+                                                  
     /** The state machine. */
     private final StateMachine                    stateMachine;
-
+                                                  
     /** The data transformer. */
     private final Transformer                     transformer;
-
+                                                  
     /** The solution space */
     private final SolutionSpace                   solutionSpace;
                                                   
@@ -134,7 +133,7 @@ public class NodeChecker {
                                                   
     /** Number of threads */
     private final int                             numThreads;
-
+                                                  
     /**
      * Creates a new NodeChecker instance.
      * 
@@ -153,7 +152,7 @@ public class NodeChecker {
                        final double snapshotSizeDataset,
                        final double snapshotSizeSnapshot,
                        final SolutionSpace solutionSpace) {
-        
+                       
         // Initialize all operators
         this.metric = metric;
         this.config = config;
@@ -187,7 +186,7 @@ public class NodeChecker {
                                    dictionarySensValue,
                                    dictionarySensFreq,
                                    solutionSpace);
-        
+                                   
         this.stateMachine = new StateMachine(history);
         this.currentGroupify = new HashGroupify(initialSize, config);
         this.lastGroupify = new HashGroupify(initialSize, config);
@@ -197,13 +196,13 @@ public class NodeChecker {
         if (this.numThreads > 1 && !DISABLE_PARALLEL_TRANSFORM) {
             
             this.transformer = new TransformerMultithreaded(manager.getDataGeneralized().getArray(),
-                                               manager.getDataAnalyzed().getArray(),
-                                               manager.getHierarchies(),
-                                               initialSize,
-                                               config,
-                                               dictionarySensValue,
-                                               dictionarySensFreq);
-            
+                                                            manager.getDataAnalyzed().getArray(),
+                                                            manager.getHierarchies(),
+                                                            initialSize,
+                                                            config,
+                                                            dictionarySensValue,
+                                                            dictionarySensFreq);
+                                                            
         } else {
             
             this.transformer = new Transformer(manager.getDataGeneralized().getArray(),
@@ -233,13 +232,13 @@ public class NodeChecker {
      */
     public TransformedData applyTransformation(final Transformation transformation,
                                                final Dictionary microaggregationDictionary) {
-        
+                                               
         // Prepare
         microaggregationDictionary.definalizeAll();
-
+        
         // Clear groupify
         currentGroupify.stateClear();
-
+        
         // Apply transition and groupify
         transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
         createThreadPool();
@@ -260,7 +259,7 @@ public class NodeChecker {
         
         // Perform microaggregation. This has to be done before suppression.
         if (microaggregationFunctions.length > 0) {
-            microaggregatedOutput = currentGroupify.performMicroaggregation(transformer.getBuffer(), 
+            microaggregatedOutput = currentGroupify.performMicroaggregation(transformer.getBuffer(),
                                                                             microaggregationStartIndex,
                                                                             microaggregationNumAttributes,
                                                                             microaggregationFunctions,
@@ -275,10 +274,12 @@ public class NodeChecker {
         }
         
         // Return the buffer
-        return new TransformedData(generalizedOutput, microaggregatedOutput, 
-                                   new Result(currentGroupify.isPrivacyModelFulfilled(), 
-                                              minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null, 
-                                              loss, null));
+        return new TransformedData(generalizedOutput,
+                                   microaggregatedOutput,
+                                   new Result(currentGroupify.isPrivacyModelFulfilled(),
+                                              minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
+                                              loss,
+                                              null));
     }
     
     /**
@@ -316,7 +317,7 @@ public class NodeChecker {
         lastGroupify = currentGroupify;
         currentGroupify = temp;
         currentGroupify.stateClear();
-
+        
         // Apply transition
         switch (transition.type) {
         case UNOPTIMIZED:
@@ -329,7 +330,7 @@ public class NodeChecker {
             transformer.applySnapshot(transition.projection, transformation.getGeneralization(), currentGroupify, transition.snapshot);
             break;
         }
-
+        
         // We are done with transforming and adding
         createThreadPool();
         currentGroupify.stateAnalyze(transformation, forceMeasureInfoLoss, threadPool);
@@ -338,8 +339,7 @@ public class NodeChecker {
         }
         
         // Compute information loss and lower bound
-        InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
-                                              metric.getInformationLoss(transformation, currentGroupify) : null;
+        InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ? metric.getInformationLoss(transformation, currentGroupify) : null;
         InformationLoss<?> loss = result != null ? result.getInformationLoss() : null;
         InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(transformation, currentGroupify);
         
@@ -374,7 +374,7 @@ public class NodeChecker {
     public int[][] getInputBuffer() {
         return this.dataGeneralized.getArray();
     }
-
+    
     /**
      * Returns the utility measure
      * @return
@@ -401,15 +401,7 @@ public class NodeChecker {
     private void createThreadPool() {
         // Create pool
         if (this.numThreads > 1 && this.threadPool == null) {
-            this.threadPool = Executors.newFixedThreadPool(numThreads, new ThreadFactory() {
-                @Override
-                public Thread newThread(Runnable r) {
-                    Thread thread = new Thread(r);
-                    thread.setDaemon(true);
-                    thread.setName("ARX Utility Analyzer");
-                    return thread;
-                }
-            });
+            this.threadPool = new ThreadPoolMainWorker(this.numThreads);
         }
     }
 }
