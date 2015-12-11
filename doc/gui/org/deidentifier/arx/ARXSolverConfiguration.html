@@ -145,40 +145,46 @@ extends de.linearbits.newtonraphson.NewtonRaphsonConfiguration&lt;<a href="../..
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html#accuracy(double)">accuracy</a></strong>(double&nbsp;arg0)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html#clone()">clone</a></strong>()</code>
+<div class="block">Clones this config</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html#create()">create</a></strong>()</code>
 <div class="block">Creates a new instance</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html#isModified()">isModified</a></strong>()</code>
 <div class="block">Modified</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html#iterationsPerTry(int)">iterationsPerTry</a></strong>(int&nbsp;arg0)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html#iterationsTotal(int)">iterationsTotal</a></strong>(int&nbsp;arg0)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html#preparedStartValues(double[][])">preparedStartValues</a></strong>(double[][]&nbsp;values)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html#setUnmodified()">setUnmodified</a></strong>()</code>
 <div class="block">Modified</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html#timePerTry(int)">timePerTry</a></strong>(int&nbsp;arg0)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html#timeTotal(int)">timeTotal</a></strong>(int&nbsp;arg0)</code>&nbsp;</td>
 </tr>
@@ -195,7 +201,7 @@ extends de.linearbits.newtonraphson.NewtonRaphsonConfiguration&lt;<a href="../..
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -232,6 +238,20 @@ extends de.linearbits.newtonraphson.NewtonRaphsonConfiguration&lt;<a href="../..
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>accuracy</code>&nbsp;in class&nbsp;<code>de.linearbits.newtonraphson.NewtonRaphsonConfiguration&lt;<a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&gt;</code></dd>
+</dl>
+</li>
+</ul>
+<a name="clone()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clone</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&nbsp;clone()</pre>
+<div class="block">Clones this config</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>clone</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
 </dl>
 </li>
 </ul>
@@ -272,6 +292,19 @@ extends de.linearbits.newtonraphson.NewtonRaphsonConfiguration&lt;<a href="../..
 </dl>
 </li>
 </ul>
+<a name="preparedStartValues(double[][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>preparedStartValues</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&nbsp;preparedStartValues(double[][]&nbsp;values)</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>preparedStartValues</code>&nbsp;in class&nbsp;<code>de.linearbits.newtonraphson.NewtonRaphsonConfiguration&lt;<a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&gt;</code></dd>
+</dl>
+</li>
+</ul>
 <a name="setUnmodified()">
 <!--   -->
 </a>
@@ -298,26 +331,13 @@ extends de.linearbits.newtonraphson.NewtonRaphsonConfiguration&lt;<a href="../..
 <a name="timeTotal(int)">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>timeTotal</h4>
 <pre>public&nbsp;<a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&nbsp;timeTotal(int&nbsp;arg0)</pre>
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>timeTotal</code>&nbsp;in class&nbsp;<code>de.linearbits.newtonraphson.NewtonRaphsonConfiguration&lt;<a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&gt;</code></dd>
-</dl>
-</li>
-</ul>
-<a name="preparedStartValues(double[][])">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>preparedStartValues</h4>
-<pre>public&nbsp;<a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&nbsp;preparedStartValues(double[][]&nbsp;values)</pre>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code>preparedStartValues</code>&nbsp;in class&nbsp;<code>de.linearbits.newtonraphson.NewtonRaphsonConfiguration&lt;<a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>

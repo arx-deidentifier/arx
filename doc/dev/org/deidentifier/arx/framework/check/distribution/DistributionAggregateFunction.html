@@ -237,9 +237,10 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected &lt;T&gt;&nbsp;void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics,%20org.deidentifier.arx.framework.check.distribution.Distribution,%20org.deidentifier.arx.DataType.DataTypeWithRatioScale)">addAll</a></strong>(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics&nbsp;statistics,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics,%20org.deidentifier.arx.framework.check.distribution.Distribution,%20org.deidentifier.arx.DataType.DataTypeWithRatioScale,%20double)">addAll</a></strong>(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics&nbsp;statistics,
       <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution,
-      <a href="../../../../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;T&gt;&nbsp;type)</code>
+      <a href="../../../../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;T&gt;&nbsp;type,
+      double&nbsp;offset)</code>
 <div class="block">Adds all values from the distribution to the given descriptive statistics object</div>
 </td>
 </tr>
@@ -443,7 +444,7 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics, org.deidentifier.arx.framework.check.distribution.Distribution, org.deidentifier.arx.DataType.DataTypeWithRatioScale)">
+<a name="addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics, org.deidentifier.arx.framework.check.distribution.Distribution, org.deidentifier.arx.DataType.DataTypeWithRatioScale, double)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -451,9 +452,10 @@ implements java.io.Serializable</pre>
 <h4>addAll</h4>
 <pre>protected&nbsp;&lt;T&gt;&nbsp;void&nbsp;addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics&nbsp;statistics,
               <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution,
-              <a href="../../../../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;T&gt;&nbsp;type)</pre>
+              <a href="../../../../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;T&gt;&nbsp;type,
+              double&nbsp;offset)</pre>
 <div class="block">Adds all values from the distribution to the given descriptive statistics object</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>statistics</code> - </dd><dd><code>distribution</code> - </dd><dd><code>type</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>statistics</code> - </dd><dd><code>distribution</code> - </dd><dd><code>type</code> - </dd><dd><code>offset</code> - will be added to values</dd></dl>
 </li>
 </ul>
 <a name="getMinMax(java.lang.String[], org.deidentifier.arx.DataType.DataTypeWithRatioScale)">

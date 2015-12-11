@@ -168,12 +168,18 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleSummary.html" title="class in org.deidentifier.arx.risk">RiskModelSampleSummary</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getSampleBasedRiskSummary(double)">getSampleBasedRiskSummary</a></strong>(double&nbsp;threshold)</code>
+<div class="block">Returns a risk summary</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleUniqueness.html" title="class in org.deidentifier.arx.risk">RiskModelSampleUniqueness</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getSampleBasedUniquenessRisk()">getSampleBasedUniquenessRisk</a></strong>()</code>
 <div class="block">Returns a class providing sample-based uniqueness estimates</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#interrupt()">interrupt</a></strong>()</code>
 <div class="block">Interrupts all computations.</div>
@@ -312,6 +318,21 @@ extends java.lang.Object</pre>
                                                         throws java.lang.InterruptedException</pre>
 <div class="block">Returns a class providing sample-based re-identification risk estimates</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.InterruptedException</code></dd></dl>
+</li>
+</ul>
+<a name="getSampleBasedRiskSummary(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSampleBasedRiskSummary</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelSampleSummary.html" title="class in org.deidentifier.arx.risk">RiskModelSampleSummary</a>&nbsp;getSampleBasedRiskSummary(double&nbsp;threshold)
+                                                 throws java.lang.InterruptedException</pre>
+<div class="block">Returns a risk summary</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>threshold</code> - Acceptable highest probability of re-identification for a single record</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.InterruptedException</code></dd></dl>
 </li>

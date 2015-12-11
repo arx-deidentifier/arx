@@ -281,8 +281,8 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected abstract java.lang.String[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int,%20org.deidentifier.arx.DataHandleStatistics.InterruptHandler)">getDistinctValues</a></strong>(int&nbsp;column,
-                 <a href="../../../org/deidentifier/arx/DataHandleStatistics.InterruptHandler.html" title="interface in org.deidentifier.arx">DataHandleStatistics.InterruptHandler</a>&nbsp;handler)</code>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues</a></strong>(int&nbsp;column,
+                 <a href="../../../org/deidentifier/arx/DataHandleInternal.InterruptHandler.html" title="interface in org.deidentifier.arx">DataHandleInternal.InterruptHandler</a>&nbsp;handler)</code>
 <div class="block">Returns the distinct values.</div>
 </td>
 </tr>
@@ -501,8 +501,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected abstract java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#internalGetValue(int,%20int)">internalGetValue</a></strong>(int&nbsp;row,
-                int&nbsp;col)</code>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#internalGetValue(int,%20int,%20boolean)">internalGetValue</a></strong>(int&nbsp;row,
+                int&nbsp;col,
+                boolean&nbsp;ignoreSuppression)</code>
 <div class="block">Internal representation of get value.</div>
 </td>
 </tr>
@@ -1576,14 +1577,14 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the data type array</dd></dl>
 </li>
 </ul>
-<a name="getDistinctValues(int, org.deidentifier.arx.DataHandleStatistics.InterruptHandler)">
+<a name="getDistinctValues(int, org.deidentifier.arx.DataHandleInternal.InterruptHandler)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getDistinctValues</h4>
 <pre>protected abstract&nbsp;java.lang.String[]&nbsp;getDistinctValues(int&nbsp;column,
-                                   <a href="../../../org/deidentifier/arx/DataHandleStatistics.InterruptHandler.html" title="interface in org.deidentifier.arx">DataHandleStatistics.InterruptHandler</a>&nbsp;handler)</pre>
+                                   <a href="../../../org/deidentifier/arx/DataHandleInternal.InterruptHandler.html" title="interface in org.deidentifier.arx">DataHandleInternal.InterruptHandler</a>&nbsp;handler)</pre>
 <div class="block">Returns the distinct values.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - the column</dd><dd><code>handler</code> - the handler</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the distinct values</dd></dl>
@@ -1629,14 +1630,15 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd>the int</dd></dl>
 </li>
 </ul>
-<a name="internalGetValue(int, int)">
+<a name="internalGetValue(int, int, boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>internalGetValue</h4>
 <pre>protected abstract&nbsp;java.lang.String&nbsp;internalGetValue(int&nbsp;row,
-                                int&nbsp;col)</pre>
+                                int&nbsp;col,
+                                boolean&nbsp;ignoreSuppression)</pre>
 <div class="block">Internal representation of get value.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - the row</dd><dd><code>col</code> - the col</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the string</dd></dl>

@@ -74,9 +74,9 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualization.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualization</a></td>
+<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsBasic</a></td>
 <td class="colLast">
-<div class="block">The current context.</div>
+<div class="block">This is a base interface for simple views in this category</div>
 </td>
 </tr>
 </tbody>
@@ -91,34 +91,46 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualizationContingency.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualizationContingency</a></td>
+<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextClassification.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextClassification</a></td>
 <td class="colLast">
 <div class="block">The current context.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualizationDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualizationDistribution</a></td>
+<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextContingency.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextContingency</a></td>
 <td class="colLast">
 <div class="block">The current context.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a></td>
+<td class="colLast">
+<div class="block">The current context.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/DensityData.html" title="class in org.deidentifier.arx.gui.view.impl.utility">DensityData</a></td>
 <td class="colLast">
 <div class="block">This class implements a data object that can be passed to the heatmap widget to
  display the contingency table.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtility.html" title="class in org.deidentifier.arx.gui.view.impl.utility">LayoutUtility</a></td>
 <td class="colLast">
 <div class="block">This class layouts the analysis view.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtilityStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">LayoutUtilityStatistics</a></td>
 <td class="colLast">
 <div class="block">Layouts the visualization and allows enabling/disabling them.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewClassificationAttributes.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewClassificationAttributes</a></td>
+<td class="colLast">
+<div class="block">This view allows to select a set of attributes for classification analysis</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -146,7 +158,7 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;T extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualization.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualization</a>&gt;</td>
+<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;T extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/async/AnalysisContextVisualization.html" title="interface in org.deidentifier.arx.gui.view.impl.common.async">AnalysisContextVisualization</a>&gt;</td>
 <td class="colLast">
 <div class="block">This is a base class for displaying utility data.</div>
 </td>
@@ -182,10 +194,37 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsRegressionInput.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsRegressionInput</a></td>
+<td class="colLast">
+<div class="block">This view displays a statistics about classification</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsRegressionOutput.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsRegressionOutput</a></td>
+<td class="colLast">
+<div class="block">This view displays a statistics about classification</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsSummaryTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsSummaryTable</a></td>
 <td class="colLast">
 <div class="block">This view displays summary statistics.</div>
 </td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList">
+<table class="packageSummary" border="0" cellpadding="3" cellspacing="0" summary="Enum Summary table, listing enums, and an explanation">
+<caption><span>Enum Summary</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Enum</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtility.ViewUtilityType.html" title="enum in org.deidentifier.arx.gui.view.impl.utility">LayoutUtility.ViewUtilityType</a></td>
+<td class="colLast">&nbsp;</td>
 </tr>
 </tbody>
 </table>

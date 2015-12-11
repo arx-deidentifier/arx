@@ -34,7 +34,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtilityStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewClassificationAttributes.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -94,13 +94,13 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></dd>
+<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsBasic</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="strong">ViewLocalRecoding</span>
 extends java.lang.Object
-implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></pre>
+implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsBasic</a></pre>
 <div class="block">This view allows to use local recoding</div>
 </li>
 </ul>
@@ -146,6 +146,18 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewLocalRecoding.html#dispose()">dispose</a></strong>()</code>
 <div class="block">Disposes the view.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>org.eclipse.swt.widgets.Composite</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewLocalRecoding.html#getParent()">getParent</a></strong>()</code>
+<div class="block">Returns the parent composite</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtility.ViewUtilityType.html" title="enum in org.deidentifier.arx.gui.view.impl.utility">LayoutUtility.ViewUtilityType</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewLocalRecoding.html#getType()">getType</a></strong>()</code>
+<div class="block">Returns the view type</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -217,6 +229,36 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 </dl>
 </li>
 </ul>
+<a name="getParent()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getParent</h4>
+<pre>public&nbsp;org.eclipse.swt.widgets.Composite&nbsp;getParent()</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html#getParent()">ViewStatisticsBasic</a></code></strong></div>
+<div class="block">Returns the parent composite</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html#getParent()">getParent</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsBasic</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getType()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getType</h4>
+<pre>public&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtility.ViewUtilityType.html" title="enum in org.deidentifier.arx.gui.view.impl.utility">LayoutUtility.ViewUtilityType</a>&nbsp;getType()</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html#getType()">ViewStatisticsBasic</a></code></strong></div>
+<div class="block">Returns the view type</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html#getType()">getType</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsBasic</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="reset()">
 <!--   -->
 </a>
@@ -273,7 +315,7 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtilityStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewClassificationAttributes.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">

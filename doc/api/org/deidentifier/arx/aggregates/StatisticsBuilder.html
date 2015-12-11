@@ -115,7 +115,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#StatisticsBuilder(org.deidentifier.arx.DataHandleStatistics)">StatisticsBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a>&nbsp;handle)</code>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#StatisticsBuilder(org.deidentifier.arx.DataHandleInternal)">StatisticsBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a>&nbsp;handle)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
@@ -135,15 +135,42 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsContingencyTable.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20org.deidentifier.arx.AttributeType.Hierarchy,%20int,%20org.deidentifier.arx.AttributeType.Hierarchy)">getContingencyTable</a></strong>(int&nbsp;column1,
-                   <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;hierarchy1,
-                   int&nbsp;column2,
-                   <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;hierarchy2)</code>
-<div class="block">Returns a contingency table for the given columns.</div>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getClassificationPerformance(java.lang.String[],%20java.lang.String,%20boolean,%20double)">getClassificationPerformance</a></strong>(java.lang.String[]&nbsp;features,
+                            java.lang.String&nbsp;clazz,
+                            boolean&nbsp;ignoreSuppressedRecords,
+                            double&nbsp;samplingFraction)</code>
+<div class="block">Creates a new set of statistics for the given classification task</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getClassificationPerformance(java.lang.String[],%20java.lang.String,%20java.lang.Integer,%20boolean,%20double)">getClassificationPerformance</a></strong>(java.lang.String[]&nbsp;features,
+                            java.lang.String&nbsp;clazz,
+                            java.lang.Integer&nbsp;seed,
+                            boolean&nbsp;ignoreSuppressedRecords,
+                            double&nbsp;samplingFraction)</code>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getClassificationPerformance(java.lang.String,%20boolean,%20double)">getClassificationPerformance</a></strong>(java.lang.String&nbsp;clazz,
+                            boolean&nbsp;ignoreSuppressedRecords,
+                            double&nbsp;samplingFraction)</code>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getClassificationPerformance(java.lang.String,%20java.lang.Integer,%20boolean,%20double)">getClassificationPerformance</a></strong>(java.lang.String&nbsp;clazz,
+                            java.lang.Integer&nbsp;seed,
+                            boolean&nbsp;ignoreSuppressedRecords,
+                            double&nbsp;samplingFraction)</code>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsContingencyTable.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20boolean,%20int,%20boolean)">getContingencyTable</a></strong>(int&nbsp;column1,
                    boolean&nbsp;orderFromDefinition1,
@@ -152,21 +179,10 @@ extends java.lang.Object</pre>
 <div class="block">Returns a contingency table for the given columns.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsContingencyTable.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20int)">getContingencyTable</a></strong>(int&nbsp;column1,
                    int&nbsp;column2)</code>
-<div class="block">Returns a contingency table for the given columns.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsContingencyTable.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20int,%20org.deidentifier.arx.AttributeType.Hierarchy,%20int,%20int,%20org.deidentifier.arx.AttributeType.Hierarchy)">getContingencyTable</a></strong>(int&nbsp;column1,
-                   int&nbsp;size1,
-                   <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;hierarchy1,
-                   int&nbsp;column2,
-                   int&nbsp;size2,
-                   <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;hierarchy2)</code>
 <div class="block">Returns a contingency table for the given columns.</div>
 </td>
 </tr>
@@ -191,6 +207,26 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsContingencyTable.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20int,%20java.lang.String[][],%20int,%20int,%20java.lang.String[][])">getContingencyTable</a></strong>(int&nbsp;column1,
+                   int&nbsp;size1,
+                   java.lang.String[][]&nbsp;hierarchy1,
+                   int&nbsp;column2,
+                   int&nbsp;size2,
+                   java.lang.String[][]&nbsp;hierarchy2)</code>
+<div class="block">Returns a contingency table for the given columns.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsContingencyTable.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20java.lang.String[][],%20int,%20java.lang.String[][])">getContingencyTable</a></strong>(int&nbsp;column1,
+                   java.lang.String[][]&nbsp;hierarchy1,
+                   int&nbsp;column2,
+                   java.lang.String[][]&nbsp;hierarchy2)</code>
+<div class="block">Returns a contingency table for the given columns.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getDistinctValues(int)">getDistinctValues</a></strong>(int&nbsp;column)</code>
 <div class="block">Returns the distinct set of data items from the given column.</div>
@@ -204,15 +240,15 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getDistinctValuesOrdered(int,%20org.deidentifier.arx.AttributeType.Hierarchy)">getDistinctValuesOrdered</a></strong>(int&nbsp;column,
-                        <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;hierarchy)</code>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getDistinctValuesOrdered(int,%20boolean)">getDistinctValuesOrdered</a></strong>(int&nbsp;column,
+                        boolean&nbsp;orderFromDefinition)</code>
 <div class="block">Returns an ordered list of the distinct set of data items from the given column.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getDistinctValuesOrdered(int,%20boolean)">getDistinctValuesOrdered</a></strong>(int&nbsp;column,
-                        boolean&nbsp;orderFromDefinition)</code>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getDistinctValuesOrdered(int,%20java.lang.String[][])">getDistinctValuesOrdered</a></strong>(int&nbsp;column,
+                        java.lang.String[][]&nbsp;hierarchy)</code>
 <div class="block">Returns an ordered list of the distinct set of data items from the given column.</div>
 </td>
 </tr>
@@ -230,15 +266,15 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsFrequencyDistribution.html" title="class in org.deidentifier.arx.aggregates">StatisticsFrequencyDistribution</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getFrequencyDistribution(int,%20org.deidentifier.arx.AttributeType.Hierarchy)">getFrequencyDistribution</a></strong>(int&nbsp;column,
-                        <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;hierarchy)</code>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getFrequencyDistribution(int,%20boolean)">getFrequencyDistribution</a></strong>(int&nbsp;column,
+                        boolean&nbsp;orderFromDefinition)</code>
 <div class="block">Returns a frequency distribution for the values in the given column.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsFrequencyDistribution.html" title="class in org.deidentifier.arx.aggregates">StatisticsFrequencyDistribution</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getFrequencyDistribution(int,%20boolean)">getFrequencyDistribution</a></strong>(int&nbsp;column,
-                        boolean&nbsp;orderFromDefinition)</code>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getFrequencyDistribution(int,%20java.lang.String[][])">getFrequencyDistribution</a></strong>(int&nbsp;column,
+                        java.lang.String[][]&nbsp;hierarchy)</code>
 <div class="block">Returns a frequency distribution for the values in the given column.</div>
 </td>
 </tr>
@@ -276,13 +312,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="StatisticsBuilder(org.deidentifier.arx.DataHandleStatistics)">
+<a name="StatisticsBuilder(org.deidentifier.arx.DataHandleInternal)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>StatisticsBuilder</h4>
-<pre>public&nbsp;StatisticsBuilder(<a href="../../../../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a>&nbsp;handle)</pre>
+<pre>public&nbsp;StatisticsBuilder(<a href="../../../../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a>&nbsp;handle)</pre>
 <div class="block">Creates a new instance.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd></dl>
 </li>
@@ -295,6 +331,74 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getClassificationPerformance(java.lang.String, boolean, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getClassificationPerformance</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a>&nbsp;getClassificationPerformance(java.lang.String&nbsp;clazz,
+                                                    boolean&nbsp;ignoreSuppressedRecords,
+                                                    double&nbsp;samplingFraction)
+                                                      throws java.text.ParseException</pre>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - - The class attributes</dd><dd><code>ignoreSuppressedRecords</code> - - Ignore suppressed records</dd><dd><code>samplingFraction</code> - - The sampling fraction</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.text.ParseException</code></dd></dl>
+</li>
+</ul>
+<a name="getClassificationPerformance(java.lang.String, java.lang.Integer, boolean, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getClassificationPerformance</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a>&nbsp;getClassificationPerformance(java.lang.String&nbsp;clazz,
+                                                    java.lang.Integer&nbsp;seed,
+                                                    boolean&nbsp;ignoreSuppressedRecords,
+                                                    double&nbsp;samplingFraction)
+                                                      throws java.text.ParseException</pre>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - - The class attributes</dd><dd><code>seed</code> - - The random seed, null, if the process should be randomized</dd><dd><code>ignoreSuppressedRecords</code> - - Ignore suppressed records</dd><dd><code>samplingFraction</code> - - The sampling fraction</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.text.ParseException</code></dd></dl>
+</li>
+</ul>
+<a name="getClassificationPerformance(java.lang.String[], java.lang.String, boolean, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getClassificationPerformance</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a>&nbsp;getClassificationPerformance(java.lang.String[]&nbsp;features,
+                                                    java.lang.String&nbsp;clazz,
+                                                    boolean&nbsp;ignoreSuppressedRecords,
+                                                    double&nbsp;samplingFraction)
+                                                      throws java.text.ParseException</pre>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>features</code> - - The feature attributes</dd><dd><code>clazz</code> - - The class attributes</dd><dd><code>ignoreSuppressedRecords</code> - - Ignore suppressed records</dd><dd><code>samplingFraction</code> - - The sampling fraction</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.text.ParseException</code></dd></dl>
+</li>
+</ul>
+<a name="getClassificationPerformance(java.lang.String[], java.lang.String, java.lang.Integer, boolean, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getClassificationPerformance</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a>&nbsp;getClassificationPerformance(java.lang.String[]&nbsp;features,
+                                                    java.lang.String&nbsp;clazz,
+                                                    java.lang.Integer&nbsp;seed,
+                                                    boolean&nbsp;ignoreSuppressedRecords,
+                                                    double&nbsp;samplingFraction)
+                                                      throws java.text.ParseException</pre>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>features</code> - - The feature attributes</dd><dd><code>clazz</code> - - The class attributes</dd><dd><code>seed</code> - - The random seed, null, if the process should be randomized</dd><dd><code>ignoreSuppressedRecords</code> - - Ignore suppressed records</dd><dd><code>samplingFraction</code> - - The sampling fraction</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.text.ParseException</code></dd></dl>
+</li>
+</ul>
 <a name="getContingencyTable(int, boolean, int, boolean)">
 <!--   -->
 </a>
@@ -314,22 +418,6 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getContingencyTable(int, org.deidentifier.arx.AttributeType.Hierarchy, int, org.deidentifier.arx.AttributeType.Hierarchy)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getContingencyTable</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsContingencyTable.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable</a>&nbsp;getContingencyTable(int&nbsp;column1,
-                                             <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;hierarchy1,
-                                             int&nbsp;column2,
-                                             <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;hierarchy2)</pre>
-<div class="block">Returns a contingency table for the given columns. The order for string data items is derived
- from the provided hierarchies</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column1</code> - The first column</dd><dd><code>hierarchy1</code> - The hierarchy for the first column, may be null</dd><dd><code>column2</code> - The second column</dd><dd><code>hierarchy2</code> - The hierarchy for the second column, may be null</dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="getContingencyTable(int, int)">
 <!--   -->
 </a>
@@ -339,7 +427,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsContingencyTable.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable</a>&nbsp;getContingencyTable(int&nbsp;column1,
                                              int&nbsp;column2)</pre>
 <div class="block">Returns a contingency table for the given columns. This method assumes that the
- order of string data items can (and should) be derived from the hierarchies provided
+ order of string data items will be derived from the hierarchies provided
  in the data definition (if any)</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>column1</code> - The first column</dd><dd><code>column2</code> - The second column</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
@@ -366,24 +454,6 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getContingencyTable(int, int, org.deidentifier.arx.AttributeType.Hierarchy, int, int, org.deidentifier.arx.AttributeType.Hierarchy)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getContingencyTable</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsContingencyTable.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable</a>&nbsp;getContingencyTable(int&nbsp;column1,
-                                             int&nbsp;size1,
-                                             <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;hierarchy1,
-                                             int&nbsp;column2,
-                                             int&nbsp;size2,
-                                             <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;hierarchy2)</pre>
-<div class="block">Returns a contingency table for the given columns. The order for string data items is derived
- from the provided hierarchies</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column1</code> - The first column</dd><dd><code>size1</code> - The maximal size in this dimension</dd><dd><code>hierarchy1</code> - The hierarchy for the first column, may be null</dd><dd><code>column2</code> - The second column</dd><dd><code>size2</code> - The maximal size in this dimension</dd><dd><code>hierarchy2</code> - The hierarchy for the second column, may be null</dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="getContingencyTable(int, int, int, int)">
 <!--   -->
 </a>
@@ -398,6 +468,40 @@ extends java.lang.Object</pre>
  order of string data items can (and should) be derived from the hierarchies provided
  in the data definition (if any)</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>column1</code> - The first column</dd><dd><code>size1</code> - The maximal size in this dimension</dd><dd><code>column2</code> - The second column</dd><dd><code>size2</code> - The maximal size in this dimension</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getContingencyTable(int, int, java.lang.String[][], int, int, java.lang.String[][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getContingencyTable</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsContingencyTable.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable</a>&nbsp;getContingencyTable(int&nbsp;column1,
+                                             int&nbsp;size1,
+                                             java.lang.String[][]&nbsp;hierarchy1,
+                                             int&nbsp;column2,
+                                             int&nbsp;size2,
+                                             java.lang.String[][]&nbsp;hierarchy2)</pre>
+<div class="block">Returns a contingency table for the given columns. The order for string data items is derived
+ from the provided hierarchies</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column1</code> - The first column</dd><dd><code>size1</code> - The maximal size in this dimension</dd><dd><code>hierarchy1</code> - The hierarchy for the first column, may be null</dd><dd><code>column2</code> - The second column</dd><dd><code>size2</code> - The maximal size in this dimension</dd><dd><code>hierarchy2</code> - The hierarchy for the second column, may be null</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getContingencyTable(int, java.lang.String[][], int, java.lang.String[][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getContingencyTable</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsContingencyTable.html" title="class in org.deidentifier.arx.aggregates">StatisticsContingencyTable</a>&nbsp;getContingencyTable(int&nbsp;column1,
+                                             java.lang.String[][]&nbsp;hierarchy1,
+                                             int&nbsp;column2,
+                                             java.lang.String[][]&nbsp;hierarchy2)</pre>
+<div class="block">Returns a contingency table for the given columns. The order for string data items is derived
+ from the provided hierarchies</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column1</code> - The first column</dd><dd><code>hierarchy1</code> - The hierarchy for the first column, may be null</dd><dd><code>column2</code> - The second column</dd><dd><code>hierarchy2</code> - The hierarchy for the second column, may be null</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -442,14 +546,14 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getDistinctValuesOrdered(int, org.deidentifier.arx.AttributeType.Hierarchy)">
+<a name="getDistinctValuesOrdered(int, java.lang.String[][])">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getDistinctValuesOrdered</h4>
 <pre>public&nbsp;java.lang.String[]&nbsp;getDistinctValuesOrdered(int&nbsp;column,
-                                          <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;hierarchy)</pre>
+                                          java.lang.String[][]&nbsp;hierarchy)</pre>
 <div class="block">Returns an ordered list of the distinct set of data items from the given column. This method assumes
  that the order of string data items can (and should) be derived from the provided hierarchy</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - The column</dd><dd><code>hierarchy</code> - The hierarchy, may be null</dd>
@@ -496,14 +600,14 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getFrequencyDistribution(int, org.deidentifier.arx.AttributeType.Hierarchy)">
+<a name="getFrequencyDistribution(int, java.lang.String[][])">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getFrequencyDistribution</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsFrequencyDistribution.html" title="class in org.deidentifier.arx.aggregates">StatisticsFrequencyDistribution</a>&nbsp;getFrequencyDistribution(int&nbsp;column,
-                                                       <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;hierarchy)</pre>
+                                                       java.lang.String[][]&nbsp;hierarchy)</pre>
 <div class="block">Returns a frequency distribution for the values in the given column. The order for string data items
  is derived from the provided hierarchy</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - The column</dd><dd><code>hierarchy</code> - The hierarchy, may be null</dd>

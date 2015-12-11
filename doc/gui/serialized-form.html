@@ -1346,6 +1346,34 @@
 <dd>-2953252206954936045L</dd>
 </dl>
 </li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.DDisclosurePrivacy">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/DDisclosurePrivacy.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.DDisclosurePrivacy</a> extends <a href="org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ExplicitPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>1543994581019659183L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>d</h4>
+<pre>double d</pre>
+<div class="block">Parameter</div>
+</li>
+<li class="blockListLast">
+<h4>distribution</h4>
+<pre>double[] distribution</pre>
+<div class="block">The original distribution.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="org.deidentifier.arx.criteria.DistinctLDiversity">
 <!--   -->
 </a>
@@ -1584,6 +1612,34 @@
 <h4>k</h4>
 <pre>int k</pre>
 <div class="block">The parameter k.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.KMap">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/KMap.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.KMap</a> extends <a href="org/deidentifier/arx/criteria/ImplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ImplicitPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-6966985761538810077L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>k</h4>
+<pre>int k</pre>
+<div class="block">K</div>
+</li>
+<li class="blockListLast">
+<h4>subset</h4>
+<pre><a href="org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a> subset</pre>
+<div class="block">A compressed representation of the research subset.</div>
 </li>
 </ul>
 </li>
@@ -1958,6 +2014,11 @@
 <div class="block">Model for a specific privacy criterion.</div>
 </li>
 <li class="blockList">
+<h4>kMapModel</h4>
+<pre><a href="org/deidentifier/arx/gui/model/ModelKMapCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelKMapCriterion</a> kMapModel</pre>
+<div class="block">Model for a specific privacy criterion.</div>
+</li>
+<li class="blockList">
 <h4>kAnonymityModel</h4>
 <pre><a href="org/deidentifier/arx/gui/model/ModelKAnonymityCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelKAnonymityCriterion</a> kAnonymityModel</pre>
 <div class="block">Model for a specific privacy criterion.</div>
@@ -1983,6 +2044,11 @@
 <div class="block">Model for a specific privacy criterion.</div>
 </li>
 <li class="blockList">
+<h4>dDisclosurePrivacyModel</h4>
+<pre>java.util.Map&lt;K,V&gt; dDisclosurePrivacyModel</pre>
+<div class="block">Model for a specific privacy criterion.</div>
+</li>
+<li class="blockList">
 <h4>metricConfig</h4>
 <pre><a href="org/deidentifier/arx/metric/MetricConfiguration.html" title="class in org.deidentifier.arx.metric">MetricConfiguration</a> metricConfig</pre>
 <div class="block">Configuration.</div>
@@ -2005,11 +2071,27 @@
 <li class="blockList">
 <h4>selectedQuasiIdentifiers</h4>
 <pre>java.util.Set&lt;E&gt; selectedQuasiIdentifiers</pre>
+<div class="block">Selected quasi identifiers</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>localRecodingModel</h4>
 <pre><a href="org/deidentifier/arx/gui/model/ModelLocalRecoding.html" title="class in org.deidentifier.arx.gui.model">ModelLocalRecoding</a> localRecodingModel</pre>
 <div class="block">The local recoding model</div>
+</li>
+<li class="blockList">
+<h4>selectedFeatures</h4>
+<pre>java.util.Set&lt;E&gt; selectedFeatures</pre>
+<div class="block">Selected attributes</div>
+</li>
+<li class="blockList">
+<h4>selectedClasses</h4>
+<pre>java.util.Set&lt;E&gt; selectedClasses</pre>
+<div class="block">Selected attributes</div>
+</li>
+<li class="blockListLast">
+<h4>classificationModel</h4>
+<pre><a href="org/deidentifier/arx/gui/model/ModelClassification.html" title="class in org.deidentifier.arx.gui.model">ModelClassification</a> classificationModel</pre>
+<div class="block">Model</div>
 </li>
 </ul>
 </li>
@@ -2052,6 +2134,44 @@
 <h4>replacementString</h4>
 <pre>java.lang.String replacementString</pre>
 <div class="block">The replacement string</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.gui.model.ModelClassification">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/gui/model/ModelClassification.html" title="class in org.deidentifier.arx.gui.model">org.deidentifier.arx.gui.model.ModelClassification</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>5361564507029617616L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>modified</h4>
+<pre>boolean modified</pre>
+<div class="block">Modified</div>
+</li>
+<li class="blockList">
+<h4>classificationMaxRecords</h4>
+<pre>int classificationMaxRecords</pre>
+<div class="block">Max records</div>
+</li>
+<li class="blockList">
+<h4>classificationSeed</h4>
+<pre>java.lang.Integer classificationSeed</pre>
+<div class="block">Seed</div>
+</li>
+<li class="blockListLast">
+<h4>ignoreSuppressedRecords</h4>
+<pre>boolean ignoreSuppressedRecords</pre>
+<div class="block">Ignore suppressed records</div>
 </li>
 </ul>
 </li>
@@ -2148,6 +2268,29 @@
 <h4>enabled</h4>
 <pre>boolean enabled</pre>
 <div class="block">Is this criterion enabled.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/gui/model/ModelDDisclosurePrivacyCriterion.html" title="class in org.deidentifier.arx.gui.model">org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion</a> extends <a href="org/deidentifier/arx/gui/model/ModelExplicitCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelExplicitCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>4708272194910927203L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>d</h4>
+<pre>double d</pre>
+<div class="block">Delta</div>
 </li>
 </ul>
 </li>
@@ -2264,6 +2407,29 @@
 <h4>k</h4>
 <pre>int k</pre>
 <div class="block">K.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.gui.model.ModelKMapCriterion">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/gui/model/ModelKMapCriterion.html" title="class in org.deidentifier.arx.gui.model">org.deidentifier.arx.gui.model.ModelKMapCriterion</a> extends <a href="org/deidentifier/arx/gui/model/ModelImplicitCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelImplicitCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>2268947734419591705L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>k</h4>
+<pre>int k</pre>
+<div class="block">Dmin.</div>
 </li>
 </ul>
 </li>
@@ -2450,9 +2616,24 @@
 <pre>boolean useOutputModelIfAvailable</pre>
 <div class="block">Model</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>riskModelForAttributes</h4>
 <pre><a href="org/deidentifier/arx/gui/model/ModelRisk.RiskModelForAttributes.html" title="enum in org.deidentifier.arx.gui.model">ModelRisk.RiskModelForAttributes</a> riskModelForAttributes</pre>
+<div class="block">Model</div>
+</li>
+<li class="blockList">
+<h4>riskThresholdRecordsAtRisk</h4>
+<pre>java.lang.Double riskThresholdRecordsAtRisk</pre>
+<div class="block">Model</div>
+</li>
+<li class="blockList">
+<h4>riskThresholdHighestRisk</h4>
+<pre>java.lang.Double riskThresholdHighestRisk</pre>
+<div class="block">Model</div>
+</li>
+<li class="blockListLast">
+<h4>riskThresholdSuccessRate</h4>
+<pre>java.lang.Double riskThresholdSuccessRate</pre>
 <div class="block">Model</div>
 </li>
 </ul>

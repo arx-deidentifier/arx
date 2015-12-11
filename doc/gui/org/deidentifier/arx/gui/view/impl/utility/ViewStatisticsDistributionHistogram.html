@@ -85,7 +85,7 @@
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">org.deidentifier.arx.gui.view.impl.utility.ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualizationDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualizationDistribution</a>&gt;</li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">org.deidentifier.arx.gui.view.impl.utility.ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a>&gt;</li>
 <li>
 <ul class="inheritance">
 <li>org.deidentifier.arx.gui.view.impl.utility.ViewStatisticsDistributionHistogram</li>
@@ -104,7 +104,7 @@
 <hr>
 <br>
 <pre>public class <span class="strong">ViewStatisticsDistributionHistogram</span>
-extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualizationDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualizationDistribution</a>&gt;</pre>
+extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a>&gt;</pre>
 <div class="block">This view displays a frequency distribution.</div>
 </li>
 </ul>
@@ -168,7 +168,7 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualizationDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualizationDistribution</a></code></td>
+<td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionHistogram.html#createViewConfig(org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext)">createViewConfig</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/async/AnalysisContext.html" title="class in org.deidentifier.arx.gui.view.impl.common.async">AnalysisContext</a>&nbsp;context)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
@@ -179,8 +179,20 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionHistogram.html#doUpdate(org.deidentifier.arx.gui.view.impl.utility.AnalysisContextVisualizationDistribution)">doUpdate</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualizationDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualizationDistribution</a>&nbsp;context)</code>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionHistogram.html#doUpdate(org.deidentifier.arx.gui.view.impl.utility.AnalysisContextDistribution)">doUpdate</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a>&nbsp;context)</code>
 <div class="block">Implement this to update.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtility.ViewUtilityType.html" title="enum in org.deidentifier.arx.gui.view.impl.utility">LayoutUtility.ViewUtilityType</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionHistogram.html#getType()">getType</a></strong>()</code>
+<div class="block">Returns the type</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionHistogram.html#isRunning()">isRunning</a></strong>()</code>
+<div class="block">Is an analysis running</div>
 </td>
 </tr>
 </table>
@@ -189,7 +201,7 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.gui.view.impl.utility.<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a></h3>
-<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#dispose()">dispose</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getModel()">getModel</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getTarget()">getTarget</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#reset()">reset</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#setStatusDone()">setStatusDone</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#setStatusEmpty()">setStatusEmpty</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#setStatusWorking()">setStatusWorking</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></code></li>
+<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#dispose()">dispose</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getModel()">getModel</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getParent()">getParent</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getProgressProvider()">getProgressProvider</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getTarget()">getTarget</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#isEnabled()">isEnabled</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#reset()">reset</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#setStatusDone()">setStatusDone</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#setStatusEmpty()">setStatusEmpty</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#setStatusWorking()">setStatusWorking</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#triggerUpdate()">triggerUpdate</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -234,6 +246,21 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getType()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getType</h4>
+<pre>public&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtility.ViewUtilityType.html" title="enum in org.deidentifier.arx.gui.view.impl.utility">LayoutUtility.ViewUtilityType</a>&nbsp;getType()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getType()">ViewStatistics</a></code></strong></div>
+<div class="block">Returns the type</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getType()">getType</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a>&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="createControl(org.eclipse.swt.widgets.Composite)">
 <!--   -->
 </a>
@@ -245,7 +272,7 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility
 <div class="block">Implement this to create the widget.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#createControl(org.eclipse.swt.widgets.Composite)">createControl</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualizationDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualizationDistribution</a>&gt;</code></dd>
+<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#createControl(org.eclipse.swt.widgets.Composite)">createControl</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a>&gt;</code></dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -255,10 +282,10 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility
 <ul class="blockList">
 <li class="blockList">
 <h4>createViewConfig</h4>
-<pre>protected&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualizationDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualizationDistribution</a>&nbsp;createViewConfig(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/async/AnalysisContext.html" title="class in org.deidentifier.arx.gui.view.impl.common.async">AnalysisContext</a>&nbsp;context)</pre>
+<pre>protected&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a>&nbsp;createViewConfig(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/async/AnalysisContext.html" title="class in org.deidentifier.arx.gui.view.impl.common.async">AnalysisContext</a>&nbsp;context)</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#createViewConfig(org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext)">createViewConfig</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualizationDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualizationDistribution</a>&gt;</code></dd>
+<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#createViewConfig(org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext)">createViewConfig</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a>&gt;</code></dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -273,23 +300,37 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility
 <div class="block">Implement this to reset.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#doReset()">doReset</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualizationDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualizationDistribution</a>&gt;</code></dd>
+<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#doReset()">doReset</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
-<a name="doUpdate(org.deidentifier.arx.gui.view.impl.utility.AnalysisContextVisualizationDistribution)">
+<a name="doUpdate(org.deidentifier.arx.gui.view.impl.utility.AnalysisContextDistribution)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>doUpdate</h4>
-<pre>protected&nbsp;void&nbsp;doUpdate(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualizationDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualizationDistribution</a>&nbsp;context)</pre>
+<pre>protected&nbsp;void&nbsp;doUpdate(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a>&nbsp;context)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#doUpdate(T)">ViewStatistics</a></code></strong></div>
 <div class="block">Implement this to update.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#doUpdate(T)">doUpdate</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualizationDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualizationDistribution</a>&gt;</code></dd>
+<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#doUpdate(T)">doUpdate</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a>&gt;</code></dd>
 </dl>
+</li>
+</ul>
+<a name="isRunning()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isRunning</h4>
+<pre>protected&nbsp;boolean&nbsp;isRunning()</pre>
+<div class="block">Is an analysis running</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#isRunning()">isRunning</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextDistribution.html" title="class in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextDistribution</a>&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

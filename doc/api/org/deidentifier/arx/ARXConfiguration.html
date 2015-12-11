@@ -384,7 +384,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setMaxOutliers(double)">setMaxOutliers</a></strong>(double&nbsp;supp)</code>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setMaxOutliers(double)">setMaxOutliers</a></strong>(double&nbsp;max)</code>
 <div class="block">Allows for a certain percentage of outliers and thus
  triggers tuple suppression.</div>
 </td>
@@ -409,17 +409,23 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setSuppressionLimit(double)">setSuppressionLimit</a></strong>(double&nbsp;limit)</code>
+<div class="block">Sets the suppression limit.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setSuppressionString(java.lang.String)">setSuppressionString</a></strong>(java.lang.String&nbsp;suppressionString)</code>
 <div class="block">Sets the string with which suppressed values are to be replaced.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setUseHeuristicSearchForSampleBasedCriteria(boolean)">setUseHeuristicSearchForSampleBasedCriteria</a></strong>(boolean&nbsp;value)</code>
 <div class="block">Do we guarantee optimality for sample-based criteria?</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setUtilityBasedMicroaggregation(boolean)">setUtilityBasedMicroaggregation</a></strong>(boolean&nbsp;value)</code>
 <div class="block">Sets whether microaggregation should be based on utility measures</div>
@@ -874,10 +880,21 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setMaxOutliers</h4>
-<pre>public&nbsp;void&nbsp;setMaxOutliers(double&nbsp;supp)</pre>
+<pre>public&nbsp;void&nbsp;setMaxOutliers(double&nbsp;max)</pre>
 <div class="block">Allows for a certain percentage of outliers and thus
  triggers tuple suppression.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>supp</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>max</code> - </dd></dl>
+</li>
+</ul>
+<a name="setSuppressionLimit(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setSuppressionLimit</h4>
+<pre>public&nbsp;void&nbsp;setSuppressionLimit(double&nbsp;limit)</pre>
+<div class="block">Sets the suppression limit. This is an alias for setMaxOutliers().</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>limit</code> - </dd></dl>
 </li>
 </ul>
 <a name="setMetric(org.deidentifier.arx.metric.Metric)">

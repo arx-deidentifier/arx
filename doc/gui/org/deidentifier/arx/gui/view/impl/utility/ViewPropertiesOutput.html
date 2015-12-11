@@ -99,7 +99,7 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></dd>
+<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsBasic</a></dd>
 </dl>
 <hr>
 <br>
@@ -138,7 +138,7 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;org.deidentifier.arx.gui.view.impl.utility.<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewProperties</a></h3>
-<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#controller">controller</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#format">format</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#model">model</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#root">root</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#roots">roots</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#treeViewer">treeViewer</a></code></li>
+<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#controller">controller</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#model">model</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#root">root</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#roots">roots</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#treeViewer">treeViewer</a></code></li>
 </ul>
 </li>
 </ul>
@@ -175,6 +175,12 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtility.ViewUtilityType.html" title="enum in org.deidentifier.arx.gui.view.impl.utility">LayoutUtility.ViewUtilityType</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewPropertiesOutput.html#getType()">getType</a></strong>()</code>
+<div class="block">Returns the view type</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewPropertiesOutput.html#update()">update</a></strong>()</code>
 <div class="block">Update the view.</div>
@@ -186,7 +192,7 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.gui.view.impl.utility.<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewProperties</a></h3>
-<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#asRelativeValue(org.deidentifier.arx.metric.InformationLoss,%20org.deidentifier.arx.ARXResult)">asRelativeValue</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#dispose()">dispose</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#getContext()">getContext</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#refresh()">refresh</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#reset()">reset</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></code></li>
+<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#asRelativeValue(org.deidentifier.arx.metric.InformationLoss,%20org.deidentifier.arx.ARXResult)">asRelativeValue</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#dispose()">dispose</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#getContext()">getContext</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#getParent()">getParent</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#refresh()">refresh</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#reset()">reset</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -229,6 +235,17 @@ extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getType()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getType</h4>
+<pre>public&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtility.ViewUtilityType.html" title="enum in org.deidentifier.arx.gui.view.impl.utility">LayoutUtility.ViewUtilityType</a>&nbsp;getType()</pre>
+<div class="block">Returns the view type</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="update()">
 <!--   -->
 </a>

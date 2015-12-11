@@ -473,6 +473,19 @@ implements java.io.Serializable</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getNumRecords(org.deidentifier.arx.ARXConfiguration,%20org.deidentifier.arx.framework.data.Data)">getNumRecords</a></strong>(<a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
+             org.deidentifier.arx.framework.data.Data&nbsp;input)</code>
+<div class="block">Returns the number of records</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getSubset(org.deidentifier.arx.ARXConfiguration)">getSubset</a></strong>(<a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
+<div class="block">Returns the subset</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initialize(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
           <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
@@ -1322,6 +1335,31 @@ implements java.io.Serializable</pre>
  been classified correctly when the method is called, i.e.,
  HashGroupifyEntry.isNotOutlier may not be set correctly!</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - </dd><dd><code>groupify</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getNumRecords(org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.framework.data.Data)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNumRecords</h4>
+<pre>protected&nbsp;int&nbsp;getNumRecords(<a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
+                org.deidentifier.arx.framework.data.Data&nbsp;input)</pre>
+<div class="block">Returns the number of records</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>config</code> - </dd><dd><code>input</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getSubset(org.deidentifier.arx.ARXConfiguration)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSubset</h4>
+<pre>protected&nbsp;<a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;getSubset(<a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</pre>
+<div class="block">Returns the subset</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>config</code> - </dd><dd><code>input</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

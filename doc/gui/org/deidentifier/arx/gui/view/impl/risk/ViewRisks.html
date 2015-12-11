@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/LayoutRisksTop.html" title="class in org.deidentifier.arx.gui.view.impl.risk"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksAttributesTable.html" title="class in org.deidentifier.arx.gui.view.impl.risk"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksClassDistributionPlot.html" title="class in org.deidentifier.arx.gui.view.impl.risk"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html" target="_top">Frames</a></li>
@@ -78,7 +78,7 @@
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">org.deidentifier.arx.gui.view.impl.risk</div>
-<h2 title="Class ViewRisks" class="title">Class ViewRisks&lt;T extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualization.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualization</a>&gt;</h2>
+<h2 title="Class ViewRisks" class="title">Class ViewRisks&lt;T extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/async/AnalysisContextVisualization.html" title="interface in org.deidentifier.arx.gui.view.impl.common.async">AnalysisContextVisualization</a>&gt;</h2>
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
@@ -99,11 +99,11 @@
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksAttributesTable.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksAttributesTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksBasicEstimates.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksBasicEstimates</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksClassDistributionPlot.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksClassDistributionPlot</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksClassDistributionTable.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksClassDistributionTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksHIPAAIdentifiersTable.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksHIPAAIdentifiersTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksPlotUniquenessEstimates.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksPlotUniquenessEstimates</a></dd>
+<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksClassDistributionPlot.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksClassDistributionPlot</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksClassDistributionTable.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksClassDistributionTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksHIPAAIdentifiersTable.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksHIPAAIdentifiersTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksPopulationUniques.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksPopulationUniques</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksQuasiIdentifiersTable.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksQuasiIdentifiersTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksReIdentification.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksReIdentification</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksReIdentificationTable.html" title="class in org.deidentifier.arx.gui.view.impl.risk">ViewRisksReIdentificationTable</a></dd>
 </dl>
 <hr>
 <br>
-<pre>public abstract class <span class="strong">ViewRisks&lt;T extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/AnalysisContextVisualization.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">AnalysisContextVisualization</a>&gt;</span>
+<pre>public abstract class <span class="strong">ViewRisks&lt;T extends <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/async/AnalysisContextVisualization.html" title="interface in org.deidentifier.arx.gui.view.impl.common.async">AnalysisContextVisualization</a>&gt;</span>
 extends java.lang.Object
 implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></pre>
 <div class="block">This is a base class for displaying risk estimates.</div>
@@ -126,6 +126,12 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#controller">controller</a></strong></code>
+<div class="block">Internal stuff.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#MINIMAL_WORKING_TIME">MINIMAL_WORKING_TIME</a></strong></code>
 <div class="block">Our users are patient.</div>
@@ -250,54 +256,60 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#isInput()">isInput</a></strong>()</code>
+<div class="block">Is this an input data oriented control</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected abstract boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#isRunning()">isRunning</a></strong>()</code>
 <div class="block">Is a job running</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#isValid()">isValid</a></strong>()</code>
 <div class="block">Is there still some data to show</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#reset()">reset</a></strong>()</code>
 <div class="block">Resets the view.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#setEnabled(boolean)">setEnabled</a></strong>(boolean&nbsp;enabled)</code>
 <div class="block">Enables or disables this view</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#setStatusDone()">setStatusDone</a></strong>()</code>
 <div class="block">Status update.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#setStatusEmpty()">setStatusEmpty</a></strong>()</code>
 <div class="block">Status empty.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#setStatusWorking()">setStatusWorking</a></strong>()</code>
 <div class="block">Status working.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#triggerUpdate()">triggerUpdate</a></strong>()</code>
 <div class="block">Triggers an update</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelEvent.html" title="class in org.deidentifier.arx.gui.model">ModelEvent</a>&nbsp;event)</code>
 <div class="block">Updates the view.</div>
@@ -328,12 +340,22 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <a name="MINIMAL_WORKING_TIME">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>MINIMAL_WORKING_TIME</h4>
 <pre>public static final&nbsp;int MINIMAL_WORKING_TIME</pre>
 <div class="block">Our users are patient.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../../../constant-values.html#org.deidentifier.arx.gui.view.impl.risk.ViewRisks.MINIMAL_WORKING_TIME">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="controller">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>controller</h4>
+<pre>protected final&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a> controller</pre>
+<div class="block">Internal stuff.</div>
 </li>
 </ul>
 </li>
@@ -467,7 +489,7 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <div class="block">Implement this to reset.</div>
 </li>
 </ul>
-<a name="doUpdate(org.deidentifier.arx.gui.view.impl.utility.AnalysisContextVisualization)">
+<a name="doUpdate(org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization)">
 <!--   -->
 </a><a name="doUpdate(T)">
 <!--   -->
@@ -488,18 +510,6 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <h4>getBuilder</h4>
 <pre>protected&nbsp;<a href="../../../../../../../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilderInterruptible</a>&nbsp;getBuilder(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/AnalysisContextRisk.html" title="class in org.deidentifier.arx.gui.view.impl.risk">AnalysisContextRisk</a>&nbsp;context)</pre>
 <div class="block">Creates a risk estimate builder</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>context</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getQuasiIdentifiers(org.deidentifier.arx.gui.view.impl.risk.AnalysisContextRisk)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getQuasiIdentifiers</h4>
-<pre>protected&nbsp;java.lang.String&nbsp;getQuasiIdentifiers(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/AnalysisContextRisk.html" title="class in org.deidentifier.arx.gui.view.impl.risk">AnalysisContextRisk</a>&nbsp;context)</pre>
-<div class="block">Returns a string containing all quasi-identifiers</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>context</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -553,6 +563,18 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getQuasiIdentifiers(org.deidentifier.arx.gui.view.impl.risk.AnalysisContextRisk)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getQuasiIdentifiers</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;getQuasiIdentifiers(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/AnalysisContextRisk.html" title="class in org.deidentifier.arx.gui.view.impl.risk">AnalysisContextRisk</a>&nbsp;context)</pre>
+<div class="block">Returns a string containing all quasi-identifiers</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>context</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getViewType()">
 <!--   -->
 </a>
@@ -561,6 +583,17 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <h4>getViewType</h4>
 <pre>protected abstract&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelRisk.ViewRiskType.html" title="enum in org.deidentifier.arx.gui.model">ModelRisk.ViewRiskType</a>&nbsp;getViewType()</pre>
 <div class="block">Returns the according type of view</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isInput()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isInput</h4>
+<pre>protected&nbsp;boolean&nbsp;isInput()</pre>
+<div class="block">Is this an input data oriented control</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -653,7 +686,7 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/LayoutRisksTop.html" title="class in org.deidentifier.arx.gui.view.impl.risk"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksAttributesTable.html" title="class in org.deidentifier.arx.gui.view.impl.risk"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksClassDistributionPlot.html" title="class in org.deidentifier.arx.gui.view.impl.risk"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html" target="_top">Frames</a></li>

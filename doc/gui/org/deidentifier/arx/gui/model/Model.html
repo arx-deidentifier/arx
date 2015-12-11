@@ -212,15 +212,27 @@ implements java.io.Serializable</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelClassification.html" title="class in org.deidentifier.arx.gui.model">ModelClassification</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getClassificationModel()">getClassificationModel</a></strong>()</code>
+<div class="block">Returns the classification model</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelClipboard.html" title="class in org.deidentifier.arx.gui.model">ModelClipboard</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getClipboard()">getClipboard</a></strong>()</code>
 <div class="block">Returns the clipboard.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getCSVSyntax()">getCSVSyntax</a></strong>()</code>
 <div class="block">Gets the csv config model.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/gui/model/ModelDDisclosurePrivacyCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelDDisclosurePrivacyCriterion</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getDDisclosurePrivacyModel()">getDDisclosurePrivacyModel</a></strong>()</code>
+<div class="block">Returns the d-disclosure privacy model.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -291,457 +303,487 @@ implements java.io.Serializable</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelKMapCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelKMapCriterion</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getKMapModel()">getKMapModel</a></strong>()</code>
+<div class="block">Returns the k-map model.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelLDiversityCriterion</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getLDiversityModel()">getLDiversityModel</a></strong>()</code>
 <div class="block">Returns the l-diversity model.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.Locale</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getLocale()">getLocale</a></strong>()</code>
 <div class="block">Returns the project locale.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelLocalRecoding.html" title="class in org.deidentifier.arx.gui.model">ModelLocalRecoding</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getLocalRecodingModel()">getLocalRecodingModel</a></strong>()</code>
 <div class="block">Returns the model for local recoding</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getMaximalSizeForComplexOperations()">getMaximalSizeForComplexOperations</a></strong>()</code>
 <div class="block">When a dataset has more records than this threshold,
  visualization of statistics will be disabled.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getMaxNodesInViewer()">getMaxNodesInViewer</a></strong>()</code>
 <div class="block">Returns the maximal size of a sub-lattice that will be displayed
  by the viewer.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/metric/MetricConfiguration.html" title="class in org.deidentifier.arx.metric">MetricConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getMetricConfiguration()">getMetricConfiguration</a></strong>()</code>
 <div class="block">Returns the configuration of the metric.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/metric/MetricDescription.html" title="class in org.deidentifier.arx.metric">MetricDescription</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getMetricDescription()">getMetricDescription</a></strong>()</code>
 <div class="block">Returns a description of the metric.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getName()">getName</a></strong>()</code>
 <div class="block">Returns the name of this project.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html" title="class in org.deidentifier.arx.gui.model">ModelNodeFilter</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getNodeFilter()">getNodeFilter</a></strong>()</code>
 <div class="block">Returns the current filter.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getOptimalNodeAsString()">getOptimalNodeAsString</a></strong>()</code>
 <div class="block">Returns a string representation of the current optimum.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getOutput()">getOutput</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getOutputConfig()">getOutputConfig</a></strong>()</code>
 <div class="block">Returns the output config.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getOutputDefinition()">getOutputDefinition</a></strong>()</code>
 <div class="block">Returns the output definition.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getOutputNode()">getOutputNode</a></strong>()</code>
 <div class="block">Returns the currently applied transformation.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getOutputNodeAsString()">getOutputNodeAsString</a></strong>()</code>
 <div class="block">Returns a string representation of the currently applied transformation.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getOutputPopulationModel()">getOutputPopulationModel</a></strong>()</code>
 <div class="block">Returns the output population model, if any.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getPath()">getPath</a></strong>()</code>
 <div class="block">Returns the path of the project.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/gui/model/Model.Perspective.html" title="enum in org.deidentifier.arx.gui.model">Model.Perspective</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getPerspective()">getPerspective</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getQuery()">getQuery</a></strong>()</code>
 <div class="block">Returns the current query.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getResult()">getResult</a></strong>()</code>
 <div class="block">Returns the current result.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.util.Set&lt;<a href="../../../../../org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelRiskBasedCriterion</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getRiskBasedModel()">getRiskBasedModel</a></strong>()</code>
 <div class="block">Returns the risk-based model.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelRisk.html" title="class in org.deidentifier.arx.gui.model">ModelRisk</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getRiskModel()">getRiskModel</a></strong>()</code>
 <div class="block">Returns the risk model</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getSelectedAttribute()">getSelectedAttribute</a></strong>()</code>
 <div class="block">Returns the currently selected attribute.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.util.Set&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getSelectedClasses()">getSelectedClasses</a></strong>()</code>
+<div class="block">Returns the selected features</div>
+</td>
+</tr>
 <tr class="altColor">
+<td class="colFirst"><code>java.util.Set&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getSelectedFeatures()">getSelectedFeatures</a></strong>()</code>
+<div class="block">Returns the selected features</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getSelectedNode()">getSelectedNode</a></strong>()</code>
 <div class="block">Returns the selected transformation.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.util.Set&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getSelectedQuasiIdentifiers()">getSelectedQuasiIdentifiers</a></strong>()</code>
 <div class="block">Returns a set of quasi identifiers selected for risk analysis</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>char</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getSeparator()">getSeparator</a></strong>()</code>
 <div class="block">Returns the separator.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getSnapshotSizeDataset()">getSnapshotSizeDataset</a></strong>()</code>
 <div class="block">Returns the according parameter.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getSnapshotSizeSnapshot()">getSnapshotSizeSnapshot</a></strong>()</code>
 <div class="block">Returns the according parameter.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getSubsetOrigin()">getSubsetOrigin</a></strong>()</code>
 <div class="block">Returns the origin of the subset.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/gui/model/ModelTClosenessCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelTClosenessCriterion</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getTClosenessModel()">getTClosenessModel</a></strong>()</code>
 <div class="block">Returns the t-closeness model.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getTime()">getTime</a></strong>()</code>
 <div class="block">Returns the execution time of the last anonymization process.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.Boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getUseFunctionalHierarchies()">getUseFunctionalHierarchies</a></strong>()</code>
 <div class="block">Returns whether functional hierarchies should be used</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.Boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getUseListwiseDeletion()">getUseListwiseDeletion</a></strong>()</code>
 <div class="block">Returns whether list-wise deletion is used for summary statistics</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelViewConfig.html" title="class in org.deidentifier.arx.gui.model">ModelViewConfig</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#getViewConfig()">getViewConfig</a></strong>()</code>
 <div class="block">Returns the view configuration.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#isDebugEnabled()">isDebugEnabled</a></strong>()</code>
 <div class="block">Returns whether debugging is enabled.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#isModified()">isModified</a></strong>()</code>
 <div class="block">Returns whether this project is modified.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#isQuasiIdentifierSelected()">isQuasiIdentifierSelected</a></strong>()</code>
 <div class="block">Returns whether a quasi-identifier is selected.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#isSensitiveAttributeSelected()">isSensitiveAttributeSelected</a></strong>()</code>
 <div class="block">Returns whether a sensitive attribute is selected.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#isVisualizationEnabled()">isVisualizationEnabled</a></strong>()</code>
 <div class="block">Returns whether visualization is enabled.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#reset()">reset</a></strong>()</code>
 <div class="block">Resets the model.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#resetAttributePair()">resetAttributePair</a></strong>()</code>
 <div class="block">Returns the last two selected attributes.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#resetCriteria()">resetCriteria</a></strong>()</code>
 <div class="block">Resets the configuration of the privacy criteria.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setAnonymizer(org.deidentifier.arx.ARXAnonymizer)">setAnonymizer</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a>&nbsp;anonymizer)</code>
 <div class="block">Sets the anonymizer.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setDebugEnabled(boolean)">setDebugEnabled</a></strong>(boolean&nbsp;value)</code>
 <div class="block">Enables debugging.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setDescription(java.lang.String)">setDescription</a></strong>(java.lang.String&nbsp;description)</code>
 <div class="block">Sets the project description.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setGroups(int[])">setGroups</a></strong>(int[]&nbsp;groups)</code>
 <div class="block">Sets the indices of equivalence classes.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setHistorySize(int)">setHistorySize</a></strong>(int&nbsp;historySize)</code>
 <div class="block">Sets the according parameter.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setInitialNodesInViewer(int)">setInitialNodesInViewer</a></strong>(int&nbsp;val)</code>
 <div class="block">Sets the according parameter.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setInputBytes(long)">setInputBytes</a></strong>(long&nbsp;inputBytes)</code>
 <div class="block">Sets the size of the input in bytes.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setInputConfig(org.deidentifier.arx.gui.model.ModelConfiguration)">setInputConfig</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a>&nbsp;config)</code>
 <div class="block">Sets the input config.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setLocale(java.util.Locale)">setLocale</a></strong>(java.util.Locale&nbsp;locale)</code>
 <div class="block">Sets the project locale.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setMaximalSizeForComplexOperations(int)">setMaximalSizeForComplexOperations</a></strong>(int&nbsp;numberOfRows)</code>
 <div class="block">Sets the according parameter.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setMaxNodesInViewer(int)">setMaxNodesInViewer</a></strong>(int&nbsp;maxNodesInViewer)</code>
 <div class="block">Sets the according parameter.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setMetricDescription(org.deidentifier.arx.metric.MetricDescription)">setMetricDescription</a></strong>(<a href="../../../../../org/deidentifier/arx/metric/MetricDescription.html" title="class in org.deidentifier.arx.metric">MetricDescription</a>&nbsp;description)</code>
 <div class="block">Sets the description of the metric.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setModified()">setModified</a></strong>()</code>
 <div class="block">Marks this project as modified.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setName(java.lang.String)">setName</a></strong>(java.lang.String&nbsp;name)</code>
 <div class="block">Sets the project name.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setNodeFilter(org.deidentifier.arx.gui.model.ModelNodeFilter)">setNodeFilter</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html" title="class in org.deidentifier.arx.gui.model">ModelNodeFilter</a>&nbsp;filter)</code>
 <div class="block">Sets a filter.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setOutput(org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.ARXLattice.ARXNode)">setOutput</a></strong>(<a href="../../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;output,
          <a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node)</code>
 <div class="block">Sets the current output.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setOutputConfig(org.deidentifier.arx.gui.model.ModelConfiguration)">setOutputConfig</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model">ModelConfiguration</a>&nbsp;config)</code>
 <div class="block">Sets the output config.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setPath(java.lang.String)">setPath</a></strong>(java.lang.String&nbsp;path)</code>
 <div class="block">Sets the project path.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setPerspective(org.deidentifier.arx.gui.model.Model.Perspective)">setPerspective</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/Model.Perspective.html" title="enum in org.deidentifier.arx.gui.model">Model.Perspective</a>&nbsp;perspective)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setQuery(java.lang.String)">setQuery</a></strong>(java.lang.String&nbsp;query)</code>
 <div class="block">Sets the query.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setResult(org.deidentifier.arx.ARXResult)">setResult</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a>&nbsp;result)</code>
 <div class="block">Sets the result.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setSaved()">setSaved</a></strong>()</code>
 <div class="block">Marks this project as saved.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setSelectedAttribute(java.lang.String)">setSelectedAttribute</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Sets the selected attribute.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setSelectedClasses(java.util.Set)">setSelectedClasses</a></strong>(java.util.Set&lt;java.lang.String&gt;&nbsp;set)</code>
+<div class="block">Sets a set of selected attributes</div>
+</td>
+</tr>
 <tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setSelectedFeatures(java.util.Set)">setSelectedFeatures</a></strong>(java.util.Set&lt;java.lang.String&gt;&nbsp;set)</code>
+<div class="block">Sets a set of selected attributes</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setSelectedNode(org.deidentifier.arx.ARXLattice.ARXNode)">setSelectedNode</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node)</code>
 <div class="block">Sets the selected node.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setSelectedQuasiIdentifiers(java.util.Set)">setSelectedQuasiIdentifiers</a></strong>(java.util.Set&lt;java.lang.String&gt;&nbsp;set)</code>
 <div class="block">Sets a set of quasi identifiers selected for risk analysis</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setSnapshotSizeDataset(double)">setSnapshotSizeDataset</a></strong>(double&nbsp;snapshotSize)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setSnapshotSizeSnapshot(double)">setSnapshotSizeSnapshot</a></strong>(double&nbsp;snapshotSize)</code>
 <div class="block">Sets the according parameter.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setSubsetManual()">setSubsetManual</a></strong>()</code>
 <div class="block">Sets how the subset was defined.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setSubsetOrigin(java.lang.String)">setSubsetOrigin</a></strong>(java.lang.String&nbsp;origin)</code>
 <div class="block">Sets how the subset was defined.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setTime(long)">setTime</a></strong>(long&nbsp;time)</code>
 <div class="block">Sets the execution time of the last anonymization process.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setUnmodified()">setUnmodified</a></strong>()</code>
 <div class="block">Marks this model as unmodified.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setUseFunctionalHierarchies(boolean)">setUseFunctionalHierarchies</a></strong>(boolean&nbsp;useFunctionalHierarchies)</code>
 <div class="block">Sets whether funtional hierarchies should be used during anonymization to esimtate utility</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setUseListwiseDeletion(boolean)">setUseListwiseDeletion</a></strong>(boolean&nbsp;useListwiseDeletion)</code>
 <div class="block">Sets whether list-wise deletion should be used for summary statistics</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setViewConfig(org.deidentifier.arx.gui.model.ModelViewConfig)">setViewConfig</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelViewConfig.html" title="class in org.deidentifier.arx.gui.model">ModelViewConfig</a>&nbsp;viewConfig)</code>
 <div class="block">Sets the view configuration.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/Model.html#setVisualizationEnabled(boolean)">setVisualizationEnabled</a></strong>(boolean&nbsp;value)</code>
 <div class="block">Sets visualization as enabled/disabled.</div>
@@ -876,6 +918,17 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getClassificationModel()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getClassificationModel</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/gui/model/ModelClassification.html" title="class in org.deidentifier.arx.gui.model">ModelClassification</a>&nbsp;getClassificationModel()</pre>
+<div class="block">Returns the classification model</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getClipboard()">
 <!--   -->
 </a>
@@ -895,6 +948,17 @@ implements java.io.Serializable</pre>
 <h4>getCSVSyntax</h4>
 <pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;getCSVSyntax()</pre>
 <div class="block">Gets the csv config model.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getDDisclosurePrivacyModel()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDDisclosurePrivacyModel</h4>
+<pre>public&nbsp;java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/gui/model/ModelDDisclosurePrivacyCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelDDisclosurePrivacyCriterion</a>&gt;&nbsp;getDDisclosurePrivacyModel()</pre>
+<div class="block">Returns the d-disclosure privacy model.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -928,6 +992,17 @@ implements java.io.Serializable</pre>
 <h4>getDPresenceModel</h4>
 <pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/gui/model/ModelDPresenceCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelDPresenceCriterion</a>&nbsp;getDPresenceModel()</pre>
 <div class="block">Returns the d-presence model.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getKMapModel()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getKMapModel</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/gui/model/ModelKMapCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelKMapCriterion</a>&nbsp;getKMapModel()</pre>
+<div class="block">Returns the k-map model.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -1270,6 +1345,28 @@ implements java.io.Serializable</pre>
 <h4>getSelectedAttribute</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getSelectedAttribute()</pre>
 <div class="block">Returns the currently selected attribute.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getSelectedClasses()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSelectedClasses</h4>
+<pre>public&nbsp;java.util.Set&lt;java.lang.String&gt;&nbsp;getSelectedClasses()</pre>
+<div class="block">Returns the selected features</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getSelectedFeatures()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSelectedFeatures</h4>
+<pre>public&nbsp;java.util.Set&lt;java.lang.String&gt;&nbsp;getSelectedFeatures()</pre>
+<div class="block">Returns the selected features</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -1728,6 +1825,28 @@ implements java.io.Serializable</pre>
 <pre>public&nbsp;void&nbsp;setSelectedAttribute(java.lang.String&nbsp;attribute)</pre>
 <div class="block">Sets the selected attribute.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd></dl>
+</li>
+</ul>
+<a name="setSelectedClasses(java.util.Set)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setSelectedClasses</h4>
+<pre>public&nbsp;void&nbsp;setSelectedClasses(java.util.Set&lt;java.lang.String&gt;&nbsp;set)</pre>
+<div class="block">Sets a set of selected attributes</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>set</code> - </dd></dl>
+</li>
+</ul>
+<a name="setSelectedFeatures(java.util.Set)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setSelectedFeatures</h4>
+<pre>public&nbsp;void&nbsp;setSelectedFeatures(java.util.Set&lt;java.lang.String&gt;&nbsp;set)</pre>
+<div class="block">Sets a set of selected attributes</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>set</code> - </dd></dl>
 </li>
 </ul>
 <a name="setSelectedNode(org.deidentifier.arx.ARXLattice.ARXNode)">

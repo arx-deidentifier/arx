@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledBorder.html" title="class in org.deidentifier.arx.gui.view.impl.common"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButton.html" title="class in org.deidentifier.arx.gui.view.impl.common"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html" target="_top">Frames</a></li>
@@ -120,18 +120,38 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#ComponentTitledFolder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton,%20java.lang.String)">ComponentTitledFolder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#ComponentTitledFolder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar,%20java.lang.String)">ComponentTitledFolder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                      <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
-                     <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButton.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButton</a>&nbsp;bar,
+                     <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButtonBar</a>&nbsp;bar,
                      java.lang.String&nbsp;id)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#ComponentTitledFolder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton,%20java.lang.String,%20boolean,%20boolean)">ComponentTitledFolder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#ComponentTitledFolder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar,%20java.lang.String,%20boolean,%20boolean)">ComponentTitledFolder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                      <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
-                     <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButton.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButton</a>&nbsp;bar,
+                     <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButtonBar</a>&nbsp;bar,
                      java.lang.String&nbsp;id,
+                     boolean&nbsp;bottom,
+                     boolean&nbsp;supportsHidingElements)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#ComponentTitledFolder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar,%20java.lang.String,%20java.util.Map)">ComponentTitledFolder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                     <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                     <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButtonBar</a>&nbsp;bar,
+                     java.lang.String&nbsp;id,
+                     java.util.Map&lt;org.eclipse.swt.widgets.Composite,java.lang.String&gt;&nbsp;helpids)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#ComponentTitledFolder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar,%20java.lang.String,%20java.util.Map,%20boolean,%20boolean)">ComponentTitledFolder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                     <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                     <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButtonBar</a>&nbsp;bar,
+                     java.lang.String&nbsp;id,
+                     java.util.Map&lt;org.eclipse.swt.widgets.Composite,java.lang.String&gt;&nbsp;helpids,
                      boolean&nbsp;bottom,
                      boolean&nbsp;supportsHidingElements)</code>
 <div class="block">Creates a new instance.</div>
@@ -206,43 +226,55 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>org.eclipse.swt.widgets.Control</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#getSelectedControl()">getSelectedControl</a></strong>()</code>
+<div class="block">Returns the selected control</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#getSelectionIndex()">getSelectionIndex</a></strong>()</code>
 <div class="block">Returns the currently selected index.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>org.eclipse.swt.graphics.Point</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#getSize()">getSize</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>org.eclipse.swt.custom.CTabItem</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#getTabItem(java.lang.String)">getTabItem</a></strong>(java.lang.String&nbsp;text)</code>
 <div class="block">Returns the tab item for the given text.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#getVisibleItems()">getVisibleItems</a></strong>()</code>
 <div class="block">Returns all visible items</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#setEnabled(boolean)">setEnabled</a></strong>(boolean&nbsp;b)</code>
 <div class="block">Enables/disables the component.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#setItemVisibilityListener(org.eclipse.swt.events.SelectionListener)">setItemVisibilityListener</a></strong>(org.eclipse.swt.events.SelectionListener&nbsp;listener)</code>
 <div class="block">Sets the item visibility listener</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#setLayoutData(java.lang.Object)">setLayoutData</a></strong>(java.lang.Object&nbsp;data)</code>
 <div class="block">Sets layout data.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#setSelectedControl(org.eclipse.swt.widgets.Control)">setSelectedControl</a></strong>(org.eclipse.swt.widgets.Control&nbsp;c)</code>
+<div class="block">Selects the item with the given control</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -279,7 +311,7 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ComponentTitledFolder(org.eclipse.swt.widgets.Composite, org.deidentifier.arx.gui.Controller, org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton, java.lang.String)">
+<a name="ComponentTitledFolder(org.eclipse.swt.widgets.Composite, org.deidentifier.arx.gui.Controller, org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar, java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -287,13 +319,44 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <h4>ComponentTitledFolder</h4>
 <pre>public&nbsp;ComponentTitledFolder(org.eclipse.swt.widgets.Composite&nbsp;parent,
                      <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
-                     <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButton.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButton</a>&nbsp;bar,
+                     <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButtonBar</a>&nbsp;bar,
                      java.lang.String&nbsp;id)</pre>
 <div class="block">Creates a new instance.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>controller</code> - </dd><dd><code>bar</code> - </dd><dd><code>id</code> - </dd></dl>
 </li>
 </ul>
-<a name="ComponentTitledFolder(org.eclipse.swt.widgets.Composite, org.deidentifier.arx.gui.Controller, org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton, java.lang.String, boolean, boolean)">
+<a name="ComponentTitledFolder(org.eclipse.swt.widgets.Composite, org.deidentifier.arx.gui.Controller, org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar, java.lang.String, java.util.Map)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ComponentTitledFolder</h4>
+<pre>public&nbsp;ComponentTitledFolder(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                     <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                     <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButtonBar</a>&nbsp;bar,
+                     java.lang.String&nbsp;id,
+                     java.util.Map&lt;org.eclipse.swt.widgets.Composite,java.lang.String&gt;&nbsp;helpids)</pre>
+<div class="block">Creates a new instance.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>controller</code> - </dd><dd><code>bar</code> - </dd><dd><code>id</code> - </dd><dd><code>helpids</code> - </dd></dl>
+</li>
+</ul>
+<a name="ComponentTitledFolder(org.eclipse.swt.widgets.Composite, org.deidentifier.arx.gui.Controller, org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar, java.lang.String, boolean, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ComponentTitledFolder</h4>
+<pre>public&nbsp;ComponentTitledFolder(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                     <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                     <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButtonBar</a>&nbsp;bar,
+                     java.lang.String&nbsp;id,
+                     boolean&nbsp;bottom,
+                     boolean&nbsp;supportsHidingElements)</pre>
+<div class="block">Creates a new instance.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>controller</code> - </dd><dd><code>bar</code> - </dd><dd><code>id</code> - </dd><dd><code>bottom</code> - </dd></dl>
+</li>
+</ul>
+<a name="ComponentTitledFolder(org.eclipse.swt.widgets.Composite, org.deidentifier.arx.gui.Controller, org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar, java.lang.String, java.util.Map, boolean, boolean)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -301,8 +364,9 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <h4>ComponentTitledFolder</h4>
 <pre>public&nbsp;ComponentTitledFolder(org.eclipse.swt.widgets.Composite&nbsp;parent,
                      <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
-                     <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButton.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButton</a>&nbsp;bar,
+                     <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButtonBar</a>&nbsp;bar,
                      java.lang.String&nbsp;id,
+                     java.util.Map&lt;org.eclipse.swt.widgets.Composite,java.lang.String&gt;&nbsp;helpids,
                      boolean&nbsp;bottom,
                      boolean&nbsp;supportsHidingElements)</pre>
 <div class="block">Creates a new instance.</div>
@@ -415,6 +479,17 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getSelectedControl()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSelectedControl</h4>
+<pre>public&nbsp;org.eclipse.swt.widgets.Control&nbsp;getSelectedControl()</pre>
+<div class="block">Returns the selected control</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getSelectionIndex()">
 <!--   -->
 </a>
@@ -492,6 +567,17 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd></dl>
 </li>
 </ul>
+<a name="setSelectedControl(org.eclipse.swt.widgets.Control)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setSelectedControl</h4>
+<pre>public&nbsp;void&nbsp;setSelectedControl(org.eclipse.swt.widgets.Control&nbsp;c)</pre>
+<div class="block">Selects the item with the given control</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>c</code> - </dd></dl>
+</li>
+</ul>
 <a name="setSelection(int)">
 <!--   -->
 </a>
@@ -541,7 +627,7 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IComp
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledBorder.html" title="class in org.deidentifier.arx.gui.view.impl.common"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButton.html" title="class in org.deidentifier.arx.gui.view.impl.common"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html" target="_top">Frames</a></li>

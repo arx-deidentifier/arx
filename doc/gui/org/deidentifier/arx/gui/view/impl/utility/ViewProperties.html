@@ -94,7 +94,7 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></dd>
+<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsBasic</a></dd>
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
@@ -104,7 +104,7 @@
 <br>
 <pre>public abstract class <span class="strong">ViewProperties</span>
 extends java.lang.Object
-implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></pre>
+implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsBasic</a></pre>
 <div class="block">This view displays basic properties about input or output data.</div>
 </li>
 </ul>
@@ -152,30 +152,24 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected java.text.NumberFormat</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#format">format</a></strong></code>
-<div class="block">Internal stuff.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#model">model</a></strong></code>
 <div class="block">Internal stuff.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected org.eclipse.swt.widgets.Composite</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#root">root</a></strong></code>
 <div class="block">Internal stuff.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.util.List&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewProperties.Property</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#roots">roots</a></strong></code>
 <div class="block">Internal stuff.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected org.eclipse.jface.viewers.TreeViewer</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#treeViewer">treeViewer</a></strong></code>
 <div class="block">Internal stuff.</div>
@@ -241,24 +235,30 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>org.eclipse.swt.widgets.Composite</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#getParent()">getParent</a></strong>()</code>
+<div class="block">Returns the parent composite</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#refresh()">refresh</a></strong>()</code>
 <div class="block">Refreshes the tree</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#reset()">reset</a></strong>()</code>
 <div class="block">Resets the view.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#update()">update</a></strong>()</code>
 <div class="block">Implement this to update the view.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelEvent.html" title="class in org.deidentifier.arx.gui.model">ModelEvent</a>&nbsp;event)</code>
 <div class="block">Updates the view.</div>
@@ -271,6 +271,13 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
 <code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_org.deidentifier.arx.gui.view.impl.utility.ViewStatisticsBasic">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;org.deidentifier.arx.gui.view.impl.utility.<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsBasic</a></h3>
+<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html#getType()">getType</a></code></li>
 </ul>
 </li>
 </ul>
@@ -303,16 +310,6 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <li class="blockList">
 <h4>root</h4>
 <pre>protected final&nbsp;org.eclipse.swt.widgets.Composite root</pre>
-<div class="block">Internal stuff.</div>
-</li>
-</ul>
-<a name="format">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>format</h4>
-<pre>protected final&nbsp;java.text.NumberFormat format</pre>
 <div class="block">Internal stuff.</div>
 </li>
 </ul>
@@ -389,6 +386,21 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html#dispose()">dispose</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="getParent()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getParent</h4>
+<pre>public&nbsp;org.eclipse.swt.widgets.Composite&nbsp;getParent()</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html#getParent()">ViewStatisticsBasic</a></code></strong></div>
+<div class="block">Returns the parent composite</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html#getParent()">getParent</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsBasic.html" title="interface in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsBasic</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="reset()">

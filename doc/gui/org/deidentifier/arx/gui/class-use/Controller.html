@@ -136,8 +136,17 @@
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><span class="strong">SWTUtil.</span><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#createHelpButton(org.deidentifier.arx.gui.Controller,%20org.eclipse.swt.custom.CTabFolder,%20java.lang.String)">createHelpButton</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
-                org.eclipse.swt.custom.CTabFolder&nbsp;tabFolder,
+                org.eclipse.swt.custom.CTabFolder&nbsp;folder,
                 java.lang.String&nbsp;id)</code>
+<div class="block">Creates a help button in the given folder.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><span class="strong">SWTUtil.</span><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#createHelpButton(org.deidentifier.arx.gui.Controller,%20org.eclipse.swt.custom.CTabFolder,%20java.lang.String,%20java.util.Map)">createHelpButton</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                org.eclipse.swt.custom.CTabFolder&nbsp;folder,
+                java.lang.String&nbsp;id,
+                java.util.Map&lt;org.eclipse.swt.widgets.Composite,java.lang.String&gt;&nbsp;helpids)</code>
 <div class="block">Creates a help button in the given folder.</div>
 </td>
 </tr>
@@ -230,7 +239,7 @@
 <tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></code></td>
 <td class="colLast"><span class="strong">ViewData.</span><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ViewData.html#controller">controller</a></strong></code>
-<div class="block">TODO</div>
+<div class="block">Controller</div>
 </td>
 </tr>
 </tbody>
@@ -261,13 +270,21 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentRiskMonitor.html#ComponentRiskMonitor(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20java.lang.String,%20java.lang.String)">ComponentRiskMonitor</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                    <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                    java.lang.String&nbsp;text,
+                    java.lang.String&nbsp;shortText)</code>
+<div class="block">Creates a new instance</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentStatus.html#ComponentStatus(org.deidentifier.arx.gui.Controller,%20org.eclipse.swt.widgets.Composite,%20org.eclipse.swt.widgets.Control)">ComponentStatus</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
                org.eclipse.swt.widgets.Composite&nbsp;parent,
                org.eclipse.swt.widgets.Control&nbsp;child)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentStatus.html#ComponentStatus(org.deidentifier.arx.gui.Controller,%20org.eclipse.swt.widgets.Composite,%20org.eclipse.swt.widgets.Control,%20org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider)">ComponentStatus</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
                org.eclipse.swt.widgets.Composite&nbsp;parent,
                org.eclipse.swt.widgets.Control&nbsp;child,
@@ -275,7 +292,7 @@
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledBorder.html#ComponentTitledBorder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20java.lang.String,%20java.lang.String)">ComponentTitledBorder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                      <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
                      java.lang.String&nbsp;title,
@@ -283,47 +300,71 @@
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#ComponentTitledFolder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton,%20java.lang.String)">ComponentTitledFolder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#ComponentTitledFolder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar,%20java.lang.String)">ComponentTitledFolder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                      <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
-                     <a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButton.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButton</a>&nbsp;bar,
+                     <a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButtonBar</a>&nbsp;bar,
                      java.lang.String&nbsp;id)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#ComponentTitledFolder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton,%20java.lang.String,%20boolean,%20boolean)">ComponentTitledFolder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#ComponentTitledFolder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar,%20java.lang.String,%20boolean,%20boolean)">ComponentTitledFolder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                      <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
-                     <a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButton.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButton</a>&nbsp;bar,
+                     <a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButtonBar</a>&nbsp;bar,
                      java.lang.String&nbsp;id,
                      boolean&nbsp;bottom,
                      boolean&nbsp;supportsHidingElements)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#ComponentTitledFolder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar,%20java.lang.String,%20java.util.Map)">ComponentTitledFolder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                     <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                     <a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButtonBar</a>&nbsp;bar,
+                     java.lang.String&nbsp;id,
+                     java.util.Map&lt;org.eclipse.swt.widgets.Composite,java.lang.String&gt;&nbsp;helpids)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ViewData.html#ViewData(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20java.lang.String)">ViewData</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolder.html#ComponentTitledFolder(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar,%20java.lang.String,%20java.util.Map,%20boolean,%20boolean)">ComponentTitledFolder</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                     <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                     <a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentTitledFolderButtonBar.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentTitledFolderButtonBar</a>&nbsp;bar,
+                     java.lang.String&nbsp;id,
+                     java.util.Map&lt;org.eclipse.swt.widgets.Composite,java.lang.String&gt;&nbsp;helpids,
+                     boolean&nbsp;bottom,
+                     boolean&nbsp;supportsHidingElements)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ViewData.html#ViewData(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20java.lang.String,%20java.lang.String)">ViewData</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
         <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+        java.lang.String&nbsp;helpid,
         java.lang.String&nbsp;title)</code>
 <div class="block">Creates a new data view.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ViewDataInput.html#ViewDataInput(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller)">ViewDataInput</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
-             <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ViewDataInput.html#ViewDataInput(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20java.lang.String)">ViewDataInput</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+             <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+             java.lang.String&nbsp;helpid)</code>
 <div class="block">Creates a new (non-editable) data view.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ViewDataInput.html#ViewDataInput(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20boolean)">ViewDataInput</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ViewDataInput.html#ViewDataInput(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20java.lang.String,%20boolean)">ViewDataInput</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
              <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+             java.lang.String&nbsp;helpid,
              boolean&nbsp;editable)</code>
 <div class="block">Creates a new data view.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ViewDataOutput.html#ViewDataOutput(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller)">ViewDataOutput</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
-              <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/common/ViewDataOutput.html#ViewDataOutput(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20java.lang.String)">ViewDataOutput</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+              <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+              java.lang.String&nbsp;helpid)</code>
 <div class="block">Creates a new data view.</div>
 </td>
 </tr>
@@ -646,6 +687,21 @@
 <!--   -->
 </a>
 <h3>Uses of <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a> in <a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/package-summary.html">org.deidentifier.arx.gui.view.impl.risk</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing fields, and an explanation">
+<caption><span>Fields in <a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/package-summary.html">org.deidentifier.arx.gui.view.impl.risk</a> declared as <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></code></td>
+<td class="colLast"><span class="strong">ViewRisks.</span><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisks.html#controller">controller</a></strong></code>
+<div class="block">Internal stuff.</div>
+</td>
+</tr>
+</tbody>
+</table>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing constructors, and an explanation">
 <caption><span>Constructors in <a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/package-summary.html">org.deidentifier.arx.gui.view.impl.risk</a> with parameters of type <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
@@ -691,22 +747,6 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksAttributesTable.html#ViewRisksAttributesTable(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewRisksAttributesTable</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
-                        <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
-                        <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
-                        <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;reset)</code>
-<div class="block">Creates a new instance.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksBasicEstimates.html#ViewRisksBasicEstimates(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewRisksBasicEstimates</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
-                       <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
-                       <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
-                       <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;reset)</code>
-<div class="block">Creates a new instance.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksClassDistributionPlot.html#ViewRisksClassDistributionPlot(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewRisksClassDistributionPlot</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                               <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
                               <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
@@ -731,24 +771,48 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksPlotUniquenessEstimates.html#ViewRisksPlotUniquenessEstimates(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20boolean)">ViewRisksPlotUniquenessEstimates</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
-                                <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
-                                <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
-                                <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;reset,
-                                boolean&nbsp;showAllModels)</code>
-<div class="block">Creates a new instance.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksPopulationModel.html#ViewRisksPopulationModel(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20boolean)">ViewRisksPopulationModel</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                         <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
                         boolean&nbsp;output)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksPopulationUniques.html#ViewRisksPopulationUniques(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20boolean)">ViewRisksPopulationUniques</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                          <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                          <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
+                          <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;reset,
+                          boolean&nbsp;showAllModels)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
 <tr class="altColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksQuasiIdentifiers.html#ViewRisksQuasiIdentifiers(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller)">ViewRisksQuasiIdentifiers</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                          <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksQuasiIdentifiersTable.html#ViewRisksQuasiIdentifiersTable(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewRisksQuasiIdentifiersTable</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                              <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                              <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
+                              <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;reset)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksReIdentification.html#ViewRisksReIdentification(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewRisksReIdentification</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                         <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                         <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
+                         <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;reset)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/risk/ViewRisksReIdentificationTable.html#ViewRisksReIdentificationTable(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewRisksReIdentificationTable</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                              <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                              <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
+                              <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;reset)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
@@ -795,12 +859,18 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewClassificationAttributes.html#ViewClassificationAttributes(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller)">ViewClassificationAttributes</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                            <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewLocalRecoding.html#ViewLocalRecoding(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller)">ViewLocalRecoding</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                  <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
 <div class="block">Constructor.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.html#ViewProperties(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewProperties</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
               <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
               <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
@@ -808,19 +878,19 @@
 <div class="block">Constructor.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewPropertiesInput.html#ViewPropertiesInput(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller)">ViewPropertiesInput</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                    <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
 <div class="block">Constructor.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewPropertiesOutput.html#ViewPropertiesOutput(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller)">ViewPropertiesOutput</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                     <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
 <div class="block">Constructor.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#ViewStatistics(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20boolean)">ViewStatistics</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
               <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
               <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
@@ -829,7 +899,7 @@
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsContingencyHeatmap.html#ViewStatisticsContingencyHeatmap(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewStatisticsContingencyHeatmap</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                                 <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
                                 <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
@@ -837,7 +907,7 @@
 <div class="block">Creates a new density plot.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsContingencyTable.html#ViewStatisticsContingencyTable(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewStatisticsContingencyTable</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                               <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
                               <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
@@ -845,7 +915,7 @@
 <div class="block">Creates a new density plot.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionHistogram.html#ViewStatisticsDistributionHistogram(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewStatisticsDistributionHistogram</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                                    <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
                                    <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
@@ -853,7 +923,7 @@
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionTable.html#ViewStatisticsDistributionTable(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewStatisticsDistributionTable</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                                <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
                                <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
@@ -861,7 +931,7 @@
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsEquivalenceClassTable.html#ViewStatisticsEquivalenceClassTable(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewStatisticsEquivalenceClassTable</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                                    <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
                                    <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,
@@ -869,7 +939,19 @@
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsRegressionInput.html#ViewStatisticsRegressionInput(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller)">ViewStatisticsRegressionInput</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                             <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
 <tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsRegressionOutput.html#ViewStatisticsRegressionOutput(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller)">ViewStatisticsRegressionOutput</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
+                              <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsSummaryTable.html#ViewStatisticsSummaryTable(org.eclipse.swt.widgets.Composite,%20org.deidentifier.arx.gui.Controller,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart,%20org.deidentifier.arx.gui.model.ModelEvent.ModelPart)">ViewStatisticsSummaryTable</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent,
                           <a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
                           <a href="../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a>&nbsp;target,

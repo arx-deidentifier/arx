@@ -122,9 +122,10 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/common/TupleWrapper.html#TupleWrapper(org.deidentifier.arx.DataHandleStatistics,%20int[],%20int)">TupleWrapper</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a>&nbsp;handle,
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/common/TupleWrapper.html#TupleWrapper(org.deidentifier.arx.DataHandleInternal,%20int[],%20int,%20boolean)">TupleWrapper</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a>&nbsp;handle,
             int[]&nbsp;indices,
-            int&nbsp;row)</code>
+            int&nbsp;row,
+            boolean&nbsp;ignoreSuppression)</code>
 <div class="block">Constructor</div>
 </td>
 </tr>
@@ -156,6 +157,12 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/common/TupleWrapper.html#hashCode()">hashCode</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/common/TupleWrapper.html#isOutlier()">isOutlier</a></strong>()</code>
+<div class="block">Is this tuple suppressed</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -192,15 +199,16 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>row</code> - </dd></dl>
 </li>
 </ul>
-<a name="TupleWrapper(org.deidentifier.arx.DataHandleStatistics, int[], int)">
+<a name="TupleWrapper(org.deidentifier.arx.DataHandleInternal, int[], int, boolean)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>TupleWrapper</h4>
-<pre>public&nbsp;TupleWrapper(<a href="../../../../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a>&nbsp;handle,
+<pre>public&nbsp;TupleWrapper(<a href="../../../../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a>&nbsp;handle,
             int[]&nbsp;indices,
-            int&nbsp;row)</pre>
+            int&nbsp;row,
+            boolean&nbsp;ignoreSuppression)</pre>
 <div class="block">Constructor</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>row</code> - </dd></dl>
 </li>
@@ -240,7 +248,7 @@ extends java.lang.Object</pre>
 <a name="hashCode()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>hashCode</h4>
 <pre>public&nbsp;int&nbsp;hashCode()</pre>
@@ -248,6 +256,17 @@ extends java.lang.Object</pre>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
 </dl>
+</li>
+</ul>
+<a name="isOutlier()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isOutlier</h4>
+<pre>public&nbsp;boolean&nbsp;isOutlier()</pre>
+<div class="block">Is this tuple suppressed</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

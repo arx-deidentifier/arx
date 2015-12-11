@@ -83,6 +83,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataSelector.html#geq(java.lang.String)">geq(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataSelector.html" title="class in org.deidentifier.arx">DataSelector</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/common/Groupify.html#get(T)">get(T)</a></span> - Method in class org.deidentifier.arx.common.<a href="../org/deidentifier/arx/common/Groupify.html" title="class in org.deidentifier.arx.common">Groupify</a></dt>
+<dd>
+<div class="block">Returns the matching entry, if any</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getAbsoluteMaxOutliers()">getAbsoluteMaxOutliers()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></dt>
 <dd>
 <div class="block">Returns the maximum number of allowed outliers.</div>
@@ -141,13 +145,13 @@
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInput.html#getAttributeName(int)">getAttributeName(int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInput.html" title="class in org.deidentifier.arx">DataHandleInput</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getAttributeName(int)">getAttributeName(int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Method</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleOutput.html#getAttributeName(int)">getAttributeName(int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
 <dd>
 <div class="block">Gets the attribute name.</div>
-</dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleStatistics.html#getAttributeName(int)">getAttributeName(int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a></dt>
-<dd>
-<div class="block">Method</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleSubset.html#getAttributeName(int)">getAttributeName(int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
 <dd>&nbsp;</dd>
@@ -193,7 +197,7 @@
 <dd>
 <div class="block">Returns a property of the class distribution</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleStatistics.html#getBaseDataType(java.lang.String)">getBaseDataType(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getBaseDataType(java.lang.String)">getBaseDataType(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getBeta()">getBeta()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html" title="class in org.deidentifier.arx.criteria">EDDifferentialPrivacy</a></dt>
 <dd>
@@ -215,6 +219,38 @@
 <dd>
 <div class="block">Returns all class-based criteria (except k-anonymity) as an array.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getClassificationPerformance(java.lang.String,%20boolean,%20double)">getClassificationPerformance(String, boolean, double)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
+<dd>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getClassificationPerformance(java.lang.String,%20java.lang.Integer,%20boolean,%20double)">getClassificationPerformance(String, Integer, boolean, double)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
+<dd>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getClassificationPerformance(java.lang.String[],%20java.lang.String,%20boolean,%20double)">getClassificationPerformance(String[], String, boolean, double)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
+<dd>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getClassificationPerformance(java.lang.String[],%20java.lang.String,%20java.lang.Integer,%20boolean,%20double)">getClassificationPerformance(String[], String, Integer, boolean, double)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
+<dd>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getClassificationPerformance(java.lang.String,%20boolean,%20double)">getClassificationPerformance(String, boolean, double)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilderInterruptible</a></dt>
+<dd>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getClassificationPerformance(java.lang.String,%20java.lang.Integer,%20boolean,%20double)">getClassificationPerformance(String, Integer, boolean, double)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilderInterruptible</a></dt>
+<dd>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getClassificationPerformance(java.lang.String[],%20java.lang.String,%20boolean,%20double)">getClassificationPerformance(String[], String, boolean, double)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilderInterruptible</a></dt>
+<dd>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getClassificationPerformance(java.lang.String[],%20java.lang.String,%20java.lang.Integer,%20boolean,%20double)">getClassificationPerformance(String[], String, Integer, boolean, double)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilderInterruptible</a></dt>
+<dd>
+<div class="block">Creates a new set of statistics for the given classification task</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/risk/HIPAAIdentifierMatch.html#getColumn()">getColumn()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/HIPAAIdentifierMatch.html" title="class in org.deidentifier.arx.risk">HIPAAIdentifierMatch</a></dt>
 <dd>
 <div class="block">The column name where the identifier was found</div>
@@ -223,6 +259,10 @@
 <dd>
 <div class="block">Returns the index of the given attribute, -1 if it is not in the header.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getColumnIndexOf(java.lang.String)">getColumnIndexOf(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Delegate</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/io/ImportConfiguration.html#getColumns()">getColumns()</a></span> - Method in class org.deidentifier.arx.io.<a href="../org/deidentifier/arx/io/ImportConfiguration.html" title="class in org.deidentifier.arx.io">ImportConfiguration</a></dt>
 <dd>
 <div class="block">Returns all added columns.</div>
@@ -230,6 +270,11 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.html#getComparator()">getComparator()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderOrderBased</a></dt>
 <dd>
 <div class="block">Returns the comparator.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/HIPAAIdentifierMatch.html#getConfidence()">getConfidence()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/HIPAAIdentifierMatch.html" title="class in org.deidentifier.arx.risk">HIPAAIdentifierMatch</a></dt>
+<dd>
+<div class="block">The confidence of the discovery, or null if the
+ match type is ATTRIBUTE_NAME</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/io/ImportAdapter.html#getConfig()">getConfig()</a></span> - Method in class org.deidentifier.arx.io.<a href="../org/deidentifier/arx/io/ImportAdapter.html" title="class in org.deidentifier.arx.io">ImportAdapter</a></dt>
 <dd>
@@ -337,10 +382,6 @@
 <dd>
 <div class="block">Returns a contingency table for the given columns.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20org.deidentifier.arx.AttributeType.Hierarchy,%20int,%20org.deidentifier.arx.AttributeType.Hierarchy)">getContingencyTable(int, AttributeType.Hierarchy, int, AttributeType.Hierarchy)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
-<dd>
-<div class="block">Returns a contingency table for the given columns.</div>
-</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20int)">getContingencyTable(int, int)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
 <dd>
 <div class="block">Returns a contingency table for the given columns.</div>
@@ -349,11 +390,15 @@
 <dd>
 <div class="block">Returns a contingency table for the given columns.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20int,%20org.deidentifier.arx.AttributeType.Hierarchy,%20int,%20int,%20org.deidentifier.arx.AttributeType.Hierarchy)">getContingencyTable(int, int, AttributeType.Hierarchy, int, int, AttributeType.Hierarchy)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20int,%20int,%20int)">getContingencyTable(int, int, int, int)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
 <dd>
 <div class="block">Returns a contingency table for the given columns.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20int,%20int,%20int)">getContingencyTable(int, int, int, int)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20int,%20java.lang.String[][],%20int,%20int,%20java.lang.String[][])">getContingencyTable(int, int, String[][], int, int, String[][])</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
+<dd>
+<div class="block">Returns a contingency table for the given columns.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getContingencyTable(int,%20java.lang.String[][],%20int,%20java.lang.String[][])">getContingencyTable(int, String[][], int, String[][])</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
 <dd>
 <div class="block">Returns a contingency table for the given columns.</div>
 </dd>
@@ -403,6 +448,10 @@
 <dd>
 <div class="block">Returns an instance of the class, if any.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/DDisclosurePrivacy.html#getD()">getD()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/DDisclosurePrivacy.html" title="class in org.deidentifier.arx.criteria">DDisclosurePrivacy</a></dt>
+<dd>
+<div class="block">Returns the parameter delta.</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.html#getDataType()">getDataType()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderGroupingBased</a></dt>
 <dd>
 <div class="block">Returns the data type.</div>
@@ -415,12 +464,12 @@
 <dd>
 <div class="block">Returns the according data type.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleOutput.html#getDataType(java.lang.String)">getDataType(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleStatistics.html#getDataType(java.lang.String)">getDataType(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getDataType(java.lang.String)">getDataType(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
 <dd>
 <div class="block">Method</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleOutput.html#getDataType(java.lang.String)">getDataType(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleSubset.html#getDataType(java.lang.String)">getDataType(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/io/ImportColumn.html#getDataType()">getDataType()</a></span> - Method in class org.deidentifier.arx.io.<a href="../org/deidentifier/arx/io/ImportColumn.html" title="class in org.deidentifier.arx.io">ImportColumn</a></dt>
@@ -430,6 +479,10 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandle.html#getDate(int,%20int)">getDate(int, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
 <dd>
 <div class="block">Returns a date/time value from the specified cell.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getDate(int,%20int)">getDate(int, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Delegate</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.html#getDefaultFunction()">getDefaultFunction()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderGroupingBased</a></dt>
 <dd>
@@ -443,7 +496,7 @@
 <dd>
 <div class="block">Returns the data definition.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleStatistics.html#getDefinition()">getDefinition()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getDefinition()">getDefinition()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
 <dd>
 <div class="block">Method</div>
 </dd>
@@ -499,7 +552,11 @@
 <dd>
 <div class="block">Returns an array containing the distinct values in the given column.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleStatistics.html#getDistinctValues(int,%20org.deidentifier.arx.DataHandleStatistics.InterruptHandler)">getDistinctValues(int, DataHandleStatistics.InterruptHandler)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getDistinctValues(int)">getDistinctValues(int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Delegate</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getDistinctValues(int,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues(int, DataHandleInternal.InterruptHandler)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
 <dd>
 <div class="block">Method</div>
 </dd>
@@ -511,7 +568,7 @@
 <dd>
 <div class="block">Returns an ordered list of the distinct set of data items from the given column.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getDistinctValuesOrdered(int,%20org.deidentifier.arx.AttributeType.Hierarchy)">getDistinctValuesOrdered(int, AttributeType.Hierarchy)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getDistinctValuesOrdered(int,%20java.lang.String[][])">getDistinctValuesOrdered(int, String[][])</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
 <dd>
 <div class="block">Returns an ordered list of the distinct set of data items from the given column.</div>
 </dd>
@@ -561,6 +618,10 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandle.html#getDouble(int,%20int)">getDouble(int, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
 <dd>
 <div class="block">Returns a double value from the specified cell.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getDouble(int,%20int)">getDouble(int, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Delegate</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/common/Groupify.Group.html#getElement()">getElement()</a></span> - Method in class org.deidentifier.arx.common.<a href="../org/deidentifier/arx/common/Groupify.Group.html" title="class in org.deidentifier.arx.common">Groupify.Group</a></dt>
 <dd>
@@ -620,6 +681,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataType.DataTypeWithFormat.html#getFormat()">getFormat()</a></span> - Method in interface org.deidentifier.arx.<a href="../org/deidentifier/arx/DataType.DataTypeWithFormat.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithFormat</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsClassification.html#getFractionCorrect()">getFractionCorrect()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a></dt>
+<dd>
+<div class="block">Returns the accuracy of the classifier</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelSampleRisks.html#getFractionOfTuplesAffectedByHighestRisk()">getFractionOfTuplesAffectedByHighestRisk()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelSampleRisks.html" title="class in org.deidentifier.arx.risk">RiskModelSampleRisks</a></dt>
 <dd>
 <div class="block">Returns the fraction of tuples affected by the highest re-identification
@@ -675,7 +740,7 @@
 <dd>
 <div class="block">Returns a frequency distribution for the values in the given column.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getFrequencyDistribution(int,%20org.deidentifier.arx.AttributeType.Hierarchy)">getFrequencyDistribution(int, AttributeType.Hierarchy)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getFrequencyDistribution(int,%20java.lang.String[][])">getFrequencyDistribution(int, String[][])</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
 <dd>
 <div class="block">Returns a frequency distribution for the values in the given column.</div>
 </dd>
@@ -705,12 +770,12 @@
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInput.html#getGeneralization(java.lang.String)">getGeneralization(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInput.html" title="class in org.deidentifier.arx">DataHandleInput</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleOutput.html#getGeneralization(java.lang.String)">getGeneralization(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleStatistics.html#getGeneralization(java.lang.String)">getGeneralization(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getGeneralization(java.lang.String)">getGeneralization(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
 <dd>
 <div class="block">Method</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleOutput.html#getGeneralization(java.lang.String)">getGeneralization(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleSubset.html#getGeneralization(java.lang.String)">getGeneralization(String)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataGeneralizationScheme.html#getGeneralizationDegree()">getGeneralizationDegree()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataGeneralizationScheme.html" title="class in org.deidentifier.arx">DataGeneralizationScheme</a></dt>
@@ -812,9 +877,17 @@
 <dd>
 <div class="block">Returns the highest re-identification risk of any tuple in the data set</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.RiskSummary.html#getHighestRisk()">getHighestRisk()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.RiskSummary.html" title="class in org.deidentifier.arx.risk">RiskModelSampleSummary.RiskSummary</a></dt>
+<dd>
+<div class="block">Maximum probability of re-identification</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getHIPAAIdentifiers()">getHIPAAIdentifiers()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskEstimateBuilder.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilder</a></dt>
 <dd>
-<div class="block">Returns the identified HIPAA identifiers.</div>
+<div class="block">Returns the a set of potential HIPAA identifiers.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getHIPAAIdentifiers(double)">getHIPAAIdentifiers(double)</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskEstimateBuilder.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilder</a></dt>
+<dd>
+<div class="block">Returns the a set of potential HIPAA identifiers.</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getHIPAAIdentifiers()">getHIPAAIdentifiers()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilderInterruptible</a></dt>
 <dd>
@@ -881,6 +954,10 @@
 <dd>
 <div class="block">Returns all currently defined intervals.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.html#getJournalistRisk()">getJournalistRisk()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.html" title="class in org.deidentifier.arx.risk">RiskModelSampleSummary</a></dt>
+<dd>
+<div class="block">Returns the journalist risk</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getK()">getK()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html" title="class in org.deidentifier.arx.criteria">EDDifferentialPrivacy</a></dt>
 <dd>
 <div class="block">Returns the k parameter of (k,b)-SDGS</div>
@@ -888,6 +965,10 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/KAnonymity.html#getK()">getK()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/KAnonymity.html" title="class in org.deidentifier.arx.criteria">KAnonymity</a></dt>
 <dd>
 <div class="block">Returns the parameter k.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/KMap.html#getK()">getK()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/KMap.html" title="class in org.deidentifier.arx.criteria">KMap</a></dt>
+<dd>
+<div class="block">Returns k.</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsSummary.html#getKurtosisAsDouble()">getKurtosisAsDouble()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsSummary.html" title="class in org.deidentifier.arx.aggregates">StatisticsSummary</a></dt>
 <dd>
@@ -973,6 +1054,10 @@
 <dd>
 <div class="block">Returns a long value from the specified cell.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getLong(int,%20int)">getLong(int, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Delegate</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/InformationLossWithBound.html#getLowerBound()">getLowerBound()</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Transformation)">getLowerBound(Transformation)</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></dt>
@@ -990,6 +1075,10 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelSampleRisks.html#getLowestRisk()">getLowestRisk()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelSampleRisks.html" title="class in org.deidentifier.arx.risk">RiskModelSampleRisks</a></dt>
 <dd>
 <div class="block">Returns the lowest re-identification risk of any tuple in the data set</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.html#getMarketerRisk()">getMarketerRisk()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.html" title="class in org.deidentifier.arx.risk">RiskModelSampleSummary</a></dt>
+<dd>
+<div class="block">Returns the marketer risk</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int)">getMatchingDataTypes(int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
 <dd>
@@ -1265,13 +1354,13 @@
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInput.html#getNumColumns()">getNumColumns()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInput.html" title="class in org.deidentifier.arx">DataHandleInput</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getNumColumns()">getNumColumns()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Method</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleOutput.html#getNumColumns()">getNumColumns()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
 <dd>
 <div class="block">Gets the num columns.</div>
-</dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleStatistics.html#getNumColumns()">getNumColumns()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a></dt>
-<dd>
-<div class="block">Method</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleSubset.html#getNumColumns()">getNumColumns()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
 <dd>&nbsp;</dd>
@@ -1289,13 +1378,13 @@
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInput.html#getNumRows()">getNumRows()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInput.html" title="class in org.deidentifier.arx">DataHandleInput</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getNumRows()">getNumRows()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Method</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleOutput.html#getNumRows()">getNumRows()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
 <dd>
 <div class="block">Gets the num rows.</div>
-</dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleStatistics.html#getNumRows()">getNumRows()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a></dt>
-<dd>
-<div class="block">Method</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleSubset.html#getNumRows()">getNumRows()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
 <dd>&nbsp;</dd>
@@ -1469,6 +1558,10 @@
 <div class="block">If supported by the according builder, this method will report a progress
  value in [0,100].</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.html#getProsecutorRisk()">getProsecutorRisk()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.html" title="class in org.deidentifier.arx.risk">RiskModelSampleSummary</a></dt>
+<dd>
+<div class="block">Returns the prosecutor risk</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataDefinition.html#getQuasiIdentifiersWithGeneralization()">getQuasiIdentifiersWithGeneralization()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></dt>
 <dd>
 <div class="block">Returns the quasi-identifiers for which generalization is specified.</div>
@@ -1505,6 +1598,10 @@
 <dd>
 <div class="block">Returns the range</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.RiskSummary.html#getRecordsAtRisk()">getRecordsAtRisk()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.RiskSummary.html" title="class in org.deidentifier.arx.risk">RiskModelSampleSummary.RiskSummary</a></dt>
+<dd>
+<div class="block">Proportion of records with risk above threshold</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html#getRedactionCharacter()">getRedactionCharacter()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderRedactionBased</a></dt>
 <dd>
 <div class="block">Returns the redaction character.</div>
@@ -1527,6 +1624,8 @@
 <dd>
 <div class="block">Returns the criteria's requirements.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/DDisclosurePrivacy.html#getRequirements()">getRequirements()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/DDisclosurePrivacy.html" title="class in org.deidentifier.arx.criteria">DDisclosurePrivacy</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/DPresence.html#getRequirements()">getRequirements()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/DPresence.html" title="class in org.deidentifier.arx.criteria">DPresence</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getRequirements()">getRequirements()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html" title="class in org.deidentifier.arx.criteria">EDDifferentialPrivacy</a></dt>
@@ -1534,6 +1633,8 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/Inclusion.html#getRequirements()">getRequirements()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/Inclusion.html" title="class in org.deidentifier.arx.criteria">Inclusion</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/KAnonymity.html#getRequirements()">getRequirements()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/KAnonymity.html" title="class in org.deidentifier.arx.criteria">KAnonymity</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/KMap.html#getRequirements()">getRequirements()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/KMap.html" title="class in org.deidentifier.arx.criteria">KMap</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/LDiversity.html#getRequirements()">getRequirements()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/LDiversity.html" title="class in org.deidentifier.arx.criteria">LDiversity</a></dt>
 <dd>&nbsp;</dd>
@@ -1594,6 +1695,14 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getSampleBasedReidentificationRisk()">getSampleBasedReidentificationRisk()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilderInterruptible</a></dt>
 <dd>
 <div class="block">Returns a class providing sample-based re-identification risk estimates</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getSampleBasedRiskSummary(double)">getSampleBasedRiskSummary(double)</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskEstimateBuilder.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilder</a></dt>
+<dd>
+<div class="block">Returns a risk summary</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html#getSampleBasedRiskSummary(double)">getSampleBasedRiskSummary(double)</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskEstimateBuilderInterruptible.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilderInterruptible</a></dt>
+<dd>
+<div class="block">Returns a risk summary</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskEstimateBuilder.html#getSampleBasedUniquenessRisk()">getSampleBasedUniquenessRisk()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskEstimateBuilder.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilder</a></dt>
 <dd>
@@ -1686,11 +1795,19 @@
 <dd>
 <div class="block">Returns the standard deviation</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getSubset()">getSubset()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></dt>
+<dd>
+<div class="block">Returns the data subset, if any</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/DPresence.html#getSubset()">getSubset()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/DPresence.html" title="class in org.deidentifier.arx.criteria">DPresence</a></dt>
 <dd>
 <div class="block">Returns the research subset.</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getSubset()">getSubset()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html" title="class in org.deidentifier.arx.criteria">EDDifferentialPrivacy</a></dt>
+<dd>
+<div class="block">Returns the research subset.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/KMap.html#getSubset()">getSubset()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/KMap.html" title="class in org.deidentifier.arx.criteria">KMap</a></dt>
 <dd>
 <div class="block">Returns the research subset.</div>
 </dd>
@@ -1702,6 +1819,14 @@
 <dd>
 <div class="block">The successors.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.MarketerRisk.html#getSuccessRate()">getSuccessRate()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.MarketerRisk.html" title="class in org.deidentifier.arx.risk">RiskModelSampleSummary.MarketerRisk</a></dt>
+<dd>
+<div class="block">Proportion of records that can be re-identified on average</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.RiskSummary.html#getSuccessRate()">getSuccessRate()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.RiskSummary.html" title="class in org.deidentifier.arx.risk">RiskModelSampleSummary.RiskSummary</a></dt>
+<dd>
+<div class="block">Proportion of records that can be re-identified on average</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getSummaryStatistics(boolean)">getSummaryStatistics(boolean)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></dt>
 <dd>
 <div class="block">Returns summary statistics for all attributes.</div>
@@ -1709,6 +1834,10 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getSummaryStatistics(boolean)">getSummaryStatistics(boolean)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilderInterruptible</a></dt>
 <dd>
 <div class="block">Returns summary statistics for all attributes.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getSuperset()">getSuperset()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Returns the superset, if this handle is a subset</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/MetricDescription.html#getSupportedAggregateFunctions()">getSupportedAggregateFunctions()</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/MetricDescription.html" title="class in org.deidentifier.arx.metric">MetricDescription</a></dt>
 <dd>
@@ -1726,13 +1855,17 @@
 <dd>
 <div class="block">Sets the string with which suppressed values are to be replaced.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleStatistics.html#getSuppressionString()">getSuppressionString()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getSuppressionString()">getSuppressionString()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
 <dd>
 <div class="block">Method</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/TCloseness.html#getT()">getT()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/TCloseness.html" title="class in org.deidentifier.arx.criteria">TCloseness</a></dt>
 <dd>
 <div class="block">Returns the parameter t.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.html#getThreshold()">getThreshold()</a></span> - Method in class org.deidentifier.arx.risk.<a href="../org/deidentifier/arx/risk/RiskModelSampleSummary.html" title="class in org.deidentifier.arx.risk">RiskModelSampleSummary</a></dt>
+<dd>
+<div class="block">Returns the user-defined risk threshold for individual records</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXResult.html#getTime()">getTime()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
 <dd>
@@ -1772,13 +1905,17 @@
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInput.html#getValue(int,%20int)">getValue(int, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInput.html" title="class in org.deidentifier.arx">DataHandleInput</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getValue(int,%20int)">getValue(int, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Method</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getValue(int,%20int,%20boolean)">getValue(int, int, boolean)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Gets the value</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleOutput.html#getValue(int,%20int)">getValue(int, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a></dt>
 <dd>
 <div class="block">Gets the value.</div>
-</dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleStatistics.html#getValue(int,%20int)">getValue(int, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a></dt>
-<dd>
-<div class="block">Method</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleSubset.html#getValue(int,%20int)">getValue(int, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
 <dd>&nbsp;</dd>
@@ -1803,6 +1940,10 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandle.html#getView()">getView()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
 <dd>
 <div class="block">Returns a new data handle that represents a context specific view on the dataset.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#getView()">getView()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Returns the view</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleSubset.html#getView()">getView()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleSubset.html" title="class in org.deidentifier.arx">DataHandleSubset</a></dt>
 <dd>&nbsp;</dd>

@@ -336,142 +336,154 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSubset()">getSubset</a></strong>()</code>
+<div class="block">Returns the data subset, if any subset is defined.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSubsetInstance(org.deidentifier.arx.RowSet,%20double)">getSubsetInstance</a></strong>(<a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset,
                  double&nbsp;gsFactor)</code>
 <div class="block">Clones this config and projects everything onto the given subset.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSuppressedAttributeTypes()">getSuppressedAttributeTypes</a></strong>()</code>
 <div class="block">Returns an integer representing all attribute types that must be suppressed.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSuppressionString()">getSuppressionString</a></strong>()</code>
 <div class="block">Sets the string with which suppressed values are to be replaced.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager)</code>
 <div class="block">Initializes the configuration.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isAttributeTypeSuppressed(org.deidentifier.arx.AttributeType)">isAttributeTypeSuppressed</a></strong>(<a href="../../../org/deidentifier/arx/AttributeType.html" title="class in org.deidentifier.arx">AttributeType</a>&nbsp;type)</code>
 <div class="block">Returns whether values of the given attribute type will be replaced by the suppression 
  string in suppressed tuples.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isHeuristicSearchEnabled()">isHeuristicSearchEnabled</a></strong>()</code>
 <div class="block">Returns whether ARX will use a heuristic search strategy.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isPracticalMonotonicity()">isPracticalMonotonicity</a></strong>()</code>
 <div class="block">Is practical monotonicity assumed.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isSuppressionAlwaysEnabled()">isSuppressionAlwaysEnabled</a></strong>()</code>
 <div class="block">Returns whether suppression is applied to the output of anonymous as well as non-anonymous transformations.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isUseHeuristicSearchForSampleBasedCriteria()">isUseHeuristicSearchForSampleBasedCriteria</a></strong>()</code>
 <div class="block">Is optimality guaranteed for sample-based criteria?</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isUtilityBasedMicroaggregation()">isUtilityBasedMicroaggregation</a></strong>()</code>
 <div class="block">Returns whether microaggregation is based on utility measures</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#removeCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">removeCriterion</a></strong>(<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;arg)</code>
 <div class="block">Removes the given criterion.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#requires(int)">requires</a></strong>(int&nbsp;requirement)</code>
 <div class="block">Convenience method for checking the requirements.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeTypeSuppressed(org.deidentifier.arx.AttributeType,%20boolean)">setAttributeTypeSuppressed</a></strong>(<a href="../../../org/deidentifier/arx/AttributeType.html" title="class in org.deidentifier.arx">AttributeType</a>&nbsp;type,
                           boolean&nbsp;enabled)</code>
 <div class="block">Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeWeight(java.lang.String,%20double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
                   double&nbsp;weight)</code>
 <div class="block">Sets the weight for the given attribute.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeWeight(java.lang.String,%20java.lang.Double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
                   java.lang.Double&nbsp;weight)</code>
 <div class="block">Sets the weight for the given attribute.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setHeuristicSearchEnabled(boolean)">setHeuristicSearchEnabled</a></strong>(boolean&nbsp;heuristicSearchEnabled)</code>
 <div class="block">Sets whether ARX will use a heuristic search strategy.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setHeuristicSearchThreshold(int)">setHeuristicSearchThreshold</a></strong>(int&nbsp;numberOfTransformations)</code>
 <div class="block">When the size of the solution space exceeds the given number of transformations,
  ARX will use a heuristic search strategy.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setHeuristicSearchTimeLimit(int)">setHeuristicSearchTimeLimit</a></strong>(int&nbsp;timeInMillis)</code>
 <div class="block">The heuristic search algorithm will terminate after the given number of milliseconds.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setMaxOutliers(double)">setMaxOutliers</a></strong>(double&nbsp;supp)</code>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setMaxOutliers(double)">setMaxOutliers</a></strong>(double&nbsp;max)</code>
 <div class="block">Allows for a certain percentage of outliers and thus
  triggers tuple suppression.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setMetric(org.deidentifier.arx.metric.Metric)">setMetric</a></strong>(<a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</code>
 <div class="block">Sets the utility metric for measuring information loss .</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setPracticalMonotonicity(boolean)">setPracticalMonotonicity</a></strong>(boolean&nbsp;assumeMonotonicity)</code>
 <div class="block">Set, if practical monotonicity assumed.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setSuppressionAlwaysEnabled(boolean)">setSuppressionAlwaysEnabled</a></strong>(boolean&nbsp;enabled)</code>
 <div class="block">Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setSuppressionLimit(double)">setSuppressionLimit</a></strong>(double&nbsp;limit)</code>
+<div class="block">Sets the suppression limit.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -657,6 +669,18 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <div class="block">Returns whether the configuration contains a criterion of the given class.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getSubset()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSubset</h4>
+<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;getSubset()</pre>
+<div class="block">Returns the data subset, if any subset is defined.
+ You may only call this, after the config has be initialized.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getAttributeWeight(java.lang.String)">
@@ -957,10 +981,21 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setMaxOutliers</h4>
-<pre>public&nbsp;void&nbsp;setMaxOutliers(double&nbsp;supp)</pre>
+<pre>public&nbsp;void&nbsp;setMaxOutliers(double&nbsp;max)</pre>
 <div class="block">Allows for a certain percentage of outliers and thus
  triggers tuple suppression.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>supp</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>max</code> - </dd></dl>
+</li>
+</ul>
+<a name="setSuppressionLimit(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setSuppressionLimit</h4>
+<pre>public&nbsp;void&nbsp;setSuppressionLimit(double&nbsp;limit)</pre>
+<div class="block">Sets the suppression limit. This is an alias for setMaxOutliers().</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>limit</code> - </dd></dl>
 </li>
 </ul>
 <a name="setMetric(org.deidentifier.arx.metric.Metric)">

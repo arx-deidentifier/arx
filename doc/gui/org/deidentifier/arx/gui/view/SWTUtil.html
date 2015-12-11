@@ -118,7 +118,7 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#SLIDER_MAX">SLIDER_MAX</a></strong></code>
-<div class="block">Static settings.</div>
+<div class="block">Constant</div>
 </td>
 </tr>
 </table>
@@ -165,6 +165,20 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#center(org.eclipse.swt.widgets.Shell,%20org.eclipse.swt.widgets.Shell)">center</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
       org.eclipse.swt.widgets.Shell&nbsp;parent)</code>
 <div class="block">Centers the given shell.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#changeFont(org.eclipse.swt.widgets.Control,%20int)">changeFont</a></strong>(org.eclipse.swt.widgets.Control&nbsp;control,
+          int&nbsp;style)</code>
+<div class="block">Changes a control's font</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#createColumnWithBarCharts(org.eclipse.swt.widgets.Table,%20org.eclipse.swt.widgets.TableColumn)">createColumnWithBarCharts</a></strong>(org.eclipse.swt.widgets.Table&nbsp;table,
+                         org.eclipse.swt.widgets.TableColumn&nbsp;column)</code>
+<div class="block">Adds a bar chart to a column</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -236,10 +250,25 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static org.eclipse.swt.layout.GridLayout</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#createGridLayoutWithEqualWidth(int)">createGridLayoutWithEqualWidth</a></strong>(int&nbsp;columns)</code>
+<div class="block">Creates a grid layout with equal-width columns</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#createHelpButton(org.deidentifier.arx.gui.Controller,%20org.eclipse.swt.custom.CTabFolder,%20java.lang.String)">createHelpButton</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
-                org.eclipse.swt.custom.CTabFolder&nbsp;tabFolder,
+                org.eclipse.swt.custom.CTabFolder&nbsp;folder,
                 java.lang.String&nbsp;id)</code>
+<div class="block">Creates a help button in the given folder.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#createHelpButton(org.deidentifier.arx.gui.Controller,%20org.eclipse.swt.custom.CTabFolder,%20java.lang.String,%20java.util.Map)">createHelpButton</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                org.eclipse.swt.custom.CTabFolder&nbsp;folder,
+                java.lang.String&nbsp;id,
+                java.util.Map&lt;org.eclipse.swt.widgets.Composite,java.lang.String&gt;&nbsp;helpids)</code>
 <div class="block">Creates a help button in the given folder.</div>
 </td>
 </tr>
@@ -316,6 +345,24 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#getPrettyString(double)">getPrettyString</a></strong>(double&nbsp;value)</code>
+<div class="block">Returns a pretty string representing the given double</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#getPrettyString(int)">getPrettyString</a></strong>(int&nbsp;value)</code>
+<div class="block">Returns a pretty string representing the given value</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#getPrettyString(long)">getPrettyString</a></strong>(long&nbsp;value)</code>
+<div class="block">Returns a pretty string representing the given value</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#intToSlider(int,%20int,%20int)">intToSlider</a></strong>(int&nbsp;min,
            int&nbsp;max,
@@ -323,13 +370,13 @@ extends java.lang.Object</pre>
 <div class="block">Converts the integer value to a slider selection.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#isMac()">isMac</a></strong>()</code>
 <div class="block">Are we running on an OSX system</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#sliderToDouble(double,%20double,%20int)">sliderToDouble</a></strong>(double&nbsp;min,
               double&nbsp;max,
@@ -337,7 +384,7 @@ extends java.lang.Object</pre>
 <div class="block">Converts the slider value to a double.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#sliderToInt(int,%20int,%20int)">sliderToInt</a></strong>(int&nbsp;min,
            int&nbsp;max,
@@ -374,7 +421,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>SLIDER_MAX</h4>
 <pre>public static final&nbsp;int SLIDER_MAX</pre>
-<div class="block">Static settings.</div>
+<div class="block">Constant</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../constant-values.html#org.deidentifier.arx.gui.view.SWTUtil.SLIDER_MAX">Constant Field Values</a></dd></dl>
 </li>
 </ul>
@@ -427,6 +474,18 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>shell</code> - </dd><dd><code>parent</code> - </dd></dl>
 </li>
 </ul>
+<a name="createColumnWithBarCharts(org.eclipse.swt.widgets.Table, org.eclipse.swt.widgets.TableColumn)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createColumnWithBarCharts</h4>
+<pre>public static&nbsp;void&nbsp;createColumnWithBarCharts(org.eclipse.swt.widgets.Table&nbsp;table,
+                             org.eclipse.swt.widgets.TableColumn&nbsp;column)</pre>
+<div class="block">Adds a bar chart to a column</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>table</code> - </dd><dd><code>column</code> - </dd></dl>
+</li>
+</ul>
 <a name="createDisabledImage(org.eclipse.swt.widgets.ToolItem)">
 <!--   -->
 </a>
@@ -439,17 +498,6 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>item</code> - </dd><dd><code>image</code> - </dd></dl>
 </li>
 </ul>
-<a name="createFillGridData(int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createFillGridData</h4>
-<pre>public static&nbsp;org.eclipse.swt.layout.GridData&nbsp;createFillGridData(int&nbsp;span)</pre>
-<div class="block">Creates grid data.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="createFillGridData()">
 <!--   -->
 </a>
@@ -457,6 +505,17 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>createFillGridData</h4>
 <pre>public static&nbsp;org.eclipse.swt.layout.GridData&nbsp;createFillGridData()</pre>
+<div class="block">Creates grid data.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="createFillGridData(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createFillGridData</h4>
+<pre>public static&nbsp;org.eclipse.swt.layout.GridData&nbsp;createFillGridData(int&nbsp;span)</pre>
 <div class="block">Creates grid data.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -553,6 +612,18 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="createGridLayoutWithEqualWidth(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createGridLayoutWithEqualWidth</h4>
+<pre>public static&nbsp;org.eclipse.swt.layout.GridLayout&nbsp;createGridLayoutWithEqualWidth(int&nbsp;columns)</pre>
+<div class="block">Creates a grid layout with equal-width columns</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>columns</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="createHelpButton(org.deidentifier.arx.gui.Controller, org.eclipse.swt.custom.CTabFolder, java.lang.String)">
 <!--   -->
 </a>
@@ -560,10 +631,36 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>createHelpButton</h4>
 <pre>public static&nbsp;void&nbsp;createHelpButton(<a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
-                    org.eclipse.swt.custom.CTabFolder&nbsp;tabFolder,
+                    org.eclipse.swt.custom.CTabFolder&nbsp;folder,
                     java.lang.String&nbsp;id)</pre>
 <div class="block">Creates a help button in the given folder.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>controller</code> - </dd><dd><code>tabFolder</code> - </dd><dd><code>id</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>controller</code> - </dd><dd><code>folder</code> - </dd><dd><code>id</code> - </dd></dl>
+</li>
+</ul>
+<a name="createHelpButton(org.deidentifier.arx.gui.Controller, org.eclipse.swt.custom.CTabFolder, java.lang.String, java.util.Map)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createHelpButton</h4>
+<pre>public static&nbsp;void&nbsp;createHelpButton(<a href="../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+                    org.eclipse.swt.custom.CTabFolder&nbsp;folder,
+                    java.lang.String&nbsp;id,
+                    java.util.Map&lt;org.eclipse.swt.widgets.Composite,java.lang.String&gt;&nbsp;helpids)</pre>
+<div class="block">Creates a help button in the given folder.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>controller</code> - </dd><dd><code>folder</code> - </dd><dd><code>id</code> - </dd><dd><code>helpids</code> - </dd></dl>
+</li>
+</ul>
+<a name="changeFont(org.eclipse.swt.widgets.Control, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>changeFont</h4>
+<pre>public static&nbsp;void&nbsp;changeFont(org.eclipse.swt.widgets.Control&nbsp;control,
+              int&nbsp;style)</pre>
+<div class="block">Changes a control's font</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>control</code> - </dd><dd><code>style</code> - </dd></dl>
 </li>
 </ul>
 <a name="createNoFillGridData()">
@@ -699,6 +796,42 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>elem</code> - </dd></dl>
 </li>
 </ul>
+<a name="getPrettyString(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrettyString</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getPrettyString(double&nbsp;value)</pre>
+<div class="block">Returns a pretty string representing the given double</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getPrettyString(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrettyString</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getPrettyString(int&nbsp;value)</pre>
+<div class="block">Returns a pretty string representing the given value</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getPrettyString(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrettyString</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getPrettyString(long&nbsp;value)</pre>
+<div class="block">Returns a pretty string representing the given value</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="intToSlider(int, int, int)">
 <!--   -->
 </a>
@@ -711,6 +844,17 @@ extends java.lang.Object</pre>
 <div class="block">Converts the integer value to a slider selection.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - </dd><dd><code>max</code> - </dd><dd><code>value</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isMac()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isMac</h4>
+<pre>public static&nbsp;boolean&nbsp;isMac()</pre>
+<div class="block">Are we running on an OSX system</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="sliderToDouble(double, double, int)">
@@ -730,7 +874,7 @@ extends java.lang.Object</pre>
 <a name="sliderToInt(int, int, int)">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>sliderToInt</h4>
 <pre>public static&nbsp;int&nbsp;sliderToInt(int&nbsp;min,
@@ -739,17 +883,6 @@ extends java.lang.Object</pre>
 <div class="block">Converts the slider value to an integer.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - </dd><dd><code>max</code> - </dd><dd><code>value</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="isMac()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>isMac</h4>
-<pre>public static&nbsp;boolean&nbsp;isMac()</pre>
-<div class="block">Are we running on an OSX system</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

@@ -34,7 +34,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../org/deidentifier/arx/gui/model/ModelAuditTrailEntry.AuditTrailEntryFindReplace.html" title="class in org.deidentifier.arx.gui.model"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../org/deidentifier/arx/gui/model/ModelClassification.html" title="class in org.deidentifier.arx.gui.model"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -140,53 +140,59 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelClipboard.html#addInterestingTransformations(org.deidentifier.arx.gui.model.Model)">addInterestingTransformations</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</code>
+<div class="block">Extracts interesting transformations from the given result</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelClipboard.html#addToClipboard(org.deidentifier.arx.ARXLattice.ARXNode)">addToClipboard</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node)</code>
 <div class="block">Add a node to the clipboard.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelClipboard.html#clearClipboard()">clearClipboard</a></strong>()</code>
 <div class="block">Clear the clipboard.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelClipboard.html#getClipboardEntries()">getClipboardEntries</a></strong>()</code>
 <div class="block">Returns a copy of all clipboard entries.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelClipboard.html#isModified()">isModified</a></strong>()</code>
 <div class="block">Is the clipboard modified.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelClipboard.html#moveEntryDown(org.deidentifier.arx.ARXLattice.ARXNode)">moveEntryDown</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node)</code>
 <div class="block">Moves the entry down.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelClipboard.html#moveEntryUp(org.deidentifier.arx.ARXLattice.ARXNode)">moveEntryUp</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node)</code>
 <div class="block">Moves the entry up.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelClipboard.html#removeFromClipboard(org.deidentifier.arx.ARXLattice.ARXNode)">removeFromClipboard</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node)</code>
-<div class="block">Removes an entry from the clipboard.</div>
+<div class="block">Removes an entry from the clip board.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelClipboard.html#setUnmodified()">setUnmodified</a></strong>()</code>
 <div class="block">Sets as unmodified.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelClipboard.html#sort()">sort</a></strong>()</code>
 <div class="block">Sorts all nodes according to their minimal information loss.</div>
@@ -240,6 +246,17 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;addAllToClipboard(java.util.List&lt;<a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&gt;&nbsp;list)</pre>
 <div class="block">Add a set of elements to the clipboard.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>list</code> - </dd></dl>
+</li>
+</ul>
+<a name="addInterestingTransformations(org.deidentifier.arx.gui.model.Model)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addInterestingTransformations</h4>
+<pre>public&nbsp;void&nbsp;addInterestingTransformations(<a href="../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</pre>
+<div class="block">Extracts interesting transformations from the given result</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - </dd></dl>
 </li>
 </ul>
 <a name="addToClipboard(org.deidentifier.arx.ARXLattice.ARXNode)">
@@ -314,7 +331,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>removeFromClipboard</h4>
 <pre>public&nbsp;void&nbsp;removeFromClipboard(<a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node)</pre>
-<div class="block">Removes an entry from the clipboard.</div>
+<div class="block">Removes an entry from the clip board.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - </dd></dl>
 </li>
 </ul>
@@ -364,7 +381,7 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../org/deidentifier/arx/gui/model/ModelAuditTrailEntry.AuditTrailEntryFindReplace.html" title="class in org.deidentifier.arx.gui.model"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../org/deidentifier/arx/gui/model/ModelClassification.html" title="class in org.deidentifier.arx.gui.model"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../../../org/deidentifier/arx/gui/model/ModelConfiguration.html" title="class in org.deidentifier.arx.gui.model"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
