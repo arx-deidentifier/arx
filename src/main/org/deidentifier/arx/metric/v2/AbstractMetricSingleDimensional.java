@@ -44,9 +44,20 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
      *
      * @param monotonic
      * @param independent
+     * @param gsFactor
+     */
+    protected AbstractMetricSingleDimensional(final boolean monotonic, final boolean independent, final double gsFactor) {
+        super(monotonic, independent, gsFactor);
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param monotonic
+     * @param independent
      */
     protected AbstractMetricSingleDimensional(final boolean monotonic, final boolean independent) {
-        super(monotonic, independent);
+        super(monotonic, independent, 0.5d);
     }
     
     @Override

@@ -75,12 +75,27 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      *
      * @param monotonic
      * @param independent
+     * @param gsFactor
+     * @param function
+     */
+    AbstractMetricMultiDimensional(final boolean monotonic,
+                                   final boolean independent,
+                                   final double gsFactor,
+                                   final AggregateFunction function) {
+        super(monotonic, independent, gsFactor);
+        this.function = function;
+    }
+    /**
+     * Creates a new instance.
+     *
+     * @param monotonic
+     * @param independent
      * @param function
      */
     AbstractMetricMultiDimensional(final boolean monotonic,
                                    final boolean independent,
                                    final AggregateFunction function) {
-        super(monotonic, independent);
+        super(monotonic, independent, 0.5d);
         this.function = function;
     }
     

@@ -43,7 +43,7 @@ public abstract class MetricDefault extends Metric<InformationLossDefault> {
      * @param independent
      */
     public MetricDefault(final boolean monotonic, final boolean independent) {
-        super(monotonic, independent);
+        super(monotonic, independent, 0.5d);
     }
     
     @Override

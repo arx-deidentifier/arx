@@ -49,7 +49,7 @@ public abstract class MetricWeighted<T extends InformationLoss<?>> extends Metri
      * @param independent
      */
     public MetricWeighted(final boolean monotonic, final boolean independent) {
-        super(monotonic, independent);
+        super(monotonic, independent, 0.5d);
     }
 
     @Override

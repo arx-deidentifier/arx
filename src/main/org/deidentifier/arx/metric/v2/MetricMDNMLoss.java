@@ -49,13 +49,13 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     /** Domain shares for each dimension. */
     private DomainShare[]     shares;
 
-    /** Configuration factor. */
+    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
     private final double      gFactor;
     
-    /** Configuration factor. */
+    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
     private final double      gsFactor;
     
-    /** Configuration factor. */
+    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
     private final double      sFactor;
     
     /**
@@ -109,25 +109,14 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                                        );
     }
     
-    /**
-     * Returns the factor used weight generalized values.
-     *
-     * @return
-     */
+    @Override
+    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationFactor() {
         return gFactor;
     }
 
-    /**
-     * Returns the factor weighting generalization and suppression.
-     *
-     * @return A factor [0,1] weighting generalization and suppression.
-     *         The default value is 0.5, which means that generalization
-     *         and suppression will be treated equally. A factor of 0
-     *         will favor suppression, and a factor of 1 will favor
-     *         generalization. The values in between can be used for
-     *         balancing both methods.
-     */
+    @Override
+    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationSuppressionFactor() {
         return gsFactor;
     }
@@ -136,12 +125,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     public String getName() {
         return "Loss";
     }
-    
-    /**
-     * Returns the factor used to weight suppressed values.
-     *
-     * @return
-     */
+
+    @Override
+    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getSuppressionFactor() {
         return sFactor;
     }

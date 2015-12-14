@@ -67,7 +67,7 @@ import org.deidentifier.arx.metric.v2.__MetricV2;
  * @param <T>
  */
 public abstract class Metric<T extends InformationLoss<?>> implements Serializable {
-    
+
     /**
      * Pluggable aggregate functions.
      *
@@ -111,10 +111,10 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     
     /**  TODO */
     private static final long serialVersionUID = -2657745103125430229L;
-
+    
     /** For comparisons. */
     private static final double DIGITS           = 10d;
-
+    
     /** For comparisons. */
     private static final double FACTOR           = Math.pow(10d, DIGITS);
     
@@ -126,7 +126,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<ILSingleDimensional> createAECSMetric() {
         return __MetricV2.createAECSMetric();
     }
-
 
     /**
      * Creates an instance of the ambiguity metric.
@@ -145,8 +144,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<ILSingleDimensional> createDiscernabilityMetric() {
         return __MetricV2.createDiscernabilityMetric();
     }
-
-
+    
     /**
      * Creates an instance of the discernability metric. The monotonic variant is DM*.
      * 
@@ -156,7 +154,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<ILSingleDimensional> createDiscernabilityMetric(boolean monotonic) {
         return __MetricV2.createDiscernabilityMetric(monotonic);
     }
-    
+
 
     /**
      * Creates an instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
@@ -821,7 +819,15 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
 
     /** Is the metric monotonic?. */
     private boolean           monotonic        = false;
+
+    /** Configuration factor. */
+    private final double      gFactor;
+
+    /** Configuration factor. */
+    private final double      gsFactor;
     
+    /** Configuration factor. */
+    private final double      sFactor;
 
     /**
      * Create a new metric.
@@ -829,9 +835,15 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param monotonic
      * @param independent
      */
-    protected Metric(final boolean monotonic, final boolean independent) {
+    protected Metric(final boolean monotonic, final boolean independent, final double gsFactor) {
         this.monotonic = monotonic;
         this.independent = independent;
+        if (gsFactor < 0d || gsFactor > 1d) {
+            throw new IllegalArgumentException("Parameter must be in [0, 1]");
+        }
+        this.gsFactor = gsFactor;
+        this.sFactor = gsFactor <  0.5d ? 2d * gsFactor : 1d;
+        this.gFactor = gsFactor <= 0.5d ? 1d            : 1d - 2d * (gsFactor - 0.5d);
     }
     
     /**
@@ -847,7 +859,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     public abstract InformationLoss<?> createMinInformationLoss();
-
+    
     /**
      * Returns the aggregate function of a multi-dimensional metric, null otherwise.
      *
@@ -865,7 +877,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public MetricConfiguration getConfiguration() {
         throw new UnsupportedOperationException();
     }
-    
+
     /**
      * Returns a description of this metric.
      *
@@ -873,6 +885,29 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public MetricDescription getDescription() {
         return Metric.getDescription(this);
+    }
+
+    /**
+     * Returns the factor used weight generalized values.
+     *
+     * @return
+     */
+    public double getGeneralizationFactor() {
+        return gFactor;
+    }
+    
+    /**
+     * Returns the factor weighting generalization and suppression.
+     *
+     * @return A factor [0,1] weighting generalization and suppression.
+     *         The default value is 0.5, which means that generalization
+     *         and suppression will be treated equally. A factor of 0
+     *         will favor suppression, and a factor of 1 will favor
+     *         generalization. The values in between can be used for
+     *         balancing both methods.
+     */
+    public double getGeneralizationSuppressionFactor() {
+        return gsFactor;
     }
     
     /**
@@ -916,8 +951,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
             return getLowerBoundInternal(node);
         }
     }
-
-
+    
     /**
      * Returns a lower bound for the information loss for the given node.
      * This can be used to expose the results of monotonic shares of a metric,
@@ -936,7 +970,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
             return getLowerBoundInternal(node, groupify);
         }
     }
-    
+
+
     /**
      * Returns the name of metric.
      *
@@ -944,6 +979,15 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public String getName() {
         return this.toString();
+    }
+    
+    /**
+     * Returns the factor used to weight suppressed values.
+     *
+     * @return
+     */
+    public double getSuppressionFactor() {
+        return sFactor;
     }
     
     /**
