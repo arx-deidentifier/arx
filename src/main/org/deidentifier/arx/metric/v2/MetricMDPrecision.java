@@ -43,7 +43,15 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
     protected MetricMDPrecision() {
         super(true, true, AggregateFunction.ARITHMETIC_MEAN);
     }
-    
+
+    /**
+     * Creates a new instance.
+     *
+     * @param function
+     */
+    protected MetricMDPrecision(double gsFactor, AggregateFunction function){
+        super(true, true, gsFactor, function);
+    }
     /**
      * Creates a new instance.
      *

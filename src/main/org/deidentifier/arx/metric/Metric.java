@@ -372,6 +372,81 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, AggregateFunction function) {
         return __MetricV2.createPrecisionMetric(monotonic, function);
     }
+    
+
+    /**
+     * Creates an instance of the non-monotonic precision metric.
+     * The default aggregate function, which is the arithmetic mean, will be used.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecisionMetric(double gsFactor) {
+        return __MetricV2.createPrecisionMetric(gsFactor);
+    }
+
+    /**
+     * Creates an instance of the non-monotonic precision metric.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param function The aggregate function to use for comparing results
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecisionMetric(double gsFactor, AggregateFunction function) {
+        return __MetricV2.createPrecisionMetric(gsFactor, function);
+    }
+    
+    /**
+     * Creates an instance of the precision metric.
+     * The default aggregate function, which is the arithmetic mean, will be used.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, double gsFactor) {
+        return __MetricV2.createPrecisionMetric(monotonic, gsFactor);
+    }
+
+    /**
+     * Creates an instance of the precision metric.
+     * This metric will respect attribute weights defined in the configuration.
+     *
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @param function
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, double gsFactor, AggregateFunction function) {
+        return __MetricV2.createPrecisionMetric(monotonic, gsFactor, function);
+    }
+
+    
     /**
      * Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -673,7 +748,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                new MetricDescription("Precision",
                                      true,  // monotonic variant supported
                                      true,  // attribute weights supported
-                                     false, // configurable coding model supported
+                                     true,  // configurable coding model supported
                                      false, // pre-computation supported
                                      true){ // aggregate function supported
 
@@ -682,6 +757,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                     @Override
                                      public Metric<?> createInstance(MetricConfiguration config) {
                                          return createPrecisionMetric(config.isMonotonic(), 
+                                                                      config.getGsFactor(),
                                                                       config.getAggregateFunction());
                                      }        
 

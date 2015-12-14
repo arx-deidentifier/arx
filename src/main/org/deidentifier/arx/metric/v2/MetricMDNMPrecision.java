@@ -77,6 +77,36 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     protected MetricMDNMPrecision(boolean monotonic, boolean independent, AggregateFunction function){
         super(monotonic, independent, function);
     }
+
+    /**
+     * For subclasses.
+     *
+     * @param monotonic
+     * @param independent
+     * @param gsFactor
+     * @param function
+     */
+    protected MetricMDNMPrecision(boolean monotonic, boolean independent, double gsFactor, AggregateFunction function){
+        super(monotonic, independent, gsFactor, function);
+    }
+    
+    /**
+     * Creates a new instance.
+     * @param gsFactor
+     */
+    protected MetricMDNMPrecision(double gsFactor) {
+        super(false, false, gsFactor, AggregateFunction.ARITHMETIC_MEAN);
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param gsFactor
+     * @param function
+     */
+    protected MetricMDNMPrecision(double gsFactor, AggregateFunction function){
+        super(false, false, gsFactor, function);
+    }
     
     /**
      * Returns the configuration of this metric.
@@ -84,11 +114,11 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false,                      // monotonic
-                                       0.5d,                       // gs-factor
-                                       false,                      // precomputed
-                                       0.0d,                       // precomputation threshold
-                                       this.getAggregateFunction() // aggregate function
+        return new MetricConfiguration(false,                                       // monotonic
+                                       super.getGeneralizationSuppressionFactor(),  // gs-factor
+                                       false,                                       // precomputed
+                                       0.0d,                                        // precomputation threshold
+                                       this.getAggregateFunction()                  // aggregate function
                                        );
     }
 
@@ -100,6 +130,8 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
+        double gFactor = super.getGeneralizationFactor();
+        double sFactor = super.getSuppressionFactor();
         int suppressedTuples = 0;
         int unsuppressedTuples = 0;
         
@@ -114,7 +146,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         double[] result = new double[getDimensions()];
         for (int i = 0; i<heights.length; i++) {
             double value = heights[i] == 0 ? 0 : (double) node.getGeneralization()[i] / (double) heights[i];
-            result[i] += (double)unsuppressedTuples * value + (double)suppressedTuples;
+            result[i] += ((double)unsuppressedTuples * value) * gFactor + (double)suppressedTuples * sFactor;
             result[i] /= rowCount;
         }
         
@@ -132,11 +164,13 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
+        
+        double gFactor = super.getGeneralizationFactor();
         double[] result = new double[getDimensions()];
         final int[] transformation = node.getGeneralization();
         for (int i = 0; i < transformation.length; i++) {
             double level = (double) transformation[i];
-            result[i] += heights[i] == 0 ? 0 : (level / (double) heights[i]);
+            result[i] += (double)(heights[i] == 0 ? 0 : (level / (double) heights[i])) * gFactor;
         }
         return createInformationLoss(result);
     }
@@ -158,12 +192,14 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         super.initialize(heights.length);
         this.heights = heights;
         this.rowCount = cells / heights.length;
+        double gFactor = super.getGeneralizationFactor();
+        double sFactor = super.getSuppressionFactor();
 
         // Min and max
         double[] min = new double[heights.length];
         Arrays.fill(min, 0d);
         double[] max = new double[min.length];
-        Arrays.fill(max, 1d);
+        Arrays.fill(max, 1d * Math.max(gFactor, sFactor));
         setMin(min);
         setMax(max);
     }
@@ -174,13 +210,16 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
                                       final Data input, 
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
+
         super.initializeInternal(manager, definition, input, hierarchies, config);
+        double gFactor = super.getGeneralizationFactor();
+        double sFactor = super.getSuppressionFactor();
 
         // Min and max
         double[] min = new double[hierarchies.length];
         Arrays.fill(min, 0d);
         double[] max = new double[min.length];
-        Arrays.fill(max, 1d);
+        Arrays.fill(max, 1d * Math.max(gFactor, sFactor));
         setMin(min);
         setMax(max);
         
