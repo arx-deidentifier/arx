@@ -39,6 +39,22 @@ public class __MetricV2 {
     public static Metric<ILSingleDimensional> createAECSMetric() {
         return new MetricSDAECS();
     }
+
+    /**
+     * Creates a new instance of the AECS metric.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * 
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createAECSMetric(double gsFactor) {
+        return new MetricSDAECS(gsFactor);
+    }
     
     /**
      * Creates a new instance of the AECS metric.
@@ -46,7 +62,7 @@ public class __MetricV2 {
      * @param rowCount
      * @return
      */
-    public static Metric<ILSingleDimensional> createAECSMetric(double rowCount) {
+    public static Metric<ILSingleDimensional> createAECSMetric(int rowCount) {
         return new MetricSDAECS(rowCount);
     }
     

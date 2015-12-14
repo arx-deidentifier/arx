@@ -128,6 +128,21 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
+     * Creates a new instance of the AECS metric.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * 
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createAECSMetric(double gsFactor) {
+        return __MetricV2.createAECSMetric(gsFactor);
+    }
+    /**
      * Creates an instance of the ambiguity metric.
      *
      * @return
@@ -753,7 +768,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                new MetricDescription("Average equivalence class size",
                                      false,  // monotonic variant supported
                                      false,  // attribute weights supported
-                                     false,  // configurable coding model supported
+                                     true,  // configurable coding model supported
                                      false,  // pre-computation supported
                                      false){ // aggregate function supported
 
@@ -761,7 +776,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
 
                                     @Override
                                      public Metric<?> createInstance(MetricConfiguration config) {
-                                         return createAECSMetric();
+                                         return createAECSMetric(config.getGsFactor());
                                      }
 
                                     @Override
@@ -975,7 +990,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     private static Metric<?> createMetric(Metric<?> metric) {
         
         if (metric instanceof MetricAECS) {
-            return __MetricV2.createAECSMetric(((MetricAECS)metric).getRowCount());
+            return __MetricV2.createAECSMetric((int)((MetricAECS)metric).getRowCount());
         } else if (metric instanceof MetricDM) {
             return __MetricV2.createDiscernabilityMetric(false, ((MetricDM)metric).getRowCount());
         } else if (metric instanceof MetricDMStar) {
