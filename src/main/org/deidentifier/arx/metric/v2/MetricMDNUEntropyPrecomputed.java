@@ -79,28 +79,31 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
      *
      * @param monotonic
      * @param independent
+     * @param gsFactor
      * @param function
      */
     public MetricMDNUEntropyPrecomputed(boolean monotonic, 
                                         boolean independent, 
+                                        double gsFactor, 
                                         AggregateFunction function) {
-        super(monotonic, independent, function);
+        super(monotonic, independent, gsFactor, function);
     }
     
     /**
      * Creates a new instance.
      */
     protected MetricMDNUEntropyPrecomputed() {
-        super(true, true, AggregateFunction.SUM);
+        super(true, true, 0.5d, AggregateFunction.SUM);
     }
     
     /**
      * Creates a new instance.
      *
+     * @param gsFactor
      * @param function
      */
-    protected MetricMDNUEntropyPrecomputed(AggregateFunction function){
-        super(true, true, function);
+    protected MetricMDNUEntropyPrecomputed(double gsFactor, AggregateFunction function){
+        super(true, true, gsFactor, function);
     }
 
     /**
@@ -109,12 +112,12 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(true,                       // monotonic
-                                       0.5d,                       // gs-factor
-                                       true,                       // precomputed
-                                       1.0d,                       // precomputation threshold
+        return new MetricConfiguration(true, // monotonic
+                                       super.getGeneralizationSuppressionFactor(), // gs-factor
+                                       true, // precomputed
+                                       1.0d, // precomputation threshold
                                        this.getAggregateFunction() // aggregate function
-                                       );
+        );
     }
     
     @Override
@@ -156,6 +159,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         // Prepare
         int[][][] cardinalities = this.cardinalities.getCardinalities();
         double[] result = new double[hierarchies.length];
+        double gFactor = super.getGeneralizationFactor();
 
         // For each column
         for (int column = 0; column < hierarchies.length; column++) {
@@ -177,7 +181,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
                 }
                 cache[column][transformation] = value;
             }
-            result[column] = value;
+            result[column] = value * gFactor;
         }
 
         return result;
@@ -203,6 +207,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         // Prepare
         int[][][] cardinalities = this.cardinalities.getCardinalities();
         double[] result = new double[hierarchies.length];
+        double gFactor = super.getGeneralizationFactor();
 
         // For each column
         for (int column = 0; column < hierarchies.length; column++) {
@@ -217,7 +222,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
                     value += a * log2(a / rows);
                 }
             }
-            result[column] = value;
+            result[column] = value * gFactor;
         }
         
         // Switch sign bit and round
@@ -249,7 +254,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         double[] min = new double[hierarchies.length];
         Arrays.fill(min, 0d);
         
-        // Its difficult to compute a reasonale maximum in this case
+        // Its difficult to compute a reasonable maximum in this case
         double[] max = new double[hierarchies.length];
         Arrays.fill(max, Double.MAX_VALUE / hierarchies.length);
         
@@ -272,6 +277,8 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         // Cardinalities
         this.cardinalities = new Cardinalities(input, subset, hierarchies);
         this.rows = input.getDataLength();
+        double gFactor = super.getGeneralizationFactor();
+        double sFactor = super.getSuppressionFactor();
         
         // Create a cache for the results
         this.cache = new double[hierarchies.length][];
@@ -293,7 +300,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         
         double[] max = new double[hierarchies.length];
         for (int i=0; i<max.length; i++) {
-            max[i] = input.getDataLength() * log2(input.getDataLength());
+            max[i] = (input.getDataLength() * log2(input.getDataLength())) * Math.max(gFactor, sFactor);
         }
         
         super.setMax(max);

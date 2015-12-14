@@ -43,10 +43,12 @@ public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
     /**
      * Creates a new instance.
      *
+     * @param gsFactor
      * @param function
+     * 
      */
-    protected MetricMDNUNMEntropy(AggregateFunction function){
-        super(function);
+    protected MetricMDNUNMEntropy(double gsFactor, AggregateFunction function){
+        super(gsFactor, function);
     }
 
     /**
@@ -55,11 +57,11 @@ public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false,                      // monotonic
-                                       0.5d,                       // gs-factor
-                                       false,                      // precomputed
-                                       0.0d,                       // precomputation threshold
-                                       this.getAggregateFunction() // aggregate function
+        return new MetricConfiguration(false,                                       // monotonic
+                                       super.getGeneralizationSuppressionFactor(),  // gs-factor
+                                       false,                                       // precomputed
+                                       0.0d,                                        // precomputation threshold
+                                       this.getAggregateFunction()                  // aggregate function
                                        );
     }
 

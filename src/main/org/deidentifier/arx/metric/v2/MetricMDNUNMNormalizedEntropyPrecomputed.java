@@ -49,7 +49,7 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
      * @param function
      */
     public MetricMDNUNMNormalizedEntropyPrecomputed(AggregateFunction function) {
-        super(function);
+        super(0.5d, function); // TODO: REPLACE WITH GS_FACTOR WHEN APPLICABLE
     }
     
     /**

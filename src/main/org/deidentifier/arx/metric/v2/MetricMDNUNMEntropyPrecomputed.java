@@ -47,16 +47,17 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
      * Creates a new instance.
      */
     protected MetricMDNUNMEntropyPrecomputed() {
-        super(false, false, AggregateFunction.SUM);
+        super(false, false, 0.5d, AggregateFunction.SUM);
     }
     
     /**
      * Creates a new instance.
      *
+     * @param gsFactor
      * @param function
      */
-    protected MetricMDNUNMEntropyPrecomputed(AggregateFunction function){
-        super(false, false, function);
+    protected MetricMDNUNMEntropyPrecomputed(double gsFactor, AggregateFunction function){
+        super(false, false, gsFactor, function);
     }
     
     /**
@@ -65,12 +66,12 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false,                      // monotonic
-                                       0.5d,                       // gs-factor
-                                       true,                       // precomputed
-                                       1.0d,                       // precomputation threshold
+        return new MetricConfiguration(false, // monotonic
+                                       super.getGeneralizationSuppressionFactor(), // gs-factor
+                                       true, // precomputed
+                                       1.0d, // precomputation threshold
                                        this.getAggregateFunction() // aggregate function
-                                       );
+        );
     }
 
     @Override
@@ -80,6 +81,9 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
 
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
+        
+        // Prepare
+        double sFactor = super.getSuppressionFactor();
         
         // Compute non-uniform entropy
         double[] result = super.getInformationLossInternalRaw(node, g);
@@ -113,7 +117,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
                 for (int j = 0; j < map.allocated.length; j++) {
                     if (map.allocated[j]) {
                         double count = map.values[j];
-                        result[i] += count * log2(count / suppressed);
+                        result[i] += count * log2(count / suppressed) * sFactor;
                     }
                 }
             }
@@ -124,8 +128,6 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
             result[column] = round(result[column] == 0.0d ? result[column] : -result[column]);
         }
 
-        
-        
         // Return
         return new ILMultiDimensionalWithBound(createInformationLoss(result),
                                                createInformationLoss(bound));
@@ -151,13 +153,17 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         
         super.initializeInternal(manager, definition, input, hierarchies, config);
 
+        // Prepare
+        double gFactor = super.getGeneralizationFactor();
+        double sFactor = super.getSuppressionFactor();
+        
         // Compute a reasonable minimum & maximum
         double[] min = new double[hierarchies.length];
         Arrays.fill(min, 0d);
         
         double[] max = new double[hierarchies.length];
         for (int i=0; i<max.length; i++) {
-            max[i] = 2d * input.getDataLength() * log2(input.getDataLength());
+            max[i] = (2d * input.getDataLength() * log2(input.getDataLength())) * Math.max(gFactor, sFactor);
         }
         
         super.setMax(max);

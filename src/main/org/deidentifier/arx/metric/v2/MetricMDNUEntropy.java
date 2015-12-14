@@ -43,10 +43,11 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
     /**
      * Creates a new instance.
      *
+     * @param gsFactor
      * @param function
      */
-    protected MetricMDNUEntropy(AggregateFunction function){
-        super(function);
+    protected MetricMDNUEntropy(double gsFactor, AggregateFunction function){
+        super(gsFactor, function);
     }
 
     /**
@@ -56,7 +57,7 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
      */
     public MetricConfiguration getConfiguration() {
         return new MetricConfiguration(true,                       // monotonic
-                                       0.5d,                       // gs-factor
+                                       super.getGeneralizationSuppressionFactor(), // gs-factor
                                        false,                      // precomputed
                                        0.0d,                       // precomputation threshold
                                        this.getAggregateFunction() // aggregate function

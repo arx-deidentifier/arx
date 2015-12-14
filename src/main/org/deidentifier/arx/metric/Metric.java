@@ -155,7 +155,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createDiscernabilityMetric(monotonic);
     }
 
-
     /**
      * Creates an instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -194,6 +193,65 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createEntropyMetric(monotonic, function);
     }
 
+
+    /**
+     * Creates an instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
+     * which is the sum-function, will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createEntropyMetric(double gsFactor) {
+        return __MetricV2.createEntropyMetric(gsFactor);
+    }
+    
+    /**
+     * Creates an instance of the non-uniform entropy metric. The default aggregate function,
+     * which is the sum-function, will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * 
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createEntropyMetric(boolean monotonic, double gsFactor) {
+        return __MetricV2.createEntropyMetric(monotonic, gsFactor);
+    }
+    
+
+    /**
+     * Creates an instance of the non-uniform entropy metric.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @param function The aggregate function to be used for comparing results
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createEntropyMetric(boolean monotonic, double gsFactor, AggregateFunction function) {
+        return __MetricV2.createEntropyMetric(monotonic, gsFactor, function);
+    }
+
+    
     /**
      * Creates an instance of the height metric. The default aggregate function, which is the sum-function,
      * will be used for comparing results.
@@ -446,7 +504,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecisionMetric(monotonic, gsFactor, function);
     }
 
-    
     /**
      * Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -493,6 +550,75 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
 
+    /**
+     * Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
+     * which is the sum-function, will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param threshold The precomputed variant of the metric will be used if 
+     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     *                  
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, double gsFactor) {
+        return __MetricV2.createPrecomputedEntropyMetric(threshold, gsFactor);
+    }
+
+    
+    /**
+     * Creates a potentially precomputed instance of the non-uniform entropy metric. The default aggregate function,
+     * which is the sum-function, will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param threshold The precomputed variant of the metric will be used if 
+     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, boolean monotonic, double gsFactor) {
+        return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic, gsFactor);
+    }
+
+    /**
+     * Creates a potentially precomputed instance of the non-uniform entropy metric.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param threshold The precomputed variant of the metric will be used if 
+     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @param function The aggregate function to be used for comparing results
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, boolean monotonic, double gsFactor, AggregateFunction function) {
+        return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic, gsFactor, function);
+    }
+    
     /**
      * Creates a potentially precomputed instance of the loss metric which treats generalization
      * and suppression equally.
@@ -713,7 +839,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                new MetricDescription("Non-uniform entropy",
                                      true,  // monotonic variant supported
                                      true,  // attribute weights supported
-                                     false, // configurable coding model supported
+                                     true, // configurable coding model supported
                                      true,  // pre-computation supported
                                      true){ // aggregate function supported
 
@@ -724,9 +850,11 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                          if (config.isPrecomputed()) {
                                              return createPrecomputedEntropyMetric(config.getPrecomputationThreshold(), 
                                                                                    config.isMonotonic(),
+                                                                                   config.getGsFactor(),
                                                                                    config.getAggregateFunction());                                             
                                          } else {
                                              return createEntropyMetric(config.isMonotonic(), 
+                                                                        config.getGsFactor(),
                                                                         config.getAggregateFunction());
                                          }
                                      } 

@@ -49,12 +49,14 @@ public class MetricMDNUEntropyPotentiallyPrecomputed extends AbstractMetricMulti
      * #distinctValues / #rows <= threshold for all quasi-identifiers.
      * 
      * @param threshold
+     * @param gsFactor
      * @param function
      */
     protected MetricMDNUEntropyPotentiallyPrecomputed(double threshold,
+                                                      double gsFactor,
                                                       AggregateFunction function) {
-        super(new MetricMDNUEntropy(function),
-              new MetricMDNUEntropyPrecomputed(function),
+        super(new MetricMDNUEntropy(gsFactor, function),
+              new MetricMDNUEntropyPrecomputed(gsFactor, function),
               threshold);
     }
     
@@ -64,12 +66,12 @@ public class MetricMDNUEntropyPotentiallyPrecomputed extends AbstractMetricMulti
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(true,                       // monotonic
-                                       0.5d,                       // gs-factor
-                                       super.isPrecomputed(),      // precomputed
-                                       super.getThreshold(),       // precomputation threshold
-                                       this.getAggregateFunction() // aggregate function
-                                       );
+        return new MetricConfiguration(true, // monotonic
+                                       super.getDefaultMetric().getGeneralizationSuppressionFactor(), // gs-factor
+                                       super.isPrecomputed(), // precomputed
+                                       super.getThreshold(), // precomputation threshold
+                                       super.getDefaultMetric().getAggregateFunction() // aggregate function
+        );
     }
     
     @Override
