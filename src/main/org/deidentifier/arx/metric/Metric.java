@@ -821,13 +821,13 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     private boolean           monotonic        = false;
 
     /** Configuration factor. */
-    private final double      gFactor;
+    private final Double      gFactor;
 
     /** Configuration factor. */
-    private final double      gsFactor;
+    private final Double      gsFactor;
     
     /** Configuration factor. */
-    private final double      sFactor;
+    private final Double      sFactor;
 
     /**
      * Create a new metric.
@@ -893,7 +893,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     public double getGeneralizationFactor() {
-        return gFactor;
+        return gFactor != null ? gFactor : 1d;
     }
     
     /**
@@ -907,7 +907,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      *         balancing both methods.
      */
     public double getGeneralizationSuppressionFactor() {
-        return gsFactor;
+        return gsFactor != null ? gsFactor : 0.5d;
     }
     
     /**
@@ -987,7 +987,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     public double getSuppressionFactor() {
-        return sFactor;
+        return sFactor != null ? sFactor : 1d;
     }
     
     /**
