@@ -32,6 +32,7 @@ import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
@@ -406,12 +407,10 @@ public class ARXResult {
             return false;
         }
         
-        // Create a set of supported privacy models
-        Set<Class<?>> supportedModels = getOptimizablePrivacyModels();
-        for (PrivacyCriterion c : config.getCriteria()) {
-            if (!supportedModels.contains(c.getClass())) {
-                return false;
-            }
+        // Check if optimizable
+        PrivacyCriterion nonOptimizable = getNonOptimizableCriterion();
+        if (nonOptimizable != null) {
+            return false;
         }
 
         // Check, if there are enough outliers
@@ -428,7 +427,7 @@ public class ARXResult {
         // Yes, we probably can do this
         return true;
     }
-
+    
     /**
      * Indicates if a result is available.
      *
@@ -506,12 +505,10 @@ public class ARXResult {
             throw new IllegalArgumentException("This output data is associated to the correct input data");
         }
         
-        // Create a set of supported privacy models
-        Set<Class<?>> supportedModels = getOptimizablePrivacyModels();
-        for (PrivacyCriterion c : config.getCriteria()) {
-            if (!supportedModels.contains(c.getClass())) {
-                throw new UnsupportedOperationException("This method does currently not supported the model: " + c.getClass().getSimpleName());
-            }
+        // Check if only optimizable criteria are configured
+        PrivacyCriterion notOptimizable = getNonOptimizableCriterion();
+        if (notOptimizable != null) {
+            throw new UnsupportedOperationException("This method does currently not supported the model: " +notOptimizable.getClass().getSimpleName());
         }
 
         // We are now ready, to go
@@ -602,7 +599,7 @@ public class ARXResult {
             throw new RollbackRequiredException("Handle must be rebuild to ensure privacy", e);
         }
     }
-    
+
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -628,7 +625,7 @@ public class ARXResult {
             }
         });
     }
-
+    
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -695,7 +692,7 @@ public class ARXResult {
             iterations++;
         }
     }
-    
+
     /**
      * Returns a map of all microaggregation functions
      * @param definition
@@ -710,12 +707,31 @@ public class ARXResult {
     }
     
     /**
+     * Returns the first privacy criterion which is not optimizable. Returns null if none found.
+     * @return
+     */
+    private PrivacyCriterion getNonOptimizableCriterion() {
+        Set<Class<?>> supportedModels = getOptimizablePrivacyModels();
+        for (PrivacyCriterion c : config.getCriteria()) {
+            if (!supportedModels.contains(c.getClass())) {
+                return c;
+            } else if (c instanceof KMap) {
+                if (((KMap) c).isAccurate()) {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
      * Returns a set of classes of privacy models that may be optimized
      * @return
      */
     private Set<Class<?>> getOptimizablePrivacyModels() {
         Set<Class<?>> result = new HashSet<Class<?>>();
         result.add(KAnonymity.class);
+        result.add(KMap.class);
         result.add(DDisclosurePrivacy.class);
         result.add(DistinctLDiversity.class);
         result.add(RecursiveCLDiversity.class);

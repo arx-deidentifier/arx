@@ -454,7 +454,8 @@ public class Model implements Serializable {
 
         // Allow adding and removing tuples
         if (!config.containsCriterion(DPresence.class) || 
-            !config.containsCriterion(KMap.class)){
+            !config.containsCriterion(KMap.class) || 
+            (config.containsCriterion(KMap.class) && !config.getCriterion(KMap.class).isAccurate())){
             if (config.getInput() != null && config.getResearchSubset() != null && 
                 config.getResearchSubset().size() != config.getInput().getHandle().getNumRows()) {
                     DataSubset subset = DataSubset.create(config.getInput(), config.getResearchSubset());

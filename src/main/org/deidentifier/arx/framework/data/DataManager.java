@@ -423,7 +423,7 @@ public class DataManager {
                 ((EDDifferentialPrivacy)c).initialize(this);
                 subset = ((EDDifferentialPrivacy) c).getSubset().getSet();
                 subsetSize = ((EDDifferentialPrivacy) c).getSubset().getArray().length;
-            } else if (c instanceof KMap && ((KMap)c).hasSubset()) {
+            } else if (c instanceof KMap && ((KMap)c).isAccurate()) {
                 subset = ((KMap) c).getSubset().getSet();
                 subsetSize = ((KMap) c).getSubset().getArray().length;
             }

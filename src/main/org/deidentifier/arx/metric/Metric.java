@@ -1325,7 +1325,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     protected int getNumRecords(ARXConfiguration config, Data input) {
         if (config.containsCriterion(DPresence.class)) {
             return config.getCriterion(DPresence.class).getSubset().getArray().length;
-        } else if (config.containsCriterion(KMap.class) && config.getCriterion(KMap.class).hasSubset()) {
+        } else if (config.containsCriterion(KMap.class) && config.getCriterion(KMap.class).isAccurate()) {
             return config.getCriterion(KMap.class).getSubset().getArray().length;
         } else if (config.containsCriterion(EDDifferentialPrivacy.class)) {
             return config.getCriterion(EDDifferentialPrivacy.class).getSubset().getArray().length;
@@ -1343,7 +1343,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     protected RowSet getSubset(ARXConfiguration config) {
         if (config.containsCriterion(DPresence.class)) {
             return config.getCriterion(DPresence.class).getSubset().getSet();
-        } else if (config.containsCriterion(KMap.class) && config.getCriterion(KMap.class).hasSubset()) {
+        } else if (config.containsCriterion(KMap.class) && config.getCriterion(KMap.class).isAccurate()) {
             return config.getCriterion(KMap.class).getSubset().getSet();
         } else if (config.containsCriterion(EDDifferentialPrivacy.class)) {
             return config.getCriterion(EDDifferentialPrivacy.class).getSubset().getSet();

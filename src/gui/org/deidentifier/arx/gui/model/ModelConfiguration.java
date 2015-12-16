@@ -102,7 +102,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         c.hierarchies = new HashMap<String, Hierarchy>(hierarchies);
         if (this.containsCriterion(DPresence.class)) {
             c.researchSubset = this.getCriterion(DPresence.class).getSubset().getSet();
-        } else if (this.containsCriterion(KMap.class)) {
+        } else if (this.containsCriterion(KMap.class) && this.getCriterion(KMap.class).isAccurate()) {
             c.researchSubset = this.getCriterion(KMap.class).getSubset().getSet();
         } else {
             c.researchSubset = this.researchSubset.clone();
