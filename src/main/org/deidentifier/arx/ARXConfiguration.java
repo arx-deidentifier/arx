@@ -422,12 +422,12 @@ public class ARXConfiguration implements Serializable, Cloneable {
             throw new RuntimeException("You must not add more than one d-presence criterion");
         } 
         if ((c instanceof DPresence) && this.containsCriterion(KMap.class)) {
-            if (!Arrays.equals(((DPresence)c).getSubset().getArray(), this.getCriterion(KMap.class).getSubset().getArray())) {
+            if (this.getCriterion(KMap.class).hasSubset() && !Arrays.equals(((DPresence)c).getSubset().getArray(), this.getCriterion(KMap.class).getSubset().getArray())) {
                 throw new IllegalArgumentException("You must not use two different research subsets");
             }
         } 
         if ((c instanceof KMap) && this.containsCriterion(DPresence.class)) {
-            if (!Arrays.equals(((KMap)c).getSubset().getArray(), this.getCriterion(DPresence.class).getSubset().getArray())) {
+            if (((KMap)c).hasSubset() && !Arrays.equals(((KMap)c).getSubset().getArray(), this.getCriterion(DPresence.class).getSubset().getArray())) {
                 throw new IllegalArgumentException("You must not use two different research subsets");
             }
         } 
@@ -501,7 +501,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
                 clone = new DPresence(((DPresence)criterion).getDMin(),
                                       ((DPresence)criterion).getDMax(),
                                       ((DPresence)criterion).getSubset().getSubsetInstance(rowset));
-            } else if (criterion instanceof KMap) {
+            } else if (criterion instanceof KMap && ((KMap)criterion).hasSubset()) {
                 clone = new KMap(((KMap)criterion).getK(),
                                  ((KMap)criterion).getSubset().getSubsetInstance(rowset));
             } else {
@@ -538,7 +538,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (this.containsCriterion(DPresence.class)) {
             return getCriterion(DPresence.class).getSubset();
         }
-        if (this.containsCriterion(KMap.class)) {
+        if (this.containsCriterion(KMap.class) && this.getCriterion(KMap.class).hasSubset()) {
             return getCriterion(KMap.class).getSubset();
         }
         if (this.containsCriterion(EDDifferentialPrivacy.class)) {
@@ -1092,7 +1092,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         int dataLength = 0;
         if (this.containsCriterion(DPresence.class)) {
             dataLength = this.getCriterion(DPresence.class).getSubset().getArray().length;
-        } else if (this.containsCriterion(KMap.class)) {
+        } else if (this.containsCriterion(KMap.class) && this.getCriterion(KMap.class).hasSubset()) {
             dataLength = this.getCriterion(KMap.class).getSubset().getArray().length;
         } else if (this.containsCriterion(EDDifferentialPrivacy.class)) {
             dataLength = this.getCriterion(EDDifferentialPrivacy.class).getSubset().getArray().length;
