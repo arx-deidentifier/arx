@@ -108,16 +108,17 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         }
     }
 
-
-
+    @Override
     public double getGeneralizationFactor() {
         return defaultMetric.getGeneralizationFactor();
     }
 
+    @Override
     public double getGeneralizationSuppressionFactor() {
         return defaultMetric.getGeneralizationSuppressionFactor();
     }
-    
+
+    @Override
     public double getSuppressionFactor() {
         return defaultMetric.getSuppressionFactor();
     }
