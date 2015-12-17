@@ -78,6 +78,9 @@ public class KMap extends ImplicitPrivacyCriterion {
     /** The selected estimator */
     private final Estimator          estimator;
                                      
+    /** The actual type I error. */
+    private double                   errorType1;
+                                     
     /**
      * Creates a new instance of the k-map criterion as proposed by Latanya Sweeney
      * @param k
@@ -135,6 +138,14 @@ public class KMap extends ImplicitPrivacyCriterion {
      */
     public int getDerivedK() {
         return this.derivedK;
+    }
+    
+    /**
+     * Returns the calculated type I error.
+     * @return
+     */
+    public double getErrorType1() {
+        return this.errorType1;
     }
     
     /**
@@ -274,6 +285,7 @@ public class KMap extends ImplicitPrivacyCriterion {
             value = distribution.cumulativeProbability(counter);
             counter++;
         }
+        this.errorType1 = 1d - value;
         return counter + 1;
     }
     
@@ -296,6 +308,7 @@ public class KMap extends ImplicitPrivacyCriterion {
             value = distribution.cumulativeProbability(counter) / v2;
             counter++;
         }
+        this.errorType1 = 1d - value;
         return counter + 1;
     }
 }
