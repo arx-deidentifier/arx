@@ -577,9 +577,9 @@ public class __MetricV2 {
      */
     public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, boolean monotonic, AggregateFunction function) {
         if (monotonic) {
-            return new MetricMDNUEntropyPotentiallyPrecomputed(0.5d, threshold, function);
+            return new MetricMDNUEntropyPotentiallyPrecomputed(threshold, 0.5d, function);
         } else {
-            return new MetricMDNUNMEntropyPotentiallyPrecomputed(0.5d, threshold, function);
+            return new MetricMDNUNMEntropyPotentiallyPrecomputed(threshold, 0.5d, function);
         }
     }
 
