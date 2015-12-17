@@ -421,7 +421,14 @@ public class ARXResult {
                 outliers++;
             }
         }
+        
+        // Check minimal group size
         if (config.getMinimalGroupSize() != Integer.MAX_VALUE && outliers < config.getMinimalGroupSize()) {
+            return false;
+        }
+        
+        // Check, if there are any outliers
+        if (outliers == 0) {
             return false;
         }
         
