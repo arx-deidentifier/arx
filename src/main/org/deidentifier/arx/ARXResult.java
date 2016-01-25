@@ -408,8 +408,8 @@ public class ARXResult {
         }
         
         // Check if optimizable
-        PrivacyCriterion nonOptimizable = getNonOptimizableCriterion();
-        if (nonOptimizable != null) {
+        String error = isOptimizable();
+        if (error != null) {
             return false;
         }
 
@@ -506,9 +506,9 @@ public class ARXResult {
         }
         
         // Check if only optimizable criteria are configured
-        PrivacyCriterion notOptimizable = getNonOptimizableCriterion();
-        if (notOptimizable != null) {
-            throw new UnsupportedOperationException("This method does currently not supported the model: " +notOptimizable.getClass().getSimpleName());
+        String error = isOptimizable();
+        if (error != null) {
+            throw new UnsupportedOperationException(error);
         }
 
         // We are now ready, to go
@@ -707,24 +707,6 @@ public class ARXResult {
     }
     
     /**
-     * Returns the first privacy criterion which is not optimizable. Returns null if none found.
-     * @return
-     */
-    private PrivacyCriterion getNonOptimizableCriterion() {
-        Set<Class<?>> supportedModels = getOptimizablePrivacyModels();
-        for (PrivacyCriterion c : config.getCriteria()) {
-            if (!supportedModels.contains(c.getClass())) {
-                return c;
-            } else if (c instanceof KMap) {
-                if (((KMap) c).isAccurate()) {
-                    return c;
-                }
-            }
-        }
-        return null;
-    }
-    
-    /**
      * Returns a set of classes of privacy models that may be optimized
      * @return
      */
@@ -740,6 +722,30 @@ public class ARXResult {
         result.add(EqualDistanceTCloseness.class);
         result.add(Inclusion.class);
         return result;
+    }
+    
+    /**
+     * Returns an error message, if the current result is not optimizable, null if it is.
+     * @return
+     */
+    private String isOptimizable() {
+        PrivacyCriterion invalid = null;
+        Set<Class<?>> supportedModels = getOptimizablePrivacyModels();
+        for (PrivacyCriterion c : config.getCriteria()) {
+            if (!supportedModels.contains(c.getClass())) {
+                invalid = c;
+                break;
+            } else if (c instanceof KMap) {
+                if (((KMap) c).isAccurate()) {
+                    invalid = c;
+                    break;
+                }
+            }
+        }
+        if (invalid == null) {
+            return null;
+        }
+        return "This method does currently not supported the privacy model: " +invalid.getClass().getSimpleName();
     }
     
     /**
