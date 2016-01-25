@@ -19,7 +19,7 @@ package org.deidentifier.arx.gui.model;
 
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.KMap;
-import org.deidentifier.arx.criteria.KMap.Estimator;
+import org.deidentifier.arx.criteria.KMap.CellSizeEstimator;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -41,7 +41,7 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
 	private double significanceLevel = 0.01d;
 
 	/** The estimator */
-    private Estimator estimator;
+    private CellSizeEstimator estimator;
     
 	/**
 	 * Creates a new instance
@@ -92,7 +92,7 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
      * Returns the estimator.
      * @return
      */
-    public Estimator getEstimator() {
+    public CellSizeEstimator getEstimator() {
         return estimator;
     }
 
@@ -134,7 +134,7 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
      * Sets the used estimator.
      * @param estimator
      */
-    public void setEstimator(Estimator estimator) {
+    public void setEstimator(CellSizeEstimator estimator) {
        this.estimator = estimator;
     }
 

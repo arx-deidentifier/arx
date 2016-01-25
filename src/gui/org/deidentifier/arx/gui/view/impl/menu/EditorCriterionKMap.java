@@ -114,12 +114,12 @@ public class EditorCriterionKMap extends EditorCriterion<ModelKMapCriterion> {
                     labelSignificanceLevel.setEnabled(false);
                     break;
                 case 1:
-                    model.setEstimator(KMap.Estimator.POISSON);
+                    model.setEstimator(KMap.CellSizeEstimator.POISSON);
                     knobSignificanceLevel.setEnabled(true);
                     labelSignificanceLevel.setEnabled(true);
                     break;
                 case 2:
-                    model.setEstimator(KMap.Estimator.ZERO_TRUNCATED_POISSON);
+                    model.setEstimator(KMap.CellSizeEstimator.ZERO_TRUNCATED_POISSON);
                     knobSignificanceLevel.setEnabled(true);
                     labelSignificanceLevel.setEnabled(true);
                     break;
