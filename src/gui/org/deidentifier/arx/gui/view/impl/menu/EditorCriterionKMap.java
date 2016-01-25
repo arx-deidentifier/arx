@@ -99,10 +99,12 @@ public class EditorCriterionKMap extends EditorCriterion<ModelKMapCriterion> {
         });
         
         Label lblModel = new Label(group, SWT.NONE);
-        lblModel.setText("Estimator:");
+        lblModel.setText(Resources.getMessage("EditorCriterionKMap.0")); //$NON-NLS-1$
         
         cmbModel = new Combo(group, SWT.READ_ONLY);
-        cmbModel.setItems(new String[] { "None", "Poisson", "Zero-truncated Poisson" });
+        cmbModel.setItems(new String[] { Resources.getMessage("EditorCriterionKMap.1"), //$NON-NLS-1$
+                                         Resources.getMessage("EditorCriterionKMap.2"), //$NON-NLS-1$
+                                         Resources.getMessage("EditorCriterionKMap.3") }); //$NON-NLS-1$
         cmbModel.select(0);
         cmbModel.addSelectionListener(new SelectionAdapter() {
             @Override
