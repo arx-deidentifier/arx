@@ -131,7 +131,7 @@ public class KMap extends ImplicitPrivacyCriterion {
         this.significaneLevel = significanceLevel;
         this.estimator = estimator;
         if ((estimator == null) && (this.subset == null)) {
-            throw new IllegalArgumentException("If no estimator is defined a subset has to be provided!");
+            throw new IllegalArgumentException("If no estimator is defined a subset has to be provided.");
         }
     }
     
