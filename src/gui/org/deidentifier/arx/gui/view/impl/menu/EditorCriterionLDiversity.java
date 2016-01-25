@@ -44,7 +44,9 @@ import de.linearbits.swt.widgets.Knob;
 public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCriterion> {
 
     /**  View */
-    private static final String VARIANTS[] = { Resources.getMessage("CriterionDefinitionView.6"), Resources.getMessage("CriterionDefinitionView.7"), Resources.getMessage("CriterionDefinitionView.8") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    private static final String VARIANTS[] = { Resources.getMessage("CriterionDefinitionView.6"), //$NON-NLS-1$ 
+                                               Resources.getMessage("CriterionDefinitionView.7"), //$NON-NLS-1$ 
+                                               Resources.getMessage("CriterionDefinitionView.8") };  //$NON-NLS-1$ 
 
     /** View */
     private Knob<Integer>       knobL;
