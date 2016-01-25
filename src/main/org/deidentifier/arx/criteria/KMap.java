@@ -79,7 +79,7 @@ public class KMap extends ImplicitPrivacyCriterion {
     private int                      derivedK;
 
     /** The significance level */
-    private final double             significaneLevel;
+    private final double             significanceLevel;
 
     /** The population model */
     private final ARXPopulationModel populationModel;
@@ -128,7 +128,7 @@ public class KMap extends ImplicitPrivacyCriterion {
         if ((significanceLevel < 0) || (significanceLevel > 1d)) {
             throw new IllegalArgumentException("Significance level has to be between 0 and 1.");
         }
-        this.significaneLevel = significanceLevel;
+        this.significanceLevel = significanceLevel;
         this.estimator = estimator;
         if ((estimator == null) && (this.subset == null)) {
             throw new IllegalArgumentException("If no estimator is defined a subset has to be provided.");
@@ -191,7 +191,7 @@ public class KMap extends ImplicitPrivacyCriterion {
      * @return
      */
     public double getSignificanceLevel() {
-        return this.significaneLevel;
+        return this.significanceLevel;
     }
     
     /**
@@ -273,7 +273,7 @@ public class KMap extends ImplicitPrivacyCriterion {
      */
     private int calculateKPoisson(double lambda) {
         
-        final double threshold = 1d - this.significaneLevel;
+        final double threshold = 1d - this.significanceLevel;
         final PoissonDistribution distribution = new PoissonDistribution(lambda);
         int counter = 0;
         double value = 0;
@@ -295,7 +295,7 @@ public class KMap extends ImplicitPrivacyCriterion {
      */
     private int calculateKZeroPoisson(double lambda) {
         
-        final double threshold = 1d - this.significaneLevel;
+        final double threshold = 1d - this.significanceLevel;
         final PoissonDistribution distribution = new PoissonDistribution(lambda);
         final double v2 = 1d - distribution.cumulativeProbability(0);
         int counter = 0;
