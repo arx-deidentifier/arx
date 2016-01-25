@@ -98,10 +98,13 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
         if (isPopulation) {
             
             Label lblModel = new Label(group, SWT.NONE);
-            lblModel.setText("Model:");
+            lblModel.setText(Resources.getMessage("EditorCriterionRiskBased.0")); //$NON-NLS-1$
             
             cmbModel = new Combo(group, SWT.READ_ONLY);
-            cmbModel.setItems(new String[]{"Dankar", "Pitman", "Zayatz", "SNB"});
+            cmbModel.setItems(new String[]{Resources.getMessage("EditorCriterionRiskBased.1"), //$NON-NLS-1$
+                                           Resources.getMessage("EditorCriterionRiskBased.2"), //$NON-NLS-1$
+                                           Resources.getMessage("EditorCriterionRiskBased.3"), //$NON-NLS-1$
+                                           Resources.getMessage("EditorCriterionRiskBased.4")}); //$NON-NLS-1$
             cmbModel.select(0);
             cmbModel.addSelectionListener(new SelectionAdapter() {
                 @Override
