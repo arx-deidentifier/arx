@@ -74,6 +74,8 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         this.defaultMetric = defaultMetric;
         this.precomputedMetric = precomputedMetric;
     }
+    
+    
 
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
@@ -84,6 +86,8 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         }
     }
 
+
+
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         if (precomputed) {
@@ -92,7 +96,9 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
             return defaultMetric.createMinInformationLoss();
         }
     }
-    
+
+
+
     @Override
     public AggregateFunction getAggregateFunction() {
         if (precomputed) {
@@ -100,6 +106,21 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         } else {
             return defaultMetric.getAggregateFunction();
         }
+    }
+
+    @Override
+    public double getGeneralizationFactor() {
+        return defaultMetric.getGeneralizationFactor();
+    }
+
+    @Override
+    public double getGeneralizationSuppressionFactor() {
+        return defaultMetric.getGeneralizationSuppressionFactor();
+    }
+
+    @Override
+    public double getSuppressionFactor() {
+        return defaultMetric.getSuppressionFactor();
     }
     
     @Override
@@ -118,19 +139,19 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     }
 
     @Override
+    protected InformationLossWithBound<AbstractILMultiDimensional>
+            getInformationLossInternal(Transformation node, HashGroupify groupify) {
+        return precomputed ? precomputedMetric.getInformationLoss(node, groupify) : 
+                             defaultMetric.getInformationLoss(node, groupify);
+    }
+
+    @Override
     protected InformationLossWithBound<AbstractILMultiDimensional> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         if (precomputed) {
             return precomputedMetric.getInformationLoss(node, entry);
         } else {
             return defaultMetric.getInformationLoss(node, entry);
         }
-    }
-
-    @Override
-    protected InformationLossWithBound<AbstractILMultiDimensional>
-            getInformationLossInternal(Transformation node, HashGroupify groupify) {
-        return precomputed ? precomputedMetric.getInformationLoss(node, groupify) : 
-                             defaultMetric.getInformationLoss(node, groupify);
     }
 
     @Override

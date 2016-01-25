@@ -61,7 +61,7 @@ public class ARXResult {
     private ARXNode                bufferLockedByNode   = null;
 
     /** The node checker. */
-    private final NodeChecker     checker;
+    private final NodeChecker      checker;
 
     /** The config. */
     private final ARXConfiguration config;
@@ -102,17 +102,17 @@ public class ARXResult {
      * @param time
      * @param solutionSpace
      */
-    public ARXResult(       final DataHandle handle,
-                            final DataDefinition definition,
-                            final ARXLattice lattice,
-                            final int historySize,
-                            final double snapshotSizeSnapshot,
-                            final double snapshotSizeDataset,
-                            final Metric<?> metric,
-                            final ARXConfiguration config,
-                            final ARXNode optimum,
-                            final long time,
-                            final SolutionSpace solutionSpace) {
+    public ARXResult(final DataHandle handle,
+                     final DataDefinition definition,
+                     final ARXLattice lattice,
+                     final int historySize,
+                     final double snapshotSizeSnapshot,
+                     final double snapshotSizeDataset,
+                     final Metric<?> metric,
+                     final ARXConfiguration config,
+                     final ARXNode optimum,
+                     final long time,
+                     final SolutionSpace solutionSpace) {
 
         // Set registry and definition
         ((DataHandleInput)handle).setDefinition(definition);
@@ -420,7 +420,14 @@ public class ARXResult {
                 outliers++;
             }
         }
+        
+        // Check minimal group size
         if (config.getMinimalGroupSize() != Integer.MAX_VALUE && outliers < config.getMinimalGroupSize()) {
+            return false;
+        }
+        
+        // Check, if there are any outliers
+        if (outliers == 0) {
             return false;
         }
         
@@ -688,7 +695,6 @@ public class ARXResult {
                     optimized = Integer.MAX_VALUE;
                 }
             }
-            
             iterations++;
         }
     }
