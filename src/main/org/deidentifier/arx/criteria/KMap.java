@@ -189,14 +189,8 @@ public class KMap extends ImplicitPrivacyCriterion {
             return ARXConfiguration.REQUIREMENT_COUNTER |
                    ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
         } else {
-            switch (this.estimator) {
-            case POISSON:
-            case ZERO_TRUNCATED_POISSON:
-                // Requires only one counter
-                return ARXConfiguration.REQUIREMENT_COUNTER;
-            default:
-                throw new IllegalArgumentException("Should not happen!");
-            }
+            // Requires only one counter
+            return ARXConfiguration.REQUIREMENT_COUNTER;
         }
     }
     
@@ -225,6 +219,7 @@ public class KMap extends ImplicitPrivacyCriterion {
             // TODO: consider subset/inclusion
             double samplingFraction = this.populationModel.getSamplingFraction(manager.getDataGeneralized().getDataLength());
             
+            // Derive k
             switch (this.estimator) {
             case POISSON:
                 this.derivedK = calculateKPoisson(samplingFraction * this.k);
