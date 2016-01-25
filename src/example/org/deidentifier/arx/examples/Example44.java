@@ -22,7 +22,6 @@ import java.io.IOException;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
-import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
@@ -78,7 +77,7 @@ public class Example44 extends Example {
         data.getDefinition().setAttributeType("gender", gender);
         data.getDefinition().setAttributeType("zipcode", zipcode);
         
-        ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.NONE);
+        ARXPopulationModel populationmodel = ARXPopulationModel.create(0.1d);
         
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
