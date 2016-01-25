@@ -88,7 +88,7 @@ public class KMap extends ImplicitPrivacyCriterion {
     private final CellSizeEstimator  estimator;
 
     /** The actual type I error. */
-    private double                   errorType1;
+    private double                   type1Error;
   
     /**
      * Creates a new instance of the k-map criterion as proposed by Latanya Sweeney
@@ -150,14 +150,6 @@ public class KMap extends ImplicitPrivacyCriterion {
     }
     
     /**
-     * Returns the calculated type I error.
-     * @return
-     */
-    public double getErrorType1() {
-        return this.errorType1;
-    }
-    
-    /**
      * Returns the specified estimator.
      * @return
      */
@@ -209,6 +201,14 @@ public class KMap extends ImplicitPrivacyCriterion {
      */
     public DataSubset getSubset() {
         return this.subset;
+    }
+    
+    /**
+     * Returns the calculated type I error.
+     * @return
+     */
+    public double getType1Error() {
+        return this.type1Error;
     }
     
     @Override
@@ -282,7 +282,7 @@ public class KMap extends ImplicitPrivacyCriterion {
             value = distribution.cumulativeProbability(counter);
             counter++;
         }
-        this.errorType1 = 1d - value;
+        this.type1Error = 1d - value;
         return counter + 1;
     }
     
@@ -305,7 +305,7 @@ public class KMap extends ImplicitPrivacyCriterion {
             value = distribution.cumulativeProbability(counter) / v2;
             counter++;
         }
-        this.errorType1 = 1d - value;
+        this.type1Error = 1d - value;
         return counter + 1;
     }
 }
