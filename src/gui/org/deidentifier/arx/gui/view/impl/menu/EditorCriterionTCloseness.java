@@ -44,7 +44,8 @@ import de.linearbits.swt.widgets.Knob;
 public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCriterion> {
 
     /**  View */
-    private static final String VARIANTS[] = {Resources.getMessage("CriterionDefinitionView.9"), Resources.getMessage("CriterionDefinitionView.10") }; //$NON-NLS-1$ //$NON-NLS-2$
+    private static final String VARIANTS[] = {Resources.getMessage("CriterionDefinitionView.9"), //$NON-NLS-1$
+                                              Resources.getMessage("CriterionDefinitionView.10") }; //$NON-NLS-1$
 
     /** View */
     private Knob<Double>        knobT;
