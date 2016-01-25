@@ -268,8 +268,8 @@ public class ViewPropertiesOutput extends ViewProperties {
                 Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { Resources.getMessage("PropertiesView.132") }); //$NON-NLS-1$ //$NON-NLS-2$
                 new Property(n, Resources.getMessage("PropertiesView.53"), new String[] { SWTUtil.getPrettyString(criterion.getK())}); //$NON-NLS-1$
                 if (!criterion.isAccurate()) {
-                    new Property(n, Resources.getMessage("PropertiesView.147"), new String[] { SWTUtil.getPrettyString(criterion.getSignificanceLevel()) }); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.146"), new String[] { SWTUtil.getPrettyString(criterion.getDerivedK()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.147"), new String[] { SWTUtil.getPrettyString(criterion.getSignificanceLevel()) }); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.148"), new String[] { SWTUtil.getPrettyString(criterion.getType1Error()) }); //$NON-NLS-1$
                 }
             }
