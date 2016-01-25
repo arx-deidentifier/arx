@@ -49,7 +49,14 @@ import org.deidentifier.arx.examples.Example34;
 import org.deidentifier.arx.examples.Example35;
 import org.deidentifier.arx.examples.Example36;
 import org.deidentifier.arx.examples.Example37;
+import org.deidentifier.arx.examples.Example38;
+import org.deidentifier.arx.examples.Example39;
 import org.deidentifier.arx.examples.Example4;
+import org.deidentifier.arx.examples.Example40;
+import org.deidentifier.arx.examples.Example41;
+import org.deidentifier.arx.examples.Example42;
+import org.deidentifier.arx.examples.Example43;
+import org.deidentifier.arx.examples.Example44;
 import org.deidentifier.arx.examples.Example5;
 import org.deidentifier.arx.examples.Example6;
 import org.deidentifier.arx.examples.Example7;
@@ -454,7 +461,33 @@ public class TestExamples {
             Assert.fail();
         }
     }
-    
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample38() {
+        try {
+            Example38.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample39() {
+        try {
+            Example39.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
     /**
      * Perform unit test based on the example
      */
@@ -462,6 +495,71 @@ public class TestExamples {
     public void testExample4() {
         try {
             Example4.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample40() {
+        try {
+            Example40.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample41() {
+        try {
+            Example41.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample42() {
+        try {
+            Example42.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample43() {
+        try {
+            Example43.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample44() {
+        try {
+            Example44.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
