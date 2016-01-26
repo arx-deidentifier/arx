@@ -46,50 +46,50 @@ public class KMap extends ImplicitPrivacyCriterion {
      * @author Fabian Prasser
      */
     public enum CellSizeEstimator {
-        
-        /** Poisson distribution*/
+                                   
+                                   /** Poisson distribution */
         POISSON("Poisson"),
-        /** Truncate-at-zero Poisson distribution*/
+                                   /** Truncate-at-zero Poisson distribution */
         ZERO_TRUNCATED_POISSON("Zero-truncated Poisson");
-
-        /** Label*/
+        
+        /** Label */
         private String label;
-
-        /** Creates a new instance*/
+        
+        /** Creates a new instance */
         CellSizeEstimator(String label) {
             this.label = label;
         }
-
+        
         @Override
         public String toString() {
             return this.label;
         }
     }
-
+    
     /** SVUID */
     private static final long        serialVersionUID = -6966985761538810077L;
-
+                                                      
     /** K */
     private final int                k;
-
+                                     
     /** A compressed representation of the research subset. */
     private DataSubset               subset;
-
+                                     
     /** The parameter k'. */
     private int                      derivedK;
-
+                                     
     /** The significance level */
     private final double             significanceLevel;
-
+                                     
     /** The population model */
     private final ARXPopulationModel populationModel;
-
+                                     
     /** The selected estimator */
     private final CellSizeEstimator  estimator;
-
+                                     
     /** The actual type I error. */
     private double                   type1Error;
-  
+                                     
     /**
      * Creates a new instance of the k-map criterion as proposed by Latanya Sweeney
      * @param k
@@ -297,15 +297,16 @@ public class KMap extends ImplicitPrivacyCriterion {
         
         final double threshold = 1d - this.significanceLevel;
         final PoissonDistribution distribution = new PoissonDistribution(lambda);
-        final double v2 = 1d - distribution.cumulativeProbability(0);
-        int counter = 0;
-        double value = 0;
+        final double v2 = 1d - distribution.probability(0);
+        int counter = 1;
+        double value = 0d;
         while (value < threshold) {
-            // value += ((Math.pow(lambda, counter)) / (Math.exp(lambda) - 1)) * ArithmeticUtils.factorial(counter);
-            value = distribution.cumulativeProbability(counter) / v2;
+            // value2 += ((Math.pow(lambda, counter)) / (Math.exp(lambda) - 1)) * ArithmeticUtils.factorial(counter);
+            value += distribution.probability(counter) / v2;
             counter++;
         }
         this.type1Error = 1d - value;
-        return counter + 1;
+        return counter;
     }
+    
 }
