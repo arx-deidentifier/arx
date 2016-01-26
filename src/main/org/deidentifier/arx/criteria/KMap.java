@@ -29,10 +29,10 @@ import org.deidentifier.arx.framework.data.DataManager;
  * <br>
  * Additionally to explicitly providing data about the underlying population, cell sizes can be can be estimated with
  * the D3 (Poisson) and D4 (zero-truncated Poisson) estimators proposed in:<br>
- * K. El Emam and F. Dankar, "Protecting privacy using k-anonymity" JAMIA, vol. 15, no. 5, pp. 627–637, 2008.<br>
+ * K. El Emam and F. Dankar, "Protecting privacy using k-anonymity" JAMIA, vol. 15, no. 5, pp. 627-637, 2008.<br>
  * <br>
  * The estimator D3 was first published in:<br>
- * J. Pannekoek, "Statistical methods for some simple disclosure limitation rules," Statistica Neerlandica, vol. 53, no. 1, pp. 55–67, 1999.
+ * J. Pannekoek, "Statistical methods for some simple disclosure limitation rules," Statistica Neerlandica, vol. 53, no. 1, pp. 55-67, 1999.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
