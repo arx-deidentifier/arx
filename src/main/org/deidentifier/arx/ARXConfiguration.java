@@ -485,6 +485,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * - All privacy models will be cloned<br>
      * - Subsets in d-presence will be projected accordingly<br>
      * - Utility measures will be cloned<br>
+     * - Replaces estimated k-map with according k-anonymity<br>
      * @param gsFactor 
      *
      * @return
@@ -501,9 +502,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
                 clone = new DPresence(((DPresence)criterion).getDMin(),
                                       ((DPresence)criterion).getDMax(),
                                       ((DPresence)criterion).getSubset().getSubsetInstance(rowset));
-            } else if (criterion instanceof KMap && ((KMap)criterion).isAccurate()) {
-                clone = new KMap(((KMap)criterion).getK(),
-                                 ((KMap)criterion).getSubset().getSubsetInstance(rowset));
+            } else if (criterion instanceof KMap) {
+                if (((KMap) criterion).isAccurate()) {
+                    clone = new KMap(((KMap) criterion).getK(),
+                                     ((KMap) criterion).getSubset().getSubsetInstance(rowset));
+                } else {
+                    // Replace estimated k-map with according k-anonymity.
+                    // This prohibits the re-calculation of k' if local recoding is applied.
+                    clone = new KAnonymity(((KMap) criterion).getDerivedK());
+                }
             } else {
                 clone = criterion.clone();
             }
