@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../org/deidentifier/arx/criteria/KAnonymity.html" title="class in org.deidentifier.arx.criteria"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../org/deidentifier/arx/criteria/LDiversity.html" title="class in org.deidentifier.arx.criteria"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?org/deidentifier/arx/criteria/KMap.html" target="_top">Frames</a></li>
@@ -59,7 +59,7 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
@@ -110,7 +110,14 @@
 <br>
 <pre>public class <span class="strong">KMap</span>
 extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ImplicitPrivacyCriterion</a></pre>
-<div class="block">The k-map criterion as proposed by Latanya Sweeney</div>
+<div class="block">This class implements the k-map privacy model as proposed by Latanya Sweeney.<br>
+ <br>
+ Additionally to explicitly providing data about the underlying population, cell sizes can be can be estimated with
+ the D3 (Poisson) and D4 (zero-truncated Poisson) estimators proposed in:<br>
+ K. El Emam and F. Dankar, "Protecting privacy using k-anonymity" JAMIA, vol. 15, no. 5, pp. 627-637, 2008.<br>
+ <br>
+ The estimator D3 was first published in:<br>
+ J. Pannekoek, "Statistical methods for some simple disclosure limitation rules," Statistica Neerlandica, vol. 53, no. 1, pp. 55-67, 1999.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../serialized-form.html#org.deidentifier.arx.criteria.KMap">Serialized Form</a></dd></dl>
 </li>
 </ul>
@@ -118,6 +125,27 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested_class_summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria">KMap.CellSizeEstimator</a></strong></code>
+<div class="block">Estimators for cell sizes in the population.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_summary">
@@ -133,6 +161,21 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#KMap(int,%20org.deidentifier.arx.DataSubset)">KMap</a></strong>(int&nbsp;k,
     <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>
 <div class="block">Creates a new instance of the k-map criterion as proposed by Latanya Sweeney</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#KMap(int,%20double,%20org.deidentifier.arx.ARXPopulationModel)">KMap</a></strong>(int&nbsp;k,
+    double&nbsp;significanceLevel,
+    <a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;populationModel)</code>
+<div class="block">Creates a new instance of the criterion.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#KMap(int,%20double,%20org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.criteria.KMap.CellSizeEstimator)">KMap</a></strong>(int&nbsp;k,
+    double&nbsp;significanceLevel,
+    <a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;populationModel,
+    <a href="../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria">KMap.CellSizeEstimator</a>&nbsp;estimator)</code>
+<div class="block">Creates a new instance of the criterion.</div>
 </td>
 </tr>
 </table>
@@ -158,14 +201,38 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getDerivedK()">getDerivedK</a></strong>()</code>
+<div class="block">Returns the derived parameter k.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria">KMap.CellSizeEstimator</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getEstimator()">getEstimator</a></strong>()</code>
+<div class="block">Returns the specified estimator.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getK()">getK</a></strong>()</code>
 <div class="block">Returns k.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getPopulationModel()">getPopulationModel</a></strong>()</code>
+<div class="block">Returns the population model.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getRequirements()">getRequirements</a></strong>()</code>
 <div class="block">Returns the criterion's requirements.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getSignificanceLevel()">getSignificanceLevel</a></strong>()</code>
+<div class="block">Returns the specified significance level.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -175,9 +242,21 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getType1Error()">getType1Error</a></strong>()</code>
+<div class="block">Returns the calculated type I error.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>
 <div class="block">Override this to initialize the criterion.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#isAccurate()">isAccurate</a></strong>()</code>
+<div class="block">Return true if the population has been modeled explicitly.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -224,13 +303,38 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <a name="KMap(int, org.deidentifier.arx.DataSubset)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>KMap</h4>
 <pre>public&nbsp;KMap(int&nbsp;k,
     <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</pre>
 <div class="block">Creates a new instance of the k-map criterion as proposed by Latanya Sweeney</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>k</code> - </dd><dd><code>subset</code> - Research subset</dd></dl>
+</li>
+</ul>
+<a name="KMap(int, double, org.deidentifier.arx.ARXPopulationModel)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>KMap</h4>
+<pre>public&nbsp;KMap(int&nbsp;k,
+    double&nbsp;significanceLevel,
+    <a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;populationModel)</pre>
+<div class="block">Creates a new instance of the criterion. Using the Poisson estimator.</div>
+</li>
+</ul>
+<a name="KMap(int, double, org.deidentifier.arx.ARXPopulationModel, org.deidentifier.arx.criteria.KMap.CellSizeEstimator)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>KMap</h4>
+<pre>public&nbsp;KMap(int&nbsp;k,
+    double&nbsp;significanceLevel,
+    <a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;populationModel,
+    <a href="../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria">KMap.CellSizeEstimator</a>&nbsp;estimator)</pre>
+<div class="block">Creates a new instance of the criterion.</div>
 </li>
 </ul>
 </li>
@@ -241,6 +345,43 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="clone()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clone</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/criteria/KMap.html" title="class in org.deidentifier.arx.criteria">KMap</a>&nbsp;clone()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">PrivacyCriterion</a></code></strong></div>
+<div class="block">Clone</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">clone</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getDerivedK()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDerivedK</h4>
+<pre>public&nbsp;int&nbsp;getDerivedK()</pre>
+<div class="block">Returns the derived parameter k.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getEstimator()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEstimator</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria">KMap.CellSizeEstimator</a>&nbsp;getEstimator()</pre>
+<div class="block">Returns the specified estimator.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getK()">
 <!--   -->
 </a>
@@ -249,6 +390,17 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <h4>getK</h4>
 <pre>public&nbsp;int&nbsp;getK()</pre>
 <div class="block">Returns k.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getPopulationModel()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPopulationModel</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;getPopulationModel()</pre>
+<div class="block">Returns the population model.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -267,6 +419,17 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getSignificanceLevel()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSignificanceLevel</h4>
+<pre>public&nbsp;double&nbsp;getSignificanceLevel()</pre>
+<div class="block">Returns the specified significance level.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getSubset()">
 <!--   -->
 </a>
@@ -275,6 +438,17 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <h4>getSubset</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;getSubset()</pre>
 <div class="block">Returns the research subset.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getType1Error()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getType1Error</h4>
+<pre>public&nbsp;double&nbsp;getType1Error()</pre>
+<div class="block">Returns the calculated type I error.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -291,6 +465,18 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dt><strong>Overrides:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="isAccurate()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isAccurate</h4>
+<pre>public&nbsp;boolean&nbsp;isAccurate()</pre>
+<div class="block">Return true if the population has been modeled explicitly.
+ This implies that no approximation is performed.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">
@@ -311,7 +497,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <a name="toString()">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>toString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
@@ -320,21 +506,6 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="clone()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>clone</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/criteria/KMap.html" title="class in org.deidentifier.arx.criteria">KMap</a>&nbsp;clone()</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">PrivacyCriterion</a></code></strong></div>
-<div class="block">Clone</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">clone</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -365,7 +536,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../org/deidentifier/arx/criteria/KAnonymity.html" title="class in org.deidentifier.arx.criteria"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../org/deidentifier/arx/criteria/LDiversity.html" title="class in org.deidentifier.arx.criteria"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?org/deidentifier/arx/criteria/KMap.html" target="_top">Frames</a></li>
@@ -389,7 +560,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>

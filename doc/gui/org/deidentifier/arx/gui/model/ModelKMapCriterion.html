@@ -110,7 +110,7 @@
 <br>
 <pre>public class <span class="strong">ModelKMapCriterion</span>
 extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelImplicitCriterion</a></pre>
-<div class="block">This class implements a model for the d-presence criterion.</div>
+<div class="block">This class implements a model for the k-map criterion.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../serialized-form.html#org.deidentifier.arx.gui.model.ModelKMapCriterion">Serialized Form</a></dd></dl>
 </li>
 </ul>
@@ -167,15 +167,27 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria">KMap.CellSizeEstimator</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelKMapCriterion.html#getEstimator()">getEstimator</a></strong>()</code>
+<div class="block">Returns the estimator.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelKMapCriterion.html#getK()">getK</a></strong>()</code>
 <div class="block">Returns k.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelKMapCriterion.html#getLabel()">getLabel</a></strong>()</code>
 <div class="block">Implement this to return a string representation.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelKMapCriterion.html#getSignificanceLevel()">getSignificanceLevel</a></strong>()</code>
+<div class="block">Returns the significance level.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -187,8 +199,20 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelKMapCriterion.html#setEstimator(org.deidentifier.arx.criteria.KMap.CellSizeEstimator)">setEstimator</a></strong>(<a href="../../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria">KMap.CellSizeEstimator</a>&nbsp;estimator)</code>
+<div class="block">Sets the used estimator.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelKMapCriterion.html#setK(int)">setK</a></strong>(int&nbsp;k)</code>
 <div class="block">Sets k.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelKMapCriterion.html#setSignificanceLevel(double)">setSignificanceLevel</a></strong>(double&nbsp;significanceLevel)</code>
+<div class="block">Sets the significance level.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -285,6 +309,28 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getSignificanceLevel()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSignificanceLevel</h4>
+<pre>public&nbsp;double&nbsp;getSignificanceLevel()</pre>
+<div class="block">Returns the significance level.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getEstimator()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEstimator</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria">KMap.CellSizeEstimator</a>&nbsp;getEstimator()</pre>
+<div class="block">Returns the estimator.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getK()">
 <!--   -->
 </a>
@@ -325,6 +371,28 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion,%20boolean)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
 <dd><code>_default</code> - Defines whether the model represents a typical parameter configuration for the criterion</dd></dl>
+</li>
+</ul>
+<a name="setSignificanceLevel(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setSignificanceLevel</h4>
+<pre>public&nbsp;void&nbsp;setSignificanceLevel(double&nbsp;significanceLevel)</pre>
+<div class="block">Sets the significance level.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>significanceLevel</code> - </dd></dl>
+</li>
+</ul>
+<a name="setEstimator(org.deidentifier.arx.criteria.KMap.CellSizeEstimator)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setEstimator</h4>
+<pre>public&nbsp;void&nbsp;setEstimator(<a href="../../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria">KMap.CellSizeEstimator</a>&nbsp;estimator)</pre>
+<div class="block">Sets the used estimator.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>estimator</code> - </dd></dl>
 </li>
 </ul>
 <a name="setK(int)">

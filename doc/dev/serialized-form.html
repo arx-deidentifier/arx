@@ -1636,10 +1636,35 @@
 <pre>int k</pre>
 <div class="block">K</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>subset</h4>
 <pre><a href="org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a> subset</pre>
 <div class="block">A compressed representation of the research subset.</div>
+</li>
+<li class="blockList">
+<h4>derivedK</h4>
+<pre>int derivedK</pre>
+<div class="block">The parameter k'.</div>
+</li>
+<li class="blockList">
+<h4>significanceLevel</h4>
+<pre>double significanceLevel</pre>
+<div class="block">The significance level</div>
+</li>
+<li class="blockList">
+<h4>populationModel</h4>
+<pre><a href="org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a> populationModel</pre>
+<div class="block">The population model</div>
+</li>
+<li class="blockList">
+<h4>estimator</h4>
+<pre><a href="org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria">KMap.CellSizeEstimator</a> estimator</pre>
+<div class="block">The selected estimator</div>
+</li>
+<li class="blockListLast">
+<h4>type1Error</h4>
+<pre>double type1Error</pre>
+<div class="block">The actual type I error.</div>
 </li>
 </ul>
 </li>
@@ -2083,10 +2108,25 @@
 <pre>boolean independent</pre>
 <div class="block">Is the metric independent?.</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>monotonic</h4>
 <pre>boolean monotonic</pre>
 <div class="block">Is the metric monotonic?.</div>
+</li>
+<li class="blockList">
+<h4>gFactor</h4>
+<pre>java.lang.Double gFactor</pre>
+<div class="block">Configuration factor.</div>
+</li>
+<li class="blockList">
+<h4>gsFactor</h4>
+<pre>java.lang.Double gsFactor</pre>
+<div class="block">Configuration factor.</div>
+</li>
+<li class="blockListLast">
+<h4>sFactor</h4>
+<pre>java.lang.Double sFactor</pre>
+<div class="block">Configuration factor.</div>
 </li>
 </ul>
 </li>
@@ -2955,17 +2995,17 @@
 <li class="blockList">
 <h4>gFactor</h4>
 <pre>double gFactor</pre>
-<div class="block">Configuration factor.</div>
+<div class="block">TODO: We must override this for backward compatibility. Remove, when re-implemented.</div>
 </li>
 <li class="blockList">
 <h4>gsFactor</h4>
 <pre>double gsFactor</pre>
-<div class="block">Configuration factor.</div>
+<div class="block">TODO: We must override this for backward compatibility. Remove, when re-implemented.</div>
 </li>
 <li class="blockListLast">
 <h4>sFactor</h4>
 <pre>double sFactor</pre>
-<div class="block">Configuration factor.</div>
+<div class="block">TODO: We must override this for backward compatibility. Remove, when re-implemented.</div>
 </li>
 </ul>
 </li>
