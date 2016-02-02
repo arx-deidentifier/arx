@@ -1019,6 +1019,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (this.containsCriterion(EDDifferentialPrivacy.class)) {
             k = Math.max(k, this.getCriterion(EDDifferentialPrivacy.class).getK());
         }
+        
+        if (this.containsCriterion(KMap.class)) {
+            KMap kMap = this.getCriterion(KMap.class);
+            if (!kMap.isAccurate()) {
+                k = Math.max(k, kMap.getDerivedK());
+            }
+        }
 
         if (this.containsCriterion(LDiversity.class)) {
             for (LDiversity c : this.getCriteria(LDiversity.class)) {
