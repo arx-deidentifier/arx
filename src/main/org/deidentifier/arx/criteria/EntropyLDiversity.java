@@ -33,9 +33,6 @@ public class EntropyLDiversity extends LDiversity {
 
     /** Helper. */
     private final double        logL;
-    
-    /** Helper. */
-    private static final double log2             = Math.log(2);
 
     /**
      * Creates a new instance of the entropy l-diversity criterion as proposed in:
@@ -48,7 +45,7 @@ public class EntropyLDiversity extends LDiversity {
      */
     public EntropyLDiversity(String attribute, double l){
         super(attribute, l, false, true);
-        logL = Math.log(l) / Math.log(2d);
+        logL = Math.log(l);
     }
 
     @Override
@@ -67,12 +64,12 @@ public class EntropyLDiversity extends LDiversity {
         for (int i = 0; i < buckets.length; i += 2) {
             if (buckets[i] != -1) { // bucket not empty
                 final double frequency = buckets[i + 1];
-                sum1 += frequency * log2(frequency);
+                sum1 += frequency * Math.log(frequency);
                 total += frequency;
             }
         }
 
-        final double val = -((sum1 / total) - log2(total));
+        final double val = Math.log(total) - (sum1 / total);
 
         // check
         return val >= logL;
@@ -82,16 +79,6 @@ public class EntropyLDiversity extends LDiversity {
 	public String toString() {
 		return "entropy-"+l+"-diversity for attribute '"+attribute+"'";
 	}
-    
-	/**
-     * Computes log 2.
-     *
-     * @param num
-     * @return
-     */
-    private final double log2(final double num) {
-        return Math.log(num) / log2;
-    }
 
     @Override
     public EntropyLDiversity clone() {
