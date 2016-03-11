@@ -115,7 +115,7 @@ public class TestRiskMetrics {
      */
     @Test
     public void testAverageRisk2() throws IOException {
-        Data data = getDataObject("../arx-data/data-junit/adult.csv");
+        Data data = getDataObject("./data/adult.csv");
         // Risk before anonymization
         double risk = data.getHandle().getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedReidentificationRisk().getAverageRisk();
         assertTrue("Is: " + risk, risk == 0.6465751607983555d);
@@ -167,7 +167,7 @@ public class TestRiskMetrics {
     @Test
     public void testDecisionRule2() throws IOException {
         
-        Data data = getDataObject("../arx-data/data-junit/adult.csv");
+        Data data = getDataObject("./data/adult.csv");
         DataHandle handle = data.getHandle();
         
         RiskModelPopulationUniqueness model = handle.getRiskEstimator(ARXPopulationModel.create(0.1d)).getPopulationBasedUniquenessRisk();
@@ -231,7 +231,7 @@ public class TestRiskMetrics {
      */
     @Test
     public void testHighestIndividualRisk2() throws IOException {
-        Data data = getDataObject("../arx-data/data-junit/adult.csv");
+        Data data = getDataObject("./data/adult.csv");
         // Risk before anonymization
         assertTrue(data.getHandle().getRiskEstimator(ARXPopulationModel.create(0.1d)).getSampleBasedReidentificationRisk().getHighestRisk() == 1.0d);
         

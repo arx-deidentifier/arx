@@ -98,7 +98,7 @@ public class TestMicroaggregation extends AbstractTest {
      */
     @Test
     public void testMicroaggregationAdult() throws IOException {
-        Data data = getDataObject("../arx-data/data-junit/adult.csv");
+        Data data = getDataObject("./data/adult.csv");
         
         data.getDefinition().setAttributeType("age", MicroAggregationFunction.createArithmeticMean());
         data.getDefinition().setDataType("age", DataType.INTEGER);
@@ -110,7 +110,7 @@ public class TestMicroaggregation extends AbstractTest {
         config.setMetric(Metric.createLossMetric(AggregateFunction.RANK));
         
         ARXResult result = anonymizer.anonymize(data, config);
-        DataHandle exptectedOutput = Data.create("../arx-data/data-junit/adult_age_microaggregated.csv", ';').getHandle();
+        DataHandle exptectedOutput = Data.create("./data/adult_age_microaggregated.csv", ';').getHandle();
         
         DataHandle output = result.getOutput();
         for (int i = 0; i < output.getNumRows(); i++) {
