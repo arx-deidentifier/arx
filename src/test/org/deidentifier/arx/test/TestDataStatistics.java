@@ -36,12 +36,57 @@ import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * 
  */
 public class TestDataStatistics extends AbstractTest {
+    
+    class DoubleArrayWrapper {
+        
+        double[] values;
+        
+        public DoubleArrayWrapper(double[] values) {
+            this.values = values;
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            DoubleArrayWrapper other = (DoubleArrayWrapper) obj;
+            if (!getOuterType().equals(other.getOuterType())) {
+                return false;
+            }
+            if (!Arrays.equals(this.values, other.values)) {
+                return false;
+            }
+            return true;
+        }
+        
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = (prime * result) + getOuterType().hashCode();
+            result = (prime * result) + Arrays.hashCode(this.values);
+            return result;
+        }
+        
+        private TestDataStatistics getOuterType() {
+            return TestDataStatistics.this;
+        }
+        
+    }
     
     /**
      * 
@@ -52,15 +97,15 @@ public class TestDataStatistics extends AbstractTest {
     @Test
     public void testContingency1() throws IllegalArgumentException, IOException {
         
-        provider.createDataDefinition();
-        provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
+        this.provider.createDataDefinition();
+        this.provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
         
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXResult result = anonymizer.anonymize(provider.getData(), config);
+        ARXResult result = anonymizer.anonymize(this.provider.getData(), config);
         
         // Define
         StatisticsContingencyTable contingency;
@@ -69,11 +114,11 @@ public class TestDataStatistics extends AbstractTest {
         double[][] frequencies;
         
         // Check input
-        contingency = provider.getData()
-                              .getHandle()
-                              .getStatistics()
-                              .getContingencyTable(0, true, 2, true);
-                              
+        contingency = this.provider.getData()
+                                   .getHandle()
+                                   .getStatistics()
+                                   .getContingencyTable(0, true, 2, true);
+                                   
         values1 = new String[] { "34", "45", "66", "70" };
         values2 = new String[] { "81667", "81675", "81925", "81931" };
         assertTrue(Arrays.equals(values1, contingency.values1));
@@ -87,7 +132,7 @@ public class TestDataStatistics extends AbstractTest {
                                        { 1, 3, 0.14285714285714285 },
                                        { 0, 3, 0.14285714285714285 } };
                                        
-        assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
+        deepEqualsWithoutOrder(contingencyToArray(contingency), frequencies);
         
         // Check output
         contingency = result.getOutput(false)
@@ -104,7 +149,7 @@ public class TestDataStatistics extends AbstractTest {
                                        { 1, 1, 0.42857142857142855 },
                                        { 0, 1, 0.2857142857142857 } };
                                        
-        assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
+        deepEqualsWithoutOrder(contingencyToArray(contingency), frequencies);
     }
     
     /**
@@ -116,14 +161,14 @@ public class TestDataStatistics extends AbstractTest {
     @Test
     public void testContingency2() throws IllegalArgumentException, IOException {
         
-        provider.createDataDefinition();
-        provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
+        this.provider.createDataDefinition();
+        this.provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
         
         // Subset
         Set<Integer> set = new HashSet<Integer>();
         set.add(0);
         set.add(6);
-        DataSubset subset = DataSubset.create(provider.getData(), set);
+        DataSubset subset = DataSubset.create(this.provider.getData(), set);
         
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
@@ -131,7 +176,7 @@ public class TestDataStatistics extends AbstractTest {
         config.setMaxOutliers(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXResult result = anonymizer.anonymize(provider.getData(), config);
+        ARXResult result = anonymizer.anonymize(this.provider.getData(), config);
         
         // Define
         StatisticsContingencyTable contingency;
@@ -140,7 +185,7 @@ public class TestDataStatistics extends AbstractTest {
         double[][] frequencies;
         
         // Check input
-        contingency = provider.getData().getHandle().getView().getStatistics().getContingencyTable(0, true, 2, true);
+        contingency = this.provider.getData().getHandle().getView().getStatistics().getContingencyTable(0, true, 2, true);
         
         values1 = new String[] { "34", "45" };
         values2 = new String[] { "81667", "81931" };
@@ -151,7 +196,7 @@ public class TestDataStatistics extends AbstractTest {
                                        { 0, 0, 0.5 },
                                        { 1, 1, 0.5 } };
                                        
-        assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
+        deepEqualsWithoutOrder(contingencyToArray(contingency), frequencies);
         
         // Check output
         contingency = result.getOutput(false).getView().getStatistics().getContingencyTable(0, true, 2, true);
@@ -163,7 +208,7 @@ public class TestDataStatistics extends AbstractTest {
         
         frequencies = new double[][] { { 0, 0, 1.0 } };
         
-        assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
+        deepEqualsWithoutOrder(contingencyToArray(contingency), frequencies);
     }
     
     /**
@@ -175,15 +220,15 @@ public class TestDataStatistics extends AbstractTest {
     @Test
     public void testDistribution1() throws IllegalArgumentException, IOException {
         
-        provider.createDataDefinition();
-        provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
+        this.provider.createDataDefinition();
+        this.provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
         
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXResult result = anonymizer.anonymize(provider.getData(), config);
+        ARXResult result = anonymizer.anonymize(this.provider.getData(), config);
         
         // Define
         StatisticsFrequencyDistribution distribution;
@@ -191,7 +236,7 @@ public class TestDataStatistics extends AbstractTest {
         double[] frequency;
         
         // Check input
-        distribution = provider.getData().getHandle().getStatistics().getFrequencyDistribution(0, true);
+        distribution = this.provider.getData().getHandle().getStatistics().getFrequencyDistribution(0, true);
         values = new String[] { "34", "45", "66", "70" };
         frequency = new double[] { 0.2857142857142857, 0.2857142857142857, 0.14285714285714285, 0.2857142857142857 };
         assertTrue(Arrays.equals(values, distribution.values));
@@ -214,15 +259,15 @@ public class TestDataStatistics extends AbstractTest {
     @Test
     public void testDistribution2() throws IllegalArgumentException, IOException {
         
-        provider.createDataDefinition();
-        provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
+        this.provider.createDataDefinition();
+        this.provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
         
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXResult result = anonymizer.anonymize(provider.getData(), config);
+        ARXResult result = anonymizer.anonymize(this.provider.getData(), config);
         
         // Define
         StatisticsFrequencyDistribution distribution;
@@ -230,7 +275,7 @@ public class TestDataStatistics extends AbstractTest {
         double[] frequency;
         
         // Check input
-        distribution = provider.getData().getHandle().getStatistics().getFrequencyDistribution(1, false);
+        distribution = this.provider.getData().getHandle().getStatistics().getFrequencyDistribution(1, false);
         values = new String[] { "female", "male" };
         frequency = new double[] { 0.42857142857142855, 0.5714285714285714 };
         assertTrue(Arrays.equals(values, distribution.values));
@@ -258,5 +303,24 @@ public class TestDataStatistics extends AbstractTest {
             list.add(new double[] { e.value1, e.value2, e.frequency });
         }
         return list.toArray(new double[][] {});
+    }
+    
+    private void deepEqualsWithoutOrder(double[][] expected, double[][] actual) {
+        
+        if (expected.length != actual.length) {
+            Assert.fail("Size does not match.");
+        }
+        
+        Set<DoubleArrayWrapper> frequencies = new HashSet<DoubleArrayWrapper>();
+        for (int i = 0; i < expected.length; i++) {
+            frequencies.add(new DoubleArrayWrapper(expected[i]));
+        }
+        
+        // Check
+        for (int j = 0; j < actual.length; j++) {
+            if (!frequencies.contains(new DoubleArrayWrapper(actual[j]))) {
+                Assert.fail("Frequency not expected.");
+            }
+        }
     }
 }
