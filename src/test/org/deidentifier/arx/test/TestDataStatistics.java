@@ -36,7 +36,6 @@ import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -124,15 +123,14 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(values1, contingency.values1));
         assertTrue(Arrays.equals(values2, contingency.values2));
         
-        frequencies = new double[][] {
-                                       { 0, 0, 0.14285714285714285 },
+        frequencies = new double[][] { { 0, 0, 0.14285714285714285 },
                                        { 1, 1, 0.14285714285714285 },
                                        { 2, 2, 0.14285714285714285 },
                                        { 3, 3, 0.2857142857142857 },
                                        { 1, 3, 0.14285714285714285 },
                                        { 0, 3, 0.14285714285714285 } };
-                                       
-        deepEqualsWithoutOrder(contingencyToArray(contingency), frequencies);
+                           
+        assertTrue("Unexpected result", deepEquals(toArray(contingency), frequencies));
         
         // Check output
         contingency = result.getOutput(false)
@@ -144,12 +142,11 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(values1, contingency.values1));
         assertTrue(Arrays.equals(values2, contingency.values2));
         
-        frequencies = new double[][] {
-                                       { 0, 0, 0.2857142857142857 },
+        frequencies = new double[][] { { 0, 0, 0.2857142857142857 },
                                        { 1, 1, 0.42857142857142855 },
                                        { 0, 1, 0.2857142857142857 } };
-                                       
-        deepEqualsWithoutOrder(contingencyToArray(contingency), frequencies);
+        
+        assertTrue("Unexpected result", deepEquals(toArray(contingency), frequencies));
     }
     
     /**
@@ -192,11 +189,10 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(values1, contingency.values1));
         assertTrue(Arrays.equals(values2, contingency.values2));
         
-        frequencies = new double[][] {
-                                       { 0, 0, 0.5 },
+        frequencies = new double[][] { { 0, 0, 0.5 },
                                        { 1, 1, 0.5 } };
-                                       
-        deepEqualsWithoutOrder(contingencyToArray(contingency), frequencies);
+        
+        assertTrue("Unexpected result", deepEquals(toArray(contingency), frequencies));
         
         // Check output
         contingency = result.getOutput(false).getView().getStatistics().getContingencyTable(0, true, 2, true);
@@ -207,8 +203,7 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(values2, contingency.values2));
         
         frequencies = new double[][] { { 0, 0, 1.0 } };
-        
-        deepEqualsWithoutOrder(contingencyToArray(contingency), frequencies);
+        assertTrue("Unexpected result", deepEquals(toArray(contingency), frequencies));
     }
     
     /**
@@ -290,12 +285,41 @@ public class TestDataStatistics extends AbstractTest {
     }
     
     /**
+     * Checks the two arrays regarding equality, treating a double[][]
+     * as a set of comparable double[]'s
      * 
-     *
+     * @param set1
+     * @param set2
+     */
+    private boolean deepEquals(double[][] set1, double[][] set2) {
+        
+        if (set1.length != set2.length) {
+            return false;
+        }
+        
+        Set<DoubleArrayWrapper> frequencies = new HashSet<DoubleArrayWrapper>();
+        for (int i = 0; i < set1.length; i++) {
+            frequencies.add(new DoubleArrayWrapper(set1[i]));
+        }
+        
+        // Check
+        for (int j = 0; j < set2.length; j++) {
+            if (!frequencies.contains(new DoubleArrayWrapper(set2[j]))) {
+                return false;
+            }
+        }
+        
+        // They are equal
+        return true;
+    }
+    
+    /**
+     * Converts a contigency table to an array
+     * 
      * @param contingency
      * @return
      */
-    private double[][] contingencyToArray(StatisticsContingencyTable contingency) {
+    private double[][] toArray(StatisticsContingencyTable contingency) {
         
         List<double[]> list = new ArrayList<double[]>();
         while (contingency.iterator.hasNext()) {
@@ -303,24 +327,5 @@ public class TestDataStatistics extends AbstractTest {
             list.add(new double[] { e.value1, e.value2, e.frequency });
         }
         return list.toArray(new double[][] {});
-    }
-    
-    private void deepEqualsWithoutOrder(double[][] expected, double[][] actual) {
-        
-        if (expected.length != actual.length) {
-            Assert.fail("Size does not match.");
-        }
-        
-        Set<DoubleArrayWrapper> frequencies = new HashSet<DoubleArrayWrapper>();
-        for (int i = 0; i < expected.length; i++) {
-            frequencies.add(new DoubleArrayWrapper(expected[i]));
-        }
-        
-        // Check
-        for (int j = 0; j < actual.length; j++) {
-            if (!frequencies.contains(new DoubleArrayWrapper(actual[j]))) {
-                Assert.fail("Frequency not expected.");
-            }
-        }
     }
 }
