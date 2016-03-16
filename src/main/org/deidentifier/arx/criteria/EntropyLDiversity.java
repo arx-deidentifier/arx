@@ -31,9 +31,6 @@ public class EntropyLDiversity extends LDiversity {
     /**  SVUID */
     private static final long   serialVersionUID = -354688551915634000L;
 
-    /** Helper. */
-    private final double        logL;
-
     /**
      * Creates a new instance of the entropy l-diversity criterion as proposed in:
      * Machanavajjhala A, Kifer D, Gehrke J.
@@ -45,7 +42,6 @@ public class EntropyLDiversity extends LDiversity {
      */
     public EntropyLDiversity(String attribute, double l){
         super(attribute, l, false, true);
-        logL = Math.log(l);
     }
 
     @Override
@@ -57,7 +53,9 @@ public class EntropyLDiversity extends LDiversity {
         if (d.size() < minSize) { return false; }
 
         // Sum of the frequencies in distribution (=number of elements)
-        int total = entry.count;
+        final int total = entry.count;
+        // Sum must stay smaller than this constant term
+        final double C = total * Math.log(total / l);
         double sum1 = 0d;
 
         final int[] buckets = d.getBuckets();
@@ -65,13 +63,13 @@ public class EntropyLDiversity extends LDiversity {
             if (buckets[i] != -1) { // bucket not empty
                 final double frequency = buckets[i + 1];
                 sum1 += frequency * Math.log(frequency);
+                // If the sum grows over C, we can abort the loop earlier.
+                if (C < sum1) { return false; }
             }
         }
 
-        final double val = Math.log(total) - (sum1 / total);
-
-        // check
-        return val >= logL;
+        // If we reach this point, the loop did not return false.
+        return true;
     }
 
 	@Override
