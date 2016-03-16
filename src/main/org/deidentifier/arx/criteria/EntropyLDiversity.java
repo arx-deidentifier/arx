@@ -31,12 +31,6 @@ public class EntropyLDiversity extends LDiversity {
     /**  SVUID */
     private static final long   serialVersionUID = -354688551915634000L;
 
-    /** Helper. */
-    private final double        logL;
-    
-    /** Helper. */
-    private static final double log2             = Math.log(2);
-
     /**
      * Creates a new instance of the entropy l-diversity criterion as proposed in:
      * Machanavajjhala A, Kifer D, Gehrke J.
@@ -48,7 +42,6 @@ public class EntropyLDiversity extends LDiversity {
      */
     public EntropyLDiversity(String attribute, double l){
         super(attribute, l, false, true);
-        logL = Math.log(l) / Math.log(2d);
     }
 
     @Override
@@ -60,38 +53,29 @@ public class EntropyLDiversity extends LDiversity {
         if (d.size() < minSize) { return false; }
 
         // Sum of the frequencies in distribution (=number of elements)
-        double total = 0;
+        final int total = entry.count;
+        // Sum must stay smaller than this constant term
+        final double C = total * Math.log(total / l);
         double sum1 = 0d;
 
         final int[] buckets = d.getBuckets();
         for (int i = 0; i < buckets.length; i += 2) {
             if (buckets[i] != -1) { // bucket not empty
                 final double frequency = buckets[i + 1];
-                sum1 += frequency * log2(frequency);
-                total += frequency;
+                sum1 += frequency * Math.log(frequency);
+                // If the sum grows over C, we can abort the loop earlier.
+                if (C < sum1) { return false; }
             }
         }
 
-        final double val = -((sum1 / total) - log2(total));
-
-        // check
-        return val >= logL;
+        // If we reach this point, the loop did not return false.
+        return true;
     }
 
 	@Override
 	public String toString() {
 		return "entropy-"+l+"-diversity for attribute '"+attribute+"'";
 	}
-    
-	/**
-     * Computes log 2.
-     *
-     * @param num
-     * @return
-     */
-    private final double log2(final double num) {
-        return Math.log(num) / log2;
-    }
 
     @Override
     public EntropyLDiversity clone() {
