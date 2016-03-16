@@ -57,7 +57,7 @@ public class EntropyLDiversity extends LDiversity {
         if (d.size() < minSize) { return false; }
 
         // Sum of the frequencies in distribution (=number of elements)
-        double total = 0;
+        int total = entry.count;
         double sum1 = 0d;
 
         final int[] buckets = d.getBuckets();
@@ -65,7 +65,6 @@ public class EntropyLDiversity extends LDiversity {
             if (buckets[i] != -1) { // bucket not empty
                 final double frequency = buckets[i + 1];
                 sum1 += frequency * Math.log(frequency);
-                total += frequency;
             }
         }
 
