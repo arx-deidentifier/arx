@@ -53,6 +53,11 @@ public abstract class PrivacyCriterion implements Serializable{
     }
     
     /**
+     * Clone
+     */
+    public abstract PrivacyCriterion clone();
+    
+    /**
      * Returns the criterion's requirements.
      *
      * @return
@@ -76,6 +81,12 @@ public abstract class PrivacyCriterion implements Serializable{
      */
     public abstract boolean isAnonymous(HashGroupifyEntry entry);
 
+    /**
+     * Returns whether the criterion supports local recoding.
+     * @return
+     */
+    public abstract boolean isLocalRecodingSupported();
+    
     /**
      * Returns whether the criterion is monotonic with generalization.
      * @return
@@ -112,9 +123,4 @@ public abstract class PrivacyCriterion implements Serializable{
      * @return
      */
     public abstract String toString();
-    
-    /**
-     * Clone
-     */
-    public abstract PrivacyCriterion clone();
 }

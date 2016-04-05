@@ -19,22 +19,11 @@ package org.deidentifier.arx;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.deidentifier.arx.ARXAnonymizer.Result;
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.criteria.DDisclosurePrivacy;
-import org.deidentifier.arx.criteria.DistinctLDiversity;
-import org.deidentifier.arx.criteria.EntropyLDiversity;
-import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
-import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
-import org.deidentifier.arx.criteria.Inclusion;
-import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
@@ -712,23 +701,6 @@ public class ARXResult {
         return result;
     }
     
-    /**
-     * Returns a set of classes of privacy models that may be optimized
-     * @return
-     */
-    private Set<Class<?>> getOptimizablePrivacyModels() {
-        Set<Class<?>> result = new HashSet<Class<?>>();
-        result.add(KAnonymity.class);
-        result.add(KMap.class);
-        result.add(DDisclosurePrivacy.class);
-        result.add(DistinctLDiversity.class);
-        result.add(RecursiveCLDiversity.class);
-        result.add(EntropyLDiversity.class);
-        result.add(HierarchicalDistanceTCloseness.class);
-        result.add(EqualDistanceTCloseness.class);
-        result.add(Inclusion.class);
-        return result;
-    }
     
     /**
      * Returns an error message, if the current result is not optimizable, null if it is.
@@ -736,22 +708,16 @@ public class ARXResult {
      */
     private String isOptimizable() {
         PrivacyCriterion invalid = null;
-        Set<Class<?>> supportedModels = getOptimizablePrivacyModels();
         for (PrivacyCriterion c : config.getCriteria()) {
-            if (!supportedModels.contains(c.getClass())) {
+            if (!c.isLocalRecodingSupported()) {
                 invalid = c;
                 break;
-            } else if (c instanceof KMap) {
-                if (((KMap) c).isAccurate()) {
-                    invalid = c;
-                    break;
-                }
             }
         }
         if (invalid == null) {
             return null;
         }
-        return "This method does currently not supported the privacy model: " +invalid.getClass().getSimpleName();
+        return "This method does currently not supported the privacy model: " + invalid.getClass().getSimpleName();
     }
     
     /**

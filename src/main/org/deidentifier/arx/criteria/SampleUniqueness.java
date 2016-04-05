@@ -38,6 +38,16 @@ public class SampleUniqueness extends RiskBasedCriterion{
     public SampleUniqueness(double riskThreshold){
         super(true, true, riskThreshold);
     }
+    
+    @Override
+    public SampleUniqueness clone() {
+        return new SampleUniqueness(this.getRiskThreshold());
+    }
+
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return false;
+    }
 
     @Override
     public String toString() {
@@ -47,10 +57,5 @@ public class SampleUniqueness extends RiskBasedCriterion{
     @Override
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
         return distribution.getFractionOfTuplesInClassesOfSize(1) <= getRiskThreshold();
-    }
-
-    @Override
-    public SampleUniqueness clone() {
-        return new SampleUniqueness(this.getRiskThreshold());
     }
 }

@@ -44,17 +44,22 @@ public class DistinctLDiversity extends LDiversity{
     }
 
     @Override
+    public DistinctLDiversity clone() {
+        return new DistinctLDiversity(this.getAttribute(), (int)this.getL());
+    }
+
+	@Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         return entry.distributions[index].size() >= minSize; // minSize=(int)l;
     }
 
-	@Override
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return true;
+    }
+
+    @Override
 	public String toString() {
 		return "distinct-"+minSize+"-diversity for attribute '"+attribute+"'";
 	}
-
-    @Override
-    public DistinctLDiversity clone() {
-        return new DistinctLDiversity(this.getAttribute(), (int)this.getL());
-    }
 }

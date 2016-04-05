@@ -39,12 +39,6 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
     /** Log 2. */
     private static final double LOG2             = Math.log(2);
 
-    /** Parameter */
-    private final double        d;
-
-    /** The original distribution. */
-    private double[]            distribution;
-
     /**
      * Computes log 2.
      *
@@ -54,6 +48,12 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
     static final double log2(final double num) {
         return Math.log(num) / LOG2;
     }
+
+    /** Parameter */
+    private final double        d;
+
+    /** The original distribution. */
+    private double[]            distribution;
     
     /**
      * Creates a new instance
@@ -64,6 +64,26 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
     public DDisclosurePrivacy(String attribute, double delta) {
         super(attribute, false, false);
         this.d = delta;
+    }
+
+    @Override
+    public DDisclosurePrivacy clone() {
+        return new DDisclosurePrivacy(this.getAttribute(), this.getD());
+    }
+
+    /**
+     * Returns the parameter delta.
+     *
+     * @return
+     */
+    public double getD(){
+        return d;
+    }
+
+	@Override
+    public int getRequirements(){
+        // Requires a distribution
+        return ARXConfiguration.REQUIREMENT_DISTRIBUTION;
     }
 
     @Override
@@ -99,29 +119,14 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
         // check
         return true;
     }
+    
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return true;
+    }
 
-	@Override
+    @Override
 	public String toString() {
 		return d+"-disclosure privacy for attribute '"+attribute+"'";
 	}
-
-    @Override
-    public DDisclosurePrivacy clone() {
-        return new DDisclosurePrivacy(this.getAttribute(), this.getD());
-    }
-
-    @Override
-    public int getRequirements(){
-        // Requires a distribution
-        return ARXConfiguration.REQUIREMENT_DISTRIBUTION;
-    }
-    
-    /**
-     * Returns the parameter delta.
-     *
-     * @return
-     */
-    public double getD(){
-        return d;
-    }
 }

@@ -48,6 +48,11 @@ public class EqualDistanceTCloseness extends TCloseness {
     }
 
     @Override
+    public EqualDistanceTCloseness clone() {
+        return new EqualDistanceTCloseness(this.getAttribute(), this.getT());
+    }
+    
+    @Override
     public void initialize(DataManager manager) {
         super.initialize(manager);
         distribution = manager.getDistribution(attribute);
@@ -92,12 +97,12 @@ public class EqualDistanceTCloseness extends TCloseness {
     }
 
 	@Override
+    public boolean isLocalRecodingSupported() {
+        return true;
+    }
+
+    @Override
 	public String toString() {
 		return t+"-closeness with equal ground-distance for attribute '"+attribute+"'";
 	}
-
-    @Override
-    public EqualDistanceTCloseness clone() {
-        return new EqualDistanceTCloseness(this.getAttribute(), this.getT());
-    }
 }

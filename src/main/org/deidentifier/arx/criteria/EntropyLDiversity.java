@@ -43,6 +43,11 @@ public class EntropyLDiversity extends LDiversity {
     public EntropyLDiversity(String attribute, double l){
         super(attribute, l, false, true);
     }
+    
+    @Override
+    public EntropyLDiversity clone() {
+        return new EntropyLDiversity(this.getAttribute(), this.getL());
+    }
 
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
@@ -73,12 +78,12 @@ public class EntropyLDiversity extends LDiversity {
     }
 
 	@Override
+    public boolean isLocalRecodingSupported() {
+        return true;
+    }
+
+    @Override
 	public String toString() {
 		return "entropy-"+l+"-diversity for attribute '"+attribute+"'";
 	}
-
-    @Override
-    public EntropyLDiversity clone() {
-        return new EntropyLDiversity(this.getAttribute(), this.getL());
-    }
 }

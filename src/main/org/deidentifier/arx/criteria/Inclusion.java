@@ -54,9 +54,14 @@ public class Inclusion extends DPresence {
     public void initialize(DataManager manager) {
         // Nothing to do
     }
-
+    
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
+        return true;
+    }
+
+    @Override
+    public boolean isLocalRecodingSupported() {
         return true;
     }
 

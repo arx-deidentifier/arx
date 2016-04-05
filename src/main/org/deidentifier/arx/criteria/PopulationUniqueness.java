@@ -103,18 +103,31 @@ public class PopulationUniqueness extends RiskBasedCriterion{
         this.solverConfig = config;
     }
 
+    @Override
+    public PopulationUniqueness clone() {
+        return new PopulationUniqueness(this.getRiskThreshold(),
+                                        this.getStatisticalModel(),
+                                        this.getPopulationModel(),
+                                        this.solverConfig);
+    }
+
     /**
      * @return the populationModel
      */
     public ARXPopulationModel getPopulationModel() {
         return populationModel;
     }
-
+    
     /**
      * @return the statisticalModel
      */
     public PopulationUniquenessModel getStatisticalModel() {
         return statisticalModel;
+    }
+
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return false;
     }
 
     @Override
@@ -150,13 +163,5 @@ public class PopulationUniqueness extends RiskBasedCriterion{
         } else {
             return false;
         }
-    }
-
-    @Override
-    public PopulationUniqueness clone() {
-        return new PopulationUniqueness(this.getRiskThreshold(),
-                                        this.getStatisticalModel(),
-                                        this.getPopulationModel(),
-                                        this.solverConfig);
     }
 }

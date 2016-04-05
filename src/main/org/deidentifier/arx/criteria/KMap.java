@@ -258,6 +258,12 @@ public class KMap extends ImplicitPrivacyCriterion {
     }
     
     @Override
+    public boolean isLocalRecodingSupported() {
+        if (isAccurate()) return false;
+        return true;
+    }
+    
+    @Override
     public String toString() {
         String value = "(" + this.k + ")-map";
         if (this.estimator != null) {
@@ -285,7 +291,7 @@ public class KMap extends ImplicitPrivacyCriterion {
         this.type1Error = 1d - value;
         return counter + 1;
     }
-    
+
     /**
      * Calculates k, based on Zero-truncated Poisson distribution.
      * https://en.wikipedia.org/wiki/Zero-truncated_Poisson_distribution

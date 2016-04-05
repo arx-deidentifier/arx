@@ -49,6 +49,11 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
         this.k = k;
     }
 
+    @Override
+    public KAnonymity clone() {
+        return new KAnonymity(this.getK());
+    }
+
     /**
      * Returns the parameter k.
      *
@@ -63,19 +68,19 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
         // Requires only one counter
         return ARXConfiguration.REQUIREMENT_COUNTER;
     }
-
-    @Override
+    
+	@Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         throw new RuntimeException("This should never be called!");
     }
-    
-	@Override
+
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return true;
+    }
+
+    @Override
 	public String toString() {
 		return k+"-anonymity";
 	}
-
-    @Override
-    public KAnonymity clone() {
-        return new KAnonymity(this.getK());
-    }
 }

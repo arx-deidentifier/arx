@@ -40,6 +40,16 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
     }
 
     @Override
+    public AverageReidentificationRisk clone() {
+        return new AverageReidentificationRisk(this.getRiskThreshold());
+    }
+    
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "(<"+getRiskThreshold()+")-avg-reidentification-risk";
     }
@@ -47,10 +57,5 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
     @Override
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
         return 1.0d / (double)distribution.getAverageClassSize() <= getRiskThreshold();
-    }
-
-    @Override
-    public AverageReidentificationRisk clone() {
-        return new AverageReidentificationRisk(this.getRiskThreshold());
     }
 }

@@ -59,6 +59,11 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
         this.hierarchy = h;
     }
 
+    @Override
+    public HierarchicalDistanceTCloseness clone() {
+        return new HierarchicalDistanceTCloseness(this.getAttribute(), this.getT(), this.hierarchy);
+    }
+    
     /**
      * Returns the hierarchy backing the EMD calculations.
      *
@@ -159,12 +164,12 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
     }
     
 	@Override
+    public boolean isLocalRecodingSupported() {
+        return true;
+    }
+
+    @Override
 	public String toString() {
 		return t+"-closeness with hierarchical ground-distance for attribute '"+attribute+"'";
 	}
-
-    @Override
-    public HierarchicalDistanceTCloseness clone() {
-        return new HierarchicalDistanceTCloseness(this.getAttribute(), this.getT(), this.hierarchy);
-    }
 }

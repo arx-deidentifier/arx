@@ -74,6 +74,11 @@ public class DPresence extends ImplicitPrivacyCriterion{
         this.subset = subset;
     }
         
+    @Override
+    public DPresence clone() {
+        return new DPresence(this.getDMin(), this.getDMax(), this.getSubset().clone());
+    }
+    
     /**
      * Returns dMax.
      *
@@ -120,12 +125,12 @@ public class DPresence extends ImplicitPrivacyCriterion{
     }
     
 	@Override
+    public boolean isLocalRecodingSupported() {
+        return false;
+    }
+
+    @Override
 	public String toString() {
 		return "("+dMin+","+dMax+")-presence";
 	}
-
-    @Override
-    public DPresence clone() {
-        return new DPresence(this.getDMin(), this.getDMax(), this.getSubset().clone());
-    }
 }

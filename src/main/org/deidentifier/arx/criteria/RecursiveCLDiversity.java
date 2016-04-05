@@ -50,6 +50,13 @@ public class RecursiveCLDiversity extends LDiversity{
         super(attribute, l, false, true);
         this.c = c;
     }
+    
+    @Override
+    public RecursiveCLDiversity clone() {
+        return new RecursiveCLDiversity(this.getAttribute(),
+                                        this.getC(),
+                                        (int)this.getL());
+    }
 
     /**
      * Returns the parameter c.
@@ -93,14 +100,12 @@ public class RecursiveCLDiversity extends LDiversity{
     }
     
 	@Override
+    public boolean isLocalRecodingSupported() {
+        return true;
+    }
+
+    @Override
 	public String toString() {
 		return "recursive-("+c+","+minSize+")-diversity for attribute '"+attribute+"'";
 	}
-
-    @Override
-    public RecursiveCLDiversity clone() {
-        return new RecursiveCLDiversity(this.getAttribute(),
-                                        this.getC(),
-                                        (int)this.getL());
-    }
 }
