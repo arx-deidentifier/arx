@@ -226,18 +226,15 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
          * @param dataset
          * @param sensitiveAttribute
          * @param hashcode
-         * @param optimizable
          */
         public ARXAnonymizationTestCase(final ARXConfiguration config,
                                         final String dataset,
                                         final String sensitiveAttribute,
-                                        final int hashcode,
-                                        final boolean optimizable) {
+                                        final int hashcode) {
             this.config = config;
             this.dataset = dataset;
             this.sensitiveAttribute = sensitiveAttribute;
             this.hashcode = hashcode;
-            this.optimizable = optimizable;
         }
 
         @Override
