@@ -397,11 +397,12 @@ public class ARXResult {
         }
         
         // Check if optimizable
-        String error = isOptimizable();
-        if (error != null) {
-            return false;
+        for (PrivacyCriterion c : config.getCriteria()) {
+            if (!c.isLocalRecodingSupported()) {
+                return false;
+            }
         }
-
+        
         // Check, if there are enough outliers
         int outliers = 0;
         for (int row = 0; row < output.getNumRows(); row++) {
@@ -483,14 +484,29 @@ public class ARXResult {
      */
     public int optimize(DataHandle handle, double gsFactor, ARXListener listener) throws RollbackRequiredException {
         
+        // Check if null
+        if (listener == null) {
+            throw new NullPointerException("Listener must not be null");
+        }
+        
+        // Check if null
+        if (handle == null) {
+            throw new NullPointerException("Handle must not be null");
+        }
 
+        // Check bounds
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");
         }
         
-        // Check, if output
+        // Check if output
         if (!(handle instanceof DataHandleOutput)) {
-            throw new IllegalArgumentException("Can only be applied to output data");
+            throw new IllegalArgumentException("Local recoding can only be applied to output data");
+        }
+        
+        // Check if optimizable
+        if (!isOptimizable(handle)) {
+            return 0;
         }
         
         // Extract
@@ -501,12 +517,6 @@ public class ARXResult {
             throw new IllegalArgumentException("This output data is associated to the correct input data");
         }
         
-        // Check if only optimizable criteria are configured
-        String error = isOptimizable();
-        if (error != null) {
-            throw new UnsupportedOperationException(error);
-        }
-
         // We are now ready, to go
         // Collect input and row indices
         RowSet rowset = RowSet.create(output.getNumRows());
@@ -699,25 +709,6 @@ public class ARXResult {
             result.put(key, definition.getMicroAggregationFunction(key).getFunction());
         }
         return result;
-    }
-    
-    
-    /**
-     * Returns an error message, if the current result is not optimizable, null if it is.
-     * @return
-     */
-    private String isOptimizable() {
-        PrivacyCriterion invalid = null;
-        for (PrivacyCriterion c : config.getCriteria()) {
-            if (!c.isLocalRecodingSupported()) {
-                invalid = c;
-                break;
-            }
-        }
-        if (invalid == null) {
-            return null;
-        }
-        return "This method does currently not supported the privacy model: " + invalid.getClass().getSimpleName();
     }
     
     /**
