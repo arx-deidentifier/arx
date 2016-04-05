@@ -267,7 +267,7 @@ public class KMap extends ImplicitPrivacyCriterion {
     public String toString() {
         String value = "(" + this.k + ")-map";
         if (this.estimator != null) {
-            value += "estimated as (" + this.derivedK + ")-anonymity (" + this.estimator + ")";
+            value += " estimated as (" + this.derivedK + ")-anonymity (" + this.estimator + ")";
         }
         return value;
     }
