@@ -42,8 +42,10 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
+import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.junit.Before;
@@ -66,33 +68,29 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
      * @author Florian Kohlmayer
      */
     public static class ARXAnonymizationTestCase {
-        
-        /** TODO */
-        private static int counter;
-        
-        /** TODO */
-        public final int id = counter++;
-        
-        /** TODO */
+
+        /** Random test variable */
+        private static int      counter;
+        /** Random test variable */
+        public final int        id          = counter++;
+        /** Random test variable */
         public ARXConfiguration config;
-        
-        /** TODO */
-        public String dataset;
-        
-        /** TODO */
-        public String sensitiveAttribute;
-        
-        /** TODO */
-        public String optimalInformationLoss;
-        
-        /** TODO */
-        public int[] optimalTransformation;
-        
-        /** TODO */
-        public boolean practical;
-        
-        /** TODO */
-        public int[] statistics;
+        /** Random test variable */
+        public String           dataset;
+        /** Random test variable */
+        public String           sensitiveAttribute;
+        /** Random test variable */
+        public String           optimalInformationLoss;
+        /** Random test variable */
+        public int[]            optimalTransformation;
+        /** Random test variable */
+        public boolean          practical;
+        /** Random test variable */
+        public int[]            statistics;
+        /** Random test variable */
+        public int              hashcode    = -1;
+        /** Random test variable */
+        public boolean          optimizable = false;
         
         /**
          * Creates a new instance.
@@ -222,6 +220,26 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             this.statistics = statistics;
         }
         
+        /**
+         * Constructor for local recoding tests
+         * @param config
+         * @param dataset
+         * @param sensitiveAttribute
+         * @param hashcode
+         * @param optimizable
+         */
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
+                                        final String dataset,
+                                        final String sensitiveAttribute,
+                                        final int hashcode,
+                                        final boolean optimizable) {
+            this.config = config;
+            this.dataset = dataset;
+            this.sensitiveAttribute = sensitiveAttribute;
+            this.hashcode = hashcode;
+            this.optimizable = optimizable;
+        }
+
         @Override
         public String toString() {
             return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
@@ -348,6 +366,13 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         
         // Test or warmup
         ARXResult result = anonymizer.anonymize(data, testCase.config);
+        if (testCase.hashcode != -1) {
+            try {
+                result.optimize(result.getOutput());
+            } catch (RollbackRequiredException e) {
+                throw new RuntimeException(e);
+            }
+        }
         
         // Benchmark
         if (benchmark) {
@@ -365,6 +390,11 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             for (int i = 0; i < REPETITIONS; i++) {
                 data.getHandle().release();
                 result = anonymizer.anonymize(data, testCase.config);
+                try {
+                    result.optimize(result.getOutput());
+                } catch (RollbackRequiredException e) {
+                    throw new RuntimeException(e);
+                }
                 time2 += result.getTime();
             }
             time = (System.currentTimeMillis() - time) / REPETITIONS;
@@ -385,7 +415,24 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             output(line.toString(), path + "/benchmark_" + version + "_" + timestamp + "_" + testClass + ".csv");
         }
         
-        // check if no solution
+        // Check if local recoding experiment
+        if (testCase.hashcode != -1) {
+            
+            // Compute hashcode of result
+            int hashcode = 23;
+            DataHandle handle = result.getOutput();
+            for (int row = 0; row < handle.getNumRows(); row++) {
+                for (int column = 0; column < handle.getNumColumns(); column++) {
+                    hashcode = (37 * hashcode) + handle.getValue(row, column).hashCode();
+                }
+            }
+            
+            // Assert
+            assertEquals("Hash code not equal", hashcode, testCase.hashcode);
+            return;
+        }
+        
+        // Check if no solution
         if (testCase.optimalTransformation == null) {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
