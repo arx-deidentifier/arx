@@ -496,21 +496,17 @@ public class ARXConfiguration implements Serializable, Cloneable {
         HashSet<PrivacyCriterion> criteria = new HashSet<PrivacyCriterion>();
         for (PrivacyCriterion criterion : result.criteria) {
             PrivacyCriterion clone = null;
+            
+            if (!criterion.isLocalRecodingSupported()) {
+                throw new IllegalStateException("Local recoding not supported.");
+            }
+            
             if (criterion instanceof Inclusion) {
-                clone = new Inclusion(((Inclusion)criterion).getSubset().getSubsetInstance(rowset));
-            } else if (criterion instanceof DPresence) {
-                clone = new DPresence(((DPresence)criterion).getDMin(),
-                                      ((DPresence)criterion).getDMax(),
-                                      ((DPresence)criterion).getSubset().getSubsetInstance(rowset));
+                clone = new Inclusion(((Inclusion) criterion).getSubset().getSubsetInstance(rowset));
             } else if (criterion instanceof KMap) {
-                if (((KMap) criterion).isAccurate()) {
-                    clone = new KMap(((KMap) criterion).getK(),
-                                     ((KMap) criterion).getSubset().getSubsetInstance(rowset));
-                } else {
-                    // Replace estimated k-map with according k-anonymity.
-                    // This prohibits the re-calculation of k' if local recoding is applied.
-                    clone = new KAnonymity(((KMap) criterion).getDerivedK());
-                }
+                // Replace estimated k-map with according k-anonymity.
+                // This prohibits the re-calculation of k' if local recoding is applied.
+                clone = new KAnonymity(((KMap) criterion).getDerivedK());
             } else {
                 clone = criterion.clone();
             }
