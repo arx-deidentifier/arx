@@ -138,6 +138,9 @@
                     <include name="**/TestAnonymizationTCloseness.java" />
                     <include name="**/TestAnonymizationCombinations.java" />
                     <include name="**/TestAnonymizationDifferentialPrivacy.java" />
+                    <include name="**/TestAnonymizationKMap.java" />
+                    <include name="**/TestAnonymizationRiskBased.java" />
+                    <include name="**/TestAnonymizationLocalRecoding.java" />
                 </fileset>
                 <formatter type="plain" usefile="false" />
                 <formatter type="xml" />
