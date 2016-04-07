@@ -4,7 +4,7 @@
     <description>Builds, tests, and runs the project.</description>
 
     <!-- defines the version number -->
-    <property name="arx.version" value="3.3.1" />
+    <property name="arx.version" value="3.4.0" />
 
 
     <!-- defines the to be included libraries -->
