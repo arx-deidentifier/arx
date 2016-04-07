@@ -215,6 +215,7 @@ public class MainToolBar extends AbstractMenu {
                     sb.append(Resources.getMessage("MainToolBar.35")) //$NON-NLS-1$
                       .append(this.numTransformationsInfolossAvailable);
                 }
+                sb.append("\n");
             }
             // Render information about the optimum
             if (this.optimum != null) {
