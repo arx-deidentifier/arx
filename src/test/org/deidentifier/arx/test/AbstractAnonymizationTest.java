@@ -68,7 +68,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
      * @author Florian Kohlmayer
      */
     public static class ARXAnonymizationTestCase {
-
+        
         /** Random test variable */
         private static int      counter;
         /** Random test variable */
@@ -91,7 +91,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         public int              hashcode    = -1;
         /** Random test variable */
         public boolean          optimizable = false;
-        
+                                            
         /**
          * Creates a new instance.
          *
@@ -236,7 +236,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             this.sensitiveAttribute = sensitiveAttribute;
             this.hashcode = hashcode;
         }
-
+        
         @Override
         public String toString() {
             return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
@@ -317,11 +317,11 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
     
     /** The test case. */
     protected final ARXAnonymizationTestCase testCase;
-    
+                                             
     /** To access the test name */
     @Rule
-    public TestName name = new TestName();
-    
+    public TestName                          name = new TestName();
+                                                  
     /**
      * Creates a new instance.
      *
@@ -376,7 +376,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             
             String version = System.getProperty("Version");
             String path = System.getProperty("Benchmark");
-            if (path == null || path.length()==0) {
+            if (path == null || path.length() == 0) {
                 path = ".";
             }
             String testClass = this.getClass().getSimpleName();
@@ -387,10 +387,12 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             for (int i = 0; i < REPETITIONS; i++) {
                 data.getHandle().release();
                 result = anonymizer.anonymize(data, testCase.config);
-                try {
-                    result.optimize(result.getOutput());
-                } catch (RollbackRequiredException e) {
-                    throw new RuntimeException(e);
+                if (testCase.hashcode != -1) {
+                    try {
+                        result.optimize(result.getOutput());
+                    } catch (RollbackRequiredException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 time2 += result.getTime();
             }
