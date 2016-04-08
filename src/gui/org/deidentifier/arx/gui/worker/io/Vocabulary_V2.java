@@ -31,8 +31,8 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
     @Override
     public void checkVersion(String version) throws SAXException {
         if (!(version.equals("2.0") || version.startsWith("2.1") || version.startsWith("2.2") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-              || version.startsWith("2.3") || version.startsWith("3.0") || version.startsWith("3.1")
-              || version.startsWith("3.2") || version.startsWith("3.3"))) { //$NON-NLS-1$ //$NON-NLS-2$
+              || version.startsWith("2.3") || version.startsWith("3.0") || version.startsWith("3.1") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              || version.startsWith("3.2") || version.startsWith("3.3") || version.startsWith("3.4"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             throw new SAXException(Resources.getMessage("WorkerLoad.10") + version); //$NON-NLS-1$
         }
     }
