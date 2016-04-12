@@ -211,7 +211,9 @@ public class ARXResult {
     /**
      * Returns a handle to the data obtained by applying the optimal transformation. This method will not copy the buffer, 
      * i.e., only one instance can be obtained for each transformation. All previous handles for output data will be invalidated when a new handle is 
-     * obtained. Use this only if you know exactly what you are doing.
+     * obtained. Use this only if you know exactly what you are doing.<br>
+     * <br>
+     * This method is obsolete. Please use getOutput() instead.
      * 
      * @return
      */
@@ -224,7 +226,10 @@ public class ARXResult {
     /**
      * Returns a handle to data obtained by applying the given transformation. This method will not copy the buffer, 
      * i.e., only one instance can be obtained for each transformation. All previous handles for output data will be invalidated when a new handle is 
-     * obtained. Use this only if you know exactly what you are doing.
+     * obtained. Use this only if you know exactly what you are doing.<br>
+     * <br>
+     * This method is obsolete. Please use getOutput(...) instead.
+     * 
      * @param node the transformation
      * 
      * @return
