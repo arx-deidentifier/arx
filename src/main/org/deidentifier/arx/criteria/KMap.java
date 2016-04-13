@@ -259,7 +259,8 @@ public class KMap extends ImplicitPrivacyCriterion {
     
     @Override
     public boolean isLocalRecodingSupported() {
-        if (isAccurate()) return false;
+        if (isAccurate())
+            return false;
         return true;
     }
     
@@ -287,11 +288,17 @@ public class KMap extends ImplicitPrivacyCriterion {
             // value += (Math.pow(lambda, counter) * Math.exp(-lambda)) / ArithmeticUtils.factorial(counter);
             value = distribution.cumulativeProbability(counter);
             counter++;
+            // Break if the estimated k is equal or greater than the given k, as this makes no sense.
+            if (counter >= this.k) {
+                // We are 100% sure that the dataset fulfills k-map
+                value = 1d;
+                break;
+            }
         }
         this.type1Error = 1d - value;
         return counter + 1;
     }
-
+    
     /**
      * Calculates k, based on Zero-truncated Poisson distribution.
      * https://en.wikipedia.org/wiki/Zero-truncated_Poisson_distribution
@@ -310,6 +317,12 @@ public class KMap extends ImplicitPrivacyCriterion {
             // value2 += ((Math.pow(lambda, counter)) / (Math.exp(lambda) - 1)) * ArithmeticUtils.factorial(counter);
             value += distribution.probability(counter) / v2;
             counter++;
+            // Break if the estimated k is equal or greater than the given k, as this makes no sense.
+            if (counter >= this.k) {
+                // We are 100% sure that the dataset fulfills k-map
+                value = 1d;
+                break;
+            }
         }
         this.type1Error = 1d - value;
         return counter;
