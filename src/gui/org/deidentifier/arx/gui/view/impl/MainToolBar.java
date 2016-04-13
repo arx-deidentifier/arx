@@ -94,7 +94,10 @@ public class MainToolBar extends AbstractMenu {
 
         /** Optimal transformation. */
         private final ARXNode optimum;
-        
+
+        /** Heuristic */
+        private final boolean heuristic;
+
         /**
          * Creates the statistics.
          *
@@ -147,6 +150,7 @@ public class MainToolBar extends AbstractMenu {
             this.numTransformationsProbablyNotAnonymous = probablyNotAnonymous;
             this.numTransformationsInfolossAvailable = infolossAvailable;
             this.optimum = result.getGlobalOptimum();
+            this.heuristic = !result.getLattice().isComplete();
         }
 
         @Override
@@ -220,6 +224,8 @@ public class MainToolBar extends AbstractMenu {
             // Render information about the optimum
             if (this.optimum != null) {
                 sb.append(Resources.getMessage("MainToolBar.36")) //$NON-NLS-1$
+                  .append(Resources.getMessage("MainToolBar.39")) //$NON-NLS-1$
+                  .append(heuristic ? Resources.getMessage("MainToolBar.60") : Resources.getMessage("MainToolBar.61")) //$NON-NLS-1$ //$NON-NLS-2$
                   .append(Resources.getMessage("MainToolBar.37")) //$NON-NLS-1$
                   .append(Arrays.toString(optimum.getTransformation()));
                 sb.append(Resources.getMessage("MainToolBar.38")) //$NON-NLS-1$

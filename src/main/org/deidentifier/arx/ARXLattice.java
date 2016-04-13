@@ -951,7 +951,7 @@ public class ARXLattice implements Serializable {
     }
     
     /**
-     * Is there a unique
+     * Returns whether the search space has been characterized completely
      * @return
      */
     public boolean isComplete() {
