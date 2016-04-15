@@ -92,18 +92,16 @@ public class Example45 extends Example {
         System.out.println("- Input data");
         print(data.getHandle());
         System.out.println("\n- Mixed risks");
-        System.out.println("  * Prosecutor re-identification risk: " + data.getHandle().getRiskEstimator(populationmodel).getMixedReidentificationRisk().getProsecutorRisk());
-        System.out.println("  * Journalist re-identification risk: " + data.getHandle().getRiskEstimator(populationmodel).getMixedReidentificationRisk().getJournalistRisk());
-        System.out.println("  * Marketer re-identification risk: " + data.getHandle().getRiskEstimator(populationmodel).getMixedReidentificationRisk().getMarketerRisk());
+        System.out.println("  * Prosecutor re-identification risk: " + data.getHandle().getRiskEstimator(populationmodel).getSampleBasedReidentificationRisk().getMixedProsecutorRisk());
+        System.out.println("  * Journalist re-identification risk: " + data.getHandle().getRiskEstimator(populationmodel).getSampleBasedReidentificationRisk().getMixedJournalistRisk());
+        System.out.println("  * Marketer re-identification risk: " + data.getHandle().getRiskEstimator(populationmodel).getSampleBasedReidentificationRisk().getMixedMarketerRisk());
         
         // Perform risk analysis
         System.out.println("- Output data");
         print(result.getOutput());
         System.out.println("\n- Mixed risks");
-        System.out.println("  * Prosecutor re-identification risk: " + result.getOutput().getRiskEstimator(populationmodel).getMixedReidentificationRisk().getProsecutorRisk());
-        System.out.println("  * Journalist re-identification risk: " + result.getOutput().getRiskEstimator(populationmodel).getMixedReidentificationRisk().getJournalistRisk());
-        System.out.println("  * Marketer re-identification risk: " + result.getOutput().getRiskEstimator(populationmodel).getMixedReidentificationRisk().getMarketerRisk());
-        
+        System.out.println("  * Prosecutor re-identification risk: " + result.getOutput().getRiskEstimator(populationmodel).getSampleBasedReidentificationRisk().getMixedProsecutorRisk());
+        System.out.println("  * Journalist re-identification risk: " + result.getOutput().getRiskEstimator(populationmodel).getSampleBasedReidentificationRisk().getMixedJournalistRisk());
+        System.out.println("  * Marketer re-identification risk: " + result.getOutput().getRiskEstimator(populationmodel).getSampleBasedReidentificationRisk().getMixedMarketerRisk());
     }
-    
 }

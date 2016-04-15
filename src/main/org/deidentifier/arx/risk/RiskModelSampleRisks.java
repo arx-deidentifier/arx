@@ -17,20 +17,29 @@
 
 package org.deidentifier.arx.risk;
 
+import org.deidentifier.arx.ARXConfiguration;
+
 /**
- * Class for analyzing re-identification risks of the current sample
+ * Class for analyzing re-identification risks of the current sample and mixed
+ * risks which have been derived from privacy models
  * 
  * @author Fabian Prasser
  */
 public class RiskModelSampleRisks extends RiskModelSample {
 
+    /** Configuration */
+    private final ARXConfiguration   config;
+    
     /**
      * Creates a new instance
      * 
      * @param histogram
+     * @param config
      */
-    public RiskModelSampleRisks(RiskModelHistogram histogram) {
+    public RiskModelSampleRisks(RiskModelHistogram histogram,
+                                ARXConfiguration config) {
         super(histogram);
+        this.config = config;
     }
 
     /**
@@ -86,6 +95,30 @@ public class RiskModelSampleRisks extends RiskModelSample {
     }
 
     /**
+     * Return journalist risk threshold, 1 if there is none
+     * @return
+     */
+    public double getMixedJournalistRisk() {
+        return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null ? config.getRiskThresholdJournalist() : 1d);
+    }
+
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getMixedMarketerRisk() {
+        return Math.min(1.0d / getHistogram().getAvgClassSize(), config != null ? config.getRiskThresholdMarketer() : 1d);
+    }
+
+    /**
+     * Return prosecutor risk threshold, 1 if there is none
+     * @return
+     */
+    public double getMixedProsecutorRisk() {
+        return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null ? config.getRiskThresholdProsecutor() : 1d);
+    }
+    
+    /**
      * Returns the number of tuples affected by the highest re-identification
      * risk
      * 
@@ -95,7 +128,7 @@ public class RiskModelSampleRisks extends RiskModelSample {
         int[] classes = getHistogram().getHistogram();
         return (double) classes[0] * (double) classes[1];
     }
-
+    
     /**
      * Returns the number of tuples affected by the lowest re-identification
      * risk

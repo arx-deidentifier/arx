@@ -231,17 +231,6 @@ public class RiskEstimateBuilder {
     }
 
     /**
-     * Returns a class providing access to risk estimates derived from the sample and privacy models
-     * 
-     * @return
-     */
-    public RiskModelMixedRisks getMixedReidentificationRisk() {
-        progress.value = 0;
-        return new RiskModelMixedRisks(getEquivalenceClassModel(),
-                                       arxconfig);
-    }
-
-    /**
      * Returns a class providing access to population-based risk estimates about
      * the attributes. Uses the decision rule by Dankar et al.
      * 
@@ -296,7 +285,7 @@ public class RiskEstimateBuilder {
      */
     public RiskModelSampleRisks getSampleBasedReidentificationRisk() {
         progress.value = 0;
-        return new RiskModelSampleRisks(getEquivalenceClassModel());
+        return new RiskModelSampleRisks(getEquivalenceClassModel(), arxconfig);
     }
 
     /**
