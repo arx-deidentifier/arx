@@ -39,6 +39,43 @@ import com.univocity.parsers.csv.CsvParserSettings;
  * @author Florian Kohlmayer
  */
 public class CSVDataInput {
+    
+    /**
+     * Static helper class for lazy initialization of a read
+     * 
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     */
+    private static class LazyFileReader extends Reader {
+
+        /** Reader */
+        private FileReader reader = null;
+        /** File */
+        private final File file;
+
+        /**
+         * Creates a new instance
+         * 
+         * @param file
+         */
+        public LazyFileReader(File file) {
+            this.file = file;
+        }
+
+        @Override
+        @SuppressWarnings("resource")
+        public int read(char[] cbuf, int off, int len) throws IOException {
+            reader = reader != null ? reader : new FileReader(file);
+            return reader.read(cbuf, off, len);
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
 
     /** A reader. */
     private final Reader            reader;
@@ -109,7 +146,7 @@ public class CSVDataInput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-        this(new FileReader(file), delimiter, quote, escape, linebreak, null);
+        this(new LazyFileReader(file), delimiter, quote, escape, linebreak, null);
     }
 
     /**
@@ -132,7 +169,7 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final File file, final CSVSyntax config, final DataType<T>[] datatype) throws IOException {
-        this(new FileReader(file), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), datatype);
+        this(new LazyFileReader(file), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), datatype);
     }
 
     /**
@@ -319,7 +356,7 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final String filename, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
-        this(new FileReader(new File(filename)), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), datatypes);
+        this(new LazyFileReader(new File(filename)), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), datatypes);
     }
 
     /**
@@ -338,21 +375,31 @@ public class CSVDataInput {
      */
     public Iterator<String[]> iterator() {
 
-        final CsvParser parser = new CsvParser(settings);
-        parser.beginParsing(reader);
-
         return new Iterator<String[]>() {
 
             // Next tuple
-            String[] next = parser.parseNext();
+            CsvParser parser = null;
+            String[] next = null;
+            
+            /** Initializes the parser*/
+            private void initParser() {
+                if (parser == null) {
+                    parser = new CsvParser(settings);
+                    parser.beginParsing(reader);
+                    next = parser.parseNext();
+                }
+            }
 
             @Override
             public boolean hasNext() {
+                initParser();
                 return next != null;
             }
 
             @Override
             public String[] next() {
+                
+                initParser();
                 String[] result = next;
                 next = parser.parseNext();
 
