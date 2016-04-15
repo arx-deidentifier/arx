@@ -226,6 +226,7 @@ public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRis
                 createItem(Resources.getMessage("RiskAnalysis.25"), getQuasiIdentifiers(context)); //$NON-NLS-1$
 
                 table.setRedraw(true);
+                table.layout();
                 
                 setStatusDone();
             }
