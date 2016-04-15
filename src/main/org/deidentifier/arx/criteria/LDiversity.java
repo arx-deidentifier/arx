@@ -79,4 +79,28 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
         // Requires a distribution, but nothing else
         return ARXConfiguration.REQUIREMENT_DISTRIBUTION;
     }
+
+    /**
+     * Return prosecutor risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdProsecutor() {
+        return 1d / getL();
+    }
+
+    /**
+     * Return journalist risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdJournalist() {
+        return getRiskThresholdProsecutor();
+    }
+
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        return getRiskThresholdProsecutor();
+    }
 }

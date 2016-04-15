@@ -485,7 +485,7 @@ public abstract class DataHandle {
      * @return
      */
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, RiskModelHistogram classes) {
-        return new RiskEstimateBuilder(model, new DataHandleInternal(this), classes);
+        return new RiskEstimateBuilder(model, new DataHandleInternal(this), classes, getConfiguration());
     }
 
     /**
@@ -496,7 +496,7 @@ public abstract class DataHandle {
      * @return
      */
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, RiskModelHistogram classes, ARXSolverConfiguration config) {
-        return new RiskEstimateBuilder(model, new DataHandleInternal(this), classes, config);
+        return new RiskEstimateBuilder(model, new DataHandleInternal(this), classes, config, getConfiguration());
     }
 
     /**
@@ -506,7 +506,7 @@ public abstract class DataHandle {
      * @return
      */
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, Set<String> qis) {
-        return new RiskEstimateBuilder(model, new DataHandleInternal(this), qis);
+        return new RiskEstimateBuilder(model, new DataHandleInternal(this), qis, getConfiguration());
     }
 
     /**
@@ -517,7 +517,7 @@ public abstract class DataHandle {
      * @return
      */
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, Set<String> qis, ARXSolverConfiguration config) {
-        return new RiskEstimateBuilder(model, new DataHandleInternal(this), qis, config);
+        return new RiskEstimateBuilder(model, new DataHandleInternal(this), qis, config, getConfiguration());
     }
 
     /**
@@ -884,6 +884,12 @@ public abstract class DataHandle {
         checkRegistry();
         return getRegistry().getBaseDataType(attribute);
     }
+
+    /**
+     * Returns the ARXConfiguration that is currently being used, null if this is an input handle
+     * @return
+     */
+    protected abstract ARXConfiguration getConfiguration();
 
     /**
      * Generates an array of data types.

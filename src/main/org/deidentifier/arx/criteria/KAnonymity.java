@@ -83,4 +83,28 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
 	public String toString() {
 		return k+"-anonymity";
 	}
+
+    /**
+     * Return prosecutor risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdProsecutor() {
+        return 1d / (double)k;
+    }
+
+    /**
+     * Return journalist risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdJournalist() {
+        return getRiskThresholdProsecutor();
+    }
+
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        return getRiskThresholdProsecutor();
+    }
 }

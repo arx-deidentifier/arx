@@ -204,6 +204,11 @@ public class DataHandleInput extends DataHandle {
     }
     
     @Override
+    protected ARXConfiguration getConfiguration() {
+        return null;
+    }
+
+    @Override
     protected DataType<?>[][] getDataTypeArray() {
         checkRegistry();
         DataType<?>[][] dataTypes = new DataType[1][header.length];
@@ -231,7 +236,7 @@ public class DataHandleInput extends DataHandle {
         System.arraycopy(dict, 0, vals, 0, vals.length);
         return vals;
     }
-
+    
     /**
      * Returns the input buffer
      * @return
@@ -240,12 +245,12 @@ public class DataHandleInput extends DataHandle {
         checkRegistry();
         return this.dataGH;
     }
-    
+
     @Override
     protected String internalGetValue(final int row, final int column, final boolean ignoreSuppression) {
         return dictionary.getMapping()[column][data[row][column]];
     }
-
+    
     @Override
     protected boolean internalReplace(int column,
                                       String original,
@@ -280,7 +285,7 @@ public class DataHandleInput extends DataHandle {
         if (dataDI != null) swap(row1, row2, dataDI);
         if (dataIS != null) swap(row1, row2, dataIS);
     }
-    
+
     /**
      * Is this handle locked?.
      *

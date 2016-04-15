@@ -164,4 +164,13 @@ public class PopulationUniqueness extends RiskBasedCriterion{
             return false;
         }
     }
+
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        // TODO: Risk is estimated differently than in the other models, here
+        return getRiskThreshold();
+    }
 }

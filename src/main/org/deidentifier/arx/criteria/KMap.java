@@ -27,7 +27,7 @@ import org.deidentifier.arx.framework.data.DataManager;
 /**
  * This class implements the k-map privacy model as proposed by Latanya Sweeney.<br>
  * <br>
- * Additionally to explicitly providing data about the underlying population, cell sizes can be can be estimated with
+ * As an alternative to explicitly providing data about the underlying population, cell sizes can be can be estimated with
  * the D3 (Poisson) and D4 (zero-truncated Poisson) estimators proposed in:<br>
  * K. El Emam and F. Dankar, "Protecting privacy using k-anonymity" JAMIA, vol. 15, no. 5, pp. 627-637, 2008.<br>
  * <br>
@@ -47,9 +47,9 @@ public class KMap extends ImplicitPrivacyCriterion {
      */
     public enum CellSizeEstimator {
                                    
-                                   /** Poisson distribution */
+        /** Poisson distribution */
         POISSON("Poisson"),
-                                   /** Truncate-at-zero Poisson distribution */
+        /** Truncate-at-zero Poisson distribution */
         ZERO_TRUNCATED_POISSON("Zero-truncated Poisson");
         
         /** Label */
@@ -76,7 +76,7 @@ public class KMap extends ImplicitPrivacyCriterion {
     private DataSubset               subset;
                                      
     /** The parameter k'. */
-    private int                      derivedK;
+    private int                      derivedK = -1;
                                      
     /** The significance level */
     private final double             significanceLevel;
@@ -259,16 +259,18 @@ public class KMap extends ImplicitPrivacyCriterion {
     
     @Override
     public boolean isLocalRecodingSupported() {
-        if (isAccurate())
-            return false;
-        return true;
+        return !isAccurate();
     }
     
     @Override
     public String toString() {
         String value = "(" + this.k + ")-map";
         if (this.estimator != null) {
-            value += " estimated as (" + this.derivedK + ")-anonymity (" + this.estimator + ")";
+            if (derivedK == -1){
+                value += " estimated as (unknown)-anonymity (" + this.estimator + ")";
+            } else {
+                value += " estimated as (" + this.derivedK + ")-anonymity (" + this.estimator + ")";
+            }
         }
         return value;
     }
@@ -327,5 +329,32 @@ public class KMap extends ImplicitPrivacyCriterion {
         this.type1Error = 1d - value;
         return counter;
     }
-    
+
+    /**
+     * Return journalist risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdProsecutor() {
+        if (isAccurate() || derivedK == -1) {
+            return 1d;
+        } else {
+            return 1d / (double)derivedK;
+        }
+    }
+
+    /**
+     * Return journalist risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdJournalist() {
+        return 1d / (double)k;
+    }
+
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        return getRiskThresholdJournalist();
+    }
 }

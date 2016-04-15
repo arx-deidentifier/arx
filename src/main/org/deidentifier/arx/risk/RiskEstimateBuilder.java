@@ -19,6 +19,7 @@ package org.deidentifier.arx.risk;
 
 import java.util.Set;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
@@ -37,7 +38,7 @@ public class RiskEstimateBuilder {
     /** Fields */
     private final ARXPopulationModel     population;
     /** Fields */
-    private final DataHandleInternal   handle;
+    private final DataHandleInternal     handle;
     /** Fields */
     private final Set<String>            identifiers;
     /** Classes */
@@ -45,36 +46,24 @@ public class RiskEstimateBuilder {
     /** Asynchronous computation */
     private final WrappedBoolean         stop;
     /** Model */
-    private final ARXSolverConfiguration config;
+    private final ARXSolverConfiguration solverconfig;
     /** Model */
     private final WrappedInteger         progress = new WrappedInteger();
-
+    /** Model */
+    private final ARXConfiguration       arxconfig; 
+    
     /**
      * Creates a new instance
      * 
      * @param population
      * @param handle
      * @param classes
-     */
-    public RiskEstimateBuilder(ARXPopulationModel population,
-                               DataHandleInternal handle,
-                               RiskModelHistogram classes) {
-        this(population, handle, null, classes, ARXSolverConfiguration.create());
-    }
-
-    /**
-     * Creates a new instance
-     * 
-     * @param population
-     * @param handle
-     * @param classes
-     * @param config
      */
     public RiskEstimateBuilder(ARXPopulationModel population,
                                DataHandleInternal handle,
                                RiskModelHistogram classes,
-                               ARXSolverConfiguration config) {
-        this(population, handle, null, classes, config);
+                               ARXConfiguration arxconfig) {
+        this(population, handle, null, classes, ARXSolverConfiguration.create(), arxconfig);
     }
 
     /**
@@ -82,16 +71,15 @@ public class RiskEstimateBuilder {
      * 
      * @param population
      * @param handle
-     * @param identifiers
+     * @param classes
+     * @param solverconfig
      */
     public RiskEstimateBuilder(ARXPopulationModel population,
                                DataHandleInternal handle,
-                               Set<String> identifiers) {
-        this(population,
-             handle,
-             identifiers,
-             (RiskModelHistogram) null,
-             ARXSolverConfiguration.create());
+                               RiskModelHistogram classes,
+                               ARXSolverConfiguration solverconfig,
+                               ARXConfiguration arxconfig) {
+        this(population, handle, null, classes, solverconfig, arxconfig);
     }
 
     /**
@@ -100,13 +88,16 @@ public class RiskEstimateBuilder {
      * @param population
      * @param handle
      * @param identifiers
-     * @param config
      */
     public RiskEstimateBuilder(ARXPopulationModel population,
                                DataHandleInternal handle,
                                Set<String> identifiers,
-                               ARXSolverConfiguration config) {
-        this(population, handle, identifiers, (RiskModelHistogram) null, config);
+                               ARXConfiguration arxconfig) {
+        this(population,
+             handle,
+             identifiers,
+             (RiskModelHistogram) null,
+             ARXSolverConfiguration.create(), arxconfig);
     }
 
     /**
@@ -115,18 +106,36 @@ public class RiskEstimateBuilder {
      * @param population
      * @param handle
      * @param identifiers
-     * @param config
+     * @param solverconfig
+     */
+    public RiskEstimateBuilder(ARXPopulationModel population,
+                               DataHandleInternal handle,
+                               Set<String> identifiers,
+                               ARXSolverConfiguration solverconfig,
+                               ARXConfiguration arxconfig) {
+        this(population, handle, identifiers, (RiskModelHistogram) null, solverconfig, arxconfig);
+    }
+
+    /**
+     * Creates a new instance
+     * 
+     * @param population
+     * @param handle
+     * @param identifiers
+     * @param solverconfig
      */
     private RiskEstimateBuilder(ARXPopulationModel population,
                                 DataHandleInternal handle,
                                 RiskModelHistogram classes,
                                 WrappedBoolean stop,
-                                ARXSolverConfiguration config) {
+                                ARXSolverConfiguration solverconfig,
+                                ARXConfiguration arxconfig) {
         this.population = population;
         this.handle = handle;
         this.identifiers = null;
         this.classes = classes;
-        this.config = config;
+        this.solverconfig = solverconfig;
+        this.arxconfig = arxconfig;
         synchronized (this) {
             this.stop = stop;
         }
@@ -139,18 +148,20 @@ public class RiskEstimateBuilder {
      * @param handle
      * @param qi
      * @param classes
-     * @param config
+     * @param solverconfig
      */
     private RiskEstimateBuilder(ARXPopulationModel population,
                                 DataHandleInternal handle,
                                 Set<String> identifiers,
                                 RiskModelHistogram classes,
-                                ARXSolverConfiguration config) {
+                                ARXSolverConfiguration solverconfig,
+                                ARXConfiguration arxconfig) {
         this.population = population;
         this.handle = handle;
         this.identifiers = identifiers;
         this.classes = classes;
-        this.config = config;
+        this.solverconfig = solverconfig;
+        this.arxconfig = arxconfig;
         synchronized (this) {
             stop = new WrappedBoolean();
         }
@@ -162,18 +173,20 @@ public class RiskEstimateBuilder {
      * @param population
      * @param handle
      * @param identifiers
-     * @param config
+     * @param solverconfig
      */
     private RiskEstimateBuilder(ARXPopulationModel population,
                                 DataHandleInternal handle,
                                 Set<String> identifiers,
                                 WrappedBoolean stop,
-                                ARXSolverConfiguration config) {
+                                ARXSolverConfiguration solverconfig,
+                                ARXConfiguration arxconfig) {
         this.population = population;
         this.handle = handle;
         this.identifiers = identifiers;
         this.classes = null;
-        this.config = config;
+        this.solverconfig = solverconfig;
+        this.arxconfig = arxconfig;
         synchronized (this) {
             this.stop = stop;
         }
@@ -218,6 +231,17 @@ public class RiskEstimateBuilder {
     }
 
     /**
+     * Returns a class providing access to risk estimates derived from the sample and privacy models
+     * 
+     * @return
+     */
+    public RiskModelMixedRisks getMixedReidentificationRisk() {
+        progress.value = 0;
+        return new RiskModelMixedRisks(getEquivalenceClassModel(),
+                                       arxconfig);
+    }
+
+    /**
      * Returns a class providing access to population-based risk estimates about
      * the attributes. Uses the decision rule by Dankar et al.
      * 
@@ -251,7 +275,7 @@ public class RiskEstimateBuilder {
                                                  handle.getNumRows(),
                                                  stop,
                                                  progress,
-                                                 config,
+                                                 solverconfig,
                                                  false);
     }
 
@@ -276,16 +300,6 @@ public class RiskEstimateBuilder {
     }
 
     /**
-     * Returns a class providing sample-based uniqueness estimates
-     * 
-     * @return
-     */
-    public RiskModelSampleUniqueness getSampleBasedUniquenessRisk() {
-        progress.value = 0;
-        return new RiskModelSampleUniqueness(getEquivalenceClassModel());
-    }
-    
-    /**
      * Returns a risk summary
      * @param threshold Acceptable highest probability of re-identification for a single record
      * @return
@@ -293,6 +307,16 @@ public class RiskEstimateBuilder {
     public RiskModelSampleSummary getSampleBasedRiskSummary(double threshold) {
         progress.value = 0;
         return new RiskModelSampleSummary(handle, identifiers, threshold, stop, progress);
+    }
+    
+    /**
+     * Returns a class providing sample-based uniqueness estimates
+     * 
+     * @return
+     */
+    public RiskModelSampleUniqueness getSampleBasedUniquenessRisk() {
+        progress.value = 0;
+        return new RiskModelSampleUniqueness(getEquivalenceClassModel());
     }
 
     /**
@@ -315,9 +339,10 @@ public class RiskEstimateBuilder {
                                                                       handle,
                                                                       attributes,
                                                                       stop,
-                                                                      config);
+                                                                      solverconfig,
+                                                                      arxconfig);
                 RiskModelHistogram classes = builder.getEquivalenceClassModel();
-                builder = new RiskEstimateBuilder(population, handle, classes, stop, config);
+                builder = new RiskEstimateBuilder(population, handle, classes, stop, solverconfig, arxconfig);
 
                 // Use classes to compute risks
                 final RiskModelSampleRisks reidentificationRisks = builder.getSampleBasedReidentificationRisk();
@@ -377,7 +402,7 @@ public class RiskEstimateBuilder {
                                                  handle.getNumRows(),
                                                  stop,
                                                  progress,
-                                                 config,
+                                                 solverconfig,
                                                  true);
     }
 

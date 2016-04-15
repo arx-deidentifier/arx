@@ -58,4 +58,13 @@ public class SampleUniqueness extends RiskBasedCriterion{
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
         return distribution.getFractionOfTuplesInClassesOfSize(1) <= getRiskThreshold();
     }
+
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        // TODO: Risk is estimated differently than in the other models, here
+        return getRiskThreshold();
+    }
 }
