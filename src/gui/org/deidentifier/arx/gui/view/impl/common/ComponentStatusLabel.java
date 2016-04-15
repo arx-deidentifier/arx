@@ -66,52 +66,52 @@ public class ComponentStatusLabel extends Canvas {
     /** The alignment. Either CENTER, RIGHT, LEFT. Default is LEFT */
     private int                                  align          = SWT.LEFT;
 
-    /** TODO */
+    /** Field */
     private int                                  leftMargin     = DEFAULT_MARGIN;
 
-    /** TODO */
+    /** Field */
     private int                                  topMargin      = DEFAULT_MARGIN;
 
-    /** TODO */
+    /** Field */
     private int                                  rightMargin    = DEFAULT_MARGIN;
 
-    /** TODO */
+    /** Field */
     private int                                  bottomMargin   = DEFAULT_MARGIN;
 
-    /** TODO */
+    /** Field */
     private String                               text;
 
-    /** TODO */
-    Image                                        image;
+    /** Field */
+    private Image                                        image;
 
-    /** TODO */
+    /** Field */
     private String                               appToolTipText;
 
-    /** TODO */
+    /** Field */
     private ComponentStatusLabelProgressProvider progressProvider;
 
-    /** TODO */
+    /** Field */
     private boolean                              ignoreDispose;
 
-    /** TODO */
+    /** Field */
     private Image                                backgroundImage;
 
-    /** TODO */
+    /** Field */
     private Color[]                              gradientColors;
 
-    /** TODO */
+    /** Field */
     private int[]                                gradientPercents;
 
-    /** TODO */
+    /** Field */
     private boolean                              gradientVertical;
 
-    /** TODO */
+    /** Field */
     private Color                                background;
 
-    /** TODO */
+    /** Field */
     private ComponentStatusLabelGIFHandler       thread         = null;
 
-    /** TODO */
+    /** Field */
     private static int                           DRAW_FLAGS     = SWT.DRAW_MNEMONIC | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT |
                                                                   SWT.DRAW_DELIMITER;
 
@@ -446,7 +446,7 @@ public class ComponentStatusLabel extends Canvas {
         if (loader.data[0] != null) this.image = new Image(this.getDisplay(), loader.data[0]);
 
         if (loader.data.length > 1) {
-            thread = new ComponentStatusLabelGIFHandler(this, loader, this.getDisplay());
+            thread = new ComponentStatusLabelGIFHandler(this, loader);
             thread.run();
         }
 
@@ -465,6 +465,15 @@ public class ComponentStatusLabel extends Canvas {
             this.image = null;
             return;
         }
+    }
+    
+    /**
+     * Updates the image
+     * @param image
+     */
+    public void updateImage(Image image) {
+        this.image = image;
+        this.redraw();
     }
 
     /**
