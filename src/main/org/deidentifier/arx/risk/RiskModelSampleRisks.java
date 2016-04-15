@@ -98,7 +98,7 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * Return journalist risk threshold, 1 if there is none
      * @return
      */
-    public double getMixedJournalistRisk() {
+    public double getEstimatedJournalistRisk() {
         return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null ? config.getRiskThresholdJournalist() : 1d);
     }
 
@@ -106,7 +106,7 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * Return marketer risk threshold, 1 if there is none
      * @return
      */
-    public double getMixedMarketerRisk() {
+    public double getEstimatedMarketerRisk() {
         return Math.min(1.0d / getHistogram().getAvgClassSize(), config != null ? config.getRiskThresholdMarketer() : 1d);
     }
 
@@ -114,7 +114,7 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * Return prosecutor risk threshold, 1 if there is none
      * @return
      */
-    public double getMixedProsecutorRisk() {
+    public double getEstimatedProsecutorRisk() {
         return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null ? config.getRiskThresholdProsecutor() : 1d);
     }
     
