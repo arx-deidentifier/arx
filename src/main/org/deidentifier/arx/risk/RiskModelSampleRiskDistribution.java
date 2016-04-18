@@ -25,27 +25,37 @@ import java.util.Arrays;
  * @author Fabian Prasser
  */
 public class RiskModelSampleRiskDistribution {
-
-    /** Thresholds */
-    private static final double[] thresholds = new double[106];
-
-    /** Thresholds */
-    static {
-        thresholds[0] = 0d;
-        thresholds[1] = 0.0000001d;
-        thresholds[2] = 0.000001d;
-        thresholds[3] = 0.00001d;
-        thresholds[4] = 0.0001d;
-        thresholds[5] = 0.001d;
-        for (int i=6; i<106; i++) {
-            thresholds[i] = (double) (i - 5) / 100d;
-        }
-    }
     
-    /** Risks*/
-    private final double[] recordsAtRisk = new double[thresholds.length];
-    /** Cumulative risks*/
-    private final double[] recordsAtCumulativeRisk = new double[thresholds.length];
+    /** Thresholds */
+    private static final double[] thresholds              = new double[] { 0d,
+                                                          0.0000001d,
+                                                          0.000001d,
+                                                          0.00001d,
+                                                          0.0001d,
+                                                          0.001d,
+                                                          0.01d,
+                                                          0.02d,
+                                                          0.03d,
+                                                          0.04d,
+                                                          0.05d,
+                                                          0.06d,
+                                                          0.07d,
+                                                          0.08d,
+                                                          0.09d,
+                                                          0.1d,
+                                                          0.125d,
+                                                          0.143d,
+                                                          0.167d,
+                                                          0.2d,
+                                                          0.25d,
+                                                          0.334d,
+                                                          0.5d,
+                                                          1d };
+
+    /** Risks */
+    private final double[]        recordsAtRisk           = new double[thresholds.length];
+    /** Cumulative risks */
+    private final double[]        recordsAtCumulativeRisk = new double[thresholds.length];
     
     /**
      * Creates a new instance
@@ -59,10 +69,10 @@ public class RiskModelSampleRiskDistribution {
             int size = array[i];
             int count = array[i+1];
             double risk = 1d / (double)size;
-            double records = (double)count / histogram.getNumTuples();
+            double records = (double)(count * size)/ histogram.getNumTuples();
             int index = Arrays.binarySearch(thresholds, risk);
             if (index < 0) {
-                index = -index - 2;
+                index = -index - 1;
             }
             recordsAtRisk[index] += records;
         }
@@ -108,7 +118,7 @@ public class RiskModelSampleRiskDistribution {
      * @return
      */
     public double[] getFractionOfRecordsForCumulativeRiskThresholds() {
-        return recordsAtRisk;
+        return recordsAtCumulativeRisk;
     }
 
     /**

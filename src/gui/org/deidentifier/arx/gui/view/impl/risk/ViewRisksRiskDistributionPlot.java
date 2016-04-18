@@ -21,12 +21,13 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
-import org.deidentifier.arx.risk.RiskModelHistogram;
+import org.deidentifier.arx.risk.RiskModelSampleRiskDistribution;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -46,6 +47,7 @@ import org.swtchart.Chart;
 import org.swtchart.IAxis;
 import org.swtchart.IAxisSet;
 import org.swtchart.IBarSeries;
+import org.swtchart.ILineSeries;
 import org.swtchart.ISeries;
 import org.swtchart.ISeries.SeriesType;
 import org.swtchart.ISeriesSet;
@@ -173,9 +175,10 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
         xAxis.getTitle().setForeground(chart.getForeground());
         yAxis.getTitle().setForeground(chart.getForeground());
 
-        // Initialize y-axis
+        // Initialize axes
         ITitle yAxisTitle = yAxis.getTitle();
         yAxisTitle.setText(Resources.getMessage("ViewRisksClassDistributionPlot.0")); //$NON-NLS-1$
+        xAxisTitle.setText(Resources.getMessage("ViewRisksClassDistributionPlot.1")); //$NON-NLS-1$
         chart.setEnabled(false);
         updateCategories();
     }
@@ -270,7 +273,9 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
             
             private boolean  stopped = false;
             private double[] frequencies;
+            private double[] cumulative;
             private String[] labels;
+            private double   max     = 0d;
 
             @Override
             public int getProgress() {
@@ -293,19 +298,32 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
                 chart.setRedraw(false);
 
                 ISeriesSet seriesSet = chart.getSeriesSet();
-                IBarSeries series = (IBarSeries) seriesSet.createSeries(SeriesType.BAR,
-                                                                        "[%]"); //$NON-NLS-1$
+
+                ILineSeries series2 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewRisksClassDistributionPlot.3")); //$NON-NLS-1$
+                series2.getLabel().setVisible(false);
+                series2.getLabel().setFont(chart.getFont());
+                series2.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+                series2.setYSeries(cumulative);
+                series2.setAntialias(SWT.ON);
+                series2.setSymbolColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+                series2.enableStep(true);
+                series2.enableArea(true);
+                
+                IBarSeries series = (IBarSeries) seriesSet.createSeries(SeriesType.BAR, Resources.getMessage("ViewRisksClassDistributionPlot.2")); //$NON-NLS-1$
                 series.getLabel().setVisible(false);
                 series.getLabel().setFont(chart.getFont());
                 series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
                 series.setYSeries(frequencies);
-                chart.getLegend().setVisible(false);
+                
+                seriesSet.bringToFront(Resources.getMessage("ViewRisksClassDistributionPlot.2")); //$NON-NLS-1$
+                
+                chart.getLegend().setVisible(true);
+                chart.getLegend().setPosition(SWT.TOP);
 
                 IAxisSet axisSet = chart.getAxisSet();
 
                 IAxis yAxis = axisSet.getYAxis(0);
-                yAxis.setRange(new Range(0d, 1d));
-                yAxis.adjustRange();
+                yAxis.setRange(new Range(0d, max));
 
                 IAxis xAxis = axisSet.getXAxis(0);
                 xAxis.setCategorySeries(labels);
@@ -335,17 +353,21 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
                 long time = System.currentTimeMillis();
                 
                 // Perform work
-                RiskModelHistogram model = builder.getEquivalenceClassModel();
-                int[] distribution = model.getHistogram();
+                RiskModelSampleRiskDistribution model = builder.getSampleBasedRiskDistribution();
 
                 // Create array
-                frequencies = new double[distribution.length/2];
-                labels = new String[distribution.length/2];
-                
-                for (int i = 0; i < distribution.length; i+=2) {
-                    frequencies[i/2] = (double) distribution[i+1] / model.getNumClasses() * 100d;
-                    labels[i/2] = String.valueOf(distribution[i]);
+                frequencies = model.getFractionOfRecordsForRiskThresholds();
+                cumulative = model.getFractionOfRecordsForCumulativeRiskThresholds();
+                labels = new String[frequencies.length];
+                max = 0d;
+                for (int i = 0; i < frequencies.length; i++) {
+                    frequencies[i] *= 100d;
+                    cumulative[i] *= 100d;
+                    max = Math.max(max, frequencies[i]);
+                    max = Math.max(max, cumulative[i]);
+                    labels[i] = String.valueOf(SWTUtil.getPrettyString(model.getRiskThresholds()[i] * 100d));
                 }
+                labels[0] = "<=" + SWTUtil.getPrettyString(1e-6);
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
