@@ -19,6 +19,8 @@ package org.deidentifier.arx.risk;
 
 import java.util.Arrays;
 
+import org.deidentifier.arx.ARXConfiguration;
+
 /**
  * Class representing the distribution of risks in the sample
  * 
@@ -56,13 +58,19 @@ public class RiskModelSampleRiskDistribution {
     private final double[]        recordsAtRisk           = new double[thresholds.length];
     /** Cumulative risks */
     private final double[]        recordsAtCumulativeRisk = new double[thresholds.length];
+    /** Threshold risk */
+    private final double          threshold;
     
     /**
      * Creates a new instance
      * 
      * @param histogram
+     * @param config
+     * @param anonymous
      */
-    public RiskModelSampleRiskDistribution(RiskModelHistogram histogram) {
+    public RiskModelSampleRiskDistribution(RiskModelHistogram histogram,
+                                           ARXConfiguration config,
+                                           boolean anonymous) {
 
         int[] array = histogram.getHistogram();
         for (int i = 0; i < array.length; i += 2) {
@@ -74,13 +82,14 @@ public class RiskModelSampleRiskDistribution {
             if (index < 0) {
                 index = -index - 1;
             }
-            recordsAtRisk[index] += records;
+            this.recordsAtRisk[index] += records;
         }
         double cumulativeRisk = 0;
         for (int i=0; i<thresholds.length; i++) {
-            cumulativeRisk += recordsAtRisk[i];
-            recordsAtCumulativeRisk[i] = cumulativeRisk;
+            cumulativeRisk += this.recordsAtRisk[i];
+            this.recordsAtCumulativeRisk[i] = cumulativeRisk;
         }
+        this.threshold = Math.min(1.0d / (double)histogram.getHistogram()[0], config != null && anonymous ? config.getRiskThresholdProsecutor() : 1d);
     }
     
     /**
@@ -98,7 +107,7 @@ public class RiskModelSampleRiskDistribution {
         }
         return recordsAtCumulativeRisk[index];
     }
-
+    
     /**
      * Returns the fraction of records with a risk which equals the given threshold.
      * Note: all risks below 10^-6 are mapped to 0% risk.
@@ -127,6 +136,14 @@ public class RiskModelSampleRiskDistribution {
      */
     public double[] getFractionOfRecordsForRiskThresholds() {
         return recordsAtRisk;
+    }
+
+    /**
+     * Returns the threshold that has been defined on prosecutor risks
+     * @return
+     */
+    public double getRiskThreshold() {
+        return this.threshold;
     }
 
     /**

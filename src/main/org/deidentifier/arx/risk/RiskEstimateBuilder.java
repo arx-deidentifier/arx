@@ -285,7 +285,7 @@ public class RiskEstimateBuilder {
      */
     public RiskModelSampleRisks getSampleBasedReidentificationRisk() {
         progress.value = 0;
-        return new RiskModelSampleRisks(getEquivalenceClassModel(), arxconfig);
+        return new RiskModelSampleRisks(getEquivalenceClassModel(), arxconfig, handle.isAnonymous());
     }
 
     /**
@@ -295,7 +295,7 @@ public class RiskEstimateBuilder {
      */
     public RiskModelSampleRiskDistribution getSampleBasedRiskDistribution() {
         progress.value = 0;
-        return new RiskModelSampleRiskDistribution(getEquivalenceClassModel());
+        return new RiskModelSampleRiskDistribution(getEquivalenceClassModel(), arxconfig, handle.isAnonymous());
     }
 
     /**

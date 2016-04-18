@@ -28,18 +28,23 @@ import org.deidentifier.arx.ARXConfiguration;
 public class RiskModelSampleRisks extends RiskModelSample {
 
     /** Configuration */
-    private final ARXConfiguration   config;
+    private final ARXConfiguration config;
+    /** Is the transformation anonymous */
+    private final boolean          anonymous;
     
     /**
      * Creates a new instance
      * 
      * @param histogram
      * @param config
+     * @param anonymous
      */
     public RiskModelSampleRisks(RiskModelHistogram histogram,
-                                ARXConfiguration config) {
+                                ARXConfiguration config,
+                                boolean anonymous) {
         super(histogram);
         this.config = config;
+        this.anonymous = anonymous;
     }
 
     /**
@@ -99,7 +104,7 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getEstimatedJournalistRisk() {
-        return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null ? config.getRiskThresholdJournalist() : 1d);
+        return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null && anonymous ? config.getRiskThresholdJournalist() : 1d);
     }
 
     /**
@@ -107,7 +112,7 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getEstimatedMarketerRisk() {
-        return Math.min(1.0d / getHistogram().getAvgClassSize(), config != null ? config.getRiskThresholdMarketer() : 1d);
+        return Math.min(1.0d / getHistogram().getAvgClassSize(), config != null && anonymous ? config.getRiskThresholdMarketer() : 1d);
     }
 
     /**
@@ -115,7 +120,7 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getEstimatedProsecutorRisk() {
-        return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null ? config.getRiskThresholdProsecutor() : 1d);
+        return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null && anonymous ? config.getRiskThresholdProsecutor() : 1d);
     }
     
     /**

@@ -60,6 +60,7 @@ public class DataHandleSubset extends DataHandle {
     
     @Override
     public DataType<?> getDataType(String attribute) {
+        checkRegistry();
         return source.getDataType(attribute);
     }
 
@@ -105,6 +106,7 @@ public class DataHandleSubset extends DataHandle {
 
     @Override
     public boolean isOptimized() {
+        checkRegistry();
         return source.isOptimized();
     }
 
@@ -161,12 +163,12 @@ public class DataHandleSubset extends DataHandle {
     @Override
     protected ARXConfiguration getConfiguration() {
         return source.getConfiguration();
-    }    
+    }
 
     @Override
     protected DataType<?>[][] getDataTypeArray() {
         return source.dataTypes;
-    }
+    }    
 
     @Override
     protected String[] getDistinctValues(int column, InterruptHandler handler) {
@@ -197,12 +199,12 @@ public class DataHandleSubset extends DataHandle {
     protected String getSuppressionString(){
         return source.getSuppressionString();
     }
-    
+
     @Override
     protected int internalCompare(int row1, int row2, int[] columns, boolean ascending) {
         return source.internalCompare(this.subset.getArray()[row1], this.subset.getArray()[row2], columns, ascending);
     }
-
+    
     @Override
     protected String internalGetValue(int row, int col, boolean ignoreSuppression) {
         return source.internalGetValue(this.subset.getArray()[row], col, ignoreSuppression);
@@ -245,5 +247,10 @@ public class DataHandleSubset extends DataHandle {
      */
     protected int internalTranslate(int row) {
         return this.subset.getArray()[row];
+    }
+
+    @Override
+    protected boolean isAnonymous() {
+        return source.isAnonymous();
     }
 }

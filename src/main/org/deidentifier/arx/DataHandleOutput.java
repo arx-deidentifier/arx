@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.framework.data.Data;
@@ -118,7 +119,10 @@ public class DataHandleOutput extends DataHandle {
 
     /** Flag determining whether this buffer has been optimized */
     private boolean      optimized = false;
-        
+
+    /** Flag determining whether this buffer is anonymous */
+    private boolean      anonymous = false;
+    
     /**
      * Instantiates a new handle.
      * 
@@ -148,6 +152,7 @@ public class DataHandleOutput extends DataHandle {
         this.suppressedAttributeTypes = convert(config.getSuppressedAttributeTypes());
         this.result = result;
         this.definition = definition;
+        this.anonymous = node.getAnonymity() == Anonymity.ANONYMOUS;
         this.statistics = new StatisticsBuilder(new DataHandleInternal(this));
         this.node = node;
         
@@ -225,7 +230,7 @@ public class DataHandleOutput extends DataHandle {
         checkColumn(col);
         return header[col];
     }
-    
+
     @Override
     public DataType<?> getDataType(String attribute) {
         
@@ -243,13 +248,13 @@ public class DataHandleOutput extends DataHandle {
             return dataTypes[type][index];
         }
     }
-    
+
     @Override
     public int getGeneralization(final String attribute) {
         checkRegistry();
         return node.getGeneralization(attribute);
     }
-
+    
     /**
      * Gets the num columns.
      * 
@@ -292,7 +297,7 @@ public class DataHandleOutput extends DataHandle {
         // Perform
         return internalGetValue(row, col, false);
     }
-    
+
     @Override
     public boolean isOptimized() {
         return this.optimized;
@@ -525,7 +530,7 @@ public class DataHandleOutput extends DataHandle {
         }
         return dataTypes;
     }
-        
+    
     /**
      * Gets the distinct values.
      *
@@ -548,7 +553,7 @@ public class DataHandleOutput extends DataHandle {
         handler.checkInterrupt();
         return vals.toArray(new String[vals.size()]);
     }
-    
+        
     /**
      * Returns the input buffer
      * @return
@@ -708,7 +713,6 @@ public class DataHandleOutput extends DataHandle {
         return found;
     }
     
-
     /**
      * Swap internal.
      * 
@@ -729,6 +733,12 @@ public class DataHandleOutput extends DataHandle {
             outputMicroaggregated.getArray()[row1] = outputMicroaggregated.getArray()[row2];
             outputMicroaggregated.getArray()[row2] = temp;
         }
+    }
+    
+
+    @Override
+    protected boolean isAnonymous() {
+        return this.anonymous;
     }
 
 

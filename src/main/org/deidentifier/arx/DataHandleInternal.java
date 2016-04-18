@@ -33,13 +33,14 @@ public class DataHandleInternal {
         /** Method*/
         public void checkInterrupt();
     }
-    
-    /**  Handle */
+
+    /** Handle */
     private DataHandle handle;
-    
+
     /**
      * Constructor
      * @param handle
+     * @param anonymous
      */
     protected DataHandleInternal(DataHandle handle){
         this.handle = handle;
@@ -213,6 +214,14 @@ public class DataHandleInternal {
     }
 
     /**
+     * Returns whether the handle is anonymous
+     * @return
+     */
+    public boolean isAnonymous() {
+        return handle.isAnonymous();
+    }
+    
+    /**
      * Returns whether the handle is optimized
      * @return
      */
@@ -228,7 +237,7 @@ public class DataHandleInternal {
     public boolean isOutlier(int row) {
         return handle.isOutlier(row);
     }
-    
+
     /**
      * Returns whether this is an output handle
      * @return

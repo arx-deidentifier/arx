@@ -567,6 +567,7 @@ public abstract class DataHandle {
      * @return
      */
     public boolean isOptimized() {
+        checkRegistry();
         return false;
     }
 
@@ -977,6 +978,14 @@ public abstract class DataHandle {
      * @return true, if successful
      */
     protected abstract boolean internalReplace(int column, String original, String replacement);
+
+    /**
+     * Returns whether the data represented by this handle is anonymous
+     * @return
+     */
+    protected boolean isAnonymous() {
+        return false;
+    }
 
     /**
      * Updates the registry.
