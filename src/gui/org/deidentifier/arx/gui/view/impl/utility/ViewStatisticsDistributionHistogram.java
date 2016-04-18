@@ -289,13 +289,16 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                 series.getLabel().setVisible(false);
                 series.getLabel().setFont(chart.getFont());
                 series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+                for (int i = 0; i < this.distribution.frequency.length; i++) {
+                    this.distribution.frequency[i] *= 100d;
+                }
                 series.setYSeries(this.distribution.frequency);
                 chart.getLegend().setVisible(false);
 
                 IAxisSet axisSet = chart.getAxisSet();
 
                 IAxis yAxis = axisSet.getYAxis(0);
-                yAxis.setRange(new Range(0d, 1d));
+                yAxis.setRange(new Range(0d, 100d));
                 yAxis.adjustRange();
 
                 IAxis xAxis = axisSet.getXAxis(0);
