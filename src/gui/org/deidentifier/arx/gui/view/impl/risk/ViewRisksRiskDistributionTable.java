@@ -207,7 +207,7 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
                 cumulative = model.getFractionOfRecordsForCumulativeRiskThresholds();
                 labels = new String[frequencies.length];
                 for (int i = 0; i < frequencies.length; i++) {
-                    labels[i] = String.valueOf(SWTUtil.getPrettyString(model.getRiskThresholds()[i] * 100d));
+                    labels[i] = String.valueOf(SWTUtil.getPrettyString(model.getAvailableRiskThresholds()[i] * 100d));
                 }
                 labels[0] = "<=" + SWTUtil.getPrettyString(1e-6); //$NON-NLS-1$
 

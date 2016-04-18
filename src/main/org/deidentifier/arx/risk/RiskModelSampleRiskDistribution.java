@@ -93,6 +93,15 @@ public class RiskModelSampleRiskDistribution {
     }
     
     /**
+     * Returns a set of risk thresholds for which data is maintained.
+     * Note: all risks below 10^-6 are mapped to 0% risk.
+     * @return
+     */
+    public double[] getAvailableRiskThresholds() {
+        return thresholds;
+    }
+    
+    /**
      * Returns the fraction of records with a risk lower than or equal
      * to the given threshold.
      * Note: all risks below 10^-6 are mapped to 0% risk.
@@ -103,11 +112,11 @@ public class RiskModelSampleRiskDistribution {
     public double getFractionOfRecordsAtCumulativeRisk(double risk) {
         int index = Arrays.binarySearch(thresholds, risk);
         if (index < 0) {
-            index = -index - 2;
+            index = -index - 1;
         }
         return recordsAtCumulativeRisk[index];
     }
-    
+
     /**
      * Returns the fraction of records with a risk which equals the given threshold.
      * Note: all risks below 10^-6 are mapped to 0% risk.
@@ -117,7 +126,7 @@ public class RiskModelSampleRiskDistribution {
     public double getFractionOfRecordsAtRisk(double risk) {
         int index = Arrays.binarySearch(thresholds, risk);
         if (index < 0) {
-            index = -index - 2;
+            index = -index - 1;
         }
         return recordsAtRisk[index];
     }
@@ -139,19 +148,15 @@ public class RiskModelSampleRiskDistribution {
     }
 
     /**
-     * Returns the threshold that has been defined on prosecutor risks
+     * Returns the threshold for which is closest to the threshold which has 
+     * been defined on prosecutor risks and for which data is maintained
      * @return
      */
     public double getRiskThreshold() {
-        return this.threshold;
-    }
-
-    /**
-     * Returns a set of risk thresholds for which data is maintained.
-     * Note: all risks below 10^-6 are mapped to 0% risk.
-     * @return
-     */
-    public double[] getRiskThresholds() {
-        return thresholds;
+        int index = Arrays.binarySearch(thresholds, this.threshold);
+        if (index < 0) {
+            index = -index - 1;
+        }
+        return thresholds[index];
     }
 }
