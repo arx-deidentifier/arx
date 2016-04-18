@@ -44,7 +44,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author Fabian Prasser
  */
-public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRisk> {
+public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRisk> {
 
     /** View */
     private Composite                root;
@@ -63,7 +63,7 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
      * @param target
      * @param reset
      */
-    public ViewRisksClassDistributionTable(final Composite parent,
+    public ViewRisksRiskDistributionTable(final Composite parent,
                                    final Controller controller,
                                    final ModelPart target,
                                    final ModelPart reset) {

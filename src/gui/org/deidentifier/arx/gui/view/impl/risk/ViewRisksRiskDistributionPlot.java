@@ -57,7 +57,7 @@ import org.swtchart.Range;
  *
  * @author Fabian Prasser
  */
-public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRisk> {
+public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk> {
 
 
     /** Minimal width of a category label. */
@@ -80,7 +80,7 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
      * @param target
      * @param reset
      */
-    public ViewRisksClassDistributionPlot(final Composite parent,
+    public ViewRisksRiskDistributionPlot(final Composite parent,
                                           final Controller controller,
                                           final ModelPart target,
                                           final ModelPart reset) {
