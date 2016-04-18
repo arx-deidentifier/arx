@@ -123,7 +123,7 @@ public class RiskEstimateBuilderInterruptible {
     public int getProgress() {
         return parent.getProgress();
     }
-    
+
     /**
      * Returns a class providing access to sample-based risk estimates about the
      * attributes
@@ -137,7 +137,7 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-    
+
     /**
      * Returns a class providing sample-based re-identification risk estimates
      * 
@@ -146,6 +146,19 @@ public class RiskEstimateBuilderInterruptible {
     public RiskModelSampleRisks getSampleBasedReidentificationRisk() throws InterruptedException {
         try {
             return parent.getSampleBasedReidentificationRisk();
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
+    
+    /**
+     * Returns a class representing the distribution of prosecutor risks in the sample
+     * 
+     * @return
+     */
+    public RiskModelSampleRiskDistribution getSampleBasedRiskDistribution() throws InterruptedException {
+        try {
+            return parent.getSampleBasedRiskDistribution();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
