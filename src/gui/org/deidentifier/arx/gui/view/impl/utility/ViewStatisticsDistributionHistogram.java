@@ -23,6 +23,7 @@ import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
@@ -134,7 +135,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                                 if (data != null && data.length>0 && series != null) {
                                     int x = (int) Math.round(xAxis.getDataCoordinate(cursor.x));
                                     if (x >= 0 && x < series.length) {
-                                        root.setToolTipText("("+series[x]+", "+data[0].getYSeries()[x]+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                        root.setToolTipText("("+series[x]+", "+SWTUtil.getPrettyString(data[0].getYSeries()[x])+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                         return;
                                     }
                                 }

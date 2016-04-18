@@ -209,6 +209,7 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
         this.root.setLayout(new FillLayout());
 
         // Tool tip
+        final StringBuilder builder = new StringBuilder();
         root.addListener(SWT.MouseMove, new Listener() {
             @Override
             public void handleEvent(Event event) {
@@ -225,7 +226,16 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
                                 if (data != null && data.length>0 && series != null) {
                                     int x = (int) Math.round(xAxis.getDataCoordinate(cursor.x));
                                     if (x >= 0 && x < series.length) {
-                                        root.setToolTipText("("+series[x]+", "+data[0].getYSeries()[x]+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                        builder.setLength(0);
+                                        builder.append("("); //$NON-NLS-1$
+                                        builder.append(Resources.getMessage("ViewRisksRiskDistributionPlot.1")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
+                                        builder.append(series[x]);
+                                        builder.append("%, ").append(Resources.getMessage("ViewRisksRiskDistributionPlot.4")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                        builder.append(SWTUtil.getPrettyString(data[1].getYSeries()[x]));
+                                        builder.append("%, ").append(Resources.getMessage("ViewRisksRiskDistributionPlot.7")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                        builder.append(SWTUtil.getPrettyString(data[0].getYSeries()[x]));
+                                        builder.append("%)"); //$NON-NLS-1$
+                                        root.setToolTipText(builder.toString());
                                         return;
                                     }
                                 }
@@ -367,7 +377,7 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
                     max = Math.max(max, cumulative[i]);
                     labels[i] = String.valueOf(SWTUtil.getPrettyString(model.getRiskThresholds()[i] * 100d));
                 }
-                labels[0] = "<=" + SWTUtil.getPrettyString(1e-6);
+                labels[0] = "<=" + SWTUtil.getPrettyString(1e-6); //$NON-NLS-1$
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
