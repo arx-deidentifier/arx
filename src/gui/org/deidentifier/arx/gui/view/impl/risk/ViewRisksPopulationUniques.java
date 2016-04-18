@@ -40,9 +40,11 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.swtchart.Chart;
@@ -177,42 +179,6 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
             }
         });
         
-        // TODO: Seems to not work on GTK although it did before
-        chart.getPlotArea().addListener(SWT.MouseMove, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                IAxisSet axisSet = chart.getAxisSet();
-                StringBuilder builder = new StringBuilder();
-                if (axisSet != null) {
-                    IAxis xAxis = axisSet.getXAxis(0);
-                    if (xAxis != null) {
-                        String[] series = xAxis.getCategorySeries();
-                        ISeries[] data = chart.getSeriesSet().getSeries();
-                        int x = (int) Math.round(xAxis.getDataCoordinate(event.x));
-                        if (x >= 0 && x < series.length) {
-                            for (int i = 0; i < data.length; i++) {
-                                ISeries yseries = data[i];
-                                builder.append(yseries.getId());
-                                builder.append("("); //$NON-NLS-1$
-                                builder.append(series[x]);
-                                builder.append(", "); //$NON-NLS-1$
-                                builder.append(yseries.getYSeries()[x]);
-                                builder.append(")"); //$NON-NLS-1$
-                                if (i < data.length - 1) {
-                                    builder.append(", "); //$NON-NLS-1$
-                                }
-                            }
-                        }
-                    }
-                }
-                if (builder.length() != 0) {
-                    chart.getPlotArea().setToolTipText(builder.toString());
-                } else {
-                    chart.getPlotArea().setToolTipText(null);
-                }
-            }
-        });
-
         // Update font
         FontData[] fd = chart.getFont().getFontData();
         fd[0].setHeight(8);
@@ -299,9 +265,38 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
 
     @Override
     protected Control createControl(Composite parent) {
-        
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
+
+        // Tool tip
+        root.addListener(SWT.MouseMove, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (chart != null) {
+                    IAxisSet axisSet = chart.getAxisSet();
+                    if (axisSet != null) {
+                        IAxis xAxis = axisSet.getXAxis(0);
+                        if (xAxis != null) {
+                            Point cursor = chart.getPlotArea().toControl(Display.getCurrent().getCursorLocation());
+                            if (cursor.x >= 0 && cursor.x < chart.getPlotArea().getSize().x && 
+                                cursor.y >= 0 && cursor.y < chart.getPlotArea().getSize().y) {
+                                String[] series = xAxis.getCategorySeries();
+                                ISeries[] data = chart.getSeriesSet().getSeries();
+                                if (data != null && data.length>0 && series != null) {
+                                    int x = (int) Math.round(xAxis.getDataCoordinate(cursor.x));
+                                    if (x >= 0 && x < series.length) {
+                                        root.setToolTipText("("+series[x]+", "+data[0].getYSeries()[x]+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    root.setToolTipText(null);
+                }
+            }
+        });
+
         return this.root;
     }
 
