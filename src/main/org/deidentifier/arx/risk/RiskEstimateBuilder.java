@@ -289,6 +289,16 @@ public class RiskEstimateBuilder {
     }
 
     /**
+     * Returns a class representing the distribution of prosecutor risks in the sample
+     * 
+     * @return
+     */
+    public RiskModelSampleRiskDistribution getSampleBasedRiskDistribution() {
+        progress.value = 0;
+        return new RiskModelSampleRiskDistribution(getEquivalenceClassModel());
+    }
+
+    /**
      * Returns a risk summary
      * @param threshold Acceptable highest probability of re-identification for a single record
      * @return
