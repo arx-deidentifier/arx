@@ -265,11 +265,11 @@ public class LayoutUtility implements ILayout {
         
         Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationInput.setLayout(new FillLayout());
-        new ViewStatisticsRegressionInput(classificationInput, controller);
+        new ViewStatisticsLogisticRegressionInput(classificationInput, controller);
         
         Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationOutput.setLayout(new FillLayout());
-        new ViewStatisticsRegressionOutput(classificationOutput, controller);
+        new ViewStatisticsLogisticRegressionOutput(classificationOutput, controller);
 
         // Create bottom composite
         final Composite compositeBottom = new Composite(centerSash, SWT.NONE);

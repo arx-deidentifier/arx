@@ -286,13 +286,21 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected abstract void doUpdate(T context);
     
     /**
+     * Returns the controller
+     * @return
+     */
+    protected Controller getController() {
+        return this.controller;
+    }
+
+    /**
      * Returns the model
      * @return
      */
     protected Model getModel() {
         return this.model;
     }
-
+    
     /**
      * Returns the parent composite
      */

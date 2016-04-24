@@ -67,11 +67,11 @@ import de.linearbits.swt.table.DynamicTable;
 import de.linearbits.swt.table.DynamicTableColumn;
 
 /**
- * This view displays a statistics about classification
+ * This view displays a statistics about the performance of logistic regression classifiers
  *
  * @author Fabian Prasser
  */
-public abstract class ViewStatisticsRegression extends ViewStatistics<AnalysisContextClassification> {
+public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<AnalysisContextClassification> {
 
     /** Minimal width of a category label. */
     private static final int MIN_CATEGORY_WIDTH = 10;
@@ -95,14 +95,15 @@ public abstract class ViewStatisticsRegression extends ViewStatistics<AnalysisCo
      * @param controller
      * @param part
      */
-    public ViewStatisticsRegression(final Composite parent,
-                                    final Controller controller,
-                                    final ModelPart part) {
+    public ViewStatisticsLogisticRegression(final Composite parent,
+                                            final Controller controller,
+                                            final ModelPart part) {
 
         super(parent, controller, part, null, false);
         this.manager = new AnalysisManager(parent.getDisplay());
         controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
+        controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
     }
     
     @Override
@@ -116,6 +117,19 @@ public abstract class ViewStatisticsRegression extends ViewStatistics<AnalysisCo
         if (event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES ||
             event.part == ModelPart.DATA_TYPE) {
             triggerUpdate();
+        }
+        if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+            int index = 0;
+            for (TableItem item : table.getItems()) {
+                if (item.getText(0).equals(super.getModel().getSelectedAttribute())) {
+                    table.select(index);
+                    if (item.getData() != null && item.getData() instanceof PrecisionRecallMatrix) {
+                        setChartSeries((PrecisionRecallMatrix) item.getData());
+                    }
+                    return;
+                }
+                index++;
+            }
         }
     }
 
@@ -368,6 +382,8 @@ public abstract class ViewStatisticsRegression extends ViewStatistics<AnalysisCo
                     if (item.getData() != null && item.getData() instanceof PrecisionRecallMatrix) {
                         setChartSeries((PrecisionRecallMatrix) item.getData());
                     }
+                    getModel().setSelectedAttribute(item.getText(0));
+                    getController().update(new ModelEvent(ViewStatisticsLogisticRegression.this, ModelPart.SELECTED_ATTRIBUTE, item.getText(0)));
                 }
             }
         });

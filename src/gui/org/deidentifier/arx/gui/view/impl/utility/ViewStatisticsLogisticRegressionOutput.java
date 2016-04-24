@@ -26,11 +26,11 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This view displays a statistics about classification
+ * This view displays a statistics about the performance of logistic regression classifiers
  *
  * @author Fabian Prasser
  */
-public class ViewStatisticsRegressionInput extends ViewStatisticsRegression{
+public class ViewStatisticsLogisticRegressionOutput  extends ViewStatisticsLogisticRegression {
 
     /**
      * Creates a new instance.
@@ -38,18 +38,20 @@ public class ViewStatisticsRegressionInput extends ViewStatisticsRegression{
      * @param parent
      * @param controller
      */
-    public ViewStatisticsRegressionInput(final Composite parent,
+    public ViewStatisticsLogisticRegressionOutput(final Composite parent,
                                          final Controller controller) {
-        super(parent, controller, ModelPart.INPUT);
+        super(parent, controller, ModelPart.OUTPUT);
     }
 
     @Override
     protected String[] getColumnHeaders() {
         return new String[] {
                 Resources.getMessage("ViewStatisticsClassificationInput.3"), //$NON-NLS-1$
+                Resources.getMessage("ViewStatisticsClassificationInput.9"), //$NON-NLS-1$
                 Resources.getMessage("ViewStatisticsClassificationInput.1"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.11"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.7") //$NON-NLS-1$
+                Resources.getMessage("ViewStatisticsClassificationInput.13"), //$NON-NLS-1$
+                Resources.getMessage("ViewStatisticsClassificationInput.7"), //$NON-NLS-1$
+                Resources.getMessage("ViewStatisticsClassificationInput.12") //$NON-NLS-1$
         };
     }
     
@@ -58,8 +60,11 @@ public class ViewStatisticsRegressionInput extends ViewStatisticsRegression{
         List<Double> list = new ArrayList<Double>();
         list.add(result.getZeroRAccuracy());
         list.add(result.getOriginalAccuracy());
-        list.add(result.getOriginalAccuracy()-result.getZeroRAccuracy());
-        list.add(result.getOriginalAverageError());
+        list.add(result.getAccuracy());
+        list.add((result.getAccuracy()-result.getZeroRAccuracy())/(result.getOriginalAccuracy()-result.getZeroRAccuracy()));
+        list.add(result.getAverageError());
+        list.add(result.getAverageError()-result.getOriginalAverageError());
         return list;
     }
+
 }
