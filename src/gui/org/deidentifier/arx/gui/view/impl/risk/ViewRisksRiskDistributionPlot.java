@@ -63,7 +63,6 @@ import org.swtchart.Range;
  */
 public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk> {
 
-
     /** Minimal width of a category label. */
     private static final int MIN_CATEGORY_WIDTH = 10;
 
@@ -208,7 +207,6 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
         chart.setEnabled(false);
         updateCategories();
     }
-
 
     /**
      * Makes the chart show category labels or not.
