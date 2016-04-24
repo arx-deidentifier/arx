@@ -116,15 +116,7 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.5")); //$NON-NLS-1$
-        c = new DynamicTableColumn(table, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.6")); //$NON-NLS-1$
-        c = new DynamicTableColumn(table, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.10")); //$NON-NLS-1$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.13")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -132,7 +124,7 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.8")); //$NON-NLS-1$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.12")); //$NON-NLS-1$
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
@@ -214,10 +206,8 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
                     item.setData("3", originalAccuracies.get(i));
                     item.setData("4", accuracies.get(i));
                     item.setData("5", (accuracies.get(i)-baselineAccuracies.get(i))/(originalAccuracies.get(i)-baselineAccuracies.get(i)));
-                    item.setData("6", baselineErrors.get(i));
-                    item.setData("7", originalErrors.get(i));
-                    item.setData("8", errors.get(i));
-                    item.setData("9", (errors.get(i)-originalErrors.get(i))/(baselineErrors.get(i)-originalErrors.get(i)));
+                    item.setData("6", errors.get(i));
+                    item.setData("7", errors.get(i)-originalErrors.get(i));
                 }
 
                 // Status
@@ -255,10 +245,10 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
                     
                     baselineAccuracies.add(result.getZeroRAccuracy());
                     originalAccuracies.add(result.getOriginalAccuracy());
-                    accuracies.add(result.getOriginalAccuracy());
+                    accuracies.add(result.getAccuracy());
                     baselineErrors.add(result.getZeroRAverageError());
                     originalErrors.add(result.getOriginalAverageError());
-                    errors.add(result.getOriginalAverageError());
+                    errors.add(result.getAverageError());
                     classNumbers.add(result.getNumClasses());
                 }
 

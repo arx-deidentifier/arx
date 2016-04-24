@@ -112,19 +112,11 @@ public class ViewStatisticsRegressionInput extends ViewStatistics<AnalysisContex
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("12.5%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.5")); //$NON-NLS-1$
-        c = new DynamicTableColumn(table, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("12.5%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.6")); //$NON-NLS-1$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.11")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("12.5%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.7")); //$NON-NLS-1$
-        c = new DynamicTableColumn(table, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("12.5%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.8")); //$NON-NLS-1$
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
@@ -168,7 +160,6 @@ public class ViewStatisticsRegressionInput extends ViewStatistics<AnalysisContex
             private List<Double>  accuracies         = new ArrayList<>();
             private List<Double>  baselineAccuracies = new ArrayList<>();
             private List<Double>  errors             = new ArrayList<>();
-            private List<Double>  baselineErrors     = new ArrayList<>();
             private List<Integer> classNumbers       = new ArrayList<>();
             private int           progress           = 0;
 
@@ -202,10 +193,8 @@ public class ViewStatisticsRegressionInput extends ViewStatistics<AnalysisContex
                     item.setText(1, String.valueOf(classNumbers.get(i)));
                     item.setData("2", baselineAccuracies.get(i));
                     item.setData("3", accuracies.get(i));
-                    item.setData("4", 1d);
-                    item.setData("5", baselineErrors.get(i));
-                    item.setData("6", errors.get(i));
-                    item.setData("7", 0d);
+                    item.setData("4", accuracies.get(i)-baselineAccuracies.get(i));
+                    item.setData("5", errors.get(i));
                 }
 
                 // Status
@@ -243,7 +232,6 @@ public class ViewStatisticsRegressionInput extends ViewStatistics<AnalysisContex
                     
                     baselineAccuracies.add(result.getZeroRAccuracy());
                     accuracies.add(result.getOriginalAccuracy());
-                    baselineErrors.add(result.getZeroRAverageError());
                     errors.add(result.getOriginalAverageError());
                     classNumbers.add(result.getNumClasses());
                 }

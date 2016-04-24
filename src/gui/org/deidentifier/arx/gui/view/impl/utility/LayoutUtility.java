@@ -215,7 +215,7 @@ public class LayoutUtility implements ILayout {
         // Create center composite
         final Composite center = new Composite(centerSash, SWT.NONE);
         center.setLayoutData(SWTUtil.createFillGridData());
-        center.setLayout(SWTUtil.createGridLayout(2));
+        center.setLayout(SWTUtil.createGridLayoutWithEqualWidth(2));
 
         // Create left composite
         centerLeft = new Composite(center, SWT.NONE);
