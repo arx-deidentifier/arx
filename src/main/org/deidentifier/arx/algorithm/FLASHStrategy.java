@@ -24,7 +24,8 @@ import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
- * This class implements the general strategy of the ARX algorithm.
+ * This class implements a total order on all transformations in the search space. It is
+ * used by the Flash algorithm to achieve stable execution times.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -83,7 +84,7 @@ public class FLASHStrategy implements Comparator<Integer> {
     }
 
     /**
-     * Compares transformation according to their criteria.
+     * Compares transformations.
      * 
      * @param n1
      *            the n1
@@ -96,10 +97,10 @@ public class FLASHStrategy implements Comparator<Integer> {
 
         // Obtain vals
         if (cache[n1] == null) {
-            cache[n1] = getValue(n1);
+            cache[n1] = getCriteria(n1);
         }
         if (cache[n2] == null) {
-            cache[n2] = getValue(n2);
+            cache[n2] = getCriteria(n2);
         }
         final double[] m1 = cache[n1];
         final double[] m2 = cache[n2];
@@ -123,18 +124,18 @@ public class FLASHStrategy implements Comparator<Integer> {
     }
 
     /**
-     * Returns the criteria for the given node.
+     * Returns the criteria that determines a transformations's position.
      * 
-     * @param node the node
+     * @param id the id
      * @return the value
      */
-    private final double[] getValue(final int node) {
+    private final double[] getCriteria(final int id) {
         
         // Prepare
         double level = 0;
         double prec = 0;
         double ddistinct = 0;
-        Transformation transformation = solutionSpace.getTransformation(node);
+        Transformation transformation = solutionSpace.getTransformation(id);
         int[] generalization = transformation.getGeneralization();
         
         // Compute
