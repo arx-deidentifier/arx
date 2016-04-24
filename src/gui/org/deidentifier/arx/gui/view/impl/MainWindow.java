@@ -59,6 +59,7 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogMultiSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogOrderSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
+import org.deidentifier.arx.gui.view.impl.menu.DialogTopBottomCoding;
 import org.deidentifier.arx.gui.view.impl.risk.LayoutRisks;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility;
 import org.deidentifier.arx.gui.worker.Worker;
@@ -450,7 +451,6 @@ public class MainWindow implements IView {
             return null;
         }
     }
-
     /**
      * Shows a help dialog.
      *
@@ -483,6 +483,19 @@ public class MainWindow implements IView {
      * @param header
      * @param text
      * @param initial
+     * @return
+     */
+    public String showInputDialog(final Shell shell, final String header, final String text, final String initial) {
+        return showInputDialog(shell, header, text, initial, null);
+    }
+
+    /**
+     * Shows an input dialog.
+     *
+     * @param shell
+     * @param header
+     * @param text
+     * @param initial
      * @param validator
      * @return
      */
@@ -495,16 +508,27 @@ public class MainWindow implements IView {
         }
     }
     /**
-     * Shows an input dialog.
-     *
+     * Shows a dialog that allows selecting multiple elements
      * @param shell
-     * @param header
+     * @param title
      * @param text
-     * @param initial
+     * @param elements
+     * @param selected
      * @return
      */
-    public String showInputDialog(final Shell shell, final String header, final String text, final String initial) {
-        return showInputDialog(shell, header, text, initial, null);
+    public List<String> showMultiSelectionDialog(Shell shell,
+                                                       String title,
+                                                       String text,
+                                                       List<String> elements,
+                                                       List<String> selected) {
+
+        // Open dialog
+        DialogMultiSelection dlg = new DialogMultiSelection(shell, title, text, elements, selected);
+        if (dlg.open() == Window.OK) {
+            return dlg.getSelectedItems();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -628,6 +652,20 @@ public class MainWindow implements IView {
         }
     }
 
+    /**
+     * Shows a top/bottom coding dialog
+     * @param type
+     * @return A pair containing the bottom value + inclusive and the top value + inclusive.
+     *         Either bottom or top may be <code>null</code> if they have not been defined. The overall pair may be
+     *         <code>null</code> if cancel was pressed.
+     */
+    public Pair<Pair<String, Boolean>, Pair<String, Boolean>> showTopBottomCodingDialog(DataType<?> type) {
+        DialogTopBottomCoding dialog = new DialogTopBottomCoding(shell, type);
+        dialog.create();
+        dialog.open();
+        return dialog.getValue();
+    }
+    
     @Override
     public void update(final ModelEvent event) {
 
@@ -640,6 +678,7 @@ public class MainWindow implements IView {
         }
     }
     
+
     /**
      * Creates the edit menu
      * @return
@@ -685,6 +724,15 @@ public class MainWindow implements IView {
                 return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
         });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.42"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuEditCreateTopBottomCodingHierarchy(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.23"), //$NON-NLS-1$
                                    controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
@@ -700,7 +748,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.30"), //$NON-NLS-1$
                                    controller.getResources().getManagedImage("edit_find_replace.png"), //$NON-NLS-1$
                                    false) {
-            public void action(Controller controller) { controller.actionFindReplace(); }
+            public void action(Controller controller) { controller.actionMenuEditFindReplace(); }
             public boolean isEnabled(Model model) { 
                 return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
@@ -789,7 +837,7 @@ public class MainWindow implements IView {
             }  
         };
     }
-    
+
 
     /**
      * Creates the help menu
@@ -833,7 +881,6 @@ public class MainWindow implements IView {
             }  
         };
     }
-
 
     /**
      * Creates the global menu
@@ -1051,29 +1098,5 @@ public class MainWindow implements IView {
                 return true;
             }  
         };
-    }
-
-    /**
-     * Shows a dialog that allows selecting multiple elements
-     * @param shell
-     * @param title
-     * @param text
-     * @param elements
-     * @param selected
-     * @return
-     */
-    public List<String> showMultiSelectionDialog(Shell shell,
-                                                       String title,
-                                                       String text,
-                                                       List<String> elements,
-                                                       List<String> selected) {
-
-        // Open dialog
-        DialogMultiSelection dlg = new DialogMultiSelection(shell, title, text, elements, selected);
-        if (dlg.open() == Window.OK) {
-            return dlg.getSelectedItems();
-        } else {
-            return null;
-        }
     }
 }

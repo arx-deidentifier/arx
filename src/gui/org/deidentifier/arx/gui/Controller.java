@@ -46,6 +46,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataScale;
 import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
@@ -56,9 +57,9 @@ import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
 import org.deidentifier.arx.gui.model.ModelCriterion;
+import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
@@ -527,78 +528,6 @@ public class Controller implements IView {
     }
 
     /**
-     * Find and replace action
-     */
-    public void actionFindReplace() {
-
-        // Check
-        if (model == null) {
-            main.showInfoDialog(main.getShell(),
-                                Resources.getMessage("Controller.3"), //$NON-NLS-1$
-                                Resources.getMessage("Controller.4")); //$NON-NLS-1$
-            return;
-        }
-
-        // Check
-        if (model.getInputConfig().getInput() == null) {
-            main.showInfoDialog(main.getShell(),
-                                Resources.getMessage("Controller.5"), //$NON-NLS-1$
-                                Resources.getMessage("Controller.6")); //$NON-NLS-1$
-            return;
-        }
-
-        // Show dialog
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-        int column = handle.getColumnIndexOf(model.getSelectedAttribute());
-        Pair<String, String> pair = main.showFindReplaceDialog(model, handle, column);
-        
-        // If action must be performed
-        if (pair != null) {
-            
-            // Replace in input
-            handle.replace(column, pair.getFirst(), pair.getSecond());
-            
-            // Replace in output
-            if (model.getOutputConfig() != null) {
-                Hierarchy hierarchy = model.getOutputConfig().getHierarchy(model.getSelectedAttribute());
-                if (hierarchy != null) {
-                    for (String[] array : hierarchy.getHierarchy()) {
-                        for (int i=0; i<array.length; i++) {
-                            if (array[i].equals(pair.getFirst())) {
-                                array[i] = pair.getSecond();
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Replace in input hierarchy
-            if (model.getInputConfig() != null) {
-                Hierarchy hierarchy = model.getInputConfig().getHierarchy(model.getSelectedAttribute());
-                if (hierarchy != null) {
-                    for (String[] array : hierarchy.getHierarchy()) {
-                        for (int i=0; i<array.length; i++) {
-                            if (array[i].equals(pair.getFirst())) {
-                                array[i] = pair.getSecond();
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // Fire event
-            ModelAuditTrailEntry entry = ModelAuditTrailEntry.createfindReplaceEntry( model.getSelectedAttribute(), 
-                                                                                      pair.getFirst(), 
-                                                                                      pair.getSecond());
-            update(new ModelEvent(this, ModelPart.ATTRIBUTE_VALUE, entry));
-            
-            // Store in model
-            model.addAuditTrailEntry(entry);
-            model.setModified();
-        }
-    }
-
-    /**
      * Starts the anonymization.
      * @param heuristicSearch 
      */
@@ -794,6 +723,154 @@ public class Controller implements IView {
     }
 
     /**
+     * Initializes the hierarchy for the currently selected attribute with a scheme
+     * for top-/bottom coding.
+     */
+    public void actionMenuEditCreateTopBottomCodingHierarchy() {
+
+        // Check
+        if (model == null ||
+            model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null ||
+            model.getSelectedAttribute() == null) {
+            return;
+        }
+        
+        // Check
+        DataType<?>type = model.getInputDefinition().getDataType(model.getSelectedAttribute());
+        if (type.getDescription().getScale() != DataScale.INTERVAL &&
+            type.getDescription().getScale() != DataScale.RATIO) {
+            actionShowInfoDialog(this.main.getShell(), Resources.getMessage("Controller.150"), Resources.getMessage("Controller.151")); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+        }
+        
+        // User input
+        Pair<Pair<String, Boolean>, Pair<String, Boolean>> pair = main.showTopBottomCodingDialog(type);
+        if (pair == null || (pair.getFirst() == null && pair.getSecond() == null)) {
+            return;
+        }
+        
+        // Obtain values
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int index = handle.getColumnIndexOf(model.getSelectedAttribute());
+        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
+        
+        String bottom = pair.getFirst() != null ? pair.getFirst().getFirst() : null;
+        Boolean bottomInclusive = pair.getFirst() != null ? pair.getFirst().getSecond() : null;
+        String top = pair.getSecond() != null ? pair.getSecond().getFirst() : null;
+        Boolean topInclusive = pair.getSecond() != null ? pair.getSecond().getSecond() : null;
+        
+        // Create hierarchy
+        String[][] array;
+        try {
+            array = new String[values.length][2];
+            for (int i = 0; i < values.length; i++) {
+
+                String value = values[i];
+                String coded = null;
+
+                if (top != null) {
+                    int cmp = type.compare(value, top);
+                    if (cmp > 0 || (topInclusive && cmp == 0)) {
+                        coded = topInclusive ? ">=" + top : ">" + top; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                }
+                if (coded == null && bottom != null) {
+                    int cmp = type.compare(value, bottom);
+                    if (cmp < 0 || (bottomInclusive && cmp == 0)) {
+                        coded = bottomInclusive ? "<=" + bottom : "<" + bottom; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                }
+                if (coded == null) {
+                    coded = value;
+                }
+                
+                array[i] = new String[] {value, coded};
+            }
+        } catch (Exception e) {
+            this.actionShowInfoDialog(main.getShell(), Resources.getMessage("Controller.152"), Resources.getMessage("Controller.153")); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+        }
+        
+        // Update
+        Hierarchy hierarchy = Hierarchy.create(array);
+        this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
+        this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+    }
+
+    /**
+     * Find and replace action
+     */
+    public void actionMenuEditFindReplace() {
+
+        // Check
+        if (model == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.3"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.4")); //$NON-NLS-1$
+            return;
+        }
+
+        // Check
+        if (model.getInputConfig().getInput() == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.5"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.6")); //$NON-NLS-1$
+            return;
+        }
+
+        // Show dialog
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int column = handle.getColumnIndexOf(model.getSelectedAttribute());
+        Pair<String, String> pair = main.showFindReplaceDialog(model, handle, column);
+        
+        // If action must be performed
+        if (pair != null) {
+            
+            // Replace in input
+            handle.replace(column, pair.getFirst(), pair.getSecond());
+            
+            // Replace in output
+            if (model.getOutputConfig() != null) {
+                Hierarchy hierarchy = model.getOutputConfig().getHierarchy(model.getSelectedAttribute());
+                if (hierarchy != null) {
+                    for (String[] array : hierarchy.getHierarchy()) {
+                        for (int i=0; i<array.length; i++) {
+                            if (array[i].equals(pair.getFirst())) {
+                                array[i] = pair.getSecond();
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Replace in input hierarchy
+            if (model.getInputConfig() != null) {
+                Hierarchy hierarchy = model.getInputConfig().getHierarchy(model.getSelectedAttribute());
+                if (hierarchy != null) {
+                    for (String[] array : hierarchy.getHierarchy()) {
+                        for (int i=0; i<array.length; i++) {
+                            if (array[i].equals(pair.getFirst())) {
+                                array[i] = pair.getSecond();
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Fire event
+            ModelAuditTrailEntry entry = ModelAuditTrailEntry.createfindReplaceEntry( model.getSelectedAttribute(), 
+                                                                                      pair.getFirst(), 
+                                                                                      pair.getSecond());
+            update(new ModelEvent(this, ModelPart.ATTRIBUTE_VALUE, entry));
+            
+            // Store in model
+            model.addAuditTrailEntry(entry);
+            model.setModified();
+        }
+    }
+
+    /**
      * Initializes the hierarchy for the currently selected attribute
      */
     public void actionMenuEditInitializeHierarchy() {
@@ -822,7 +899,6 @@ public class Controller implements IView {
         this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
         this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
     }
-
     /**
      * Resets the current output
      */

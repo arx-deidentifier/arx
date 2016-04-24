@@ -33,8 +33,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 /**
- * This class implements an a menu for the editor for generalization hierarchies. It is partly
- * based upon code implemented by Ledian Xhani and Ljubomir Dshevlekov.
+ * This class implements an a menu for the editor for generalization hierarchies.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -85,6 +84,9 @@ public class ComponentHierarchyMenu implements IView {
 
     /** Item. */
     private MenuItem           itemInitialize;
+
+    /** Item. */
+    private MenuItem           itemTopBottomCoding;
     
     /**
      * Creates a new instance
@@ -270,6 +272,22 @@ public class ComponentHierarchyMenu implements IView {
                 }
             }
         });
+        
+        // Action top/bottom coding
+        itemTopBottomCoding = new MenuItem(menu, SWT.NONE);
+        itemTopBottomCoding.setText(Resources.getMessage("HierarchyView.22")); //$NON-NLS-1$
+        itemTopBottomCoding.addSelectionListener(new SelectionAdapter() {
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    if (hierarchy.isRowSelected() || hierarchy.isColumnSelected() ||
+                        hierarchy.isCellSelected() || model == null || model.getInputConfig() == null ||
+                        model.getInputConfig().getInput() == null ||
+                        model.getSelectedAttribute() == null) { return; }
+    
+                    controller.actionMenuEditCreateTopBottomCodingHierarchy();
+                }
+            }
+        });
     }
 
     /**
@@ -310,6 +328,7 @@ public class ComponentHierarchyMenu implements IView {
         // ---------
         itemClear.setEnabled(cell || row || column);
         itemInitialize.setEnabled(hierarchy.isEmpty());
+        itemTopBottomCoding.setEnabled(hierarchy.isEmpty());
         
         // Show
         this.menu.setLocation(point);

@@ -35,8 +35,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 
 /**
- * This class implements an editor for generalization hierarchies. It is partly
- * based upon code implemented by Ledian Xhani and Ljubomir Dshevlekov.
+ * This class implements an editor for generalization hierarchies.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer

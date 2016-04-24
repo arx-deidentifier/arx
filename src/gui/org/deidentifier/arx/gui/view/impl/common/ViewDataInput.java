@@ -86,7 +86,7 @@ public class ViewDataInput extends ViewData {
             item1.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(final SelectionEvent arg0) {
-                    controller.actionFindReplace();
+                    controller.actionMenuEditFindReplace();
                 }
             });
 
