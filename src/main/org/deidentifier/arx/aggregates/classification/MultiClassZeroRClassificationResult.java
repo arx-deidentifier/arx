@@ -50,13 +50,6 @@ public class MultiClassZeroRClassificationResult implements ClassificationResult
         if (result == null) {
             return false;
         }
-        
-        if (map.get(clazz)==null) {
-            System.out.println(clazz);
-            System.out.println(map);
-            System.exit(0);
-        }
-        
         return result.intValue() == map.get(clazz).intValue();
     }
 

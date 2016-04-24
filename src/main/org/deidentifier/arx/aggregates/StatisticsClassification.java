@@ -231,7 +231,7 @@ public class StatisticsClassification {
                         classifications++;
                         
                         // Correct result
-                        String actualValue = outputHandle.getValue(index, specification.classIndex);
+                        String actualValue = outputHandle.getValue(index, specification.classIndex, true);
                         
                         // Maintain data about inputZR
                         this.zeroRAverageError += resultInputZR.error(actualValue);
