@@ -301,10 +301,6 @@ public class DialogProperties implements IDialog {
             protected Integer getValue() { return model.getClassificationModel().getMaximalNumberOfRecords(); }
             protected void setValue(Object t) { model.getClassificationModel().setMaximalNumberOfRecords((Integer)t); }});
 
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.16")) { //$NON-NLS-1$
-            protected Boolean getValue() { return model.getClassificationModel().isIgnoreSuppressedRecords(); }
-            protected void setValue(Object t) { model.getClassificationModel().setIgnoreSuppressedRecords((Boolean)t); }});
-
         window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.17")) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getClassificationModel().getSeed()==Integer.MAX_VALUE; }
             protected void setValue(Object t) { model.getClassificationModel().setSeed((Boolean)t ? Integer.MAX_VALUE : null); }});        

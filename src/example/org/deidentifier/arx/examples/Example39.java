@@ -101,12 +101,8 @@ public class Example39 extends Example {
         data.getDefinition().setAttributeType("marital-status", AttributeType.INSENSITIVE_ATTRIBUTE);
         data.getDefinition().setDataType("age", DataType.INTEGER);
 
-        double inputAccuracy = data.getHandle().getStatistics()
-                                    .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, true, 1d)
-                                    .getFractionCorrect();
-        
         System.out.println("Input dataset");
-        System.out.println(" - Classification accuracy: " + inputAccuracy);
+        System.out.println(data.getHandle().getStatistics().getClassificationPerformance(features, clazz, Integer.MAX_VALUE, 1d));
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
@@ -115,13 +111,8 @@ public class Example39 extends Example {
         config.setMetric(Metric.createLossMetric());
         
         ARXResult result = anonymizer.anonymize(data, config);
-
-        double outputAccuracy = result.getOutput().getStatistics()
-                                        .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, true, 1d)
-                                        .getFractionCorrect();
-        
         System.out.println("5-anonymous dataset");
-        System.out.println(" - Classification accuracy: " + outputAccuracy);
-        System.out.println(" - Difference to input: " + (outputAccuracy / inputAccuracy - 1d) * 100d + "[%]");
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, Integer.MAX_VALUE, 1d));
+        
     }
 }

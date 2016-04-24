@@ -20,6 +20,8 @@ package org.deidentifier.arx;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.deidentifier.arx.aggregates.StatisticsBuilder;
+
 /**
  * Wrapper class that provides information to StatisticsBuilder.
  *
@@ -114,13 +116,24 @@ public class DataHandleInternal {
     /**
      * Method
      * @param column
+     * @param ignoreSuppression
+     * @param stop
+     * @return
+     */
+    public String[] getDistinctValues(int column, boolean ignoreSuppression, InterruptHandler stop) {
+        return handle.getDistinctValues(column, ignoreSuppression, stop);
+    }
+
+    /**
+     * Method
+     * @param column
      * @param stop
      * @return
      */
     public String[] getDistinctValues(int column, InterruptHandler stop) {
-        return handle.getDistinctValues(column, stop);
+        return handle.getDistinctValues(column, false, stop);
     }
-
+    
     /**
      * Delegate
      * @param row
@@ -168,6 +181,10 @@ public class DataHandleInternal {
         return handle.getNumRows();
     }
 
+    public StatisticsBuilder getStatisticsBuilder() {
+        return this.handle.getStatistics();
+    }
+
     /**
      * Returns the superset, if this handle is a subset
      * @return
@@ -197,14 +214,14 @@ public class DataHandleInternal {
     public String getValue(int row, int column) {
         return handle.getValue(row, column);
     }
-
+  
     /**
      * Gets the value
      */
     public String getValue(final int row, final int col, final boolean ignoreSuppression) {
         return handle.internalGetValue(row, col, ignoreSuppression);
     }
-  
+
     /**
      * Returns the view
      * @return
@@ -212,7 +229,7 @@ public class DataHandleInternal {
     public DataHandleInternal getView() {
         return new DataHandleInternal(handle.getView());
     }
-
+    
     /**
      * Returns whether the handle is anonymous
      * @return
@@ -228,7 +245,7 @@ public class DataHandleInternal {
     public boolean isOptimized() {
         return handle.isOptimized();
     }
-    
+
     /**
      * Returns whether the given row is suppressed
      * @param row
@@ -248,5 +265,28 @@ public class DataHandleInternal {
         } else {
             return this.handle instanceof DataHandleOutput;
         }
+    }
+
+    /**
+     * Returns the associated input handle, itself if there is none.
+     * @return
+     */
+    public DataHandleInternal getAssociatedInput() {
+        
+        // Check if input already
+        if (!this.isOutput()) {
+            return this;
+        }
+        
+        // Obtain
+        DataHandle input = this.handle.registry.getInputHandle();
+        
+        // Map to subset
+        if (this.getSuperset() != null) {
+            input = input.getView();
+        }
+        
+        // Return
+        return new DataHandleInternal(input);
     }
 }

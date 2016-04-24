@@ -154,7 +154,7 @@ public abstract class DataHandle {
      * @return the distinct values
      */
     public final String[] getDistinctValues(int column) {
-        return getDistinctValues(column, new InterruptHandler() {
+        return getDistinctValues(column, false, new InterruptHandler() {
             @Override
             public void checkInterrupt() {
                 // Nothing to do
@@ -903,10 +903,11 @@ public abstract class DataHandle {
      * Returns the distinct values.
      *
      * @param column the column
+     * @param ignoreSuppression
      * @param handler the handler
      * @return the distinct values
      */
-    protected abstract String[] getDistinctValues(int column, InterruptHandler handler);
+    protected abstract String[] getDistinctValues(int column, boolean ignoreSuppression, InterruptHandler handler);
 
     /**
      * Returns the registry associated with this handle.

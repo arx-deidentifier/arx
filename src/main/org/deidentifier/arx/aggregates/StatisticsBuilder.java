@@ -73,44 +73,38 @@ public class StatisticsBuilder {
     /**
      * Creates a new set of statistics for the given classification task
      * @param clazz - The class attributes
-     * @param ignoreSuppressedRecords - Ignore suppressed records
      * @param samplingFraction - The sampling fraction
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String clazz,
-                                                                 boolean ignoreSuppressedRecords,
                                                                  double samplingFraction) throws ParseException {
-        return getClassificationPerformance(new String[] {}, clazz, null, ignoreSuppressedRecords, samplingFraction);
+        return getClassificationPerformance(new String[] {}, clazz, null, samplingFraction);
     }
     
     /**
      * Creates a new set of statistics for the given classification task
      * @param clazz - The class attributes
      * @param seed - The random seed, null, if the process should be randomized
-     * @param ignoreSuppressedRecords - Ignore suppressed records
      * @param samplingFraction - The sampling fraction
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String clazz,
                                                                  Integer seed,
-                                                                 boolean ignoreSuppressedRecords,
                                                                  double samplingFraction) throws ParseException {
-        return getClassificationPerformance(new String[] {}, clazz, seed, ignoreSuppressedRecords, samplingFraction);
+        return getClassificationPerformance(new String[] {}, clazz, seed, samplingFraction);
     }
     
     /**
      * Creates a new set of statistics for the given classification task
      * @param features - The feature attributes
      * @param clazz - The class attributes
-     * @param ignoreSuppressedRecords - Ignore suppressed records
      * @param samplingFraction - The sampling fraction
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
-                                                                 boolean ignoreSuppressedRecords,
                                                                  double samplingFraction) throws ParseException {
-        return getClassificationPerformance(features, clazz, null, ignoreSuppressedRecords, samplingFraction);
+        return getClassificationPerformance(features, clazz, null, samplingFraction);
     }
     
     /**
@@ -118,21 +112,19 @@ public class StatisticsBuilder {
      * @param features - The feature attributes
      * @param clazz - The class attributes
      * @param seed - The random seed, null, if the process should be randomized
-     * @param ignoreSuppressedRecords - Ignore suppressed records
      * @param samplingFraction - The sampling fraction
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
                                                                  Integer seed,
-                                                                 boolean ignoreSuppressedRecords,
                                                                  double samplingFraction) throws ParseException {
 
         // Reset stop flag
         interrupt.value = false;
-
+        
         // Return
-        return new StatisticsClassification(this, handle, ignoreSuppressedRecords, features, clazz, seed, samplingFraction, interrupt);
+        return new StatisticsClassification(handle.getAssociatedInput(), handle, features, clazz, seed, samplingFraction, interrupt);
     }
     
     /**

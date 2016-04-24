@@ -19,9 +19,8 @@ package org.deidentifier.arx.gui.view.impl.utility;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.DataHandleSubset;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
+import org.deidentifier.arx.aggregates.StatisticsClassification;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -95,25 +94,45 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
-        
+
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.0")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.2")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.4")); //$NON-NLS-1$
+        c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.3")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.9")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
+        c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.1")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.5")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
+        c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.6")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
+        c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.10")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
+        c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.7")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
+        c.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.8")); //$NON-NLS-1$
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
@@ -144,34 +163,28 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
 
         // The statistics builder
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
-        final DataHandle sourceHandle;
-        if (context.handle instanceof DataHandleSubset) {
-            sourceHandle = context.model.getInputConfig().getInput().getHandle().getView();    
-        } else {
-            sourceHandle = context.model.getInputConfig().getInput().getHandle();
-        }
-        final StatisticsBuilderInterruptible sourcebuilder = sourceHandle.getStatistics().getInterruptibleInstance();
-        
         final String[] features = context.model.getSelectedFeatures().toArray(new String[0]);
         final String[] classes = context.model.getSelectedClasses().toArray(new String[0]);
         final double fraction = context.handle.getNumRows() > context.model.getClassificationModel().getMaximalNumberOfRecords() ?
                                 (double)context.model.getClassificationModel().getMaximalNumberOfRecords() / (double)context.handle.getNumRows() : 1d;
         final Integer seed = context.model.getClassificationModel().getSeed();
-        final boolean ignoreSuppressedRecords = context.model.getClassificationModel().isIgnoreSuppressedRecords();
         
         // Create an analysis
         Analysis analysis = new Analysis(){
 
-            private boolean       stopped              = false;
-            private List<Double>  accuracies           = new ArrayList<>();
-            private List<Double>  baselineAccuracies   = new ArrayList<>();
-            private List<Integer> classNumbers         = new ArrayList<>();
-            private List<Integer> baselineClassNumbers = new ArrayList<>();
-            private int           progress             = 0;
+            private boolean       stopped            = false;
+            private List<Double>  baselineAccuracies = new ArrayList<>();
+            private List<Double>  originalAccuracies = new ArrayList<>();
+            private List<Double>  accuracies         = new ArrayList<>();
+            private List<Double>  baselineErrors     = new ArrayList<>();
+            private List<Double>  originalErrors     = new ArrayList<>();
+            private List<Double>  errors             = new ArrayList<>();
+            private List<Integer> classNumbers       = new ArrayList<>();
+            private int           progress           = 0;
 
             @Override
             public int getProgress() {
-                return (int)((double)progress / (double)classes.length / 4d * 100d);
+                return (int)((double)progress / (double)classes.length * 100d);
             }
             
             @Override
@@ -197,9 +210,14 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(0, classes[i]);
                     item.setText(1, String.valueOf(classNumbers.get(i)));
-                    item.setData("2", (double) classNumbers.get(i) / (double) baselineClassNumbers.get(i) - 1d);
-                    item.setData("3", accuracies.get(i));
-                    item.setData("4", (double) accuracies.get(i) / (double) baselineAccuracies.get(i) - 1d);
+                    item.setData("2", baselineAccuracies.get(i));
+                    item.setData("3", originalAccuracies.get(i));
+                    item.setData("4", accuracies.get(i));
+                    item.setData("5", (accuracies.get(i)-baselineAccuracies.get(i))/(originalAccuracies.get(i)-baselineAccuracies.get(i)));
+                    item.setData("6", baselineErrors.get(i));
+                    item.setData("7", originalErrors.get(i));
+                    item.setData("8", errors.get(i));
+                    item.setData("9", (errors.get(i)-originalErrors.get(i))/(baselineErrors.get(i)-originalErrors.get(i)));
                 }
 
                 // Status
@@ -224,34 +242,24 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
                 
                 // Do work
                 for (String clazz : classes) {
-                    accuracies.add(builder.getClassificationPerformance(features,
-                                                                        clazz,
-                                                                        seed,
-                                                                        ignoreSuppressedRecords,
-                                                                        fraction).getFractionCorrect());
+
+                    // Compute
+                    StatisticsClassification result = builder.getClassificationPerformance(features,
+                                                                                               clazz,
+                                                                                               seed,
+                                                                                               fraction); 
                     progress++;
                     if (stopped) {
                         break;
                     }
-                    baselineAccuracies.add(sourcebuilder.getClassificationPerformance(features,
-                                                                                      clazz,
-                                                                                      seed,
-                                                                                      ignoreSuppressedRecords,
-                                                                                      fraction).getFractionCorrect());
-                    progress++;
-                    if (stopped) {
-                        break;
-                    }
-                    baselineClassNumbers.add(sourcebuilder.getDistinctValues(context.handle.getColumnIndexOf(clazz)).length);
-                    progress++;
-                    if (stopped) {
-                        break;
-                    }
-                    classNumbers.add(builder.getDistinctValues(context.handle.getColumnIndexOf(clazz)).length);
-                    progress++;
-                    if (stopped) {
-                        break;
-                    }
+                    
+                    baselineAccuracies.add(result.getZeroRAccuracy());
+                    originalAccuracies.add(result.getOriginalAccuracy());
+                    accuracies.add(result.getOriginalAccuracy());
+                    baselineErrors.add(result.getZeroRAverageError());
+                    originalErrors.add(result.getOriginalAverageError());
+                    errors.add(result.getOriginalAverageError());
+                    classNumbers.add(result.getNumClasses());
                 }
 
                 // Our users are patient
@@ -263,7 +271,6 @@ public class ViewStatisticsRegressionOutput  extends ViewStatistics<AnalysisCont
             @Override
             public void stop() {
                 builder.interrupt();
-                sourcebuilder.interrupt();
                 this.stopped = true;
             }
         };

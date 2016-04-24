@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
+import org.deidentifier.arx.aggregates.StatisticsClassification;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -95,23 +96,35 @@ public class ViewStatisticsRegressionInput extends ViewStatistics<AnalysisContex
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
         
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("12.5%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.0")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("12.5%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.2")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("12.5%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.3")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("12.5%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.1")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("12.5%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.5")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
+        c.setWidth("12.5%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.6")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
+        c.setWidth("12.5%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.7")); //$NON-NLS-1$
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
+        c.setWidth("12.5%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.8")); //$NON-NLS-1$
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
@@ -145,22 +158,23 @@ public class ViewStatisticsRegressionInput extends ViewStatistics<AnalysisContex
         final String[] features = context.model.getSelectedFeatures().toArray(new String[0]);
         final String[] classes = context.model.getSelectedClasses().toArray(new String[0]);
         final double fraction = context.handle.getNumRows() > context.model.getClassificationModel().getMaximalNumberOfRecords() ?
-                                (double)context.model.getClassificationModel().getMaximalNumberOfRecords() / (double)context.handle.getNumRows() : 1d;
+                (double) context.model.getClassificationModel().getMaximalNumberOfRecords() / (double) context.handle.getNumRows() : 1d;
         final Integer seed = context.model.getClassificationModel().getSeed();
-        final boolean ignoreSuppressedRecords = context.model.getClassificationModel().isIgnoreSuppressedRecords();
-        
+
         // Create an analysis
         Analysis analysis = new Analysis(){
 
             private boolean       stopped            = false;
             private List<Double>  accuracies         = new ArrayList<>();
             private List<Double>  baselineAccuracies = new ArrayList<>();
+            private List<Double>  errors             = new ArrayList<>();
+            private List<Double>  baselineErrors     = new ArrayList<>();
             private List<Integer> classNumbers       = new ArrayList<>();
             private int           progress           = 0;
 
             @Override
             public int getProgress() {
-                return (int)((double)progress / (double)classes.length / 3d * 100d);
+                return (int)((double)progress / (double)classes.length * 100d);
             }
             
             @Override
@@ -188,7 +202,10 @@ public class ViewStatisticsRegressionInput extends ViewStatistics<AnalysisContex
                     item.setText(1, String.valueOf(classNumbers.get(i)));
                     item.setData("2", baselineAccuracies.get(i));
                     item.setData("3", accuracies.get(i));
-                    item.setData("4", accuracies.get(i) - baselineAccuracies.get(i));
+                    item.setData("4", 1d);
+                    item.setData("5", baselineErrors.get(i));
+                    item.setData("6", errors.get(i));
+                    item.setData("7", 0d);
                 }
 
                 // Status
@@ -213,28 +230,22 @@ public class ViewStatisticsRegressionInput extends ViewStatistics<AnalysisContex
                 
                 // Do work
                 for (String clazz : classes) {
-                    baselineAccuracies.add(builder.getClassificationPerformance(clazz,
-                                                                                seed,
-                                                                                ignoreSuppressedRecords,
-                                                                                fraction).getFractionCorrect());
+                    
+                    // Compute
+                    StatisticsClassification result = builder.getClassificationPerformance(features,
+                                                                                           clazz,
+                                                                                           seed,
+                                                                                           fraction);
                     progress++;
                     if (stopped) {
                         break;
                     }
-                    accuracies.add(builder.getClassificationPerformance(features,
-                                                                        clazz,
-                                                                        seed,
-                                                                        ignoreSuppressedRecords,
-                                                                        fraction).getFractionCorrect());
-                    progress++;
-                    if (stopped) {
-                        break;
-                    }
-                    classNumbers.add(builder.getDistinctValues(context.handle.getColumnIndexOf(clazz)).length);
-                    progress++;
-                    if (stopped) {
-                        break;
-                    }
+                    
+                    baselineAccuracies.add(result.getZeroRAccuracy());
+                    accuracies.add(result.getOriginalAccuracy());
+                    baselineErrors.add(result.getZeroRAverageError());
+                    errors.add(result.getOriginalAverageError());
+                    classNumbers.add(result.getNumClasses());
                 }
 
                 // Our users are patient

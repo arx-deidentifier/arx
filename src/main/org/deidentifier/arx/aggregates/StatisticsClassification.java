@@ -19,24 +19,15 @@ package org.deidentifier.arx.aggregates;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 
-import org.apache.mahout.classifier.sgd.L1;
-import org.apache.mahout.classifier.sgd.OnlineLogisticRegression;
-import org.apache.mahout.math.DenseVector;
-import org.apache.mahout.math.Vector;
-import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
-import org.apache.mahout.vectorizer.encoders.StaticWordValueEncoder;
 import org.deidentifier.arx.DataHandleInternal;
-import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.DataType.ARXDate;
-import org.deidentifier.arx.DataType.ARXDecimal;
-import org.deidentifier.arx.DataType.ARXInteger;
+import org.deidentifier.arx.aggregates.classification.ClassificationDataSpecification;
+import org.deidentifier.arx.aggregates.classification.ClassificationMethod;
+import org.deidentifier.arx.aggregates.classification.ClassificationResult;
+import org.deidentifier.arx.aggregates.classification.MultiClassLogisticRegression;
+import org.deidentifier.arx.aggregates.classification.MultiClassZeroR;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
@@ -49,110 +40,110 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 public class StatisticsClassification {
     
     /**
-     * Implements a classifier
+     * A matrix mapping confidence thresholds to precision and recall
+     * 
      * @author Fabian Prasser
+     *
      */
-    private interface Classifier {
-
-        /**
-         * Classify
-         * @param features
-         * @return
-         */
-        public int classify(Vector features);
-
-        /**
-         * Close
-         */
-        public void close();
-
-        /**
-         * Train
-         * @param features
-         * @param clazz
-         */
-        public void train(Vector features, int clazz);
-    }
-    
-    /**
-     * Implements a classifier
-     * @author Fabian Prasser
-     */
-    private class MultiClassLogisticRegression implements Classifier {
+    public static class PrecisionRecallMatrix {
         
-        /** Instance*/
-        private final OnlineLogisticRegression lr;
+        /** Confidence thresholds*/
+        private static final double[] CONFIDENCE_THRESHOLDS = new double[]{
+            0d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1d
+        };
 
         /**
-         * Creates a new instance
-         * @param features
-         * @param classes
+         * @return the confidence thresholds
          */
-        public MultiClassLogisticRegression(int features, int classes) {
+        public static double[] getConfidenceThresholds() {
+            return CONFIDENCE_THRESHOLDS;
+        }
+        /** Measurements */
+        private double                measurements          = 0d;
+        /** Precision */
+        private final double[]        precision             = new double[CONFIDENCE_THRESHOLDS.length];
 
-            // Check
-            if (features == 0) {
-                features = 1;
-            }
+        /** Recall */
+        private final double[]        recall                = new double[CONFIDENCE_THRESHOLDS.length];
+        
+        /**
+         * @return the precision
+         */
+        public double[] getPrecision() {
+            return precision;
+        }
 
-            // Prepare classifier
-            this.lr = new OnlineLogisticRegression(classes, features, new L1());
+        /**
+         * @return the recall
+         */
+        public double[] getRecall() {
+            return recall;
+        }
+
+        /**
+         * Adds a new value
+         * @param confidence
+         * @param correct
+         */
+        void add(double confidence, boolean correct) {
             
-            // Configure
-            this.lr.learningRate(1);
-            this.lr.alpha(1);
-            this.lr.lambda(0.000001);
-            this.lr.stepOffset(10000);
-            this.lr.decayExponent(0.2);
+            for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
+                if (confidence >= CONFIDENCE_THRESHOLDS[i]) {
+                    recall[i]++;
+                    precision[i] += correct ? 1d : 0d;
+                }
+            }
+            measurements++;
         }
 
-        @Override
-        public int classify(Vector features) {
-            return lr.classifyFull(features).maxValueIndex();
-        }
-
-        @Override
-        public void close() {
-            lr.close();
-        }
-
-        @Override
-        public void train(Vector features, int clazz) {
-            lr.train(clazz, features);
+        /**
+         * Packs the results
+         */
+        void pack() {
+            for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
+                precision[i] /= recall[i];
+                recall[i] /= measurements;
+            }
         }
     }
 
-    /** Features and class: last element is the class */
-    private final int[]          indexes;
-    /** Data types */
-    private final DataType<?>[]  type;
-    /** Minimum */
-    private final double[]       minimum;
-    /** Maximum */
-    private final double[]       maximum;
-    /** Cardinalities */
-    private final int[]          cardinality;
+    /** Accuracy */
+    private double                accuracy;
+    /** Average error */
+    private double                averageError;
     /** Interrupt flag */
-    private final WrappedBoolean interrupt;
+    private final WrappedBoolean  interrupt;
+    /** Precision/recall matrix */
+    private PrecisionRecallMatrix matrix         = new PrecisionRecallMatrix();
+    /** Num classes */
+    private int                   numClasses;
+    /** Original accuracy */
+    private double                originalAccuracy;
+    /** Original accuracy */
+    private double                originalAverageError;
+    /** Precision/recall matrix */
+    private PrecisionRecallMatrix originalMatrix = new PrecisionRecallMatrix();
     /** Random */
-    private final Random         random;
-    /** Result */
-    private double               accuracy;
+    private final Random          random;
+    /** ZeroR accuracy */
+    private double                zeroRAccuracy;
+    /** ZeroR accuracy */
+    private double                zeroRAverageError;
+    /** Measurements */
+    private int                   numMeasurements;
 
     /**
      * Creates a new set of statistics for the given classification task
-     * @param builder - The statistics builder
-     * @param handle - The handle
-     * @param ignoreSuppressedRows - Ignore suppressed records
+     * @param inputHandle - The input features handle
+     * @param outputHandle - The output features handle
      * @param features - The feature attributes
      * @param clazz - The class attributes
      * @param seed - The random seed, null, if the process should be randomized
      * @param samplingFraction - The sampling fraction
      * @throws ParseException 
      */
-    StatisticsClassification(StatisticsBuilder builder,
-                             DataHandleInternal handle,
-                             boolean ignoreSuppressedRows,
+    StatisticsClassification(DataHandleInternal inputHandle,
+                             DataHandleInternal outputHandle,
                              String[] features,
                              String clazz,
                              Integer seed,
@@ -166,29 +157,7 @@ public class StatisticsClassification {
         if (samplingFraction <= 0d || samplingFraction > 1d) {
             throw new IllegalArgumentException("Samling fraction must be in ]0,1]");
         }
-        if (clazz == null) {
-            throw new IllegalArgumentException("No class attribute defined");
-        }
-        if (handle.getColumnIndexOf(clazz) == -1) {
-            throw new IllegalArgumentException("Unknown class '"+clazz+"'");
-        }
-        if (features == null) {
-            throw new IllegalArgumentException("No features defined");
-        }
-        List<String> featuresList = new ArrayList<>();
-        for (String feature : features) {
-            if (feature == null) {
-                throw new IllegalArgumentException("Feature must not be null");    
-            }
-            if (handle.getColumnIndexOf(feature) == -1) {
-                throw new IllegalArgumentException("Unknown feature '"+feature+"'");
-            }
-            if (!feature.equals(clazz)) {
-                featuresList.add(feature);
-            }
-        }
-        features = featuresList.toArray(new String[featuresList.size()]);
-        
+       
         // Initialize random
         if (seed == null) {
             this.random = new Random();
@@ -196,116 +165,231 @@ public class StatisticsClassification {
             this.random = new Random(seed);
         }
         
-        // Create indexes
-        this.indexes = getAttributeIndexes(handle, features, clazz);
+        // TODO: Feature is not used. Continuous variables are treated as categorical.
+        ClassificationDataSpecification specification = new ClassificationDataSpecification(inputHandle, 
+                                                                                            outputHandle, 
+                                                                                            features,
+                                                                                            clazz,
+                                                                                            interrupt);
         
-        // Map for the target attribute
-        Map<String, Integer> map = new HashMap<String, Integer>();
-        
-        // Maps for the features
-        @SuppressWarnings("unchecked")
-        Map<String, Integer>[] maps = new HashMap[indexes.length-1];
-        
-        // Obtain meta data
-        type = new DataType[indexes.length];
-        minimum = new double[indexes.length];
-        maximum = new double[indexes.length];
-        cardinality = new int[indexes.length];
-        
-        // For each attribute
-        for (int index = 0; index < indexes.length; index++) {
-            
-            // Obtain
-            int column = indexes[index];
-            String attribute = handle.getAttributeName(column);
-            String[] values = handle.getDistinctValues(column);
+        // Train and evaluate
+        int k = inputHandle.getNumRows() > 10 ? 10 : inputHandle.getNumRows();
+        List<List<Integer>> folds = getFolds(inputHandle.getNumRows(), k);
 
-            // Store
-            type[index] = handle.getDataType(attribute);
-            cardinality[index] = values.length;
+        // Track
+        int classifications = 0;
+        
+        // For each fold as a validation set
+        for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
             
-            // Create map for class attribute
-            if (index == indexes.length - 1) {
-                for (int i = 0; i < values.length; i++) {
+            // Create classifiers
+            ClassificationMethod inputLR = new MultiClassLogisticRegression(specification);
+            ClassificationMethod inputZR = new MultiClassZeroR(specification);
+            ClassificationMethod outputLR = null;
+            if (inputHandle != outputHandle) {
+                outputLR = new MultiClassLogisticRegression(specification);
+            }
+            
+            try {
+                
+                // Train with all training sets
+                boolean trained = false;
+                for (int trainingFold = 0; trainingFold < folds.size(); trainingFold++) {
+                    if (trainingFold != evaluationFold) {                        
+                        for (int index : folds.get(trainingFold)) {
+                            checkInterrupt();
+                            inputLR.train(inputHandle, outputHandle, index);
+                            inputZR.train(inputHandle, outputHandle, index);
+                            if (outputLR != null && !outputHandle.isOutlier(index)) {
+                                outputLR.train(outputHandle, outputHandle, index);
+                            }
+                            trained = true;
+                        }
+                    }
+                }
+                
+                // Close
+                inputLR.close();
+                inputZR.close();
+                if (outputLR != null) {
+                    outputLR.close();
+                }
+                
+                // Now validate
+                for (int index : folds.get(evaluationFold)) {
                     
                     // Check
                     checkInterrupt();
                     
-                    // Do
-                    map.put(values[i], i);
-                }
-                
-            // Compute min and max for others
-            } else {
-                // Numeric
-                if (type[index] instanceof ARXDecimal ||
-                    type[index] instanceof ARXInteger ||
-                    type[index] instanceof ARXDate) {
-                    
-                    // Compute minimum and maximum for feature scaling
-                    minimum[index] = Double.MAX_VALUE;
-                    maximum[index] = - Double.MAX_VALUE;
-                    for (String value : values) {
+                    // If trained
+                    if (trained) {
                         
-                        // Check
-                        checkInterrupt();
+                        // Classify
+                        ClassificationResult resultInputLR = inputLR.classify(inputHandle, index);
+                        ClassificationResult resultInputZR = inputZR.classify(inputHandle, index);
+                        ClassificationResult resultOutputLR = outputLR == null ? null : outputLR.classify(outputHandle, index);
+                        classifications++;
                         
-                        // Do
-                        try {
-                            double numericValue = 0d;
-                            if (type[index] instanceof ARXDecimal) {
-                                numericValue = (Double)type[index].parse(value);
-                            } else if (type[index] instanceof ARXInteger) {
-                                numericValue = (Long)type[index].parse(value);
-                            } else if (type[index] instanceof ARXDate) {
-                                numericValue = ((Date)type[index].parse(value)).getTime();
-                            }
-                            minimum[index] = Math.min(minimum[index], numericValue);
-                            maximum[index] = Math.max(maximum[index], numericValue);
-                        } catch (Exception e) {
-                            // Ignore: this is for the handling of suppressed values
+                        // Correct result
+                        String actualValue = outputHandle.getValue(index, specification.classIndex);
+                        
+                        // Maintain data about inputZR
+                        this.zeroRAverageError += resultInputZR.error(actualValue);
+                        this.zeroRAccuracy += resultInputZR.correct(actualValue) ? 1d : 0d;
+
+                        // Maintain data about inputLR
+                        boolean correct = resultInputLR.correct(actualValue);
+                        this.originalAverageError += resultInputLR.error(actualValue);
+                        this.originalAccuracy += correct ? 1d : 0d;
+                        this.originalMatrix.add(resultInputLR.confidence(), correct);
+
+                        // Maintain data about outputLR                        
+                        if (resultOutputLR != null) {
+                            correct = resultOutputLR.correct(actualValue);
+                            this.averageError += resultOutputLR.error(actualValue);
+                            this.accuracy += correct ? 1d : 0d;
+                            this.matrix.add(resultOutputLR.confidence(), correct);
                         }
                     }
-                    if (minimum[index] == Double.MAX_VALUE) {
-                        minimum[index] = 0d;
-                    }
-                    if (maximum[index] == - Double.MAX_VALUE) {
-                        maximum[index] = 1d;
-                    }
-                    
-                // Ordinal or nominal
-                } else {
-                    
-                    maps[index] = new HashMap<String, Integer>();
-                    int position = 0;
-                    for (String value : builder.getDistinctValuesOrdered(column)) {
-                        maps[index].put(value, position++);
-                    }
-                    
-                    minimum[index] = 0d;
-                    maximum[index] = maps[index].size();
-                }   
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
         
-        // Validate
-        int k = handle.getNumRows() > 10 ? 10 : handle.getNumRows();
         
-        // ZeroR baseline
-        if (this.indexes.length == 1) {
-            this.accuracy = getBaselineAccordingToKFoldCrossValidation(handle, ignoreSuppressedRows, map, k, random, samplingFraction);
-            
-        // Train and cross validate
+        // Maintain data about inputZR
+        this.zeroRAverageError /= (double)classifications;
+        this.zeroRAccuracy/= (double)classifications;
+
+        // Maintain data about inputLR
+        this.originalAverageError /= (double)classifications;
+        this.originalAccuracy /= (double)classifications;
+        this.originalMatrix.pack();
+
+        // Maintain data about outputLR                        
+        if (inputHandle != outputHandle) {
+            this.averageError /= (double)classifications;
+            this.accuracy /= (double)classifications;
+            this.matrix.pack();
         } else {
-            this.accuracy = getAccuracyAccordingToKFoldCrossValidation(handle, ignoreSuppressedRows, map, maps, k, random, samplingFraction);
+            this.averageError = this.originalAverageError;
+            this.accuracy = this.originalAccuracy;
+            this.matrix = this.originalMatrix;
         }
+        
+        this.numClasses = specification.classMap.size();
+        this.numMeasurements = classifications;
     }
 
     /**
-     * Returns the accuracy of the classifier
+     * Returns the resulting accuracy. Obtained by training a
+     * Logistic Regression classifier on the output (or input) dataset.
+     * 
+     * @return
      */
-    public double getFractionCorrect() {
-        return accuracy;
+    public double getAccuracy() {
+        return this.accuracy;
+    }
+    
+    /**
+     * Returns the average error, defined as avg(1d-probability-of-correct-result) for
+     * each classification event.
+     * 
+     * @return
+     */
+    public double getAverageError() {
+        return this.averageError;
+    }
+
+    /**
+     * Returns the number of classes
+     * @return
+     */
+    public int getNumClasses() {
+        return this.numClasses;
+    }
+    
+    /**
+     * Returns the number of measurements
+     * @return
+     */
+    public int getNumMeasurements() {
+        return this.numMeasurements;
+    }
+    
+    /**
+     * Returns the maximal accuracy. Obtained by training a
+     * Logistic Regression classifier on the input dataset.
+     * 
+     * @return
+     */
+    public double getOriginalAccuracy() {
+        return this.originalAccuracy;
+    }
+
+    /**
+     * Returns the average error, defined as avg(1d-probability-of-correct-result) for
+     * each classification event.
+     * 
+     * @return
+     */
+    public double getOriginalAverageError() {
+        return this.originalAverageError;
+    }
+
+    /**
+     * Returns a precision/recall matrix for LogisticRegression on input
+     * @return
+     */
+    public PrecisionRecallMatrix getOriginalPrecisionRecall() {
+        return this.originalMatrix;
+    }
+    
+    /**
+     * Returns a precision/recall matrix
+     * @return
+     */
+    public PrecisionRecallMatrix getPrecisionRecall() {
+        return this.matrix;
+    }
+
+    /**
+     * Returns the minimal accuracy. Obtained by training a
+     * ZeroR classifier on the input dataset.
+     * 
+     * @return
+     */
+    public double getZeroRAccuracy() {
+        return this.zeroRAccuracy;
+    }
+    
+    /**
+     * Returns the average error, defined as avg(1d-probability-of-correct-result) for
+     * each classification event.
+     * 
+     * @return
+     */
+    public double getZeroRAverageError() {
+        return this.zeroRAverageError;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("StatisticsClassification{\n");
+        builder.append(" - Accuracy:\n");
+        builder.append("   * Original: ").append(originalAccuracy).append("\n");
+        builder.append("   * ZeroR: ").append(zeroRAccuracy).append("\n");
+        builder.append("   * Output: ").append(accuracy).append("\n");
+        builder.append(" - Average error:\n");
+        builder.append("   * Original: ").append(originalAverageError).append("\n");
+        builder.append("   * ZeroR: ").append(zeroRAverageError).append("\n");
+        builder.append("   * Output: ").append(averageError).append("\n");
+        builder.append(" - Number of classes: ").append(numClasses).append("\n");
+        builder.append(" - Number of measurements: ").append(numMeasurements).append("\n");
+        builder.append("}");
+        return builder.toString();
     }
 
     /**
@@ -316,320 +400,20 @@ public class StatisticsClassification {
             throw new ComputationInterruptedException("Interrupted");
         }
     }
-
-    /**
-     * Performs k-fold cross validation
-     * @param handle
-     * @param ignoreSuppressedRows
-     * @param map
-     * @param maps 
-     * @param k
-     * @param random
-     * @param samplingFraction 
-     * @return
-     * @throws ParseException 
-     */
-    private double getAccuracyAccordingToKFoldCrossValidation(DataHandleInternal handle,
-                                                              boolean ignoreSuppressedRows,
-                                                              Map<String, Integer> map,
-                                                              Map<String, Integer>[] maps,
-                                                              int k,
-                                                              Random random,
-                                                              double samplingFraction) throws ParseException {
-
-        // Obtain the folds
-        List<List<Integer>> folds = getFolds(handle,
-                                             ignoreSuppressedRows,
-                                             k,
-                                             random,
-                                             samplingFraction);
-
-        // Encode all features and classes
-        List<Vector[]> features = new ArrayList<Vector[]>();
-        List<int[]> classes = new ArrayList<int[]>();
-        ConstantValueEncoder interceptEncoder = new ConstantValueEncoder("intercept");
-        StaticWordValueEncoder featureEncoder = new StaticWordValueEncoder("feature");
-        
-        // For each fold as a validation set
-        for (List<Integer> fold : folds) {
-            Vector[] foldFeatures = new Vector[fold.size()];
-            int[] foldClasses = new int[fold.size()];
-            int index = 0;
-            for (int row : fold) {
-                foldFeatures[index] = getFeatures(handle, row, maps, interceptEncoder, featureEncoder);
-                foldClasses[index] = getClass(handle, row, map);
-                index++;
-            }
-            features.add(foldFeatures);
-            classes.add(foldClasses);
-            fold.clear();
-        }
-        folds.clear();
-        folds = null;
-        
-        // Perform cross validation
-        double correct = 0d;
-        double total = 0d;
-
-        // For each fold as a validation set
-        for (int i = 0; i < features.size(); i++) {
-            
-            // Create classifier
-            Classifier classifier = new MultiClassLogisticRegression(indexes.length - 1, map.size());
-
-            try {
-
-                // For all training sets
-                for (int j = 0; j < features.size(); j++) {
-                    if (j != i) {
-                        Vector[] foldFeatures = features.get(j);
-                        int[] foldClasses = classes.get(j);
-                        for (int index = 0; index < foldFeatures.length; index++) {
-
-                            // Check
-                            checkInterrupt();
-
-                            // Train
-                            classifier.train(foldFeatures[index], foldClasses[index]);
-                        }
-                    }
-                }
-               
-                // Now validate
-                Vector[] foldFeatures = features.get(i);
-                int[] foldClasses = classes.get(i);
-                for (int index = 0; index < foldFeatures.length; index++) {
-
-                    // Check
-                    checkInterrupt();
-                    
-                    // Count
-                    total++;
-                    correct += foldClasses[index] == classifier.classify(foldFeatures[index]) ? 1 : 0;
-                }
-                
-            } catch (Exception e) {
-                throw (e);
-            } finally {
-                classifier.close();
-            }
-        }
-
-        // Return mean
-        return correct / total;
-    }
-
-    /**
-     * Returns the indexes of all relevant attributes
-     * @param handle
-     * @param features
-     * @param clazz
-     * @return
-     */
-    private int[] getAttributeIndexes(DataHandleInternal handle, String[] features, String clazz) {
-        // Collect
-        List<Integer> list = new ArrayList<>();
-        for (int column = 0; column < handle.getNumColumns(); column++) {
-            String attribute = handle.getAttributeName(column);
-            if (isContained(features, attribute)) {
-                list.add(column);
-            }
-        }
-        list.add(handle.getColumnIndexOf(clazz));
-        
-        // Convert
-        int[] result = new int[list.size()];
-        for (int i=0; i<list.size(); i++) {
-            result[i] = list.get(i);
-        }
-        
-        // Return
-        return result;
-    }
-
-    /**
-     * Returns the baseline accuracy according to the zeroR method
-     * @param handle
-     * @param ignoreSuppressedRows
-     * @param map 
-     * @param k
-     * @param random
-     * @param samplingFraction
-     * @return
-     */
-    private double getBaselineAccordingToKFoldCrossValidation(DataHandleInternal handle,
-                                                              boolean ignoreSuppressedRows,
-                                                              Map<String, Integer> map, 
-                                                              int k,
-                                                              Random random,
-                                                              double samplingFraction) {
-
-        // Obtain the folds
-        List<List<Integer>> folds = getFolds(handle,
-                                             ignoreSuppressedRows,
-                                             k,
-                                             random,
-                                             samplingFraction);
-
-        // Encode all features and classes
-        List<int[]> classes = new ArrayList<int[]>();
-        
-        // For each fold as a validation set
-        for (List<Integer> fold : folds) {
-            int[] foldClasses = new int[fold.size()];
-            int index = 0;
-            for (int row : fold) {
-                foldClasses[index] = getClass(handle, row, map);
-                index++;
-            }
-            classes.add(foldClasses);
-            fold.clear();
-        }
-        folds.clear();
-        folds = null;
-        
-        // Perform cross validation
-        double correct = 0d;
-        double total = 0d;
-
-        // For each fold as a validation set
-        for (int i = 0; i < classes.size(); i++) {
-
-            // For all training sets
-            Map<Integer, Integer> counts = new HashMap<Integer, Integer>();
-            for (int j = 0; j < classes.size(); j++) {
-                if (j != i) {
-                    int[] foldClasses = classes.get(j);
-                    for (int index = 0; index < foldClasses.length; index++) {
-
-                        // Check
-                        checkInterrupt();
-
-                        // Train
-                        Integer previous = counts.get(foldClasses[index]);
-                        counts.put(foldClasses[index], previous != null ? previous + 1 : 1);
-                    }
-                }
-            }
-            
-            // Obtain most frequent element
-            int mostFrequentCount = 0;
-            int mostFrequentElement = -1;
-            for (Entry<Integer, Integer> entry : counts.entrySet()) {
-                if (entry.getValue() > mostFrequentCount) {
-                    mostFrequentElement = entry.getKey();
-                    mostFrequentCount = entry.getValue();
-                }
-            }
-            
-            // Now validate
-            int[] foldClasses = classes.get(i);
-            for (int index = 0; index < foldClasses.length; index++) {
-
-                // Check
-                checkInterrupt();
-
-                // Count
-                total++;
-                correct += foldClasses[index] == mostFrequentElement ? 1 : 0;
-            }
-        }
-
-        // Return mean
-        return correct / total;
-    }
     
     /**
-     * Returns the class for the given row
-     * @param handle
-     * @param row
-     * @param map
-     * @return
-     */
-    private int getClass(DataHandleInternal handle, int row, Map<String, Integer> map) {
-        return map.get(handle.getValue(row, indexes[indexes.length - 1]));
-    }
-
-    /**
-     * Returns the feature vector for the given row
-     * @param handle
-     * @param row
-     * @param maps
-     * @param interceptEncoder
-     * @param featureEncoder
-     * @return
-     * @throws ParseException
-     */
-    private Vector getFeatures(DataHandleInternal handle, int row,
-                               Map<String, Integer>[] maps,
-                               ConstantValueEncoder interceptEncoder,
-                               StaticWordValueEncoder featureEncoder) throws ParseException {
-        
-        // Prepare
-        int length = this.indexes.length - 1;
-        DenseVector vector = new DenseVector(length != 0 ? length : 1);
-        interceptEncoder.addToVector("1", vector);
-        
-        // Special case where there are no features
-        if (length == 0) {
-            featureEncoder.addToVector("Feature:1", 1, vector);
-            return vector;
-        }
-        
-        // For each attribute
-        for (int index = 0; index < length; index++) {
-            
-            // Obtain data
-            int column = indexes[index];
-            String name = handle.getAttributeName(column);
-            DataType<?> type = this.type[index];
-            double minimum = this.minimum[index];
-            double maximum = this.maximum[index];
-            
-            // Set value
-            double value = 0d;
-            try {
-                if (type instanceof ARXDecimal) {
-                    value = handle.getDouble(row, column);
-                } else if (type instanceof ARXInteger) {
-                    value = handle.getDouble(row, column);
-                } else if (type instanceof ARXDate) {
-                    value = handle.getDate(row, column).getTime();
-                } else {
-                    value = maps[index].get(handle.getValue(row, column));
-                }
-            } catch (Exception e) {
-                // Handle suppressed values
-                value = maximum + 1;
-            }
-            featureEncoder.addToVector(name, (value - minimum) / (maximum - minimum), vector);
-        }
-        
-        // Return
-        return vector;
-    }
-
-    /**
      * Creates the folds
-     * @param handle
-     * @param ignoreSuppressedRows
+     * @param length
      * @param k
      * @param random
-     * @param samplingFraction
      * @return
      */
-    private List<List<Integer>> getFolds(DataHandleInternal handle,
-                                         boolean ignoreSuppressedRows,
-                                         int k,
-                                         Random random,
-                                         double samplingFraction) {
+    private List<List<Integer>> getFolds(int length, int k) {
+        
         // Prepare indexes
         List<Integer> rows = new ArrayList<>();
-        for (int row = 0; row < handle.getNumRows(); row++) {
-            if ((!ignoreSuppressedRows || !handle.isOutlier(row)) 
-                 && random.nextDouble() <= samplingFraction) {
-                rows.add(row);
-            }
+        for (int row = 0; row < length; row++) {
+            rows.add(row);
         }
         Collections.shuffle(rows, random);
         
@@ -638,10 +422,6 @@ public class StatisticsClassification {
         int size = rows.size() / k;
         size = size > 1 ? size : 1;
         for (int i = 0; i < k; i++) {
-            
-            // Check
-            checkInterrupt();
-            
             // For each fold
             int min = i * size;
             int max = (i + 1) * size;
@@ -667,20 +447,5 @@ public class StatisticsClassification {
         rows.clear();
         rows = null;
         return folds;
-    }
-
-    /**
-     * Returns whether the given array contains the given value
-     * @param array
-     * @param value
-     * @return
-     */
-    private boolean isContained(String[] array, String value) {
-        for (String element : array) {
-            if (element.equals(value)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

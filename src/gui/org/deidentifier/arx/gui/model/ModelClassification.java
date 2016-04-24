@@ -35,8 +35,6 @@ public class ModelClassification implements Serializable {
     private int               classificationMaxRecords = 100000;
     /** Seed */
     private Integer           classificationSeed       = Integer.MAX_VALUE;
-    /** Ignore suppressed records */
-    private boolean           ignoreSuppressedRecords  = true;
     
     /**
      * Returns the max records for classification
@@ -56,30 +54,11 @@ public class ModelClassification implements Serializable {
     }
 
     /**
-     * Ignore suppressed records
-     * @return
-     */
-    public boolean isIgnoreSuppressedRecords() {
-        return ignoreSuppressedRecords;
-    }
-
-    /**
      * Is this model modified
      * @return
      */
     public boolean isModified() {
         return modified;
-    }
-
-    /** 
-     * Ignore suppressed records
-     * @param value
-     */
-    public void setIgnoreSuppressedRecords(boolean value) {
-        if (value != this.ignoreSuppressedRecords) {
-            this.modified = true;
-        }
-        this.ignoreSuppressedRecords = value;
     }
 
     /**

@@ -171,7 +171,7 @@ public class DataHandleSubset extends DataHandle {
     }    
 
     @Override
-    protected String[] getDistinctValues(int column, InterruptHandler handler) {
+    protected String[] getDistinctValues(int column, boolean ignoreSuppression, InterruptHandler handler) {
 
         // Check
         checkRegistry();
@@ -180,7 +180,7 @@ public class DataHandleSubset extends DataHandle {
         final Set<String> vals = new HashSet<String>();
         for (int i = 0; i < getNumRows(); i++) {
             handler.checkInterrupt();
-            vals.add(getValue(i, column));
+            vals.add(internalGetValue(i, column, ignoreSuppression));
         }
         handler.checkInterrupt();
         return vals.toArray(new String[vals.size()]);

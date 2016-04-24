@@ -535,11 +535,12 @@ public class DataHandleOutput extends DataHandle {
      * Gets the distinct values.
      *
      * @param col the column
+     * @param ignoreSuppression
      * @param handler
      * @return the distinct values
      */
     @Override
-    protected String[] getDistinctValues(final int col, InterruptHandler handler) {
+    protected String[] getDistinctValues(final int col, final boolean ignoreSuppression, InterruptHandler handler) {
         
         // Check
         checkRegistry();
@@ -548,7 +549,7 @@ public class DataHandleOutput extends DataHandle {
         final Set<String> vals = new HashSet<String>();
         for (int i = 0; i < getNumRows(); i++) {
             handler.checkInterrupt();
-            vals.add(getValue(i, col));
+            vals.add(internalGetValue(i, col, ignoreSuppression));
         }
         handler.checkInterrupt();
         return vals.toArray(new String[vals.size()]);

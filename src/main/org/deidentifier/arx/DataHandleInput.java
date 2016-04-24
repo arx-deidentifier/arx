@@ -224,7 +224,7 @@ public class DataHandleInput extends DataHandle {
     }
 
     @Override
-    protected String[] getDistinctValues(final int column, InterruptHandler handler) {
+    protected String[] getDistinctValues(final int column, final boolean ignoreSuppression, InterruptHandler handler) {
         checkRegistry();
         handler.checkInterrupt();
         checkColumn(column);
