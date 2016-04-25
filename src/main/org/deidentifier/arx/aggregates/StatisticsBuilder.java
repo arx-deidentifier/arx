@@ -443,7 +443,7 @@ public class StatisticsBuilder {
         
         // Sort by data type
         if (hierarchy == null || level == 0) {
-            sort(list, datatype, handle.getSuppressionString());
+            sort(list, datatype);
             // Sort by hierarchy and data type
         } else {
             // Build order directly from the hierarchy
@@ -462,7 +462,7 @@ public class StatisticsBuilder {
                 if (baseType.isValid(element)) baseSet.add(element);
             }
             String[] baseArray = baseSet.toArray(new String[baseSet.size()]);
-            sort(baseArray, handle.getBaseDataType(attribute), handle.getSuppressionString());
+            sort(baseArray, handle.getBaseDataType(attribute));
             Map<String, Integer> baseOrder = new HashMap<String, Integer>();
             for (int i = 0; i < baseArray.length; i++) {
                 checkInterrupt();
@@ -489,8 +489,7 @@ public class StatisticsBuilder {
             }
             
             // Add suppression string
-            String supp = handle.getSuppressionString();
-            if (supp != null) order.put(supp, max);
+            order.put(DataType.ANY_VALUE, max);
             
             // Sort
             sort(list, order);
@@ -555,7 +554,7 @@ public class StatisticsBuilder {
             averageEquivalenceClassSizeIncludingOutliers += element.getCount();
             numberOfTuples += element.getCount();
             
-            if (!isOutlier(element, handle.getSuppressionString())) {
+            if (!isOutlier(element)) {
                 
                 maximalEquivalenceClassSize = Math.max(element.getCount(), maximalEquivalenceClassSize);
                 minimalEquivalenceClassSize = Math.min(element.getCount(), minimalEquivalenceClassSize);
@@ -743,7 +742,7 @@ public class StatisticsBuilder {
                     DataType<?> type = handle.getDataType(attribute);
                     
                     // Analyze
-                    if (!value.equals(handle.getSuppressionString()) && !DataType.isNull(value)) {
+                    if (!DataType.isAny(value) && !DataType.isNull(value)) {
                         ordinal.get(attribute).addValue(value);
                         if (type instanceof DataTypeWithRatioScale) {
                             double doubleValue = ((DataTypeWithRatioScale) type).toDouble(type.parse(value));
@@ -992,12 +991,11 @@ public class StatisticsBuilder {
     /**
      * Returns whether the given element is suppressed
      * @param element
-     * @param suppression
      * @return
      */
-    private boolean isOutlier(Group<TupleWrapper> element, String suppression) {
+    private boolean isOutlier(Group<TupleWrapper> element) {
         for (String value : element.getElement().getValues()) {
-            if (!value.equals(suppression)) {
+            if (!value.equals(DataType.ANY_VALUE)) {
                 return false;
             }
         }
@@ -1009,9 +1007,8 @@ public class StatisticsBuilder {
      *
      * @param array
      * @param type
-     * @param suppressionString
      */
-    private void sort(final String[] array, final DataType<?> type, final String suppressionString) {
+    private void sort(final String[] array, final DataType<?> type) {
         GenericSorting.mergeSort(0, array.length, new IntComparator() {
             
             @Override
@@ -1020,9 +1017,9 @@ public class StatisticsBuilder {
                 try {
                     String s1 = array[arg0];
                     String s2 = array[arg1];
-                    return (s1 == suppressionString && s2 == suppressionString) ? 0
-                            : (s1 == suppressionString ? +1
-                                    : (s2 == suppressionString ? -1
+                    return (s1 == DataType.ANY_VALUE && s2 == DataType.ANY_VALUE) ? 0
+                            : (s1 == DataType.ANY_VALUE ? +1
+                                    : (s2 == DataType.ANY_VALUE ? -1
                                             : type.compare(s1, s2)));
                 } catch (
                         IllegalArgumentException

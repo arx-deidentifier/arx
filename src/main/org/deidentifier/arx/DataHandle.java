@@ -919,15 +919,6 @@ public abstract class DataHandle {
     }
 
     /**
-     * Returns the string inserted for suppressed data items.
-     *
-     * @return the suppression string
-     */
-    protected String getSuppressionString() {
-        return null;
-    }
-
-    /**
      * A negative integer, zero, or a positive integer as the first argument is
      * less than, equal to, or greater than the second. It uses the specified
      * data types for comparison. If no datatype is specified for a specific

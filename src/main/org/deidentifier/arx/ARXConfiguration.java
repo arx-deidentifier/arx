@@ -342,9 +342,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples. */
     private Integer                            suppressedAttributeTypes              = 1 << AttributeType.ATTR_TYPE_QI;
 
-    /** The string with which suppressed values are to be replaced. */
-    private String                             suppressionString                     = "*";
-
     /**
      * Determines whether suppression is applied to the output of anonymous as
      * well as non-anonymous transformations.
@@ -464,7 +461,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.requirements = this.requirements;
         result.metric = this.metric;
         result.snapshotLength = this.snapshotLength;
-        result.suppressionString = this.suppressionString;
         result.suppressionAlwaysEnabled = this.suppressionAlwaysEnabled;
         result.suppressedAttributeTypes = this.suppressedAttributeTypes;
         result.heuristicSearchForSampleBasedCriteria = this.heuristicSearchForSampleBasedCriteria;
@@ -708,16 +704,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.
-     * @return
-     */
-    public String getSuppressionString(){
-        // Ensure backwards compatibility
-        if (suppressionString == null) { return "*"; }
-        return this.suppressionString;
-    }
-
-    /**
      * Returns whether values of the given attribute type will be replaced by the suppression 
      * string in suppressed tuples.
      * @param type
@@ -913,15 +899,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         this.relMaxOutliers = limit;
     }
     
-    /**
-     * Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.
-     * @param suppressionString
-     */
-    public void setSuppressionString(String suppressionString){
-    	checkArgument(suppressionString);
-        this.suppressionString = suppressionString;    	
-    }
-
     /**
      * Do we guarantee optimality for sample-based criteria?
      */

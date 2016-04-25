@@ -321,14 +321,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * @return
-     * @see org.deidentifier.arx.ARXConfiguration#getSuppressionString()
-     */
-    public String getSuppressionString() {
-        return config.getSuppressionString();
-    }
-    
-    /**
      * Returns the suppression/generalization weight, that will be respected by
      * the NDS metric.
      *
@@ -650,15 +642,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void setSuppressionAlwaysEnabled(boolean enabled) {
         setModified();
         config.setSuppressionAlwaysEnabled(enabled);
-    }
-    
-    /**
-     * @param suppressionString
-     * @see org.deidentifier.arx.ARXConfiguration#setSuppressionString(java.lang.String)
-     */
-    public void setSuppressionString(String suppressionString) {
-        setModified();
-        config.setSuppressionString(suppressionString);
     }
     
     /**

@@ -199,14 +199,6 @@ public class DataHandleInternal {
 
     /**
      * Method
-     * @return
-     */
-    public String getSuppressionString() {
-        return handle.getSuppressionString();
-    }
-
-    /**
-     * Method
      * @param row
      * @param column
      * @return

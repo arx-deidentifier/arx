@@ -75,7 +75,6 @@ public class TestAnonymization extends AbstractTest {
             
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final ARXConfiguration config = ARXConfiguration.create();
-            config.setSuppressionString("*");
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(0d);
             anonymizer.anonymize(provider.getData(), config);
@@ -248,7 +247,6 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         ARXResult result = anonymizer.anonymize(provider.getData(), config);
@@ -267,7 +265,6 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(provider.getData(), config));
@@ -299,7 +296,6 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
         config.addCriterion(new DistinctLDiversity("age", 2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
@@ -332,7 +328,6 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
         config.addCriterion(new EntropyLDiversity("age", 2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
@@ -365,7 +360,6 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
         config.addCriterion(new RecursiveCLDiversity("age", 3.0d, 2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
@@ -424,21 +418,18 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
         data.getHandle().release();
         
         config = ARXConfiguration.create();
-        config.setSuppressionString("*");
         config.addCriterion(new KAnonymity(3));
         config.setMaxOutliers(0d);
         final String[][] result3 = resultToArray(anonymizer.anonymize(data, config));
         data.getHandle().release();
         
         config = ARXConfiguration.create();
-        config.setSuppressionString("*");
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         final String[][] result2 = resultToArray(anonymizer.anonymize(data, config));
@@ -544,7 +535,6 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new EqualDistanceTCloseness("disease", 0.6d));
         config.setMaxOutliers(0d);
@@ -630,7 +620,6 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new HierarchicalDistanceTCloseness("disease", 0.4d, disease));
         config.setMaxOutliers(0d);

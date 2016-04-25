@@ -269,10 +269,6 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.32"), false) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE); }
             protected void setValue(Object t) { model.getInputConfig().setAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE, (Boolean)t); }});
-        
-        window.addPreference(new PreferenceString(Resources.getMessage("PropertyDialog.13"), "*") { //$NON-NLS-1$ //$NON-NLS-2$
-            protected String getValue() { return model.getInputConfig().getSuppressionString(); }
-            protected void setValue(Object t) { model.getInputConfig().setSuppressionString((String)t); }});
     }
 
     /**

@@ -1002,7 +1002,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             if (cache.size()>1) {
                 AbstractGroup[] column = new AbstractGroup[data.length];
                 @SuppressWarnings("serial")
-                AbstractGroup element = new AbstractGroup("*") {};
+                AbstractGroup element = new AbstractGroup(DataType.ANY_VALUE) {};
                 for (int i = 0; i < column.length; i++) {
                     column[i] = element;
                 }

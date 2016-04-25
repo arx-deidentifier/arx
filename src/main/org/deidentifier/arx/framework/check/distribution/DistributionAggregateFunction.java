@@ -165,7 +165,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
                 while (hierarchy[current][lvl] != val) {
                     lvl++;
                     if (lvl == hierarchy[previous].length) {
-                        return "*";
+                        return DataType.ANY_VALUE;
                     }
                     val = hierarchy[previous][lvl];
                 }

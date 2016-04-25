@@ -268,7 +268,6 @@ public class WorkerSave extends Worker<Model> {
     	XMLWriter writer = new XMLWriter(); 
         writer.indent(vocabulary.getConfig());
         writer.write(vocabulary.getSuppressionAlwaysEnabled(), config.isSuppressionAlwaysEnabled());
-        writer.write(vocabulary.getSuppressionString(), config.getSuppressionString());
         
         // Write suppressed attribute types
         writer.indent(vocabulary.getSuppressedAttributeTypes());

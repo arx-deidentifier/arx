@@ -439,13 +439,6 @@ public abstract class Vocabulary {
      *
      * @return
      */
-    public abstract String getSuppressionString();
-    
-    /**
-     * 
-     *
-     * @return
-     */
 	public abstract String getTransformation();
     
     /**

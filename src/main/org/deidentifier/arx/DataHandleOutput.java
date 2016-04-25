@@ -114,9 +114,6 @@ public class DataHandleOutput extends DataHandle {
     /** Suppression handling. */
     private final int    suppressedAttributeTypes;
 
-    /** Suppression handling. */
-    private final String suppressionString;
-
     /** Flag determining whether this buffer has been optimized */
     private boolean      optimized = false;
 
@@ -148,7 +145,6 @@ public class DataHandleOutput extends DataHandle {
         this.setRegistry(registry);
         
         // Init
-        this.suppressionString = config.getSuppressionString();
         this.suppressedAttributeTypes = convert(config.getSuppressedAttributeTypes());
         this.result = result;
         this.definition = definition;
@@ -581,15 +577,6 @@ public class DataHandleOutput extends DataHandle {
     }
     
     /**
-     * Returns the suppression string.
-     *
-     * @return
-     */
-    protected String getSuppressionString() {
-        return this.suppressionString;
-    }
-    
-    /**
      * A negative integer, zero, or a positive integer as the first argument is
      * less than, equal to, or greater than the second. It uses the specified
      * data types for comparison if no generalization was applied, otherwise it
@@ -626,9 +613,9 @@ public class DataHandleOutput extends DataHandle {
             try {
                 String s1 = internalGetValue(row1, index, false);
                 String s2 = internalGetValue(row2, index, false);
-                cmp = (s1 == suppressionString && s2 == suppressionString) ? 0
-                        : (s1 == suppressionString ? +1
-                                : (s2 == suppressionString ? -1
+                cmp = (s1 == DataType.ANY_VALUE && s2 == DataType.ANY_VALUE) ? 0
+                        : (s1 == DataType.ANY_VALUE ? +1
+                                : (s2 == DataType.ANY_VALUE ? -1
                                         : dataTypes[attributeType][indexMap].compare(s1, s2)));
             } catch (final Exception e) {
                 throw new RuntimeException(e);
@@ -660,14 +647,14 @@ public class DataHandleOutput extends DataHandle {
         final int type = inverseMap[key];
         switch (type) {
         case AttributeTypeInternal.IDENTIFYING:
-            return suppressionString;
+            return DataType.ANY_VALUE;
         default:
             final int index = inverseMap[key + 1];
             final int[][] data = inverseData[type];
             
             if (!ignoreSuppression && (suppressedAttributeTypes & (1 << type)) != 0 &&
                 ((outputGeneralized.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) {
-                return suppressionString;
+                return DataType.ANY_VALUE;
             }
             
             final int value = data[row][index] & Data.REMOVE_OUTLIER_MASK;

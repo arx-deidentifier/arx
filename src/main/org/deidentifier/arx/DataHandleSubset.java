@@ -196,11 +196,6 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    protected String getSuppressionString(){
-        return source.getSuppressionString();
-    }
-
-    @Override
     protected int internalCompare(int row1, int row2, int[] columns, boolean ascending) {
         return source.internalCompare(this.subset.getArray()[row1], this.subset.getArray()[row2], columns, ascending);
     }
