@@ -1508,6 +1508,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
     /** The string representing the NULL value */
     public static final String NULL_VALUE = "NULL";
+
+    /** The string representing the ANY value */
+    public static final String ANY_VALUE = "*";
     
     /**  SVUID */
     private static final long serialVersionUID = -4380267779210935078L;
@@ -1625,6 +1628,15 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         return new ARXOrderedString(format);
     }
     
+    /**
+     * Returns whether the value represents any value
+     * @param value
+     * @return
+     */
+    public static final boolean isAny(String value) {
+        return value != null && value.equals(ANY_VALUE);
+    }
+
     /**
      * Returns whether the value represents null
      * @param value
