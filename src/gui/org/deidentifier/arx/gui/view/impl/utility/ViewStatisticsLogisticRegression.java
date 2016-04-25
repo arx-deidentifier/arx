@@ -270,6 +270,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         chart.setRedraw(true);
         chart.updateLayout();
         chart.update();
+        chart.redraw();
     }
 
 
