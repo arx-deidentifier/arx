@@ -35,6 +35,8 @@ public class ModelClassification implements Serializable {
     private int               classificationMaxRecords = 100000;
     /** Seed */
     private Integer           classificationSeed       = Integer.MAX_VALUE;
+    /** Folds*/
+    private Integer           numberOfFolds            = 10;
     
     /**
      * Returns the max records for classification
@@ -77,6 +79,28 @@ public class ModelClassification implements Serializable {
     public void setSeed(Integer seed) {
         this.classificationSeed = seed;
         this.modified = true;
+    }
+    
+    
+
+    /**
+     * Gets the number of folds
+     * @return the numberOfFolds
+     */
+    public int getNumberOfFolds() {
+        if (numberOfFolds == null) {
+            numberOfFolds = 10;
+        }
+        return numberOfFolds;
+    }
+
+    /**
+     * Sets the number of folds
+     * @param numberOfFolds the numberOfFolds to set
+     */
+    public void setNumberOfFolds(Integer numberOfFolds) {
+        this.modified = true;
+        this.numberOfFolds = numberOfFolds;
     }
 
     /**

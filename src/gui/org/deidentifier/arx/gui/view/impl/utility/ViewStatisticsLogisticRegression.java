@@ -437,7 +437,9 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         final double fraction = context.handle.getNumRows() > context.model.getClassificationModel().getMaximalNumberOfRecords() ?
                 (double) context.model.getClassificationModel().getMaximalNumberOfRecords() / (double) context.handle.getNumRows() : 1d;
         final Integer seed = context.model.getClassificationModel().getSeed();
-
+        final Integer numberOfFolds = context.model.getClassificationModel().getNumberOfFolds();
+        // TODO: Consider this when executing the classification experiment
+        
         // Create an analysis
         Analysis analysis = new Analysis(){
 

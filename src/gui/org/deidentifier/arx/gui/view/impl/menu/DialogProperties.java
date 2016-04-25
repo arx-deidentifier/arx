@@ -303,7 +303,12 @@ public class DialogProperties implements IDialog {
 
         window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.17")) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getClassificationModel().getSeed()==Integer.MAX_VALUE; }
-            protected void setValue(Object t) { model.getClassificationModel().setSeed((Boolean)t ? Integer.MAX_VALUE : null); }});        
+            protected void setValue(Object t) { model.getClassificationModel().setSeed((Boolean)t ? Integer.MAX_VALUE : null); }});
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.18"), 2, 100, 10) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getClassificationModel().getNumberOfFolds(); }
+            protected void setValue(Object t) { model.getClassificationModel().setNumberOfFolds((Integer)t); }});
+
     }
     
     /**
