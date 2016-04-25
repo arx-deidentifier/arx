@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.utility;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsClassification;
 import org.deidentifier.arx.aggregates.StatisticsClassification.PrecisionRecallMatrix;
@@ -439,11 +440,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
         final String[] features = context.model.getSelectedFeatures().toArray(new String[0]);
         final String[] classes = context.model.getSelectedClasses().toArray(new String[0]);
-        final double fraction = context.handle.getNumRows() > context.model.getClassificationModel().getMaximalNumberOfRecords() ?
-                (double) context.model.getClassificationModel().getMaximalNumberOfRecords() / (double) context.handle.getNumRows() : 1d;
-        final Integer seed = context.model.getClassificationModel().getSeed();
-        final Integer numberOfFolds = context.model.getClassificationModel().getNumberOfFolds();
-        // TODO: Consider this when executing the classification experiment
+        final ARXLogisticRegressionConfiguration config = context.model.getClassificationModel().getARXLogisticRegressionConfiguration();
         
         // Break, if nothing do
         if (context.model.getSelectedFeatures().isEmpty() ||
@@ -527,8 +524,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
                     // Compute
                     StatisticsClassification result = builder.getClassificationPerformance(features,
                                                                                            clazz,
-                                                                                           seed,
-                                                                                           fraction);
+                                                                                           config);
                     progress++;
                     if (stopped) {
                         break;

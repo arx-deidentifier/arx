@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.classification.ClassificationDataSpecification;
 import org.deidentifier.arx.aggregates.classification.ClassificationMethod;
@@ -144,31 +145,35 @@ public class StatisticsClassification {
      * @param outputHandle - The output features handle
      * @param features - The feature attributes
      * @param clazz - The class attributes
-     * @param seed - The random seed, null, if the process should be randomized
-     * @param samplingFraction - The sampling fraction
+     * @param config - The configuration
+     * @param interrupt - The interrupt flag
      * @throws ParseException 
      */
     StatisticsClassification(DataHandleInternal inputHandle,
                              DataHandleInternal outputHandle,
                              String[] features,
                              String clazz,
-                             Integer seed,
-                             double samplingFraction,
+                             ARXLogisticRegressionConfiguration config,
                              WrappedBoolean interrupt) throws ParseException {
 
         // Init
         this.interrupt = interrupt;
         
         // Check and clean up
-        if (samplingFraction <= 0d || samplingFraction > 1d) {
-            throw new IllegalArgumentException("Samling fraction must be in ]0,1]");
+        double samplingFraction = (double)config.getMaxRecords() / (double)inputHandle.getNumRows();
+        if (samplingFraction <= 0d) {
+            throw new IllegalArgumentException("Sampling fraction must be >0");
         }
+        if (samplingFraction > 1d) {
+            samplingFraction = 1d;
+        }
+        
        
         // Initialize random
-        if (seed == null) {
+        if (!config.isDeterministic()) {
             this.random = new Random();
         } else {
-            this.random = new Random(seed);
+            this.random = new Random(config.getSeed());
         }
         
         // TODO: Feature is not used. Continuous variables are treated as categorical.
@@ -179,7 +184,7 @@ public class StatisticsClassification {
                                                                                             interrupt);
         
         // Train and evaluate
-        int k = inputHandle.getNumRows() > 10 ? 10 : inputHandle.getNumRows();
+        int k = inputHandle.getNumRows() > config.getNumFolds() ? config.getNumFolds() : inputHandle.getNumRows();
         List<List<Integer>> folds = getFolds(inputHandle.getNumRows(), k);
 
         // Track
@@ -189,13 +194,14 @@ public class StatisticsClassification {
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
             
             // Create classifiers
-            ClassificationMethod inputLR = new MultiClassLogisticRegression(specification);
+            ClassificationMethod inputLR = new MultiClassLogisticRegression(specification, config);
             ClassificationMethod inputZR = new MultiClassZeroR(specification);
             ClassificationMethod outputLR = null;
             if (inputHandle != outputHandle) {
-                outputLR = new MultiClassLogisticRegression(specification);
+                outputLR = new MultiClassLogisticRegression(specification, config);
             }
             
+            // Try
             try {
                 
                 // Train with all training sets

@@ -19,6 +19,9 @@ package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
+import org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction;
+
 /**
  * This class represents a model
  *
@@ -30,29 +33,104 @@ public class ModelClassification implements Serializable {
     private static final long serialVersionUID         = 5361564507029617616L;
 
     /** Modified */
-    private boolean           modified                 = false;
-    /** Max records */
-    private int               classificationMaxRecords = 100000;
-    /** Seed */
-    private Integer           classificationSeed       = Integer.MAX_VALUE;
-    /** Folds*/
-    private Integer           numberOfFolds            = 10;
-    
+    private boolean                            modified         = false;
+    /** Config*/
+    private ARXLogisticRegressionConfiguration config           = null;
+
     /**
-     * Returns the max records for classification
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getAlpha()
+     */
+    public double getAlpha() {
+        return config.getAlpha();
+    }
+
+    /**
+     * Returns a config for ARX
      * @return
      */
-    public Integer getMaximalNumberOfRecords() {
-        return this.classificationMaxRecords;
-        
+    public ARXLogisticRegressionConfiguration getARXLogisticRegressionConfiguration() {
+        return getConfig();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getDecayExponent()
+     */
+    public double getDecayExponent() {
+        return config.getDecayExponent();
     }
     
     /**
-     * Returns the seed for classification
      * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getLambda()
+     */
+    public double getLambda() {
+        return config.getLambda();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getLearningRate()
+     */
+    public double getLearningRate() {
+        return config.getLearningRate();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getMaxRecords()
+     */
+    public int getMaxRecords() {
+        return config.getMaxRecords();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getNumFolds()
+     */
+    public Integer getNumberOfFolds() {
+        return config.getNumFolds();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getPriorFunction()
+     */
+    public PriorFunction getPriorFunction() {
+        return config.getPriorFunction();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getSeed()
      */
     public Integer getSeed() {
-        return this.classificationSeed;
+        return config.getSeed();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getStepOffset()
+     */
+    public int getStepOffset() {
+        return config.getStepOffset();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getVectorLength()
+     */
+    public int getVectorLength() {
+        return config.getVectorLength();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#isDeterministic()
+     */
+    public boolean isDeterministic() {
+        return getConfig().isDeterministic();
     }
 
     /**
@@ -64,49 +142,136 @@ public class ModelClassification implements Serializable {
     }
 
     /**
-     * Sets the max records for classification
-     * @param records
+     * @param alpha
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setAlpha(double)
      */
-    public void setMaximalNumberOfRecords(int records) {
-        this.classificationMaxRecords = records;
-        this.modified = true;
+    public void setAlpha(double alpha) {
+        setModified();
+        getConfig().setAlpha(alpha);
     }
 
     /**
-     * Sets the seed. Set to Integer.MAX_VALUE for randomization
-     * @param seed
+     * @param decayExponent
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setDecayExponent(double)
      */
-    public void setSeed(Integer seed) {
-        this.classificationSeed = seed;
-        this.modified = true;
-    }
-    
-    
-
-    /**
-     * Gets the number of folds
-     * @return the numberOfFolds
-     */
-    public int getNumberOfFolds() {
-        if (numberOfFolds == null) {
-            numberOfFolds = 10;
-        }
-        return numberOfFolds;
+    public void setDecayExponent(double decayExponent) {
+        setModified();
+        getConfig().setDecayExponent(decayExponent);
     }
 
     /**
-     * Sets the number of folds
-     * @param numberOfFolds the numberOfFolds to set
+     * @param stepOffset
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setDeterministic(boolean)
+     */
+    public void setDeterministic(boolean deterministic) {
+        setModified();
+        getConfig().setDeterministic(deterministic);
+    }
+
+    /**
+     * @param lambda
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setLambda(double)
+     */
+    public void setLambda(double lambda) {
+        setModified();
+        getConfig().setLambda(lambda);
+    }
+
+    /**
+     * @param learningRate
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setLearningRate(double)
+     */
+    public void setLearningRate(double learningRate) {
+        setModified();
+        getConfig().setLearningRate(learningRate);
+    }
+
+    /**
+     * @param maxRecords
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setMaxRecords(int)
+     */
+    public void setMaxRecords(int maxRecords) {
+        setModified();
+        getConfig().setMaxRecords(maxRecords);
+    }
+
+    /**
+     * @param numberOfFolds
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setNumFolds(java.lang.Integer)
      */
     public void setNumberOfFolds(Integer numberOfFolds) {
-        this.modified = true;
-        this.numberOfFolds = numberOfFolds;
+        setModified();
+        getConfig().setNumFolds(numberOfFolds);
     }
 
+    /**
+     * @param priorFunction
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setPriorFunction(org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction)
+     */
+    public void setPriorFunction(PriorFunction priorFunction) {
+        setModified();
+        getConfig().setPriorFunction(priorFunction);
+    }
+
+    /**
+     * @param seed
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setSeed(java.lang.Integer)
+     */
+    public void setSeed(Integer seed) {
+        setModified();
+        getConfig().setSeed(seed);
+    }
+
+    /**
+     * @param stepOffset
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setStepOffset(int)
+     */
+    public void setStepOffset(int stepOffset) {
+        setModified();
+        getConfig().setStepOffset(stepOffset);
+    }
+    
     /**
      * Set unmodified
      */
     public void setUnmodified() {
         this.modified = false;
+    }
+    
+    /**
+     * @param vectorLength
+     * @return
+     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setVectorLength(int)
+     */
+    public ARXLogisticRegressionConfiguration setVectorLength(int vectorLength) {
+        setModified();
+        return getConfig().setVectorLength(vectorLength);
+    }
+
+    /**
+     * For backwards compatibility
+     */
+    private ARXLogisticRegressionConfiguration getConfig() {
+        if (this.config == null) {
+            this.config = ARXLogisticRegressionConfiguration.create();
+        }
+        return this.config;
+    }
+
+    /**
+     * Sets modified
+     */
+    private void setModified() {
+        this.modified = true;
     }
 }

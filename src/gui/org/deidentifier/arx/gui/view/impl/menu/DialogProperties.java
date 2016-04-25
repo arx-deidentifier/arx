@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -298,17 +299,25 @@ public class DialogProperties implements IDialog {
         window.addGroup(Resources.getMessage("DialogProperties.14")); //$NON-NLS-1$
 
         window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.15"), 1000, Integer.MAX_VALUE, 100000) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getClassificationModel().getMaximalNumberOfRecords(); }
-            protected void setValue(Object t) { model.getClassificationModel().setMaximalNumberOfRecords((Integer)t); }});
+            protected Integer getValue() { return model.getClassificationModel().getMaxRecords(); }
+            protected void setValue(Object t) { model.getClassificationModel().setMaxRecords((Integer)t); }});
 
         window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.17")) { //$NON-NLS-1$
-            protected Boolean getValue() { return model.getClassificationModel().getSeed()==Integer.MAX_VALUE; }
-            protected void setValue(Object t) { model.getClassificationModel().setSeed((Boolean)t ? Integer.MAX_VALUE : null); }});
+            protected Boolean getValue() { return model.getClassificationModel().isDeterministic(); }
+            protected void setValue(Object t) { model.getClassificationModel().setDeterministic((Boolean)t); }});
         
         window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.18"), 2, 100, 10) { //$NON-NLS-1$
             protected Integer getValue() { return model.getClassificationModel().getNumberOfFolds(); }
             protected void setValue(Object t) { model.getClassificationModel().setNumberOfFolds((Integer)t); }});
 
+        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.19"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getClassificationModel().getVectorLength(); }
+            protected void setValue(Object t) { model.getClassificationModel().setVectorLength((Integer)t); }});
+
+        window.addPreference(new PreferenceSelection(Resources.getMessage("DialogProperties.20"), getPriorFunctions()) { //$NON-NLS-1$
+            protected String getValue() { return model.getClassificationModel().getPriorFunction().name(); }
+            protected void setValue(Object arg0) { model.getClassificationModel().setPriorFunction(PriorFunction.valueOf((String)arg0)); }
+        });
     }
     
     /**
@@ -322,6 +331,18 @@ public class DialogProperties implements IDialog {
             languages.add(lang.toUpperCase());
         }
         return languages.toArray(new String[]{});
+    }
+
+    /**
+     * Creates a list of prior functions
+     * @return
+     */
+    private String[] getPriorFunctions() {
+        List<String> result = new ArrayList<String>();
+        for (PriorFunction function : PriorFunction.values()) {
+            result.add(function.name());
+        }
+        return result.toArray(new String[result.size()]);
     }
 
     /**

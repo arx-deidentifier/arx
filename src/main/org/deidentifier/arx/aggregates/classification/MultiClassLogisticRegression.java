@@ -16,11 +16,17 @@
  */
 package org.deidentifier.arx.aggregates.classification;
 
+import org.apache.mahout.classifier.sgd.ElasticBandPrior;
+import org.apache.mahout.classifier.sgd.L1;
+import org.apache.mahout.classifier.sgd.L2;
 import org.apache.mahout.classifier.sgd.OnlineLogisticRegression;
+import org.apache.mahout.classifier.sgd.PriorFunction;
+import org.apache.mahout.classifier.sgd.UniformPrior;
 import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.Vector;
 import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
 import org.apache.mahout.vectorizer.encoders.StaticWordValueEncoder;
+import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 
 /**
@@ -29,28 +35,48 @@ import org.deidentifier.arx.DataHandleInternal;
  */
 public class MultiClassLogisticRegression implements ClassificationMethod {
 
-    /** TODO: Make configurable */
-    private final MultiClassLogisticRegressionConfiguration config = new MultiClassLogisticRegressionConfiguration();
+    /** Config */
+    private final ARXLogisticRegressionConfiguration config;
     /** Encoder */
-    private final ConstantValueEncoder                      interceptEncoder;
+    private final ConstantValueEncoder               interceptEncoder;
     /** Instance */
-    private final OnlineLogisticRegression                  lr;
+    private final OnlineLogisticRegression           lr;
     /** Specification */
-    private final ClassificationDataSpecification           specification;
+    private final ClassificationDataSpecification    specification;
     /** Encoder */
-    private final StaticWordValueEncoder                    wordEncoder;
+    private final StaticWordValueEncoder             wordEncoder;
 
     /**
      * Creates a new instance
      * @param specification
+     * @param config
      */
-    public MultiClassLogisticRegression(ClassificationDataSpecification specification) {
+    public MultiClassLogisticRegression(ClassificationDataSpecification specification,
+                                        ARXLogisticRegressionConfiguration config) {
 
         // Store
+        this.config = config;
         this.specification = specification;
         
         // Prepare classifier
-        this.lr = new OnlineLogisticRegression(this.specification.classMap.size(), config.getVectorLength(), config.getPriorFunction());
+        PriorFunction prior = null;
+        switch (config.getPriorFunction()) {
+        case ELASTIC_BAND:
+            prior = new ElasticBandPrior();
+            break;
+        case L1:
+            prior = new L1();
+            break;
+        case L2:
+            prior = new L2();
+            break;
+        case UNIFORM:
+            prior = new UniformPrior();
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown prior function");
+        }
+        this.lr = new OnlineLogisticRegression(this.specification.classMap.size(), config.getVectorLength(), prior);
         
         // Configure
         this.lr.learningRate(config.getLearningRate());
@@ -59,7 +85,7 @@ public class MultiClassLogisticRegression implements ClassificationMethod {
         this.lr.stepOffset(config.getStepOffset());
         this.lr.decayExponent(config.getDecayExponent());    
         
-        
+        // Prepare encoders
         this.interceptEncoder = new ConstantValueEncoder("intercept");
         this.wordEncoder = new StaticWordValueEncoder("feature");
         

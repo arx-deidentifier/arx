@@ -24,6 +24,7 @@ import java.util.Iterator;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
@@ -96,7 +97,7 @@ public class Example40 extends Example {
             System.out.println(Arrays.toString(input.next()));
         }
 
-        System.out.println(data.getHandle().getStatistics().getClassificationPerformance(features, clazz, Integer.MAX_VALUE, 1d));
+        System.out.println(data.getHandle().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
         
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -112,6 +113,6 @@ public class Example40 extends Example {
             System.out.println(Arrays.toString(transformed.next()));
         }
 
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, Integer.MAX_VALUE, 1d));
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
     }
 }

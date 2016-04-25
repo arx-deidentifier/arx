@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -102,7 +103,7 @@ public class Example39 extends Example {
         data.getDefinition().setDataType("age", DataType.INTEGER);
 
         System.out.println("Input dataset");
-        System.out.println(data.getHandle().getStatistics().getClassificationPerformance(features, clazz, Integer.MAX_VALUE, 1d));
+        System.out.println(data.getHandle().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
@@ -112,7 +113,7 @@ public class Example39 extends Example {
         
         ARXResult result = anonymizer.anonymize(data, config);
         System.out.println("5-anonymous dataset");
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, Integer.MAX_VALUE, 1d));
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
         
     }
 }
