@@ -51,7 +51,7 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
 
     @Override
     public String toString() {
-        return "(<"+getRiskThreshold()+")-avg-reidentification-risk";
+        return "("+getRiskThreshold()+")-avg-reidentification-risk";
     }
 
     @Override
