@@ -336,7 +336,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         
         // Tool tip
         final StringBuilder builder = new StringBuilder();
-        this.root.addListener(SWT.MouseMove, new Listener() {
+        this.sash.addListener(SWT.MouseMove, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 if (chart != null) {
@@ -357,18 +357,18 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
                                         builder.append(Resources.getMessage("ViewStatisticsClassificationInput.14")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
                                         builder.append(series[x]);
                                         builder.append("%, ").append(Resources.getMessage("ViewStatisticsClassificationInput.15")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                        builder.append(SWTUtil.getPrettyString(data[1].getYSeries()[x]));
-                                        builder.append("%, ").append(Resources.getMessage("ViewStatisticsClassificationInput.16")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                         builder.append(SWTUtil.getPrettyString(data[0].getYSeries()[x]));
+                                        builder.append("%, ").append(Resources.getMessage("ViewStatisticsClassificationInput.16")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                        builder.append(SWTUtil.getPrettyString(data[1].getYSeries()[x]));
                                         builder.append("%)"); //$NON-NLS-1$
-                                        root.setToolTipText(builder.toString());
+                                        sash.setToolTipText(builder.toString());
                                         return;
                                     }
                                 }
                             }
                         }
                     }
-                    root.setToolTipText(null);
+                    sash.setToolTipText(null);
                 }
             }
         });
