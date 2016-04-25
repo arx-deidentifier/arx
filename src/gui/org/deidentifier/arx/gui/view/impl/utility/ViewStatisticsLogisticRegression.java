@@ -38,12 +38,11 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -221,7 +220,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
      * @param matrix
      */
     private void setChartSeries(PrecisionRecallMatrix matrix) {
-
+        
         // Init data
         String[] xAxisLabels = new String[matrix.getConfidenceThresholds().length];
         double[] ySeriesPrecision = new double[matrix.getConfidenceThresholds().length];
@@ -372,22 +371,39 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
                 }
             }
         });
-        
+
         // Update matrix
-        this.table.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                if (table.getSelectionIndex() >= 0 && table.getSelectionIndex() < table.getItemCount()) {
-                    TableItem item = table.getItem(table.getSelectionIndex());
-                    if (item.getData() != null && item.getData() instanceof PrecisionRecallMatrix) {
-                        setChartSeries((PrecisionRecallMatrix) item.getData());
+        table.addListener(SWT.MouseDown, new Listener() {
+            public void handleEvent(Event event) {
+                Rectangle clientArea = table.getClientArea();
+                Point pt = new Point(event.x, event.y);
+                int index = table.getTopIndex();
+                while (index < table.getItemCount()) {
+                    boolean visible = false;
+                    TableItem item = table.getItem(index);
+                    for (int i = 0; i < table.getColumnCount(); i++) {
+                        Rectangle rect = item.getBounds(i);
+                        if (rect.contains(pt)) {
+                            if (item.getData() != null &&
+                                item.getData() instanceof PrecisionRecallMatrix) {
+                                setChartSeries((PrecisionRecallMatrix) item.getData());
+                            }
+                            getModel().setSelectedAttribute(item.getText(0));
+                            getController().update(new ModelEvent(ViewStatisticsLogisticRegression.this,
+                                                                  ModelPart.SELECTED_ATTRIBUTE,
+                                                                  item.getText(0)));
+                            return;
+                        }
+                        if (!visible && rect.intersects(clientArea)) {
+                            visible = true;
+                        }
                     }
-                    getModel().setSelectedAttribute(item.getText(0));
-                    getController().update(new ModelEvent(ViewStatisticsLogisticRegression.this, ModelPart.SELECTED_ATTRIBUTE, item.getText(0)));
+                    if (!visible) return;
+                    index++;
                 }
             }
         });
-        
+
         return this.root;
     }
     
