@@ -184,7 +184,7 @@ public class DataDefinition implements Cloneable{
                 return hierarchy[0].length - 1;
             }
         } else {
-            throw new IllegalStateException("No materialized hierarchy specified for attribute ("+attribute+")");
+            return 0;
         }
     }
     
