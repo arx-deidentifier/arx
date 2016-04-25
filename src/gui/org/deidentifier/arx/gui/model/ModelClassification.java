@@ -42,7 +42,7 @@ public class ModelClassification implements Serializable {
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getAlpha()
      */
     public double getAlpha() {
-        return config.getAlpha();
+        return getConfig().getAlpha();
     }
 
     /**
@@ -58,7 +58,7 @@ public class ModelClassification implements Serializable {
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getDecayExponent()
      */
     public double getDecayExponent() {
-        return config.getDecayExponent();
+        return getConfig().getDecayExponent();
     }
     
     /**
@@ -66,7 +66,7 @@ public class ModelClassification implements Serializable {
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getLambda()
      */
     public double getLambda() {
-        return config.getLambda();
+        return getConfig().getLambda();
     }
 
     /**
@@ -74,7 +74,7 @@ public class ModelClassification implements Serializable {
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getLearningRate()
      */
     public double getLearningRate() {
-        return config.getLearningRate();
+        return getConfig().getLearningRate();
     }
 
     /**
@@ -82,7 +82,7 @@ public class ModelClassification implements Serializable {
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getMaxRecords()
      */
     public int getMaxRecords() {
-        return config.getMaxRecords();
+        return getConfig().getMaxRecords();
     }
 
     /**
@@ -90,7 +90,7 @@ public class ModelClassification implements Serializable {
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getNumFolds()
      */
     public Integer getNumberOfFolds() {
-        return config.getNumFolds();
+        return getConfig().getNumFolds();
     }
 
     /**
@@ -98,7 +98,7 @@ public class ModelClassification implements Serializable {
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getPriorFunction()
      */
     public PriorFunction getPriorFunction() {
-        return config.getPriorFunction();
+        return getConfig().getPriorFunction();
     }
 
     /**
@@ -106,7 +106,7 @@ public class ModelClassification implements Serializable {
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getSeed()
      */
     public Integer getSeed() {
-        return config.getSeed();
+        return getConfig().getSeed();
     }
 
     /**
@@ -114,7 +114,7 @@ public class ModelClassification implements Serializable {
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getStepOffset()
      */
     public int getStepOffset() {
-        return config.getStepOffset();
+        return getConfig().getStepOffset();
     }
 
     /**
@@ -122,7 +122,7 @@ public class ModelClassification implements Serializable {
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getVectorLength()
      */
     public int getVectorLength() {
-        return config.getVectorLength();
+        return getConfig().getVectorLength();
     }
 
     /**
