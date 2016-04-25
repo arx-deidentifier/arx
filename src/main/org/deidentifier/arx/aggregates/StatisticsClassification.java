@@ -100,9 +100,15 @@ public class StatisticsClassification {
          * Packs the results
          */
         void pack() {
+            // Pack
             for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
-                precision[i] /= recall[i];
-                recall[i] /= measurements;
+                
+                if (recall[i] == 0d) {
+                    precision[i] = 1d;
+                } else {
+                    precision[i] /= recall[i];
+                    recall[i] /= measurements;
+                }
             }
         }
     }
