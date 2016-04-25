@@ -554,7 +554,7 @@ public class StatisticsBuilder {
             averageEquivalenceClassSizeIncludingOutliers += element.getCount();
             numberOfTuples += element.getCount();
             
-            if (!isOutlier(element)) {
+            if (!element.getElement().isOutlier()) {
                 
                 maximalEquivalenceClassSize = Math.max(element.getCount(), maximalEquivalenceClassSize);
                 minimalEquivalenceClassSize = Math.min(element.getCount(), minimalEquivalenceClassSize);
@@ -986,20 +986,6 @@ public class StatisticsBuilder {
                 }
             });
         }
-    }
-    
-    /**
-     * Returns whether the given element is suppressed
-     * @param element
-     * @return
-     */
-    private boolean isOutlier(Group<TupleWrapper> element) {
-        for (String value : element.getElement().getValues()) {
-            if (!value.equals(DataType.ANY_VALUE)) {
-                return false;
-            }
-        }
-        return true;
     }
     
     /**
