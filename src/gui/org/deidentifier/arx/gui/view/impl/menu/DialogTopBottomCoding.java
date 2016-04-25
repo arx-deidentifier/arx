@@ -127,7 +127,7 @@ public class DialogTopBottomCoding extends TitleAreaDialog {
                    !type.isValid(topThresholdText.getText())) {
             setErrorMessage(Resources.getMessage("DialogTopBottomCoding.5")); //$NON-NLS-1$
         } else if (bottomThresholdText.getText().equals("") && topThresholdText.getText().equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
-            setErrorMessage(Resources.getMessage("DialogTopBottomCoding.10")); //$NON-NLS-1$
+            setErrorMessage(Resources.getMessage("DialogTopBottomCoding.12")); //$NON-NLS-1$
         } else {
             setErrorMessage(null);
         }
