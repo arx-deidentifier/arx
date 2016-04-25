@@ -115,7 +115,12 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         super.update(event);
         if (event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES ||
             event.part == ModelPart.DATA_TYPE) {
-            triggerUpdate();
+            if (getModel() != null && (getModel().getSelectedFeatures().isEmpty() || getModel().getSelectedClasses().isEmpty())) {
+                doReset();
+                return;
+            } else {
+                triggerUpdate();
+            }
         }
         if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
             int index = 0;
@@ -440,6 +445,13 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         final Integer numberOfFolds = context.model.getClassificationModel().getNumberOfFolds();
         // TODO: Consider this when executing the classification experiment
         
+        // Break, if nothing do
+        if (context.model.getSelectedFeatures().isEmpty() ||
+            context.model.getSelectedClasses().isEmpty()) {
+            doReset();
+            return;
+        }
+        
         // Create an analysis
         Analysis analysis = new Analysis(){
 
@@ -463,7 +475,8 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
             public void onFinish() {
 
                 // Check
-                if (stopped || !isEnabled()) {
+                if (stopped || !isEnabled() || getModel().getSelectedFeatures().isEmpty() || getModel().getSelectedClasses().isEmpty()) {
+                    setStatusEmpty();
                     return;
                 }
 
@@ -495,7 +508,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
 
             @Override
             public void onInterrupt() {
-                if (!isEnabled()) {
+                if (!isEnabled() || getModel().getSelectedFeatures().isEmpty() || getModel().getSelectedClasses().isEmpty()) {
                     setStatusEmpty();
                 } else {
                     setStatusWorking();

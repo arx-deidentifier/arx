@@ -61,7 +61,11 @@ public class ViewStatisticsLogisticRegressionOutput  extends ViewStatisticsLogis
         list.add(result.getZeroRAccuracy());
         list.add(result.getOriginalAccuracy());
         list.add(result.getAccuracy());
-        list.add((result.getAccuracy()-result.getZeroRAccuracy())/(result.getOriginalAccuracy()-result.getZeroRAccuracy()));
+        if (result.getOriginalAccuracy() - result.getZeroRAccuracy() == 0d) {
+            list.add(result.getAccuracy() / result.getZeroRAccuracy());
+        } else {
+            list.add((result.getAccuracy() - result.getZeroRAccuracy()) / (result.getOriginalAccuracy() - result.getZeroRAccuracy()));
+        }
         list.add(result.getAverageError());
         list.add(result.getAverageError()-result.getOriginalAverageError());
         return list;
