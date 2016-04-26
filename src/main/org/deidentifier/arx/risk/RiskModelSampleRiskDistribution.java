@@ -77,7 +77,7 @@ public class RiskModelSampleRiskDistribution {
             int size = array[i];
             int count = array[i+1];
             double risk = 1d / (double)size;
-            double records = (double)(count * size)/ histogram.getNumTuples();
+            double records = (double)(count * size)/ histogram.getNumRecords();
             int index = Arrays.binarySearch(thresholds, risk);
             if (index < 0) {
                 index = -index - 1;

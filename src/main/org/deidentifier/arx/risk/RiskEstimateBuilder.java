@@ -261,7 +261,6 @@ public class RiskEstimateBuilder {
         progress.value = 0;
         return new RiskModelPopulationUniqueness(population,
                                                  getHistogram(0.25),
-                                                 handle.getNumRows(),
                                                  stop,
                                                  progress,
                                                  solverconfig,
@@ -398,7 +397,6 @@ public class RiskEstimateBuilder {
         progress.value = 0;
         return new RiskModelPopulationUniqueness(population,
                                                  getHistogram(0.25),
-                                                 handle.getNumRows(),
                                                  stop,
                                                  progress,
                                                  solverconfig,

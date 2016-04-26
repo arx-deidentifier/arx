@@ -19,6 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 
@@ -58,12 +59,44 @@ public abstract class PrivacyCriterion implements Serializable{
     public abstract PrivacyCriterion clone();
     
     /**
+     * Returns the associated population model, <code>null</code> if there is none.
+     * @return the populationModel
+     */
+    public ARXPopulationModel getPopulationModel() {
+        return null;
+    }
+
+    /**
      * Returns the criterion's requirements.
      *
      * @return
      */
     public abstract int getRequirements();
+    
+    /**
+     * Return journalist risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdJournalist() {
+        return 1d;
+    }
 
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        return 1d;
+    }
+    
+    /**
+     * Return prosecutor risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdProsecutor() {
+        return 1d;
+    }
+    
     /**
      * Override this to initialize the criterion.
      *
@@ -80,7 +113,7 @@ public abstract class PrivacyCriterion implements Serializable{
      * @return
      */
     public abstract boolean isAnonymous(HashGroupifyEntry entry);
-
+    
     /**
      * Returns whether the criterion supports local recoding.
      * @return
@@ -99,7 +132,7 @@ public abstract class PrivacyCriterion implements Serializable{
             return this.monotonicWithGeneralization;
         }
     }
-    
+
     /**
      * Returns whether the criterion is monotonic with tuple suppression.
      *
@@ -108,7 +141,7 @@ public abstract class PrivacyCriterion implements Serializable{
     public boolean isMonotonicWithSuppression() {
         return this.monotonic;
     }
-    
+
     /**
      * Is this criterion based on the overall sample
      * @return
@@ -116,35 +149,11 @@ public abstract class PrivacyCriterion implements Serializable{
     public boolean isSampleBased() {
         return false;
     }
-    
+
     /**
      * Returns a string representation.
      *
      * @return
      */
     public abstract String toString();
-    
-    /**
-     * Return prosecutor risk threshold, 1 if there is none
-     * @return
-     */
-    public double getRiskThresholdProsecutor() {
-        return 1d;
-    }
-
-    /**
-     * Return journalist risk threshold, 1 if there is none
-     * @return
-     */
-    public double getRiskThresholdJournalist() {
-        return 1d;
-    }
-
-    /**
-     * Return marketer risk threshold, 1 if there is none
-     * @return
-     */
-    public double getRiskThresholdMarketer() {
-        return 1d;
-    }
 }

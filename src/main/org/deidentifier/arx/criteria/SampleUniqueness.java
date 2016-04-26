@@ -44,21 +44,6 @@ public class SampleUniqueness extends RiskBasedCriterion{
         return new SampleUniqueness(this.getRiskThreshold());
     }
 
-    @Override
-    public boolean isLocalRecodingSupported() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return "(<"+getRiskThreshold()+")-sample-uniques";
-    }
-
-    @Override
-    protected boolean isFulfilled(HashGroupifyDistribution distribution) {
-        return distribution.getFractionOfTuplesInClassesOfSize(1) <= getRiskThreshold();
-    }
-
     /**
      * Return marketer risk threshold, 1 if there is none
      * @return
@@ -66,5 +51,20 @@ public class SampleUniqueness extends RiskBasedCriterion{
     public double getRiskThresholdMarketer() {
         // TODO: Risk is estimated differently than in the other models, here
         return getRiskThreshold();
+    }
+
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "("+getRiskThreshold()+")-sample-uniques";
+    }
+
+    @Override
+    protected boolean isFulfilled(HashGroupifyDistribution distribution) {
+        return distribution.getFractionOfRecordsInClassesOfSize(1) <= getRiskThreshold();
     }
 }

@@ -21,7 +21,7 @@ package org.deidentifier.arx.gui.view.impl.risk;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.criteria.PopulationUniqueness;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -203,9 +203,10 @@ public class ViewRisksPopulationModel implements IView {
      */
     private boolean isOutputPopulationModelAvailable() {
         if (model == null || model.getOutputConfig() == null) { return false; }
-        for (PopulationUniqueness t : model.getOutputConfig()
-                                                          .getCriteria(PopulationUniqueness.class)) {
-            if (t.getPopulationModel() != null) { return true; }
+        for (PrivacyCriterion c : model.getOutputConfig().getCriteria()) {
+            if (c.getPopulationModel() != null) {
+                return true;
+            }
         }
         return false;
     }
@@ -254,8 +255,8 @@ public class ViewRisksPopulationModel implements IView {
             }
             table.getParent().setFocus();
             DataHandle handle = model.getInputConfig().getInput().getHandle();
-            long population = (long)popmodel.getPopulationSize(handle);
-            double fraction = popmodel.getSamplingFraction(handle);
+            long population = (long)popmodel.getPopulationSize();
+            double fraction = (double)handle.getNumRows() / (double)population;
             textSampleFraction.setText(SWTUtil.getPrettyString(fraction));
             textSampleFraction.setToolTipText(String.valueOf(fraction));
             textSampleFraction.setEnabled(true);

@@ -66,8 +66,6 @@ public class RiskModelPopulationUniqueness extends RiskModelPopulation {
     /** Parameter */
     private ARXSolverConfiguration    config;
     /** Parameter */
-    private int                       sampleSize;
-    /** Parameter */
     private WrappedBoolean            stop;
 
     /**
@@ -75,16 +73,13 @@ public class RiskModelPopulationUniqueness extends RiskModelPopulation {
      * 
      * @param model
      * @param classes
-     * @param sampleSize
      * @param config
      */
     public RiskModelPopulationUniqueness(ARXPopulationModel model,
                                          RiskModelHistogram classes,
-                                         int sampleSize,
                                          ARXSolverConfiguration config) {
         this(model,
              classes,
-             sampleSize,
              new WrappedBoolean(),
              new WrappedInteger(),
              config,
@@ -96,7 +91,6 @@ public class RiskModelPopulationUniqueness extends RiskModelPopulation {
      * 
      * @param model
      * @param histogram
-     * @param sampleSize
      * @param stop
      * @param progress
      * @param config
@@ -104,19 +98,17 @@ public class RiskModelPopulationUniqueness extends RiskModelPopulation {
      */
     RiskModelPopulationUniqueness(ARXPopulationModel model,
                                   RiskModelHistogram histogram,
-                                  int sampleSize,
                                   WrappedBoolean stop,
                                   WrappedInteger progress,
                                   ARXSolverConfiguration config,
                                   boolean precompute) {
-        super(histogram, model, sampleSize, stop, progress);
+        super(histogram, model, stop, progress);
 
         // Init
         this.numClassesOfSize1 = (int) super.getNumClassesOfSize(1);
         this.samplingFraction = super.getSamplingFraction();
         this.model = model;
         this.histogram = histogram;
-        this.sampleSize = sampleSize;
         this.config = config;
         this.stop = stop;
 
@@ -281,7 +273,6 @@ public class RiskModelPopulationUniqueness extends RiskModelPopulation {
             } else {
                 numUniquesPitman = new ModelPitman(model,
                                                    histogram,
-                                                   sampleSize,
                                                    config,
                                                    stop).getNumUniques();
             }
@@ -300,7 +291,6 @@ public class RiskModelPopulationUniqueness extends RiskModelPopulation {
             } else {
                 numUniquesSNB = new ModelSNB(model,
                                              histogram,
-                                             sampleSize,
                                              config,
                                              stop).getNumUniques();
             }
@@ -319,7 +309,6 @@ public class RiskModelPopulationUniqueness extends RiskModelPopulation {
             } else {
                 numUniquesZayatz = new ModelZayatz(model,
                                                    histogram,
-                                                   sampleSize,
                                                    stop).getNumUniques();
             }
         }

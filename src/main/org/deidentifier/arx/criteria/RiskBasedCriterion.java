@@ -65,7 +65,7 @@ public abstract class RiskBasedCriterion extends SampleBasedCriterion{
                 boolean fulfilled = RiskBasedCriterion.this.isFulfilled(distribution);
                 
                 // Early abort
-                if (!fulfilled && distribution.getNumOfSuppressedTuples() > numMaxSuppressedOutliers) {
+                if (!fulfilled && distribution.getNumSuppressedRecords() > numMaxSuppressedOutliers) {
                     return State.ABORT;
                     
                 // Go on

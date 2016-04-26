@@ -43,7 +43,6 @@ import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KMap;
-import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVSyntax;
@@ -849,9 +848,10 @@ public class Model implements Serializable {
     public ARXPopulationModel getOutputPopulationModel() {
         ModelConfiguration config = getOutputConfig();
         if (config != null) {
-            Set<PopulationUniqueness> set = config.getCriteria(PopulationUniqueness.class);
-            if (set != null && !set.isEmpty()) {
-                return set.iterator().next().getPopulationModel();
+            for (PrivacyCriterion c : config.getCriteria()) {
+                if (c.getPopulationModel() != null) {
+                    return c.getPopulationModel();
+                }
             }
         }
         return null;

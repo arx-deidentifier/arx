@@ -64,7 +64,7 @@ public class RiskModelSampleRisks extends RiskModelSample {
      */
     public double getFractionOfTuplesAffectedByHighestRisk() {
         return getNumTuplesAffectedByHighestRisk() /
-               getHistogram().getNumTuples();
+               getHistogram().getNumRecords();
     }
 
     /**
@@ -75,7 +75,7 @@ public class RiskModelSampleRisks extends RiskModelSample {
      */
     public double getFractionOfTuplesAffectedByLowestRisk() {
         return getNumTuplesAffectedByLowestRisk() /
-               getHistogram().getNumTuples();
+               getHistogram().getNumRecords();
     }
 
     /**

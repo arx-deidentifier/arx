@@ -30,6 +30,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
+import org.deidentifier.arx.risk.RiskModelHistogram;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
@@ -82,7 +83,7 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
     private static String[] getLabels(double[] points) {
         String[] result = new String[points.length];
         for (int i = 0; i < points.length; i++) {
-            result[i] = SWTUtil.getPrettyString(points[i]);
+            result[i] = SWTUtil.getPrettyString(points[i]*100d);
         }
         return result;
     }
@@ -104,9 +105,6 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
     /** View */
     private Composite       root;
 
-    /** View */
-    private boolean         showAllModels;
-
     /** Internal stuff. */
     private AnalysisManager manager;
 
@@ -119,14 +117,12 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
      * @param reset
      */
     public ViewRisksPopulationUniques(final Composite parent,
-                                            final Controller controller,
-                                            final ModelPart target,
-                                            final ModelPart reset,
-                                            final boolean showAllModels) {
+                                      final Controller controller,
+                                      final ModelPart target,
+                                      final ModelPart reset) {
 
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
-        this.showAllModels = showAllModels;
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.POPULATION_MODEL, this);
     }
@@ -238,6 +234,7 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
         // Initialize y-axis
         ITitle yAxisTitle = yAxis.getTitle();
         yAxisTitle.setText(Resources.getMessage("ViewRisksPlotUniquenessEstimates.0")); //$NON-NLS-1$
+        xAxisTitle.setText(Resources.getMessage("ViewRisksPlotUniquenessEstimates.1")); //$NON-NLS-1$
         chart.setEnabled(false);
         updateCategories();
     }
@@ -319,6 +316,7 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
 
         // The statistics builder
         final RiskEstimateBuilderInterruptible baseBuilder = getBuilder(context);
+        final int sampleSize = context.model.getInputConfig().getInput().getHandle().getNumRows();
         
         // Enable/disable
         if (!this.isEnabled() || baseBuilder == null) {
@@ -361,21 +359,16 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
                 resetChart();
 
                 ISeriesSet seriesSet = chart.getSeriesSet();
-                if (showAllModels) {
-                    createSeries(seriesSet, dataPitman, "Pitman", PlotSymbolType.CIRCLE, GUIHelper.COLOR_BLACK); //$NON-NLS-1$
-                    createSeries(seriesSet, dataZayatz, "Zayatz", PlotSymbolType.CROSS, GUIHelper.COLOR_BLUE); //$NON-NLS-1$
-                    createSeries(seriesSet, dataSNB, "SNB", PlotSymbolType.DIAMOND, GUIHelper.COLOR_RED); //$NON-NLS-1$
-                    createSeries(seriesSet, dataDankar, "Dankar", PlotSymbolType.SQUARE, GUIHelper.COLOR_DARK_GRAY); //$NON-NLS-1$
-                    chart.getLegend().setVisible(true);
-                } else {
-                    createSeries(seriesSet, dataDankar, "Dankar", PlotSymbolType.SQUARE, GUIHelper.COLOR_BLACK); //$NON-NLS-1$
-                    chart.getLegend().setVisible(false);
-                }
+                createSeries(seriesSet, dataPitman, "Pitman", PlotSymbolType.CIRCLE, GUIHelper.COLOR_BLACK); //$NON-NLS-1$
+                createSeries(seriesSet, dataZayatz, "Zayatz", PlotSymbolType.CROSS, GUIHelper.COLOR_BLUE); //$NON-NLS-1$
+                createSeries(seriesSet, dataSNB, "SNB", PlotSymbolType.DIAMOND, GUIHelper.COLOR_RED); //$NON-NLS-1$
+                createSeries(seriesSet, dataDankar, "Dankar", PlotSymbolType.SQUARE, GUIHelper.COLOR_DARK_GRAY); //$NON-NLS-1$
+                chart.getLegend().setVisible(true);
                 
                 IAxisSet axisSet = chart.getAxisSet();
 
                 IAxis yAxis = axisSet.getYAxis(0);
-                yAxis.setRange(new Range(0d, 1d));
+                yAxis.setRange(new Range(0d, 100d));
 
                 IAxis xAxis = axisSet.getXAxis(0);
                 xAxis.setRange(new Range(0d, LABELS.length));
@@ -408,36 +401,37 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
                 
                 // Perform work
                 dataDankar = new double[POINTS.length];
-                if (showAllModels) {
-                    dataPitman = new double[POINTS.length];
-                    dataZayatz = new double[POINTS.length];
-                    dataSNB = new double[POINTS.length];
-                }
+                dataPitman = new double[POINTS.length];
+                dataZayatz = new double[POINTS.length];
+                dataSNB = new double[POINTS.length];
                 for (idx = 0; idx < POINTS.length; idx++) {
                     if (stopped) {
                         throw new InterruptedException();
                     }
                     
-                    builder = getBuilder(context, ARXPopulationModel.create(POINTS[idx]), builder.getEquivalenceClassModel());
+                    RiskModelHistogram histogram = builder.getEquivalenceClassModel();
+                    ARXPopulationModel population = ARXPopulationModel.create(sampleSize, POINTS[idx]);
+                    builder = getBuilder(context, population, histogram);
                     
                     if (idx == 0 && builder.getSampleBasedUniquenessRisk().getFractionOfUniqueTuples() == 0.0d) {
                         Arrays.fill(dataDankar, 0.0d);
-                        if (showAllModels) {
-                            Arrays.fill(dataPitman, 0.0d);
-                            Arrays.fill(dataZayatz, 0.0d);
-                            Arrays.fill(dataSNB, 0.0d);
-                        }
+                        Arrays.fill(dataPitman, 0.0d);
+                        Arrays.fill(dataZayatz, 0.0d);
+                        Arrays.fill(dataSNB, 0.0d);
                         break;
                     }
                     RiskModelPopulationUniqueness populationBasedModel = builder.getPopulationBasedUniquenessRisk();
                     dataDankar[idx] = populationBasedModel.getFractionOfUniqueTuplesDankar();
-                    if (showAllModels) {
-                        dataPitman[idx] = populationBasedModel.getFractionOfUniqueTuplesPitman();
-                        dataZayatz[idx] = populationBasedModel.getFractionOfUniqueTuplesZayatz();
-                        dataSNB[idx] = populationBasedModel.getFractionOfUniqueTuplesSNB();
-                    }
+                    dataPitman[idx] = populationBasedModel.getFractionOfUniqueTuplesPitman();
+                    dataZayatz[idx] = populationBasedModel.getFractionOfUniqueTuplesZayatz();
+                    dataSNB[idx] = populationBasedModel.getFractionOfUniqueTuplesSNB();
                 }
-
+                
+                makePercentage(dataDankar);
+                makePercentage(dataPitman);
+                makePercentage(dataZayatz);
+                makePercentage(dataSNB);
+                
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
                     Thread.sleep(10);
@@ -452,6 +446,16 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
         };
         
         this.manager.start(analysis);
+    }
+
+    /**
+     * Convert to percentage
+     * @param data
+     */
+    private void makePercentage(double[] data) {
+        for (int i = 0; i < data.length; i++) {
+            data[i] = data[i] * 100d;
+        }
     }
 
     @Override
@@ -469,11 +473,7 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
 
     @Override
     protected ViewRiskType getViewType() {
-        if (this.showAllModels) {
-            return ViewRiskType.UNIQUES_ALL;
-        } else {
-            return ViewRiskType.UNIQUES_DANKAR;
-        }
+        return ViewRiskType.UNIQUES_ALL;
     }
 
     /**

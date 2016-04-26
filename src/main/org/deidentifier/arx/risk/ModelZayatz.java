@@ -41,14 +41,12 @@ class ModelZayatz extends RiskModelPopulation {
      * 
      * @param model
      * @param histogram
-     * @param sampleSize
      * @param stop
      */
     ModelZayatz(ARXPopulationModel model,
                 final RiskModelHistogram histogram,
-                final int sampleSize,
                 final WrappedBoolean stop) {
-        super(histogram, model, sampleSize, stop, new WrappedInteger());
+        super(histogram, model, stop, new WrappedInteger());
 
         int[] _histogram = getHistogram().getHistogram();
         double uniqueness = computeConditionalUniqueness(_histogram, getPopulationSize(), getSampleSize(), getNumClasses());

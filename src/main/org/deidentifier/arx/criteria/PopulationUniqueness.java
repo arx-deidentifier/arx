@@ -20,6 +20,7 @@ package org.deidentifier.arx.criteria;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
@@ -111,18 +112,36 @@ public class PopulationUniqueness extends RiskBasedCriterion{
                                         this.solverConfig);
     }
 
-    /**
-     * @return the populationModel
-     */
+    @Override
     public ARXPopulationModel getPopulationModel() {
         return populationModel;
     }
     
     /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        // TODO: Risk is estimated differently than in the other models, here
+        return getRiskThreshold();
+    }
+
+    /**
      * @return the statisticalModel
      */
     public PopulationUniquenessModel getStatisticalModel() {
         return statisticalModel;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void initialize(DataManager manager) {
+        super.initialize(manager);
+        
+        // TODO: Needed for backwards compatibility of ARX 3.4.0 with previous versions
+        if (this.populationModel != null) {
+            this.populationModel.makeBackwardsCompatible(manager.getDataGeneralized().getDataLength());
+        }
     }
 
     @Override
@@ -132,9 +151,9 @@ public class PopulationUniqueness extends RiskBasedCriterion{
 
     @Override
     public String toString() {
-        return "(<" + getRiskThreshold() + "-population-uniques (" + statisticalModel.toString().toLowerCase() + ")";
+        return "(" + getRiskThreshold() + ")-population-uniques (" + statisticalModel.toString().toLowerCase() + ")";
     }
-
+    
     /**
      * We currently assume that at any time, at least one statistical model converges.
      * This might not be the case, and 0 may be returned instead. That's why we only
@@ -145,10 +164,9 @@ public class PopulationUniqueness extends RiskBasedCriterion{
      */
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
 
-        RiskModelPopulationUniqueness riskModel = new RiskModelPopulationUniqueness(this.populationModel, 
-                                                                                                      distribution.getEquivalenceClasses(), 
-                                                                                                      distribution.getNumberOfTuples(),
-                                                                                                      solverConfig);
+        RiskModelPopulationUniqueness riskModel = new RiskModelPopulationUniqueness(this.populationModel,
+                                                                                    distribution.getHistogram(),
+                                                                                    solverConfig);
         
         double populationUniques = 0d;
         if (this.statisticalModel == PopulationUniquenessModel.DANKAR) {
@@ -158,19 +176,10 @@ public class PopulationUniqueness extends RiskBasedCriterion{
         }
         if (populationUniques > 0d && populationUniques <= getRiskThreshold()) {
             return true;
-        } else if (populationUniques == 0d && distribution.getFractionOfTuplesInClassesOfSize(1) == 0d) {
+        } else if (populationUniques == 0d && distribution.getFractionOfRecordsInClassesOfSize(1) == 0d) {
             return true;
         } else {
             return false;
         }
-    }
-
-    /**
-     * Return marketer risk threshold, 1 if there is none
-     * @return
-     */
-    public double getRiskThresholdMarketer() {
-        // TODO: Risk is estimated differently than in the other models, here
-        return getRiskThreshold();
     }
 }

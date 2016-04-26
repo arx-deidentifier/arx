@@ -47,24 +47,22 @@ class ModelPitman extends RiskModelPopulation {
      * 
      * @param model
      * @param histogram
-     * @param sampleSize
      * @param config
      * @param stop
      */
     ModelPitman(final ARXPopulationModel model,
                 final RiskModelHistogram histogram,
-                final int sampleSize,
                 final NewtonRaphsonConfiguration<?> config,
                 final WrappedBoolean stop) {
 
-        super(histogram, model, sampleSize, stop, new WrappedInteger());
+        super(histogram, model, stop, new WrappedInteger());
 
         // Init
         double c1 = getNumClassesOfSize(1);
         double c2 = getNumClassesOfSize(2);
         double u = getNumClasses();
         double p = getPopulationSize();
-        double n = sampleSize;
+        double n = super.getSampleSize();
 
         // Initial guess
         c2 = c2 != 0 ? c2 : 1; // Overestimate

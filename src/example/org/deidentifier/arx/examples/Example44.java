@@ -77,7 +77,7 @@ public class Example44 extends Example {
         data.getDefinition().setAttributeType("gender", gender);
         data.getDefinition().setAttributeType("zipcode", zipcode);
         
-        ARXPopulationModel populationmodel = ARXPopulationModel.create(0.01d);
+        ARXPopulationModel populationmodel = ARXPopulationModel.create(data.getHandle().getNumRows(), 0.01d);
         
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();

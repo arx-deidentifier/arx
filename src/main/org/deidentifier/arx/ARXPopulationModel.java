@@ -72,7 +72,7 @@ public class ARXPopulationModel implements Serializable {
         /**
          * @return the population
          */
-        public long getPopulation() {
+        public long getPopulationSize() {
             return population;
         }
     }
@@ -82,11 +82,21 @@ public class ARXPopulationModel implements Serializable {
 
     /**
      * Creates a new instance
-     * @param sampleFraction
+     * @param sampleSize
+     * @param samplingFraction
      * @return
      */
-    public static ARXPopulationModel create(double sampleFraction){
-        return new ARXPopulationModel(sampleFraction);
+    public static ARXPopulationModel create(int sampleSize, double samplingFraction){
+        return new ARXPopulationModel(sampleSize, samplingFraction);
+    }
+
+    /**
+     * Creates a new instance
+     * @param populationSize
+     * @return
+     */
+    public static ARXPopulationModel create(long populationSize){
+        return new ARXPopulationModel(populationSize);
     }
 
     /**
@@ -97,78 +107,67 @@ public class ARXPopulationModel implements Serializable {
     public static ARXPopulationModel create(Region region){
         return new ARXPopulationModel(region);
     }
-    
+
     /** The region */
-    private Region            region           = Region.NONE;
-    
+    private Region region         = Region.NONE;
+
+    /** TODO: This field is here for backwards compatibility only!*/
+    private double sampleFraction = 0.01d;
+
     /** The sample fraction */
-    private double            sampleFraction   = 0.01d;
+    private Long   populationSize;
     
 
     /**
      * Creates a new instance
-     * @param handle
-     * @param populationSize
+     * @param sampleSize
+     * @param samplingFraction
      */
-    public ARXPopulationModel(DataHandle handle, double populationSize) {
+    private ARXPopulationModel(int sampleSize, double samplingFraction) {
         this.region = Region.NONE;
-        this.sampleFraction = (double)handle.getNumRows() / populationSize;
+        this.populationSize = (long)(Math.round((double)sampleSize / samplingFraction));
     }
 
     /**
      * Creates a new instance
-     * @param sampleFraction
+     * @param populationSize
      */
-    public ARXPopulationModel(double sampleFraction) {
+    private ARXPopulationModel(long populationSize) {
         this.region = Region.NONE;
-        this.sampleFraction = sampleFraction;
+        this.populationSize = populationSize;
     }
 
     /**
      * Creates a new instance
      * @param region
      */
-    public ARXPopulationModel(Region region) {
+    private ARXPopulationModel(Region region) {
         this.region = region;
+        this.populationSize = region.getPopulationSize();
     }
 
     /**
      * Clone constructor
-     * @param region
      * @param sampleFraction
      */
-    private ARXPopulationModel(Region region, double sampleFraction) {
+    private ARXPopulationModel(Region region, long populationSize) {
         this.region = region;
-        this.sampleFraction = sampleFraction;
+        this.populationSize = populationSize;
     }
 
     /**
      * Returns a clone of this object
      */
     public ARXPopulationModel clone() {
-        return new ARXPopulationModel(region, sampleFraction);
+        return new ARXPopulationModel(region, populationSize);
     }
     
     /**
      * Returns the population size
-     * @param handle
      * @return
      */
-    public double getPopulationSize(DataHandle handle) {
-        return getPopulationSize(handle.getNumRows());
-    }
-
-    /**
-     * Returns the population size
-     * @param sampleSize
-     * @return
-     */
-    public double getPopulationSize(double sampleSize) {
-        if (region == Region.NONE) {
-            return 1.0d / this.sampleFraction * sampleSize;
-        } else {
-            return (double)region.getPopulation();
-        }
+    public long getPopulationSize() {
+        return populationSize;
     }
 
     /**
@@ -177,26 +176,11 @@ public class ARXPopulationModel implements Serializable {
     public Region getRegion() {
         return region;
     }
-
-    /**
-     * Returns the sampling fraction
-     * @param handle
-     * @return
-     */
-    public double getSamplingFraction(DataHandle handle) {
-        return getSamplingFraction(handle.getNumRows());
-    }
     
-    /**
-     * Returns the sampling fraction
-     * @param sampleSize
-     * @return the sampling fraction
-     */
-    public double getSamplingFraction(double sampleSize) {
-        if (region == Region.NONE) {
-            return this.sampleFraction;
-        } else {
-            return (double)sampleSize / (double)region.getPopulation();
+    @Deprecated
+    public void makeBackwardsCompatible(int sampleSize) {
+        if (populationSize == null) {
+           populationSize = (long) (Math.round((double) sampleSize / this.sampleFraction));
         }
     }
 }

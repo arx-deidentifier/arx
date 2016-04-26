@@ -264,7 +264,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         if (analysisContext.getData() == null || analysisContext.getData().definition == null) {
             return null;
         }
-        return context.handle.getRiskEstimator(analysisContext.getModel().getRiskModel().getPopulationModel(),
+        return context.handle.getRiskEstimator(analysisContext.getPopulationModel(),
                                                analysisContext.getData().definition.getQuasiIdentifyingAttributes(),
                                                analysisContext.getModel().getRiskModel().getSolverConfiguration())
                                                .getInterruptibleInstance();
@@ -273,16 +273,16 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     /**
      * Creates a risk estimate builder
      * @param context
-     * @param model
+     * @param population
      * @param classes
      * @return
      */
     protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context, 
-                                                          ARXPopulationModel model, 
+                                                          ARXPopulationModel population, 
                                                           RiskModelHistogram classes) {
 
         AnalysisContext analysisContext = context.context;
-        return context.handle.getRiskEstimator(model, 
+        return context.handle.getRiskEstimator(population, 
                                                classes, 
                                                analysisContext.getModel().getRiskModel().getSolverConfiguration())
                                                .getInterruptibleInstance();

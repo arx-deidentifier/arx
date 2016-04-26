@@ -74,18 +74,18 @@ public class HashGroupifyDistribution {
          */
         public State isFulfilled(HashGroupifyDistribution distribution);
     }
-    
+
     /** The backing map */
-    private IntIntOpenHashMap   distribution        = new IntIntOpenHashMap();
+    private IntIntOpenHashMap   distribution = new IntIntOpenHashMap();
     /** The number of suppressed tuples */
-    private int                 suppressed          = 0;
+    private int                 numSuppressed   = 0;
     /** Entries that can be suppressed */
     private HashGroupifyEntry[] entries;
     /** Number of tuples in the data set */
-    private double              numTuples;
+    private double              numRecords    = 0;
     /** Number of classes in the data set */
-    private double              numClasses          = 0;
-    
+    private double              numClasses   = 0;
+
     /**
      * Creates a new instance
      * 
@@ -104,15 +104,9 @@ public class HashGroupifyDistribution {
                 addToDistribution(entry.count);
                 list.add(entry);
             } else {
-                this.suppressed += entry.count;
+                this.numSuppressed += entry.count;
             }
-            numTuples += entry.count;
             entry = entry.nextOrdered;
-        }
-        
-        // Suppressed tuples form one equivalence class
-        if (suppressed != 0) {
-            addToDistribution(suppressed);
         }
         
         Comparator<HashGroupifyEntry> comparator;
@@ -184,13 +178,13 @@ public class HashGroupifyDistribution {
      * @return
      */
     public double getAverageClassSize() {
-        return numTuples / numClasses;
+        return numRecords / numClasses;
     }
 
     /**
      * Returns a set of classes as an input for the risk model
      */
-    public RiskModelHistogram getEquivalenceClasses() {
+    public RiskModelHistogram getHistogram() {
         return new RiskModelHistogram(this.distribution);
     }
 
@@ -199,24 +193,24 @@ public class HashGroupifyDistribution {
      * @param size
      * @return
      */
-    public double getFractionOfTuplesInClassesOfSize(int size) {
-        return (double)distribution.get(size) * (double)size / numTuples;
+    public double getFractionOfRecordsInClassesOfSize(int size) {
+        return (double)distribution.get(size) * (double)size / numRecords;
     }
 
     /**
-     * Returns the number of tuples
+     * Returns the number of records
      * @return
      */
-    public int getNumberOfTuples() {
-        return (int)this.numTuples;
+    public int getNumRecords() {
+        return (int)this.numRecords;
     }
     
     /**
-     * Returns the number of suppressed tuples
+     * Returns the number of suppressed records
      * @return
      */
-    public int getNumOfSuppressedTuples() {
-        return this.suppressed;
+    public int getNumSuppressedRecords() {
+        return this.numSuppressed;
     }
     
 
@@ -229,14 +223,14 @@ public class HashGroupifyDistribution {
         
         // Nothing to suppress
         if (entries.length == 0) {
-            return this.suppressed;
+            return this.numSuppressed;
         }
 
         // Start parameters
         int low = 0;
         int high = entries.length - 1;
         int mid = (low + high) / 2;
-        int initiallySuppressed = this.suppressed;
+        int initiallySuppressed = this.numSuppressed;
         State state = State.ABORT;
 
         // Initially suppress from low to mid
@@ -280,7 +274,7 @@ public class HashGroupifyDistribution {
             }
         }
 
-        return this.suppressed - initiallySuppressed;
+        return this.numSuppressed - initiallySuppressed;
     }
 
     /**
@@ -290,7 +284,7 @@ public class HashGroupifyDistribution {
      */
     public int suppressWhileNotFulfilledLinear(PrivacyCondition condition) {
 
-        int initiallySuppressed = this.suppressed;
+        int initiallySuppressed = this.numSuppressed;
 
         for (int i=0; i<entries.length; i++) {
             State state = condition.isFulfilled(this);
@@ -302,7 +296,7 @@ public class HashGroupifyDistribution {
             }
         }
         
-        return this.suppressed - initiallySuppressed;
+        return this.numSuppressed - initiallySuppressed;
     }
 
     /**
@@ -311,6 +305,7 @@ public class HashGroupifyDistribution {
      */
     private void addToDistribution(int size) {
         this.numClasses++;
+        this.numRecords += size;
         this.distribution.putOrAdd(size, 1, 1);   
     }
 
@@ -320,6 +315,7 @@ public class HashGroupifyDistribution {
      */
     private void removeFromDistribution(int size) {
         this.numClasses--;
+        this.numRecords -= size;
         int previous = distribution.remove(size);
         if (previous != 1) {
             distribution.put(size, previous - 1);
@@ -333,29 +329,22 @@ public class HashGroupifyDistribution {
     private void suppressEntry(HashGroupifyEntry entry) {
         entry.isNotOutlier = false;
         removeFromDistribution(entry.count);
-        if (this.suppressed != 0) {
-            removeFromDistribution(this.suppressed);
-        }
-        this.suppressed += entry.count;
-        addToDistribution(this.suppressed);
+        this.numSuppressed += entry.count;
+        // No need to adjust "numRecords", because this is done in "removeFromDistribution"
     }
 
     /**
-     * Unsuppressed the given entry
+     * Unsuppresses the given entry
      * @param entry
      */
     private void unSuppressEntry(HashGroupifyEntry entry) {
         
-        if (this.suppressed == 0) {
-            throw new IllegalStateException("Must not happed");
+        if (this.numSuppressed == 0 || entry.isNotOutlier) {
+            throw new IllegalStateException("Internal error. There are not suppressed entries.");
         }
-        
         entry.isNotOutlier = true;
-        removeFromDistribution(this.suppressed);
-        this.suppressed -= entry.count;
-        if (this.suppressed != 0) {
-            addToDistribution(this.suppressed);
-        }
+        this.numSuppressed -= entry.count;
         addToDistribution(entry.count);
+        // No need to adjust "numRecords", because this is done in "addToDistribution"
     }
 }

@@ -40,7 +40,7 @@ public class RiskModelSampleUniqueness extends RiskModelSample {
      * @return
      */
     public double getFractionOfUniqueTuples() {
-        return getNumUniqueTuples() / getHistogram().getNumTuples();
+        return getNumUniqueTuples() / getHistogram().getNumRecords();
     }
 
     /**

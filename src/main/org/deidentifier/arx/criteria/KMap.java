@@ -166,10 +166,7 @@ public class KMap extends ImplicitPrivacyCriterion {
         return this.k;
     }
     
-    /**
-     * Returns the population model.
-     * @return
-     */
+    @Override
     public ARXPopulationModel getPopulationModel() {
         return this.populationModel;
     }
@@ -183,6 +180,34 @@ public class KMap extends ImplicitPrivacyCriterion {
         } else {
             // Requires only one counter
             return ARXConfiguration.REQUIREMENT_COUNTER;
+        }
+    }
+    
+    /**
+     * Return journalist risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdJournalist() {
+        return 1d / (double)k;
+    }
+    
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        return getRiskThresholdJournalist();
+    }
+    
+    /**
+     * Return journalist risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdProsecutor() {
+        if (isAccurate() || derivedK == -1) {
+            return 1d;
+        } else {
+            return 1d / (double)derivedK;
         }
     }
     
@@ -212,20 +237,29 @@ public class KMap extends ImplicitPrivacyCriterion {
     }
     
     @Override
+    @SuppressWarnings("deprecation")
     public void initialize(DataManager manager) {
         super.initialize(manager);
+        
+        // TODO: Needed for backwards compatibility of ARX 3.4.0 with previous versions
+        if (this.populationModel != null) {
+            this.populationModel.makeBackwardsCompatible(manager.getDataGeneralized().getDataLength());
+        }
+        
         if (this.estimator != null) {
             
             // TODO: consider subset/inclusion
-            double samplingFraction = this.populationModel.getSamplingFraction(manager.getDataGeneralized().getDataLength());
+            double samplingFraction =
+                    (double)manager.getDataGeneralized().getDataLength() /
+                    (double)this.populationModel.getPopulationSize();
             
             // Derive k
             switch (this.estimator) {
             case POISSON:
-                this.derivedK = calculateKPoisson(samplingFraction * this.k);
+                this.derivedK = calculateKPoisson(Math.round(samplingFraction * (double)this.k));
                 break;
             case ZERO_TRUNCATED_POISSON:
-                this.derivedK = calculateKZeroPoisson(samplingFraction * this.k);
+                this.derivedK = calculateKZeroPoisson(Math.round(samplingFraction * (double)this.k));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown estimator: " + this.estimator);
@@ -261,7 +295,7 @@ public class KMap extends ImplicitPrivacyCriterion {
     public boolean isLocalRecodingSupported() {
         return !isAccurate();
     }
-    
+
     @Override
     public String toString() {
         String value = "(" + this.k + ")-map";
@@ -274,7 +308,7 @@ public class KMap extends ImplicitPrivacyCriterion {
         }
         return value;
     }
-    
+
     /**
      * Calculates k, based on Poisson distribution.
      * @param lambda
@@ -300,7 +334,7 @@ public class KMap extends ImplicitPrivacyCriterion {
         this.type1Error = 1d - value;
         return counter + 1;
     }
-    
+
     /**
      * Calculates k, based on Zero-truncated Poisson distribution.
      * https://en.wikipedia.org/wiki/Zero-truncated_Poisson_distribution
@@ -328,33 +362,5 @@ public class KMap extends ImplicitPrivacyCriterion {
         }
         this.type1Error = 1d - value;
         return counter;
-    }
-
-    /**
-     * Return journalist risk threshold, 1 if there is none
-     * @return
-     */
-    public double getRiskThresholdProsecutor() {
-        if (isAccurate() || derivedK == -1) {
-            return 1d;
-        } else {
-            return 1d / (double)derivedK;
-        }
-    }
-
-    /**
-     * Return journalist risk threshold, 1 if there is none
-     * @return
-     */
-    public double getRiskThresholdJournalist() {
-        return 1d / (double)k;
-    }
-
-    /**
-     * Return marketer risk threshold, 1 if there is none
-     * @return
-     */
-    public double getRiskThresholdMarketer() {
-        return getRiskThresholdJournalist();
     }
 }

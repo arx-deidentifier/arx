@@ -37,25 +37,23 @@ abstract class RiskModelPopulation {
     private final WrappedBoolean     stop;
     /** Progress */
     private final WrappedInteger     progress;
-    /** The sample size */
-    private final int                sampleSize;
 
     /**
      * Creates a new instance
      * 
      * @param histogram
+     * @param populationModel
+     * @param stop
      * @param progress
      */
     RiskModelPopulation(RiskModelHistogram histogram,
                         ARXPopulationModel populationModel,
-                        int sampleSize,
                         WrappedBoolean stop,
                         WrappedInteger progress) {
         this.histogram = histogram;
         this.populationModel = populationModel;
         this.stop = stop;
         this.progress = progress;
-        this.sampleSize = sampleSize;
     }
 
     /**
@@ -113,7 +111,7 @@ abstract class RiskModelPopulation {
      * @return
      */
     protected double getPopulationSize() {
-        return this.populationModel.getPopulationSize(this.sampleSize);
+        return this.populationModel.getPopulationSize();
     }
 
     /**
@@ -122,7 +120,7 @@ abstract class RiskModelPopulation {
      * @return
      */
     protected double getSampleSize() {
-        return this.sampleSize;
+        return this.histogram.getNumRecords();
     }
 
     /**
@@ -131,7 +129,7 @@ abstract class RiskModelPopulation {
      * @return
      */
     protected double getSamplingFraction() {
-        return this.populationModel.getSamplingFraction(this.sampleSize);
+        return this.getSampleSize() / this.getPopulationSize();
     }
 
     /**

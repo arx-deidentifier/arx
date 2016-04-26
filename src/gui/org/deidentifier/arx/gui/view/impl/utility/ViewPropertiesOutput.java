@@ -269,6 +269,7 @@ public class ViewPropertiesOutput extends ViewProperties {
                 new Property(n, Resources.getMessage("PropertiesView.53"), new String[] { SWTUtil.getPrettyString(criterion.getK())}); //$NON-NLS-1$
                 if (!criterion.isAccurate()) {
                     new Property(n, Resources.getMessage("PropertiesView.146"), new String[] { SWTUtil.getPrettyString(criterion.getDerivedK()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.133"), new String[] { SWTUtil.getPrettyString(((KMap)criterion).getPopulationModel().getPopulationSize())}); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.147"), new String[] { SWTUtil.getPrettyString(criterion.getSignificanceLevel()) }); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.148"), new String[] { SWTUtil.getPrettyString(criterion.getType1Error()) }); //$NON-NLS-1$
                 }
@@ -315,8 +316,7 @@ public class ViewPropertiesOutput extends ViewProperties {
                     new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                     final int height = context.config.getHierarchy(criterion.getAttribute()).getHierarchy()[0].length;
                     new Property(n, "SE-"+(index++), new String[] { Resources.getMessage("PropertiesView.87") + String.valueOf(height) }); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                else if (c instanceof DDisclosurePrivacy){
+                } else if (c instanceof DDisclosurePrivacy){
                     DDisclosurePrivacy criterion = (DDisclosurePrivacy)c;
                     Property n = new Property(Resources.getMessage("PropertiesView.83"), new String[] { Resources.getMessage("PropertiesView.130") }); //$NON-NLS-1$ //$NON-NLS-2$
                     new Property(n, Resources.getMessage("PropertiesView.131"), new String[] { SWTUtil.getPrettyString(criterion.getD()) }); //$NON-NLS-1$
@@ -341,7 +341,7 @@ public class ViewPropertiesOutput extends ViewProperties {
                 new Property(n, Resources.getMessage("PropertiesView.120"), new String[] { SWTUtil.getPrettyString(criterion.getRiskThreshold())}); //$NON-NLS-1$
                 
                 if (criterion instanceof PopulationUniqueness) {
-                    new Property(n, Resources.getMessage("PropertiesView.121"), new String[] { SWTUtil.getPrettyString(((PopulationUniqueness)criterion).getPopulationModel().getSamplingFraction(context.handle))}); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.133"), new String[] { SWTUtil.getPrettyString(((PopulationUniqueness)criterion).getPopulationModel().getPopulationSize())}); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.122"), new String[] { ((PopulationUniqueness)criterion).getStatisticalModel().toString()}); //$NON-NLS-1$
                 }
             }

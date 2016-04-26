@@ -537,7 +537,7 @@ public class HashGroupify {
             criterion.enforce(distribution, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
             
             // Early abort
-            this.currentNumOutliers = distribution.getNumOfSuppressedTuples();
+            this.currentNumOutliers = distribution.getNumSuppressedRecords();
             if (earlyAbort && currentNumOutliers > suppressionLimit) {
                 return;
             }

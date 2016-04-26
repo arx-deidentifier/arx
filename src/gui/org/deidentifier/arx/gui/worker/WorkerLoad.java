@@ -226,6 +226,7 @@ public class WorkerLoad extends Worker<Model> {
      * @throws ClassNotFoundException
      * @throws SAXException
      */
+    @SuppressWarnings("deprecation")
     private void readConfiguration(final String prefix,
                                    final boolean output,
                                    final Map<String, ARXNode> map,
@@ -260,6 +261,10 @@ public class WorkerLoad extends Worker<Model> {
             model.setInputConfig(config);
             readDefinition(config, model.getInputDefinition(), prefix, zip);
             
+            // TODO: Needed for backwards compatibility of ARX 3.4.0 with previous versions
+            if (model.getInputPopulationModel() != null) {
+                model.getInputPopulationModel().makeBackwardsCompatible(config.getInput().getHandle().getNumRows());
+            }
         } else {
             
             // Read input, config and definition
