@@ -282,7 +282,11 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
                                 if (data != null && data.length>0 && series != null) {
                                     int x = (int) Math.round(xAxis.getDataCoordinate(cursor.x));
                                     if (x >= 0 && x < series.length) {
-                                        root.setToolTipText("("+series[x]+", "+data[0].getYSeries()[x]+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                        root.setToolTipText("(Sampling fraction: "+series[x]+"%, Dankar: "+SWTUtil.getPrettyString(data[3].getYSeries()[x]) //$NON-NLS-1$ //$NON-NLS-2$
+                                                                         +"%, Pitman: "+SWTUtil.getPrettyString(data[2].getYSeries()[x]) //$NON-NLS-1$
+                                                                         +"%, Zayatz: "+SWTUtil.getPrettyString(data[1].getYSeries()[x]) //$NON-NLS-1$
+                                                                         +"%, SNB: "+SWTUtil.getPrettyString(data[0].getYSeries()[x]) //$NON-NLS-1$
+                                                                         +"%)"); //$NON-NLS-1$
                                         return;
                                     }
                                 }
@@ -364,6 +368,11 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
                 createSeries(seriesSet, dataSNB, "SNB", PlotSymbolType.DIAMOND, GUIHelper.COLOR_RED); //$NON-NLS-1$
                 createSeries(seriesSet, dataDankar, "Dankar", PlotSymbolType.SQUARE, GUIHelper.COLOR_DARK_GRAY); //$NON-NLS-1$
                 chart.getLegend().setVisible(true);
+                
+                seriesSet.bringToFront("SNB"); //$NON-NLS-1$
+                seriesSet.bringToFront("Zayatz"); //$NON-NLS-1$
+                seriesSet.bringToFront("Pitman"); //$NON-NLS-1$
+                seriesSet.bringToFront("Dankar"); //$NON-NLS-1$
                 
                 IAxisSet axisSet = chart.getAxisSet();
 
