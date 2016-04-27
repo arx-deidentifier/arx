@@ -256,10 +256,10 @@ public class KMap extends ImplicitPrivacyCriterion {
             // Derive k
             switch (this.estimator) {
             case POISSON:
-                this.derivedK = calculateKPoisson(Math.round(samplingFraction * (double)this.k));
+                this.derivedK = calculateKPoisson(samplingFraction * (double)this.k);
                 break;
             case ZERO_TRUNCATED_POISSON:
-                this.derivedK = calculateKZeroPoisson(Math.round(samplingFraction * (double)this.k));
+                this.derivedK = calculateKZeroPoisson(samplingFraction * (double)this.k);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown estimator: " + this.estimator);
