@@ -180,7 +180,11 @@ public class ARXPopulationModel implements Serializable {
     @Deprecated
     public void makeBackwardsCompatible(int sampleSize) {
         if (populationSize == null) {
-           populationSize = (long) (Math.round((double) sampleSize / this.sampleFraction));
+            if (region == null || region == Region.NONE) {
+                populationSize = (long) (Math.round((double) sampleSize / this.sampleFraction));
+            } else {
+                populationSize = region.getPopulationSize();
+            }
         }
     }
 }
