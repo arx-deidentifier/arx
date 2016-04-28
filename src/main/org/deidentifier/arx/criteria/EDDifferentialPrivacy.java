@@ -59,7 +59,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
     /** Parameter */
     private transient DataManager    manager;
     /** Parameter */
-    private transient Random         random;
+    private transient boolean        deterministic    = false;
     /** Parameter */
     private DataGeneralizationScheme generalization;
 
@@ -77,6 +77,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
         this.generalization = generalization;
         this.beta = calculateBeta(epsilon);
         this.k = calculateK(delta, epsilon, this.beta);
+        this.deterministic = false;
     }
     
     /**
@@ -97,9 +98,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
         this.generalization = generalization;
         this.beta = calculateBeta(epsilon);
         this.k = calculateK(delta, epsilon, this.beta);
-        if (deterministic) {
-            this.random = new Random(0xDEADBEEF);
-        }
+        this.deterministic = true;
     }
     
 
@@ -187,11 +186,16 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
             return;
         }
 
-        // Create a data subset via sampling based on beta
-        Set<Integer> subsetIndices = new HashSet<Integer>();
-        if (random == null) {
+        // Create RNG
+        Random random;
+        if (deterministic) {
+            random = new Random(0xDEADBEEF);
+        } else {
             random = new SecureRandom();
         }
+
+        // Create a data subset via sampling based on beta
+        Set<Integer> subsetIndices = new HashSet<Integer>();
         int records = manager.getDataGeneralized().getDataLength();
         for (int i = 0; i < records; ++i) {
             if (random.nextDouble() < beta) {
