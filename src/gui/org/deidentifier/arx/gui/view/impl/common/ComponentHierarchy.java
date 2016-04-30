@@ -140,7 +140,7 @@ public class ComponentHierarchy {
      * Clears the hierarchy.
      */
     public void actionClear() {
-        setHierarchy(null);
+        this.setHierarchy(null);
         this.triggerChangedEvent();
     }
     
