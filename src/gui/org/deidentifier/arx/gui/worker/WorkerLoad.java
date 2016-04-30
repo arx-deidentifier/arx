@@ -444,7 +444,7 @@ public class WorkerLoad extends Worker<Model> {
                         }
                         
                         // Only if a hierarchy has been defined
-                        if (hierarchy != null) {
+                        if (hierarchy != null && hierarchy.getHierarchy() != null) {
                             config.setHierarchy(attr, hierarchy); /* For backwards compatibility */
                             definition.setHierarchy(attr, hierarchy);
                             
