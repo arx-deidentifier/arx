@@ -133,7 +133,7 @@ public class ComponentHierarchy {
      * Clears the hierarchy.
      */
     public void actionReset() {
-        setHierarchy(null);
+        this.setHierarchy(null);
     }
     
     /**
