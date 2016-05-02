@@ -197,11 +197,13 @@ public class ARXAnonymizer {
         handle.getDefinition().materializeHierarchies(handle);
         checkBeforeEncoding(handle, config);
         handle.getRegistry().reset();
-        handle.getRegistry().createInputSubset(config);
         
         // Create manager
         DataManager manager = getDataManager(handle, handle.getDefinition(), config);
 
+        // Attach subset to handle
+        handle.getRegistry().createInputSubset(config);
+        
         // Attach arrays to data handle
         ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
                                          manager.getDataAnalyzed().getArray(),
