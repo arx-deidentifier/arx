@@ -482,9 +482,7 @@ public class WorkerSave extends Worker<Model> {
         for (Entry<String, Hierarchy> entry : config.getHierarchies().entrySet()) {
             zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(entry.getKey()) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
             final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-            if (entry.getValue().getHierarchy() != null) {
-                out.write(entry.getValue().getHierarchy());
-            }
+            out.write(entry.getValue().getHierarchy());
         }
     }
     

@@ -443,7 +443,7 @@ public class ViewAttributeTransformation implements IView {
         updateMinMax();
         
         // Update model
-        if (hierarchy == null) {
+        if (hierarchy == null || hierarchy.getHierarchy() == null) {
             model.getInputConfig().removeHierarchy(attribute);
         } else {
             model.getInputConfig().setHierarchy(attribute, hierarchy);
