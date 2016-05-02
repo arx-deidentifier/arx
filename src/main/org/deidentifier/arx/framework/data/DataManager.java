@@ -414,6 +414,9 @@ public class DataManager {
 
         // Store research subset
         for (PrivacyCriterion c : criteria) {
+            if (c instanceof EDDifferentialPrivacy) {
+                ((EDDifferentialPrivacy) c).initialize(this);
+            }
             if (c.getSubset() != null) {
                 subset = c.getSubset().getSet();
                 subsetSize = c.getSubset().getArray().length;
