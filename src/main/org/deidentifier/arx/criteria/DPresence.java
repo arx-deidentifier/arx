@@ -104,11 +104,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
 
-    /**
-     * Returns the research subset.
-     *
-     * @return
-     */
+    @Override
     public DataSubset getSubset() {
         return this.subset;
     }

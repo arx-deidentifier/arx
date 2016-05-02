@@ -25,9 +25,7 @@ import java.util.Map;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
-import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
-import org.deidentifier.arx.criteria.KMap;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -1323,12 +1321,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     protected int getNumRecords(ARXConfiguration config, Data input) {
-        if (config.containsCriterion(DPresence.class)) {
-            return config.getCriterion(DPresence.class).getSubset().getArray().length;
-        } else if (config.containsCriterion(KMap.class) && config.getCriterion(KMap.class).isAccurate()) {
-            return config.getCriterion(KMap.class).getSubset().getArray().length;
-        } else if (config.containsCriterion(EDDifferentialPrivacy.class)) {
-            return config.getCriterion(EDDifferentialPrivacy.class).getSubset().getArray().length;
+        if (getSubset(config) != null) {
+            return getSubset(config).size();
         } else{
             return input.getDataLength();
         }
@@ -1341,15 +1335,12 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     protected RowSet getSubset(ARXConfiguration config) {
-        if (config.containsCriterion(DPresence.class)) {
-            return config.getCriterion(DPresence.class).getSubset().getSet();
-        } else if (config.containsCriterion(KMap.class) && config.getCriterion(KMap.class).isAccurate()) {
-            return config.getCriterion(KMap.class).getSubset().getSet();
-        } else if (config.containsCriterion(EDDifferentialPrivacy.class)) {
-            return config.getCriterion(EDDifferentialPrivacy.class).getSubset().getSet();
-        } else{
-            return null;
+        for (PrivacyCriterion c : config.getCriteria()) {
+            if (c.getSubset() != null) {
+                return c.getSubset().getSet();
+            }
         }
+        return null;
     }
 
     /**

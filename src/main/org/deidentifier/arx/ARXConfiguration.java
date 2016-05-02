@@ -1022,14 +1022,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @return
      */
     protected DataSubset getSubset() {
-        if (this.containsCriterion(DPresence.class)) {
-            return getCriterion(DPresence.class).getSubset();
-        }
-        if (this.containsCriterion(KMap.class) && this.getCriterion(KMap.class).isAccurate()) {
-            return getCriterion(KMap.class).getSubset();
-        }
-        if (this.containsCriterion(EDDifferentialPrivacy.class)) {
-            return getCriterion(EDDifferentialPrivacy.class).getSubset();
+        for (PrivacyCriterion c : this.criteria) {
+            if (c.getSubset() != null) {
+                return c.getSubset();
+            }
         }
         return null;
     }
@@ -1113,12 +1109,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         int dataLength = 0;
-        if (this.containsCriterion(DPresence.class)) {
-            dataLength = this.getCriterion(DPresence.class).getSubset().getArray().length;
-        } else if (this.containsCriterion(KMap.class) && this.getCriterion(KMap.class).isAccurate()) {
-            dataLength = this.getCriterion(KMap.class).getSubset().getArray().length;
-        } else if (this.containsCriterion(EDDifferentialPrivacy.class)) {
-            dataLength = this.getCriterion(EDDifferentialPrivacy.class).getSubset().getArray().length;
+        if (this.getSubset() != null) {
+            dataLength = getSubset().getArray().length;
         } else {
             dataLength = manager.getDataGeneralized().getDataLength();
         }

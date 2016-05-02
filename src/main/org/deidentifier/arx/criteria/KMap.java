@@ -219,11 +219,7 @@ public class KMap extends ImplicitPrivacyCriterion {
         return this.significanceLevel;
     }
     
-    /**
-     * Returns the research subset.
-     *
-     * @return
-     */
+    @Override
     public DataSubset getSubset() {
         return this.subset;
     }

@@ -72,7 +72,7 @@ public class RowSet implements Serializable, Cloneable {
     private RowSet(Data data) {
         this.length = data.getHandle().getNumRows();
         int chunks = (int) (Math.ceil((double) this.length / 64d));
-        array = new long[chunks];
+        this.array = new long[chunks];
     }
     
     /**
@@ -83,7 +83,7 @@ public class RowSet implements Serializable, Cloneable {
     private RowSet(int length) {
         this.length = length;
         int chunks = (int) (Math.ceil((double) this.length / 64d));
-        array = new long[chunks];
+        this.array = new long[chunks];
     }
 
     /**
@@ -94,8 +94,8 @@ public class RowSet implements Serializable, Cloneable {
     public void add(int rowIndex) {
         int offset = rowIndex >> ADDRESS_BITS_PER_UNIT;
         long temp = array[offset];
-        array[offset] |= 1L << (rowIndex & BIT_INDEX_MASK);
-        size += array[offset] != temp ? 1 : 0; 
+        this.array[offset] |= 1L << (rowIndex & BIT_INDEX_MASK);
+        this.size += array[offset] != temp ? 1 : 0; 
     }
     
     @Override
@@ -133,8 +133,8 @@ public class RowSet implements Serializable, Cloneable {
     public void remove(int rowIndex){
         int offset = rowIndex >> ADDRESS_BITS_PER_UNIT;
         long temp = array[offset];
-        array[offset] &= ~(1L << (rowIndex & BIT_INDEX_MASK));
-        size -= array[offset] != temp ? 1 : 0; 
+        this.array[offset] &= ~(1L << (rowIndex & BIT_INDEX_MASK));
+        this.size -= array[offset] != temp ? 1 : 0; 
     }
 
     /**

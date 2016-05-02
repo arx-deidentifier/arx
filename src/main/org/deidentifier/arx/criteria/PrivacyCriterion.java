@@ -20,6 +20,7 @@ package org.deidentifier.arx.criteria;
 import java.io.Serializable;
 
 import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 
@@ -104,6 +105,14 @@ public abstract class PrivacyCriterion implements Serializable{
      */
     public void initialize(DataManager manager){
         // Empty by design
+    }
+    
+    /**
+     * Returns a research subset, <code>null</code> if no subset is available
+     * @return
+     */
+    public DataSubset getSubset() {
+        return null;
     }
     
     /**

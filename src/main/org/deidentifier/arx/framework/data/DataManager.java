@@ -25,10 +25,8 @@ import java.util.Set;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.RowSet;
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
-import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
@@ -416,16 +414,9 @@ public class DataManager {
 
         // Store research subset
         for (PrivacyCriterion c : criteria) {
-            if (c instanceof DPresence) {
-                subset = ((DPresence) c).getSubset().getSet();
-                subsetSize = ((DPresence) c).getSubset().getArray().length;
-            } else if (c instanceof EDDifferentialPrivacy) {
-                ((EDDifferentialPrivacy)c).initialize(this);
-                subset = ((EDDifferentialPrivacy) c).getSubset().getSet();
-                subsetSize = ((EDDifferentialPrivacy) c).getSubset().getArray().length;
-            } else if (c instanceof KMap && ((KMap)c).isAccurate()) {
-                subset = ((KMap) c).getSubset().getSet();
-                subsetSize = ((KMap) c).getSubset().getArray().length;
+            if (c.getSubset() != null) {
+                subset = c.getSubset().getSet();
+                subsetSize = c.getSubset().getArray().length;
             }
         }
     }
