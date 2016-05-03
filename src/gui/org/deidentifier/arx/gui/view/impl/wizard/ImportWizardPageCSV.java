@@ -18,9 +18,9 @@
 package org.deidentifier.arx.gui.view.impl.wizard;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -524,7 +524,7 @@ public class ImportWizardPageCSV extends WizardPage {
      */
     private void detectDelimiter() throws IOException {
 
-        final BufferedReader r = new BufferedReader(new FileReader(new File(comboLocation.getText())));
+        final BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(comboLocation.getText()), "Cp1252"));
         final IntIntOpenHashMap map = new IntIntOpenHashMap();
         final CharIntOpenHashMap delimitors = new CharIntOpenHashMap();
         for (int i=0; i<this.delimiters.length; i++) {
@@ -582,7 +582,7 @@ public class ImportWizardPageCSV extends WizardPage {
         int read = 0;
 
         try {
-            r = new BufferedReader(new FileReader(new File(comboLocation.getText())));
+            r = new BufferedReader(new InputStreamReader(new FileInputStream(comboLocation.getText()), "Cp1252"));
             read = r.read(buffer);
         } finally {
             if (r != null) {

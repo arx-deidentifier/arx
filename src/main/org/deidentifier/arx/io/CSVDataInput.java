@@ -18,7 +18,7 @@
 package org.deidentifier.arx.io;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,7 +49,7 @@ public class CSVDataInput {
     private static class LazyFileReader extends Reader {
 
         /** Reader */
-        private FileReader reader = null;
+        private InputStreamReader reader = null;
         /** File */
         private final File file;
 
@@ -65,7 +65,7 @@ public class CSVDataInput {
         @Override
         @SuppressWarnings("resource")
         public int read(char[] cbuf, int off, int len) throws IOException {
-            reader = reader != null ? reader : new FileReader(file);
+            reader = reader != null ? reader : new InputStreamReader(new FileInputStream(file), "Cp1252");
             return reader.read(cbuf, off, len);
         }
 
@@ -229,7 +229,7 @@ public class CSVDataInput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataInput(final InputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-        this(new InputStreamReader(stream), delimiter, quote, escape, linebreak, null);
+        this(new InputStreamReader(stream, "Cp1252"), delimiter, quote, escape, linebreak, null);
     }
 
     /**
@@ -252,7 +252,7 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final InputStream stream, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
-        this(new InputStreamReader(stream), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), datatypes);
+        this(new InputStreamReader(stream, "Cp1252"), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), datatypes);
     }
 
     /**

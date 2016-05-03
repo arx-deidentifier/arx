@@ -20,9 +20,10 @@ package org.deidentifier.arx.gui.view.impl.menu;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -200,7 +201,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         ArrayList<String> list = new ArrayList<String>();
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(new File(file)));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "Cp1252"));
             String line = reader.readLine();
             while (line != null) {
                 list.add(line);

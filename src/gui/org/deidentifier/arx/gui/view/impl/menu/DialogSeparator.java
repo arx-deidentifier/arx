@@ -18,9 +18,9 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -119,7 +119,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
     private void detect(final String file) throws IOException {
 
         // Open file
-        final BufferedReader r = new BufferedReader(new FileReader(new File(file)));
+        final BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(file), "Cp1252"));
 
         // Count chars
         int count = 0;
