@@ -249,91 +249,98 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected abstract <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getConfiguration()">getConfiguration</a></strong>()</code>
+<div class="block">Returns the ARXConfiguration that is currently being used, null if this is an input handle</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Returns the according data type.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected abstract <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>
 <div class="block">Generates an array of data types.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.Date</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getDate(int,%20int)">getDate</a></strong>(int&nbsp;row,
        int&nbsp;col)</code>
 <div class="block">Returns a date/time value from the specified cell.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getDefinition()">getDefinition</a></strong>()</code>
 <div class="block">Returns the data definition.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int)">getDistinctValues</a></strong>(int&nbsp;column)</code>
 <div class="block">Returns an array containing the distinct values in the given column.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected abstract java.lang.String[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues</a></strong>(int&nbsp;column,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int,%20boolean,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues</a></strong>(int&nbsp;column,
+                 boolean&nbsp;ignoreSuppression,
                  <a href="../../../org/deidentifier/arx/DataHandleInternal.InterruptHandler.html" title="interface in org.deidentifier.arx">DataHandleInternal.InterruptHandler</a>&nbsp;handler)</code>
 <div class="block">Returns the distinct values.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.Double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getDouble(int,%20int)">getDouble</a></strong>(int&nbsp;row,
          int&nbsp;col)</code>
 <div class="block">Returns a double value from the specified cell.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.Float</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getFloat(int,%20int)">getFloat</a></strong>(int&nbsp;row,
         int&nbsp;col)</code>
 <div class="block">Returns a float value from the specified cell.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getGeneralization(java.lang.String)">getGeneralization</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Returns the generalization level for the attribute.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.Integer</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getInt(int,%20int)">getInt</a></strong>(int&nbsp;row,
       int&nbsp;col)</code>
 <div class="block">Returns an int value from the specified cell.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getLong(int,%20int)">getLong</a></strong>(int&nbsp;row,
        int&nbsp;col)</code>
 <div class="block">Returns a long value from the specified cell.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int)">getMatchingDataTypes</a></strong>(int&nbsp;column)</code>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>&lt;U&gt;&nbsp;java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     java.lang.Class&lt;U&gt;&nbsp;clazz)</code>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>&lt;U&gt;&nbsp;java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class,%20double)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     java.lang.Class&lt;U&gt;&nbsp;clazz,
@@ -341,7 +348,7 @@ extends java.lang.Object</pre>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>&lt;U&gt;&nbsp;java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class,%20java.util.Locale)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     java.lang.Class&lt;U&gt;&nbsp;clazz,
@@ -349,7 +356,7 @@ extends java.lang.Object</pre>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>&lt;U&gt;&nbsp;java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class,%20java.util.Locale,%20double)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     java.lang.Class&lt;U&gt;&nbsp;clazz,
@@ -358,14 +365,14 @@ extends java.lang.Object</pre>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20double)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     double&nbsp;threshold)</code>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.util.Locale)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     java.util.Locale&nbsp;locale)</code>
@@ -373,7 +380,7 @@ extends java.lang.Object</pre>
  This method only returns types that match at least 80% of all values in the column .</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.util.Locale,%20double)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     java.util.Locale&nbsp;locale,
@@ -381,7 +388,7 @@ extends java.lang.Object</pre>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getNonConformingValues(int,%20org.deidentifier.arx.DataType,%20int)">getNonConformingValues</a></strong>(int&nbsp;column,
                       <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type,
@@ -389,52 +396,52 @@ extends java.lang.Object</pre>
 <div class="block">Returns a set of values that do not conform to the given data type.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getNumColumns()">getNumColumns</a></strong>()</code>
 <div class="block">Returns the number of columns in the dataset.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getNumConformingValues(int,%20org.deidentifier.arx.DataType)">getNumConformingValues</a></strong>(int&nbsp;column,
                       <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type)</code>
 <div class="block">Returns the number of (distinct) values that conform to the given data type.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getNumRows()">getNumRows</a></strong>()</code>
 <div class="block">Returns the number of rows in the dataset.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected org.deidentifier.arx.DataRegistry</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getRegistry()">getRegistry</a></strong>()</code>
 <div class="block">Returns the registry associated with this handle.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilder</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel)">getRiskEstimator</a></strong>(<a href="../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;model)</code>
 <div class="block">Returns a risk estimator</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilder</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.ARXSolverConfiguration)">getRiskEstimator</a></strong>(<a href="../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;model,
                 <a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&nbsp;config)</code>
 <div class="block">Returns a risk estimator</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilder</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.risk.RiskModelHistogram)">getRiskEstimator</a></strong>(<a href="../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;model,
                 <a href="../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;classes)</code>
 <div class="block">Returns a risk estimator for the given set of equivalence classes.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilder</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.risk.RiskModelHistogram,%20org.deidentifier.arx.ARXSolverConfiguration)">getRiskEstimator</a></strong>(<a href="../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;model,
                 <a href="../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;classes,
@@ -442,14 +449,14 @@ extends java.lang.Object</pre>
 <div class="block">Returns a risk estimator for the given set of equivalence classes.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilder</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20java.util.Set)">getRiskEstimator</a></strong>(<a href="../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;model,
                 java.util.Set&lt;java.lang.String&gt;&nbsp;qis)</code>
 <div class="block">Returns a risk estimator for the given set of quasi-identifiers</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html" title="class in org.deidentifier.arx.risk">RiskEstimateBuilder</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20java.util.Set,%20org.deidentifier.arx.ARXSolverConfiguration)">getRiskEstimator</a></strong>(<a href="../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;model,
                 java.util.Set&lt;java.lang.String&gt;&nbsp;qis,
@@ -457,17 +464,11 @@ extends java.lang.Object</pre>
 <div class="block">Returns a risk estimator for the given set of quasi-identifiers</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getStatistics()">getStatistics</a></strong>()</code>
 <div class="block">Returns an object providing access to basic descriptive statistics about the data represented
  by this handle.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getSuppressionString()">getSuppressionString</a></strong>()</code>
-<div class="block">Returns the string inserted for suppressed data items.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -516,37 +517,43 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#isAnonymous()">isAnonymous</a></strong>()</code>
+<div class="block">Returns whether the data represented by this handle is anonymous</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#isOptimized()">isOptimized</a></strong>()</code>
 <div class="block">Has this handle been optimized with local recoding?</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#isOrphaned()">isOrphaned</a></strong>()</code>
 <div class="block">Determines whether this handle is orphaned, i.e., should not be used anymore</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#isOutlier(int)">isOutlier</a></strong>(int&nbsp;row)</code>
 <div class="block">Determines whether a given row is an outlier in the currently associated
  data transformation.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract java.util.Iterator&lt;java.lang.String[]&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#iterator()">iterator</a></strong>()</code>
 <div class="block">Returns an iterator over the data.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#release()">release</a></strong>()</code>
 <div class="block">Releases this handle and all associated resources.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#replace(int,%20java.lang.String,%20java.lang.String)">replace</a></strong>(int&nbsp;column,
        java.lang.String&nbsp;original,
@@ -554,86 +561,86 @@ extends java.lang.Object</pre>
 <div class="block">Replaces the original value with the replacement in the given column.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.File)">save</a></strong>(java.io.File&nbsp;file)</code>
 <div class="block">Writes the data to a CSV file.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.File,%20char)">save</a></strong>(java.io.File&nbsp;file,
     char&nbsp;separator)</code>
 <div class="block">Writes the data to a CSV file.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.File,%20org.deidentifier.arx.io.CSVSyntax)">save</a></strong>(java.io.File&nbsp;file,
     <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
 <div class="block">Writes the data to a CSV file.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.OutputStream)">save</a></strong>(java.io.OutputStream&nbsp;out)</code>
 <div class="block">Writes the data to a CSV file.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.OutputStream,%20char)">save</a></strong>(java.io.OutputStream&nbsp;out,
     char&nbsp;separator)</code>
 <div class="block">Writes the data to a CSV file.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.OutputStream,%20org.deidentifier.arx.io.CSVSyntax)">save</a></strong>(java.io.OutputStream&nbsp;out,
     <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
 <div class="block">Writes the data to a CSV file.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#save(java.lang.String)">save</a></strong>(java.lang.String&nbsp;path)</code>
 <div class="block">Writes the data to a CSV file.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#save(java.lang.String,%20char)">save</a></strong>(java.lang.String&nbsp;path,
     char&nbsp;separator)</code>
 <div class="block">Writes the data to a CSV file.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#save(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax)">save</a></strong>(java.lang.String&nbsp;path,
     <a href="../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config)</code>
 <div class="block">Writes the data to a CSV file.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#setRegistry(org.deidentifier.arx.DataRegistry)">setRegistry</a></strong>(org.deidentifier.arx.DataRegistry&nbsp;registry)</code>
 <div class="block">Updates the registry.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#setView(org.deidentifier.arx.DataHandle)">setView</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle)</code>
 <div class="block">Sets the subset.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#sort(boolean,%20int...)">sort</a></strong>(boolean&nbsp;ascending,
     int...&nbsp;columns)</code>
 <div class="block">Sorts the dataset according to the given columns.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#sort(int,%20int,%20boolean,%20int...)">sort</a></strong>(int&nbsp;from,
     int&nbsp;to,
@@ -642,7 +649,7 @@ extends java.lang.Object</pre>
 <div class="block">Sorts the dataset according to the given columns and the given range.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#sort(cern.colt.Swapper,%20boolean,%20int...)">sort</a></strong>(cern.colt.Swapper&nbsp;swapper,
     boolean&nbsp;ascending,
@@ -650,7 +657,7 @@ extends java.lang.Object</pre>
 <div class="block">Sorts the dataset according to the given columns.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#sort(cern.colt.Swapper,%20int,%20int,%20boolean,%20int...)">sort</a></strong>(cern.colt.Swapper&nbsp;swapper,
     int&nbsp;from,
@@ -660,7 +667,7 @@ extends java.lang.Object</pre>
 <div class="block">Sorts the dataset according to the given columns and the given range.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#swap(int,%20int)">swap</a></strong>(int&nbsp;row1,
     int&nbsp;row2)</code>
@@ -1566,6 +1573,17 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd>the base data type</dd></dl>
 </li>
 </ul>
+<a name="getConfiguration()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getConfiguration</h4>
+<pre>protected abstract&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;getConfiguration()</pre>
+<div class="block">Returns the ARXConfiguration that is currently being used, null if this is an input handle</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getDataTypeArray()">
 <!--   -->
 </a>
@@ -1577,16 +1595,17 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the data type array</dd></dl>
 </li>
 </ul>
-<a name="getDistinctValues(int, org.deidentifier.arx.DataHandleInternal.InterruptHandler)">
+<a name="getDistinctValues(int, boolean, org.deidentifier.arx.DataHandleInternal.InterruptHandler)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getDistinctValues</h4>
 <pre>protected abstract&nbsp;java.lang.String[]&nbsp;getDistinctValues(int&nbsp;column,
+                                   boolean&nbsp;ignoreSuppression,
                                    <a href="../../../org/deidentifier/arx/DataHandleInternal.InterruptHandler.html" title="interface in org.deidentifier.arx">DataHandleInternal.InterruptHandler</a>&nbsp;handler)</pre>
 <div class="block">Returns the distinct values.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - the column</dd><dd><code>handler</code> - the handler</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - the column</dd><dd><code>ignoreSuppression</code> - </dd><dd><code>handler</code> - the handler</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the distinct values</dd></dl>
 </li>
 </ul>
@@ -1599,17 +1618,6 @@ extends java.lang.Object</pre>
 <pre>protected&nbsp;org.deidentifier.arx.DataRegistry&nbsp;getRegistry()</pre>
 <div class="block">Returns the registry associated with this handle.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the registry</dd></dl>
-</li>
-</ul>
-<a name="getSuppressionString()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSuppressionString</h4>
-<pre>protected&nbsp;java.lang.String&nbsp;getSuppressionString()</pre>
-<div class="block">Returns the string inserted for suppressed data items.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the suppression string</dd></dl>
 </li>
 </ul>
 <a name="internalCompare(int, int, int[], boolean)">
@@ -1656,6 +1664,17 @@ extends java.lang.Object</pre>
 <div class="block">Internal replacement method.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - the column</dd><dd><code>original</code> - the original</dd><dd><code>replacement</code> - the replacement</dd>
 <dt><span class="strong">Returns:</span></dt><dd>true, if successful</dd></dl>
+</li>
+</ul>
+<a name="isAnonymous()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isAnonymous</h4>
+<pre>protected&nbsp;boolean&nbsp;isAnonymous()</pre>
+<div class="block">Returns whether the data represented by this handle is anonymous</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="setRegistry(org.deidentifier.arx.DataRegistry)">

@@ -294,9 +294,21 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSuppressionString()">getSuppressionString</a></strong>()</code>
-<div class="block">Sets the string with which suppressed values are to be replaced.</div>
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getRiskThresholdJournalist()">getRiskThresholdJournalist</a></strong>()</code>
+<div class="block">Return journalist risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getRiskThresholdMarketer()">getRiskThresholdMarketer</a></strong>()</code>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getRiskThresholdProsecutor()">getRiskThresholdProsecutor</a></strong>()</code>
+<div class="block">Return prosecutor risk threshold, 1 if there is none</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -415,17 +427,11 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setSuppressionString(java.lang.String)">setSuppressionString</a></strong>(java.lang.String&nbsp;suppressionString)</code>
-<div class="block">Sets the string with which suppressed values are to be replaced.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setUseHeuristicSearchForSampleBasedCriteria(boolean)">setUseHeuristicSearchForSampleBasedCriteria</a></strong>(boolean&nbsp;value)</code>
 <div class="block">Do we guarantee optimality for sample-based criteria?</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setUtilityBasedMicroaggregation(boolean)">setUtilityBasedMicroaggregation</a></strong>(boolean&nbsp;value)</code>
 <div class="block">Sets whether microaggregation should be based on utility measures</div>
@@ -710,14 +716,36 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getSuppressionString()">
+<a name="getRiskThresholdJournalist()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getSuppressionString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getSuppressionString()</pre>
-<div class="block">Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.</div>
+<h4>getRiskThresholdJournalist</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdJournalist()</pre>
+<div class="block">Return journalist risk threshold, 1 if there is none</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getRiskThresholdMarketer()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRiskThresholdMarketer</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdMarketer()</pre>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getRiskThresholdProsecutor()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRiskThresholdProsecutor</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdProsecutor()</pre>
+<div class="block">Return prosecutor risk threshold, 1 if there is none</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -886,17 +914,6 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>max</code> - </dd></dl>
 </li>
 </ul>
-<a name="setSuppressionLimit(double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setSuppressionLimit</h4>
-<pre>public&nbsp;void&nbsp;setSuppressionLimit(double&nbsp;limit)</pre>
-<div class="block">Sets the suppression limit. This is an alias for setMaxOutliers().</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>limit</code> - </dd></dl>
-</li>
-</ul>
 <a name="setMetric(org.deidentifier.arx.metric.Metric)">
 <!--   -->
 </a>
@@ -932,15 +949,15 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>enabled</code> - </dd></dl>
 </li>
 </ul>
-<a name="setSuppressionString(java.lang.String)">
+<a name="setSuppressionLimit(double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setSuppressionString</h4>
-<pre>public&nbsp;void&nbsp;setSuppressionString(java.lang.String&nbsp;suppressionString)</pre>
-<div class="block">Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>suppressionString</code> - </dd></dl>
+<h4>setSuppressionLimit</h4>
+<pre>public&nbsp;void&nbsp;setSuppressionLimit(double&nbsp;limit)</pre>
+<div class="block">Sets the suppression limit. This is an alias for setMaxOutliers().</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>limit</code> - </dd></dl>
 </li>
 </ul>
 <a name="setUseHeuristicSearchForSampleBasedCriteria(boolean)">

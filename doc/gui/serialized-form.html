@@ -138,11 +138,6 @@
 <div class="block">Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.</div>
 </li>
 <li class="blockList">
-<h4>suppressionString</h4>
-<pre>java.lang.String suppressionString</pre>
-<div class="block">The string with which suppressed values are to be replaced.</div>
-</li>
-<li class="blockList">
 <h4>suppressionAlwaysEnabled</h4>
 <pre>java.lang.Boolean suppressionAlwaysEnabled</pre>
 <div class="block">Determines whether suppression is applied to the output of anonymous as
@@ -287,6 +282,79 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="org.deidentifier.arx.ARXLogisticRegressionConfiguration">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">org.deidentifier.arx.ARXLogisticRegressionConfiguration</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-7432423626032273246L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>alpha</h4>
+<pre>double alpha</pre>
+<div class="block">Configuration</div>
+</li>
+<li class="blockList">
+<h4>decayExponent</h4>
+<pre>double decayExponent</pre>
+<div class="block">Configuration</div>
+</li>
+<li class="blockList">
+<h4>lambda</h4>
+<pre>double lambda</pre>
+<div class="block">Configuration</div>
+</li>
+<li class="blockList">
+<h4>learningRate</h4>
+<pre>double learningRate</pre>
+<div class="block">Configuration</div>
+</li>
+<li class="blockList">
+<h4>stepOffset</h4>
+<pre>int stepOffset</pre>
+<div class="block">Configuration</div>
+</li>
+<li class="blockList">
+<h4>vectorLength</h4>
+<pre>int vectorLength</pre>
+<div class="block">Configuration</div>
+</li>
+<li class="blockList">
+<h4>maxRecords</h4>
+<pre>int maxRecords</pre>
+<div class="block">Max records</div>
+</li>
+<li class="blockList">
+<h4>seed</h4>
+<pre>int seed</pre>
+<div class="block">Seed</div>
+</li>
+<li class="blockList">
+<h4>numberOfFolds</h4>
+<pre>int numberOfFolds</pre>
+<div class="block">Folds</div>
+</li>
+<li class="blockList">
+<h4>deterministic</h4>
+<pre>boolean deterministic</pre>
+<div class="block">Deterministic</div>
+</li>
+<li class="blockListLast">
+<h4>prior</h4>
+<pre><a href="org/deidentifier/arx/ARXLogisticRegressionConfiguration.PriorFunction.html" title="enum in org.deidentifier.arx">ARXLogisticRegressionConfiguration.PriorFunction</a> prior</pre>
+<div class="block">Configuration</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="org.deidentifier.arx.ARXPopulationModel">
 <!--   -->
 </a>
@@ -306,9 +374,14 @@
 <pre><a href="org/deidentifier/arx/ARXPopulationModel.Region.html" title="enum in org.deidentifier.arx">ARXPopulationModel.Region</a> region</pre>
 <div class="block">The region</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>sampleFraction</h4>
 <pre>double sampleFraction</pre>
+<div class="block">TODO: This field is here for backwards compatibility only!</div>
+</li>
+<li class="blockListLast">
+<h4>populationSize</h4>
+<pre>java.lang.Long populationSize</pre>
 <div class="block">The sample fraction</div>
 </li>
 </ul>
@@ -1472,20 +1545,6 @@
 <dt>serialVersionUID:</dt>
 <dd>-354688551915634000L</dd>
 </dl>
-<ul class="blockList">
-<li class="blockList"><a name="serializedForm">
-<!--   -->
-</a>
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockListLast">
-<h4>logL</h4>
-<pre>double logL</pre>
-<div class="block">Helper.</div>
-</li>
-</ul>
-</li>
-</ul>
 </li>
 <li class="blockList"><a name="org.deidentifier.arx.criteria.EqualDistanceTCloseness">
 <!--   -->
@@ -2183,20 +2242,10 @@
 <pre>boolean modified</pre>
 <div class="block">Modified</div>
 </li>
-<li class="blockList">
-<h4>classificationMaxRecords</h4>
-<pre>int classificationMaxRecords</pre>
-<div class="block">Max records</div>
-</li>
-<li class="blockList">
-<h4>classificationSeed</h4>
-<pre>java.lang.Integer classificationSeed</pre>
-<div class="block">Seed</div>
-</li>
 <li class="blockListLast">
-<h4>ignoreSuppressedRecords</h4>
-<pre>boolean ignoreSuppressedRecords</pre>
-<div class="block">Ignore suppressed records</div>
+<h4>config</h4>
+<pre><a href="org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a> config</pre>
+<div class="block">Config</div>
 </li>
 </ul>
 </li>

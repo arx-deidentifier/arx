@@ -152,21 +152,57 @@ implements java.io.Serializable</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getPopulationModel()">getPopulationModel</a></strong>()</code>
+<div class="block">Returns the associated population model, <code>null</code> if there is none.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>abstract int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRequirements()">getRequirements</a></strong>()</code>
 <div class="block">Returns the criterion's requirements.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRiskThresholdJournalist()">getRiskThresholdJournalist</a></strong>()</code>
+<div class="block">Return journalist risk threshold, 1 if there is none</div>
+</td>
+</tr>
 <tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRiskThresholdMarketer()">getRiskThresholdMarketer</a></strong>()</code>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRiskThresholdProsecutor()">getRiskThresholdProsecutor</a></strong>()</code>
+<div class="block">Return prosecutor risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getSubset()">getSubset</a></strong>()</code>
+<div class="block">Returns a research subset, <code>null</code> if no subset is available</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager)</code>
 <div class="block">Override this to initialize the criterion.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry&nbsp;entry)</code>
 <div class="block">Implement this, to enforce the criterion.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>abstract boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isLocalRecodingSupported()">isLocalRecodingSupported</a></strong>()</code>
+<div class="block">Returns whether the criterion supports local recoding.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -235,6 +271,31 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="clone()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clone</h4>
+<pre>public abstract&nbsp;<a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;clone()</pre>
+<div class="block">Clone</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>clone</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getPopulationModel()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPopulationModel</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;getPopulationModel()</pre>
+<div class="block">Returns the associated population model, <code>null</code> if there is none.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the populationModel</dd></dl>
+</li>
+</ul>
 <a name="getRequirements()">
 <!--   -->
 </a>
@@ -243,6 +304,39 @@ implements java.io.Serializable</pre>
 <h4>getRequirements</h4>
 <pre>public abstract&nbsp;int&nbsp;getRequirements()</pre>
 <div class="block">Returns the criterion's requirements.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getRiskThresholdJournalist()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRiskThresholdJournalist</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdJournalist()</pre>
+<div class="block">Return journalist risk threshold, 1 if there is none</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getRiskThresholdMarketer()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRiskThresholdMarketer</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdMarketer()</pre>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getRiskThresholdProsecutor()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRiskThresholdProsecutor</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdProsecutor()</pre>
+<div class="block">Return prosecutor risk threshold, 1 if there is none</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -257,6 +351,17 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>manager</code> - </dd></dl>
 </li>
 </ul>
+<a name="getSubset()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSubset</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;getSubset()</pre>
+<div class="block">Returns a research subset, <code>null</code> if no subset is available</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">
 <!--   -->
 </a>
@@ -267,6 +372,17 @@ implements java.io.Serializable</pre>
 <div class="block">Implement this, to enforce the criterion.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>entry</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isLocalRecodingSupported()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isLocalRecodingSupported</h4>
+<pre>public abstract&nbsp;boolean&nbsp;isLocalRecodingSupported()</pre>
+<div class="block">Returns whether the criterion supports local recoding.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="isMonotonicWithGeneralization()">
@@ -305,7 +421,7 @@ implements java.io.Serializable</pre>
 <a name="toString()">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>toString</h4>
 <pre>public abstract&nbsp;java.lang.String&nbsp;toString()</pre>
@@ -314,20 +430,6 @@ implements java.io.Serializable</pre>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="clone()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>clone</h4>
-<pre>public abstract&nbsp;<a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;clone()</pre>
-<div class="block">Clone</div>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code>clone</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
-</dl>
 </li>
 </ul>
 </li>

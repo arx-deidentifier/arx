@@ -212,6 +212,24 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriter
 <div class="block">Returns the criterion's requirements.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getRiskThresholdJournalist()">getRiskThresholdJournalist</a></strong>()</code>
+<div class="block">Return journalist risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getRiskThresholdMarketer()">getRiskThresholdMarketer</a></strong>()</code>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getRiskThresholdProsecutor()">getRiskThresholdProsecutor</a></strong>()</code>
+<div class="block">Return prosecutor risk threshold, 1 if there is none</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_org.deidentifier.arx.criteria.ExplicitPrivacyCriterion">
@@ -225,7 +243,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriter
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.criteria.<a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></h3>
-<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">clone</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">clone</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getPopulationModel()">getPopulationModel</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getSubset()">getSubset</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isLocalRecodingSupported()">isLocalRecodingSupported</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -323,7 +341,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriter
 <a name="getRequirements()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getRequirements</h4>
 <pre>public&nbsp;int&nbsp;getRequirements()</pre>
@@ -332,6 +350,48 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriter
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRequirements()">getRequirements</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getRiskThresholdProsecutor()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRiskThresholdProsecutor</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdProsecutor()</pre>
+<div class="block">Return prosecutor risk threshold, 1 if there is none</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRiskThresholdProsecutor()">getRiskThresholdProsecutor</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getRiskThresholdJournalist()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRiskThresholdJournalist</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdJournalist()</pre>
+<div class="block">Return journalist risk threshold, 1 if there is none</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRiskThresholdJournalist()">getRiskThresholdJournalist</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getRiskThresholdMarketer()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getRiskThresholdMarketer</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdMarketer()</pre>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRiskThresholdMarketer()">getRiskThresholdMarketer</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

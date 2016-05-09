@@ -187,7 +187,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/DPresence.html#getSubset()">getSubset</a></strong>()</code>
-<div class="block">Returns the research subset.</div>
+<div class="block">Returns a research subset, <code>null</code> if no subset is available</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -203,6 +203,12 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/DPresence.html#isLocalRecodingSupported()">isLocalRecodingSupported</a></strong>()</code>
+<div class="block">Returns whether the criterion supports local recoding.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/DPresence.html#toString()">toString</a></strong>()</code>
 <div class="block">Returns a string representation.</div>
@@ -214,7 +220,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.criteria.<a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></h3>
-<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getPopulationModel()">getPopulationModel</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRiskThresholdJournalist()">getRiskThresholdJournalist</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRiskThresholdMarketer()">getRiskThresholdMarketer</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRiskThresholdProsecutor()">getRiskThresholdProsecutor</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -261,6 +267,21 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="clone()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clone</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/criteria/DPresence.html" title="class in org.deidentifier.arx.criteria">DPresence</a>&nbsp;clone()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">PrivacyCriterion</a></code></strong></div>
+<div class="block">Clone</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">clone</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="getDMax()">
 <!--   -->
 </a>
@@ -305,8 +326,12 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <li class="blockList">
 <h4>getSubset</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;getSubset()</pre>
-<div class="block">Returns the research subset.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getSubset()">PrivacyCriterion</a></code></strong></div>
+<div class="block">Returns a research subset, <code>null</code> if no subset is available</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getSubset()">getSubset</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="initialize(org.deidentifier.arx.framework.data.DataManager)">
@@ -339,10 +364,25 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="toString()">
+<a name="isLocalRecodingSupported()">
 <!--   -->
 </a>
 <ul class="blockList">
+<li class="blockList">
+<h4>isLocalRecodingSupported</h4>
+<pre>public&nbsp;boolean&nbsp;isLocalRecodingSupported()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isLocalRecodingSupported()">PrivacyCriterion</a></code></strong></div>
+<div class="block">Returns whether the criterion supports local recoding.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isLocalRecodingSupported()">isLocalRecodingSupported</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="toString()">
+<!--   -->
+</a>
+<ul class="blockListLast">
 <li class="blockList">
 <h4>toString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
@@ -351,21 +391,6 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="clone()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>clone</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/criteria/DPresence.html" title="class in org.deidentifier.arx.criteria">DPresence</a>&nbsp;clone()</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">PrivacyCriterion</a></code></strong></div>
-<div class="block">Clone</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">clone</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
 </dl>
 </li>
 </ul>

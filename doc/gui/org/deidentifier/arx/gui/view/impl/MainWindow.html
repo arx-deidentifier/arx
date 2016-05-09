@@ -362,6 +362,12 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>org.apache.commons.math3.util.Pair&lt;org.apache.commons.math3.util.Pair&lt;java.lang.String,java.lang.Boolean&gt;,org.apache.commons.math3.util.Pair&lt;java.lang.String,java.lang.Boolean&gt;&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showTopBottomCodingDialog(org.deidentifier.arx.DataType)">showTopBottomCodingDialog</a></strong>(<a href="../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type)</code>
+<div class="block">Shows a top/bottom coding dialog</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></strong>(<a href="../../../../../../org/deidentifier/arx/gui/model/ModelEvent.html" title="class in org.deidentifier.arx.gui.model">ModelEvent</a>&nbsp;event)</code>
 <div class="block">Updates the view.</div>
@@ -655,6 +661,21 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>shell</code> - </dd><dd><code>header</code> - </dd><dd><code>text</code> - </dd></dl>
 </li>
 </ul>
+<a name="showInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>showInputDialog</h4>
+<pre>public&nbsp;java.lang.String&nbsp;showInputDialog(org.eclipse.swt.widgets.Shell&nbsp;shell,
+                               java.lang.String&nbsp;header,
+                               java.lang.String&nbsp;text,
+                               java.lang.String&nbsp;initial)</pre>
+<div class="block">Shows an input dialog.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>shell</code> - </dd><dd><code>header</code> - </dd><dd><code>text</code> - </dd><dd><code>initial</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="showInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String, org.eclipse.jface.dialogs.IInputValidator)">
 <!--   -->
 </a>
@@ -671,18 +692,19 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="showInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String)">
+<a name="showMultiSelectionDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.util.List, java.util.List)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>showInputDialog</h4>
-<pre>public&nbsp;java.lang.String&nbsp;showInputDialog(org.eclipse.swt.widgets.Shell&nbsp;shell,
-                               java.lang.String&nbsp;header,
-                               java.lang.String&nbsp;text,
-                               java.lang.String&nbsp;initial)</pre>
-<div class="block">Shows an input dialog.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>shell</code> - </dd><dd><code>header</code> - </dd><dd><code>text</code> - </dd><dd><code>initial</code> - </dd>
+<h4>showMultiSelectionDialog</h4>
+<pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;showMultiSelectionDialog(org.eclipse.swt.widgets.Shell&nbsp;shell,
+                                                        java.lang.String&nbsp;title,
+                                                        java.lang.String&nbsp;text,
+                                                        java.util.List&lt;java.lang.String&gt;&nbsp;elements,
+                                                        java.util.List&lt;java.lang.String&gt;&nbsp;selected)</pre>
+<div class="block">Shows a dialog that allows selecting multiple elements</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>shell</code> - </dd><dd><code>title</code> - </dd><dd><code>text</code> - </dd><dd><code>elements</code> - </dd><dd><code>selected</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -780,10 +802,24 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="update(org.deidentifier.arx.gui.model.ModelEvent)">
+<a name="showTopBottomCodingDialog(org.deidentifier.arx.DataType)">
 <!--   -->
 </a>
 <ul class="blockList">
+<li class="blockList">
+<h4>showTopBottomCodingDialog</h4>
+<pre>public&nbsp;org.apache.commons.math3.util.Pair&lt;org.apache.commons.math3.util.Pair&lt;java.lang.String,java.lang.Boolean&gt;,org.apache.commons.math3.util.Pair&lt;java.lang.String,java.lang.Boolean&gt;&gt;&nbsp;showTopBottomCodingDialog(<a href="../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type)</pre>
+<div class="block">Shows a top/bottom coding dialog</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>type</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd>A pair containing the bottom value + inclusive and the top value + inclusive.
+         Either bottom or top may be <code>null</code> if they have not been defined. The overall pair may be
+         <code>null</code> if cancel was pressed.</dd></dl>
+</li>
+</ul>
+<a name="update(org.deidentifier.arx.gui.model.ModelEvent)">
+<!--   -->
+</a>
+<ul class="blockListLast">
 <li class="blockList">
 <h4>update</h4>
 <pre>public&nbsp;void&nbsp;update(<a href="../../../../../../org/deidentifier/arx/gui/model/ModelEvent.html" title="class in org.deidentifier.arx.gui.model">ModelEvent</a>&nbsp;event)</pre>
@@ -793,22 +829,6 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></code></dd>
 </dl>
-</li>
-</ul>
-<a name="showMultiSelectionDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.util.List, java.util.List)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>showMultiSelectionDialog</h4>
-<pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;showMultiSelectionDialog(org.eclipse.swt.widgets.Shell&nbsp;shell,
-                                                        java.lang.String&nbsp;title,
-                                                        java.lang.String&nbsp;text,
-                                                        java.util.List&lt;java.lang.String&gt;&nbsp;elements,
-                                                        java.util.List&lt;java.lang.String&gt;&nbsp;selected)</pre>
-<div class="block">Shows a dialog that allows selecting multiple elements</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>shell</code> - </dd><dd><code>title</code> - </dd><dd><code>text</code> - </dd><dd><code>elements</code> - </dd><dd><code>selected</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

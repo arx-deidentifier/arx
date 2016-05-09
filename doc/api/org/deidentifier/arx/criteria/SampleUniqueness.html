@@ -161,6 +161,18 @@ extends <a href="../../../../org/deidentifier/arx/criteria/RiskBasedCriterion.ht
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/SampleUniqueness.html#getRiskThresholdMarketer()">getRiskThresholdMarketer</a></strong>()</code>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/SampleUniqueness.html#isLocalRecodingSupported()">isLocalRecodingSupported</a></strong>()</code>
+<div class="block">Returns whether the criterion supports local recoding.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/SampleUniqueness.html#toString()">toString</a></strong>()</code>
 <div class="block">Returns a string representation.</div>
@@ -186,7 +198,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/RiskBasedCriterion.ht
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.criteria.<a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></h3>
-<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getPopulationModel()">getPopulationModel</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRiskThresholdJournalist()">getRiskThresholdJournalist</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRiskThresholdProsecutor()">getRiskThresholdProsecutor</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getSubset()">getSubset</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -228,25 +240,10 @@ extends <a href="../../../../org/deidentifier/arx/criteria/RiskBasedCriterion.ht
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="toString()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>toString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">PrivacyCriterion</a></code></strong></div>
-<div class="block">Returns a string representation.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
-</dl>
-</li>
-</ul>
 <a name="clone()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>clone</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/criteria/SampleUniqueness.html" title="class in org.deidentifier.arx.criteria">SampleUniqueness</a>&nbsp;clone()</pre>
@@ -255,6 +252,50 @@ extends <a href="../../../../org/deidentifier/arx/criteria/RiskBasedCriterion.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">clone</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getRiskThresholdMarketer()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRiskThresholdMarketer</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdMarketer()</pre>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getRiskThresholdMarketer()">getRiskThresholdMarketer</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isLocalRecodingSupported()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isLocalRecodingSupported</h4>
+<pre>public&nbsp;boolean&nbsp;isLocalRecodingSupported()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isLocalRecodingSupported()">PrivacyCriterion</a></code></strong></div>
+<div class="block">Returns whether the criterion supports local recoding.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isLocalRecodingSupported()">isLocalRecodingSupported</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="toString()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">PrivacyCriterion</a></code></strong></div>
+<div class="block">Returns a string representation.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
 </dl>
 </li>
 </ul>

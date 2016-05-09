@@ -168,58 +168,59 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#getConfiguration()">getConfiguration</a></strong>()</code>
+<div class="block">Returns the ARXConfiguration that is currently being used, null if this is an input handle</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Returns the according data type.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>
 <div class="block">Generates an array of data types.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.lang.String[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#getDistinctValues(int,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues</a></strong>(int&nbsp;column,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#getDistinctValues(int,%20boolean,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues</a></strong>(int&nbsp;column,
+                 boolean&nbsp;ignoreSuppression,
                  <a href="../../../org/deidentifier/arx/DataHandleInternal.InterruptHandler.html" title="interface in org.deidentifier.arx">DataHandleInternal.InterruptHandler</a>&nbsp;handler)</code>
 <div class="block">Returns the distinct values.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#getGeneralization(java.lang.String)">getGeneralization</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Returns the generalization level for the attribute.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#getNumColumns()">getNumColumns</a></strong>()</code>
 <div class="block">Returns the number of columns in the dataset.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#getNumRows()">getNumRows</a></strong>()</code>
 <div class="block">Returns the number of rows in the dataset.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#getSource()">getSource</a></strong>()</code>
 <div class="block">Returns the underlying source data handle.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#getSubset()">getSubset</a></strong>()</code>
 <div class="block">Returns the research subset.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#getSuppressionString()">getSuppressionString</a></strong>()</code>
-<div class="block">Returns the string inserted for suppressed data items.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -281,25 +282,31 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#isAnonymous()">isAnonymous</a></strong>()</code>
+<div class="block">Returns whether the data represented by this handle is anonymous</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#isOptimized()">isOptimized</a></strong>()</code>
 <div class="block">Has this handle been optimized with local recoding?</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#isOutlier(int)">isOutlier</a></strong>(int&nbsp;row)</code>
 <div class="block">Determines whether a given row is an outlier in the currently associated
  data transformation.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.util.Iterator&lt;java.lang.String[]&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#iterator()">iterator</a></strong>()</code>
 <div class="block">Returns an iterator over the data.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleSubset.html#replace(int,%20java.lang.String,%20java.lang.String)">replace</a></strong>(int&nbsp;column,
        java.lang.String&nbsp;original,
@@ -558,6 +565,21 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 </dl>
 </li>
 </ul>
+<a name="getConfiguration()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getConfiguration</h4>
+<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;getConfiguration()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html#getConfiguration()">DataHandle</a></code></strong></div>
+<div class="block">Returns the ARXConfiguration that is currently being used, null if this is an input handle</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#getConfiguration()">getConfiguration</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getDataTypeArray()">
 <!--   -->
 </a>
@@ -573,19 +595,20 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <dt><span class="strong">Returns:</span></dt><dd>the data type array</dd></dl>
 </li>
 </ul>
-<a name="getDistinctValues(int, org.deidentifier.arx.DataHandleInternal.InterruptHandler)">
+<a name="getDistinctValues(int, boolean, org.deidentifier.arx.DataHandleInternal.InterruptHandler)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getDistinctValues</h4>
 <pre>protected&nbsp;java.lang.String[]&nbsp;getDistinctValues(int&nbsp;column,
+                                   boolean&nbsp;ignoreSuppression,
                                    <a href="../../../org/deidentifier/arx/DataHandleInternal.InterruptHandler.html" title="interface in org.deidentifier.arx">DataHandleInternal.InterruptHandler</a>&nbsp;handler)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">DataHandle</a></code></strong></div>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int,%20boolean,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">DataHandle</a></code></strong></div>
 <div class="block">Returns the distinct values.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
+<dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int,%20boolean,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - the column</dd><dd><code>handler</code> - the handler</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the distinct values</dd></dl>
 </li>
@@ -599,21 +622,6 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <pre>protected&nbsp;<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;getSource()</pre>
 <div class="block">Returns the underlying source data handle.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getSuppressionString()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSuppressionString</h4>
-<pre>protected&nbsp;java.lang.String&nbsp;getSuppressionString()</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html#getSuppressionString()">DataHandle</a></code></strong></div>
-<div class="block">Returns the string inserted for suppressed data items.</div>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#getSuppressionString()">getSuppressionString</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the suppression string</dd></dl>
 </li>
 </ul>
 <a name="internalCompare(int, int, int[], boolean)">
@@ -699,12 +707,27 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <a name="internalTranslate(int)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>internalTranslate</h4>
 <pre>protected&nbsp;int&nbsp;internalTranslate(int&nbsp;row)</pre>
 <div class="block">Translates the row number.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isAnonymous()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isAnonymous</h4>
+<pre>protected&nbsp;boolean&nbsp;isAnonymous()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html#isAnonymous()">DataHandle</a></code></strong></div>
+<div class="block">Returns whether the data represented by this handle is anonymous</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#isAnonymous()">isAnonymous</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

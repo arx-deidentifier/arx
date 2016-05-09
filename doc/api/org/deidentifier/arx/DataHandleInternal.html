@@ -137,44 +137,58 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#getAssociatedInput()">getAssociatedInput</a></strong>()</code>
+<div class="block">Returns the associated input handle, itself if there is none.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#getAttributeName(int)">getAttributeName</a></strong>(int&nbsp;column)</code>
 <div class="block">Method</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#getBaseDataType(java.lang.String)">getBaseDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#getColumnIndexOf(java.lang.String)">getColumnIndexOf</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Delegate</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Method</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.Date</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#getDate(int,%20int)">getDate</a></strong>(int&nbsp;row,
        int&nbsp;column)</code>
 <div class="block">Delegate</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#getDefinition()">getDefinition</a></strong>()</code>
 <div class="block">Method</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#getDistinctValues(int)">getDistinctValues</a></strong>(int&nbsp;column)</code>
 <div class="block">Delegate</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#getDistinctValues(int,%20boolean,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues</a></strong>(int&nbsp;column,
+                 boolean&nbsp;ignoreSuppression,
+                 <a href="../../../org/deidentifier/arx/DataHandleInternal.InterruptHandler.html" title="interface in org.deidentifier.arx">DataHandleInternal.InterruptHandler</a>&nbsp;stop)</code>
+<div class="block">Method</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -217,15 +231,13 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#getStatisticsBuilder()">getStatisticsBuilder</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#getSuperset()">getSuperset</a></strong>()</code>
 <div class="block">Returns the superset, if this handle is a subset</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#getSuppressionString()">getSuppressionString</a></strong>()</code>
-<div class="block">Method</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -251,17 +263,23 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#isAnonymous()">isAnonymous</a></strong>()</code>
+<div class="block">Returns whether the handle is anonymous</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#isOptimized()">isOptimized</a></strong>()</code>
 <div class="block">Returns whether the handle is optimized</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#isOutlier(int)">isOutlier</a></strong>(int&nbsp;row)</code>
 <div class="block">Returns whether the given row is suppressed</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInternal.html#isOutput()">isOutput</a></strong>()</code>
 <div class="block">Returns whether this is an output handle</div>
@@ -375,6 +393,20 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getDistinctValues(int, boolean, org.deidentifier.arx.DataHandleInternal.InterruptHandler)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDistinctValues</h4>
+<pre>public&nbsp;java.lang.String[]&nbsp;getDistinctValues(int&nbsp;column,
+                                   boolean&nbsp;ignoreSuppression,
+                                   <a href="../../../org/deidentifier/arx/DataHandleInternal.InterruptHandler.html" title="interface in org.deidentifier.arx">DataHandleInternal.InterruptHandler</a>&nbsp;stop)</pre>
+<div class="block">Method</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - </dd><dd><code>ignoreSuppression</code> - </dd><dd><code>stop</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getDistinctValues(int, org.deidentifier.arx.DataHandleInternal.InterruptHandler)">
 <!--   -->
 </a>
@@ -454,6 +486,15 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getStatisticsBuilder()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStatisticsBuilder</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a>&nbsp;getStatisticsBuilder()</pre>
+</li>
+</ul>
 <a name="getSuperset()">
 <!--   -->
 </a>
@@ -462,17 +503,6 @@ extends java.lang.Object</pre>
 <h4>getSuperset</h4>
 <pre>public&nbsp;<a href="../../../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a>&nbsp;getSuperset()</pre>
 <div class="block">Returns the superset, if this handle is a subset</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getSuppressionString()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSuppressionString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getSuppressionString()</pre>
-<div class="block">Method</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -512,6 +542,17 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="isAnonymous()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isAnonymous</h4>
+<pre>public&nbsp;boolean&nbsp;isAnonymous()</pre>
+<div class="block">Returns whether the handle is anonymous</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="isOptimized()">
 <!--   -->
 </a>
@@ -538,11 +579,22 @@ extends java.lang.Object</pre>
 <a name="isOutput()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>isOutput</h4>
 <pre>public&nbsp;boolean&nbsp;isOutput()</pre>
 <div class="block">Returns whether this is an output handle</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getAssociatedInput()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getAssociatedInput</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a>&nbsp;getAssociatedInput()</pre>
+<div class="block">Returns the associated input handle, itself if there is none.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

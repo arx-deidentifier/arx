@@ -1,5 +1,6 @@
 org.deidentifier.arx
 org.deidentifier.arx.aggregates
+org.deidentifier.arx.aggregates.classification
 org.deidentifier.arx.algorithm
 org.deidentifier.arx.common
 org.deidentifier.arx.criteria

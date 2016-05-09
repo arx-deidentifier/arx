@@ -143,27 +143,27 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html#getEquivalenceClasses()">getEquivalenceClasses</a></strong>()</code>
-<div class="block">Returns a set of classes as an input for the risk model</div>
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html#getFractionOfRecordsInClassesOfSize(int)">getFractionOfRecordsInClassesOfSize</a></strong>(int&nbsp;size)</code>
+<div class="block">Returns the fraction of tuples that are in classes of the given size</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html#getFractionOfTuplesInClassesOfSize(int)">getFractionOfTuplesInClassesOfSize</a></strong>(int&nbsp;size)</code>
-<div class="block">Returns the fraction of tuples that are in classes of the given size</div>
+<td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html#getHistogram()">getHistogram</a></strong>()</code>
+<div class="block">Returns a set of classes as an input for the risk model</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html#getNumberOfTuples()">getNumberOfTuples</a></strong>()</code>
-<div class="block">Returns the number of tuples</div>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html#getNumRecords()">getNumRecords</a></strong>()</code>
+<div class="block">Returns the number of records</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html#getNumOfSuppressedTuples()">getNumOfSuppressedTuples</a></strong>()</code>
-<div class="block">Returns the number of suppressed tuples</div>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyDistribution.html#getNumSuppressedRecords()">getNumSuppressedRecords</a></strong>()</code>
+<div class="block">Returns the number of suppressed records</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -211,47 +211,47 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getEquivalenceClasses()">
+<a name="getHistogram()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getEquivalenceClasses</h4>
-<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;getEquivalenceClasses()</pre>
+<h4>getHistogram</h4>
+<pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;getHistogram()</pre>
 <div class="block">Returns a set of classes as an input for the risk model</div>
 </li>
 </ul>
-<a name="getFractionOfTuplesInClassesOfSize(int)">
+<a name="getFractionOfRecordsInClassesOfSize(int)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getFractionOfTuplesInClassesOfSize</h4>
-<pre>public&nbsp;double&nbsp;getFractionOfTuplesInClassesOfSize(int&nbsp;size)</pre>
+<h4>getFractionOfRecordsInClassesOfSize</h4>
+<pre>public&nbsp;double&nbsp;getFractionOfRecordsInClassesOfSize(int&nbsp;size)</pre>
 <div class="block">Returns the fraction of tuples that are in classes of the given size</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>size</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getNumberOfTuples()">
+<a name="getNumRecords()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getNumberOfTuples</h4>
-<pre>public&nbsp;int&nbsp;getNumberOfTuples()</pre>
-<div class="block">Returns the number of tuples</div>
+<h4>getNumRecords</h4>
+<pre>public&nbsp;int&nbsp;getNumRecords()</pre>
+<div class="block">Returns the number of records</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getNumOfSuppressedTuples()">
+<a name="getNumSuppressedRecords()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getNumOfSuppressedTuples</h4>
-<pre>public&nbsp;int&nbsp;getNumOfSuppressedTuples()</pre>
-<div class="block">Returns the number of suppressed tuples</div>
+<h4>getNumSuppressedRecords</h4>
+<pre>public&nbsp;int&nbsp;getNumSuppressedRecords()</pre>
+<div class="block">Returns the number of suppressed records</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

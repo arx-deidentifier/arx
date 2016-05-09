@@ -324,40 +324,52 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getRiskThresholdJournalist()">getRiskThresholdJournalist</a></strong>()</code>
+<div class="block">Return journalist risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getRiskThresholdMarketer()">getRiskThresholdMarketer</a></strong>()</code>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getRiskThresholdProsecutor()">getRiskThresholdProsecutor</a></strong>()</code>
+<div class="block">Return prosecutor risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/criteria/SampleBasedCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedCriterion</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSampleBasedCriteriaAsArray()">getSampleBasedCriteriaAsArray</a></strong>()</code>
 <div class="block">Returns all sample-based criteria as an array.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSnapshotLength()">getSnapshotLength</a></strong>()</code>
 <div class="block">Returns the specific length of each entry in a snapshot.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSubset()">getSubset</a></strong>()</code>
 <div class="block">Returns the data subset, if any subset is defined.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSubsetInstance(org.deidentifier.arx.RowSet,%20double)">getSubsetInstance</a></strong>(<a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset,
                  double&nbsp;gsFactor)</code>
 <div class="block">Clones this config and projects everything onto the given subset.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSuppressedAttributeTypes()">getSuppressedAttributeTypes</a></strong>()</code>
 <div class="block">Returns an integer representing all attribute types that must be suppressed.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSuppressionString()">getSuppressionString</a></strong>()</code>
-<div class="block">Sets the string with which suppressed values are to be replaced.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -488,17 +500,11 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setSuppressionString(java.lang.String)">setSuppressionString</a></strong>(java.lang.String&nbsp;suppressionString)</code>
-<div class="block">Sets the string with which suppressed values are to be replaced.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setUseHeuristicSearchForSampleBasedCriteria(boolean)">setUseHeuristicSearchForSampleBasedCriteria</a></strong>(boolean&nbsp;value)</code>
 <div class="block">Do we guarantee optimality for sample-based criteria?</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setUtilityBasedMicroaggregation(boolean)">setUtilityBasedMicroaggregation</a></strong>(boolean&nbsp;value)</code>
 <div class="block">Sets whether microaggregation should be based on utility measures</div>
@@ -643,22 +649,6 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getSubsetInstance(org.deidentifier.arx.RowSet, double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSubsetInstance</h4>
-<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;getSubsetInstance(<a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset,
-                                 double&nbsp;gsFactor)</pre>
-<div class="block">Clones this config and projects everything onto the given subset.<br>
- - All privacy models will be cloned<br>
- - Subsets in d-presence will be projected accordingly<br>
- - Utility measures will be cloned<br></div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="containsCriterion(java.lang.Class)">
 <!--   -->
 </a>
@@ -669,18 +659,6 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <div class="block">Returns whether the configuration contains a criterion of the given class.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getSubset()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSubset</h4>
-<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;getSubset()</pre>
-<div class="block">Returns the data subset, if any subset is defined.
- You may only call this, after the config has be initialized.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getAttributeWeight(java.lang.String)">
@@ -811,14 +789,36 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getSuppressionString()">
+<a name="getRiskThresholdJournalist()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getSuppressionString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getSuppressionString()</pre>
-<div class="block">Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.</div>
+<h4>getRiskThresholdJournalist</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdJournalist()</pre>
+<div class="block">Return journalist risk threshold, 1 if there is none</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getRiskThresholdMarketer()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRiskThresholdMarketer</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdMarketer()</pre>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getRiskThresholdProsecutor()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRiskThresholdProsecutor</h4>
+<pre>public&nbsp;double&nbsp;getRiskThresholdProsecutor()</pre>
+<div class="block">Return prosecutor risk threshold, 1 if there is none</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -987,17 +987,6 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>max</code> - </dd></dl>
 </li>
 </ul>
-<a name="setSuppressionLimit(double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setSuppressionLimit</h4>
-<pre>public&nbsp;void&nbsp;setSuppressionLimit(double&nbsp;limit)</pre>
-<div class="block">Sets the suppression limit. This is an alias for setMaxOutliers().</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>limit</code> - </dd></dl>
-</li>
-</ul>
 <a name="setMetric(org.deidentifier.arx.metric.Metric)">
 <!--   -->
 </a>
@@ -1033,15 +1022,15 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>enabled</code> - </dd></dl>
 </li>
 </ul>
-<a name="setSuppressionString(java.lang.String)">
+<a name="setSuppressionLimit(double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setSuppressionString</h4>
-<pre>public&nbsp;void&nbsp;setSuppressionString(java.lang.String&nbsp;suppressionString)</pre>
-<div class="block">Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>suppressionString</code> - </dd></dl>
+<h4>setSuppressionLimit</h4>
+<pre>public&nbsp;void&nbsp;setSuppressionLimit(double&nbsp;limit)</pre>
+<div class="block">Sets the suppression limit. This is an alias for setMaxOutliers().</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>limit</code> - </dd></dl>
 </li>
 </ul>
 <a name="setUseHeuristicSearchForSampleBasedCriteria(boolean)">
@@ -1141,6 +1130,35 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <pre>protected&nbsp;int&nbsp;getSnapshotLength()</pre>
 <div class="block">Returns the specific length of each entry in a snapshot.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getSubset()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSubset</h4>
+<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;getSubset()</pre>
+<div class="block">Returns the data subset, if any subset is defined.
+ You may only call this, after the config has be initialized.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getSubsetInstance(org.deidentifier.arx.RowSet, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSubsetInstance</h4>
+<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;getSubsetInstance(<a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset,
+                                 double&nbsp;gsFactor)</pre>
+<div class="block">Clones this config and projects everything onto the given subset.<br>
+ - All privacy models will be cloned<br>
+ - Subsets in d-presence will be projected accordingly<br>
+ - Utility measures will be cloned<br>
+ - Replaces estimated k-map with according k-anonymity<br></div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getSuppressedAttributeTypes()">

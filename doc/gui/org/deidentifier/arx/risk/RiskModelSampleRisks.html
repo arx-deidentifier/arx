@@ -34,7 +34,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.PopulationUniquenessModel.html" title="enum in org.deidentifier.arx.risk"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRiskDistribution.html" title="class in org.deidentifier.arx.risk"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleSummary.html" title="class in org.deidentifier.arx.risk"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -96,7 +96,8 @@
 <br>
 <pre>public class <span class="strong">RiskModelSampleRisks</span>
 extends java.lang.Object</pre>
-<div class="block">Class for analyzing re-identification risks of the current sample</div>
+<div class="block">Class for analyzing re-identification risks of the current sample and mixed
+ risks which have been derived from privacy models</div>
 </li>
 </ul>
 </div>
@@ -115,7 +116,9 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#RiskModelSampleRisks(org.deidentifier.arx.risk.RiskModelHistogram)">RiskModelSampleRisks</a></strong>(<a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;histogram)</code>
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#RiskModelSampleRisks(org.deidentifier.arx.risk.RiskModelHistogram,%20org.deidentifier.arx.ARXConfiguration,%20boolean)">RiskModelSampleRisks</a></strong>(<a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;histogram,
+                    <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
+                    boolean&nbsp;anonymous)</code>
 <div class="block">Creates a new instance</div>
 </td>
 </tr>
@@ -142,42 +145,60 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#getEstimatedJournalistRisk()">getEstimatedJournalistRisk</a></strong>()</code>
+<div class="block">Return journalist risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#getEstimatedMarketerRisk()">getEstimatedMarketerRisk</a></strong>()</code>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#getEstimatedProsecutorRisk()">getEstimatedProsecutorRisk</a></strong>()</code>
+<div class="block">Return prosecutor risk threshold, 1 if there is none</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#getFractionOfTuplesAffectedByHighestRisk()">getFractionOfTuplesAffectedByHighestRisk</a></strong>()</code>
 <div class="block">Returns the fraction of tuples affected by the highest re-identification
  risk</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#getFractionOfTuplesAffectedByLowestRisk()">getFractionOfTuplesAffectedByLowestRisk</a></strong>()</code>
 <div class="block">Returns the fraction of tuples affected by the lowest re-identification
  risk</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#getHighestRisk()">getHighestRisk</a></strong>()</code>
 <div class="block">Returns the highest re-identification risk of any tuple in the data set</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#getHistogram()">getHistogram</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#getLowestRisk()">getLowestRisk</a></strong>()</code>
 <div class="block">Returns the lowest re-identification risk of any tuple in the data set</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#getNumTuplesAffectedByHighestRisk()">getNumTuplesAffectedByHighestRisk</a></strong>()</code>
 <div class="block">Returns the number of tuples affected by the highest re-identification
  risk</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#getNumTuplesAffectedByLowestRisk()">getNumTuplesAffectedByLowestRisk</a></strong>()</code>
 <div class="block">Returns the number of tuples affected by the lowest re-identification
@@ -206,15 +227,17 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="RiskModelSampleRisks(org.deidentifier.arx.risk.RiskModelHistogram)">
+<a name="RiskModelSampleRisks(org.deidentifier.arx.risk.RiskModelHistogram, org.deidentifier.arx.ARXConfiguration, boolean)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>RiskModelSampleRisks</h4>
-<pre>public&nbsp;RiskModelSampleRisks(<a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;histogram)</pre>
+<pre>public&nbsp;RiskModelSampleRisks(<a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;histogram,
+                    <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
+                    boolean&nbsp;anonymous)</pre>
 <div class="block">Creates a new instance</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>histogram</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>histogram</code> - </dd><dd><code>config</code> - </dd><dd><code>anonymous</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -282,6 +305,39 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getEstimatedJournalistRisk()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEstimatedJournalistRisk</h4>
+<pre>public&nbsp;double&nbsp;getEstimatedJournalistRisk()</pre>
+<div class="block">Return journalist risk threshold, 1 if there is none</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getEstimatedMarketerRisk()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEstimatedMarketerRisk</h4>
+<pre>public&nbsp;double&nbsp;getEstimatedMarketerRisk()</pre>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getEstimatedProsecutorRisk()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEstimatedProsecutorRisk</h4>
+<pre>public&nbsp;double&nbsp;getEstimatedProsecutorRisk()</pre>
+<div class="block">Return prosecutor risk threshold, 1 if there is none</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getNumTuplesAffectedByHighestRisk()">
 <!--   -->
 </a>
@@ -342,7 +398,7 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../org/deidentifier/arx/risk/RiskModelPopulationUniqueness.PopulationUniquenessModel.html" title="enum in org.deidentifier.arx.risk"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRiskDistribution.html" title="class in org.deidentifier.arx.risk"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleSummary.html" title="class in org.deidentifier.arx.risk"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">

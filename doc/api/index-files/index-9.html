@@ -414,6 +414,14 @@
 <dd>
 <div class="block">Creates a new instance of the enclosure criterion.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/classification/ClassificationResult.html#index()">index()</a></span> - Method in interface org.deidentifier.arx.aggregates.classification.<a href="../org/deidentifier/arx/aggregates/classification/ClassificationResult.html" title="interface in org.deidentifier.arx.aggregates.classification">ClassificationResult</a></dt>
+<dd>
+<div class="block">Returns the index of the predicted value</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/classification/MultiClassLogisticRegressionClassificationResult.html#index()">index()</a></span> - Method in class org.deidentifier.arx.aggregates.classification.<a href="../org/deidentifier/arx/aggregates/classification/MultiClassLogisticRegressionClassificationResult.html" title="class in org.deidentifier.arx.aggregates.classification">MultiClassLogisticRegressionClassificationResult</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/classification/MultiClassZeroRClassificationResult.html#index()">index()</a></span> - Method in class org.deidentifier.arx.aggregates.classification.<a href="../org/deidentifier/arx/aggregates/classification/MultiClassZeroRClassificationResult.html" title="class in org.deidentifier.arx.aggregates.classification">MultiClassZeroRClassificationResult</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric"><span class="strong">InformationLoss</span></a>&lt;<a href="../org/deidentifier/arx/metric/InformationLoss.html" title="type parameter in InformationLoss">T</a>&gt; - Class in <a href="../org/deidentifier/arx/metric/package-summary.html">org.deidentifier.arx.metric</a></dt>
 <dd>
 <div class="block">This class implements an abstract base class for information loss.</div>
@@ -460,6 +468,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/KMap.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize(DataManager)</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/KMap.html" title="class in org.deidentifier.arx.criteria">KMap</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/PopulationUniqueness.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize(DataManager)</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/PopulationUniqueness.html" title="class in org.deidentifier.arx.criteria">PopulationUniqueness</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize(DataManager)</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></dt>
 <dd>
 <div class="block">Override this to initialize the criterion.</div>
@@ -471,6 +481,10 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricMDHeight.html#initialize(int,%20int)">initialize(int, int)</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricMDHeight.html" title="class in org.deidentifier.arx.metric.v2">MetricMDHeight</a></dt>
 <dd>
 <div class="block">For backwards compatibility only.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/classification/ClassificationDataSpecification.html#inputFeatureMetadata">inputFeatureMetadata</a></span> - Variable in class org.deidentifier.arx.aggregates.classification.<a href="../org/deidentifier/arx/aggregates/classification/ClassificationDataSpecification.html" title="class in org.deidentifier.arx.aggregates.classification">ClassificationDataSpecification</a></dt>
+<dd>
+<div class="block">Feature meta data</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/AttributeType.html#INSENSITIVE_ATTRIBUTE">INSENSITIVE_ATTRIBUTE</a></span> - Static variable in class org.deidentifier.arx.<a href="../org/deidentifier/arx/AttributeType.html" title="class in org.deidentifier.arx">AttributeType</a></dt>
 <dd>
@@ -534,6 +548,14 @@
 <dd>
 <div class="block">Not supported by this type of criterion</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataHandleInternal.html#isAnonymous()">isAnonymous()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a></dt>
+<dd>
+<div class="block">Returns whether the handle is anonymous</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/DataType.html#isAny(java.lang.String)">isAny(String)</a></span> - Static method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a></dt>
+<dd>
+<div class="block">Returns whether the value represents any value</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/StatisticsSummary.html#isArithmeticMeanAvailable()">isArithmeticMeanAvailable()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/StatisticsSummary.html" title="class in org.deidentifier.arx.aggregates">StatisticsSummary</a></dt>
 <dd>
 <div class="block">Returns whether the following measure is available: mean</div>
@@ -579,10 +601,14 @@
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.html#isComplete()">isComplete()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a></dt>
 <dd>
-<div class="block">Is there a unique</div>
+<div class="block">Returns whether the search space has been characterized completely</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/MetricDescription.html#isConfigurableCodingModelSupported()">isConfigurableCodingModelSupported()</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/MetricDescription.html" title="class in org.deidentifier.arx.metric">MetricDescription</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html#isDeterministic()">isDeterministic()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a></dt>
+<dd>
+<div class="block">Returns whether the process should be deterministic</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html#isDomainPropertiesAvailable()">isDomainPropertiesAvailable()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderRedactionBased</a></dt>
 <dd>
 <div class="block">Returns whether domain-properties are available for this builder.</div>
@@ -632,6 +658,38 @@
 <dd>
 <div class="block">Last names</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/AverageReidentificationRisk.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/AverageReidentificationRisk.html" title="class in org.deidentifier.arx.criteria">AverageReidentificationRisk</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/DDisclosurePrivacy.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/DDisclosurePrivacy.html" title="class in org.deidentifier.arx.criteria">DDisclosurePrivacy</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/DistinctLDiversity.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/DistinctLDiversity.html" title="class in org.deidentifier.arx.criteria">DistinctLDiversity</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/DPresence.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/DPresence.html" title="class in org.deidentifier.arx.criteria">DPresence</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html" title="class in org.deidentifier.arx.criteria">EDDifferentialPrivacy</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/EntropyLDiversity.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/EntropyLDiversity.html" title="class in org.deidentifier.arx.criteria">EntropyLDiversity</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/EqualDistanceTCloseness.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/EqualDistanceTCloseness.html" title="class in org.deidentifier.arx.criteria">EqualDistanceTCloseness</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/HierarchicalDistanceTCloseness.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/HierarchicalDistanceTCloseness.html" title="class in org.deidentifier.arx.criteria">HierarchicalDistanceTCloseness</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/Inclusion.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/Inclusion.html" title="class in org.deidentifier.arx.criteria">Inclusion</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/KAnonymity.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/KAnonymity.html" title="class in org.deidentifier.arx.criteria">KAnonymity</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/KMap.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/KMap.html" title="class in org.deidentifier.arx.criteria">KMap</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/PopulationUniqueness.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/PopulationUniqueness.html" title="class in org.deidentifier.arx.criteria">PopulationUniqueness</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/PrivacyCriterion.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></dt>
+<dd>
+<div class="block">Returns whether the criterion supports local recoding.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/RecursiveCLDiversity.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/RecursiveCLDiversity.html" title="class in org.deidentifier.arx.criteria">RecursiveCLDiversity</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/SampleUniqueness.html#isLocalRecodingSupported()">isLocalRecodingSupported()</a></span> - Method in class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/SampleUniqueness.html" title="class in org.deidentifier.arx.criteria">SampleUniqueness</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataDefinition.html#isLocked()">isLocked()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></dt>
 <dd>
 <div class="block">Returns whether this definition can be altered.</div>
@@ -691,6 +749,10 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Interval.html#isNullInterval()">isNullInterval()</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Interval.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased.Interval</a></dt>
 <dd>
 <div class="block">Is this an interval for null values</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/classification/ClassificationFeatureMetadata.html#isNumeric()">isNumeric()</a></span> - Method in class org.deidentifier.arx.aggregates.classification.<a href="../org/deidentifier/arx/aggregates/classification/ClassificationFeatureMetadata.html" title="class in org.deidentifier.arx.aggregates.classification">ClassificationFeatureMetadata</a></dt>
+<dd>
+<div class="block">Returns whether this is a numeric attribute</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXResult.html#isOptimizable(org.deidentifier.arx.DataHandle)">isOptimizable(DataHandle)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></dt>
 <dd>
