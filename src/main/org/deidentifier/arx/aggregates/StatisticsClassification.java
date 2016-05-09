@@ -440,21 +440,17 @@ public class StatisticsClassification {
             if (i == k - 1) {
                 max = rows.size();
             }
-            
-            // Check
-            if (max < rows.size()) {
-                
-                // Collect rows
-                List<Integer> fold = new ArrayList<>();
-                for (int j = min; j < max; j++) {
-                    fold.add(rows.get(j));
-                }
-                
-                // Store
-                folds.add(fold);
+
+            // Collect rows
+            List<Integer> fold = new ArrayList<>();
+            for (int j = min; j < max; j++) {
+                fold.add(rows.get(j));
             }
+
+            // Store
+            folds.add(fold);
         }
-        
+
         // Free
         rows.clear();
         rows = null;
