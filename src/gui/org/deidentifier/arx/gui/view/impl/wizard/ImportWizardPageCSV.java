@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -523,8 +524,9 @@ public class ImportWizardPageCSV extends WizardPage {
      * @throws IOException In case file couldn't be accessed successfully
      */
     private void detectDelimiter() throws IOException {
+        Charset charset = getCharset();
 
-        final BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(comboLocation.getText()), "Cp1252"));
+        final BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(comboLocation.getText()), charset));
         final IntIntOpenHashMap map = new IntIntOpenHashMap();
         final CharIntOpenHashMap delimitors = new CharIntOpenHashMap();
         for (int i=0; i<this.delimiters.length; i++) {
@@ -571,6 +573,12 @@ public class ImportWizardPageCSV extends WizardPage {
         }
     }
 
+    
+    private Charset getCharset() {
+        // TODO: get charset from user
+        return Charset.defaultCharset();
+    }
+
     /**
      * Tries to detect the line break.
      *
@@ -580,9 +588,11 @@ public class ImportWizardPageCSV extends WizardPage {
         BufferedReader r = null;
         final char[] buffer = new char[ImportWizardModel.DETECT_MAX_CHARS];
         int read = 0;
+        
+        Charset charset = getCharset();
 
         try {
-            r = new BufferedReader(new InputStreamReader(new FileInputStream(comboLocation.getText()), "Cp1252"));
+            r = new BufferedReader(new InputStreamReader(new FileInputStream(comboLocation.getText()), charset));
             read = r.read(buffer);
         } finally {
             if (r != null) {
@@ -691,13 +701,14 @@ public class ImportWizardPageCSV extends WizardPage {
         final char quote = quotes[selectedQuote];
         final char escape = escapes[selectedEscape];
         final boolean containsHeader = btnContainsHeader.getSelection();
+        final Charset charset = Charset.defaultCharset();
 
         /* Variables needed for processing */
-        final CSVDataInput in = new CSVDataInput(location, delimiter, quote, escape, linebreak);
+        final CSVDataInput in = new CSVDataInput(location, charset, delimiter, quote, escape, linebreak);
         final Iterator<String[]> it = in.iterator();
         final String[] firstLine;
         wizardColumns = new ArrayList<ImportWizardModelColumn>();
-        ImportConfigurationCSV config = new ImportConfigurationCSV(location, delimiter, quote, escape, linebreak, containsHeader);
+        ImportConfigurationCSV config = new ImportConfigurationCSV(location, charset, delimiter, quote, escape, linebreak, containsHeader);
 
         /* Check whether there is at least one line in file and retrieve it */
         if (it.hasNext()) {

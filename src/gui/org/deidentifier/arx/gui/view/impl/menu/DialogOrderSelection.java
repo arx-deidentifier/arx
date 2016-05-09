@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -195,13 +196,14 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
      * Loads the array from a file.
      *
      * @param file
+     * @param charset TODO
      * @return
      */
-    private String[] loadArray(String file) {
+    private String[] loadArray(String file, Charset charset) {
         ArrayList<String> list = new ArrayList<String>();
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "Cp1252"));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
             String line = reader.readLine();
             while (line != null) {
                 list.add(line);
@@ -300,7 +302,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
             public void widgetSelected(final SelectionEvent e) {
                 String file = controller.actionShowOpenFileDialog(getShell(), "*.csv"); //$NON-NLS-1$
                 if (file != null){
-                    String[] array = loadArray(file);
+                    String[] array = loadArray(file, Charset.defaultCharset());
                     if (array != null) {
                         
                         // Select string

@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,6 +62,9 @@ public abstract class HIPAAConstants {
     private Set<String>                       zipcodes   = null;
     /** Labels */
     private Map<String, Map<String, Integer>> labels     = null;
+                                                         
+    /** Default charset */
+    private static final Charset              CHARSET    = StandardCharsets.UTF_8;
 
     /**
      * Returns all matchers for the given category
@@ -164,7 +169,7 @@ public abstract class HIPAAConstants {
         if (this.labels == null) {
                 
             InputStream stream = getInputStream("labels.properties");
-            BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+            BufferedReader br = new BufferedReader(new InputStreamReader(stream, CHARSET));
             this.labels = new HashMap<String, Map<String, Integer>>();
     
             try {
@@ -218,7 +223,7 @@ public abstract class HIPAAConstants {
      */
     private Set<String> load(String file) {
         InputStream stream = getInputStream(file);
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream, CHARSET));
         Set<String> set = new HashSet<String>();
         try {
             String line = br.readLine();

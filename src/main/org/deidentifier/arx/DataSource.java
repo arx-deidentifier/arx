@@ -17,6 +17,7 @@
 package org.deidentifier.arx;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 
 import org.deidentifier.arx.io.ImportColumnCSV;
@@ -120,8 +121,8 @@ public class DataSource {
      * @param separator
      * @param containsHeader
      */
-    private DataSource(File file, char separator, boolean containsHeader) {
-        config = new ImportConfigurationCSV(file.getAbsolutePath(), separator, containsHeader);
+    private DataSource(File file, Charset charset, char separator, boolean containsHeader) {
+        config = new ImportConfigurationCSV(file.getAbsolutePath(), charset, separator, containsHeader);
     }
 
     /**

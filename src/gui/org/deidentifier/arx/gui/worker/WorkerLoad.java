@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -594,7 +595,7 @@ public class WorkerLoad extends Worker<Model> {
         final InputStream is = new BufferedInputStream(zip.getInputStream(entry));
         
         // Use project delimiter for backwards compatibility
-        return Hierarchy.create(is, model.getCSVSyntax().getDelimiter());
+        return Hierarchy.create(is, Charset.defaultCharset(), model.getCSVSyntax().getDelimiter());
     }
 
     /**
@@ -612,6 +613,7 @@ public class WorkerLoad extends Worker<Model> {
         // Read input
         // Use project delimiter for backwards compatibility
         config.setInput(Data.create(new BufferedInputStream(zip.getInputStream(entry)),
+                                    Charset.defaultCharset(),
                                     model.getCSVSyntax().getDelimiter()));
         
         // Disable visualization

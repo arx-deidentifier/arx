@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -222,11 +223,12 @@ public class AttributeType implements Serializable, Cloneable {
          * Creates a new hierarchy from a CSV file.
          *
          * @param file the file
+         * @param charset the charset
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final File file) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file).getHierarchy());
+        public static Hierarchy create(final File file, final Charset charset) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, charset).getHierarchy());
         }
 
         /**
@@ -237,41 +239,44 @@ public class AttributeType implements Serializable, Cloneable {
          * @return A Hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final File file, final char delimiter) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file, delimiter).getHierarchy());
+        public static Hierarchy create(final File file, final Charset charset, final char delimiter) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, charset, delimiter).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param file the file
+         * @param charset the charset
          * @param delimiter the delimiter
          * @param quote the quote
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final File file, final char delimiter, final char quote) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file, delimiter, quote).getHierarchy());
+        public static Hierarchy create(final File file, final Charset charset, final char delimiter, final char quote) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, charset, delimiter, quote).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param file the file
+         * @param charset the charset
          * @param delimiter the delimiter
          * @param quote the quote
          * @param escape the escape
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final File file, final char delimiter, final char quote, final char escape) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file, delimiter, quote, escape).getHierarchy());
+        public static Hierarchy create(final File file, final Charset charset, final char delimiter, final char quote, final char escape) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, charset, delimiter, quote, escape).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param file the file
+         * @param charset the charset
          * @param delimiter the delimiter
          * @param quote the quote
          * @param escape the escape
@@ -279,8 +284,8 @@ public class AttributeType implements Serializable, Cloneable {
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file, delimiter, quote, escape, linebreak).getHierarchy());
+        public static Hierarchy create(final File file, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, charset, delimiter, quote, escape, linebreak).getHierarchy());
         }
 
         /**
@@ -291,8 +296,8 @@ public class AttributeType implements Serializable, Cloneable {
          * @return
          * @throws IOException
          */
-        public static Hierarchy create(final File file, final CSVSyntax config) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file, config).getHierarchy());
+        public static Hierarchy create(final File file, final Charset charset, final CSVSyntax config) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, charset, config).getHierarchy());
         }
 
         /**
@@ -302,53 +307,57 @@ public class AttributeType implements Serializable, Cloneable {
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final InputStream stream) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream).getHierarchy());
+        public static Hierarchy create(final InputStream stream, final Charset charset) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, charset).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param stream An input stream
+         * @param charset the charset
          * @param delimiter The utilized separator character
          * @return A Hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final InputStream stream, final char delimiter) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream, delimiter).getHierarchy());
+        public static Hierarchy create(final InputStream stream, final Charset charset, final char delimiter) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, charset, delimiter).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param stream the stream
+         * @param charset the charset
          * @param delimiter the delimiter
          * @param quote the quote
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final InputStream stream, final char delimiter, final char quote) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream, delimiter, quote).getHierarchy());
+        public static Hierarchy create(final InputStream stream, final Charset charset, final char delimiter, final char quote) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, charset, delimiter, quote).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param stream the stream
+         * @param charset the charset
          * @param delimiter the delimiter
          * @param quote the quote
          * @param escape the escape
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final InputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream, delimiter, quote, escape).getHierarchy());
+        public static Hierarchy create(final InputStream stream, final Charset charset, final char delimiter, final char quote, final char escape) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, charset, delimiter, quote, escape).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param stream the stream
+         * @param charset the charset
          * @param delimiter the delimiter
          * @param quote the quote
          * @param escape the escape
@@ -356,19 +365,20 @@ public class AttributeType implements Serializable, Cloneable {
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final InputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream, delimiter, quote, escape, linebreak).getHierarchy());
+        public static Hierarchy create(final InputStream stream, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, charset, delimiter, quote, escape, linebreak).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          * @param stream
+         * @param charset
          * @param config
          * @return
          * @throws IOException
          */
-        public static Hierarchy create(final InputStream stream, final CSVSyntax config) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream, config).getHierarchy());
+        public static Hierarchy create(final InputStream stream, final Charset charset, final CSVSyntax config) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, charset, config).getHierarchy());
         }
 
         /**
@@ -395,23 +405,25 @@ public class AttributeType implements Serializable, Cloneable {
          * Creates a new hierarchy from a CSV file.
          *
          * @param path A path to the file
+         * @param charset the charset
          * @param separator The utilized separator character
          * @return A Hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final String path, final char separator) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(path, separator).getHierarchy());
+        public static Hierarchy create(final String path, final Charset charset, final char separator) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(path, charset, separator).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          * @param path
+         * @param charset
          * @param config
          * @return
          * @throws IOException
          */
-        public static Hierarchy create(final String path, final CSVSyntax config) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(path, config).getHierarchy());
+        public static Hierarchy create(final String path, final Charset charset, final CSVSyntax config) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(path, charset, config).getHierarchy());
         }
 
         /**

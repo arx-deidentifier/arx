@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1163,7 +1164,8 @@ public class Controller implements IView {
 
             // Load hierarchy
             final char separator = dialog.getSeparator();
-            final Hierarchy hierarchy = actionImportHierarchy(path, separator);
+            final Charset charset = Charset.defaultCharset();
+            final Hierarchy hierarchy = actionImportHierarchy(path, charset, separator);
             if (hierarchy != null) {
                 String attr = model.getSelectedAttribute();
                 model.getInputConfig().setMaximumGeneralization(attr, null);
@@ -1984,9 +1986,10 @@ public class Controller implements IView {
      * @return
      */
     private Hierarchy actionImportHierarchy(final String path,
+                                            final Charset charset,
                                             final char separator) {
         try {
-            return Hierarchy.create(path, separator);
+            return Hierarchy.create(path, charset, separator);
         } catch (Throwable error) {
             if (error instanceof RuntimeException) {
                 if (error.getCause() != null) {

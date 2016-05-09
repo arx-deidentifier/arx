@@ -20,6 +20,7 @@ package org.deidentifier.arx.io;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,8 +42,8 @@ public class CSVHierarchyInput {
      * @param file the file
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final File file) throws IOException {
-        load(new CSVDataInput(file));
+    public CSVHierarchyInput(final File file, final Charset charset) throws IOException {
+        load(new CSVDataInput(file, charset));
     }
 
     /**
@@ -52,8 +53,8 @@ public class CSVHierarchyInput {
      * @param delimiter the delimiter
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final File file, final char delimiter) throws IOException {
-        load(new CSVDataInput(file, delimiter));
+    public CSVHierarchyInput(final File file, final Charset charset, final char delimiter) throws IOException {
+        load(new CSVDataInput(file, charset, delimiter));
     }
 
     /**
@@ -64,8 +65,8 @@ public class CSVHierarchyInput {
      * @param quote the quote
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final File file, final char delimiter, final char quote) throws IOException {
-        load(new CSVDataInput(file, delimiter, quote));
+    public CSVHierarchyInput(final File file, final Charset charset, final char delimiter, final char quote) throws IOException {
+        load(new CSVDataInput(file, charset, delimiter, quote));
     }
 
     /**
@@ -77,8 +78,8 @@ public class CSVHierarchyInput {
      * @param escape the escape
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final File file, final char delimiter, final char quote, final char escape) throws IOException {
-        load(new CSVDataInput(file, delimiter, quote, escape));
+    public CSVHierarchyInput(final File file, final Charset charset, final char delimiter, final char quote, final char escape) throws IOException {
+        load(new CSVDataInput(file, charset, delimiter, quote, escape));
     }
 
     /**
@@ -91,8 +92,8 @@ public class CSVHierarchyInput {
      * @param linebreak the linebreak
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-        load(new CSVDataInput(file, delimiter, quote, escape, linebreak));
+    public CSVHierarchyInput(final File file, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        load(new CSVDataInput(file, charset, delimiter, quote, escape, linebreak));
     }
 
     /**
@@ -102,8 +103,8 @@ public class CSVHierarchyInput {
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final File file, final CSVSyntax config) throws IOException {
-        load(new CSVDataInput(file, config));
+    public CSVHierarchyInput(final File file, final Charset charset, final CSVSyntax config) throws IOException {
+        load(new CSVDataInput(file, charset, config));
     }
 
     /**
@@ -112,8 +113,8 @@ public class CSVHierarchyInput {
      * @param stream the stream
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final InputStream stream) throws IOException {
-        load(new CSVDataInput(stream));
+    public CSVHierarchyInput(final InputStream stream, final Charset charset) throws IOException {
+        load(new CSVDataInput(stream, charset));
     }
 
     /**
@@ -123,8 +124,8 @@ public class CSVHierarchyInput {
      * @param delimiter the delimiter
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final InputStream stream, final char delimiter) throws IOException {
-        load(new CSVDataInput(stream, delimiter));
+    public CSVHierarchyInput(final InputStream stream, final Charset charset, final char delimiter) throws IOException {
+        load(new CSVDataInput(stream, charset, delimiter));
     }
 
     /**
@@ -135,8 +136,8 @@ public class CSVHierarchyInput {
      * @param quote the quote
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final InputStream stream, final char delimiter, final char quote) throws IOException {
-        load(new CSVDataInput(stream, delimiter, quote));
+    public CSVHierarchyInput(final InputStream stream, final Charset charset, final char delimiter, final char quote) throws IOException {
+        load(new CSVDataInput(stream, charset, delimiter, quote));
     }
 
     /**
@@ -148,10 +149,10 @@ public class CSVHierarchyInput {
      * @param escape the escape
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final InputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
-        load(new CSVDataInput(stream, delimiter, quote, escape));
+    public CSVHierarchyInput(final InputStream stream, final Charset charset, final char delimiter, final char quote, final char escape) throws IOException {
+        load(new CSVDataInput(stream, charset, delimiter, quote, escape));
     }
-
+    
     /**
      * Instantiate.
      *
@@ -162,8 +163,8 @@ public class CSVHierarchyInput {
      * @param linebreak the linebreak
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final InputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-        load(new CSVDataInput(stream, delimiter, quote, escape, linebreak));
+    public CSVHierarchyInput(final InputStream stream, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        load(new CSVDataInput(stream, charset, delimiter, quote, escape, linebreak));
     }
 
     /**
@@ -173,8 +174,8 @@ public class CSVHierarchyInput {
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final InputStream stream, final CSVSyntax config) throws IOException {
-        load(new CSVDataInput(stream, config));
+    public CSVHierarchyInput(final InputStream stream, final Charset charset, final CSVSyntax config) throws IOException {
+        load(new CSVDataInput(stream, charset, config));
     }
 
     /**
@@ -183,8 +184,8 @@ public class CSVHierarchyInput {
      * @param filename the filename
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final String filename) throws IOException {
-        load(new CSVDataInput(filename));
+    public CSVHierarchyInput(final String filename, final Charset charset) throws IOException {
+        load(new CSVDataInput(filename, charset));
     }
 
     /**
@@ -194,8 +195,8 @@ public class CSVHierarchyInput {
      * @param delimiter the delimiter
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final String filename, final char delimiter) throws IOException {
-        load(new CSVDataInput(filename, delimiter));
+    public CSVHierarchyInput(final String filename, final Charset charset, final char delimiter) throws IOException {
+        load(new CSVDataInput(filename, charset, delimiter));
     }
 
     /**
@@ -206,8 +207,8 @@ public class CSVHierarchyInput {
      * @param quote the quote
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final String filename, final char delimiter, final char quote) throws IOException {
-        load(new CSVDataInput(filename, delimiter, quote));
+    public CSVHierarchyInput(final String filename, final Charset charset, final char delimiter, final char quote) throws IOException {
+        load(new CSVDataInput(filename, charset, delimiter, quote));
     }
 
     /**
@@ -219,8 +220,8 @@ public class CSVHierarchyInput {
      * @param escape the escape
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final String filename, final char delimiter, final char quote, final char escape) throws IOException {
-        load(new CSVDataInput(filename, delimiter, quote, escape));
+    public CSVHierarchyInput(final String filename, final Charset charset, final char delimiter, final char quote, final char escape) throws IOException {
+        load(new CSVDataInput(filename, charset, delimiter, quote, escape));
     }
 
     /**
@@ -233,8 +234,8 @@ public class CSVHierarchyInput {
      * @param linebreak the linebreak
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final String filename, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-        load(new CSVDataInput(filename, delimiter, quote, escape, linebreak));
+    public CSVHierarchyInput(final String filename, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        load(new CSVDataInput(filename, charset, delimiter, quote, escape, linebreak));
     }
 
     /**
@@ -244,8 +245,8 @@ public class CSVHierarchyInput {
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public CSVHierarchyInput(final String filename, final CSVSyntax config) throws IOException {
-        load(new CSVDataInput(filename, config));
+    public CSVHierarchyInput(final String filename, final Charset charset, final CSVSyntax config) throws IOException {
+        load(new CSVDataInput(filename, charset, config));
     }
 
     /**

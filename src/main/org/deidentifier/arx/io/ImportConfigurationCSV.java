@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.io;
 
+import java.nio.charset.Charset;
+
 /**
  * Configuration describing a CSV file.
  *
@@ -43,6 +45,9 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
      * @see {@link IImportConfigurationWithHeader}
      */
     private boolean      containsHeader;
+    
+    /** The charset of the CSV file */
+    private final Charset charset;
 
     /**
      * Creates a new instance of this object.
@@ -51,59 +56,67 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
      * @param containsHeader {@link #containsHeader}
      */
     public ImportConfigurationCSV(String fileLocation,
+                                  Charset charset,
                                   boolean containsHeader) {
-        this(fileLocation, CSVSyntax.DEFAULT_DELIMITER, CSVSyntax.DEFAULT_QUOTE, CSVSyntax.DEFAULT_ESCAPE, containsHeader);
+        this(fileLocation, charset, CSVSyntax.DEFAULT_DELIMITER, CSVSyntax.DEFAULT_QUOTE, CSVSyntax.DEFAULT_ESCAPE, containsHeader);
     }
 
     /**
      * Creates a new instance of this object.
      *
      * @param fileLocation {@link #setFileLocation(String)}
+     * @param charset {@link #charset}
      * @param delimiter {@link #separator}
      * @param containsHeader {@link #containsHeader}
      */
     public ImportConfigurationCSV(String fileLocation,
+                                  Charset charset,
                                   char delimiter,
                                   boolean containsHeader) {
-        this(fileLocation, delimiter, CSVSyntax.DEFAULT_QUOTE, CSVSyntax.DEFAULT_ESCAPE, containsHeader);
+        this(fileLocation, charset, delimiter, CSVSyntax.DEFAULT_QUOTE, CSVSyntax.DEFAULT_ESCAPE, containsHeader);
     }
 
     /**
      * Creates a new instance of this object.
      *
      * @param fileLocation {@link #setFileLocation(String)}
+     * @param charset {@link #charset}
      * @param delimiter {@link #delimiter}
      * @param quote {@link #quote}
      * @param containsHeader {@link #containsHeader}
      */
     public ImportConfigurationCSV(String fileLocation,
+                                  Charset charset,
                                   char delimiter,
                                   char quote,
                                   boolean containsHeader) {
-        this(fileLocation, delimiter, quote, CSVSyntax.DEFAULT_ESCAPE, containsHeader);
+        this(fileLocation, charset, delimiter, quote, CSVSyntax.DEFAULT_ESCAPE, containsHeader);
     }
 
     /**
      * Creates a new instance of this object.
      *
      * @param fileLocation {@link #setFileLocation(String)}
+     * @param charset {@link #charset}
      * @param delimiter {@link #delimiter}
      * @param quote {@link #quote}
      * @param escape {@link #escape}
      * @param containsHeader {@link #containsHeader}
      */
     public ImportConfigurationCSV(String fileLocation,
+                                  Charset charset,
                                   char delimiter,
                                   char quote,
                                   char escape,
                                   boolean containsHeader) {
-        this(fileLocation, delimiter, quote, escape, CSVSyntax.DEFAULT_LINEBREAK, containsHeader);
+        this(fileLocation, charset, delimiter, quote, escape, CSVSyntax.DEFAULT_LINEBREAK, containsHeader);
     }
 
     /**
      * Creates a new instance of this object.
      *
      * @param fileLocation the file location
+     * @param charset the charset
      * @param delimiter the delimiter
      * @param quote the quote
      * @param escape the escape
@@ -111,6 +124,7 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
      * @param containsHeader the contains header
      */
     public ImportConfigurationCSV(String fileLocation,
+                                  Charset charset,
                                   char delimiter,
                                   char quote,
                                   char escape,
@@ -123,6 +137,7 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
         this.escape = escape;
         this.containsHeader = containsHeader;
         this.linebreak = linebreak;
+        this.charset = charset;
     }
 
     /**
@@ -245,5 +260,13 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
     @Override
     public void setContainsHeader(boolean containsHeader) {
         this.containsHeader = containsHeader;
+    }
+
+    /**
+     * Returns the charset of the CSV file.
+     * @return
+     */
+    public Charset getCharset() {
+        return charset;
     }
 }

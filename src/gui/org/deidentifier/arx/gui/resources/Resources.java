@@ -21,6 +21,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,6 +61,9 @@ public class Resources {
     /** The image cache */
     private final Map<String, Image>    imageCache;
     
+    /** The charset used to read the license text */
+    private final static Charset CHARSET = StandardCharsets.UTF_8;
+    
     /**
      * Returns the logo.
      *
@@ -85,7 +90,7 @@ public class Resources {
      */
     public static String getLicenseText() {
         InputStream stream = Resources.class.getResourceAsStream("license.txt"); //$NON-NLS-1$
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream, CHARSET));
         String content = ""; //$NON-NLS-1$
         try {
             StringBuilder sb = new StringBuilder();
