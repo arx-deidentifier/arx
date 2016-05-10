@@ -18,6 +18,7 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Arrays;
 
@@ -118,7 +119,7 @@ public class Example28 extends Example {
      */
     private static void exampleCSV() throws IOException {
         
-        DataSource source = DataSource.createCSVSource("data/test_dirty.csv", ';', true);
+        DataSource source = DataSource.createCSVSource("data/test_dirty.csv", StandardCharsets.UTF_8, ';', true);
         source.addColumn("age", DataType.INTEGER, true);
         
         // Create data object
@@ -173,7 +174,7 @@ public class Example28 extends Example {
      * @throws IOException
      */
     private static void useBuilderAndAnonymize() throws IOException {
-        DataSource source = DataSource.createCSVSource("data/test_dirty.csv", ';', true);
+        DataSource source = DataSource.createCSVSource("data/test_dirty.csv", StandardCharsets.UTF_8, ';', true);
         source.addColumn("age", DataType.INTEGER, true);
         
         // Create data object

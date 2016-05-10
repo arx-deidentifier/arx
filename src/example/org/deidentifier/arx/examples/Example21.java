@@ -18,6 +18,7 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 
 import org.deidentifier.arx.Data;
@@ -68,7 +69,7 @@ public class Example21 extends Example {
         // The most interesting parameter is the last one, which defines
         // whether or not the file contains a header assigning a name to each
         // individual column, which can be used to address the column later on
-        DataSource source = DataSource.createCSVSource("data/test.csv", ';', true);
+        DataSource source = DataSource.createCSVSource("data/test.csv", StandardCharsets.UTF_8, ';', true);
         
         // Add columns
         // Note that there are different means to specify a column. The first
