@@ -19,6 +19,7 @@ package org.deidentifier.arx.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -43,7 +44,7 @@ public class TestDataImport extends AbstractTest {
      */
     @Test
     public void test1() throws IllegalArgumentException, IOException {
-        Data data = Data.create(new File("data/test-import.csv"), ';', '\"');
+        Data data = Data.create(new File("data/test-import.csv"), StandardCharsets.UTF_8, ';', '\"');
         Iterator<String[]> iter = data.getHandle().iterator();
         List<String[]> result = new ArrayList<String[]>();
         while (iter.hasNext()) {

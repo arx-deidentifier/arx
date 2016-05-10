@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,7 +59,7 @@ public class TestRiskMetrics {
      */
     private static Data getDataObject(final String dataset) throws IOException {
         
-        final Data data = Data.create(dataset, ';');
+        final Data data = Data.create(dataset, StandardCharsets.UTF_8, ';');
         
         // Read generalization hierachies
         final FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -80,7 +81,7 @@ public class TestRiskMetrics {
             final Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
                 
-                final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
+                final CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
                 final String attributeName = matcher.group(1);
                 
                 // use all found attribute hierarchies as qis
@@ -176,8 +177,7 @@ public class TestRiskMetrics {
         
         if (model.getPopulationUniquenessModel() == PopulationUniquenessModel.PITMAN) {
             assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, 0.27684993883653597) == 0);
-        } else
-            if (model.getPopulationUniquenessModel() == PopulationUniquenessModel.ZAYATZ) {
+        } else if (model.getPopulationUniquenessModel() == PopulationUniquenessModel.ZAYATZ) {
             assertTrue(populationUniqueness + "/" + sampleUniqueness, compareUniqueness(populationUniqueness, 0.3207402393466189) == 0);
         } else {
             fail("Unexpected convergence of SNB");

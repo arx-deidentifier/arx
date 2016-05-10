@@ -36,7 +36,7 @@ import org.deidentifier.arx.DataType;
  * @author Fabian Prasser
  */
 public class Example21 extends Example {
-
+    
     /**
      * Main entry point.
      *
@@ -46,14 +46,14 @@ public class Example21 extends Example {
      * @throws ClassNotFoundException
      */
     public static void main(String[] args) throws IOException,
-                                                SQLException,
-                                                ClassNotFoundException {
-
+                                           SQLException,
+                                           ClassNotFoundException {
+                                           
         exampleCSV();
         exampleExcel();
         exampleJDBC();
     }
-
+    
     /**
      * This method demonstrates the import of data from a simple CSV file. It
      * uses more advanced features than {@link #Example2}. Columns are renamed,
@@ -63,13 +63,13 @@ public class Example21 extends Example {
      * @throws IOException
      */
     private static void exampleCSV() throws IOException {
-
+        
         // Define configuration for CSV file
         // The most interesting parameter is the last one, which defines
         // whether or not the file contains a header assigning a name to each
         // individual column, which can be used to address the column later on
         DataSource source = DataSource.createCSVSource("data/test.csv", ';', true);
-
+        
         // Add columns
         // Note that there are different means to specify a column. The first
         // two columns are addressed based on their name. It is also possible
@@ -86,18 +86,18 @@ public class Example21 extends Example {
         source.addColumn(2, DataType.STRING); // zipcode (index based addressing)
         source.addColumn("gender", DataType.STRING); // gender (named addressing)
         source.addColumn("age", "renamed", DataType.INTEGER); // age (named addressing + alias name)
-
+        
         // In the output dataset, the columns will appear in the same order as
         // specified by the order of calls to addColumn().
-
+        
         // Create data object
         Data data = Data.create(source);
-
+        
         // Print to console
         print(data.getHandle());
         System.out.println("\n");
     }
-
+    
     /**
      * This method demonstrates the import of data from an Excel file. It uses
      * more advanced features than {@link #Example2}. Columns are renamed, and
@@ -114,23 +114,23 @@ public class Example21 extends Example {
      *             In case of IO errors with the given file
      */
     private static void exampleExcel() throws IOException {
-
+        
         // Define configuration for Excel file
         DataSource source = DataSource.createExcelSource("data/test.xls", 0, true);
-
+        
         // Add columns
         source.addColumn(2, DataType.STRING); // zipcode (index based addressing)
         source.addColumn("gender", DataType.STRING); // gender (named addressing)
         source.addColumn("age", "renamed", DataType.INTEGER); // age (named addressing + alias name)
-
+        
         // Create data object
         Data data = Data.create(source);
-
+        
         // Print to console
         print(data.getHandle());
         System.out.println("\n");
     }
-
+    
     /**
      * This method demonstrates the import of data from a JDBC data source.
      * Columns can be renamed, or selected individually. Furthermore a data type
@@ -153,24 +153,24 @@ public class Example21 extends Example {
      *             In case there is no JDBC driver
      */
     private static void exampleJDBC() throws IOException,
-                                     SQLException,
-                                     ClassNotFoundException {
-
+                                      SQLException,
+                                      ClassNotFoundException {
+                                      
         // Load JDBC driver
         Class.forName("org.sqlite.JDBC");
-
+        
         // Configuration for JDBC source
         DataSource source = DataSource.createJDBCSource("jdbc:sqlite:data/test.db",
                                                         "test");
-
+                                                        
         // Add columns
         source.addColumn(2, DataType.STRING); // zipcode (index based addressing)
         source.addColumn("gender", DataType.STRING); // gender (named addressing)
         source.addColumn("age", "renamed", DataType.INTEGER); // age (named addressing + alias name)
-
+        
         // Create data object
         Data data = Data.create(source);
-
+        
         // Print to console
         print(data.getHandle());
         System.out.println("\n");

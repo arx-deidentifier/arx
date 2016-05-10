@@ -20,6 +20,7 @@ package org.deidentifier.arx.examples;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +51,7 @@ public class Example22 extends Example {
      */
     public static Data createData(final String dataset) throws IOException {
 
-        Data data = Data.create("data/" + dataset + ".csv", ';');
+        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
 
         // Read generalization hierarchies
         FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -71,7 +72,7 @@ public class Example22 extends Example {
         for (File file : genHierFiles) {
             Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
-                CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
+                CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
                 String attributeName = matcher.group(1);
                 data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
             }

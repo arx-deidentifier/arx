@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,7 +59,7 @@ public class TestMicroaggregation extends AbstractTest {
      */
     private static Data getDataObject(final String dataset) throws IOException {
         
-        final Data data = Data.create(dataset, ';');
+        final Data data = Data.create(dataset, StandardCharsets.UTF_8, ';');
         
         // Read generalization hierachies
         final FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -80,7 +81,7 @@ public class TestMicroaggregation extends AbstractTest {
             final Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
                 
-                final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
+                final CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
                 final String attributeName = matcher.group(1);
                 
                 // use all found attribute hierarchies as qis
@@ -110,7 +111,7 @@ public class TestMicroaggregation extends AbstractTest {
         config.setMetric(Metric.createLossMetric(AggregateFunction.RANK));
         
         ARXResult result = anonymizer.anonymize(data, config);
-        DataHandle exptectedOutput = Data.create("./data/adult_age_microaggregated.csv", ';').getHandle();
+        DataHandle exptectedOutput = Data.create("./data/adult_age_microaggregated.csv", StandardCharsets.UTF_8, ';').getHandle();
         
         DataHandle output = result.getOutput();
         for (int i = 0; i < output.getNumRows(); i++) {
@@ -181,7 +182,7 @@ public class TestMicroaggregation extends AbstractTest {
         final String[][] resultArray = resultToArray(result);
         
         final String[][] expectedArray = {
-                                           { "age", "gender", "zipcode" },  
+                                           { "age", "gender", "zipcode" },
                                            { "52", "male", "81***" },
                                            { "48", "female", "81***" },
                                            { "52", "male", "81***" },
@@ -190,7 +191,6 @@ public class TestMicroaggregation extends AbstractTest {
                                            { "52", "male", "81***" },
                                            { "52", "male", "81***" } };
                                            
-        
         assertTrue(Arrays.deepEquals(resultArray, expectedArray));
     }
 }

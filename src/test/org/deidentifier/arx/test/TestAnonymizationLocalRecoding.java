@@ -18,6 +18,7 @@
 package org.deidentifier.arx.test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -54,11 +55,12 @@ public class TestAnonymizationLocalRecoding extends AbstractAnonymizationTest {
      * 
      *
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() throws IOException {
-        return Arrays.asList(new Object[][] { { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addCriterion(new EntropyLDiversity("occupation", 5)), "./data/adult.csv", "occupation", -527345078) },
+        return Arrays.asList(new Object[][] {
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addCriterion(new EntropyLDiversity("occupation", 5)), "./data/adult.csv", "occupation", -527345078) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createDiscernabilityMetric(true)).addCriterion(new DistinctLDiversity("Highest level of school completed", 5)), "./data/atus.csv", "Highest level of school completed", 23802617) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addCriterion(new RecursiveCLDiversity("Highest level of school completed", 4d, 3)), "./data/atus.csv", "Highest level of school completed", 1660794343) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createDiscernabilityMetric(true)).addCriterion(new EqualDistanceTCloseness("occupation", 0.2d)).addCriterion(new KAnonymity(5)), "./data/adult.csv", "occupation", 471897083) },
@@ -68,7 +70,7 @@ public class TestAnonymizationLocalRecoding extends AbstractAnonymizationTest {
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.05d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addCriterion(new KMap(3, 0.01d, ARXPopulationModel.create(Region.USA), CellSizeEstimator.ZERO_TRUNCATED_POISSON)), "./data/adult.csv", "occupation", -1491241251) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.05d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addCriterion(new KMap(1000, 0.01d, ARXPopulationModel.create(Region.USA), CellSizeEstimator.ZERO_TRUNCATED_POISSON)), "./data/adult.csv", "occupation", 1709539182) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createLossMetric()).addCriterion(new EDDifferentialPrivacy(1.0d, 1E-6d, DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM_HIGH), true)), "./data/fars.csv", "", 482534106) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.0d, Metric.createPrecomputedEntropyMetric(0.1d, true)).addCriterion(new DPresence(0.0, 0.2, DataSubset.create(Data.create("./data/fars.csv", ';'), Data.create("./data/fars_subset.csv", ';')))), "./data/fars.csv", "istatenum", -2090597576) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.0d, Metric.createPrecomputedEntropyMetric(0.1d, true)).addCriterion(new DPresence(0.0, 0.2, DataSubset.create(Data.create("./data/fars.csv", StandardCharsets.UTF_8, ';'), Data.create("./data/fars_subset.csv", StandardCharsets.UTF_8, ';')))), "./data/fars.csv", "istatenum", -2090597576) },
                                               
         });
     }

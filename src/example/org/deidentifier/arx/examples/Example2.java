@@ -18,6 +18,7 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -34,7 +35,7 @@ import org.deidentifier.arx.criteria.KAnonymity;
  * @author Florian Kohlmayer
  */
 public class Example2 extends Example {
-
+    
     /**
      * Entry point.
      * 
@@ -42,29 +43,29 @@ public class Example2 extends Example {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-
-            Data data = Data.create("data/test.csv", ';');
-
-            // Define input files
-            data.getDefinition().setAttributeType("age", Hierarchy.create("data/test_hierarchy_age.csv", ';'));
-            data.getDefinition().setAttributeType("gender", Hierarchy.create("data/test_hierarchy_gender.csv", ';'));
-            data.getDefinition().setAttributeType("zipcode", Hierarchy.create("data/test_hierarchy_zipcode.csv", ';'));
-
-            // Create an instance of the anonymizer
-            ARXAnonymizer anonymizer = new ARXAnonymizer();
-
-            // Execute the algorithm
-            ARXConfiguration config = ARXConfiguration.create();
-            config.addCriterion(new KAnonymity(2));
-            config.setMaxOutliers(0d);
-            ARXResult result = anonymizer.anonymize(data, config);
-            
-            // Print info
-            printResult(result, data);
-
-            // Write results
-            System.out.print(" - Writing data...");
-            result.getOutput(false).save("data/test_anonymized.csv", ';');
-            System.out.println("Done!");
+        
+        Data data = Data.create("data/test.csv", StandardCharsets.UTF_8, ';');
+        
+        // Define input files
+        data.getDefinition().setAttributeType("age", Hierarchy.create("data/test_hierarchy_age.csv", StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("gender", Hierarchy.create("data/test_hierarchy_gender.csv", StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("zipcode", Hierarchy.create("data/test_hierarchy_zipcode.csv", StandardCharsets.UTF_8, ';'));
+        
+        // Create an instance of the anonymizer
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        
+        // Execute the algorithm
+        ARXConfiguration config = ARXConfiguration.create();
+        config.addCriterion(new KAnonymity(2));
+        config.setMaxOutliers(0d);
+        ARXResult result = anonymizer.anonymize(data, config);
+        
+        // Print info
+        printResult(result, data);
+        
+        // Write results
+        System.out.print(" - Writing data...");
+        result.getOutput(false).save("data/test_anonymized.csv", ';');
+        System.out.println("Done!");
     }
 }

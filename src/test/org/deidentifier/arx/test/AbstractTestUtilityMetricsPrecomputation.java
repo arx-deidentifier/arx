@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,19 +58,19 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
         
         /** TODO */
         public ARXConfiguration config;
-        
+                                
         /** TODO */
-        public String dataset;
-        
+        public String           dataset;
+                                
         /** TODO */
-        public String sensitiveAttribute;
-        
+        public String           sensitiveAttribute;
+                                
         /** TODO */
-        public Metric<?> m1;
-        
+        public Metric<?>        m1;
+                                
         /** TODO */
-        public Metric<?> m2;
-        
+        public Metric<?>        m2;
+                                
         /**
          * Creates a new instance.
          *
@@ -128,7 +129,7 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
      */
     public static Data getDataObject(final ARXUtilityMetricsTestCase testCase) throws IOException {
         
-        final Data data = Data.create(testCase.dataset, ';');
+        final Data data = Data.create(testCase.dataset, StandardCharsets.UTF_8, ';');
         
         // Read generalization hierachies
         final FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -151,7 +152,7 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
             final Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
                 
-                final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
+                final CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
                 final String attributeName = matcher.group(1);
                 
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {

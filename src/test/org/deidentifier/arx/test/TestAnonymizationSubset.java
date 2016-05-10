@@ -18,6 +18,7 @@
 package org.deidentifier.arx.test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -55,9 +56,9 @@ public class TestAnonymizationSubset extends AbstractAnonymizationTest {
     public static Collection<Object[]> cases() throws IOException {
         return Arrays.asList(new Object[][] {
                                               
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.0d, Metric.createPrecomputedEntropyMetric(0.1d, true)).addCriterion(new KAnonymity(5)).addCriterion(new HierarchicalDistanceTCloseness("occupation", 0.2, Hierarchy.create("./data/adult_hierarchy_occupation.csv", ';'))).addCriterion(new Inclusion(getSubset(20000))), "occupation", "./data/adult.csv", 178437.4164900378, new int[] { 1, 4, 1, 1, 3, 2, 2, 1 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.0d, Metric.createPrecomputedEntropyMetric(0.1d, true)).addCriterion(new KAnonymity(5)).addCriterion(new HierarchicalDistanceTCloseness("occupation", 0.2, Hierarchy.create("./data/adult_hierarchy_occupation.csv", StandardCharsets.UTF_8, ';'))).addCriterion(new Inclusion(getSubset(20000))), "occupation", "./data/adult.csv", 178437.4164900378, new int[] { 1, 4, 1, 1, 3, 2, 2, 1 }, false) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.0d, Metric.createPrecomputedEntropyMetric(0.1d, true)).addCriterion(new KAnonymity(5)).addCriterion(new Inclusion(getSubset(10000))), "occupation", "./data/adult.csv", 70774.7774633781, new int[] { 0, 4, 1, 1, 2, 2, 2, 0 }, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.0d, Metric.createPrecomputedEntropyMetric(0.1d, true)).addCriterion(new HierarchicalDistanceTCloseness("occupation", 0.2, Hierarchy.create("./data/adult_hierarchy_occupation.csv", ';'))).addCriterion(new Inclusion(getSubset(30000))), "occupation", "./data/adult.csv", 250816.4033099704, new int[] { 0, 4, 1, 1, 3, 2, 2, 1 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.0d, Metric.createPrecomputedEntropyMetric(0.1d, true)).addCriterion(new HierarchicalDistanceTCloseness("occupation", 0.2, Hierarchy.create("./data/adult_hierarchy_occupation.csv", StandardCharsets.UTF_8, ';'))).addCriterion(new Inclusion(getSubset(30000))), "occupation", "./data/adult.csv", 250816.4033099704, new int[] { 0, 4, 1, 1, 3, 2, 2, 1 }, false) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.0d, Metric.createPrecomputedEntropyMetric(0.1d, true)).addCriterion(new RecursiveCLDiversity("occupation", 4.0, 5)).addCriterion(new Inclusion(getSubset(9000))), "occupation", "./data/adult.csv", 65996.221545847, new int[] { 1, 2, 1, 1, 3, 2, 2, 1 }, false) },
         });
     }

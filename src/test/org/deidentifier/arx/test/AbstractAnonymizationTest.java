@@ -27,6 +27,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -275,7 +276,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
      */
     public static Data getDataObject(final ARXAnonymizationTestCase testCase) throws IOException {
         
-        final Data data = Data.create(testCase.dataset, ';');
+        final Data data = Data.create(testCase.dataset, StandardCharsets.UTF_8, ';');
         
         // Read generalization hierachies
         final FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -298,7 +299,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             final Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
                 
-                final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
+                final CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
                 final String attributeName = matcher.group(1);
                 
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {

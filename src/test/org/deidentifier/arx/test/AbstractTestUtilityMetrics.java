@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -129,7 +130,7 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
      */
     public static Data getDataObject(final ARXUtilityMetricsTestCase testCase) throws IOException {
         
-        final Data data = Data.create(testCase.dataset, ';');
+        final Data data = Data.create(testCase.dataset, StandardCharsets.UTF_8, ';');
         
         // Read generalization hierachies
         final FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -152,7 +153,7 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
             final Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
                 
-                final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
+                final CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
                 final String attributeName = matcher.group(1);
                 
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {

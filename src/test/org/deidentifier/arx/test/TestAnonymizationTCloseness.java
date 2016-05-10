@@ -18,6 +18,7 @@
 package org.deidentifier.arx.test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -106,7 +107,7 @@ public class TestAnonymizationTCloseness extends AbstractAnonymizationTest {
         
         // TODO: Ugly hack!
         if (!testCase.config.containsCriterion(TCloseness.class)) {
-            final Hierarchy hierarchy = Hierarchy.create(testCase.dataset.substring(0, testCase.dataset.length() - 4) + "_hierarchy_" + testCase.sensitiveAttribute + ".csv", ';');
+            final Hierarchy hierarchy = Hierarchy.create(testCase.dataset.substring(0, testCase.dataset.length() - 4) + "_hierarchy_" + testCase.sensitiveAttribute + ".csv", StandardCharsets.UTF_8, ';');
             testCase.config.addCriterion(new HierarchicalDistanceTCloseness(testCase.sensitiveAttribute, 0.2d, hierarchy));
         }
         super.test();
