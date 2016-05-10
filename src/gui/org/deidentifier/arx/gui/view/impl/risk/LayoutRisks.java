@@ -187,5 +187,10 @@ public class LayoutRisks implements ILayout {
         centerSash.setWeights(new int[] { WEIGHT_TOP, WEIGHT_BOTTOM });
         bottomSash.setWeights(new int[] { WEIGHT_LEFT, WEIGHT_RIGHT });
         center.setWeights(new int[] { WEIGHT_LEFT, WEIGHT_RIGHT });
+
+        // Fix resize bug
+        SWTUtil.fixOSXSashBug(centerSash);
+        SWTUtil.fixOSXSashBug(bottomSash);
+        SWTUtil.fixOSXSashBug(center);
     }
 }

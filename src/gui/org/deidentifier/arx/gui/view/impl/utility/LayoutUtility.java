@@ -371,6 +371,10 @@ public class LayoutUtility implements ILayout {
         // Set sash weights
         centerSash.setWeights(new int[] { WEIGHT_TOP, WEIGHT_BOTTOM });
         bottomSash.setWeights(new int[] { WEIGHT_LEFT, WEIGHT_RIGHT });
+        
+        // Fix resize bug
+        SWTUtil.fixOSXSashBug(centerSash);
+        SWTUtil.fixOSXSashBug(bottomSash);
     }
 
     /**
