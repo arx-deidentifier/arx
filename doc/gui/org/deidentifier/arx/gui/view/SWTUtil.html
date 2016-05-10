@@ -345,24 +345,30 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#fixOSXSashBug(org.eclipse.swt.custom.SashForm)">fixOSXSashBug</a></strong>(org.eclipse.swt.custom.SashForm&nbsp;sash)</code>
+<div class="block">Tries to fix a bug when resizing sash forms in OSX</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#getPrettyString(double)">getPrettyString</a></strong>(double&nbsp;value)</code>
 <div class="block">Returns a pretty string representing the given double</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#getPrettyString(int)">getPrettyString</a></strong>(int&nbsp;value)</code>
 <div class="block">Returns a pretty string representing the given value</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#getPrettyString(long)">getPrettyString</a></strong>(long&nbsp;value)</code>
 <div class="block">Returns a pretty string representing the given value</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#intToSlider(int,%20int,%20int)">intToSlider</a></strong>(int&nbsp;min,
            int&nbsp;max,
@@ -370,13 +376,13 @@ extends java.lang.Object</pre>
 <div class="block">Converts the integer value to a slider selection.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#isMac()">isMac</a></strong>()</code>
 <div class="block">Are we running on an OSX system</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#sliderToDouble(double,%20double,%20int)">sliderToDouble</a></strong>(double&nbsp;min,
               double&nbsp;max,
@@ -384,7 +390,7 @@ extends java.lang.Object</pre>
 <div class="block">Converts the slider value to a double.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#sliderToInt(int,%20int,%20int)">sliderToInt</a></strong>(int&nbsp;min,
            int&nbsp;max,
@@ -472,6 +478,18 @@ extends java.lang.Object</pre>
           org.eclipse.swt.widgets.Shell&nbsp;parent)</pre>
 <div class="block">Centers the given shell.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>shell</code> - </dd><dd><code>parent</code> - </dd></dl>
+</li>
+</ul>
+<a name="changeFont(org.eclipse.swt.widgets.Control, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>changeFont</h4>
+<pre>public static&nbsp;void&nbsp;changeFont(org.eclipse.swt.widgets.Control&nbsp;control,
+              int&nbsp;style)</pre>
+<div class="block">Changes a control's font</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>control</code> - </dd><dd><code>style</code> - </dd></dl>
 </li>
 </ul>
 <a name="createColumnWithBarCharts(org.eclipse.swt.widgets.Table, org.eclipse.swt.widgets.TableColumn)">
@@ -651,18 +669,6 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>controller</code> - </dd><dd><code>folder</code> - </dd><dd><code>id</code> - </dd><dd><code>helpids</code> - </dd></dl>
 </li>
 </ul>
-<a name="changeFont(org.eclipse.swt.widgets.Control, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>changeFont</h4>
-<pre>public static&nbsp;void&nbsp;changeFont(org.eclipse.swt.widgets.Control&nbsp;control,
-              int&nbsp;style)</pre>
-<div class="block">Changes a control's font</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>control</code> - </dd><dd><code>style</code> - </dd></dl>
-</li>
-</ul>
 <a name="createNoFillGridData()">
 <!--   -->
 </a>
@@ -794,6 +800,17 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;void&nbsp;enable(org.eclipse.swt.widgets.Control&nbsp;elem)</pre>
 <div class="block">Enables the control.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>elem</code> - </dd></dl>
+</li>
+</ul>
+<a name="fixOSXSashBug(org.eclipse.swt.custom.SashForm)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fixOSXSashBug</h4>
+<pre>public static&nbsp;void&nbsp;fixOSXSashBug(org.eclipse.swt.custom.SashForm&nbsp;sash)</pre>
+<div class="block">Tries to fix a bug when resizing sash forms in OSX</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>sash</code> - </dd></dl>
 </li>
 </ul>
 <a name="getPrettyString(double)">
