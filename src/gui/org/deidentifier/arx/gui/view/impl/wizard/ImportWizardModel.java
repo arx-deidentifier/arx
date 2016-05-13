@@ -100,7 +100,7 @@ public class ImportWizardModel {
     private char                          csvQuote;
                                           
     /** The charset of the file */
-    private Charset                       charset;
+    private Charset                       charset = Charset.defaultCharset();
                                           
     /**
      * Indicates whether first row contains header
