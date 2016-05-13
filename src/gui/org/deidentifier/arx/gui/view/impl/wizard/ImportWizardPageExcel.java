@@ -208,6 +208,7 @@ public class ImportWizardPageExcel extends WizardPage {
                     readSheets();
                 } catch (IOException e) {
                     setErrorMessage(Resources.getMessage("ImportWizardPageExcel.4")); //$NON-NLS-1$
+                    return;
                 }
 
                 /* Make widgets visible */
@@ -498,6 +499,10 @@ public class ImportWizardPageExcel extends WizardPage {
             workbook = WorkbookFactory.create(stream);
         } catch (InvalidFormatException e) {
             throw new IOException(Resources.getMessage("ImportWizardPageExcel.14")); //$NON-NLS-1$
+        } catch (IllegalArgumentException e) {
+            throw new IOException(Resources.getMessage("ImportWizardPageExcel.14")); //$NON-NLS-1$
+        } catch (Exception e) {
+            throw new IOException(Resources.getMessage("ImportWizardPageExcel.15")); //$NON-NLS-1$
         }
 
         /* Add all sheets to combo */
