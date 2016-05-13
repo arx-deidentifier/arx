@@ -208,6 +208,7 @@ public class ImportWizardPageExcel extends WizardPage {
                     readSheets();
                 } catch (IOException e) {
                     setErrorMessage(Resources.getMessage("ImportWizardPageExcel.4")); //$NON-NLS-1$
+                    resetPage();
                     return;
                 }
 
@@ -282,7 +283,7 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /* Place holders */
         new Label(container, SWT.NONE);
-        new Label(container, SWT.NONE);
+        new Label(container, SWT.NONE);       
 
         /* Contains header button */
         btnContainsHeader = new Button(container, SWT.CHECK);
@@ -333,7 +334,7 @@ public class ImportWizardPageExcel extends WizardPage {
             /* Die silently*/
         }
     }
-
+    
     /**
      * Evaluates the page
      *
@@ -474,7 +475,7 @@ public class ImportWizardPageExcel extends WizardPage {
         tablePreview.layout();
         tablePreview.setRedraw(true);
     }
-    
+
     /**
      * Reads in the available sheets from file
      * 
@@ -509,5 +510,18 @@ public class ImportWizardPageExcel extends WizardPage {
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             comboSheet.add(workbook.getSheetName(i));
         }
+    }
+    
+    /**
+     * Reset page
+     */
+    private void resetPage() {
+        comboSheet.setVisible(false);
+        comboSheet.removeAll();
+        lblSheet.setVisible(false);
+        btnContainsHeader.setEnabled(true);
+        btnContainsHeader.setVisible(false);
+        tablePreview.removeAll();
+        tablePreview.setVisible(false);
     }
 }
