@@ -59,12 +59,13 @@ public class Charsets {
             }
 
             // Store
-            this.name = builder.toString();
             this.charset = charset;
             this.systemDefault = charset.equals(Charset.defaultCharset());
             if (this.systemDefault) {
+                builder.append(" (").append(Resources.getMessage("MainWindow.21")).append(")");
                 DEFAULT_CHARSET = this;
             }
+            this.name = builder.toString();
         }
     }
 

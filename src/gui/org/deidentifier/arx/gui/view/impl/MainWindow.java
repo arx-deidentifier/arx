@@ -155,16 +155,16 @@ public class MainWindow implements IView {
 
         // Create the subviews
         Composite item1 = root.createItem(Resources.getMessage("MainWindow.2"), controller.getResources().getManagedImage("perspective_define.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        helpids.put(item1, "id-3");
+        helpids.put(item1, "id-3"); //$NON-NLS-1$
         new LayoutDefinition(item1, controller);
         Composite item2 = root.createItem(Resources.getMessage("MainWindow.3"), controller.getResources().getManagedImage("perspective_explore.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        helpids.put(item2, "id-4");
+        helpids.put(item2, "id-4"); //$NON-NLS-1$
         this.layoutExplore = new LayoutExplore(item2, controller);
         Composite item3 = root.createItem(Resources.getMessage("MainWindow.1"), controller.getResources().getManagedImage("perspective_analyze.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        helpids.put(item3, "help.utility.overview");
+        helpids.put(item3, "help.utility.overview"); //$NON-NLS-1$
         new LayoutUtility(item3, controller);
         Composite item4 = root.createItem(Resources.getMessage("MainWindow.4"), controller.getResources().getManagedImage("perspective_risk.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        helpids.put(item4, "help.risk.overview");
+        helpids.put(item4, "help.risk.overview"); //$NON-NLS-1$
         new LayoutRisks(item4, controller);
 
         // Hack to update visualizations
@@ -317,10 +317,11 @@ public class MainWindow implements IView {
         }
 
         // Open dialog
-        final DialogComboSelection dlg = new DialogComboSelection(shell, "Please select a charset",
-                                                                  "Just click OK to choose the default charset for your system.",
+        final DialogComboSelection dlg = new DialogComboSelection(shell, Resources.getMessage("MainWindow.19"), //$NON-NLS-1$
+                                                                  Resources.getMessage("MainWindow.20"), //$NON-NLS-1$
                                                                   charsets.toArray(new String[] {}),
-                                                                  Charsets.getDefaultCharset().name, validator);
+                                                                  Charsets.getDefaultCharset().name,
+                                                                  validator);
 
         // Return value
         if (dlg.open() == Window.OK) {
