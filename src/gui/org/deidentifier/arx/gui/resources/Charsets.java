@@ -62,7 +62,7 @@ public class Charsets {
             this.charset = charset;
             this.systemDefault = charset.equals(Charset.defaultCharset());
             if (this.systemDefault) {
-                builder.append(" (").append(Resources.getMessage("MainWindow.21")).append(")");
+                builder.append(" (").append(Resources.getMessage("Charset.1")).append(")");
                 DEFAULT_CHARSET = this;
             }
             this.name = builder.toString();
