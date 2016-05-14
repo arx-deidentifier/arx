@@ -46,7 +46,7 @@ public class Charsets {
          */
         AvailableCharset(String name, Charset charset) {
 
-            // Format the name
+            // Format name of the charset
             name = name.toUpperCase().replace('_', '-').replace(' ', '-');
             char[] array = name.toCharArray();
             StringBuilder builder = new StringBuilder();
@@ -68,8 +68,10 @@ public class Charsets {
         }
     }
 
+    /** Default charset*/
     private static AvailableCharset         DEFAULT_CHARSET;
 
+    /** List of names of the most commonly used charsets*/
     private static String[]                 MOST_USED_CHARSETS = { "UTF-8",
                                                                "ISO-8859-1",
                                                                "latin1",
@@ -116,6 +118,7 @@ public class Charsets {
                                                                "ISO-8859-11",
                                                                "IBM850" };
 
+    /** List of objects representing the most commonly used charsets*/
     private static final AvailableCharset[] AVAILABLE_CHARSETS = getAvailableCharsets(MOST_USED_CHARSETS);
 
     /**
