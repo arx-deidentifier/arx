@@ -1447,6 +1447,15 @@ public class Controller implements IView {
     }
 
     /**
+     * Shows an input dialog for selecting a charset.
+     * @param shell
+     * @return
+     */
+    public String actionShowCharsetInputDialog(final Shell shell) {
+        return main.showCharsetInputDialog(shell);
+    }
+
+    /**
      * Shows an error dialog.
      *
      * @param shell
@@ -1521,7 +1530,7 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, preselected, locale, type, values);
     }
-
+    
     /**
      * Shows a help dialog.
      *

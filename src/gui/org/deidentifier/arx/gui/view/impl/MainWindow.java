@@ -40,6 +40,8 @@ import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
+import org.deidentifier.arx.gui.resources.Charsets;
+import org.deidentifier.arx.gui.resources.Charsets.AvailableCharset;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
@@ -293,6 +295,42 @@ public class MainWindow implements IView {
         dialog.open();
     }
     /**
+     * Shows an input dialog for selecting a charset.
+     *
+     * @param shell
+     * @return
+     */
+    public String showCharsetInputDialog(final Shell shell) {
+
+        // Validator
+        final IInputValidator validator = new IInputValidator() {
+            @Override
+            public String isValid(final String arg0) {
+                return null;
+            }
+        };
+
+        // Extract list of formats
+        List<String> charsets = new ArrayList<String>();
+        for (AvailableCharset charset : Charsets.getAvailableCharsets()) {
+            charsets.add(charset.name);
+        }
+
+        // Open dialog
+        final DialogComboSelection dlg = new DialogComboSelection(shell, "Please select a charset",
+                                                                  "Just click OK to choose the default charset for your system.",
+                                                                  charsets.toArray(new String[] {}),
+                                                                  Charsets.getDefaultCharset().name, validator);
+
+        // Return value
+        if (dlg.open() == Window.OK) {
+            return dlg.getValue();
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * Shows a dialog for configuring privacy criteria.
      *
      * @param criteria
@@ -304,7 +342,7 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-    
+
     /**
      * Shows a debug dialog.
      */
@@ -313,7 +351,7 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-
+    
     /**
      * Shows an error dialog.
      *
@@ -326,7 +364,7 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-    
+
     /**
      * Shows an error dialog.
      *
@@ -375,7 +413,7 @@ public class MainWindow implements IView {
         dialog.open();
         return dialog.getValue();
     }
-
+    
     /**
      * Shows an input dialog for selecting formats string for data types.
      *
@@ -451,6 +489,7 @@ public class MainWindow implements IView {
             return null;
         }
     }
+    
     /**
      * Shows a help dialog.
      *
