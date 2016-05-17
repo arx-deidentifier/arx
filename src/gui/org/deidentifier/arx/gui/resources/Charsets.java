@@ -18,62 +18,27 @@ package org.deidentifier.arx.gui.resources;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * A class for managing charsets
+ * A class for managing charsets. In comparison to the class <code>Charset</code> provided by the Java libraries,
+ * this class restricts the set of available charset to the most common ones (ordered by frequency of use) 
+ * and it provides consistent and beautified labels.
+ * 
  * @author Fabian Prasser
  */
 public class Charsets {
 
-    /**
-     * Class representing an available charset
-     * @author Fabian Prasser
-     */
-    public static class AvailableCharset {
+    /** Name to charset */
+    private static Map<String, Charset> NAME_TO_CHARSET    = new HashMap<>();
 
-        /** Name */
-        public final String  name;
-        /** Name */
-        public final Charset charset;
-        /** System default */
-        public final boolean systemDefault;
-
-        /**
-         * Creates a new instance
-         * @param name
-         * @param charset
-         */
-        AvailableCharset(String name, Charset charset) {
-
-            // Format name of the charset
-            name = name.toUpperCase().replace('_', '-').replace(' ', '-');
-            char[] array = name.toCharArray();
-            StringBuilder builder = new StringBuilder();
-            builder.append(array[0]);
-            for (int i = 1; i < array.length; i++) {
-                if ((array[i - 1] != '-' && !Character.isDigit(array[i - 1])) && Character.isDigit(array[i])) {
-                    builder.append("-");
-                }
-                builder.append(array[i]);
-            }
-
-            // Store
-            this.charset = charset;
-            this.systemDefault = charset.equals(Charset.defaultCharset());
-            if (this.systemDefault) {
-                builder.append(" (").append(Resources.getMessage("Charset.1")).append(")");
-                DEFAULT_CHARSET = this;
-            }
-            this.name = builder.toString();
-        }
-    }
-
-    /** Default charset*/
-    private static AvailableCharset         DEFAULT_CHARSET;
+    /** Default charset */
+    private static String               DEFAULT_CHARSET;
 
     /** List of names of the most commonly used charsets*/
-    private static String[]                 MOST_USED_CHARSETS = { "UTF-8",
+    private static String[]             MOST_USED_CHARSETS = { "UTF-8",
                                                                "ISO-8859-1",
                                                                "latin1",
                                                                "Windows-1251",
@@ -119,14 +84,66 @@ public class Charsets {
                                                                "ISO-8859-11",
                                                                "IBM850" };
 
-    /** List of objects representing the most commonly used charsets*/
-    private static final AvailableCharset[] AVAILABLE_CHARSETS = getAvailableCharsets(MOST_USED_CHARSETS);
+    /** List of objects representing the most commonly used charsets */
+    private static final String[]       AVAILABLE_CHARSETS;
+
+    static {
+
+        // Prepare
+        List<String> availableCharsets = new ArrayList<>();
+        String defaultCharset = null;
+        
+        // For each name
+        for (String name : MOST_USED_CHARSETS) {
+            
+            // Check
+            Charset charset = null;
+            try {
+                charset = Charset.forName(name);
+            } catch (Exception e) {
+                // We can live with this
+            }
+            
+            // If it exists
+            if (charset != null) {
+
+                // Format name of the charset
+                name = name.toUpperCase().replace('_', '-').replace(' ', '-');
+                char[] array = name.toCharArray();
+                StringBuilder builder = new StringBuilder();
+                builder.append(array[0]);
+                for (int i = 1; i < array.length; i++) {
+                    if ((array[i - 1] != '-' && !Character.isDigit(array[i - 1])) && Character.isDigit(array[i])) {
+                        builder.append("-");
+                    }
+                    builder.append(array[i]);
+                }
+
+                // Store
+                boolean systemDefault = charset.equals(Charset.defaultCharset());
+                if (systemDefault) {
+                    builder.append(" (").append(Resources.getMessage("Charset.1")).append(")");
+                    defaultCharset = builder.toString();
+                }
+                availableCharsets.add(builder.toString());
+                NAME_TO_CHARSET.put(builder.toString(), charset);
+            }
+        }
+        
+        // Store
+        AVAILABLE_CHARSETS = availableCharsets.toArray(new String[availableCharsets.size()]);
+        if (defaultCharset != null) {
+            DEFAULT_CHARSET = defaultCharset;
+        } else {
+            DEFAULT_CHARSET = AVAILABLE_CHARSETS[0];
+        }
+    }
 
     /**
      * Returns a list of available charsets. The list is restricted to the most common charsets.
      * @return
      */
-    public static AvailableCharset[] getAvailableCharsets() {
+    public static String[] getNamesOfAvailableCharsets() {
         return AVAILABLE_CHARSETS;
     }
     
@@ -134,30 +151,16 @@ public class Charsets {
      * Returns the system's default charset
      * @return
      */
-    public static AvailableCharset getDefaultCharset() {
+    public static String getNameOfDefaultCharset() {
         return DEFAULT_CHARSET;
     }
     
     /**
-     * Returns all available charsets from the given list of names
-     * @param charsetsNames
+     * Returns a charset for the given name
+     * @param name
      * @return
      */
-    private static AvailableCharset[] getAvailableCharsets(String[] charsetsNames) {
-        List<AvailableCharset> result = new ArrayList<>();
-        for (String name : charsetsNames) {
-            Charset charset = null;
-            try {
-                charset = Charset.forName(name);
-            } catch (Exception e) {
-                // We can live with this
-            }
-            if (charset != null) {
-                result.add(new AvailableCharset(name, charset));
-            } else {
-                System.out.println(name);
-            }
-        }
-        return result.toArray(new AvailableCharset[result.size()]);
+    public static Charset getCharsetForName(String name) {
+        return NAME_TO_CHARSET.get(name);
     }
 }

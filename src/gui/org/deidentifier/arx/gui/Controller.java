@@ -1451,7 +1451,7 @@ public class Controller implements IView {
      * @param shell
      * @return
      */
-    public String actionShowCharsetInputDialog(final Shell shell) {
+    public Charset actionShowCharsetInputDialog(final Shell shell) {
         return main.showCharsetInputDialog(shell);
     }
 

@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,7 +42,6 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.resources.Charsets;
-import org.deidentifier.arx.gui.resources.Charsets.AvailableCharset;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
@@ -300,7 +300,7 @@ public class MainWindow implements IView {
      * @param shell
      * @return
      */
-    public String showCharsetInputDialog(final Shell shell) {
+    public Charset showCharsetInputDialog(final Shell shell) {
 
         // Validator
         final IInputValidator validator = new IInputValidator() {
@@ -312,20 +312,20 @@ public class MainWindow implements IView {
 
         // Extract list of formats
         List<String> charsets = new ArrayList<String>();
-        for (AvailableCharset charset : Charsets.getAvailableCharsets()) {
-            charsets.add(charset.name);
+        for (String charset : Charsets.getNamesOfAvailableCharsets()) {
+            charsets.add(charset);
         }
 
         // Open dialog
         final DialogComboSelection dlg = new DialogComboSelection(shell, Resources.getMessage("MainWindow.19"), //$NON-NLS-1$
                                                                   Resources.getMessage("MainWindow.20"), //$NON-NLS-1$
                                                                   charsets.toArray(new String[] {}),
-                                                                  Charsets.getDefaultCharset().name,
+                                                                  Charsets.getNameOfDefaultCharset(),
                                                                   validator);
 
         // Return value
         if (dlg.open() == Window.OK) {
-            return dlg.getValue();
+            return Charsets.getCharsetForName(dlg.getValue());
         } else {
             return null;
         }
