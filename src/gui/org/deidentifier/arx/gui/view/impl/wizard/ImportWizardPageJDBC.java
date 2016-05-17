@@ -68,65 +68,64 @@ public class ImportWizardPageJDBC extends WizardPage {
     /** Reference to the wizard containing this page. */
     private ImportWizard        wizardImport;
     
-    /* SWT Widgets */
-    /** TODO */
+    /** Widget */
     private Label               lblType;
     
-    /** TODO */
+    /** Widget */
     private Combo               comboType;
     
-    /** TODO */
+    /** Widget */
     private Composite           compositeSwap;
     
-    /** TODO */
+    /** Widget */
     private Text                txtServer;
     
-    /** TODO */
+    /** Widget */
     private StackLayout         layout;
     
-    /** TODO */
+    /** Widget */
     private Composite           compositeRemote;
     
-    /** TODO */
+    /** Widget */
     private Composite           compositeLocal;
     
-    /** TODO */
+    /** Widget */
     private Text                txtPort;
     
-    /** TODO */
+    /** Widget */
     private Text                txtUsername;
     
-    /** TODO */
+    /** Widget */
     private Text                txtPassword;
     
-    /** TODO */
+    /** Widget */
     private Text                txtDatabase;
     
-    /** TODO */
+    /** Widget */
     private Label               lblLocation;
     
-    /** TODO */
+    /** Widget */
     private Combo               comboLocation;
     
-    /** TODO */
+    /** Widget */
     private Button              btnChoose;
     
-    /** TODO */
+    /** Widget */
     private Composite           container;
     
-    /** TODO */
+    /** Widget */
     private static final String ORACLE     = "Oracle";    //$NON-NLS-1$
                                                            
-    /** TODO */
+    /** Widget */
     private static final String MSSQL      = "MS SQL";    //$NON-NLS-1$
                                                            
-    /** TODO */
+    /** Widget */
     private static final String MYSQL      = "MySQL";     //$NON-NLS-1$
                                                            
-    /** TODO */
+    /** Widget */
     private static final String POSTGRESQL = "PostgreSQL"; //$NON-NLS-1$
                                                            
-    /** TODO */
+    /** Widget */
     private static final String SQLITE     = "SQLite";    //$NON-NLS-1$
                                                            
     /**
