@@ -27,7 +27,7 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentRiskMonitor;
 import org.deidentifier.arx.gui.view.impl.common.ComponentRiskThresholds;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledSeparator;
-import org.deidentifier.arx.gui.view.impl.common.DelayedSelectionListener;
+import org.deidentifier.arx.gui.view.impl.common.DelayedChangeListener;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
@@ -222,9 +222,9 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
                     }
                 }
             });
-            riskThresholds.addSelectionListenerThresholdHighestRisk(new DelayedSelectionListener(1000) {
+            riskThresholds.addSelectionListenerThresholdHighestRisk(new DelayedChangeListener(1000) {
                 @Override
-                public void widgetDelayedSelected(SelectionEvent arg0) {
+                public void delayedEvent() {
                     getModel().getRiskModel().setRiskThresholdHighestRisk(riskThresholds.getThresholdHighestRisk());
                     controller.update(new ModelEvent(this, ModelPart.RISK_THRESHOLD_MAIN, null));
                     triggerUpdate();

@@ -16,22 +16,24 @@
  */
 package org.deidentifier.arx.gui.view.impl.common;
 
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * A selection listener that defers execution for a given amount of time
+ * A listener that acts as a selection listener and a modify listener which defers change
+ * events for a given amount of time
  * 
  * @author Fabian Prasser
  */
-public abstract class DelayedSelectionListener implements SelectionListener {
+public abstract class DelayedChangeListener implements SelectionListener, ModifyListener {
 
-    /** Tick in millis */
-    private static final int TICK = 100;
-
-    /** Event */
-    private SelectionEvent   event;
+    /** Tick in milliseconds */
+    private static final int TICK  = 100;
+    /** Flag */
+    private boolean          event = false;
     /** Time */
     private long             time;
     /** Delay in milliseconds */
@@ -41,7 +43,7 @@ public abstract class DelayedSelectionListener implements SelectionListener {
      * Delay in milliseconds
      * @param delay
      */
-    public DelayedSelectionListener(long delay) {
+    public DelayedChangeListener(long delay) {
         this.delay = delay;
         
         // Create repeating task
@@ -49,9 +51,9 @@ public abstract class DelayedSelectionListener implements SelectionListener {
         display.timerExec(TICK, new Runnable() {
             @Override
             public void run() {
-                if (event != null && System.currentTimeMillis() > time) {
-                    widgetDelayedSelected(event);
-                    event = null;
+                if (event && System.currentTimeMillis() > time) {
+                    delayedEvent();
+                    event = false;
                 }
                 display.timerExec(TICK, this);
             }
@@ -60,13 +62,19 @@ public abstract class DelayedSelectionListener implements SelectionListener {
     
     @Override
     public void widgetDefaultSelected(SelectionEvent arg0) {
-        this.event = arg0;
+        this.event = true;
         this.time = System.currentTimeMillis() + delay;
     }
 
     @Override
     public void widgetSelected(SelectionEvent arg0) {
-        this.event = arg0;
+        this.event = true;
+        this.time = System.currentTimeMillis() + delay;
+    }
+
+    @Override
+    public void modifyText(ModifyEvent arg0) {
+        this.event = true;
         this.time = System.currentTimeMillis() + delay;
     }
 
@@ -74,5 +82,5 @@ public abstract class DelayedSelectionListener implements SelectionListener {
      * Implement this
      * @param arg0
      */
-    public abstract void widgetDelayedSelected(SelectionEvent arg0);
+    public abstract void delayedEvent();
 }

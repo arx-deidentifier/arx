@@ -29,12 +29,11 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.DelayedSelectionListener;
+import org.deidentifier.arx.gui.view.impl.common.DelayedChangeListener;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
@@ -89,9 +88,9 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         // Create table
         features = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         features.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        features.addSelectionListener(new DelayedSelectionListener(1000) {
+        features.addSelectionListener(new DelayedChangeListener(1000) {
             @Override
-            public void widgetDelayedSelected(SelectionEvent arg0) {
+            public void delayedEvent() {
                 fireEvent();
             }
         });
@@ -99,8 +98,8 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         // Create button
         classes = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         classes.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        classes.addSelectionListener(new DelayedSelectionListener(1000) {
-            public void widgetDelayedSelected(SelectionEvent arg0) {
+        classes.addSelectionListener(new DelayedChangeListener(1000) {
+            public void delayedEvent() {
                 fireEvent();
             }   
         });
