@@ -254,8 +254,8 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
         } else if (data.getSourceType() == SourceType.EXCEL) {
 
             configuration = new ImportConfigurationExcel(data.getFileLocation(),
-                                                       data.getExcelSheetIndex(),
-                                                       data.getFirstRowContainsHeader());
+                                                         data.getExcelSheetIndex(),
+                                                         data.getFirstRowContainsHeader());
 
         } else if (data.getSourceType() == SourceType.JDBC) {
 
