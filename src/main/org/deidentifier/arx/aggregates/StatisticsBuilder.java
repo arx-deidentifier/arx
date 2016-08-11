@@ -563,7 +563,7 @@ public class StatisticsBuilder {
             } else {
                 
                 containsOutliers = true;
-                numberOfOutlyingTuples = element.getCount();
+                numberOfOutlyingTuples += element.getCount();
             }
             
             element = element.next();
