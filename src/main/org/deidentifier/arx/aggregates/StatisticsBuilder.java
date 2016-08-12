@@ -577,6 +577,12 @@ public class StatisticsBuilder {
         averageEquivalenceClassSize /= (double)numberOfEquivalenceClasses;
         averageEquivalenceClassSizeIncludingOutliers /= (double)numberOfEquivalenceClassesIncludingOutliers;
         
+        // Fix corner cases
+        if (numberOfEquivalenceClasses == 0) {
+            averageEquivalenceClassSize = 0;
+            maximalEquivalenceClassSize = 0;
+            minimalEquivalenceClassSize = 0;
+        }
 
         // And return
         return new StatisticsEquivalenceClasses(averageEquivalenceClassSize,

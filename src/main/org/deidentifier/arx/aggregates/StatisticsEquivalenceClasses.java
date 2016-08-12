@@ -190,7 +190,7 @@ public class StatisticsEquivalenceClasses {
                "- Maximal equivalence class size = " + getMaximalEquivalenceClassSize() + "\n" +
                "- Maximal equivalence class size (including outliers) = " + getMaximalEquivalenceClassSizeIncludingOutliers() + "\n" +
                "- Minimal equivalence class size = " + getMinimalEquivalenceClassSize() + "\n" +
-               "- Minimal equivalence class size (including outliers) =" + getMinimalEquivalenceClassSizeIncludingOutliers() + "\n" +
+               "- Minimal equivalence class size (including outliers) = " + getMinimalEquivalenceClassSizeIncludingOutliers() + "\n" +
                "- Number of equivalence classes = " + getNumberOfEquivalenceClasses() + "\n" +
                "- Number of equivalence classes (including outliers) = " + getNumberOfEquivalenceClassesIncludingOutliers() + "\n" +
                "- Number of tuples = " + getNumberOfTuples() + "\n" +
