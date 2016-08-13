@@ -17,13 +17,18 @@
 
 package org.deidentifier.arx;
 
+import java.io.Serializable;
+
 /**
  * Basic configuration for the Stackelberg game
  * @author Fabian Prasser
  *
  */
-public class ARXStackelbergConfiguration {
+public class ARXStackelbergConfiguration implements Serializable {
     
+    /** SVUID*/
+    private static final long serialVersionUID = -560679186676701860L;
+
     /**
      * Creates a new instance
      * @return
@@ -40,15 +45,8 @@ public class ARXStackelbergConfiguration {
     private double             adversaryGain     = 300d;
     /** Basic parameters */
     private double             adversaryCost     = 4d;
-    /** Basic parameters */
-    private boolean            journalist        = false;
-
     /** Parameter for the journalist model */
     private DataSubset         subset            = null;
-    /** Parameter for the journalist model */
-    private double             significanceLevel = 0d;
-    /** Parameter for the journalist model */
-    private ARXPopulationModel population        = null;
     
     /**
      * Hide constructor
@@ -64,10 +62,7 @@ public class ARXStackelbergConfiguration {
         result.publisherLoss = this.publisherLoss;
         result.adversaryGain = this.adversaryGain;
         result.adversaryCost = this.adversaryCost;
-        result.journalist = this.journalist;
-        result.subset = this.subset.clone();
-        result.significanceLevel = this.significanceLevel;
-        result.population = this.population.clone();
+        result.subset = this.subset != null ? this.subset.clone() : null;
         return result;
     }
 
@@ -91,12 +86,6 @@ public class ARXStackelbergConfiguration {
     public DataSubset getDataSubset() {
         return subset;
     }
-    /**
-     * @return the population
-     */
-    public ARXPopulationModel getPopulationModel() {
-        return population;
-    }
 
     /**
      * @return the publisherBenefit
@@ -113,33 +102,19 @@ public class ARXStackelbergConfiguration {
     }
 
     /**
-     * @return the significanceLevel
-     */
-    public double getSignificanceLevel() {
-        return significanceLevel;
-    }
-
-    /**
      * @return whether we assume the journalist attacker model
      */
     public boolean isJournalistAttackerModel() {
-        return journalist;
+        return this.subset != null;
     }
 
     /**
      * @return whether we assume the journalist attacker model
      */
     public boolean isProsecutorAttackerModel() {
-        return !journalist;
+        return this.subset == null;
     }
 
-    /**
-     * Returns whether explicit sub-/supersets are available or whether we need to use population estimates
-     * @return
-     */
-    public boolean isSubsetAvailable() {
-        return this.subset != null;
-    }
     /**
      * @param adversaryCost the adversaryCost to set
      */
@@ -157,29 +132,12 @@ public class ARXStackelbergConfiguration {
     }
 
     /**
-     * Set the journalist attacker model using population estimates using the Zero-Truncated Poisson distribution
-     * @param population
-     * @param significanceLevel
-     * @return
-     */
-    public ARXStackelbergConfiguration setJournalistAttackerModel(ARXPopulationModel population, double significanceLevel){
-        this.journalist = true;
-        this.subset = null;
-        this.significanceLevel = significanceLevel;
-        this.population = population;
-        return this;
-    }
-
-    /**
      * Set the journalist attacker model with an explicit sub-/superset
      * @param subset
      * @return
      */
     public ARXStackelbergConfiguration setJournalistAttackerModel(DataSubset subset){
-        this.journalist = true;
         this.subset = subset;
-        this.significanceLevel = 0d;
-        this.population = null;
         return this;
     }
 
@@ -188,10 +146,7 @@ public class ARXStackelbergConfiguration {
      * @return
      */
     public ARXStackelbergConfiguration setProsecutorAttackerModel(){
-        this.journalist = false;
         this.subset = null;
-        this.significanceLevel = 0d;
-        this.population = null;
         return this;
     }
     
@@ -215,11 +170,7 @@ public class ARXStackelbergConfiguration {
     public String toString() {
         
         StringBuilder builder = new StringBuilder();
-        if (isProsecutorAttackerModel()) {
-            builder.append("[prosecutor, ");   
-        } else {
-            builder.append("[journalist, ").append(isSubsetAvailable() ? "explicit, " : "estimated, ");
-        }
+        builder.append(isProsecutorAttackerModel() ? "[prosecutor, " : "[journalist, ");   
         builder.append("benefit=").append(publisherBenefit).append(", loss=");
         builder.append(publisherLoss).append(", gain=").append(adversaryGain).append(", cost=").append(adversaryCost).append("]");
         return builder.toString();

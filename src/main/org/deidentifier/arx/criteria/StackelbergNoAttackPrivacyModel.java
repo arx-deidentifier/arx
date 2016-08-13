@@ -18,10 +18,8 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXStackelbergConfiguration;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.criteria.KMap.CellSizeEstimator;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -35,8 +33,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * 
  * @author Fabian Prasser
  */
-public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion implements _PrivacyModelWithDelayedProsecutorThreshold,
-                                                                                         _PrivacyModelWithProsecutorThreshold,
+public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion implements _PrivacyModelWithProsecutorThreshold,
                                                                                          _PrivacyModelWithSubset {
 
     /** SVUID */
@@ -72,20 +69,8 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion im
         
         // Decide whether to use k-anonymity or k-map
         if (config.isJournalistAttackerModel()) {
-            
-            // K-Map: Decide whether to use population data or estimates
-            if (config.isSubsetAvailable()) {
-                kMap = new KMap(k, config.getDataSubset());
-            } else {
-                kMap = new KMap(k,
-                                config.getSignificanceLevel(),
-                                config.getPopulationModel(),
-                                CellSizeEstimator.ZERO_TRUNCATED_POISSON);
-            }
-            
+            this.kMap = new KMap(k, config.getDataSubset());
         } else {
-            
-            // K-Anonymity
             this.kMap = null;
         }
     }
@@ -103,45 +88,12 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion im
         return config.getDataSubset();
     }
     
-    /**
-     * @return
-     * @see org.deidentifier.arx.criteria.KMap#getDerivedK()
-     */
-    public int getDerivedK() {
-        if (kMap == null) {
-            return k;
-        }
-        return kMap.getDerivedK();
-    }
-    
-    /**
-     * @return
-     * @see org.deidentifier.arx.criteria.KMap#getEstimator()
-     */
-    public CellSizeEstimator getEstimator() {
-        if (kMap == null) {
-            return null;
-        }
-        return kMap.getEstimator();
-    }
-    
-    /**
-     * @return
-     * @see org.deidentifier.arx.criteria.KMap#getPopulationModel()
-     */
-    public ARXPopulationModel getPopulationModel() {
-        if (kMap == null) {
-            return null;
-        }
-        return kMap.getPopulationModel();
-    }
-    
     @Override
     public int getProsecutorRiskThreshold() {
         if (config.isProsecutorAttackerModel()) {
             return this.k;
         } else {
-            return this.kMap != null ? this.kMap.getDerivedK() : -1;
+            return 0;
         }
     }
     
@@ -165,28 +117,6 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion im
         return kMap != null ? kMap.getRiskThresholdProsecutor() : 1d / (double)k;
     }
     
-    /**
-     * @return
-     * @see org.deidentifier.arx.criteria.KMap#getSignificanceLevel()
-     */
-    public double getSignificanceLevel() {
-        if (kMap == null) {
-            return 0d;
-        }
-        return kMap.getSignificanceLevel();
-    }
-
-    /**
-     * @return
-     * @see org.deidentifier.arx.criteria.KMap#getType1Error()
-     */
-    public double getType1Error() {
-        if (kMap == null) {
-            return 0d;
-        }
-        return kMap.getType1Error();
-    }
-
     @Override
     public void initialize(DataManager manager) {
         if (kMap != null) {
@@ -194,25 +124,9 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion im
         }
     }
     
-    /**
-     * @return
-     * @see org.deidentifier.arx.criteria.KMap#isAccurate()
-     */
-    public boolean isAccurate() {
-        if (kMap == null) {
-            return true;
-        }
-        return kMap.isAccurate();
-    }
-    
     @Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return kMap != null ? kMap.isAnonymous(node, entry) : entry.count >= k;
-    }
-
-    @Override
-    public boolean isDelayedProsecutorRiskThresholdAvaliable() {
-        return kMap != null && kMap.getDerivedK() != -1;
     }
 
     @Override
@@ -237,20 +151,9 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion im
         return config.isProsecutorAttackerModel();
     }
 
-    /**
-     * @return
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isSampleBased()
-     */
-    public boolean isSampleBased() {
-        if (kMap == null) {
-            return true;
-        }
-        return kMap.isSampleBased();
-    }
-
     @Override
     public boolean isSubsetAvailable() {
-        return config.isJournalistAttackerModel() && config.isSubsetAvailable();
+        return config.isJournalistAttackerModel();
     }
 
     @Override

@@ -155,7 +155,7 @@ public class Example47 extends Example {
         DataHandle handle = result.getOutput(node, false);
         
         // Print stuff
-        System.out.println("Data: " + data.getHandle().getNumRows() + " records with " + data.getHandle().getNumColumns() + " quasi-identifiers");
+        System.out.println("Data: " + data.getHandle().getView().getNumRows() + " records with " + data.getDefinition().getQuasiIdentifyingAttributes().size() + " quasi-identifiers");
         System.out.println(" - Configuration: " + config.toString());
         System.out.println(" - Solution: " + Arrays.toString(node.getTransformation()));
         System.out.println("   * Optimal: " + result.getLattice().isComplete());

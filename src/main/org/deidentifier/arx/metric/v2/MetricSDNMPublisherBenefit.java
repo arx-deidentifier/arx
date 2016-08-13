@@ -123,8 +123,9 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
      */
     public double[] getPublisherPayoff(Transformation transformation, HashGroupifyEntry entry) {
 
-        // Compute success probability
-        double adversarySuccessProbability = config.isProsecutorAttackerModel() ? 1d / entry.count : 1d / entry.pcount;
+        // Compute success probability: if the metric is configured to use the journalist risk, 
+        // but no population table is available, we silently default to the prosecutor model.
+        double adversarySuccessProbability = config.isProsecutorAttackerModel() || entry.pcount == 0 ? 1d / entry.count : 1d / entry.pcount;
         
         // Determine adversary's payoff
         double adversaryPayoff = config.getAdversaryGain() * adversarySuccessProbability - config.getAdversaryCost();

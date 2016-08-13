@@ -52,14 +52,10 @@ public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion implements
      * PLOS|ONE. 2015. 
      */
     public StackelbergPrivacyModel(MetricSDNMPublisherBenefit metric){
-        super(false, false); // TODO: Do we have any form of monotonicity here?
+        // TODO: Can we find some form of monotonicity for this model?
+        super(false, false);
         this.metric = metric;
         this.config = metric.getStackelbergConfig();
-        
-        // Check for unsupported configurations
-        if (this.config.isJournalistAttackerModel() && !this.config.isSubsetAvailable()) {
-            throw new UnsupportedOperationException("Estimation of journalist risks is currently not suppported for this model");
-        }
     }
 
     @Override
@@ -116,6 +112,6 @@ public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion implements
 
     @Override
     public boolean isSubsetAvailable() {
-        return metric.getStackelbergConfig().isSubsetAvailable();
+        return metric.getStackelbergConfig().isJournalistAttackerModel();
     }
 }

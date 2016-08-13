@@ -27,14 +27,14 @@ import java.util.regex.Pattern;
 import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.DataSelector;
-import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.ARXStackelbergConfiguration;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataSelector;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.StackelbergPrivacyModel;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
@@ -42,7 +42,7 @@ import org.deidentifier.arx.metric.v2.MetricSDNMPublisherBenefit;
 
 /**
  * Examples of using the Stackelberg game for de-identifying the Adult dataset
- * based on the journalist attacker model with explicit background knowledge
+ * based on the journalist attacker model with an explicit population table
  *
  * @author Fabian Prasser
  */
@@ -98,9 +98,9 @@ public class Example48 extends Example {
         Data data = createData("adult");
         
         // We select all records with "sex=Male" to serve as the dataset which we will de-identify.
-        // The overall dataset serves background knowledge.
+        // The overall dataset serves as our population table.
         DataSubset subset = DataSubset.create(data, DataSelector.create(data).field("sex").equals("Male"));
-
+        
         // Config from PLOS|ONE paper
         solve(data, ARXStackelbergConfiguration.create()
                                                .setAdversaryCost(4d)
@@ -161,7 +161,7 @@ public class Example48 extends Example {
         DataHandle handle = result.getOutput(node, false).getView();
         
         // Print stuff
-        System.out.println("Data: " + data.getHandle().getView().getNumRows() + " records with " + data.getHandle().getView().getNumColumns() + " quasi-identifiers");
+        System.out.println("Data: " + data.getHandle().getView().getNumRows() + " records with " + data.getDefinition().getQuasiIdentifyingAttributes().size() + " quasi-identifiers");
         System.out.println(" - Configuration: " + config.toString());
         System.out.println(" - Solution: " + Arrays.toString(node.getTransformation()));
         System.out.println("   * Optimal: " + result.getLattice().isComplete());
