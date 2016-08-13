@@ -126,6 +126,15 @@ public class Example47 extends Example {
                                                .setPublisherLoss(600d)
                                                .setPublisherBenefit(1200d)
                                                .setProsecutorAttackerModel());
+        
+        // Config from PLOS|ONE paper but publisher loss and benefit changed with each other
+        solve(data, ARXStackelbergConfiguration.create()
+                                               .setAdversaryCost(4d)
+                                               .setAdversaryGain(300d)
+                                               .setPublisherLoss(1200d)
+                                               .setPublisherBenefit(300d)
+                                               .setProsecutorAttackerModel());
+
 
     }
 
