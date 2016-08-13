@@ -36,6 +36,8 @@ import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleBasedCriterion;
+import org.deidentifier.arx.criteria.StackelbergNoAttackPrivacyModel;
+import org.deidentifier.arx.criteria.StackelbergPrivacyModel;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.criteria._PrivacyModelWithDelayedProsecutorThreshold;
 import org.deidentifier.arx.criteria._PrivacyModelWithProsecutorThreshold;
@@ -1202,7 +1204,12 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (this.containsCriterion(TCloseness.class)) {
             list.addAll(this.getCriteria(TCloseness.class));
         }
-
+        if (this.containsCriterion(StackelbergPrivacyModel.class)) {
+            list.addAll(this.getCriteria(StackelbergPrivacyModel.class));
+        }
+        if (this.containsCriterion(StackelbergNoAttackPrivacyModel.class)) {
+            list.addAll(this.getCriteria(StackelbergNoAttackPrivacyModel.class));
+        }
         this.aCriteria = list.toArray(new PrivacyCriterion[0]);
         
         // Compute array of sample-based criteria
