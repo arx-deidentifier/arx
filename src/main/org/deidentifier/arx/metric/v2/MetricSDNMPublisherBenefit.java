@@ -173,8 +173,7 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
             int value = entry.key[dimension];
             int level = generalization[dimension];
             double share = 1d / (shares[dimension].getShare(value, level) * shares[dimension].getDomainSize());
-            double generalizationIL = Math.log10(share);
-            benefit -= generalizationIL;
+            benefit -= Math.log10(share);
         }
         
         // Normalize
