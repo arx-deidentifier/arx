@@ -60,11 +60,12 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion im
         
         // We reduce this model to k-map or k-anonymity:
         // adversaryPayoff = adversaryGain * successProbability - adversaryCost
-        // -> adversaryGain * successProbability < adversaryCost
+        // To give the adversary no incentives to attack we need to ensure that the following holds:
+        // adversaryGain * successProbability < adversaryCost
         // -> successProbability < adversaryCost / adversaryGain
-        // With successProbability = 1 / (size of population group of r), we have:
-        // -> 1 / (size of population group of r) < adversaryCost / adversaryGain
-        // -> (size of population group of r) > adversaryGain / adversaryCost
+        // With successProbability = 1 / [size of (population) group of r], we have:
+        // -> 1 / [size of (population) group of r] < adversaryCost / adversaryGain
+        // -> [size of (population) group of r] > adversaryGain / adversaryCost
         this.k = (int)Math.ceil(config.getAdversaryGain() / config.getAdversaryCost());
         
         // Decide whether to use k-anonymity or k-map
