@@ -18,6 +18,7 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * The distinct l-diversity privacy criterion.
@@ -49,7 +50,7 @@ public class DistinctLDiversity extends LDiversity{
     }
 
 	@Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return entry.distributions[index].size() >= minSize; // minSize=(int)l;
     }
 

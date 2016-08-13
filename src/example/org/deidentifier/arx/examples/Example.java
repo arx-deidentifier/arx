@@ -162,10 +162,12 @@ public abstract class Example {
         }
 
         // Print
-        System.out.println(" - Information loss: " + result.getGlobalOptimum().getMaximumInformationLoss());
+        System.out.println(" - Information loss: " + result.getGlobalOptimum().getMinimumInformationLoss() + " / " + result.getGlobalOptimum().getMaximumInformationLoss());
         System.out.println(" - Optimal generalization");
         for (int i = 0; i < qis.size(); i++) {
             System.out.println("   * " + identifiers[i] + ": " + generalizations[i]);
         }
+        System.out.println(" - Statistics");
+        System.out.println(result.getOutput(result.getGlobalOptimum(), false).getStatistics().getEquivalenceClassStatistics());
     }
 }

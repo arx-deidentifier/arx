@@ -29,7 +29,7 @@ import org.deidentifier.arx.ARXConfiguration;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class LDiversity extends ExplicitPrivacyCriterion {
+public abstract class LDiversity extends ExplicitPrivacyCriterion implements _PrivacyModelWithProsecutorThreshold{
 
     /**  SVUID */
     private static final long serialVersionUID = 6429149925699964530L;
@@ -64,28 +64,16 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
         return l;
     }
 
-    /**
-     * Returns the minimal group size required to fulfill this criterion.
-     *
-     * @return
-     */
-    public int getMinimalGroupSize(){
-        return minSize;
+    @Override
+    public int getProsecutorRiskThreshold() {
+        return this.minSize;
     }
-    
+
     @Override
     public int getRequirements() {
 
         // Requires a distribution, but nothing else
         return ARXConfiguration.REQUIREMENT_DISTRIBUTION;
-    }
-
-    /**
-     * Return prosecutor risk threshold, 1 if there is none
-     * @return
-     */
-    public double getRiskThresholdProsecutor() {
-        return 1d / getL();
     }
 
     /**
@@ -102,5 +90,18 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
      */
     public double getRiskThresholdMarketer() {
         return getRiskThresholdProsecutor();
+    }
+
+    /**
+     * Return prosecutor risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdProsecutor() {
+        return 1d / minSize;
+    }
+
+    @Override
+    public boolean isProsecutorRiskThresholdAvaliable() {
+        return true;
     }
 }

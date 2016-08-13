@@ -27,11 +27,11 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.criteria._PrivacyModelWithSubset;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -100,13 +100,23 @@ public class ModelConfiguration implements Serializable, Cloneable {
         c.max = new HashMap<String, Integer>(max);
         c.config = config.clone();
         c.hierarchies = new HashMap<String, Hierarchy>(hierarchies);
-        if (this.containsCriterion(DPresence.class)) {
-            c.researchSubset = this.getCriterion(DPresence.class).getSubset().getSet();
-        } else if (this.containsCriterion(KMap.class) && this.getCriterion(KMap.class).isAccurate()) {
-            c.researchSubset = this.getCriterion(KMap.class).getSubset().getSet();
-        } else {
+        
+        // Clone subset
+        boolean found = false;
+        for (PrivacyCriterion pc : this.getCriteria()) {
+            if (pc instanceof _PrivacyModelWithSubset) {
+                DataSubset subset = ((_PrivacyModelWithSubset)pc).getDataSubset();
+                if (subset != null) {
+                    c.researchSubset = subset.getSet();
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (!found) {
             c.researchSubset = this.researchSubset.clone();
         }
+        
         c.suppressionWeight = this.suppressionWeight;
         c.microAggregationFunctions = new HashMap<String, MicroAggregationFunctionDescription>(microAggregationFunctions);
         c.microAggregationIgnoreMissingData = new HashMap<String, Boolean>(microAggregationIgnoreMissingData);

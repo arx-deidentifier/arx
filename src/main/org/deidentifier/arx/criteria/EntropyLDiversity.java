@@ -19,6 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * The entropy l-diversity criterion.
@@ -50,7 +51,7 @@ public class EntropyLDiversity extends LDiversity {
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
 
         Distribution d = entry.distributions[index];
 

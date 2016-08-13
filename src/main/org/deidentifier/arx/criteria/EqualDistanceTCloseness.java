@@ -19,6 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * The t-closeness criterion with equal-distance EMD.
@@ -59,7 +60,7 @@ public class EqualDistanceTCloseness extends TCloseness {
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
 
         // Calculate EMD with equal distance
         int[] buckets = entry.distributions[index].getBuckets();

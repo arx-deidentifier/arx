@@ -21,6 +21,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * The d-presence criterion
@@ -32,7 +33,7 @@ import org.deidentifier.arx.framework.data.DataManager;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class DPresence extends ImplicitPrivacyCriterion{
+public class DPresence extends ImplicitPrivacyCriterion implements _PrivacyModelWithSubset {
     
     /**  SVUID */
     private static final long serialVersionUID = 8534004943055128797L;
@@ -76,7 +77,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
         
     @Override
     public DPresence clone() {
-        return new DPresence(this.getDMin(), this.getDMax(), this.getSubset().clone());
+        return new DPresence(this.getDMin(), this.getDMax(), this.getDataSubset().clone());
     }
     
     /**
@@ -105,17 +106,12 @@ public class DPresence extends ImplicitPrivacyCriterion{
     }
 
     @Override
-    public DataSubset getSubset() {
-        return this.subset;
-    }
-
-    @Override
     public void initialize(DataManager manager) {
         // Nothing to do
     }
     
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         double delta = entry.count == 0 ? 0d : (double) entry.count / (double) entry.pcount;
         return (delta >= dMin) && (delta <= dMax);
     }
@@ -129,4 +125,14 @@ public class DPresence extends ImplicitPrivacyCriterion{
 	public String toString() {
 		return "("+dMin+","+dMax+")-presence";
 	}
+
+    @Override
+    public DataSubset getDataSubset() {
+        return this.subset;
+    }
+
+    @Override
+    public boolean isSubsetAvailable() {
+        return this.subset != null;
+    }
 }

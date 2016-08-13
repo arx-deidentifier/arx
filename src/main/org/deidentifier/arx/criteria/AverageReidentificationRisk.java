@@ -44,6 +44,14 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
         return new AverageReidentificationRisk(this.getRiskThreshold());
     }
     
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        return getRiskThreshold();
+    }
+
     @Override
     public boolean isLocalRecodingSupported() {
         return false;
@@ -57,13 +65,5 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
     @Override
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
         return 1.0d / (double)distribution.getAverageClassSize() <= getRiskThreshold();
-    }
-
-    /**
-     * Return marketer risk threshold, 1 if there is none
-     * @return
-     */
-    public double getRiskThresholdMarketer() {
-        return getRiskThreshold();
     }
 }

@@ -29,20 +29,20 @@ import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquen
  * 
  * @author Fabian Prasser
  */
-public class PopulationUniqueness extends RiskBasedCriterion{
+public class PopulationUniqueness extends RiskBasedCriterion {
 
     /** SVUID */
-    private static final long          serialVersionUID = 618039085843721351L;
+    private static final long         serialVersionUID = 618039085843721351L;
 
     /** The statistical model */
     private PopulationUniquenessModel statisticalModel;
 
     /** The population model */
-    private ARXPopulationModel         populationModel;
+    private ARXPopulationModel        populationModel;
 
-    /** The solver config*/
-    private ARXSolverConfiguration     solverConfig;
-    
+    /** The solver config */
+    private ARXSolverConfiguration    solverConfig;
+
     /**
      * Creates a new instance of this criterion. Uses Dankar's method for estimating population uniqueness.
      * This constructor will clone the population model, making further changes to it will not influence

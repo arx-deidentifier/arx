@@ -23,6 +23,7 @@ import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * An abstract base class for privacy criteria.
@@ -58,6 +59,18 @@ public abstract class PrivacyCriterion implements Serializable{
      * Clone
      */
     public abstract PrivacyCriterion clone();
+
+    /**
+     * Clone for local recoding
+     */
+    public PrivacyCriterion clone(DataSubset subset) {
+        if (!isLocalRecodingSupported()) {
+            throw new UnsupportedOperationException("Local recoding is not supported by this model");
+        } else if ((this instanceof _PrivacyModelWithSubset) && ((_PrivacyModelWithSubset)this).isSubsetAvailable()) {
+            throw new UnsupportedOperationException("This model must override clone(subset)");
+        }
+        return this.clone();
+    }
     
     /**
      * Returns the associated population model, <code>null</code> if there is none.
@@ -108,20 +121,13 @@ public abstract class PrivacyCriterion implements Serializable{
     }
     
     /**
-     * Returns a research subset, <code>null</code> if no subset is available
-     * @return
-     */
-    public DataSubset getSubset() {
-        return null;
-    }
-    
-    /**
      * Implement this, to enforce the criterion.
-     *
+     * @param node TODO
      * @param entry
+     *
      * @return
      */
-    public abstract boolean isAnonymous(HashGroupifyEntry entry);
+    public abstract boolean isAnonymous(Transformation node, HashGroupifyEntry entry);
     
     /**
      * Returns whether the criterion supports local recoding.

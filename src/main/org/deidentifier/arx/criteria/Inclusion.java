@@ -21,6 +21,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * This is a special criterion that does not enforce any privacy guarantees
@@ -29,7 +30,7 @@ import org.deidentifier.arx.framework.data.DataManager;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class Inclusion extends DPresence {
+public class Inclusion extends DPresence implements _PrivacyModelWithSubset{
     
     /**  SVUID */
     private static final long serialVersionUID = -3984193225980793775L;
@@ -42,27 +43,32 @@ public class Inclusion extends DPresence {
     public Inclusion(DataSubset subset) {
         super(subset);
     }
-        
+
     @Override
     public int getRequirements(){
         // Requires two counters
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
-
+    
     @Override
     public void initialize(DataManager manager) {
         // Nothing to do
     }
-    
+
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return true;
     }
 
     @Override
     public boolean isLocalRecodingSupported() {
         return true;
+    }
+    
+    @Override
+    public PrivacyCriterion clone(DataSubset subset) {
+        return new Inclusion(subset);
     }
 
     @Override

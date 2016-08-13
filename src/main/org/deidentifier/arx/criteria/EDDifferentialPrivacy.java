@@ -29,6 +29,7 @@ import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * (e,d)-Differential Privacy implemented with (k,b)-SDGS as proposed in:
@@ -41,7 +42,8 @@ import org.deidentifier.arx.framework.data.DataManager;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
+public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion implements _PrivacyModelWithProsecutorThreshold,
+                                                                               _PrivacyModelWithSubset{
     
     /** SVUID */
     private static final long        serialVersionUID = 242579895476272606L;
@@ -148,15 +150,15 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
     }
 
     @Override
+    public int getProsecutorRiskThreshold() {
+        return k;
+    }
+
+    @Override
     public int getRequirements(){
         // Requires two counters
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
-    }
-
-    @Override
-    public DataSubset getSubset() {
-        return this.subset;
     }
     
     /**
@@ -203,7 +205,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return entry.count >= k;
     }
 
@@ -212,6 +214,11 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
         return false;
     }
 
+    @Override
+    public boolean isProsecutorRiskThresholdAvaliable() {
+        return true;
+    }
+    
     @Override
     public String toString() {
         return "("+epsilon+","+delta+")-DP";
@@ -255,7 +262,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
 
         return sum;
     }
-    
+
     /**
      * Calculates c_n
      * @param n
@@ -267,7 +274,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
         double gamma = calculateGamma(epsilon, beta);
         return (new Exp()).value(-1.0d * n * (gamma * (new Log()).value(gamma / beta) - (gamma - beta)));
     }
-
+    
     /**
      * Calculates delta
      * @param k
@@ -300,7 +307,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
         double power = (new Exp()).value(epsilon);
         return (power - 1.0d + beta) / power;
     }
-    
+
     /**
      * Calculates k
      * @param delta
@@ -316,5 +323,15 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
         }
 
         return k;
+    }
+
+    @Override
+    public DataSubset getDataSubset() {
+        return subset;
+    }
+
+    @Override
+    public boolean isSubsetAvailable() {
+        return subset != null;
     }
 }
