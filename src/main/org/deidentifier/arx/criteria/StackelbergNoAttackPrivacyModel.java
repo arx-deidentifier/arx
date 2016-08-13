@@ -21,7 +21,6 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXStackelbergConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
@@ -39,8 +38,6 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion im
     /** SVUID */
     private static final long                 serialVersionUID = -1283022087083117810L;
 
-    /** The underlying k-map privacy model */
-    private KMap                              kMap;
     /** The underlying k-anonymity privacy model */
     private int                               k;
     /** Config */
@@ -67,20 +64,12 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion im
         // -> 1 / [size of (population) group of r] < adversaryCost / adversaryGain
         // -> [size of (population) group of r] > adversaryGain / adversaryCost
         this.k = (int)Math.ceil(config.getAdversaryGain() / config.getAdversaryCost());
-        
-        // Decide whether to use k-anonymity or k-map
-        if (config.isJournalistAttackerModel()) {
-            this.kMap = new KMap(k, config.getDataSubset());
-        } else {
-            this.kMap = null;
-        }
     }
     
     @Override
     public PrivacyCriterion clone() {
         StackelbergNoAttackPrivacyModel result = new StackelbergNoAttackPrivacyModel(this.config.clone());
         result.k = this.k;
-        result.kMap = this.kMap != null ? this.kMap.clone() : null;
         return result;
     }
     
@@ -100,39 +89,40 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion im
     
     @Override
     public int getRequirements() {
-        return kMap != null ? kMap.getRequirements() : ARXConfiguration.REQUIREMENT_COUNTER;
+        int result = ARXConfiguration.REQUIREMENT_COUNTER;
+        if (config.isJournalistAttackerModel()) {
+            result |= ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
+        }
+        return result;
     }
     
     @Override
     public double getRiskThresholdJournalist() {
-        return kMap != null ? kMap.getRiskThresholdJournalist() :  getRiskThresholdProsecutor();
+        return 1d / (double)k;
     }
     
     @Override
     public double getRiskThresholdMarketer() {
-        return kMap != null ? kMap.getRiskThresholdMarketer() :  getRiskThresholdProsecutor();
+        return getRiskThresholdJournalist();
     }
     
     @Override
     public double getRiskThresholdProsecutor() {
-        return kMap != null ? kMap.getRiskThresholdProsecutor() : 1d / (double)k;
-    }
-    
-    @Override
-    public void initialize(DataManager manager) {
-        if (kMap != null) {
-            kMap.initialize(manager);
+        if (config.isProsecutorAttackerModel()) {
+            return 1d / (double)k;
+        } else {
+            return 0d;
         }
     }
     
     @Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
-        return kMap != null ? kMap.isAnonymous(node, entry) : entry.count >= k;
+        return config.isProsecutorAttackerModel() ? entry.count >= k : entry.pcount >= k;
     }
 
     @Override
     public boolean isLocalRecodingSupported() {
-        return kMap != null ? kMap.isLocalRecodingSupported() : true;
+        return config.isProsecutorAttackerModel();
     }
     
     @Override
@@ -140,11 +130,7 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion im
         if (!isLocalRecodingSupported()) {
             throw new UnsupportedOperationException("Local recoding is not supported by this model");
         }
-        if (kMap != null) {
-            return kMap.clone(subset);
-        }  else {
-            return new KAnonymity(this.k);
-        }
+        return clone();
     }
 
     @Override
