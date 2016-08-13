@@ -52,7 +52,7 @@ public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion implements
      * PLOS|ONE. 2015. 
      */
     public StackelbergPrivacyModel(MetricSDNMPublisherBenefit metric){
-        super(false, false); // TODO: Do we have any form of monotonicity here
+        super(false, false); // TODO: Do we have any form of monotonicity here?
         this.metric = metric;
         this.config = metric.getStackelbergConfig();
         
@@ -64,7 +64,6 @@ public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion implements
 
     @Override
     public StackelbergPrivacyModel clone() {
-        // TODO: It's probably not a good idea to pass the metric on to the clone
         return new StackelbergPrivacyModel(this.metric.clone());
     }
 

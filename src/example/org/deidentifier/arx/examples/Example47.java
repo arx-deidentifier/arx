@@ -95,8 +95,6 @@ public class Example47 extends Example {
         // Load the dataset
         Data data = createData("adult");
         
-        // TODO: Is journalist risk handled correctly?
-
         // Config from PLOS|ONE paper
         solve(data, ARXStackelbergConfiguration.create()
                                                .setAdversaryCost(4d)
