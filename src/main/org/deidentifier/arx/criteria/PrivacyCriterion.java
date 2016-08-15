@@ -66,10 +66,26 @@ public abstract class PrivacyCriterion implements Serializable{
     public PrivacyCriterion clone(DataSubset subset) {
         if (!isLocalRecodingSupported()) {
             throw new UnsupportedOperationException("Local recoding is not supported by this model");
-        } else if ((this instanceof _PrivacyModelWithSubset) && ((_PrivacyModelWithSubset)this).isSubsetAvailable()) {
+        } else if (this.isSubsetAvailable()) {
             throw new UnsupportedOperationException("This model must override clone(subset)");
         }
         return this.clone();
+    }
+    
+    /**
+     * If a privacy model uses a data subset, it must overwrite this method
+     * @return
+     */
+    public DataSubset getDataSubset() {
+    return null;
+    }
+
+    /**
+     * If a privacy model provides a prosecutor risk threshold, it should override this method to enable optimizations
+     * @return
+     */
+    public int getMinimalClassSize() {
+    return 0;
     }
     
     /**
@@ -94,7 +110,7 @@ public abstract class PrivacyCriterion implements Serializable{
     public double getRiskThresholdJournalist() {
         return 1d;
     }
-
+    
     /**
      * Return marketer risk threshold, 1 if there is none
      * @return
@@ -128,13 +144,21 @@ public abstract class PrivacyCriterion implements Serializable{
      * @return
      */
     public abstract boolean isAnonymous(Transformation node, HashGroupifyEntry entry);
-    
+
     /**
      * Returns whether the criterion supports local recoding.
      * @return
      */
     public abstract boolean isLocalRecodingSupported();
-    
+
+    /**
+     * If a privacy model provides a prosecutor risk threshold, it should override this method to enable optimizations
+     * @return
+     */
+    public boolean isMinimalClassSizeAvailable() {
+        return false;
+    }
+
     /**
      * Returns whether the criterion is monotonic with generalization.
      * @return
@@ -147,6 +171,7 @@ public abstract class PrivacyCriterion implements Serializable{
             return this.monotonicWithGeneralization;
         }
     }
+    
 
     /**
      * Returns whether the criterion is monotonic with tuple suppression.
@@ -165,6 +190,15 @@ public abstract class PrivacyCriterion implements Serializable{
         return false;
     }
 
+
+    /**
+     * If a privacy model uses a data subset, it must overwrite this method
+     * @return
+     */
+    public boolean isSubsetAvailable() {
+    return false;
+    }
+    
     /**
      * Returns a string representation.
      *

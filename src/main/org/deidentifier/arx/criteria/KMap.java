@@ -38,8 +38,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class KMap extends ImplicitPrivacyCriterion implements _PrivacyModelWithDelayedProsecutorThreshold,
-                                                              _PrivacyModelWithSubset{
+public class KMap extends ImplicitPrivacyCriterion {
     
     /**
      * Estimators for cell sizes in the population.
@@ -143,6 +142,16 @@ public class KMap extends ImplicitPrivacyCriterion implements _PrivacyModelWithD
     }
     
     @Override
+    public PrivacyCriterion clone(DataSubset subset) {
+        if (!isLocalRecodingSupported()) {
+            throw new UnsupportedOperationException("Local recoding is not supported by this model");
+        }
+        // We replace estimated k-map with an according instance of k-anonymity.
+        // This avoids the re-calculation of k' 
+        return new KAnonymity(this.getDerivedK());
+    }
+    
+    @Override
     public DataSubset getDataSubset() {
         return this.subset;
     }
@@ -174,13 +183,13 @@ public class KMap extends ImplicitPrivacyCriterion implements _PrivacyModelWithD
     }
     
     @Override
-    public ARXPopulationModel getPopulationModel() {
-        return this.populationModel;
+    public int getMinimalClassSize() {
+        return this.derivedK;
     }
     
     @Override
-    public int getProsecutorRiskThreshold() {
-        return this.derivedK;
+    public ARXPopulationModel getPopulationModel() {
+        return this.populationModel;
     }
     
     @Override
@@ -275,7 +284,7 @@ public class KMap extends ImplicitPrivacyCriterion implements _PrivacyModelWithD
         }
         this.derivedK = Math.min(this.k, this.derivedK);
     }
-    
+
     /**
      * Return true if the population has been modeled explicitly.
      * This implies that no approximation is performed.
@@ -295,23 +304,13 @@ public class KMap extends ImplicitPrivacyCriterion implements _PrivacyModelWithD
     }
 
     @Override
-    public boolean isDelayedProsecutorRiskThresholdAvaliable() {
-        return this.estimator != null && this.derivedK != -1;
-    }
-
-    @Override
     public boolean isLocalRecodingSupported() {
         return !isAccurate();
     }
 
     @Override
-    public PrivacyCriterion clone(DataSubset subset) {
-        if (!isLocalRecodingSupported()) {
-            throw new UnsupportedOperationException("Local recoding is not supported by this model");
-        }
-        // We replace estimated k-map with an according instance of k-anonymity.
-        // This avoids the re-calculation of k' 
-        return new KAnonymity(this.getDerivedK());
+    public boolean isMinimalClassSizeAvailable() {
+        return this.estimator != null && this.derivedK != -1;
     }
 
     @Override

@@ -33,7 +33,7 @@ import org.deidentifier.arx.metric.v2.MetricSDNMPublisherBenefit;
  * 
  * @author Fabian Prasser
  */
-public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion implements _PrivacyModelWithSubset {
+public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion {
 
     /** SVUID */
     private static final long                 serialVersionUID = -1698534839214708559L;
@@ -72,6 +72,11 @@ public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion implements
     }
 
     @Override
+    public DataSubset getDataSubset() {
+        return metric.getStackelbergConfig().getDataSubset();
+    }
+    
+    @Override
     public int getRequirements(){
         if (config.isProsecutorAttackerModel()) {
             return ARXConfiguration.REQUIREMENT_COUNTER;
@@ -94,24 +99,19 @@ public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion implements
         // We keep the set of records if the payoff is > 0
         return (payoff > 0);
     }
-    
+
     @Override
     public boolean isLocalRecodingSupported() {
         return config.isProsecutorAttackerModel();
     }
 
     @Override
-    public String toString() {
-        return "stackelberg-game " + config.toString();
-    }
-
-    @Override
-    public DataSubset getDataSubset() {
-        return metric.getStackelbergConfig().getDataSubset();
-    }
-
-    @Override
     public boolean isSubsetAvailable() {
         return metric.getStackelbergConfig().isJournalistAttackerModel();
+    }
+
+    @Override
+    public String toString() {
+        return "stackelberg-game " + config.toString();
     }
 }

@@ -29,7 +29,6 @@ import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.criteria._PrivacyModelWithSubset;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 
@@ -419,11 +418,12 @@ public class DataManager {
             if (c instanceof EDDifferentialPrivacy) {
                 ((EDDifferentialPrivacy) c).initialize(this);
             }
-            if ((c instanceof _PrivacyModelWithSubset)) {
-                DataSubset _subset = ((_PrivacyModelWithSubset) c).getDataSubset();
+            if (c.isSubsetAvailable()) {
+                DataSubset _subset = c.getDataSubset();
                 if (_subset != null) {
                     subset = _subset.getSet();
                     subsetSize = _subset.getArray().length;
+                    break;
                 }
             }
         }

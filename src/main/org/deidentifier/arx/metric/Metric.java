@@ -28,7 +28,6 @@ import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.criteria._PrivacyModelWithSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -1350,8 +1349,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     protected RowSet getSubset(ARXConfiguration config) {
         for (PrivacyCriterion c : config.getCriteria()) {
-            if ((c instanceof _PrivacyModelWithSubset)) {
-                DataSubset subset = ((_PrivacyModelWithSubset) c).getDataSubset();
+            if (c.isSubsetAvailable()) {
+                DataSubset subset = c.getDataSubset();
                 if (subset != null) {
                     return subset.getSet();
                 }

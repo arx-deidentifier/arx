@@ -31,7 +31,6 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.criteria._PrivacyModelWithSubset;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -104,8 +103,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
         // Clone subset
         boolean found = false;
         for (PrivacyCriterion pc : this.getCriteria()) {
-            if (pc instanceof _PrivacyModelWithSubset) {
-                DataSubset subset = ((_PrivacyModelWithSubset)pc).getDataSubset();
+            if (pc.isSubsetAvailable()) {
+                DataSubset subset = pc.getDataSubset();
                 if (subset != null) {
                     c.researchSubset = subset.getSet();
                     found = true;

@@ -39,9 +39,6 @@ import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.criteria.StackelbergNoAttackPrivacyModel;
 import org.deidentifier.arx.criteria.StackelbergPrivacyModel;
 import org.deidentifier.arx.criteria.TCloseness;
-import org.deidentifier.arx.criteria._PrivacyModelWithDelayedProsecutorThreshold;
-import org.deidentifier.arx.criteria._PrivacyModelWithProsecutorThreshold;
-import org.deidentifier.arx.criteria._PrivacyModelWithSubset;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.MetricConfiguration;
@@ -56,8 +53,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     // TODO: While in use, this configuration object should be locked, similar to, e.g., DataDefinition
 
     /**
-     * Class for internal use that provides access to more details.
-     * TODO: This class is a hack and should be removed in future releases
+     * Class for internal use that provides access to more parameters and functionality.
      */
     public static class ARXConfigurationInternal {
         
@@ -357,7 +353,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Should microaggregation be based on data utility measurements */
     private boolean                            utilityBasedMicroaggregation          = false;
 
-    /** TODO: This is a hack and should be removed in future releases. */
+    /** Internal variant of the class providing a broader interface. */
     private transient ARXConfigurationInternal accessibleInstance                    = null;
 
     /** Are we performing optimal anonymization for sample-based criteria? */
@@ -433,31 +429,26 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if ((c instanceof KAnonymity) && this.containsCriterion(KAnonymity.class)) { 
                throw new RuntimeException("You must not add more than one k-anonymity criterion"); 
         }
+        if ((c instanceof EDDifferentialPrivacy) && this.containsCriterion(EDDifferentialPrivacy.class)) { 
+            throw new RuntimeException("You must not add more than one differential privacy criterion"); 
+        }
         
         // Check whether different subsets have been defined
-        if (c instanceof _PrivacyModelWithSubset) {
-            
-            // Make sure we ignore differential privacy here
-            if (((_PrivacyModelWithSubset)c).isSubsetAvailable()) {
-            
-                // Collect all subsets
-                List<int[]> subsets = new ArrayList<int[]>();
-                subsets.add(((_PrivacyModelWithSubset)c).getDataSubset().getArray());
-                for (PrivacyCriterion other : this.getCriteria()) {
-                    if (other instanceof _PrivacyModelWithSubset) {
-                        
-                        // Make sure we ignore differential privacy here
-                        if (((_PrivacyModelWithSubset)other).isSubsetAvailable()) {
-                            subsets.add(((_PrivacyModelWithSubset)other).getDataSubset().getArray());
-                        }
-                    }
+        if (c.isSubsetAvailable()) {
+
+            // Collect all subsets
+            List<int[]> subsets = new ArrayList<int[]>();
+            subsets.add(c.getDataSubset().getArray());
+            for (PrivacyCriterion other : this.getCriteria()) {
+                if (other.isSubsetAvailable()) {
+                    subsets.add(other.getDataSubset().getArray());
                 }
-                
-                // Compare
-                for (int i = 0; i < subsets.size() - 1; i++) {
-                    if (!Arrays.equals(subsets.get(i), subsets.get(i + 1))) {
-                        throw new IllegalArgumentException("Using different research subsets is not supported");
-                    }
+            }
+
+            // Compare
+            for (int i = 0; i < subsets.size() - 1; i++) {
+                if (!Arrays.equals(subsets.get(i), subsets.get(i + 1))) {
+                    throw new IllegalArgumentException("Using different research subsets is not supported");
                 }
             }
         }
@@ -468,7 +459,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Check DP has been combined with a subset
         if (this.containsCriterion(EDDifferentialPrivacy.class)) {
             for (PrivacyCriterion other : this.getCriteria()) {
-                if (other != c && (other instanceof _PrivacyModelWithSubset)) {
+                if (other != c && other.isSubsetAvailable()) {
                     
                     // Remove and complain
                     criteria.remove(c);
@@ -979,7 +970,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * TODO: This is a hack and should be removed in future releases.
+     * Returns an internal variant of the class which provides a broader interface
      *
      * @return
      */
@@ -996,21 +987,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
      */
     protected int getMinimalGroupSize() {
-        
+
+        // Init
         int result = -1;
-        
+
         // For each
         for (PrivacyCriterion c : this.getCriteria()) {
-            
-            if (c instanceof _PrivacyModelWithProsecutorThreshold) {
-                result = Math.max(result, ((_PrivacyModelWithProsecutorThreshold)c).getProsecutorRiskThreshold());
-            }
-            if (c instanceof _PrivacyModelWithDelayedProsecutorThreshold) {
-                if (((_PrivacyModelWithDelayedProsecutorThreshold)c).isDelayedProsecutorRiskThresholdAvaliable())
-                result = Math.max(result, ((_PrivacyModelWithDelayedProsecutorThreshold)c).getProsecutorRiskThreshold());
+            if (c.isMinimalClassSizeAvailable()) {
+                result = Math.max(result, c.getMinimalClassSize());
             }
         }
-        
+
+        // Check & return
         if (result == -1) return Integer.MAX_VALUE;
         else return result;
     }
@@ -1048,8 +1036,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     protected DataSubset getSubset() {
         for (PrivacyCriterion c : this.criteria) {
-            if (c instanceof _PrivacyModelWithSubset) {
-                DataSubset subset = ((_PrivacyModelWithSubset)c).getDataSubset();
+            if (c.isSubsetAvailable()) {
+                DataSubset subset = c.getDataSubset();
                 if (subset != null) {
                     return subset;    
                 }
@@ -1092,7 +1080,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
             
             // Clone and store
             PrivacyCriterion clone = criterion.clone(subset);
-            subsetAdded |= (criterion instanceof _PrivacyModelWithSubset) && ((_PrivacyModelWithSubset)criterion).isSubsetAvailable();
+            subsetAdded |= criterion.isSubsetAvailable();
             
             // We need to make sure that we don't add multiple instances of k-anonymity
             // because k-map can be converted into this model

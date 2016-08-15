@@ -31,7 +31,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class KAnonymity extends ImplicitPrivacyCriterion implements _PrivacyModelWithProsecutorThreshold {
+public class KAnonymity extends ImplicitPrivacyCriterion {
 
     /**  SVUID */
     private static final long serialVersionUID = -8370928677928140572L;
@@ -65,7 +65,7 @@ public class KAnonymity extends ImplicitPrivacyCriterion implements _PrivacyMode
     }
 
     @Override
-    public int getProsecutorRiskThreshold() {
+    public int getMinimalClassSize() {
         return k;
     }
     
@@ -110,7 +110,7 @@ public class KAnonymity extends ImplicitPrivacyCriterion implements _PrivacyMode
     }
 
     @Override
-    public boolean isProsecutorRiskThresholdAvaliable() {
+    public boolean isMinimalClassSizeAvailable() {
         return true;
     }
 

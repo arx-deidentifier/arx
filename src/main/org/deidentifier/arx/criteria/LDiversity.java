@@ -29,7 +29,7 @@ import org.deidentifier.arx.ARXConfiguration;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class LDiversity extends ExplicitPrivacyCriterion implements _PrivacyModelWithProsecutorThreshold{
+public abstract class LDiversity extends ExplicitPrivacyCriterion {
 
     /**  SVUID */
     private static final long serialVersionUID = 6429149925699964530L;
@@ -65,7 +65,7 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion implements _Pr
     }
 
     @Override
-    public int getProsecutorRiskThreshold() {
+    public int getMinimalClassSize() {
         return this.minSize;
     }
 
@@ -101,7 +101,7 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion implements _Pr
     }
 
     @Override
-    public boolean isProsecutorRiskThresholdAvaliable() {
+    public boolean isMinimalClassSizeAvailable() {
         return true;
     }
 }

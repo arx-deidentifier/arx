@@ -33,7 +33,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class DPresence extends ImplicitPrivacyCriterion implements _PrivacyModelWithSubset {
+public class DPresence extends ImplicitPrivacyCriterion {
     
     /**  SVUID */
     private static final long serialVersionUID = 8534004943055128797L;
@@ -80,6 +80,11 @@ public class DPresence extends ImplicitPrivacyCriterion implements _PrivacyModel
         return new DPresence(this.getDMin(), this.getDMax(), this.getDataSubset().clone());
     }
     
+    @Override
+    public DataSubset getDataSubset() {
+        return this.subset;
+    }
+
     /**
      * Returns dMax.
      *
@@ -104,35 +109,30 @@ public class DPresence extends ImplicitPrivacyCriterion implements _PrivacyModel
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
-
+    
     @Override
     public void initialize(DataManager manager) {
         // Nothing to do
     }
     
-    @Override
+	@Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         double delta = entry.count == 0 ? 0d : (double) entry.count / (double) entry.pcount;
         return (delta >= dMin) && (delta <= dMax);
     }
-    
-	@Override
+
+    @Override
     public boolean isLocalRecodingSupported() {
         return false;
-    }
-
-    @Override
-	public String toString() {
-		return "("+dMin+","+dMax+")-presence";
-	}
-
-    @Override
-    public DataSubset getDataSubset() {
-        return this.subset;
     }
 
     @Override
     public boolean isSubsetAvailable() {
         return this.subset != null;
     }
+
+    @Override
+	public String toString() {
+		return "("+dMin+","+dMax+")-presence";
+	}
 }

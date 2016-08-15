@@ -30,7 +30,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class Inclusion extends DPresence implements _PrivacyModelWithSubset{
+public class Inclusion extends DPresence {
     
     /**  SVUID */
     private static final long serialVersionUID = -3984193225980793775L;
@@ -45,12 +45,17 @@ public class Inclusion extends DPresence implements _PrivacyModelWithSubset{
     }
 
     @Override
+    public PrivacyCriterion clone(DataSubset subset) {
+        return new Inclusion(subset);
+    }
+    
+    @Override
     public int getRequirements(){
         // Requires two counters
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
-    
+
     @Override
     public void initialize(DataManager manager) {
         // Nothing to do
@@ -60,15 +65,10 @@ public class Inclusion extends DPresence implements _PrivacyModelWithSubset{
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return true;
     }
-
+    
     @Override
     public boolean isLocalRecodingSupported() {
         return true;
-    }
-    
-    @Override
-    public PrivacyCriterion clone(DataSubset subset) {
-        return new Inclusion(subset);
     }
 
     @Override

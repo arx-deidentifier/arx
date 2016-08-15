@@ -42,8 +42,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion implements _PrivacyModelWithProsecutorThreshold,
-                                                                               _PrivacyModelWithSubset{
+public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     
     /** SVUID */
     private static final long        serialVersionUID = 242579895476272606L;
@@ -117,6 +116,11 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion implements _
         return beta;
     }
     
+    @Override
+    public DataSubset getDataSubset() {
+        return subset;
+    }
+
     /**
      * Returns the delta parameter of (e,d)-DP
      * @return
@@ -150,17 +154,17 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion implements _
     }
 
     @Override
-    public int getProsecutorRiskThreshold() {
+    public int getMinimalClassSize() {
         return k;
     }
-
+    
     @Override
     public int getRequirements(){
         // Requires two counters
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
-    
+
     /**
      * Creates a random sample based on beta
      *
@@ -213,10 +217,15 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion implements _
     public boolean isLocalRecodingSupported() {
         return false;
     }
+    
+    @Override
+    public boolean isMinimalClassSizeAvailable() {
+        return true;
+    }
 
     @Override
-    public boolean isProsecutorRiskThresholdAvaliable() {
-        return true;
+    public boolean isSubsetAvailable() {
+        return subset != null;
     }
     
     @Override
@@ -235,7 +244,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion implements _
         double gamma = calculateGamma(epsilon, beta);
         return calculateBinomialSum((int) Math.floor(n * gamma) + 1, n, beta);
     }
-    
+
     /**
      * Calculates beta_max
      * @param epsilon
@@ -244,7 +253,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion implements _
     private double calculateBeta(double epsilon) {
         return 1.0d - (new Exp()).value(-1.0d * epsilon);
     }
-
+    
     /**
      * Adds summands of the binomial distribution with probability beta
      * @param from
@@ -274,7 +283,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion implements _
         double gamma = calculateGamma(epsilon, beta);
         return (new Exp()).value(-1.0d * n * (gamma * (new Log()).value(gamma / beta) - (gamma - beta)));
     }
-    
+
     /**
      * Calculates delta
      * @param k
@@ -323,15 +332,5 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion implements _
         }
 
         return k;
-    }
-
-    @Override
-    public DataSubset getDataSubset() {
-        return subset;
-    }
-
-    @Override
-    public boolean isSubsetAvailable() {
-        return subset != null;
     }
 }

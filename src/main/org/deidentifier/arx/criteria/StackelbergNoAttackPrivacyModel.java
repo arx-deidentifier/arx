@@ -32,8 +32,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * 
  * @author Fabian Prasser
  */
-public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion implements _PrivacyModelWithProsecutorThreshold,
-                                                                                         _PrivacyModelWithSubset {
+public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion {
 
     /** SVUID */
     private static final long                 serialVersionUID = -1283022087083117810L;
@@ -74,12 +73,20 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion im
     }
     
     @Override
+    public PrivacyCriterion clone(DataSubset subset) {
+        if (!isLocalRecodingSupported()) {
+            throw new UnsupportedOperationException("Local recoding is not supported by this model");
+        }
+        return clone();
+    }
+    
+    @Override
     public DataSubset getDataSubset() {
         return config.getDataSubset();
     }
     
     @Override
-    public int getProsecutorRiskThreshold() {
+    public int getMinimalClassSize() {
         if (config.isProsecutorAttackerModel()) {
             return this.k;
         } else {
@@ -114,27 +121,19 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion im
             return 0d;
         }
     }
-    
+
     @Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return config.isProsecutorAttackerModel() ? entry.count >= k : entry.pcount >= k;
     }
-
+    
     @Override
     public boolean isLocalRecodingSupported() {
         return config.isProsecutorAttackerModel();
     }
-    
-    @Override
-    public PrivacyCriterion clone(DataSubset subset) {
-        if (!isLocalRecodingSupported()) {
-            throw new UnsupportedOperationException("Local recoding is not supported by this model");
-        }
-        return clone();
-    }
 
     @Override
-    public boolean isProsecutorRiskThresholdAvaliable() {
+    public boolean isMinimalClassSizeAvailable() {
         return config.isProsecutorAttackerModel();
     }
 
