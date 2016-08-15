@@ -56,6 +56,7 @@ import org.deidentifier.arx.metric.v2.MetricSDAECS;
 import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
 import org.deidentifier.arx.metric.v2.MetricSDNMAmbiguity;
 import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
+import org.deidentifier.arx.metric.v2.MetricSDNMEntropyBasedInformationLoss;
 import org.deidentifier.arx.metric.v2.MetricSDNMKLDivergence;
 import org.deidentifier.arx.metric.v2.MetricSDNMPublisherBenefit;
 import org.deidentifier.arx.metric.v2.__MetricV2;
@@ -172,6 +173,15 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
+     * Creates an instance of the entropy-based information loss metric
+     * 
+     * @return
+     */
+    public static MetricSDNMEntropyBasedInformationLoss createEntropyBasedInformationLossMetric() {
+        return __MetricV2.createEntropyBasedInformationLossMetric();
+    }
+    
+    /**
      * Creates an instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
      * This metric will respect attribute weights defined in the configuration.
@@ -182,6 +192,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createEntropyMetric();
     }
     
+
     /**
      * Creates an instance of the non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -194,7 +205,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createEntropyMetric(boolean monotonic) {
         return __MetricV2.createEntropyMetric(monotonic);
     }
-    
+
 
     /**
      * Creates an instance of the non-uniform entropy metric.
@@ -208,8 +219,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createEntropyMetric(boolean monotonic, AggregateFunction function) {
         return __MetricV2.createEntropyMetric(monotonic, function);
     }
-
-
+    
     /**
      * Creates an instance of the non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -230,6 +240,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createEntropyMetric(monotonic, gsFactor);
     }
     
+
     /**
      * Creates an instance of the non-uniform entropy metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -248,8 +259,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createEntropyMetric(boolean monotonic, double gsFactor, AggregateFunction function) {
         return __MetricV2.createEntropyMetric(monotonic, gsFactor, function);
     }
-    
 
+    
     /**
      * Creates an instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -267,7 +278,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createEntropyMetric(gsFactor);
     }
 
-    
     /**
      * Creates an instance of the height metric. The default aggregate function, which is the sum-function,
      * will be used for comparing results.
@@ -278,6 +288,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createHeightMetric() {
         return __MetricV2.createHeightMetric();
     }
+    
 
     /**
      * Creates an instance of the height metric.
@@ -290,7 +301,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createHeightMetric(AggregateFunction function) {
         return __MetricV2.createHeightMetric(function);
     }
-    
+
 
     /**
      * Creates an instance of the KL Divergence metric.
@@ -300,8 +311,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<ILSingleDimensional> createKLDivergenceMetric() {
         return __MetricV2.createKLDivergenceMetric();
     }
-
-
+    
     /**
      * Creates an instance of the loss metric which treats generalization and suppression equally.
      * The default aggregate function, which is the rank function, will be used.
@@ -312,7 +322,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createLossMetric() {
         return __MetricV2.createLossMetric();
     }
-    
+
     /**
      * Creates an instance of the loss metric which treats generalization and suppression equally.
      * This metric will respect attribute weights defined in the configuration.
@@ -323,6 +333,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createLossMetric(AggregateFunction function) {
         return __MetricV2.createLossMetric(function);
     }
+
 
     /**
      * Creates an instance of the loss metric with factors for weighting generalization and suppression.
@@ -340,7 +351,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createLossMetric(double gsFactor) {
         return __MetricV2.createLossMetric(gsFactor);
     }
-
 
     /**
      * Creates an instance of the loss metric with factors for weighting generalization and suppression.
@@ -409,7 +419,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric() {
         return __MetricV2.createPrecisionMetric();
     }
-
+    
     /**
      * Creates an instance of the non-monotonic precision metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -421,7 +431,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(AggregateFunction function) {
         return __MetricV2.createPrecisionMetric(function);
     }
-    
+
     /**
      * Creates an instance of the precision metric.
      * The default aggregate function, which is the arithmetic mean, will be used.
@@ -434,6 +444,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic) {
         return __MetricV2.createPrecisionMetric(monotonic);
     }
+    
 
     /**
      * Creates an instance of the precision metric.
@@ -446,7 +457,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, AggregateFunction function) {
         return __MetricV2.createPrecisionMetric(monotonic, function);
     }
-    
 
     /**
      * Creates an instance of the precision metric.
@@ -466,7 +476,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, double gsFactor) {
         return __MetricV2.createPrecisionMetric(monotonic, gsFactor);
     }
-
+    
     /**
      * Creates an instance of the precision metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -484,7 +494,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, double gsFactor, AggregateFunction function) {
         return __MetricV2.createPrecisionMetric(monotonic, gsFactor, function);
     }
-    
+
     /**
      * Creates an instance of the non-monotonic precision metric.
      * The default aggregate function, which is the arithmetic mean, will be used.
@@ -520,6 +530,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecisionMetric(gsFactor, function);
     }
 
+    
     /**
      * Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -534,7 +545,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecomputedEntropyMetric(threshold);
     }
 
-    
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -549,6 +559,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, boolean monotonic) {
         return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic);
     }
+
 
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric.
@@ -565,7 +576,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic, function);
     }
 
-
+    
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -587,7 +598,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic, gsFactor);
     }
 
-    
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -608,7 +618,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, boolean monotonic, double gsFactor, AggregateFunction function) {
         return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic, gsFactor, function);
     }
-
+    
     /**
      * Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -634,7 +644,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, double gsFactor) {
         return __MetricV2.createPrecomputedEntropyMetric(threshold, gsFactor);
     }
-    
+
     /**
      * Creates a potentially precomputed instance of the loss metric which treats generalization
      * and suppression equally.
@@ -681,7 +691,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, double gsFactor) {
         return __MetricV2.createPrecomputedLossMetric(threshold, gsFactor);
     }
-
+    
     /**
      * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
      * This metric will respect attribute weights defined in the configuration.
@@ -702,6 +712,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecomputedLossMetric(threshold, gsFactor, function);
     }
     
+
     /**
      * Creates a potentially precomputed instance of the normalized entropy metric.
      * The default aggregate function, which is the sum function, will be used.
@@ -715,7 +726,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedNormalizedEntropyMetric(double threshold) {
         return __MetricV2.createPrecomputedNormalizedEntropyMetric(threshold);
     }
-    
 
     /**
      * Creates a potentially precomputed instance of the normalized entropy metric.
@@ -730,7 +740,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedNormalizedEntropyMetric(double threshold, AggregateFunction function) {
         return __MetricV2.createPrecomputedNormalizedEntropyMetric(threshold, function);
     }
-
 
     /**
      * Creates an instance of the  metric for maximizing publisher benefit in the Stackelberg game.
