@@ -20,9 +20,6 @@ package org.deidentifier.arx.metric.v2;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXStackelbergConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
-import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -260,33 +257,8 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
         super.initializeInternal(manager, definition, input, hierarchies, config);
 
         // Compute domain shares
-        this.shares = new DomainShare[hierarchies.length];
-        for (int i = 0; i < shares.length; i++) {
-
-            // Extract info
-            String attribute = manager.getDataGeneralized().getHeader()[i];
-            String[][] hierarchy = definition.getHierarchy(attribute);
-            HierarchyBuilder<?> builder = definition.getHierarchyBuilder(attribute);
-
-            // Create shares for redaction-based hierarchies
-            if ((builder instanceof HierarchyBuilderRedactionBased) &&
-                ((HierarchyBuilderRedactionBased<?>) builder).isDomainPropertiesAvailable()) {
-                shares[i] = new DomainShareRedaction((HierarchyBuilderRedactionBased<?>) builder);
-
-                // Create shares for interval-based hierarchies
-            } else if (builder instanceof HierarchyBuilderIntervalBased) {
-                shares[i] = new DomainShareInterval<>((HierarchyBuilderIntervalBased<?>) builder,
-                                                      hierarchies[i].getArray(),
-                                                      input.getDictionary().getMapping()[i]);
-
-                // Create fallback-shares for materialized hierarchies
-            } else {
-                shares[i] = new DomainShareMaterialized(hierarchy,
-                                                        input.getDictionary().getMapping()[i],
-                                                        hierarchies[i].getArray());
-            }
-        }
-
+        this.shares =  manager.getDomainShares();
+                
         // Precompute MaxIL
         this.maxIL = 0d;
         for (DomainShare share : shares) {
