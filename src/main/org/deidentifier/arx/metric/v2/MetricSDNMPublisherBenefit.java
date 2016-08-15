@@ -42,9 +42,9 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
     /** Domain shares for each dimension. */
     private DomainShare[]                     shares;
 
-    /** Max-IL */
+    /** MaxIL */
     private double                            maxIL;
-
+    
     /** Config for the Stackelberg game */
     private final ARXStackelbergConfiguration config;
 
@@ -160,26 +160,39 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
      */
     private double getBenefit(Transformation transformation, HashGroupifyEntry entry) {
 
-        // Although the equivalence class likely contains multiple records, we can think of
-        // it as containing exactly one record when reasoning about payoffs. 
+        // We transform the formula, to make evaluating it more efficient. We have:
+        // 
+        // [-log( 1 / share_1 * size_1 ) - log ( 1 / share_2 * size_2 ) ... - log( 1 / share_n * size_n) ] / maxIL
+        //
+        // Step 1:
+        //
+        // [log(share_1 * size_1 ) + log (share_2 * size_2 ) ... + log( share_n * size_n) ] / maxIL
+        //
+        // Step 2:
+        //
+        // [log(share_1 * share_2 * ... * share_n) + log(size_1 * size_2 * size_n) ] / maxIL
+        //
+        // Step 3:
+        // 
+        // [log(share_1 * share_2 * ... * share_n) + maxIL ] / maxIL
+        //
+        // Step 4:
+        // 
+        // log(share_1 * share_2 * ... * share_n) / maxIL + 1
+
         int[] generalization = transformation.getGeneralization();
-        double benefit = 0d;
-        
-        // Calculate
+        double infoLoss = 1d;
         for (int dimension = 0; dimension < shares.length; dimension++) {
-            
             int value = entry.key[dimension];
             int level = generalization[dimension];
-            double share = 1d / (shares[dimension].getShare(value, level) * shares[dimension].getDomainSize());
-            benefit -= Math.log10(share);
+            infoLoss *= shares[dimension].getShare(value, level);
         }
         
-        // Normalize
-        benefit /= maxIL;
-        benefit = config.getPublisherBenefit() * (1d - benefit);
-        
+        // Finalize
+        infoLoss = Math.log10(infoLoss) / maxIL + 1d;
+
         // Return
-        return benefit;
+        return config.getPublisherBenefit() * (1d - infoLoss);
     }
 
     @Override
@@ -259,11 +272,12 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
         // Compute domain shares
         this.shares =  manager.getDomainShares();
                 
-        // Precompute MaxIL
-        this.maxIL = 0d;
+        // Calculate MaxIL
+        this.maxIL = 1d;
         for (DomainShare share : shares) {
-            maxIL -= Math.log10(1d / share.getDomainSize());
+            maxIL *= share.getDomainSize();
         }
+        maxIL = Math.log10(maxIL);
     }
     
     @Override
