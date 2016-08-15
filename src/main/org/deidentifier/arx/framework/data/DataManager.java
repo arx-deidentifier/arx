@@ -26,11 +26,18 @@ import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.RowSet;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
+import org.deidentifier.arx.metric.v2.DomainShare;
+import org.deidentifier.arx.metric.v2.DomainShareInterval;
+import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
+import org.deidentifier.arx.metric.v2.DomainShareRedaction;
 
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
@@ -68,6 +75,12 @@ public class DataManager {
 
     /** The data which is insensitive */
     private final Data                                 dataStatic;
+
+    /** The data definition */
+    private final DataDefinition                       definition;
+
+    /** The domain shares */
+    private DomainShare[]                              shares;
 
     /** The original input header. */
     private final String[]                             header;
@@ -112,61 +125,6 @@ public class DataManager {
     private int                                        subsetSize = 0;
     
     /**
-     * For creating a projected instance
-     * @param dataAnalyzed
-     * @param dataGeneralized
-     * @param dataStatic
-     * @param header
-     * @param hierarchiesGeneralized
-     * @param hierarchiesHeights
-     * @param hierarchiesSensitive
-     * @param indexesSensitive
-     * @param maxLevels
-     * @param microaggregationFunctions
-     * @param microaggregationHeader
-     * @param microaggregationMap
-     * @param microaggregationNumAttributes
-     * @param microaggregationStartIndex
-     * @param minLevels
-     */
-    protected DataManager(Data dataAnalyzed,
-                       Data dataGeneralized,
-                       Data dataStatic,
-                       String[] header,
-                       GeneralizationHierarchy[] hierarchiesGeneralized,
-                       int[] hierarchiesHeights,
-                       Map<String, GeneralizationHierarchy> hierarchiesSensitive,
-                       Map<String, Integer> indexesSensitive,
-                       int[] maxLevels,
-                       DistributionAggregateFunction[] microaggregationFunctions,
-                       String[] microaggregationHeader,
-                       int[] microaggregationMap,
-                       int microaggregationNumAttributes,
-                       int microaggregationStartIndex,
-                       int[] minLevels) {
-        this.dataAnalyzed = dataAnalyzed;
-        this.dataGeneralized = dataGeneralized;
-        this.dataStatic = dataStatic;
-        this.header = header;
-        this.hierarchiesGeneralized = hierarchiesGeneralized;
-        this.hierarchiesHeights = hierarchiesHeights;
-        this.hierarchiesSensitive = hierarchiesSensitive;
-        this.indexesSensitive = indexesSensitive;
-        this.maxLevels = maxLevels;
-        this.microaggregationFunctions = microaggregationFunctions;
-        this.microaggregationHeader = microaggregationHeader;
-        this.microaggregationMap = microaggregationMap;
-        this.microaggregationNumAttributes = microaggregationNumAttributes;
-        this.microaggregationStartIndex = microaggregationStartIndex;
-        this.minLevels = minLevels;
-        
-        // Both variables are only used for getDistribution() and getTree()
-        // The projected instance delegates these methods to the original data manager
-        this.subset = null;
-        this.subsetSize = 0;
-    }
-
-    /**
      * Creates a new data manager from pre-encoded data.
      * 
      * @param header
@@ -185,6 +143,7 @@ public class DataManager {
 
         // Store columns for reordering the output
         this.header = header;
+        this.definition = definition;
 
         Set<String> attributesGemeralized = definition.getQuasiIdentifiersWithGeneralization();
         Set<String> attributesSensitive = definition.getSensitiveAttributes();
@@ -430,6 +389,64 @@ public class DataManager {
     }
 
     /**
+     * For creating a projected instance
+     * @param definition
+     * @param dataAnalyzed
+     * @param dataGeneralized
+     * @param dataStatic
+     * @param header
+     * @param hierarchiesGeneralized
+     * @param hierarchiesHeights
+     * @param hierarchiesSensitive
+     * @param indexesSensitive
+     * @param maxLevels
+     * @param microaggregationFunctions
+     * @param microaggregationHeader
+     * @param microaggregationMap
+     * @param microaggregationNumAttributes
+     * @param microaggregationStartIndex
+     * @param minLevels
+     */
+    protected DataManager(DataDefinition definition,
+                          Data dataAnalyzed,
+                          Data dataGeneralized,
+                          Data dataStatic,
+                          String[] header,
+                          GeneralizationHierarchy[] hierarchiesGeneralized,
+                          int[] hierarchiesHeights,
+                          Map<String, GeneralizationHierarchy> hierarchiesSensitive,
+                          Map<String, Integer> indexesSensitive,
+                          int[] maxLevels,
+                          DistributionAggregateFunction[] microaggregationFunctions,
+                          String[] microaggregationHeader,
+                          int[] microaggregationMap,
+                          int microaggregationNumAttributes,
+                          int microaggregationStartIndex,
+                          int[] minLevels) {
+        this.definition = definition;
+        this.dataAnalyzed = dataAnalyzed;
+        this.dataGeneralized = dataGeneralized;
+        this.dataStatic = dataStatic;
+        this.header = header;
+        this.hierarchiesGeneralized = hierarchiesGeneralized;
+        this.hierarchiesHeights = hierarchiesHeights;
+        this.hierarchiesSensitive = hierarchiesSensitive;
+        this.indexesSensitive = indexesSensitive;
+        this.maxLevels = maxLevels;
+        this.microaggregationFunctions = microaggregationFunctions;
+        this.microaggregationHeader = microaggregationHeader;
+        this.microaggregationMap = microaggregationMap;
+        this.microaggregationNumAttributes = microaggregationNumAttributes;
+        this.microaggregationStartIndex = microaggregationStartIndex;
+        this.minLevels = minLevels;
+        
+        // Both variables are only used for getDistribution() and getTree()
+        // The projected instance delegates these methods to the original data manager
+        this.subset = null;
+        this.subsetSize = 0;
+    }
+
+    /**
      * Returns the input data that will be analyzed.
      * 
      * @return the data
@@ -498,6 +515,44 @@ public class DataManager {
         final int distinctValues = dataAnalyzed.getDictionary().getMapping()[index].length;
         final int[][] data = dataAnalyzed.getArray();
         return getDistribution(data, index, distinctValues);
+    }
+
+    public DomainShare[] getDomainShares() {
+
+        // Build on-demand
+        if (this.shares == null) {
+            
+            // Compute domain shares
+            this.shares = new DomainShare[dataGeneralized.getHeader().length];
+            for (int i=0; i<shares.length; i++) {
+                
+                // Extract info
+                String attribute = dataGeneralized.getHeader()[i];
+                String[][] hierarchy = definition.getHierarchy(attribute);
+                HierarchyBuilder<?> builder = definition.getHierarchyBuilder(attribute);
+                
+                // Create shares for redaction-based hierarchies
+                if (builder != null && (builder instanceof HierarchyBuilderRedactionBased) &&
+                    ((HierarchyBuilderRedactionBased<?>)builder).isDomainPropertiesAvailable()){
+                    this.shares[i] = new DomainShareRedaction((HierarchyBuilderRedactionBased<?>)builder);
+                    
+                 // Create shares for interval-based hierarchies
+                } else if (builder != null && (builder instanceof HierarchyBuilderIntervalBased)) {
+                    this.shares[i] = new DomainShareInterval<>((HierarchyBuilderIntervalBased<?>)builder,
+                                                           hierarchiesGeneralized[i].getArray(),
+                                                           dataGeneralized.getDictionary().getMapping()[i]);
+                    
+                // Create fallback-shares for materialized hierarchies
+                } else {
+                    this.shares[i] = new DomainShareMaterialized(hierarchy, 
+                                                            dataGeneralized.getDictionary().getMapping()[i],
+                                                            hierarchiesGeneralized[i].getArray());
+                }
+            }
+        }
+        
+        // Return
+        return this.shares;
     }
 
     /**
@@ -590,6 +645,36 @@ public class DataManager {
      */
     public int getMicroaggregationStartIndex() {
         return microaggregationStartIndex;
+    }
+    
+    /**
+     * Returns an instance of this data manager, that is projected onto the given rowset
+     * @param rowset
+     * @return
+     */
+    public DataManager getSubsetInstance(RowSet rowset) {
+        
+        DistributionAggregateFunction[] microaggregationFunctions = new DistributionAggregateFunction[this.microaggregationFunctions.length];
+        for (int i = 0; i < this.microaggregationFunctions.length; i++) {
+            microaggregationFunctions[i] = this.microaggregationFunctions[i].clone();
+        }
+        
+        return new DataManagerSubset(this,
+                                     this.dataAnalyzed.getSubsetInstance(rowset),
+                                     this.dataGeneralized.getSubsetInstance(rowset),
+                                     this.dataStatic.getSubsetInstance(rowset),
+                                     this.header,
+                                     this.hierarchiesGeneralized,
+                                     this.hierarchiesHeights,
+                                     this.hierarchiesSensitive,
+                                     this.indexesSensitive,
+                                     this.maxLevels,
+                                     microaggregationFunctions,
+                                     this.microaggregationHeader,
+                                     this.microaggregationMap,
+                                     this.microaggregationNumAttributes,
+                                     this.microaggregationStartIndex,
+                                     this.minLevels);
     }
 
     /**
@@ -706,7 +791,7 @@ public class DataManager {
 
         return treeArray;
     }
-    
+
     /**
      * Returns the tree for the given sensitive attribute, if a generalization hierarchy is associated.
      * The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.
@@ -722,7 +807,7 @@ public class DataManager {
         final int index = indexesSensitive.get(attribute);
         return getTree(data, index, hierarchiesSensitive.get(attribute).map);
     }
-
+    
     /**
      * Encodes the data.
      * 
@@ -803,32 +888,10 @@ public class DataManager {
     }
 
     /**
-     * Returns an instance of this data manager, that is projected onto the given rowset
-     * @param rowset
+     * Returns the data definitions
      * @return
      */
-    public DataManager getSubsetInstance(RowSet rowset) {
-        
-        DistributionAggregateFunction[] microaggregationFunctions = new DistributionAggregateFunction[this.microaggregationFunctions.length];
-        for (int i = 0; i < this.microaggregationFunctions.length; i++) {
-            microaggregationFunctions[i] = this.microaggregationFunctions[i].clone();
-        }
-        
-        return new DataManagerSubset(this,
-                                     this.dataAnalyzed.getSubsetInstance(rowset),
-                                     this.dataGeneralized.getSubsetInstance(rowset),
-                                     this.dataStatic.getSubsetInstance(rowset),
-                                     this.header,
-                                     this.hierarchiesGeneralized,
-                                     this.hierarchiesHeights,
-                                     this.hierarchiesSensitive,
-                                     this.indexesSensitive,
-                                     this.maxLevels,
-                                     microaggregationFunctions,
-                                     this.microaggregationHeader,
-                                     this.microaggregationMap,
-                                     this.microaggregationNumAttributes,
-                                     this.microaggregationStartIndex,
-                                     this.minLevels);
+    protected DataDefinition getDataDefinition() {
+        return this.definition;
     }
 }

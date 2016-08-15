@@ -65,7 +65,8 @@ public class DataManagerSubset extends DataManager {
                                 int microaggregationNumAttributes,
                                 int microaggregationStartIndex,
                                 int[] minLevels) {
-        super(dataAnalyzed,
+        super(source.getDataDefinition(),
+              dataAnalyzed,
               dataGeneralized,
               dataStatic,
               header,
