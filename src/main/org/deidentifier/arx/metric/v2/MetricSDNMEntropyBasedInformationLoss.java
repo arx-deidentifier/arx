@@ -18,7 +18,6 @@
 package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXStackelbergConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -28,24 +27,21 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.MetricConfiguration;
-import org.deidentifier.arx.risk.RiskModelMonetary;
 
 /**
- * This class implements a prototype model which maximizes publisher benefit as proposed in:<br>
+ * This class implements a the IL model proposed in:<br>
  * A Game Theoretic Framework for Analyzing Re-Identification Risk.
  * Zhiyu Wan, Yevgeniy Vorobeychik, Weiyi Xia, Ellen Wright Clayton,
  * Murat Kantarcioglu, Ranjit Ganta, Raymond Heatherly, Bradley A. Malin
  * PLOS|ONE. 2015.
  * 
+ * 
  * @author Fabian Prasser
  */
-public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional {
+public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleDimensional {
 
-    /** SUID. */
-    private static final long                 serialVersionUID = 5729454129866471107L;
-
-    /** Configuration for the Stackelberg game */
-    private final ARXStackelbergConfiguration config;
+    /** SVUID*/
+    private static final long serialVersionUID = -2443537745262162075L;
 
     /** Domain shares for each dimension. */
     private DomainShare[]                     shares;
@@ -53,23 +49,35 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
     /** MaxIL */
     private double                            maxIL;
 
-    /** Risk model */
-    private RiskModelMonetary                 modelRisk;
-
     /**
      * Creates a new instance
      * @param config
-     * @param infoLoss
      */
-    public MetricSDNMPublisherBenefit(ARXStackelbergConfiguration config) {
+    public MetricSDNMEntropyBasedInformationLoss() {
         super(false, false);
-        this.config = config;
-        this.modelRisk = new RiskModelMonetary(config);
+    }
+
+    /**
+     * Clone constructor
+     * @param config
+     * @param shares
+     * @param maxIL
+     */
+    private MetricSDNMEntropyBasedInformationLoss(DomainShare[] shares,
+                                                  double maxIL) {
+        super(false, false);
+        this.shares = shares;
+        this.maxIL = maxIL;
     }
 
     @Override
-    public MetricSDNMPublisherBenefit clone() {
-        return new MetricSDNMPublisherBenefit(config.clone());
+    public MetricSDNMEntropyBasedInformationLoss clone() {
+        
+        DomainShare[] shares = new DomainShare[this.shares.length];
+        for (int i = 0; i < this.shares.length; i++) {
+            shares[i] = this.shares[i].clone();
+        }
+        return new MetricSDNMEntropyBasedInformationLoss(shares, maxIL);
     }
 
     @Override
@@ -78,7 +86,7 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
         if (rows == null) {
             throw new IllegalStateException("Metric must be initialized first");
         } else {
-            return new ILSingleDimensional(rows * this.config.getPublisherBenefit());
+            return new ILSingleDimensional(rows);
         }
     }
 
@@ -98,30 +106,42 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
 
     @Override
     public String getName() {
-        return "PublisherBenefit";
+        return "EntropyBasedInformationLoss";
     }
 
     @Override
     public String toString() {
-        return "PublisherBenefit (" + config.getPublisherBenefit() + ")";
+        return "EntropyBasedInformationLoss";
     }
 
     /**
-     * Returns the success probability. If the game is configured to use the journalist risk, 
-     * but no population table is available, we silently default to the prosecutor model.
+     * Implements the entropy-based IL model. Ignores record suppression. Returns the loss for exactly one record.
+     * @param transformation
      * @param entry
      * @return
      */
-    private double getSuccessProbability(HashGroupifyEntry entry) {
-        return config.isProsecutorAttackerModel() || entry.pcount == 0 ? 1d / entry.count : 1d / entry.pcount;
-    }
+    private double getEntropyBasedInformationLoss(Transformation transformation, HashGroupifyEntry entry) {
 
+        // We transform the formula, to make evaluating it more efficient. We have:
+        // 
+        // [-log( 1 / share_1 * size_1 ) - log ( 1 / share_2 * size_2 ) ... - log( 1 / share_n * size_n) ] / maxIL
+        //
+        // Step 1:
+        //
+        // [log(share_1 * size_1 ) + log (share_2 * size_2 ) ... + log( share_n * size_n) ] / maxIL
+        //
+        // Step 2:
+        //
+        // [log(share_1 * share_2 * ... * share_n) + log(size_1 * size_2 * size_n) ] / maxIL
+        //
+        // Step 3:
+        // 
+        // [log(share_1 * share_2 * ... * share_n) + maxIL ] / maxIL
+        //
+        // Step 4:
+        // 
+        // log(share_1 * share_2 * ... * share_n) / maxIL + 1
 
-    /**
-     * Returns the information loss for the according class. This is an exact copy of: 
-     * @see MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(Transformation, HashGroupifyEntry)
-     */
-    protected double getEntropyBasedInformationLoss(Transformation transformation, HashGroupifyEntry entry) {
         int[] generalization = transformation.getGeneralization();
         double infoLoss = 1d;
         for (int dimension = 0; dimension < shares.length; dimension++) {
@@ -129,49 +149,39 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
             int level = generalization[dimension];
             infoLoss *= shares[dimension].getShare(value, level);
         }
+        
+        // Finalize
         return Math.log10(infoLoss) / maxIL + 1d;
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation transformation, HashGroupify groupify) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation transformation, HashGroupify g) {
         
         // Compute
         double real = 0;
         double bound = 0;
-        HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
+        HashGroupifyEntry entry = g.getFirstEquivalenceClass();
         while (entry != null) {
             if (entry.count > 0) {
-                double adversarySuccessProbability = this.getSuccessProbability(entry);
-                double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
-                real += !entry.isNotOutlier ? 0d : entry.count * modelRisk.getExpectedPublisherPayoff(informationLoss, adversarySuccessProbability);
-                bound += entry.count * modelRisk.getExpectedPublisherPayoff(informationLoss, 0d);
+                double loss = entry.count * getEntropyBasedInformationLoss(transformation, entry);
+                real += entry.isNotOutlier ? loss : entry.count;
+                bound += loss;
             }
             entry = entry.nextOrdered;
         }
-        
-        // Invert
-        real = this.getNumTuples() * this.config.getPublisherBenefit() - real;
-        bound = this.getNumTuples() * this.config.getPublisherBenefit() - bound;
         
         // Return
         return super.createInformationLoss(real, bound);
     }
 
     @Override
-    protected InformationLossWithBound<ILSingleDimensional> getInformationLossInternal(Transformation transformation, HashGroupifyEntry entry) {
-
-        // Compute
-        double adversarySuccessProbability = this.getSuccessProbability(entry);
-        double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
-        double real = !entry.isNotOutlier ? 0d : entry.count * modelRisk.getExpectedPublisherPayoff(informationLoss, adversarySuccessProbability);
-        double bound = entry.count * modelRisk.getExpectedPublisherPayoff(informationLoss, 0d);
-
-        // Invert
-        real = entry.count * this.config.getPublisherBenefit() - real;
-        bound = entry.count * this.config.getPublisherBenefit() - bound;
+    protected InformationLossWithBound<ILSingleDimensional> getInformationLossInternal(Transformation transformation,
+                                                                                       HashGroupifyEntry entry) {
         
-        // Return
-        return super.createInformationLoss(real, bound);
+        double iloss = entry.count * getEntropyBasedInformationLoss(transformation, entry);
+        double loss = entry.isNotOutlier ? iloss : entry.count;
+        double bound = iloss;
+        return super.createInformationLoss(loss, bound);
     }
 
     @Override
@@ -183,23 +193,26 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
     protected ILSingleDimensional getLowerBoundInternal(Transformation transformation,
                                                         HashGroupify groupify) {
 
-
         // Compute
         double bound = 0;
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         while (entry != null) {
-            if (entry.count > 0) {
-                double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
-                bound +=  entry.count * modelRisk.getExpectedPublisherPayoff(informationLoss, 0d);
-            }
+            
+            bound += entry.count == 0 ? 0d : entry.count * getEntropyBasedInformationLoss(transformation, entry);
             entry = entry.nextOrdered;
         }
         
-        // Invert
-        bound = this.getNumTuples() * this.config.getPublisherBenefit() - bound;
-        
         // Return
         return new ILSingleDimensional(bound);
+    }
+
+    /**
+     * For subclasses.
+     * 
+     * @return
+     */
+    protected DomainShare[] getShares() {
+        return this.shares;
     }
     
     @Override
@@ -209,6 +222,7 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
                                       final GeneralizationHierarchy[] hierarchies,
                                       final ARXConfiguration config) {
 
+        // Prepare weights
         super.initializeInternal(manager, definition, input, hierarchies, config);
 
         // Compute domain shares

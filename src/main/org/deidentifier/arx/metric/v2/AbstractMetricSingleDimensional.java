@@ -44,10 +44,9 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
      *
      * @param monotonic
      * @param independent
-     * @param gsFactor
      */
-    protected AbstractMetricSingleDimensional(final boolean monotonic, final boolean independent, final double gsFactor) {
-        super(monotonic, independent, gsFactor);
+    protected AbstractMetricSingleDimensional(final boolean monotonic, final boolean independent) {
+        super(monotonic, independent, 0.5d);
     }
 
     /**
@@ -55,9 +54,29 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
      *
      * @param monotonic
      * @param independent
+     * @param gsFactor
      */
-    protected AbstractMetricSingleDimensional(final boolean monotonic, final boolean independent) {
-        super(monotonic, independent, 0.5d);
+    protected AbstractMetricSingleDimensional(final boolean monotonic, final boolean independent, final double gsFactor) {
+        super(monotonic, independent, gsFactor);
+    }
+    
+    /**
+     * Create a loss object
+     * @param loss
+     * @return
+     */
+    public ILSingleDimensional createInformationLoss(double loss) {
+        return new ILSingleDimensional(loss);
+    }
+
+    /**
+     * Create a loss object
+     * @param loss
+     * @param bound
+     * @return
+     */
+    public ILSingleDimensionalWithBound createInformationLoss(double loss, double bound) {
+        return new ILSingleDimensionalWithBound(loss, bound);
     }
     
     @Override
@@ -69,7 +88,8 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     public InformationLoss<?> createMinInformationLoss() {
         return new ILSingleDimensional(0d);
     }
-    
+
+
     /**
      * Returns the number of rows in the dataset or subset.
      *
@@ -88,7 +108,6 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
         
         this.tuples = (double) getNumRecords(config, input);
     }
-
 
     /**
      * Returns the number of rows in the dataset or subset.

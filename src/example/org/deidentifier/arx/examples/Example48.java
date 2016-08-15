@@ -147,7 +147,7 @@ public class Example48 extends Example {
         MetricSDNMPublisherBenefit stackelbergMetric = Metric.createPublisherBenefitMetric(config);
         
         // Create privacy model for the game-theoretic approach
-        StackelbergPrivacyModel stackelbergPrivacyModel = new StackelbergPrivacyModel(stackelbergMetric);
+        StackelbergPrivacyModel stackelbergPrivacyModel = new StackelbergPrivacyModel(config);
         
         // Configure ARX
         arxconfig.setMaxOutliers(1d);
