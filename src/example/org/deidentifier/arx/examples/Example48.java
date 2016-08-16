@@ -163,6 +163,7 @@ public class Example48 extends Example {
         // Print stuff
         System.out.println("Data: " + data.getHandle().getView().getNumRows() + " records with " + data.getDefinition().getQuasiIdentifyingAttributes().size() + " quasi-identifiers");
         System.out.println(" - Configuration: " + config.toString());
+        System.out.println(" - Policies available: " + result.getLattice().getSize());
         System.out.println(" - Solution: " + Arrays.toString(node.getTransformation()));
         System.out.println("   * Optimal: " + result.getLattice().isComplete());
         System.out.println("   * Time needed: " + result.getTime() + "[ms]");
