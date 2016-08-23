@@ -420,4 +420,8 @@ public class RiskEstimateBuilder {
             this.stop.value = true;
         }
     }
+
+	public RiskModelAttributes getAlphaDistinctionSeparation() {
+		return getAttributeRisks(null);
+	}
 }

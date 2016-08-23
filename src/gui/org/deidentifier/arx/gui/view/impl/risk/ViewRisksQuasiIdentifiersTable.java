@@ -259,6 +259,9 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
                 case SAMPLE_UNIQUENESS:
                     risks = builder.getSampleBasedAttributeRisks();
                     break;
+                case ALPHA_DISTINCTION_SEPARATION:
+                	risks = builder.getAlphaDistinctionSeparation();
+                	break;
                 case POPULATION_UNIQUENESS_PITMAN:
                     risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.PITMAN);
                     break;

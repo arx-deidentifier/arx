@@ -37,9 +37,9 @@ public abstract class RiskModelAttributes {
         /** Field */
         private double            fractionOfUniqueTuples;
         /** Field */
-        private double 			  separation;
+        private double 			  alphaDistinction;
         /** Field */
-        private double 			  distinction;
+        private double 			  alphaSeparation;
 
         /**
          * Creates a new instance
@@ -52,21 +52,39 @@ public abstract class RiskModelAttributes {
             this.highestReidentificationRisk = provider.getHighestRisk();
             this.averageReidentificationRisk = provider.getAverageRisk();
             this.fractionOfUniqueTuples = provider.getFractionOfUniqueTuples();
+            this.alphaDistinction = provider.getAlphaDistinction();
+            this.alphaSeparation = provider.getAlphaSeparation();
         }
 
         @Override
         public int compareTo(QuasiIdentifierRisk other) {
-            int cmp = Integer.compare(this.identifier.size(),
-                                      other.identifier.size());
-            if (cmp != 0) { return cmp; }
-            cmp = Double.compare(this.fractionOfUniqueTuples,
-                                 other.fractionOfUniqueTuples);
-            if (cmp != 0) { return cmp; }
-            cmp = Double.compare(this.highestReidentificationRisk,
-                                 other.highestReidentificationRisk);
-            if (cmp != 0) { return cmp; }
-            return Double.compare(this.averageReidentificationRisk,
-                                  other.averageReidentificationRisk);
+            int cmp = Integer.compare(this.identifier.size(), other.identifier.size());
+            if (cmp != 0) {
+                return cmp;
+            }
+
+            cmp = Double.compare(this.fractionOfUniqueTuples, other.fractionOfUniqueTuples);
+            if (cmp != 0) {
+                return cmp;
+            }
+
+            cmp = Double.compare(this.highestReidentificationRisk, other.highestReidentificationRisk);
+            if (cmp != 0) {
+                return cmp;
+            }
+
+            cmp = Double.compare(this.alphaDistinction, other.alphaDistinction);
+            if (cmp != 0) {
+                return cmp;
+            }
+
+            cmp = Double.compare(this.alphaSeparation, other.alphaSeparation);
+            if (cmp != 0) {
+                return cmp;
+            }
+            return Double.compare(this.averageReidentificationRisk, other.averageReidentificationRisk);
+
+
         }
 
         /**
@@ -94,14 +112,14 @@ public abstract class RiskModelAttributes {
          * @return the alpha distinction
          */
         public double getDistinction() {
-        	return distinction;
+        	return alphaDistinction;
         }
         
         /**
          * @return alpha separation
          */
         public double getSeparation() {
-        	return separation;
+        	return alphaSeparation;
         }
 
         /**
@@ -117,12 +135,16 @@ public abstract class RiskModelAttributes {
      * 
      * @author Fabian Prasser
      */
-    static interface RiskProvider {
-        public abstract double getAverageRisk();
+    interface RiskProvider {
+        double getAverageRisk();
 
-        public abstract double getFractionOfUniqueTuples();
+        double getFractionOfUniqueTuples();
 
-        public abstract double getHighestRisk();
+        double getHighestRisk();
+
+        double getAlphaDistinction();
+
+        double getAlphaSeparation();
     }
 
     /** Stop */
