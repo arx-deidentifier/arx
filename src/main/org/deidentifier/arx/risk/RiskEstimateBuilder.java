@@ -231,28 +231,6 @@ public class RiskEstimateBuilder {
     }
 
     /**
-     * Returns a class providing access to population-based risk estimates about
-     * the attributes. Uses the decision rule by Dankar et al.
-     * 
-     * @return
-     */
-    public RiskModelAttributes getPopulationBasedAttributeRisks() {
-        return getAttributeRisks(PopulationUniquenessModel.DANKAR);
-    }
-
-    /**
-     * Returns a class providing access to population-based risk estimates about
-     * the attributes.
-     * 
-     * @param model
-     *            Uses the given statistical model
-     * @return
-     */
-    public RiskModelAttributes getPopulationBasedAttributeRisks(PopulationUniquenessModel model) {
-        return getAttributeRisks(model);
-    }
-
-    /**
      * Returns a class providing population-based uniqueness estimates
      * 
      * @return
@@ -267,14 +245,8 @@ public class RiskEstimateBuilder {
                                                  false);
     }
 
-    /**
-     * Returns a class providing access to sample-based risk estimates about the
-     * attributes
-     * 
-     * @return
-     */
     public RiskModelAttributes getAttributeRisks() {
-        return getAttributeRisks(null);
+        return getAttributeRisksAlphaDistinctionSeparation();
     }
 
     /**
@@ -317,20 +289,12 @@ public class RiskEstimateBuilder {
         return new RiskModelSampleUniqueness(getEquivalenceClassModel());
     }
 
-    public RiskModelAlphaDistinctionSeparation getSampleBasedAlphaDistinctionSeparation() {
+    private RiskModelAlphaDistinctionSeparation getSampleBasedAlphaDistinctionSeparation() {
         progress.value = 0;
         return new RiskModelAlphaDistinctionSeparation(getEquivalenceClassModel());
     }
 
-    /**
-     * Returns a class providing access to population- or sample-based risk
-     * estimates about the attributes
-     * 
-     * @param model
-     *            null for sample-based model
-     * @return
-     */
-    private RiskModelAttributes getAttributeRisks(final PopulationUniquenessModel model) {
+    private RiskModelAttributes getAttributeRisksAlphaDistinctionSeparation() {
         progress.value = 0;
         return new RiskModelAttributes(this.identifiers, this.stop, progress) {
             @Override
@@ -385,7 +349,7 @@ public class RiskEstimateBuilder {
      * 
      * @return
      */
-    protected RiskModelPopulationUniqueness getPopulationBasedUniquenessRiskInterruptible() {
+    RiskModelPopulationUniqueness getPopulationBasedUniquenessRiskInterruptible() {
         progress.value = 0;
         return new RiskModelPopulationUniqueness(population,
                                                  getHistogram(0.25),
