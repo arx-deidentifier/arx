@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.common.WrappedBoolean;
@@ -31,9 +30,9 @@ public abstract class RiskModelAttributes {
         /** Field */
         private final Set<String> identifier;
         /** Field */
-        private double 			  alphaDistinction;
+        private final double 			  alphaDistinction;
         /** Field */
-        private double 			  alphaSeparation;
+        private final double 			  alphaSeparation;
 
         /**
          * Creates a new instance

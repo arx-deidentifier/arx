@@ -129,7 +129,7 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * 
      * @return
      */
-    public double getNumTuplesAffectedByHighestRisk() {
+    private double getNumTuplesAffectedByHighestRisk() {
         int[] classes = getHistogram().getHistogram();
         return (double) classes[0] * (double) classes[1];
     }
@@ -140,7 +140,7 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * 
      * @return
      */
-    public double getNumTuplesAffectedByLowestRisk() {
+    private double getNumTuplesAffectedByLowestRisk() {
         int[] classes = getHistogram().getHistogram();
         int index = classes.length - 2;
         return (double) classes[index] * (double) classes[index + 1];

@@ -36,7 +36,6 @@ import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelAttributes;
 import org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisk;
-import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -55,13 +54,10 @@ import de.linearbits.swt.table.DynamicTableColumn;
 public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRisk> {
 
     /** View */
-    private Composite         root;
-
-    /** View */
     private DynamicTable      table;
 
     /** Internal stuff. */
-    private AnalysisManager   manager;
+    private final AnalysisManager   manager;
 
     /**
      * Creates a new instance.
@@ -107,11 +103,12 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
             }
         }
         item.setText(0, builder.toString());
-        item.setText(1, Double.toString(round(risks.getDistinction(),2)));
-        item.setText(2, Double.toString(round(risks.getSeparation(),2)));
+        item.setText(1, Double.toString(round(risks.getDistinction(),3)));
+        item.setText(2, Double.toString(round(risks.getSeparation(),3)));
     }
 
-    public static double round(double value, int places) {
+    @SuppressWarnings("SameParameterValue")
+    private static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
@@ -121,8 +118,9 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
     @Override
     protected Control createControl(Composite parent) {
 
-        this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(new FillLayout());
+        /* View */
+        Composite root = new Composite(parent, SWT.NONE);
+        root.setLayout(new FillLayout());
 
         table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.BORDER |
                                        SWT.V_SCROLL | SWT.FULL_SELECTION);
