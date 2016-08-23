@@ -107,11 +107,8 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
             }
         }
         item.setText(0, builder.toString());
-        item.setData("1", risks.getFractionOfUniqueTuples());
-        item.setData("2", risks.getHighestReidentificationRisk());
-        item.setData("3", risks.getAverageReidentificationRisk());
-        item.setText(4, Double.toString(round(risks.getDistinction(),2)));
-        item.setText(5, Double.toString(round(risks.getSeparation(),2)));
+        item.setText(1, Double.toString(round(risks.getDistinction(),2)));
+        item.setText(2, Double.toString(round(risks.getSeparation(),2)));
     }
 
     public static double round(double value, int places) {
@@ -137,31 +134,19 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
         c.setWidth("50%"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.19")); //$NON-NLS-1$
         c.setResizable(true);
-        c = new DynamicTableColumn(table, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("RiskAnalysis.20")); //$NON-NLS-1$
-        c.setResizable(true);
-        c = new DynamicTableColumn(table, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("RiskAnalysis.21")); //$NON-NLS-1$
-        c.setResizable(true);
-        c = new DynamicTableColumn(table, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("RiskAnalysis.22")); //$NON-NLS-1$
-        c.setResizable(true);
+
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.43")); //$NON-NLS-1$
         c.setResizable(true);
+
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.44")); //$NON-NLS-1$
         c.setResizable(true);
+
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
@@ -259,30 +244,10 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
 
             @Override
             public void run() throws InterruptedException {
-
                 // Timestamp
                 long time = System.currentTimeMillis();
 
-                // Perform work
-                switch (getModel().getRiskModel().getRiskModelForAttributes()) {
-                case SAMPLE_UNIQUENESS:
-                    risks = builder.getSampleBasedAttributeRisks();
-                    break;
-                case POPULATION_UNIQUENESS_PITMAN:
-                    risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.PITMAN);
-                    break;
-                case POPULATION_UNIQUENESS_ZAYATZ:
-                    risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.ZAYATZ);
-                    break;
-                case POPULATION_UNIQUENESS_SNB:
-                    risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.SNB);
-                    break;
-                case POPULATION_UNIQUENESS_DANKAR:
-                    risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.DANKAR);
-                    break;
-                default:
-                    throw new RuntimeException("Invalid risk model"); //$NON-NLS-1$
-                }
+                risks = builder.getAlphaDistinctionAndSeparation();
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped) {

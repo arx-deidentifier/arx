@@ -121,7 +121,7 @@ public class RiskEstimateBuilder {
      * 
      * @param population
      * @param handle
-     * @param identifiers
+     * @param classes
      * @param solverconfig
      */
     private RiskEstimateBuilder(ARXPopulationModel population,
@@ -146,7 +146,7 @@ public class RiskEstimateBuilder {
      * 
      * @param population
      * @param handle
-     * @param qi
+     * @param identifiers
      * @param classes
      * @param solverconfig
      */
@@ -273,7 +273,7 @@ public class RiskEstimateBuilder {
      * 
      * @return
      */
-    public RiskModelAttributes getSampleBasedAttributeRisks() {
+    public RiskModelAttributes getAttributeRisks() {
         return getAttributeRisks(null);
     }
 
@@ -347,38 +347,12 @@ public class RiskEstimateBuilder {
                 RiskModelHistogram classes = builder.getEquivalenceClassModel();
                 builder = new RiskEstimateBuilder(population, handle, classes, stop, solverconfig, arxconfig);
 
-                // Use classes to compute risks
-                final RiskModelSampleRisks reidentificationRisks = builder.getSampleBasedReidentificationRisk();
-                final double highestRisk = reidentificationRisks.getHighestRisk();
-                final double averageRisk = reidentificationRisks.getAverageRisk();
-                final double fractionOfUniqueTuples;
-
                 final RiskModelAlphaDistinctionSeparation alphaDistinctionAndSeparation = builder.getSampleBasedAlphaDistinctionSeparation();
                 final double alphaDistinction = alphaDistinctionAndSeparation.getAlphaDistinction();
                 final double alphaSeparation = alphaDistinctionAndSeparation.getAlphaSeparation();
 
-                if (model == null) {
-                    fractionOfUniqueTuples = builder.getSampleBasedUniquenessRisk()
-                                                    .getFractionOfUniqueTuples();
-                } else {
-                    fractionOfUniqueTuples = builder.getPopulationBasedUniquenessRisk()
-                                                    .getFractionOfUniqueTuples(model);
-                }
-
                 // Return a provider
                 return new RiskProvider() {
-                    public double getAverageRisk() {
-                        return averageRisk;
-                    }
-
-                    public double getFractionOfUniqueTuples() {
-                        return fractionOfUniqueTuples;
-                    }
-
-                    public double getHighestRisk() {
-                        return highestRisk;
-                    }
-
                     public double getAlphaDistinction() {
                         return alphaDistinction;
                     }

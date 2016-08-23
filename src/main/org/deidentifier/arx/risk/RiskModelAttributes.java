@@ -31,12 +31,6 @@ public abstract class RiskModelAttributes {
         /** Field */
         private final Set<String> identifier;
         /** Field */
-        private double            highestReidentificationRisk;
-        /** Field */
-        private double            averageReidentificationRisk;
-        /** Field */
-        private double            fractionOfUniqueTuples;
-        /** Field */
         private double 			  alphaDistinction;
         /** Field */
         private double 			  alphaSeparation;
@@ -49,9 +43,6 @@ public abstract class RiskModelAttributes {
         private QuasiIdentifierRisk(Set<String> identifier) {
             RiskProvider provider = getRiskProvider(identifier, stop);
             this.identifier = identifier;
-            this.highestReidentificationRisk = provider.getHighestRisk();
-            this.averageReidentificationRisk = provider.getAverageRisk();
-            this.fractionOfUniqueTuples = provider.getFractionOfUniqueTuples();
             this.alphaDistinction = provider.getAlphaDistinction();
             this.alphaSeparation = provider.getAlphaSeparation();
         }
@@ -63,41 +54,17 @@ public abstract class RiskModelAttributes {
                 return cmp;
             }
 
-            cmp = Double.compare(this.fractionOfUniqueTuples, other.fractionOfUniqueTuples);
+            cmp = Double.compare(this.alphaDistinction, other.alphaDistinction);
             if (cmp != 0) {
                 return cmp;
             }
 
-            cmp = Double.compare(this.highestReidentificationRisk, other.highestReidentificationRisk);
+            cmp = Double.compare(this.alphaSeparation, other.alphaSeparation);
             if (cmp != 0) {
                 return cmp;
             }
-            return Double.compare(this.averageReidentificationRisk, other.averageReidentificationRisk);
-
-
+           return 0; // TODO Max: fallback value?
         }
-
-        /**
-         * @return the averageReidentificationRisk
-         */
-        public double getAverageReidentificationRisk() {
-            return averageReidentificationRisk;
-        }
-
-        /**
-         * @return the fractionOfUniqueTuples
-         */
-        public double getFractionOfUniqueTuples() {
-            return fractionOfUniqueTuples;
-        }
-
-        /**
-         * @return the highestReidentificationRisk
-         */
-        public double getHighestReidentificationRisk() {
-            return highestReidentificationRisk;
-        }
-        
         /**
          * @return the alpha distinction
          */
@@ -126,12 +93,6 @@ public abstract class RiskModelAttributes {
      * @author Fabian Prasser
      */
     interface RiskProvider {
-        double getAverageRisk();
-
-        double getFractionOfUniqueTuples();
-
-        double getHighestRisk();
-
         double getAlphaDistinction();
 
         double getAlphaSeparation();
@@ -168,24 +129,6 @@ public abstract class RiskModelAttributes {
                                                         (double) (powerset.size() - 1) *
                                                         100d);
             }
-        }
-
-        // Now compute the average of all sets
-        for (Entry<Set<String>, QuasiIdentifierRisk> entry : scores.entrySet()) {
-            int count = 1;
-            for (Entry<Set<String>, QuasiIdentifierRisk> entry2 : scores.entrySet()) {
-                checkInterrupt();
-                if (!entry.getKey().equals(entry2.getKey()) &&
-                    entry2.getKey().containsAll(entry.getKey())) {
-                    entry.getValue().averageReidentificationRisk += entry2.getValue().averageReidentificationRisk;
-                    entry.getValue().fractionOfUniqueTuples += entry2.getValue().fractionOfUniqueTuples;
-                    entry.getValue().highestReidentificationRisk += entry2.getValue().highestReidentificationRisk;
-                    count++;
-                }
-            }
-            entry.getValue().averageReidentificationRisk /= (double) count;
-            entry.getValue().fractionOfUniqueTuples /= (double) count;
-            entry.getValue().highestReidentificationRisk /= (double) count;
         }
 
         // Now create sorted array

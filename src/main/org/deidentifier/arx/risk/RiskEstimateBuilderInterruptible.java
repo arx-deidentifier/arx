@@ -34,7 +34,7 @@ public class RiskEstimateBuilderInterruptible {
     /**
      * Creates a new instance
      * 
-     * @param builder
+     * @param parent
      */
     RiskEstimateBuilderInterruptible(RiskEstimateBuilder parent) {
         this.parent = parent;
@@ -124,15 +124,9 @@ public class RiskEstimateBuilderInterruptible {
         return parent.getProgress();
     }
 
-    /**
-     * Returns a class providing access to sample-based risk estimates about the
-     * attributes
-     * 
-     * @return
-     */
-    public RiskModelAttributes getSampleBasedAttributeRisks() throws InterruptedException {
+    public RiskModelAttributes getAlphaDistinctionAndSeparation() throws InterruptedException {
         try {
-            return parent.getSampleBasedAttributeRisks();
+            return parent.getAttributeRisks();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
