@@ -317,9 +317,9 @@ public class RiskEstimateBuilder {
         return new RiskModelSampleUniqueness(getEquivalenceClassModel());
     }
 
-    public RiskModelAlphaDisSep getSampleBasedAlphaDistinctionSeparation() {
+    public RiskModelAlphaDistinctionSeparation getSampleBasedAlphaDistinctionSeparation() {
         progress.value = 0;
-        return new RiskModelAlphaDisSep(getEquivalenceClassModel());
+        return new RiskModelAlphaDistinctionSeparation(getEquivalenceClassModel());
     }
 
     /**
@@ -353,7 +353,7 @@ public class RiskEstimateBuilder {
                 final double averageRisk = reidentificationRisks.getAverageRisk();
                 final double fractionOfUniqueTuples;
 
-                final RiskModelAlphaDisSep alphaDistinctionAndSeparation = builder.getSampleBasedAlphaDistinctionSeparation();
+                final RiskModelAlphaDistinctionSeparation alphaDistinctionAndSeparation = builder.getSampleBasedAlphaDistinctionSeparation();
                 final double alphaDistinction = alphaDistinctionAndSeparation.getAlphaDistinction();
                 final double alphaSeparation = alphaDistinctionAndSeparation.getAlphaSeparation();
 
