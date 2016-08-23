@@ -16,6 +16,8 @@
  */
 package org.deidentifier.arx.gui.view.impl.risk;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -108,8 +110,15 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
         item.setData("1", risks.getFractionOfUniqueTuples());
         item.setData("2", risks.getHighestReidentificationRisk());
         item.setData("3", risks.getAverageReidentificationRisk());
-        item.setData("4", risks.getDistinction());
-        item.setData("5", risks.getSeparation());
+        item.setText(4, Double.toString(round(risks.getDistinction(),2)));
+        item.setText(5, Double.toString(round(risks.getSeparation(),2)));
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     @Override
@@ -146,12 +155,12 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText("Distinction"); //$NON-NLS-1$
+        c.setText("α-distinct"); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText("Separation"); //$NON-NLS-1$
+        c.setText("α-separation"); //$NON-NLS-1$
         c.setResizable(true);
         for (final TableColumn col : table.getColumns()) {
             col.pack();
@@ -259,9 +268,6 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
                 case SAMPLE_UNIQUENESS:
                     risks = builder.getSampleBasedAttributeRisks();
                     break;
-                case ALPHA_DISTINCTION_SEPARATION:
-                	risks = builder.getAlphaDistinctionSeparation();
-                	break;
                 case POPULATION_UNIQUENESS_PITMAN:
                     risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.PITMAN);
                     break;
