@@ -36,6 +36,10 @@ public abstract class RiskModelAttributes {
         private double            averageReidentificationRisk;
         /** Field */
         private double            fractionOfUniqueTuples;
+        /** Field */
+        private double 			  separation;
+        /** Field */
+        private double 			  distinction;
 
         /**
          * Creates a new instance
@@ -84,6 +88,20 @@ public abstract class RiskModelAttributes {
          */
         public double getHighestReidentificationRisk() {
             return highestReidentificationRisk;
+        }
+        
+        /**
+         * @return the alpha distinction
+         */
+        public double getDistinction() {
+        	return distinction;
+        }
+        
+        /**
+         * @return alpha separation
+         */
+        public double getSeparation() {
+        	return separation;
         }
 
         /**
