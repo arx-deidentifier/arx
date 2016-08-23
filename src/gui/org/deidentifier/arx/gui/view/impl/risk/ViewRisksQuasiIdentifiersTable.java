@@ -155,12 +155,12 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText("α-distinct"); //$NON-NLS-1$
+        c.setText(Resources.getMessage("RiskAnalysis.43")); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText("α-separation"); //$NON-NLS-1$
+        c.setText(Resources.getMessage("RiskAnalysis.44")); //$NON-NLS-1$
         c.setResizable(true);
         for (final TableColumn col : table.getColumns()) {
             col.pack();
