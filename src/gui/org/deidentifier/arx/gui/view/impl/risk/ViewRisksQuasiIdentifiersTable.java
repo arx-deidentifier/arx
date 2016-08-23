@@ -108,8 +108,8 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
         item.setData("1", risks.getFractionOfUniqueTuples());
         item.setData("2", risks.getHighestReidentificationRisk());
         item.setData("3", risks.getAverageReidentificationRisk());
-        item.setData("4", risks.getSeparation());
-        item.setData("5", risks.getDistinction());
+        item.setData("4", risks.getDistinction());
+        item.setData("5", risks.getSeparation());
     }
 
     @Override
@@ -146,12 +146,12 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText("Separation"); //$NON-NLS-1$
+        c.setText("Distinction"); //$NON-NLS-1$
         c.setResizable(true);
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText("Distinction"); //$NON-NLS-1$
+        c.setText("Separation"); //$NON-NLS-1$
         c.setResizable(true);
         for (final TableColumn col : table.getColumns()) {
             col.pack();
