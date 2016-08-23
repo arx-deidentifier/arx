@@ -137,15 +137,6 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
-    public RiskModelAttributes getAlphaDistinctionSeparation() throws InterruptedException {
-		try {
-			return parent.getAlphaDistinctionSeparation();
-        } catch (ComputationInterruptedException e) {
-            throw new InterruptedException("Computation interrupted");
-        }
-    	
-    }
     /**
      * Returns a class providing sample-based re-identification risk estimates
      * 

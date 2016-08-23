@@ -317,6 +317,11 @@ public class RiskEstimateBuilder {
         return new RiskModelSampleUniqueness(getEquivalenceClassModel());
     }
 
+    public RiskModelAlphaDisSep getSampleBasedAlphaDistinctionSeparation() {
+        progress.value = 0;
+        return new RiskModelAlphaDisSep(getEquivalenceClassModel());
+    }
+
     /**
      * Returns a class providing access to population- or sample-based risk
      * estimates about the attributes
@@ -347,6 +352,11 @@ public class RiskEstimateBuilder {
                 final double highestRisk = reidentificationRisks.getHighestRisk();
                 final double averageRisk = reidentificationRisks.getAverageRisk();
                 final double fractionOfUniqueTuples;
+
+                final RiskModelAlphaDisSep alphaDistinctionAndSeparation = builder.getSampleBasedAlphaDistinctionSeparation();
+                final double alphaDistinction = alphaDistinctionAndSeparation.getAlphaDistinction();
+                final double alphaSeparation = alphaDistinctionAndSeparation.getAlphaSeparation();
+
                 if (model == null) {
                     fractionOfUniqueTuples = builder.getSampleBasedUniquenessRisk()
                                                     .getFractionOfUniqueTuples();
@@ -367,6 +377,14 @@ public class RiskEstimateBuilder {
 
                     public double getHighestRisk() {
                         return highestRisk;
+                    }
+
+                    public double getAlphaDistinction() {
+                        return alphaDistinction;
+                    }
+
+                    public double getAlphaSeparation() {
+                        return alphaSeparation;
                     }
                 };
             }
@@ -421,7 +439,5 @@ public class RiskEstimateBuilder {
         }
     }
 
-	public RiskModelAttributes getAlphaDistinctionSeparation() {
-		return getAttributeRisks(null);
-	}
+
 }

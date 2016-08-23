@@ -72,16 +72,6 @@ public abstract class RiskModelAttributes {
             if (cmp != 0) {
                 return cmp;
             }
-
-            cmp = Double.compare(this.alphaDistinction, other.alphaDistinction);
-            if (cmp != 0) {
-                return cmp;
-            }
-
-            cmp = Double.compare(this.alphaSeparation, other.alphaSeparation);
-            if (cmp != 0) {
-                return cmp;
-            }
             return Double.compare(this.averageReidentificationRisk, other.averageReidentificationRisk);
 
 
