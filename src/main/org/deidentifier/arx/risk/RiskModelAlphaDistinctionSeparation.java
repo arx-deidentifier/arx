@@ -1,6 +1,8 @@
 package org.deidentifier.arx.risk;
 
 
+import org.apache.hadoop.mapred.JobHistory;
+
 import java.util.Arrays;
 
 class RiskModelAlphaDistinctionSeparation extends RiskModelSample {
@@ -26,19 +28,22 @@ class RiskModelAlphaDistinctionSeparation extends RiskModelSample {
 
         int collisions = 0;
         for (int i = 0; i < classes.length; i+=2) {
-            int classSize = classes[i];
-            int count = classes[i+1];
-            int cc = 0;
-            int[] classesWithoutCurrent = Arrays.copyOfRange(classes, i+2, classes.length);
-            int restRecords = getNumRecords(classesWithoutCurrent);
-            for (int ii = 1; ii < count; ii++) {
-                cc += classSize * (classSize+restRecords);
+            int class_size = classes[i];
+            int class_count = classes[i+1];
+            int[] classesFromCurrent = Arrays.copyOfRange(classes, i+2, classes.length);
+            int numRecordsLeft = getNumRecords(classesFromCurrent);
+            for (int ii = 1; ii < class_count; ii++) {
+                collisions += class_size * (class_size+numRecordsLeft);
             }
-            cc += classSize * restRecords;
-            collisions += cc;
+            //int tmp = class_size * (class_size+numRecordsLeft) * max((class_count-1),1); // make sure no multiplication with 0
+            collisions += class_size * numRecordsLeft;
+            //collisions += tmp;
         }
 
         return (double)collisions/(double)comparesTotal;
+    }
+    private int max(int a, int b) {
+        return a > b ? a : b;
     }
 
     private int getNumRecords(int[] classes) {
