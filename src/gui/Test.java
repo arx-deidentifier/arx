@@ -1,25 +1,31 @@
+import javax.security.auth.login.AccountException;
 import java.util.Arrays;
 
 public class Test {
     public static void main(String[] args) {
         //Test();
-        //System.out.println("\nCollisions: " + collisionsOneClassSizeIterative(1, 3));
+        //System.out.println("\nCollisions: " + calculateDistinctTuples(1, 3));
         // 2,2 , 3,1
 
-        int[] values = new int[]{2,4,3,1,1,5};
+        /*
+        int[] values = new int[]{3,6,5,2};
         int collisions = 0;
+        int collisions2 = 0;
+        int collisions3 = 0;
         for (int i = 0; i < values.length; i+=2) {
             int size = values[i];
             int count = values[i+1];
 
             int[] classesWithoutCurrent = Arrays.copyOfRange(values, i+2, values.length);
             int restRecords = getNumRecords(classesWithoutCurrent);
-            int res = collisionsOneClassSizeIterative(size,count,restRecords); //
             //System.out.println(res);
-            collisions += res;
+            collisions += calculateDistinctTuples(size,count,restRecords);
+            collisions3 += calculateDistinctTuplesFormula(size, count, restRecords);
         }
-        //int res = collisionsOneClassSizeIterative(1,2,3); //
-        System.out.println(collisions);
+        //int res = calculateDistinctTuples(1,2,3); //
+        System.out.println(collisions + " : " + collisions2 + " : " + collisions3);*/
+
+        System.out.println(sum(5-1));
     }
 
 //    private static int collisionsMoreClasses() {
@@ -27,26 +33,43 @@ public class Test {
 //        EqClass classB = new EqClass(1,1);
 //        // should be 2
 //
-//        //collisionsOneClassSizeIterative(classA.getSize(), classA.getCount());
+//        //calculateDistinctTuples(classA.getSize(), classA.getCount());
 //
 //    }
 
-    private static int collisionsOneClassSizeIterative(int size, int count, int restNumRecords) {
-        // aa bb ccc dddd
-        // 2,2   3,1  4,1
+//    private static int calculateDistinctTuplesNormal(int classSize, int classCount, int recordsLeft) {
+//        int distinctTuples = 0;
+//        for (int i = 1; i < classCount; i++) {
+//            distinctTuples += classSize * (i * classSize + recordsLeft);
+//        }
+//        distinctTuples += classSize * recordsLeft;
+//        return distinctTuples;
+//    }
+
+
+    private static int calculateDistinctTuplesIterative(int size, int count, int restNumRecords) {
         int collisions = 0;
         for (int i = 1; i < count; i++) {
-            //System.out.println("Schritt " + i + ":");
-            int cc = size * ((count - i) * size + restNumRecords);
-            //System.out.println(size + " * " + "((" + ((count + "-" + i)) + ") * " + size + ")");
-            //System.out.println("Kollisionen: " + cc + "");
-            collisions += cc;
-            //System.out.println("Collisionen bisher: " + collisions + "");
 
+            collisions += size * ((count - i) * size + restNumRecords);
         }
         collisions += size * restNumRecords;
         return collisions;
     }
+
+        private static int sum(int n) {
+        return (n*(n+1))/2; // Rechenregel Summe i, von i=1 bis n entspricht (n(n+1))/2
+    }
+
+    private static int calculateDistinctTuples(int classSize, int classCount, int recordsLeft) {
+        int distinctTuples = 0;
+        for (int i = 1; i < classCount; i++) {
+            distinctTuples += Math.pow(classSize,2) * i + classSize * recordsLeft;
+        }
+        distinctTuples += classSize * recordsLeft;
+        return distinctTuples;
+    }
+
 
 
     private static int getNumRecords(int[] classes) {
@@ -114,7 +137,7 @@ public class Test {
             int size = eqClass.size;
             int count = eqClass.count;
 
-            int resI = 0;//collisionsOneClassSizeIterative(size, count);
+            int resI = 0;//calculateDistinctTuples(size, count);
             //int resF = collisionsOneClassSizeFormula(size, count);
 
 
