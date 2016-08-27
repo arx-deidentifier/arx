@@ -103,8 +103,8 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
             }
         }
         item.setText(0, builder.toString());
-        item.setText(1, Double.toString(round(risks.getDistinction(),3)));
-        item.setText(2, Double.toString(round(risks.getSeparation(),3)));
+        item.setData("1", risks.getDistinction());
+        item.setData("2", risks.getSeparation());
     }
 
     @SuppressWarnings("SameParameterValue")
