@@ -32,16 +32,37 @@ class RiskModelAlphaDistinctionSeparation extends RiskModelSample {
             int class_count = classes[i+1];
             int[] classesFromCurrent = Arrays.copyOfRange(classes, i+2, classes.length);
             int numRecordsLeft = getNumRecords(classesFromCurrent);
-            for (int ii = 1; ii < class_count; ii++) {
-                collisions += class_size * (class_size+numRecordsLeft);
-            }
+
+            //for (int ii = 0; ii < class_count-1; ii++) {
+                //collisions += class_size * (class_size*(class_count-1)+numRecordsLeft); // bei 3 gruppen mit größe 1 müssen die anderen 2 gruppen, die übrig bleiben auch mit einberechnet werden, nicht nur eine
+            collisions += collisionsOneClassSizeIterative(class_size, class_count, numRecordsLeft);
+           // }
+
             //int tmp = class_size * (class_size+numRecordsLeft) * max((class_count-1),1); // make sure no multiplication with 0
-            collisions += class_size * numRecordsLeft;
+            //collisions += class_size * numRecordsLeft;
             //collisions += tmp;
         }
 
         return (double)collisions/(double)comparesTotal;
     }
+
+    private static int collisionsOneClassSizeIterative(int size, int count, int restNumRecords) {
+        // aa bb ccc dddd
+        // 2,2   3,1  4,1
+        int collisions = 0;
+        for (int i = 1; i < count; i++) {
+            //System.out.println("Schritt " + i + ":");
+            int cc = size * ((count - i) * size + restNumRecords);
+            //System.out.println(size + " * " + "((" + ((count + "-" + i)) + ") * " + size + ")");
+            //System.out.println("Kollisionen: " + cc + "");
+            collisions += cc;
+            //System.out.println("Collisionen bisher: " + collisions + "");
+
+        }
+        collisions += size * restNumRecords;
+        return collisions;
+    }
+
     private int max(int a, int b) {
         return a > b ? a : b;
     }
@@ -51,6 +72,7 @@ class RiskModelAlphaDistinctionSeparation extends RiskModelSample {
         for (int i = 0; i<classes.length;i+=2) {
             num += classes[i+1] * classes[i];
         }
+
         return num;
     }
 
