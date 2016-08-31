@@ -156,8 +156,7 @@ public class DataManager {
         int indexMicroaggregated = this.microaggregationStartIndex;
         int counter = 0;
 
-        // A map for column indices. map[i*2]=attribute type, map[i*2+1]=index
-        // position. */
+        // A map for column indices. map[i*2]=attribute type, map[i*2+1]=index position.
         final int[] map = new int[header.length * 2];
         final String[] headerGH = new String[dictionaryGeneralized.getNumDimensions()];
         final String[] headerDI = new String[dictionaryAnalyzed.getNumDimensions()];
@@ -199,7 +198,7 @@ public class DataManager {
                 indexSensitive++;
             } else {
                 // TODO: CHECK: Changed default? - now all undefined attributes
-                // are identifying! Previously they were sensitive?
+                // are identifying! Previously they were considered sensitive?
                 map[idx] = AttributeTypeInternal.IDENTIFYING;
                 map[idx + 1] = -1;
             }
@@ -241,8 +240,7 @@ public class DataManager {
                                                                                           dictionaryIndex,
                                                                                           dictionaryGeneralized);
                 } else {
-                    throw new IllegalStateException("No hierarchy available for attribute (" +
-                                                    header[i] + ")");
+                    throw new IllegalStateException("No hierarchy available for attribute (" + header[i] + ")");
                 }
                 // Initialize hierarchy height and minimum / maximum
                 // generalization
