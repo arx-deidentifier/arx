@@ -260,7 +260,7 @@ public class WorkerLoad extends Worker<Model> {
             // Read input, config and definition
         	readInput(config, zip);
             model.setInputConfig(config);
-            readDefinition(config, model.getInputDefinition(), prefix, zip);
+            readDefinition(config, output, model.getInputDefinition(), prefix, zip);
             
             // TODO: Needed for backwards compatibility of ARX 3.4.0 with previous versions
             if (model.getInputPopulationModel() != null) {
@@ -272,7 +272,7 @@ public class WorkerLoad extends Worker<Model> {
             config.setInput(model.getInputConfig().getInput());
             model.setOutputConfig(config);
             DataDefinition definition = new DataDefinition();
-            readDefinition(config, definition, prefix, zip);
+            readDefinition(config, output, definition, prefix, zip);
             
             // Create Handles
             final int historySize = model.getHistorySize();
@@ -331,6 +331,7 @@ public class WorkerLoad extends Worker<Model> {
      * Reads the data definition from the file.
      *
      * @param config
+     * @param output 
      * @param definition
      * @param prefix
      * @param zip
@@ -338,9 +339,10 @@ public class WorkerLoad extends Worker<Model> {
      * @throws SAXException
      */
     private void readDefinition(final ModelConfiguration config,
-                                final DataDefinition definition, final String prefix,
-                                final ZipFile zip) throws IOException,
-                                                          SAXException {
+                                final boolean output,
+                                final DataDefinition definition,
+                                final String prefix,
+                                final ZipFile zip) throws IOException, SAXException {
     	
     	// Obtain entry
         final ZipEntry entry = zip.getEntry(prefix + "definition.xml"); //$NON-NLS-1$
@@ -437,7 +439,25 @@ public class WorkerLoad extends Worker<Model> {
                             // Check if a hierarchy is defined in the XML file
                             if (ref != null) {
                                 try {
-                                    hierarchy = readHierarchy(zip, prefix, ref);
+
+                                    // Bugfix: ARX 3.4.1 does not serialize automatically created empty hierarchies
+                                    // but it does create a reference to such a file. We handle this case separately now
+                                    // which probably breaks the backwards compatibility to older versions of ARX for
+                                    // which this clodeblock was initially implemented:
+                                    if (output && zip.getEntry(prefix + ref) == null) {
+
+                                        // Create an empty hierarchy
+                                        String[] data = config.getInput().getHandle().getDistinctValues(config.getInput()
+                                                                                     .getHandle()
+                                                                                     .getColumnIndexOf(attr));
+                                        String[][] array = new String[data.length][];
+                                        for (int i=0; i<data.length; i++) {
+                                            array[i] = new String[]{data[i]};
+                                        }
+                                        hierarchy = Hierarchy.create(array);
+                                    } else {
+                                        hierarchy = readHierarchy(zip, prefix, ref);
+                                    }
                                 } catch (final IOException e) {
                                     throw new SAXException(e);
                                 }
@@ -449,8 +469,7 @@ public class WorkerLoad extends Worker<Model> {
                             config.setHierarchy(attr, hierarchy); /* For backwards compatibility */
                             definition.setHierarchy(attr, hierarchy);
                             
-                            int height = hierarchy.getHierarchy().length > 0 ?
-                                    hierarchy.getHierarchy()[0].length : 0;
+                            int height = hierarchy.getHierarchy().length > 0 ? hierarchy.getHierarchy()[0].length : 0;
                             if (min.equals("All")) { //$NON-NLS-1$
                                 config.setMinimumGeneralization(attr, null);
                                 definition.setMinimumGeneralization(attr, 0);
