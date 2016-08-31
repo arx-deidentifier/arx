@@ -51,9 +51,9 @@ public class GeneralizationHierarchy {
                                    final Dictionary dictionary) {
 
         // Check
-        if (hierarchy == null || hierarchy.length == 0) { throw new RuntimeException("Empty generalization hierarchy for attribute '" +
-                                                                                     name +
-                                                                                     "'"); }
+        if (hierarchy == null || hierarchy.length == 0) { 
+            throw new RuntimeException("Empty generalization hierarchy for attribute '" + name + "'");
+        }
 
         // Init
         this.attribute = name;
