@@ -27,7 +27,8 @@ import java.util.Set;
 import com.carrotsearch.hppc.IntArrayList;
 
 /**
- * This class represents a data subset as required for d-presence.
+ * This class represents a the dataset that is to be de-identified 
+ * as a subset of the given population table.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -42,14 +43,14 @@ public class DataSubset implements Serializable {
      */
     private static class Entry implements Serializable {
         
-        /**  TODO */
+        /** SVUID */
         private static final long serialVersionUID = 31695068160887476L;
-        
-        /**  TODO */
-        private String[] data;
-        
-        /**  TODO */
-        private int hashcode;
+
+        /** Record */
+        private String[]          data;
+
+        /** Hashcode */
+        private int               hashcode;
      
         /**
          * 

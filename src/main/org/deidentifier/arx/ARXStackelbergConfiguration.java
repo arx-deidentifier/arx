@@ -67,6 +67,19 @@ public class ARXStackelbergConfiguration implements Serializable {
     }
 
     /**
+     * Creates a clone of this configuration which uses the given data subset
+     */
+    public ARXStackelbergConfiguration clone(DataSubset subset) {
+        ARXStackelbergConfiguration result = new ARXStackelbergConfiguration();
+        result.publisherBenefit = this.publisherBenefit;
+        result.publisherLoss = this.publisherLoss;
+        result.adversaryGain = this.adversaryGain;
+        result.adversaryCost = this.adversaryCost;
+        result.subset = subset;
+        return result;
+    }
+
+    /**
      * @return the adversaryCost
      */
     public double getAdversaryCost() {

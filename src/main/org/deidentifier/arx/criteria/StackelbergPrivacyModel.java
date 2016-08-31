@@ -119,12 +119,7 @@ public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion {
         double informationLoss = getEntropyBasedInformationLoss(transformation, entry);
         double successProbability = getSuccessProbability(entry);
         double publisherPayoff = riskModel.getExpectedPublisherPayoff(informationLoss, successProbability);
-        
-//        System.out.println("Entry");
-//        System.out.println(" - Information loss: " + informationLoss);
-//        System.out.println(" - Success probability: " + successProbability);
-//        System.out.println(" - Publisher payoff: " + publisherPayoff);
-        
+                
         // We keep the set of records if the payoff is > 0
         return publisherPayoff > 0;
     }
