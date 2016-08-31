@@ -171,7 +171,7 @@ public class ImportAdapterJDBC extends ImportAdapter {
             String[] result = new String[indexes.length];
             for (int i = 0; i < indexes.length; i++) {
                 
-                result[i] = resultSet.getString(indexes[i]);
+                result[i] = resultSet.getString(indexes[i]).trim();
                 if (!dataTypes[i].isValid(result[i])) {
                     if (config.columns.get(i).isCleansing()) {
                         result[i] = DataType.NULL_VALUE;
@@ -264,7 +264,7 @@ public class ImportAdapterJDBC extends ImportAdapter {
                 /* Assign name from JDBC metadata */
                 try {
                     /* +1 offset, because counting in JDBC starts at 1 */
-                    header[i] = resultSet.getMetaData().getColumnName(((ImportColumnJDBC) column).getIndex() + 1);
+                    header[i] = resultSet.getMetaData().getColumnName(((ImportColumnJDBC) column).getIndex() + 1).trim();
                 } catch (SQLException e) {
                     throw new IllegalArgumentException("Index for column '" + ((ImportColumnJDBC) column).getIndex() + "' couldn't be found");
                 }

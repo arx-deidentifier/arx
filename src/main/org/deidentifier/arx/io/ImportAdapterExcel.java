@@ -186,7 +186,7 @@ public class ImportAdapterExcel extends ImportAdapter {
         for (int i = 0; i < indexes.length; i++) {
 
             row.getCell(indexes[i]).setCellType(Cell.CELL_TYPE_STRING);
-            result[i] = row.getCell(indexes[i]).getStringCellValue();
+            result[i] = row.getCell(indexes[i]).getStringCellValue().trim();
 
             if (!dataTypes[i].isValid(result[i])) {
                 if (config.columns.get(i).isCleansing()) {
@@ -255,7 +255,7 @@ public class ImportAdapterExcel extends ImportAdapter {
             row.getCell(((ImportColumnExcel) column).getIndex())
                .setCellType(Cell.CELL_TYPE_STRING);
             String name = row.getCell(((ImportColumnExcel) column).getIndex())
-                             .getStringCellValue();
+                             .getStringCellValue().trim();
 
             if (config.getContainsHeader() && !name.equals("")) {
                 /* Assign name of file itself */
