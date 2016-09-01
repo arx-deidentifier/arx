@@ -452,6 +452,26 @@
 <dd>7493568420925738049L</dd>
 </dl>
 <ul class="blockList">
+<li class="blockList"><a name="serialized_methods">
+<!--   -->
+</a>
+<h3>Serialization Methods</h3>
+<ul class="blockList">
+<li class="blockListLast"><a name="readObject(java.io.ObjectInputStream)">
+<!--   -->
+</a>
+<h4>readObject</h4>
+<pre>private&nbsp;void&nbsp;readObject(java.io.ObjectInputStream&nbsp;ois)
+                 throws java.lang.ClassNotFoundException,
+                        java.io.IOException</pre>
+<div class="block">This fixes a bug, where hierarchies which have been loaded from CSV files are trimmed but
+ hierarchies which are deserialized are not. We fix this by implementing custom deserialization.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.ClassNotFoundException</code></dd>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="serializedForm">
 <!--   -->
 </a>
@@ -4130,6 +4150,7 @@
 <li class="blockListLast">
 <h4>maximalArea</h4>
 <pre>double maximalArea</pre>
+<div class="block">Maximal area</div>
 </li>
 </ul>
 </li>

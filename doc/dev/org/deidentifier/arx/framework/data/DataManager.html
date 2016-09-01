@@ -322,10 +322,26 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="DataManager(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, java.lang.String[], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[], java.util.Map, java.util.Map, int[], org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], java.lang.String[], int[], int, int, int[])">
+<a name="DataManager(java.lang.String[], int[][], org.deidentifier.arx.framework.data.Dictionary, org.deidentifier.arx.DataDefinition, java.util.Set, java.util.Map)">
 <!--   -->
 </a>
 <ul class="blockList">
+<li class="blockList">
+<h4>DataManager</h4>
+<pre>public&nbsp;DataManager(java.lang.String[]&nbsp;header,
+           int[][]&nbsp;data,
+           <a href="../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;dictionary,
+           <a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+           java.util.Set&lt;<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;criteria,
+           java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>&gt;&nbsp;functions)</pre>
+<div class="block">Creates a new data manager from pre-encoded data.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>header</code> - </dd><dd><code>data</code> - </dd><dd><code>dictionary</code> - </dd><dd><code>definition</code> - </dd><dd><code>criteria</code> - </dd><dd><code>function</code> - </dd></dl>
+</li>
+</ul>
+<a name="DataManager(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, java.lang.String[], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[], java.util.Map, java.util.Map, int[], org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], java.lang.String[], int[], int, int, int[])">
+<!--   -->
+</a>
+<ul class="blockListLast">
 <li class="blockList">
 <h4>DataManager</h4>
 <pre>protected&nbsp;DataManager(<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataAnalyzed,
@@ -345,22 +361,6 @@ extends java.lang.Object</pre>
            int[]&nbsp;minLevels)</pre>
 <div class="block">For creating a projected instance</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>dataAnalyzed</code> - </dd><dd><code>dataGeneralized</code> - </dd><dd><code>dataStatic</code> - </dd><dd><code>header</code> - </dd><dd><code>hierarchiesGeneralized</code> - </dd><dd><code>hierarchiesHeights</code> - </dd><dd><code>hierarchiesSensitive</code> - </dd><dd><code>indexesSensitive</code> - </dd><dd><code>maxLevels</code> - </dd><dd><code>microaggregationFunctions</code> - </dd><dd><code>microaggregationHeader</code> - </dd><dd><code>microaggregationMap</code> - </dd><dd><code>microaggregationNumAttributes</code> - </dd><dd><code>microaggregationStartIndex</code> - </dd><dd><code>minLevels</code> - </dd></dl>
-</li>
-</ul>
-<a name="DataManager(java.lang.String[], int[][], org.deidentifier.arx.framework.data.Dictionary, org.deidentifier.arx.DataDefinition, java.util.Set, java.util.Map)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>DataManager</h4>
-<pre>public&nbsp;DataManager(java.lang.String[]&nbsp;header,
-           int[][]&nbsp;data,
-           <a href="../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;dictionary,
-           <a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
-           java.util.Set&lt;<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;criteria,
-           java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>&gt;&nbsp;functions)</pre>
-<div class="block">Creates a new data manager from pre-encoded data.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>header</code> - </dd><dd><code>data</code> - </dd><dd><code>dictionary</code> - </dd><dd><code>definition</code> - </dd><dd><code>criteria</code> - </dd><dd><code>function</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -542,6 +542,18 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getSubsetInstance(org.deidentifier.arx.RowSet)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSubsetInstance</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;getSubsetInstance(<a href="../../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset)</pre>
+<div class="block">Returns an instance of this data manager, that is projected onto the given rowset</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rowset</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getTree(int[][], int, int[][])">
 <!--   -->
 </a>
@@ -560,7 +572,7 @@ extends java.lang.Object</pre>
 <a name="getTree(java.lang.String)">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>getTree</h4>
 <pre>public&nbsp;int[]&nbsp;getTree(java.lang.String&nbsp;attribute)</pre>
@@ -568,18 +580,6 @@ extends java.lang.Object</pre>
  The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd>tree</dd></dl>
-</li>
-</ul>
-<a name="getSubsetInstance(org.deidentifier.arx.RowSet)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>getSubsetInstance</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;getSubsetInstance(<a href="../../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset)</pre>
-<div class="block">Returns an instance of this data manager, that is projected onto the given rowset</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rowset</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>
