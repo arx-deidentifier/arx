@@ -186,7 +186,7 @@ public class ImportAdapterExcel extends ImportAdapter {
         for (int i = 0; i < indexes.length; i++) {
 
             row.getCell(indexes[i]).setCellType(Cell.CELL_TYPE_STRING);
-            result[i] = row.getCell(indexes[i]).getStringCellValue().trim();
+            result[i] = IOUtil.trim(row.getCell(indexes[i]).getStringCellValue());
 
             if (!dataTypes[i].isValid(result[i])) {
                 if (config.columns.get(i).isCleansing()) {
@@ -252,18 +252,15 @@ public class ImportAdapterExcel extends ImportAdapter {
 
             ImportColumn column = columns.get(i);
 
-            row.getCell(((ImportColumnExcel) column).getIndex())
-               .setCellType(Cell.CELL_TYPE_STRING);
-            String name = row.getCell(((ImportColumnExcel) column).getIndex())
-                             .getStringCellValue().trim();
+            row.getCell(((ImportColumnExcel) column).getIndex()).setCellType(Cell.CELL_TYPE_STRING);
+            String name = IOUtil.trim(row.getCell(((ImportColumnExcel) column).getIndex()).getStringCellValue());
 
             if (config.getContainsHeader() && !name.equals("")) {
                 /* Assign name of file itself */
                 header[i] = name;
             } else {
                 /* Nothing defined in header (or empty), build name manually */
-                header[i] = "Column #" +
-                            ((ImportColumnExcel) column).getIndex();
+                header[i] = "Column #" + ((ImportColumnExcel) column).getIndex();
             }
 
             if (column.getAliasName() != null) {

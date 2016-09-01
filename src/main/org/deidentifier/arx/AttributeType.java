@@ -39,6 +39,7 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.io.CSVSyntax;
+import org.deidentifier.arx.io.IOUtil;
 
 /**
  * Represents an attribute type.
@@ -137,7 +138,7 @@ public class AttributeType implements Serializable, Cloneable {
                 if (array != null) {
                     for (int row = 0; row < array.length; row++) {
                         if (array[row] != null && array[row].length > 0) {
-                            array[row][0] = array[row][0].trim();
+                            array[row][0] = IOUtil.trim(array[row][0]);
                         }
                     }
                 }
@@ -145,7 +146,7 @@ public class AttributeType implements Serializable, Cloneable {
                 if (hierarchy != null) {
                     for (int row = 0; row < hierarchy.size(); row++) {
                         if (hierarchy.get(row) != null && hierarchy.get(row).length > 0) {
-                            hierarchy.get(row)[0] = hierarchy.get(row)[0].trim();
+                            hierarchy.get(row)[0] = IOUtil.trim(hierarchy.get(row)[0]);
                         }
                     }
                 }
@@ -201,7 +202,7 @@ public class AttributeType implements Serializable, Cloneable {
                 if (hierarchy != null) {
                     for (int row = 0; row < hierarchy.length; row++) {
                         if (hierarchy[row] != null && hierarchy[row].length > 0) {
-                            hierarchy[row][0] = hierarchy[row][0].trim();
+                            hierarchy[row][0] = IOUtil.trim(hierarchy[row][0]);
                         }
                     }
                 }
@@ -276,7 +277,7 @@ public class AttributeType implements Serializable, Cloneable {
                 if (hierarchy != null) {
                     for (int row = 0; row < hierarchy.length; row++) {
                         if (hierarchy[row] != null && hierarchy[row].length > 0) {
-                            hierarchy[row][0] = hierarchy[row][0].trim();
+                            hierarchy[row][0] = IOUtil.trim(hierarchy[row][0]);
                         }
                     }
                 }

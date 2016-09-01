@@ -27,6 +27,7 @@ import java.util.List;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.io.IOUtil;
 import org.deidentifier.arx.io.ImportColumnJDBC;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -289,7 +290,7 @@ public class ImportWizardPageTable extends WizardPage {
             
             while (rs.next()) {
                 ImportColumnJDBC column = new ImportColumnJDBC(i++,
-                                                               rs.getString("COLUMN_NAME").trim(), //$NON-NLS-1$
+                                                               IOUtil.trim(rs.getString("COLUMN_NAME")), //$NON-NLS-1$
                                                                DataType.STRING);
                 columns.add(new ImportWizardModelColumn(column));
             }
@@ -428,7 +429,7 @@ public class ImportWizardPageTable extends WizardPage {
             while (rs.next()) {
                 String[] previewRow = new String[rs.getMetaData().getColumnCount()];
                 for (int j = 0; j < previewRow.length; j++) {
-                    previewRow[j] = rs.getString(j + 1).trim();
+                    previewRow[j] = IOUtil.trim(rs.getString(j + 1));
                 }
                 previewData.add(previewRow);
             }
