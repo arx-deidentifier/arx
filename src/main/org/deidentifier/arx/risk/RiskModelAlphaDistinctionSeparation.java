@@ -29,8 +29,7 @@ class RiskModelAlphaDistinctionSeparation extends RiskModelSample {
         for (int i = 0; i < classes.length; i+=2) {
             int classSize = classes[i];
             int classCount = classes[i+1];
-            int[] classesLeft = Arrays.copyOfRange(classes, i+2, classes.length);
-            int countRecordsLeft = getNumRecords(classesLeft);
+            int countRecordsLeft = getNumRecords(classes, i+2);
 
             distinctTuples += calculateDistinctTuples(classSize, classCount, countRecordsLeft);
 
@@ -42,9 +41,12 @@ class RiskModelAlphaDistinctionSeparation extends RiskModelSample {
         return ((classCount-1) * classSize * (classCount * classSize + 2 * recordsLeft))/2 + classSize * recordsLeft;
     }
 
-    private int getNumRecords(int[] classes) {
+    private int getNumRecords(int[] classes, int start) {
+        if (start % 2 != 0) {
+            throw new IllegalArgumentException("Start must be multiple of 2 due to format of classes array.");
+        }
         int num = 0;
-        for (int i = 0; i<classes.length;i+=2) {
+        for (int i = start; i<classes.length;i+=2) {
             num += classes[i+1] * classes[i];
         }
         return num;
