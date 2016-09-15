@@ -9,41 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class Example47 extends Example {
-    private static class QuasiIdentifier {
-        private String identifier;
-        private double alphaDistinction;
-        private double alphaSeparation;
-
-        public QuasiIdentifier(String identifier, double alphaDistinction, double alphaSeparation) {
-            this.identifier = identifier;
-            this.alphaDistinction = alphaDistinction;
-            this.alphaSeparation = alphaSeparation;
-        }
-
-        public String getIdentifier() {
-            return identifier;
-        }
-
-        public void setIdentifier(String identifier) {
-            this.identifier = identifier;
-        }
-
-        public double getAlphaDistinction() {
-            return alphaDistinction;
-        }
-
-        public void setAlphaDistinction(double alphaDistinction) {
-            this.alphaDistinction = alphaDistinction;
-        }
-
-        public double getAlphaSeparation() {
-            return alphaSeparation;
-        }
-
-        public void setAlphaSeparation(double alphaSeparation) {
-            this.alphaSeparation = alphaSeparation;
-        }
-    }
 
     /**
      * Entry point.
@@ -78,12 +43,8 @@ public class Example47 extends Example {
         RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
         RiskModelAttributes riskmodel = builder.getAttributeRisks();
 
-        ArrayList<QuasiIdentifier> quasiIdentifiers = new ArrayList<>();
-        for (RiskModelAttributes.QuasiIdentifierRisk risk : riskmodel.getAttributeRisks()) {
-            quasiIdentifiers.add(new QuasiIdentifier(risk.getIdentifier().toString(), risk.getDistinction(), risk.getSeparation()));
-        }
         // output
-        printPrettyTable(quasiIdentifiers);
+        printPrettyTable(riskmodel.getAttributeRisks());
     }
 
     private static Data loadCsv() throws IOException {
@@ -123,9 +84,10 @@ public class Example47 extends Example {
         return data;
     }
 
-    private static void printPrettyTable(ArrayList<QuasiIdentifier> quasiIdentifiers) {
+    private static void printPrettyTable(RiskModelAttributes.QuasiIdentifierRisk[] quasiIdentifiers) {
         // get char count of longest quasi-identifier
-        int charCountLongestQi = quasiIdentifiers.get(quasiIdentifiers.size() - 1).getIdentifier().length();
+        ;
+        int charCountLongestQi = quasiIdentifiers[quasiIdentifiers.length-1].getIdentifier().toString().length();
 
         // make sure that there is enough space for the table header strings
         charCountLongestQi = Math.max(charCountLongestQi, 12);
@@ -143,9 +105,9 @@ public class Example47 extends Example {
         System.out.format("+" + StringUtils.repeat("-", charCountLongestQi) + "+---------------+--------------+%n");
         System.out.format("| Identifier " + StringUtils.repeat(" ", spacesAfterColumHeader) + "| α-Distinction | α-Separation |%n");
         System.out.format("+" + StringUtils.repeat("-", charCountLongestQi) + "+---------------+--------------+%n");
-        for (QuasiIdentifier quasiIdentifier : quasiIdentifiers) {
+        for (RiskModelAttributes.QuasiIdentifierRisk quasiIdentifier : quasiIdentifiers) {
             // print every Quasi-Identifier
-            System.out.format(leftAlignFormat, quasiIdentifier.getIdentifier(), quasiIdentifier.alphaDistinction * 100, quasiIdentifier.alphaSeparation * 100);
+            System.out.format(leftAlignFormat, quasiIdentifier.getIdentifier(), quasiIdentifier.getDistinction() * 100, quasiIdentifier.getSeparation() * 100);
         }
         System.out.format("+" + StringUtils.repeat("-", charCountLongestQi) + "+---------------+--------------+%n");
     }
