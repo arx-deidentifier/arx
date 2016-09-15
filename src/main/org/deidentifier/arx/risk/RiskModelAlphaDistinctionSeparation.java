@@ -98,7 +98,6 @@ public class RiskModelAlphaDistinctionSeparation extends RiskModelSample {
      * @return the sum from 1 to n
      */
     private static double sum(double n) {
-        // see https://de.wikipedia.org/wiki/Gau%C3%9Fsche_Summenformel
         return (n * (n + 1d)) / 2d;
     }
 
