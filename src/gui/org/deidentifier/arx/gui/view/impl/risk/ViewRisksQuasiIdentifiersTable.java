@@ -16,8 +16,6 @@
  */
 package org.deidentifier.arx.gui.view.impl.risk;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,11 +51,15 @@ import de.linearbits.swt.table.DynamicTableColumn;
  */
 public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRisk> {
 
-    /** View */
-    private DynamicTable      table;
+    /**
+     * View
+     */
+    private DynamicTable table;
 
-    /** Internal stuff. */
-    private final AnalysisManager   manager;
+    /**
+     * Internal stuff.
+     */
+    private final AnalysisManager manager;
 
     /**
      * Creates a new instance.
@@ -68,16 +70,16 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
      * @param reset
      */
     public ViewRisksQuasiIdentifiersTable(final Composite parent,
-                                    final Controller controller,
-                                    final ModelPart target,
-                                    final ModelPart reset) {
-        
+                                          final Controller controller,
+                                          final ModelPart target,
+                                          final ModelPart reset) {
+
         super(parent, controller, target, reset);
         controller.addListener(ModelPart.SELECTED_QUASI_IDENTIFIERS, this);
         controller.addListener(ModelPart.POPULATION_MODEL, this);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
-    
+
     @Override
     public void update(ModelEvent event) {
         super.update(event);
@@ -88,6 +90,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
 
     /**
      * Creates a table item
+     *
      * @param risks
      */
     private void createItem(QuasiIdentifierRisk risks) {
@@ -96,23 +99,15 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
         list.addAll(risks.getIdentifier());
         Collections.sort(list);
         StringBuilder builder = new StringBuilder();
-        for (int i=0; i<list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             builder.append(list.get(i));
-            if (i < list.size() - 1){
+            if (i < list.size() - 1) {
                 builder.append(", "); //$NON-NLS-1$
             }
         }
         item.setText(0, builder.toString());
         item.setData("1", risks.getDistinction());
         item.setData("2", risks.getSeparation());
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
-        BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
     }
 
     @Override
@@ -123,7 +118,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
         root.setLayout(new FillLayout());
 
         table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.BORDER |
-                                       SWT.V_SCROLL | SWT.FULL_SELECTION);
+                SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
@@ -172,7 +167,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
 
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
-        
+
         // Enable/disable
         final RiskEstimateBuilderInterruptible builder = getBuilder(context, context.context.getModel().getSelectedQuasiIdentifiers());
         if (!this.isEnabled() || builder == null) {
@@ -182,14 +177,14 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
             this.setStatusEmpty();
             return;
         }
-        
+
         // Create an analysis
         Analysis analysis = new Analysis() {
 
             // The statistics builder
-            private boolean                  stopped = false;
-            private RiskModelAttributes      risks;
-            
+            private boolean stopped = false;
+            private RiskModelAttributes risks;
+
             @Override
             public int getProgress() {
                 return builder.getProgress();
@@ -221,7 +216,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
                     col.pack();
                 }
 
-                if (risks.getAttributeRisks().length==0) {
+                if (risks.getAttributeRisks().length == 0) {
                     setStatusEmpty();
                 } else {
                     setStatusDone();
@@ -244,7 +239,6 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
             public void run() throws InterruptedException {
                 // Timestamp
                 long time = System.currentTimeMillis();
-
                 risks = builder.getAlphaDistinctionAndSeparation();
 
                 // Our users are patient
@@ -265,7 +259,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
 
     @Override
     protected ComponentStatusLabelProgressProvider getProgressProvider() {
-        return new ComponentStatusLabelProgressProvider(){
+        return new ComponentStatusLabelProgressProvider() {
             public int getProgress() {
                 if (manager == null) {
                     return 0;
@@ -275,7 +269,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
             }
         };
     }
-    
+
     @Override
     protected ViewRiskType getViewType() {
         return ViewRiskType.ATTRIBUTES;

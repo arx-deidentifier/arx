@@ -62,7 +62,7 @@ public abstract class RiskModelAttributes {
             if (cmp != 0) {
                 return cmp;
             }
-           return 0; // TODO Max: fallback value?
+           return 0;
         }
         /**
          * @return the alpha distinction
@@ -72,7 +72,7 @@ public abstract class RiskModelAttributes {
         }
         
         /**
-         * @return alpha separation
+         * @return the alpha separation
          */
         public double getSeparation() {
         	return alphaSeparation;

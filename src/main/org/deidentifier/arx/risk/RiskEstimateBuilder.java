@@ -19,42 +19,54 @@ package org.deidentifier.arx.risk;
 
 import java.util.Set;
 
-import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXPopulationModel;
-import org.deidentifier.arx.ARXSolverConfiguration;
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.*;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**
  * A builder for risk estimates
- * 
+ *
  * @author Fabian Prasser
- * 
  */
 public class RiskEstimateBuilder {
 
-    /** Fields */
-    private final ARXPopulationModel     population;
-    /** Fields */
-    private final DataHandleInternal     handle;
-    /** Fields */
-    private final Set<String>            identifiers;
-    /** Classes */
-    private RiskModelHistogram           classes;
-    /** Asynchronous computation */
-    private final WrappedBoolean         stop;
-    /** Model */
+    /**
+     * Fields
+     */
+    private final ARXPopulationModel population;
+    /**
+     * Fields
+     */
+    private final DataHandleInternal handle;
+    /**
+     * Fields
+     */
+    private final Set<String> identifiers;
+    /**
+     * Classes
+     */
+    private RiskModelHistogram classes;
+    /**
+     * Asynchronous computation
+     */
+    private final WrappedBoolean stop;
+    /**
+     * Model
+     */
     private final ARXSolverConfiguration solverconfig;
-    /** Model */
-    private final WrappedInteger         progress = new WrappedInteger();
-    /** Model */
-    private final ARXConfiguration       arxconfig; 
-    
+    /**
+     * Model
+     */
+    private final WrappedInteger progress = new WrappedInteger();
+    /**
+     * Model
+     */
+    private final ARXConfiguration arxconfig;
+
     /**
      * Creates a new instance
-     * 
+     *
      * @param population
      * @param handle
      * @param classes
@@ -68,7 +80,7 @@ public class RiskEstimateBuilder {
 
     /**
      * Creates a new instance
-     * 
+     *
      * @param population
      * @param handle
      * @param classes
@@ -84,7 +96,7 @@ public class RiskEstimateBuilder {
 
     /**
      * Creates a new instance
-     * 
+     *
      * @param population
      * @param handle
      * @param identifiers
@@ -94,15 +106,15 @@ public class RiskEstimateBuilder {
                                Set<String> identifiers,
                                ARXConfiguration arxconfig) {
         this(population,
-             handle,
-             identifiers,
-             (RiskModelHistogram) null,
-             ARXSolverConfiguration.create(), arxconfig);
+                handle,
+                identifiers,
+                (RiskModelHistogram) null,
+                ARXSolverConfiguration.create(), arxconfig);
     }
 
     /**
      * Creates a new instance
-     * 
+     *
      * @param population
      * @param handle
      * @param identifiers
@@ -118,7 +130,7 @@ public class RiskEstimateBuilder {
 
     /**
      * Creates a new instance
-     * 
+     *
      * @param population
      * @param handle
      * @param classes
@@ -143,7 +155,7 @@ public class RiskEstimateBuilder {
 
     /**
      * Creates a new instance
-     * 
+     *
      * @param population
      * @param handle
      * @param identifiers
@@ -169,7 +181,7 @@ public class RiskEstimateBuilder {
 
     /**
      * Creates a new instance
-     * 
+     *
      * @param population
      * @param handle
      * @param identifiers
@@ -194,7 +206,7 @@ public class RiskEstimateBuilder {
 
     /**
      * Returns a model of the equivalence classes in this data set
-     * 
+     *
      * @return
      */
     public RiskModelHistogram getEquivalenceClassModel() {
@@ -204,7 +216,7 @@ public class RiskEstimateBuilder {
     /**
      * Returns the a set of potential HIPAA identifiers. Values are matched with a
      * confidence threshold of 50%
-     * 
+     *
      * @return
      */
     public HIPAAIdentifierMatch[] getHIPAAIdentifiers() {
@@ -214,15 +226,17 @@ public class RiskEstimateBuilder {
     /**
      * Returns the a set of potential HIPAA identifiers. Values are matched with the
      * given confidence threshold.
+     *
      * @param threshold Confidence threshold
      * @return
      */
     public HIPAAIdentifierMatch[] getHIPAAIdentifiers(double threshold) {
         return new RiskModelHIPAASafeHarbor().getMatches(handle, threshold, stop);
     }
+
     /**
      * Returns an interruptible instance of this object.
-     * 
+     *
      * @return
      */
     public RiskEstimateBuilderInterruptible getInterruptibleInstance() {
@@ -232,26 +246,27 @@ public class RiskEstimateBuilder {
 
     /**
      * Returns a class providing population-based uniqueness estimates
-     * 
+     *
      * @return
      */
     public RiskModelPopulationUniqueness getPopulationBasedUniquenessRisk() {
         progress.value = 0;
         return new RiskModelPopulationUniqueness(population,
-                                                 getHistogram(0.25),
-                                                 stop,
-                                                 progress,
-                                                 solverconfig,
-                                                 false);
+                getHistogram(0.25),
+                stop,
+                progress,
+                solverconfig,
+                false);
     }
 
     public RiskModelAttributes getAttributeRisks() {
+        progress.value = 0;
         return getAttributeRisksAlphaDistinctionSeparation();
     }
 
     /**
      * Returns a class providing sample-based re-identification risk estimates
-     * 
+     *
      * @return
      */
     public RiskModelSampleRisks getSampleBasedReidentificationRisk() {
@@ -261,7 +276,7 @@ public class RiskEstimateBuilder {
 
     /**
      * Returns a class representing the distribution of prosecutor risks in the sample
-     * 
+     *
      * @return
      */
     public RiskModelSampleRiskDistribution getSampleBasedRiskDistribution() {
@@ -271,6 +286,7 @@ public class RiskEstimateBuilder {
 
     /**
      * Returns a risk summary
+     *
      * @param threshold Acceptable highest probability of re-identification for a single record
      * @return
      */
@@ -278,10 +294,10 @@ public class RiskEstimateBuilder {
         progress.value = 0;
         return new RiskModelSampleSummary(handle, identifiers, threshold, stop, progress);
     }
-    
+
     /**
      * Returns a class providing sample-based uniqueness estimates
-     * 
+     *
      * @return
      */
     public RiskModelSampleUniqueness getSampleBasedUniquenessRisk() {
@@ -303,17 +319,17 @@ public class RiskEstimateBuilder {
 
                 // Compute classes
                 RiskEstimateBuilder builder = new RiskEstimateBuilder(population,
-                                                                      handle,
-                                                                      attributes,
-                                                                      stop,
-                                                                      solverconfig,
-                                                                      arxconfig);
+                        handle,
+                        attributes,
+                        stop,
+                        solverconfig,
+                        arxconfig);
                 RiskModelHistogram classes = builder.getEquivalenceClassModel();
                 builder = new RiskEstimateBuilder(population, handle, classes, stop, solverconfig, arxconfig);
 
-                final RiskModelAlphaDistinctionSeparation alphaDistinctionAndSeparation = builder.getSampleBasedAlphaDistinctionSeparation();
-                final double alphaDistinction = alphaDistinctionAndSeparation.getAlphaDistinction();
-                final double alphaSeparation = alphaDistinctionAndSeparation.getAlphaSeparation();
+                final RiskModelAlphaDistinctionSeparation riskModel = builder.getSampleBasedAlphaDistinctionSeparation();
+                final double alphaDistinction = riskModel.getAlphaDistinction();
+                final double alphaSeparation = riskModel.getAlphaSeparation();
 
                 // Return a provider
                 return new RiskProvider() {
@@ -331,7 +347,7 @@ public class RiskEstimateBuilder {
 
     /**
      * Returns a model of the equivalence classes in this data set
-     * 
+     *
      * @return
      */
     private RiskModelHistogram getHistogram(double factor) {
@@ -346,22 +362,22 @@ public class RiskEstimateBuilder {
 
     /**
      * Returns a class providing population-based uniqueness estimates
-     * 
+     *
      * @return
      */
     RiskModelPopulationUniqueness getPopulationBasedUniquenessRiskInterruptible() {
         progress.value = 0;
         return new RiskModelPopulationUniqueness(population,
-                                                 getHistogram(0.25),
-                                                 stop,
-                                                 progress,
-                                                 solverconfig,
-                                                 true);
+                getHistogram(0.25),
+                stop,
+                progress,
+                solverconfig,
+                true);
     }
 
     /**
      * Returns progress data, if available
-     * 
+     *
      * @return
      */
     int getProgress() {
@@ -376,6 +392,4 @@ public class RiskEstimateBuilder {
             this.stop.value = true;
         }
     }
-
-
 }
