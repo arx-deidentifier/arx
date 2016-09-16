@@ -91,7 +91,7 @@ public class RiskEstimateBuilderInterruptible {
         return parent.getProgress();
     }
 
-    public RiskModelAttributes getAlphaDistinctionAndSeparation() throws InterruptedException {
+    public RiskModelAttributes getAttributeRisks() throws InterruptedException {
         try {
             return parent.getAttributeRisks();
         } catch (ComputationInterruptedException e) {

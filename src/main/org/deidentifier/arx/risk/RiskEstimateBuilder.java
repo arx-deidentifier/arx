@@ -22,7 +22,6 @@ import java.util.Set;
 import org.deidentifier.arx.*;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
-import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**
  * A builder for risk estimates
@@ -187,12 +186,12 @@ public class RiskEstimateBuilder {
      * @param identifiers
      * @param solverconfig
      */
-    private RiskEstimateBuilder(ARXPopulationModel population,
-                                DataHandleInternal handle,
-                                Set<String> identifiers,
-                                WrappedBoolean stop,
-                                ARXSolverConfiguration solverconfig,
-                                ARXConfiguration arxconfig) {
+    RiskEstimateBuilder(ARXPopulationModel population,
+                        DataHandleInternal handle,
+                        Set<String> identifiers,
+                        WrappedBoolean stop,
+                        ARXSolverConfiguration solverconfig,
+                        ARXConfiguration arxconfig) {
         this.population = population;
         this.handle = handle;
         this.identifiers = identifiers;
@@ -261,7 +260,7 @@ public class RiskEstimateBuilder {
 
     public RiskModelAttributes getAttributeRisks() {
         progress.value = 0;
-        return getAttributeRisksAlphaDistinctionSeparation();
+        return getQuasiIdentifiers();
     }
 
     /**
@@ -305,44 +304,14 @@ public class RiskEstimateBuilder {
         return new RiskModelSampleUniqueness(getEquivalenceClassModel());
     }
 
-    private RiskModelAlphaDistinctionSeparation getSampleBasedAlphaDistinctionSeparation() {
+//    private RiskModelAlphaDistinctionSeparation getSampleBasedAlphaDistinctionSeparation() {
+//        progress.value = 0;
+//        return new RiskModelAlphaDistinctionSeparation(getEquivalenceClassModel());
+//    }
+
+    private RiskModelAttributes getQuasiIdentifiers() {
         progress.value = 0;
-        return new RiskModelAlphaDistinctionSeparation(getEquivalenceClassModel());
-    }
-
-    private RiskModelAttributes getAttributeRisksAlphaDistinctionSeparation() {
-        progress.value = 0;
-        return new RiskModelAttributes(this.identifiers, this.stop, progress) {
-            @Override
-            protected RiskProvider getRiskProvider(final Set<String> attributes,
-                                                   final WrappedBoolean stop) {
-
-                // Compute classes
-                RiskEstimateBuilder builder = new RiskEstimateBuilder(population,
-                        handle,
-                        attributes,
-                        stop,
-                        solverconfig,
-                        arxconfig);
-                RiskModelHistogram classes = builder.getEquivalenceClassModel();
-                builder = new RiskEstimateBuilder(population, handle, classes, stop, solverconfig, arxconfig);
-
-                final RiskModelAlphaDistinctionSeparation riskModel = builder.getSampleBasedAlphaDistinctionSeparation();
-                final double alphaDistinction = riskModel.getAlphaDistinction();
-                final double alphaSeparation = riskModel.getAlphaSeparation();
-
-                // Return a provider
-                return new RiskProvider() {
-                    public double getAlphaDistinction() {
-                        return alphaDistinction;
-                    }
-
-                    public double getAlphaSeparation() {
-                        return alphaSeparation;
-                    }
-                };
-            }
-        };
+        return new RiskModelAttributes(this.population, this.handle, this.identifiers, this.stop, progress, this.solverconfig, this.arxconfig);
     }
 
     /**
