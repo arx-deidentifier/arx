@@ -239,7 +239,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
             public void run() throws InterruptedException {
                 // Timestamp
                 long time = System.currentTimeMillis();
-                risks = builder.getAlphaDistinctionAndSeparation();
+                risks = builder.getAttributeRisks();
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped) {
