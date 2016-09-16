@@ -42,6 +42,7 @@ public class TestRiskQuasiIdentifiers {
         data.add("30", "Female", "CA");
         data.add("40", "Female", "TX");
         data.add("20", "Male", "NY");
+        data.add("40", "Male", "CA");
 
         // calculated by hand
         ResultSet[] results = new ResultSet[]{
