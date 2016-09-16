@@ -304,11 +304,6 @@ public class RiskEstimateBuilder {
         return new RiskModelSampleUniqueness(getEquivalenceClassModel());
     }
 
-//    private RiskModelAlphaDistinctionSeparation getSampleBasedAlphaDistinctionSeparation() {
-//        progress.value = 0;
-//        return new RiskModelAlphaDistinctionSeparation(getEquivalenceClassModel());
-//    }
-
     private RiskModelAttributes getQuasiIdentifiers() {
         progress.value = 0;
         return new RiskModelAttributes(this.population, this.handle, this.identifiers, this.stop, progress, this.solverconfig, this.arxconfig);
