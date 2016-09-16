@@ -22,7 +22,10 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelAttributes;
+import org.deidentifier.arx.risk.RiskModelQI;
 import org.junit.Test;
+
+import java.text.DecimalFormat;
 
 import static org.junit.Assert.assertTrue;
 
@@ -67,9 +70,32 @@ public class TestRiskQuasiIdentifiers {
 
         for (int i = 0; i < risks.length; i++) {
             assertTrue("Identifier should be: " + results[i].identifier + "; Actually is: " + risks[i].getIdentifier(), results[i].identifier.equals(risks[i].getIdentifier().toString()));
-            assertTrue("Distinction should be: "+results[i].calculatedDistinction + "; Actually is: " + risks[i].getDistinction(), results[i].calculatedDistinction == risks[i].getDistinction());
-            assertTrue("Separation should be "+results[i].calculatedSeparation+"; Actually is: " + risks[i].getSeparation(), results[i].calculatedSeparation == risks[i].getSeparation());
+            assertTrue("Distinction should be: " + results[i].calculatedDistinction + "; Actually is: " + risks[i].getDistinction(), results[i].calculatedDistinction == risks[i].getDistinction());
+            assertTrue("Separation should be " + results[i].calculatedSeparation + "; Actually is: " + risks[i].getSeparation(), results[i].calculatedSeparation == risks[i].getSeparation());
         }
+    }
+
+    @Test
+    public void compareWithOldMethod() {
+        DataProvider dataProvider = new DataProvider();
+        dataProvider.createDataDefinition();
+        Data data = dataProvider.getData();
+
+        RiskEstimateBuilder builder = data.getHandle().getRiskEstimator(null);
+        RiskModelAttributes riskModel = builder.getAttributeRisks();
+        RiskModelAttributes.QuasiIdentifierRisk risksNewMethod[] = riskModel.getAttributeRisks();
+
+        for (RiskModelAttributes.QuasiIdentifierRisk riskNewMethod : risksNewMethod) {
+            RiskModelQI riskModelQI = new RiskModelQI(data.getHandle(), riskNewMethod.getIdentifier());
+            double newValue = truncate(riskNewMethod.getDistinction(), 7);
+            double oldValue = truncate(riskModelQI.getAlphaDistinct(), 7);
+            assertTrue("Mismatch: \nNewMethod:\t" + newValue + "\nOldMethod:\t" + oldValue, oldValue == newValue);
+        }
+    }
+
+    private static double truncate(double value, int places) {
+        double multiplier = Math.pow(10, places);
+        return Math.floor(multiplier * value) / multiplier;
     }
 
     private class ResultSet {
