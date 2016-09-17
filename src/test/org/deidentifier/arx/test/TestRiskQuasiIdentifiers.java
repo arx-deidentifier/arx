@@ -17,15 +17,17 @@
 
 package org.deidentifier.arx.test;
 
-import org.apache.commons.lang.StringUtils;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataSource;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelAttributes;
 import org.deidentifier.arx.risk.RiskModelQI;
 import org.junit.Test;
 
-import java.text.DecimalFormat;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertTrue;
 
@@ -48,7 +50,7 @@ public class TestRiskQuasiIdentifiers {
         data.add("40", "Male", "CA");
 
         // calculated by hand
-        ResultSet[] results = new ResultSet[]{
+        ResultSet[] expectedResults = new ResultSet[]{
                 new ResultSet("[sex]", 0.4, 0.6),
                 new ResultSet("[state]", 0.6, 0.7),
                 new ResultSet("[age]", 0.6, 0.8),
@@ -69,33 +71,10 @@ public class TestRiskQuasiIdentifiers {
         RiskModelAttributes.QuasiIdentifierRisk risks[] = riskmodel.getAttributeRisks();
 
         for (int i = 0; i < risks.length; i++) {
-            assertTrue("Identifier expected: " + results[i].identifier + "; got: " + risks[i].getIdentifier(), results[i].identifier.equals(risks[i].getIdentifier().toString()));
-            assertTrue("Distinction expected: " + results[i].calculatedDistinction + "; got: " + risks[i].getDistinction(), results[i].calculatedDistinction == risks[i].getDistinction());
-            assertTrue("Separation expected: " + results[i].calculatedSeparation + "; got: " + risks[i].getSeparation(), results[i].calculatedSeparation == risks[i].getSeparation());
+            assertTrue("Identifier expected: " + expectedResults[i].identifier + "; got: " + risks[i].getIdentifier(), expectedResults[i].identifier.equals(risks[i].getIdentifier().toString()));
+            assertTrue("Distinction expected: " + expectedResults[i].calculatedDistinction + "; got: " + risks[i].getDistinction(), expectedResults[i].calculatedDistinction == risks[i].getDistinction());
+            assertTrue("Separation expected: " + expectedResults[i].calculatedSeparation + "; got: " + risks[i].getSeparation(), expectedResults[i].calculatedSeparation == risks[i].getSeparation());
         }
-    }
-
-    @Test
-    public void compareWithOldMethod() {
-        DataProvider dataProvider = new DataProvider();
-        dataProvider.createDataDefinition();
-        Data data = dataProvider.getData();
-
-        RiskEstimateBuilder builder = data.getHandle().getRiskEstimator(null);
-        RiskModelAttributes riskModel = builder.getAttributeRisks();
-        RiskModelAttributes.QuasiIdentifierRisk risksNewMethod[] = riskModel.getAttributeRisks();
-
-        for (RiskModelAttributes.QuasiIdentifierRisk riskNewMethod : risksNewMethod) {
-            RiskModelQI riskModelQI = new RiskModelQI(data.getHandle(), riskNewMethod.getIdentifier());
-            double newValue = truncate(riskNewMethod.getDistinction(), 7);
-            double oldValue = truncate(riskModelQI.getAlphaDistinct(), 7);
-            assertTrue("Mismatch: \nNewMethod:\t" + newValue + "\nOldMethod:\t" + oldValue, oldValue == newValue);
-        }
-    }
-
-    private static double truncate(double value, int places) {
-        double multiplier = Math.pow(10, places);
-        return Math.floor(multiplier * value) / multiplier;
     }
 
     private class ResultSet {
