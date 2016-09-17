@@ -69,9 +69,9 @@ public class TestRiskQuasiIdentifiers {
         RiskModelAttributes.QuasiIdentifierRisk risks[] = riskmodel.getAttributeRisks();
 
         for (int i = 0; i < risks.length; i++) {
-            assertTrue("Identifier should be: " + results[i].identifier + "; Actually is: " + risks[i].getIdentifier(), results[i].identifier.equals(risks[i].getIdentifier().toString()));
-            assertTrue("Distinction should be: " + results[i].calculatedDistinction + "; Actually is: " + risks[i].getDistinction(), results[i].calculatedDistinction == risks[i].getDistinction());
-            assertTrue("Separation should be " + results[i].calculatedSeparation + "; Actually is: " + risks[i].getSeparation(), results[i].calculatedSeparation == risks[i].getSeparation());
+            assertTrue("Identifier expected: " + results[i].identifier + "; got: " + risks[i].getIdentifier(), results[i].identifier.equals(risks[i].getIdentifier().toString()));
+            assertTrue("Distinction expected: " + results[i].calculatedDistinction + "; got: " + risks[i].getDistinction(), results[i].calculatedDistinction == risks[i].getDistinction());
+            assertTrue("Separation expected: " + results[i].calculatedSeparation + "; got: " + risks[i].getSeparation(), results[i].calculatedSeparation == risks[i].getSeparation());
         }
     }
 
