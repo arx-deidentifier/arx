@@ -39,6 +39,8 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
  * This class is based on the work stated in R. Motwani et al., “Efficient algorithms for masking and finding quasi-identifiers,” Proc. VLDB Conf., 2007.
  * Interdisciplinary training
  *
+ * In this class we always analyze a given specific set of attributes, which form a quasi-identifier (QI).
+ *
  * @author Fabian Prasser, Maximilian Zitzmann
  */
 public class RiskModelAttributes {
@@ -176,9 +178,9 @@ public class RiskModelAttributes {
     }
 
     /**
-     * We calculate a value alpha in [0,1] such that a record of a subset of attributes, which differs at least
-     * on one value in all records of this subset, differs at least on an alpha fraction of all
-     * possible record combinations in this dataset
+     * Two records are separated by the QI if they do not share the same quasi-identifying values.
+     * From the set of all possible combinations of records, this method returns the fraction alpha (in [0, 1])
+     * of all combinations which are separated by the current QI.
      *
      * @return the calculated alpha separation
      */
