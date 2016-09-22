@@ -80,19 +80,26 @@ public class OrderedDistanceTCloseness extends TCloseness {
                 map.put(value, frequency);
             }
         }
-        
-        // Calculate
+        double threshold = t * (order.length - 1d);
         double distance = 0d;
         double sum_i = 0d;
+        
+        // Calculate and check
         for (int i=0; i<order.length; i++) {
+            
+            // Compute summands and distance
             int value = order[i];
             sum_i += (map.getOrDefault(value, 0d) - distribution[value]);
             distance += Math.abs(sum_i);
+            
+            // Early abort
+            if (distance > threshold) {
+                return false;
+            }
         }
-        distance /= (order.length - 1d);
         
-        // Check
-        return distance <= t;
+        // Yes
+        return true;
     }
 
 	@Override
