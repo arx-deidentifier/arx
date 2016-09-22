@@ -19,6 +19,7 @@ package org.deidentifier.arx.framework.data;
 
 import java.util.Map;
 
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 
 /**
@@ -48,6 +49,7 @@ public class DataManagerSubset extends DataManager {
      * @param microaggregationNumAttributes
      * @param microaggregationStartIndex
      * @param minLevels
+     * @param dataTypesSensitive 
      */
     protected DataManagerSubset(DataManager source,
                                 Data dataAnalyzed,
@@ -64,7 +66,8 @@ public class DataManagerSubset extends DataManager {
                                 int[] microaggregationMap,
                                 int microaggregationNumAttributes,
                                 int microaggregationStartIndex,
-                                int[] minLevels) {
+                                int[] minLevels,
+                                Map<String, DataType<?>> dataTypesSensitive) {
         super(dataAnalyzed,
               dataGeneralized,
               dataStatic,
@@ -79,7 +82,8 @@ public class DataManagerSubset extends DataManager {
               microaggregationMap,
               microaggregationNumAttributes,
               microaggregationStartIndex,
-              minLevels);
+              minLevels,
+              dataTypesSensitive);
         
         this.source = source;
     }

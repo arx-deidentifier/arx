@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.framework.data;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,12 +25,16 @@ import java.util.Set;
 
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataGeneralizationScheme;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
+
+import cern.colt.Sorting;
+import cern.colt.function.IntComparator;
 
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
@@ -79,6 +84,9 @@ public class DataManager {
 
     /** The sensitive attributes. */
     private final Map<String, GeneralizationHierarchy> hierarchiesSensitive;
+
+    /** The data types of sensitive attributes. */
+    private final Map<String, DataType<?>>             dataTypesSensitive;
 
     /** The indexes of sensitive attributes. */
     private final Map<String, Integer>                 indexesSensitive;
@@ -130,13 +138,13 @@ public class DataManager {
         // Store columns for reordering the output
         this.header = header;
 
-        Set<String> attributesGemeralized = definition.getQuasiIdentifiersWithGeneralization();
+        Set<String> attributesGeneralized = definition.getQuasiIdentifiersWithGeneralization();
         Set<String> attributesSensitive = definition.getSensitiveAttributes();
         Set<String> attributesMicroaggregated = definition.getQuasiIdentifiersWithMicroaggregation();
         Set<String> attributesInsensitive = definition.getInsensitiveAttributes();
 
         // Init dictionary
-        final Dictionary dictionaryGeneralized = new Dictionary(attributesGemeralized.size());
+        final Dictionary dictionaryGeneralized = new Dictionary(attributesGeneralized.size());
         final Dictionary dictionaryAnalyzed = new Dictionary(attributesSensitive.size() + attributesMicroaggregated.size());
         final Dictionary dictionaryStatic = new Dictionary(attributesInsensitive.size());
 
@@ -161,11 +169,12 @@ public class DataManager {
         final String[] headerGH = new String[dictionaryGeneralized.getNumDimensions()];
         final String[] headerDI = new String[dictionaryAnalyzed.getNumDimensions()];
         final String[] headerIS = new String[dictionaryStatic.getNumDimensions()];
-        microaggregationHeader = new String[attributesMicroaggregated.size()];
+        this.microaggregationHeader = new String[attributesMicroaggregated.size()];
+        this.dataTypesSensitive = new HashMap<>();
 
         for (final String column : header) {
             final int idx = counter * 2;
-            if (attributesGemeralized.contains(column)) {
+            if (attributesGeneralized.contains(column)) {
                 map[idx] = AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED;
                 map[idx + 1] = indexGeneralized;
                 mapGeneralized[indexGeneralized] = counter;
@@ -196,6 +205,7 @@ public class DataManager {
                 dictionaryAnalyzed.registerAll(indexSensitive, dictionary, counter);
                 headerDI[indexSensitive] = header[counter];
                 indexSensitive++;
+                dataTypesSensitive.put(column, definition.getDataType(column));
             } else {
                 // TODO: CHECK: Changed default? - now all undefined attributes
                 // are identifying! Previously they were considered sensitive?
@@ -222,15 +232,15 @@ public class DataManager {
         dataStatic = ddata[2];
 
         // Initialize minlevels
-        minLevels = new int[attributesGemeralized.size()];
-        hierarchiesHeights = new int[attributesGemeralized.size()];
-        maxLevels = new int[attributesGemeralized.size()];
+        minLevels = new int[attributesGeneralized.size()];
+        hierarchiesHeights = new int[attributesGeneralized.size()];
+        maxLevels = new int[attributesGeneralized.size()];
 
         // Build hierarchiesQI
-        hierarchiesGeneralized = new GeneralizationHierarchy[attributesGemeralized.size()];
+        hierarchiesGeneralized = new GeneralizationHierarchy[attributesGeneralized.size()];
         for (int i = 0; i < header.length; i++) {
             final int idx = i * 2;
-            if (attributesGemeralized.contains(header[i]) &&
+            if (attributesGeneralized.contains(header[i]) &&
                 map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) {
                 final int dictionaryIndex = map[idx + 1];
                 final String name = header[i];
@@ -258,7 +268,7 @@ public class DataManager {
                 DataGeneralizationScheme scheme = ((EDDifferentialPrivacy)c).getGeneralizationScheme();
                 for (int i = 0; i < header.length; i++) {
                     final int idx = i * 2;
-                    if (attributesGemeralized.contains(header[i]) &&
+                    if (attributesGeneralized.contains(header[i]) &&
                         map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) {
                         minLevels[map[idx + 1]] = scheme.getGeneralizationLevel(header[i], definition);
                         maxLevels[map[idx + 1]] = scheme.getGeneralizationLevel(header[i], definition);
@@ -384,22 +394,24 @@ public class DataManager {
      * @param microaggregationNumAttributes
      * @param microaggregationStartIndex
      * @param minLevels
+     * @param dataTypesSensitive 
      */
     protected DataManager(Data dataAnalyzed,
-                       Data dataGeneralized,
-                       Data dataStatic,
-                       String[] header,
-                       GeneralizationHierarchy[] hierarchiesGeneralized,
-                       int[] hierarchiesHeights,
-                       Map<String, GeneralizationHierarchy> hierarchiesSensitive,
-                       Map<String, Integer> indexesSensitive,
-                       int[] maxLevels,
-                       DistributionAggregateFunction[] microaggregationFunctions,
-                       String[] microaggregationHeader,
-                       int[] microaggregationMap,
-                       int microaggregationNumAttributes,
-                       int microaggregationStartIndex,
-                       int[] minLevels) {
+                          Data dataGeneralized,
+                          Data dataStatic,
+                          String[] header,
+                          GeneralizationHierarchy[] hierarchiesGeneralized,
+                          int[] hierarchiesHeights,
+                          Map<String, GeneralizationHierarchy> hierarchiesSensitive,
+                          Map<String, Integer> indexesSensitive,
+                          int[] maxLevels,
+                          DistributionAggregateFunction[] microaggregationFunctions,
+                          String[] microaggregationHeader,
+                          int[] microaggregationMap,
+                          int microaggregationNumAttributes,
+                          int microaggregationStartIndex,
+                          int[] minLevels,
+                          Map<String, DataType<?>> dataTypesSensitive) {
         this.dataAnalyzed = dataAnalyzed;
         this.dataGeneralized = dataGeneralized;
         this.dataStatic = dataStatic;
@@ -415,6 +427,7 @@ public class DataManager {
         this.microaggregationNumAttributes = microaggregationNumAttributes;
         this.microaggregationStartIndex = microaggregationStartIndex;
         this.minLevels = minLevels;
+        this.dataTypesSensitive = dataTypesSensitive;
         
         // Both variables are only used for getDistribution() and getTree()
         // The projected instance delegates these methods to the original data manager
@@ -474,22 +487,68 @@ public class DataManager {
         }
         return distribution;
     }
-    
+
     /**
-     * Returns the distribution of the given sensitive attribute in the original dataset. Required for t-closeness.
+     * Returns the order of the given sensitive attribute in the original dataset. 
+     * Required for t-closeness.
+     * 
+     * @param attribute
+     * @return distribution
+     */
+    public int[] getOrder(String attribute) {
+
+        // Check
+        if (!indexesSensitive.containsKey(attribute)) {
+            throw new IllegalArgumentException("Attribute " + attribute + " is not sensitive");
+        }
+        
+        // Prepare
+        final String[] dictionary = dataAnalyzed.getDictionary().getMapping()[indexesSensitive.get(attribute)];
+        final DataType<?> type = this.dataTypesSensitive.get(attribute);
+        
+        // Init
+        int[] order = new int[dictionary.length];
+        for (int i = 0; i < order.length; i++) {
+            order[i] = i;
+        }
+        
+        // Sort
+        Sorting.mergeSort(order, 0, order.length, new IntComparator() {
+            @Override public int compare(int arg0, int arg1) {
+                String value1 = dictionary[arg0];
+                String value2 = dictionary[arg1];
+                try {
+                    return type.compare(value1, value2);
+                } catch (NumberFormatException | ParseException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        });
+        
+        // Return
+        return order;
+    }
+
+    /**
+     * Returns the distribution of the given sensitive attribute in the original dataset. 
+     * Required for t-closeness.
      * 
      * @param attribute
      * @return distribution
      */
     public double[] getDistribution(String attribute) {
 
+        // Check
         if (!indexesSensitive.containsKey(attribute)) {
             throw new IllegalArgumentException("Attribute " + attribute + " is not sensitive");
         }
         
-        final int index = indexesSensitive.get(attribute);
-        final int distinctValues = dataAnalyzed.getDictionary().getMapping()[index].length;
-        final int[][] data = dataAnalyzed.getArray();
+        // Prepare
+        int index = indexesSensitive.get(attribute);
+        int distinctValues = dataAnalyzed.getDictionary().getMapping()[index].length;
+        int[][] data = dataAnalyzed.getArray();
+        
+        // Calculate and return
         return getDistribution(data, index, distinctValues);
     }
 
@@ -612,7 +671,8 @@ public class DataManager {
                                      this.microaggregationMap,
                                      this.microaggregationNumAttributes,
                                      this.microaggregationStartIndex,
-                                     this.minLevels);
+                                     this.minLevels,
+                                     this.dataTypesSensitive);
     }
     
     /**
