@@ -102,13 +102,13 @@ public class OrderedDistanceTCloseness extends TCloseness {
         return true;
     }
 
-	@Override
+    @Override
     public boolean isLocalRecodingSupported() {
         return true;
     }
 
     @Override
-	public String toString() {
-		return t+"-closeness with ordered distance for attribute '"+attribute+"'";
-	}
+    public String toString() {
+        return t+"-closeness with ordered distance for attribute '"+attribute+"'";
+    }
 }
