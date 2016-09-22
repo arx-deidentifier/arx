@@ -89,6 +89,12 @@ public class DataManagerSubset extends DataManager {
     }
 
     @Override
+    public int[] getOrder(String attribute) {
+        // Delegate to source
+        return source.getOrder(attribute);
+    }
+
+    @Override
     public double[] getDistribution(int[][] data, int index, int distinctValues) {
         // Delegate to source
         return source.getDistribution(data, index, distinctValues);
