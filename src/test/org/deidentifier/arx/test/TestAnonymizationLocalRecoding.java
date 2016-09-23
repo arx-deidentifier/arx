@@ -52,8 +52,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestAnonymizationLocalRecoding extends AbstractAnonymizationTest {
     
     /**
-     * 
-     *
+     * Collection
      * @return
      * @throws IOException
      */
@@ -76,8 +75,7 @@ public class TestAnonymizationLocalRecoding extends AbstractAnonymizationTest {
     }
     
     /**
-     * 
-     *
+     * Test
      * @param testCase
      */
     public TestAnonymizationLocalRecoding(final ARXAnonymizationTestCase testCase) {
