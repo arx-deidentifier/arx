@@ -141,6 +141,7 @@
                     <include name="**/TestAnonymizationKMap.java" />
                     <include name="**/TestAnonymizationRiskBased.java" />
                     <include name="**/TestAnonymizationLocalRecoding.java" />
+                    <include name="**/TestAnonymizationOrderedDistanceTCloseness.java" />
                 </fileset>
                 <formatter type="plain" usefile="false" />
                 <formatter type="xml" />
