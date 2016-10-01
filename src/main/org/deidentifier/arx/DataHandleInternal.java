@@ -49,6 +49,29 @@ public class DataHandleInternal {
     }
 
     /**
+     * Returns the associated input handle, itself if there is none.
+     * @return
+     */
+    public DataHandleInternal getAssociatedInput() {
+        
+        // Check if input already
+        if (!this.isOutput()) {
+            return this;
+        }
+        
+        // Obtain
+        DataHandle input = this.handle.registry.getInputHandle();
+        
+        // Map to subset
+        if (this.getSuperset() != null) {
+            input = input.getView();
+        }
+        
+        // Return
+        return new DataHandleInternal(input);
+    }
+
+    /**
      * Method
      * @param column
      * @return
@@ -74,6 +97,14 @@ public class DataHandleInternal {
      */
     public int getColumnIndexOf(String attribute) {
         return handle.getColumnIndexOf(attribute);
+    }
+
+    /**
+     * Returns a raw data matrix as needed for SUDA2
+     * @return
+     */
+    public DataMatrix getDataMatrix(int[] columns) {
+        return this.handle.getDataMatrix(columns);
     }
 
     /**
@@ -112,7 +143,7 @@ public class DataHandleInternal {
     public String[] getDistinctValues(int column) {
         return handle.getDistinctValues(column);
     }
-
+    
     /**
      * Method
      * @param column
@@ -153,7 +184,7 @@ public class DataHandleInternal {
     public int getGeneralization(String attribute) {
         return handle.getGeneralization(attribute);
     }
-    
+
     /**
      * Delegate
      * @param row
@@ -184,7 +215,7 @@ public class DataHandleInternal {
     public StatisticsBuilder getStatisticsBuilder() {
         return this.handle.getStatistics();
     }
-
+  
     /**
      * Returns the superset, if this handle is a subset
      * @return
@@ -206,14 +237,14 @@ public class DataHandleInternal {
     public String getValue(int row, int column) {
         return handle.getValue(row, column);
     }
-  
+    
     /**
      * Gets the value
      */
     public String getValue(final int row, final int col, final boolean ignoreSuppression) {
         return handle.internalGetValue(row, col, ignoreSuppression);
     }
-
+    
     /**
      * Returns the view
      * @return
@@ -221,7 +252,7 @@ public class DataHandleInternal {
     public DataHandleInternal getView() {
         return new DataHandleInternal(handle.getView());
     }
-    
+
     /**
      * Returns whether the handle is anonymous
      * @return
@@ -229,7 +260,7 @@ public class DataHandleInternal {
     public boolean isAnonymous() {
         return handle.isAnonymous();
     }
-    
+
     /**
      * Returns whether the handle is optimized
      * @return
@@ -246,7 +277,7 @@ public class DataHandleInternal {
     public boolean isOutlier(int row) {
         return handle.isOutlier(row);
     }
-
+    
     /**
      * Returns whether this is an output handle
      * @return
@@ -257,28 +288,5 @@ public class DataHandleInternal {
         } else {
             return this.handle instanceof DataHandleOutput;
         }
-    }
-
-    /**
-     * Returns the associated input handle, itself if there is none.
-     * @return
-     */
-    public DataHandleInternal getAssociatedInput() {
-        
-        // Check if input already
-        if (!this.isOutput()) {
-            return this;
-        }
-        
-        // Obtain
-        DataHandle input = this.handle.registry.getInputHandle();
-        
-        // Map to subset
-        if (this.getSuperset() != null) {
-            input = input.getView();
-        }
-        
-        // Return
-        return new DataHandleInternal(input);
     }
 }

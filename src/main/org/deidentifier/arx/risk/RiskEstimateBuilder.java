@@ -191,7 +191,7 @@ public class RiskEstimateBuilder {
             this.stop = stop;
         }
     }
-
+    
     /**
      * Returns a model of the equivalence classes in this data set
      * 
@@ -220,6 +220,7 @@ public class RiskEstimateBuilder {
     public HIPAAIdentifierMatch[] getHIPAAIdentifiers(double threshold) {
         return new RiskModelHIPAASafeHarbor().getMatches(handle, threshold, stop);
     }
+
     /**
      * Returns an interruptible instance of this object.
      * 
@@ -228,6 +229,14 @@ public class RiskEstimateBuilder {
     public RiskEstimateBuilderInterruptible getInterruptibleInstance() {
         progress.value = 0;
         return new RiskEstimateBuilderInterruptible(this);
+    }
+    /**
+     * Returns a model of the MSUs in this data set
+     * @return
+     */
+    public RiskModelMSU getMSUStatistics() {
+        progress.value = 0;
+        return new RiskModelMSU(this.handle, this.identifiers, progress, stop);
     }
 
     /**

@@ -69,6 +69,19 @@ public class RiskEstimateBuilderInterruptible {
     }
     
     /**
+     * Returns a model of the MSUs in this data set
+     * @return
+     * @throws InterruptedException 
+     */
+    public RiskModelMSU getMSUStatistics() throws InterruptedException {
+        try {
+            return parent.getMSUStatistics();
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
+
+    /**
      * Returns a class providing access to population-based risk estimates about
      * the attributes. Uses the decision rule by Dankar et al., excluding the
      * SNB model
@@ -82,7 +95,6 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-    
     /**
      * Returns a class providing access to population-based risk estimates about
      * the attributes.

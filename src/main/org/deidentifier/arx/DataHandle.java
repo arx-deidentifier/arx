@@ -893,6 +893,23 @@ public abstract class DataHandle {
     protected abstract ARXConfiguration getConfiguration();
 
     /**
+     * Returns a raw data array needed for SUDA2. Suppressed records will not be included.
+     * @param columns Columns to include
+     * @return
+     */
+    protected DataMatrix getDataMatrix(int[] columns) {
+        return this.getDataMatrix(columns, null);
+    }
+
+    /**
+     * Returns a raw data array needed for SUDA2. Suppressed records will not be included.
+     * @param columns Columns to include
+     * @param rows Rows to include. Can be null.
+     * @return
+     */
+    protected abstract DataMatrix getDataMatrix(int[] columns, int[] rows);
+
+    /**
      * Generates an array of data types.
      *
      * @return the data type array

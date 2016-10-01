@@ -480,6 +480,11 @@ public class DataHandleOutput extends DataHandle {
         return result.getConfiguration();
     }
     
+    @Override
+    protected DataMatrix getDataMatrix(int[] columns, int[] rows) {
+        return new DataMatrix(inverseMap, inverseData, inverseDictionaries, outputGeneralized, suppressedAttributeTypes, columns, rows);
+    }
+    
     /**
      * Creates the data type array.
      *
@@ -526,7 +531,7 @@ public class DataHandleOutput extends DataHandle {
         }
         return dataTypes;
     }
-    
+        
     /**
      * Gets the distinct values.
      *
@@ -550,7 +555,7 @@ public class DataHandleOutput extends DataHandle {
         handler.checkInterrupt();
         return vals.toArray(new String[vals.size()]);
     }
-        
+    
     /**
      * Returns the input buffer
      * @return
@@ -701,6 +706,7 @@ public class DataHandleOutput extends DataHandle {
         return found;
     }
     
+
     /**
      * Swap internal.
      * 
@@ -722,13 +728,13 @@ public class DataHandleOutput extends DataHandle {
             outputMicroaggregated.getArray()[row2] = temp;
         }
     }
-    
+
 
     @Override
     protected boolean isAnonymous() {
         return this.anonymous;
     }
-
+    
 
     /**
      * Marks this handle as optimized
@@ -737,7 +743,6 @@ public class DataHandleOutput extends DataHandle {
     protected void setOptimized(boolean optimized) {
         this.optimized = true;
     }
-    
 
     /**
      * Used to update data types after local recoding

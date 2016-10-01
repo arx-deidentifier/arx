@@ -209,6 +209,12 @@ public class DataHandleInput extends DataHandle {
     }
 
     @Override
+    protected DataMatrix getDataMatrix(int[] columns, int[] rows) {
+        checkRegistry();
+        return new DataMatrix(this.data, columns, rows);
+    }
+
+    @Override
     protected DataType<?>[][] getDataTypeArray() {
         checkRegistry();
         DataType<?>[][] dataTypes = new DataType[1][header.length];
@@ -222,7 +228,7 @@ public class DataHandleInput extends DataHandle {
         }
         return dataTypes;
     }
-
+    
     @Override
     protected String[] getDistinctValues(final int column, final boolean ignoreSuppression, InterruptHandler handler) {
         checkRegistry();
@@ -236,7 +242,7 @@ public class DataHandleInput extends DataHandle {
         System.arraycopy(dict, 0, vals, 0, vals.length);
         return vals;
     }
-    
+
     /**
      * Returns the input buffer
      * @return
@@ -245,7 +251,7 @@ public class DataHandleInput extends DataHandle {
         checkRegistry();
         return this.dataGH;
     }
-
+    
     @Override
     protected String internalGetValue(final int row, final int column, final boolean ignoreSuppression) {
         return dictionary.getMapping()[column][data[row][column]];
@@ -266,7 +272,7 @@ public class DataHandleInput extends DataHandle {
         }
         return found;
     }
-    
+
     /**
      * Swaps the rows.
      *
