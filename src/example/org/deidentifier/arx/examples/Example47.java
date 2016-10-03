@@ -103,7 +103,7 @@ public class Example47 extends Example {
         int spacesAfterColumHeader = charCountLongestQi - 12;
 
         System.out.format("+" + StringUtils.repeat("-", charCountLongestQi) + "+---------------+--------------+%n");
-        System.out.format("| Identifier " + StringUtils.repeat(" ", spacesAfterColumHeader) + "| α-Distinction | α-Separation |%n");
+        System.out.format("| Identifier " + StringUtils.repeat(" ", spacesAfterColumHeader) + "|   Distinction |   Separation |%n");
         System.out.format("+" + StringUtils.repeat("-", charCountLongestQi) + "+---------------+--------------+%n");
         for (RiskModelAttributes.QuasiIdentifierRisk quasiIdentifier : quasiIdentifiers) {
             // print every Quasi-Identifier
