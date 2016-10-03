@@ -1,3 +1,19 @@
+/*
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.deidentifier.arx.risk.msu;
 
 import java.util.HashSet;
@@ -17,7 +33,7 @@ public class SUDA2Item {
      * @return
      */
     public static long getId(int column, int value) {
-        return ((long)column) << 32 | value & 0xFFFFFFFFL;
+        return ((long)column) << 32 | ((long)value) & 0xFFFFFFFFL;
     }
 
     /** Column */
@@ -54,6 +70,18 @@ public class SUDA2Item {
         return true;
     }
 
+    public int getColumn() {
+        return column;
+    }
+
+    /**
+     * Returns the id
+     * @return
+     */
+    public long getId() {
+        return id;
+    }
+
     /**
      * Returns the rows in which this item is located
      * @return
@@ -70,24 +98,13 @@ public class SUDA2Item {
         return this.rows.size();
     }
 
+    public int getValue() {
+        return value;
+    }
+
     @Override
     public int hashCode() {
         return hashCode;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("(").append(column).append(",").append(value).append(")");
-        return builder.toString();
-    }
-
-    /**
-     * Returns the id
-     * @return
-     */
-    public long getId() {
-        return id;
     }
 
     /**
@@ -97,5 +114,12 @@ public class SUDA2Item {
      */
     public boolean isContained(int[] row) {
         return row[column] == value;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("(").append(column).append(",").append(value).append(")");
+        return builder.toString();
     }
 }

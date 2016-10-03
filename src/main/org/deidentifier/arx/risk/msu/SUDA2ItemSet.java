@@ -1,19 +1,38 @@
+/*
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.deidentifier.arx.risk.msu;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Each itemset is a concrete key, i.e. a set of values for a set of attributes.
+ * Each item set is a concrete key, i.e. a set of values for a set of attributes.
  * 
  * @author Fabian Prasser
  */
 public class SUDA2ItemSet {
 
     /** Items */
-    private Set<SUDA2Item> items = new HashSet<>();
+    private Set<SUDA2Item>  items = new HashSet<>();
     /** Support rows */
-    private Set<Integer>   rows  = new HashSet<>();
+    private Set<Integer>    rows  = new HashSet<>();
+    /** Reference item */
+    private SUDA2Item       reference = null;
 
     /**
      * Creates an item set containing a single item
@@ -39,15 +58,37 @@ public class SUDA2ItemSet {
     }
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ItemSet[");
-        for (SUDA2Item item : this.items) {
-            builder.append(item.toString());
-            builder.append(",");
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        SUDA2ItemSet other = (SUDA2ItemSet) obj;
+        if (items == null) {
+            if (other.items != null) return false;
+        } else if (!items.equals(other.items)) return false;
+        return true;
+    }
+
+    public Set<SUDA2Item> getItems() {
+        return items;
+    }
+    
+    /**
+     * Returns the reference item
+     */
+    public SUDA2Item getReferenceItem() {
+        if (this.reference == null) {
+            SUDA2Item reference = null;
+            int support = Integer.MAX_VALUE;
+            for (SUDA2Item item : this.items) {
+                if (item.getSupport() < support) {
+                    support = item.getSupport();
+                    reference = item;
+                }
+            }
+            this.reference = reference;
         }
-        builder.append("]");
-        return builder.toString();
+        return this.reference;
     }
 
     /**
@@ -75,18 +116,17 @@ public class SUDA2ItemSet {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        SUDA2ItemSet other = (SUDA2ItemSet) obj;
-        if (items == null) {
-            if (other.items != null) return false;
-        } else if (!items.equals(other.items)) return false;
-        return true;
-    }
-
-    public Set<SUDA2Item> getItems() {
-        return items;
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ItemSet[");
+        Iterator<SUDA2Item> iter = this.items.iterator();
+        while (iter.hasNext()) {
+            builder.append(iter.next().toString());
+            if (iter.hasNext()) {
+                builder.append(",");
+            }
+        }
+        builder.append("]");
+        return builder.toString();
     }
 }
