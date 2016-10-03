@@ -23,7 +23,6 @@ import org.deidentifier.arx.DataSource;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelAttributes;
-import org.deidentifier.arx.risk.RiskModelQI;
 import org.junit.Test;
 
 import java.io.IOException;
