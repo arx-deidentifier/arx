@@ -59,6 +59,10 @@ public class SUDA2Item {
         this.id = getId(column, value);
     }
 
+    /**
+     * Adds a row
+     * @param row
+     */
     public void addRow(int row) {
         this.rows.add(row);
     }
