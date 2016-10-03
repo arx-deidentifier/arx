@@ -143,15 +143,15 @@ public class SUDA2 {
     }
     
     /**
-     * Returns all items for the given rows
-     * @param rows
+     * Returns all items for the given reference item
+     * @param reference
      * @return
      */
-    private SUDA2IndexedItemSet getItems(Set<Integer> rows) {
+    private SUDA2IndexedItemSet getItems(SUDA2Item reference) {
 
         // Collect items within the given range and their support rows
-        SUDA2IndexedItemSet items = new SUDA2IndexedItemSet();
-        for (int index : rows) {
+        SUDA2IndexedItemSet items = new SUDA2IndexedItemSet(reference);
+        for (int index : reference.getRows()) {
             int[] row = data[index];
             for (int column = 0; column < columns; column++) {
                 int value = row[column];
@@ -188,7 +188,7 @@ public class SUDA2 {
         }
 
         // Return
-        return new Pair<Set<SUDA2ItemSet>, SUDA2ItemList>(msus, new SUDA2ItemList(result));
+        return new Pair<Set<SUDA2ItemSet>, SUDA2ItemList>(msus, new SUDA2ItemList(result, list.getReferenceItem()));
     }
 
     /**
@@ -216,7 +216,7 @@ public class SUDA2 {
         if (candidate.getItems().size() == 2) {
             return true;
         } else {
-            return isSpecialRowContained(currentList, referenceItem, candidate);
+            return isSpecialRowAvailable(currentList, referenceItem, candidate);
         }
     }
 
@@ -227,23 +227,30 @@ public class SUDA2 {
      * @param candidate
      * @return
      */
-    private boolean isSpecialRowContained(SUDA2ItemList currentList, SUDA2Item referenceItem, SUDA2ItemSet candidate) {
+    private boolean isSpecialRowAvailable(SUDA2ItemList currentList, SUDA2Item referenceItem, SUDA2ItemSet candidate) {
         
-        // Obtain reference item from the candidate set
-        SUDA2Item candidateReferenceItem = candidate.getReferenceItem();
-        
-        // Obtain according item in the current list
-        SUDA2Item candidateReferenceItemInCurrentList = currentList.getItem(candidateReferenceItem.getId());
-        
-        // If the item is not contained in the current list it must have been
-        // a singleton MSU. This implies that the special row cannot exist
-        if (candidateReferenceItemInCurrentList == null) {
-            return false;
-        }
-        
-        // Else obtain the relevant set of rows
-        Set<Integer> rows = candidateReferenceItemInCurrentList.getRows();
-        
+        // TODO: The paper recommends the first branch for all searches
+        Set<Integer> rows = null;
+//        if (currentList.getReferenceItem() == null) {
+                
+            // Obtain reference item from the candidate set
+            SUDA2Item candidateReferenceItem = candidate.getReferenceItem();
+            
+            // Obtain according item in the current list
+            SUDA2Item candidateReferenceItemInCurrentList = currentList.getItem(candidateReferenceItem.getId());
+            
+            // If the item is not contained in the current list it must have been
+            // a singleton MSU. This implies that the special row cannot exist
+            if (candidateReferenceItemInCurrentList == null) {
+                return false;
+            }
+            
+            // Else obtain the relevant set of rows
+            rows = candidateReferenceItemInCurrentList.getRows();
+//        } else {
+//            rows = currentList.getReferenceItem().getRows();
+//        }
+            
         // And search them for the special row
         outer: for (int index : rows) {
             int[] row = data[index];
@@ -307,7 +314,7 @@ public class SUDA2 {
             DEBUG_println("Reference: " + referenceItem, maxK - 1);
 
             // Recursive call
-            SUDA2ItemList nextList = getItems(referenceItem.getRows()).getItemList();
+            SUDA2ItemList nextList = getItems(referenceItem).getItemList();
             Set<SUDA2ItemSet> msus_i = suda2(ranks,
                                              nextList,
                                              referenceItem.getRows().size(),

@@ -32,19 +32,16 @@ public class SUDA2ItemList {
     private final List<SUDA2Item>            list;
     /** The index */
     private LongObjectOpenHashMap<SUDA2Item> index = null;
-
-    /**
-     * Creates a new empty instance
-     */
-    public SUDA2ItemList() {
-        this.list = null;
-    }
+    /** The reference item */
+    private final SUDA2Item                  reference;
 
     /**
      * Creates a new instance
      * @param list
+     * @param reference
      */
-    public SUDA2ItemList(List<SUDA2Item> list) {
+    public SUDA2ItemList(List<SUDA2Item> list, SUDA2Item reference) {
+        this.reference = reference;
         this.list = list;
     }
 
@@ -84,5 +81,13 @@ public class SUDA2ItemList {
      */
     public SUDA2ItemRanks getRanks() {
         return new SUDA2ItemRanks(this);
+    }
+
+    /**
+     * Returns the reference item
+     * @return
+     */
+    public SUDA2Item getReferenceItem() {
+        return this.reference;
     }
 }
