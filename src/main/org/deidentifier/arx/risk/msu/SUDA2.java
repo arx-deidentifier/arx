@@ -17,8 +17,11 @@
 package org.deidentifier.arx.risk.msu;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.mahout.math.Arrays;
@@ -34,6 +37,8 @@ public class SUDA2 {
     private final int[][]        data;
     /** Number of columns */
     private final int            columns;
+    /** The maximal k */
+    private int                  maxK;
 
     /**
      * Constructor
@@ -62,6 +67,9 @@ public class SUDA2 {
         
         DEBUG_CALLS = 0;
 
+        // Store
+        this.maxK = maxK;
+        
         // Obtain sorted item list
         SUDA2ItemList list = getItems().getItemList();
         
@@ -69,12 +77,46 @@ public class SUDA2 {
         SUDA2ItemRanks ranks = list.getRanks();
 
         // Execute remainder of SUDA2 algorithm
-        Set<SUDA2ItemSet> set = suda2(Integer.MAX_VALUE, 1, ranks, list, data.length, maxK);
+        Set<SUDA2ItemSet> set = suda2(new SUDA2PruningInformation(), 1, ranks, list, data.length);
         
         System.out.println("Calls: " + DEBUG_CALLS);
         
+        DEBUG_printHistogram(set);
+        
         // Return
         return set;
+    }
+
+    private void DEBUG_printHistogram(Set<SUDA2ItemSet> set) {
+        
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+        for (SUDA2ItemSet itemset : set) {
+            int size = itemset.getItems().size();
+            Integer count = map.get(size);
+            count = count == null ? 1 : count +1;
+            map.put(size, count);
+        }
+        
+        
+        List<Integer> sizes = new ArrayList<Integer>();
+        sizes.addAll(map.keySet());
+        Collections.sort(sizes);
+        
+        for (int size : sizes) {
+            System.out.print(DEBUG_pad(String.valueOf(size), 5) + "|");
+        }
+        System.out.println("");
+        for (int size : sizes) {
+            System.out.print(DEBUG_pad(String.valueOf(map.get(size)), 5) + "|");
+        }
+        System.out.println("");
+    }
+    
+    private String DEBUG_pad(String s, int width) {
+        while (s.length() < width) {
+            s = " " + s;
+        }
+        return s;
     }
 
     /**
@@ -94,15 +136,15 @@ public class SUDA2 {
      * Debugging stuff
      * @param currentItem
      * @param currentList
-     * @param maxK
+     * @param depth
      */
-    private void DEBUG_print(SUDA2ItemList list, int maxK) {
+    private void DEBUG_print(SUDA2ItemList list, int depth) {
         if (!DEBUG) return;
         
         if (list.containsAllItems()) {
             int index = 0;
             for (int[] row : data) {
-               DEBUG_println(Arrays.toString(row)+"-"+index++, maxK);
+               DEBUG_println(Arrays.toString(row)+"-"+index++, depth);
             }
         } else {
             Set<Integer> rows = new HashSet<Integer>();
@@ -111,7 +153,7 @@ public class SUDA2 {
             }
             
             for (int index : rows) {
-                DEBUG_println(Arrays.toString(data[index])+"-"+index, maxK);
+                DEBUG_println(Arrays.toString(data[index])+"-"+index, depth);
             }
         }
     }
@@ -119,13 +161,13 @@ public class SUDA2 {
     /**
      * Debugging stuff
      * @param string
-     * @param maxK
+     * @param depth
      * @return
      */
-    private void DEBUG_println(String string, int maxK) {
+    private void DEBUG_println(String string, int depth) {
         if (!DEBUG) return;
         String intent = "";
-        for (int i=maxK; i<columns; i++) {
+        for (int i=0; i<depth; i++) {
             intent +="   ";
         }
         System.out.println(intent+string);
@@ -287,22 +329,23 @@ public class SUDA2 {
 
     /**
      * SUDA2
-     * @param maxLength
+     * @param pruning
      * @param depth
      * @param ranks
      * @param currentList
      * @param numRecords
      * @return
      */
-    private Set<SUDA2ItemSet> suda2(int maxLength,
+    private Set<SUDA2ItemSet> suda2(SUDA2PruningInformation pruning,
                                     int depth,
                                     SUDA2ItemRanks ranks,
                                     SUDA2ItemList currentList,
-                                    int numRecords,
-                                    int maxK) {
+                                    int numRecords) {
+
+        DEBUG_CALLS++;
         
         // Debug
-        DEBUG_print(currentList, maxK);
+        DEBUG_print(currentList, depth);
 
         // Find MSUs and clear list
         Pair<Set<SUDA2ItemSet>, SUDA2ItemList> msusAndList = getMSUs(currentList, numRecords);
@@ -313,19 +356,17 @@ public class SUDA2 {
         // TODO: This can be done much more efficiently, by not performing the recursive
         //       call on depth == maxLength, which allows skipping the generation of the sorted list, etc.,
         //       because we only need to find 1-msus for the next recursive step.
-        if (depth > maxLength) {
+        if (pruning.canPrune(depth)) {
             return msus;
         }
 
-        DEBUG_CALLS++;
-        
         // Debug
         for (SUDA2ItemSet msu : msus) {
-            DEBUG_println("Singleton: " + msu, maxK);
+            DEBUG_println("Singleton: " + msu, depth);
         }
 
         // Check for maxK
-        if (maxK == 1) {
+        if (depth == maxK) {
             return msus;
         }
 
@@ -343,16 +384,17 @@ public class SUDA2 {
             int referenceRank = ranks.getRank(referenceItem.getId());
 
             // Debug
-            DEBUG_println("Reference: " + referenceItem, maxK - 1);
+            DEBUG_println("Reference: " + referenceItem, depth);
 
             // Recursive call
             SUDA2ItemList nextList = getItems(referenceItem).getItemList();
-            Set<SUDA2ItemSet> msus_i = suda2(referenceItem.getRows().size(),
+            Set<SUDA2ItemSet> msus_i = suda2(new SUDA2PruningInformation(referenceItem.getRows().size(),
+                                                                         list.size() - index - 1,
+                                                                         pruning.getUpperBound() - 1),
                                              depth + 1,
                                              ranks,
                                              nextList,
-                                             referenceItem.getRows().size(),
-                                             maxK - 1);
+                                             referenceItem.getRows().size());
 
             // For each candidate
             outer: for (SUDA2ItemSet candidate : msus_i) {
@@ -366,7 +408,7 @@ public class SUDA2 {
                 SUDA2ItemSet merged = new SUDA2ItemSet(referenceItem, candidate);
 
                 // Debug
-                DEBUG_println("Combined: " + merged, maxK);
+                DEBUG_println("Combined: " + merged, depth);
 
                 // TODO: Just a sanity check
                 if (merged.getSupport() != 1) {

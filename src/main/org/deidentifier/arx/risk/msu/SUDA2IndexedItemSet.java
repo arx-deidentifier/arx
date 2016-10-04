@@ -61,7 +61,7 @@ public class SUDA2IndexedItemSet {
      */
     public SUDA2ItemList getItemList() {
 
-        // Create list and sort by support, move all null values to the end
+        // Create list and sort by support
         List<SUDA2Item> list = new ArrayList<SUDA2Item>();
         Iterator<ObjectCursor<SUDA2Item>> iter = items.values().iterator();
         while (iter.hasNext()) {

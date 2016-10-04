@@ -87,7 +87,7 @@ public class Example60 extends Example {
      */
     public static void main(String[] args) throws ParseException, IOException {
     
-        Data data = createData("adult");
+        Data data = createData("adult_9000");
         data.getHandle().getRiskEstimator(ARXPopulationModel.create(Region.USA)).getMSUStatistics();
     }
 }

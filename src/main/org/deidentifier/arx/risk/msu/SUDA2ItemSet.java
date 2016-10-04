@@ -39,8 +39,7 @@ public class SUDA2ItemSet {
      * @param item
      */
     public SUDA2ItemSet(SUDA2Item item) {
-        this.items.add(item);
-        this.rows.addAll(item.getRows());
+        init1(item);
     }
 
     /**
@@ -49,12 +48,7 @@ public class SUDA2ItemSet {
      * @param set
      */
     public SUDA2ItemSet(SUDA2Item item, SUDA2ItemSet set) {
-        this.items.add(item);
-        this.rows.addAll(item.getRows());
-        for (SUDA2Item setItem : set.items) {
-            this.items.add(setItem);
-            this.rows.retainAll(setItem.getRows());
-        }
+        init2(item, set);
     }
 
     @Override
@@ -68,11 +62,11 @@ public class SUDA2ItemSet {
         } else if (!items.equals(other.items)) return false;
         return true;
     }
-
+    
     public Set<SUDA2Item> getItems() {
         return items;
     }
-    
+
     /**
      * Returns the reference item
      */
@@ -98,7 +92,7 @@ public class SUDA2ItemSet {
     public Set<Integer> getRows() {
         return this.rows;
     }
-
+    
     /**
      * Returns the support
      * @return
@@ -128,5 +122,28 @@ public class SUDA2ItemSet {
         }
         builder.append("]");
         return builder.toString();
+    }
+
+    /**
+     * For profiling
+     * @param item
+     */
+    private void init1(SUDA2Item item) {
+        this.items.add(item);
+        this.rows.addAll(item.getRows());
+    }
+
+    /**
+     * For profiling
+     * @param item
+     * @param set
+     */
+    private void init2(SUDA2Item item, SUDA2ItemSet set) {
+        this.items.add(item);
+        this.rows.addAll(item.getRows());
+        for (SUDA2Item setItem : set.items) {
+            this.items.add(setItem);
+            this.rows.retainAll(setItem.getRows());
+        }
     }
 }
