@@ -170,7 +170,7 @@ public class SUDA2 {
         }
         return items;
     }
-
+    
     /**
      * Clears the list and returns all MSUs
      * @param list
@@ -198,6 +198,15 @@ public class SUDA2 {
 
         // Return
         return new Pair<Set<SUDA2ItemSet>, SUDA2ItemList>(msus, new SUDA2ItemList(result, list.getReferenceItem()));
+    }
+
+    /**
+     * Returns all 1-MSUs for the given item
+     * @param item
+     * @return
+     */
+    private Set<SUDA2ItemSet> getOneMSUs(SUDA2Item item) {
+        return getItems(item).getOneMSUs();
     }
 
     /**

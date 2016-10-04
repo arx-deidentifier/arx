@@ -19,8 +19,10 @@ package org.deidentifier.arx.risk.msu;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.carrotsearch.hppc.LongObjectOpenHashMap;
 import com.carrotsearch.hppc.cursors.ObjectCursor;
@@ -93,5 +95,21 @@ public class SUDA2IndexedItemSet {
             items.put(id, item);
         }
         return item;
+    }
+
+    /**
+     * Returns all 1-MSUs in this set
+     * @return
+     */
+    public Set<SUDA2ItemSet> getOneMSUs() {
+        Set<SUDA2ItemSet> result = new HashSet<SUDA2ItemSet>();
+        Iterator<ObjectCursor<SUDA2Item>> iter = items.values().iterator();
+        while (iter.hasNext()) {
+            SUDA2Item item = iter.next().value;
+            if (item.getSupport() == 1) {
+                result.add(new SUDA2ItemSet(item));
+            }
+        }
+        return result;
     }
 }
