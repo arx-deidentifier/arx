@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.criteria;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
@@ -32,7 +35,7 @@ public class EntropyLDiversity extends LDiversity {
     private static final long   serialVersionUID = -354688551915634000L;
     
     /** Entropy Estimator to use */
-    protected final EntropyEstimator estimator;
+    protected EntropyEstimator estimator;
 
     /**
      * Creates a new instance of the entropy l-diversity criterion as proposed in:
@@ -247,5 +250,25 @@ public class EntropyLDiversity extends LDiversity {
             return Math.log(n) +
                     m *(s1 - m *(s2 - m*s3));
         }
+    }
+    
+    /**
+     * Custom deserialization
+     * 
+     * If we deserialize an older object where the entropy estimator
+     * could not be chosen, set the estimator to the default: Shannon.
+     * 
+     * @param ois
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
+    private void readObject(ObjectInputStream ois)
+    		throws ClassNotFoundException, IOException {
+    	// default deserialization
+    	ois.defaultReadObject();
+    	// Set default estimator if deserializing an older object
+    	if(this.estimator == null) {
+    		this.estimator = EntropyEstimator.SHANNON;
+    	}
     }
 }
