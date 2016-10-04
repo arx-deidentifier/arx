@@ -25,8 +25,10 @@ import org.apache.mahout.math.Arrays;
 
 public class SUDA2 {
 
-    /** Debug flag*/
-    private static final boolean DEBUG = false;
+    /** Debug flag */
+    private static final boolean DEBUG       = false;
+    /** Debug data */
+    private int                  DEBUG_CALLS = 0;
 
     /** The data */
     private final int[][]        data;
@@ -57,6 +59,8 @@ public class SUDA2 {
      * @return
      */
     public Set<SUDA2ItemSet> suda2(int maxK) {
+        
+        DEBUG_CALLS = 0;
 
         // Obtain sorted item list
         SUDA2ItemList list = getItems().getItemList();
@@ -65,7 +69,12 @@ public class SUDA2 {
         SUDA2ItemRanks ranks = list.getRanks();
 
         // Execute remainder of SUDA2 algorithm
-        return suda2(ranks, list, data.length, maxK);
+        Set<SUDA2ItemSet> set = suda2(Integer.MAX_VALUE, 1, ranks, list, data.length, maxK);
+        
+        System.out.println("Calls: " + DEBUG_CALLS);
+        
+        // Return
+        return set;
     }
 
     /**
@@ -269,12 +278,16 @@ public class SUDA2 {
 
     /**
      * SUDA2
+     * @param maxLength
+     * @param depth
      * @param ranks
      * @param currentList
      * @param numRecords
      * @return
      */
-    private Set<SUDA2ItemSet> suda2(SUDA2ItemRanks ranks,
+    private Set<SUDA2ItemSet> suda2(int maxLength,
+                                    int depth,
+                                    SUDA2ItemRanks ranks,
                                     SUDA2ItemList currentList,
                                     int numRecords,
                                     int maxK) {
@@ -286,6 +299,16 @@ public class SUDA2 {
         Pair<Set<SUDA2ItemSet>, SUDA2ItemList> msusAndList = getMSUs(currentList, numRecords);
         Set<SUDA2ItemSet> msus = msusAndList.first;
         currentList = msusAndList.second;
+        
+        // First pruning strategy
+        // TODO: This can be done much more efficiently, by not performing the recursive
+        //       call on depth == maxLength, which allows skipping the generation of the sorted list, etc.,
+        //       because we only need to find 1-msus for the next recursive step.
+        if (depth > maxLength) {
+            return msus;
+        }
+
+        DEBUG_CALLS++;
         
         // Debug
         for (SUDA2ItemSet msu : msus) {
@@ -303,7 +326,7 @@ public class SUDA2 {
             
             // Progress information
             if (numRecords == data.length) {
-                System.out.println(index+"/"+list.size());
+                System.out.println(index+"/"+list.size()+" -> "+DEBUG_CALLS);
             }
             
             // Obtain item and rank
@@ -315,7 +338,9 @@ public class SUDA2 {
 
             // Recursive call
             SUDA2ItemList nextList = getItems(referenceItem).getItemList();
-            Set<SUDA2ItemSet> msus_i = suda2(ranks,
+            Set<SUDA2ItemSet> msus_i = suda2(referenceItem.getRows().size(),
+                                             depth + 1,
+                                             ranks,
                                              nextList,
                                              referenceItem.getRows().size(),
                                              maxK - 1);
