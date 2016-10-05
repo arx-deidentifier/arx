@@ -42,8 +42,8 @@ public class Test {
         
         System.out.println("26 is correct");
 
-        SUDA2 suda2 = new SUDA2(data);
-        Set<SUDA2ItemSet> result = suda2.suda2(5);
+        SUDA2 suda2 = new SUDA2(data, 0);
+        Set<SUDA2ItemSet> result = suda2.suda2();
         System.out.println("Found: " + result.size() + " MSUs");
         for (SUDA2ItemSet set : result) {
             System.out.println(set + "-" + set.getRows());

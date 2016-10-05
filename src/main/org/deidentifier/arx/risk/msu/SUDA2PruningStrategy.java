@@ -54,8 +54,7 @@ public class SUDA2PruningStrategy {
         this.upperBoundFromSupport = upperBoundFromSupport;
         this.upperBoundFromRemainingItems = upperBoundFromRemainingItems;
         this.upperBoundFromBound = upperBoundFromBound;
-        this.upperBound = Math.min(upperBoundFromSupport,
-                              Math.min(upperBoundFromRemainingItems, upperBoundFromBound));
+        this.upperBound = Math.min(upperBoundFromSupport, Math.min(upperBoundFromRemainingItems, upperBoundFromBound));
     }
 
     /**
@@ -64,8 +63,8 @@ public class SUDA2PruningStrategy {
      * @return
      */
     public boolean canPrune(int depth) {
-        return false;
-//        return depth > upperBound;
+//        return false;
+        return depth > upperBound;
     }
 
     /**

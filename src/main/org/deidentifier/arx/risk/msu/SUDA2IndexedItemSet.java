@@ -85,7 +85,7 @@ public class SUDA2IndexedItemSet {
      * @param value
      * @return
      */
-    public SUDA2Item getOrCreate(int column, int value) {
+    public SUDA2Item getOrCreateItem(int column, int value) {
         long id = SUDA2Item.getId(column, value);
         SUDA2Item item;
         if (items.containsKey(id)) {
@@ -95,6 +95,15 @@ public class SUDA2IndexedItemSet {
             items.put(id, item);
         }
         return item;
+    }
+    
+    /**
+     * Returns item for the given id
+     * @param id
+     * @return
+     */
+    public SUDA2Item getItem(long id) {
+        return items.get(id);
     }
 
     /**

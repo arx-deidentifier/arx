@@ -126,4 +126,12 @@ public class SUDA2Item {
         builder.append("(").append(column).append(",").append(value).append(")");
         return builder.toString();
     }
+
+    /**
+     * Adds all rows to the item
+     * @param rows
+     */
+    public void addRows(Set<Integer> rows) {
+        this.rows.addAll(rows);
+    }
 }
