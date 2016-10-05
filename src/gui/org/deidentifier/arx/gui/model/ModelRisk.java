@@ -38,7 +38,6 @@ public class ModelRisk implements Serializable {
      */
     public static enum RiskModelForAttributes {
         SAMPLE_UNIQUENESS,
-        ALPHA_DISTINCTION_SEPARATION,
         POPULATION_UNIQUENESS_PITMAN,
         POPULATION_UNIQUENESS_ZAYATZ,
         POPULATION_UNIQUENESS_DANKAR,

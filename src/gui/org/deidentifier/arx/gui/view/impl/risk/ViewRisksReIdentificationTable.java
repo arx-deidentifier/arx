@@ -49,10 +49,13 @@ import de.linearbits.swt.table.DynamicTableColumn;
 public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRisk> {
 
     /** View */
+    private Composite       root;
+
+    /** View */
     private DynamicTable    table;
 
     /** Internal stuff. */
-    private final AnalysisManager manager;
+    private AnalysisManager manager;
 
     /**
      * Creates a new instance.
@@ -117,9 +120,8 @@ public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRis
     @Override
     protected Control createControl(Composite parent) {
         
-        /* View */
-        Composite root = new Composite(parent, SWT.NONE);
-        root.setLayout(SWTUtil.createGridLayout(1));
+        this.root = new Composite(parent, SWT.NONE);
+        this.root.setLayout(SWTUtil.createGridLayout(1));
         
         table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setHeaderVisible(true);

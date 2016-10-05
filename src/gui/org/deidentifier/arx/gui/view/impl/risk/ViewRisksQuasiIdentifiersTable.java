@@ -167,7 +167,6 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
 
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
-
         // Enable/disable
         final RiskEstimateBuilderInterruptible builder = getBuilder(context, context.context.getModel().getSelectedQuasiIdentifiers());
         if (!this.isEnabled() || builder == null) {

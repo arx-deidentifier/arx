@@ -258,8 +258,12 @@ public class RiskEstimateBuilder {
                 false);
     }
 
+    /**
+     * Returns a class providing access to quasi-identifer alpha distinction and alpha separation
+     *
+     * @return the RiskModelAttributes class with risk analysis
+     */
     public RiskModelAttributes getAttributeRisks() {
-        progress.value = 0;
         return getQuasiIdentifiers();
     }
 

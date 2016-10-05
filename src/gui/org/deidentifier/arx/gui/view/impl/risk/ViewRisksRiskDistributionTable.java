@@ -53,7 +53,7 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
     private DynamicTable             table;
 
     /** Internal stuff. */
-    private final AnalysisManager          manager;
+    private AnalysisManager          manager;
 
     /**
      * Creates a new instance.
