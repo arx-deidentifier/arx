@@ -25,35 +25,33 @@ import org.deidentifier.arx.metric.Metric;
 import org.junit.Before;
 
 /**
+ * Abstract test class
  * 
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class AbstractTest {
     
     /**
-     * 
+     * Enum for metrics
      */
     public static enum TestMetric {
         
-        /** TODO */
+        /** Metric*/
         DMSTAR,
-                                   
-                                   /** TODO */
+        /** Metric*/
         DM,
-                                   
-                                   /** TODO */
+        /** Metric*/
         HEIGHT,
-                                   
-                                   /** TODO */
+        /** Metric*/
         PREC,
-                                   
-                                   /** TODO */
+        /** Metric*/
         ENTROPY,
-                                   
-                                   /** TODO */
+        /** Metric*/
         NMENTROPY
     }
     
-    /** TODO */
+    /** Data provider */
     protected DataProvider provider = null;
     
     @Before
@@ -62,8 +60,7 @@ public abstract class AbstractTest {
     }
     
     /**
-     * 
-     *
+     * Creates a metric
      * @param metricType
      * @return
      */
@@ -93,8 +90,7 @@ public abstract class AbstractTest {
     }
     
     /**
-     * 
-     *
+     * Convert to array
      * @param iterator
      * @return
      */
@@ -107,8 +103,7 @@ public abstract class AbstractTest {
     }
     
     /**
-     * 
-     *
+     * Print array
      * @param array
      */
     protected void printArray(final String[][] array) {
@@ -136,8 +131,7 @@ public abstract class AbstractTest {
     }
     
     /**
-     * 
-     *
+     * Convert to array
      * @param result
      * @return
      */
