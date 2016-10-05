@@ -77,7 +77,7 @@ public class SUDA2 {
         SUDA2ItemRanks ranks = list.getRanks();
 
         // Execute remainder of SUDA2 algorithm
-        Set<SUDA2ItemSet> set = suda2(new SUDA2PruningInformation(), 1, ranks, list, data.length);
+        Set<SUDA2ItemSet> set = suda2(new SUDA2PruningStrategy(), 1, ranks, list, data.length);
         
         System.out.println("Calls: " + DEBUG_CALLS);
         
@@ -336,7 +336,7 @@ public class SUDA2 {
      * @param numRecords
      * @return
      */
-    private Set<SUDA2ItemSet> suda2(SUDA2PruningInformation pruning,
+    private Set<SUDA2ItemSet> suda2(SUDA2PruningStrategy pruning,
                                     int depth,
                                     SUDA2ItemRanks ranks,
                                     SUDA2ItemList currentList,
@@ -388,9 +388,9 @@ public class SUDA2 {
 
             // Recursive call
             SUDA2ItemList nextList = getItems(referenceItem).getItemList();
-            Set<SUDA2ItemSet> msus_i = suda2(new SUDA2PruningInformation(referenceItem.getRows().size(),
-                                                                         list.size() - index - 1,
-                                                                         pruning.getUpperBound() - 1),
+            Set<SUDA2ItemSet> msus_i = suda2(new SUDA2PruningStrategy(referenceItem.getRows().size(),
+                                                                      list.size() - index - 1,
+                                                                      pruning.getUpperBound() - 1),
                                              depth + 1,
                                              ranks,
                                              nextList,

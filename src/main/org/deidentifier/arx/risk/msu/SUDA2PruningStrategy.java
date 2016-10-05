@@ -20,7 +20,7 @@ package org.deidentifier.arx.risk.msu;
  * A simple class encapsulating the pruning logic
  * @author Fabian Prasser
  */
-public class SUDA2PruningInformation {
+public class SUDA2PruningStrategy {
 
     /** Upper bound from the first pruning strategy*/
     private final int upperBoundFromSupport; // Pruning-1
@@ -35,7 +35,7 @@ public class SUDA2PruningInformation {
     /**
      * Creates an instance which will not result in pruning
      */
-    public SUDA2PruningInformation() {
+    public SUDA2PruningStrategy() {
         this.upperBoundFromSupport = Integer.MAX_VALUE;
         this.upperBoundFromRemainingItems = Integer.MAX_VALUE;
         this.upperBoundFromBound = Integer.MAX_VALUE;
@@ -48,7 +48,7 @@ public class SUDA2PruningInformation {
      * @param remainingItems
      * @param upperBound
      */
-    SUDA2PruningInformation(int upperBoundFromSupport,
+    SUDA2PruningStrategy(int upperBoundFromSupport,
                             int upperBoundFromRemainingItems,
                             int upperBoundFromBound) {
         this.upperBoundFromSupport = upperBoundFromSupport;
@@ -64,8 +64,8 @@ public class SUDA2PruningInformation {
      * @return
      */
     public boolean canPrune(int depth) {
-        return depth > upperBoundFromSupport;
-        //return depth > upperBound;
+        return false;
+//        return depth > upperBound;
     }
 
     /**
