@@ -120,7 +120,7 @@ public class Example29 extends Example {
         RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
         RiskModelAttributes riskmodel = builder.getAttributeRisks();
         for (QuasiIdentifierRisk risk : riskmodel.getAttributeRisks()) {
-            System.out.println("   * Score: " + /*risk.getFractionOfUniqueTuples() +*/ ", Identifier: " + risk.getIdentifier());
+            System.out.println("   * Distinction: " + risk.getDistinction() + ", Separation: " + risk.getSeparation() + ", Identifier: " + risk.getIdentifier());
         }
     }
         
