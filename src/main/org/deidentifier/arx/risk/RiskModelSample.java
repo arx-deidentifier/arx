@@ -22,7 +22,7 @@ package org.deidentifier.arx.risk;
  * 
  * @author Fabian Prasser
  */
-public abstract class RiskModelSample {
+abstract class RiskModelSample {
 
     /** The classes */
     private final RiskModelHistogram histogram;

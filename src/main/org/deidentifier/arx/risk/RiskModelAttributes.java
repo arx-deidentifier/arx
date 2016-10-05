@@ -85,7 +85,7 @@ public class RiskModelAttributes {
         Arrays.sort(risks);
     }
 
-    /***
+    /**
      * Calculates the gaussian sum formula
      * @param n the number to sum to
      * @return the sum from 1 to n
