@@ -33,10 +33,6 @@ public class SUDA2 {
     private static final boolean      DEBUG            = false;
     /** Debug data */
     private int                       DEBUG_CALLS      = 0;
-    /** Debug data */
-    private int                       DEBUG_nonUnique  = 0;
-    /** Debug data */
-    private int                       DEBUG_nonMinimal = 0;
 
     /** The data */
     private final int[][]             data;
@@ -314,11 +310,11 @@ public class SUDA2 {
         }
         
         // Search for the special row
-//        if (candidate.getItems().size() <= 2) {
-//            return true;
-//        } else {
+        if (candidate.getItems().size() <= 1) {
+            return true;
+        } else {
             return isSpecialRowAvailable(currentList, referenceItem, candidate);
-//        }
+        }
     }
 
     /**
@@ -352,40 +348,6 @@ public class SUDA2 {
 //            rows = currentList.getReferenceItem().getRows();
 //        }
             
-        // And search them for the special row
-        outer: for (int index : rows) {
-            int[] row = data[index];
-            if (referenceItem.isContained(row)) {
-                continue;
-            }
-            for (SUDA2Item item : candidate.getItems()) {
-                if (!item.isContained(row)) {
-                    continue outer;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Searches for the special row
-     * @param rows
-     * @param referenceItem
-     * @param candidate
-     * @return
-     */
-    private boolean isSpecialRowAvailable(SUDA2Item referenceItem, SUDA2ItemSet candidate) {
-
-        // Obtain reference item from the candidate set
-        SUDA2Item candidateReferenceItem = candidate.getReferenceItem(ranks);
-
-        // Obtain according item in the overall item list
-        SUDA2Item candidateReferenceItemInCurrentList = set.getItem(candidateReferenceItem.getId());
-
-        // Else obtain the relevant set of rows
-        Set<Integer> rows = candidateReferenceItemInCurrentList.getRows();
-
         // And search them for the special row
         outer: for (int index : rows) {
             int[] row = data[index];
