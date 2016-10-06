@@ -29,8 +29,6 @@ public class SUDA2ItemSet {
 
     /** Items */
     private Set<SUDA2Item>  items = new HashSet<>();
-    /** Support rows */
-    private Set<Integer>    rows  = new HashSet<>();
     /** Reference item */
     private SUDA2Item       reference = null;
 
@@ -39,7 +37,7 @@ public class SUDA2ItemSet {
      * @param item
      */
     public SUDA2ItemSet(SUDA2Item item) {
-        init1(item);
+        this.items.add(item);
     }
 
     /**
@@ -48,7 +46,8 @@ public class SUDA2ItemSet {
      * @param set
      */
     public SUDA2ItemSet(SUDA2Item item, SUDA2ItemSet set) {
-        init2(item, set);
+        this.items.add(item);
+        this.items.addAll(set.items);
     }
 
     @Override
@@ -85,22 +84,6 @@ public class SUDA2ItemSet {
         return this.reference;
     }
 
-    /**
-     * Returns the support rows
-     * @return
-     */
-    public Set<Integer> getRows() {
-        return this.rows;
-    }
-    
-    /**
-     * Returns the support
-     * @return
-     */
-    public int getSupport() {
-        return this.rows.size();
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -131,28 +114,5 @@ public class SUDA2ItemSet {
         }
         builder.append("]");
         return builder.toString();
-    }
-
-    /**
-     * For profiling
-     * @param item
-     */
-    private void init1(SUDA2Item item) {
-        this.items.add(item);
-        this.rows.addAll(item.getRows());
-    }
-
-    /**
-     * For profiling
-     * @param item
-     * @param set
-     */
-    private void init2(SUDA2Item item, SUDA2ItemSet set) {
-        this.items.add(item);
-        this.rows.addAll(item.getRows());
-        for (SUDA2Item setItem : set.items) {
-            this.items.add(setItem);
-            this.rows.retainAll(setItem.getRows());
-        }
     }
 }

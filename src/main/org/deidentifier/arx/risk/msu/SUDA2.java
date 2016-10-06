@@ -200,7 +200,7 @@ public class SUDA2 {
             rows.retainAll(reference.getRows());
             if (!rows.isEmpty()) {
                 SUDA2Item item = items.getOrCreateItem(_item.getColumn(), _item.getValue());
-                item.addRows(rows);
+                item.setRows(rows);
             }
         }
         return items;
@@ -292,7 +292,9 @@ public class SUDA2 {
 
         // If the item is not contained in the current list it must have been
         // a singleton MSU. This implies that the special row cannot exist
-        if (candidateReferenceItemInCurrentList == null) { return false; }
+        if (candidateReferenceItemInCurrentList == null) { 
+            return false; 
+        }
 
         // Else obtain the relevant set of rows
         Set<Integer> rows = candidateReferenceItemInCurrentList.getRows();
@@ -364,9 +366,9 @@ public class SUDA2 {
             DEBUG_println("Reference: " + referenceItem, maxK);
 
             // Recursive call
-            int upperLimit = Math.min(maxK - 1, currentList.size() - index);
+            int upperLimit = Math.min(maxK - 1, currentList.size() - index); // TODO: Pruning strategy 2 (+1)?
             SUDA2ItemList nextList = getItems(currentList, referenceItem).getItemList();
-            Set<SUDA2ItemSet> msus_i = suda2(upperLimit, // Pruning strategy 2
+            Set<SUDA2ItemSet> msus_i = suda2(upperLimit,
                                              nextList,
                                              referenceItem.getRows().size());
 

@@ -46,7 +46,7 @@ public class Test {
         Set<SUDA2ItemSet> result = suda2.suda2(0);
         System.out.println("Found: " + result.size() + " MSUs");
         for (SUDA2ItemSet set : result) {
-            System.out.println(set + "-" + set.getRows());
+            System.out.println(set);
         }
 
         ExhaustiveSearch exhaustive = new ExhaustiveSearch(data);
