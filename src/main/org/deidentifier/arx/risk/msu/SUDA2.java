@@ -70,13 +70,13 @@ public class SUDA2 {
         this.maxK = maxK > 0 ? maxK : this.columns;
         
         // Obtain set of items
-        this.set = getItems();
+        this.set = this.getItems();
         
         // Obtain sorted item list
         this.list = this.set.getItemList();
         
         // Obtain map with ranks
-        this.ranks = list.getRanks();
+        this.ranks = this.list.getRanks();
     }
 
     /**
