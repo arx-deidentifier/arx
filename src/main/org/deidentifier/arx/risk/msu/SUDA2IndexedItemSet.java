@@ -39,19 +39,37 @@ public class SUDA2IndexedItemSet {
     
     /**
      * Creates a new instance
+     */
+    public SUDA2IndexedItemSet() {
+        this.reference = null;
+    }
+    
+    /**
+     * Creates a new instance
      * @param reference
      */
     public SUDA2IndexedItemSet(SUDA2Item reference) {
         this.reference = reference;
     }
-    
+
     /**
-     * Creates a new instance
+     * Adds an item
+     * @param item
+     * @return
      */
-    public SUDA2IndexedItemSet() {
-        this.reference = null;
+    public void addItem(SUDA2Item item) {
+        items.put(item.getId(), item);
     }
 
+    /**
+     * Returns item for the given id
+     * @param id
+     * @return
+     */
+    public SUDA2Item getItem(long id) {
+        return items.get(id);
+    }
+    
     /**
      * Returns a list containing items sorted by rank
      * @param items
@@ -76,7 +94,7 @@ public class SUDA2IndexedItemSet {
         // Return
         return new SUDA2ItemList(list, reference);
     }
-
+    
     /**
      * Either returns an existing entry or creates a new one
      * @param column
@@ -93,14 +111,5 @@ public class SUDA2IndexedItemSet {
             items.put(id, item);
         }
         return item;
-    }
-    
-    /**
-     * Returns item for the given id
-     * @param id
-     * @return
-     */
-    public SUDA2Item getItem(long id) {
-        return items.get(id);
     }
 }

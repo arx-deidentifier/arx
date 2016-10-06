@@ -26,6 +26,8 @@ import java.util.Set;
 
 import org.apache.mahout.math.Arrays;
 
+import com.carrotsearch.hppc.IntOpenHashSet;
+
 public class SUDA2 {
 
     /** Debug flag */
@@ -114,7 +116,9 @@ public class SUDA2 {
         } else {
             Set<Integer> rows = new HashSet<Integer>();
             for (SUDA2Item item : list.getList()) {
-                rows.addAll(item.getRows());
+                for (int row : item.getRows().toArray()) {
+                    rows.add(row);
+                }
             }
             
             for (int index : rows) {
@@ -195,12 +199,10 @@ public class SUDA2 {
         // Collect items within the given range and their support rows
         SUDA2IndexedItemSet items = new SUDA2IndexedItemSet(reference);
         for (SUDA2Item _item : list.getList()) {
-            Set<Integer> rows = new HashSet<>();
-            rows.addAll(_item.getRows());
+            IntOpenHashSet rows = new IntOpenHashSet(_item.getRows());
             rows.retainAll(reference.getRows());
             if (!rows.isEmpty()) {
-                SUDA2Item item = items.getOrCreateItem(_item.getColumn(), _item.getValue());
-                item.setRows(rows);
+                items.addItem(new SUDA2Item(_item.getColumn(), _item.getValue(), rows));
             }
         }
         return items;
@@ -297,20 +299,24 @@ public class SUDA2 {
         }
 
         // Else obtain the relevant set of rows
-        Set<Integer> rows = candidateReferenceItemInCurrentList.getRows();
+        IntOpenHashSet rows = candidateReferenceItemInCurrentList.getRows();
 
         // And search them for the special row
-        outer: for (int index : rows) {
-            int[] row = data[index];
-            if (referenceItem.isContained(row)) {
-                continue;
-            }
-            for (SUDA2Item item : candidate.getItems()) {
-                if (!item.isContained(row)) {
-                    continue outer;
+        final int [] keys = rows.keys;
+        final boolean [] allocated = rows.allocated;
+        outer: for (int i = 0; i < allocated.length; i++) {
+            if (allocated[i]) {
+                int[] row = data[keys[i]];
+                if (referenceItem.isContained(row)) {
+                    continue;
                 }
+                for (SUDA2Item item : candidate.getItems()) {
+                    if (!item.isContained(row)) {
+                        continue outer;
+                    }
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }

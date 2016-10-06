@@ -16,8 +16,7 @@
  */
 package org.deidentifier.arx.risk.msu;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.carrotsearch.hppc.IntOpenHashSet;
 
 /**
  * Each itemset is a concrete value for a concrete attribute
@@ -45,18 +44,29 @@ public class SUDA2Item {
     /** Hash code */
     private final int    hashCode;
     /** Support rows */
-    private Set<Integer> rows = new HashSet<>();
+    private IntOpenHashSet rows;
 
+    /**
+     * Creates a new item
+     * @param column
+     * @param value
+     * @param rows
+     */
+    public SUDA2Item(int column, int value, IntOpenHashSet rows) {
+        this.column = column;
+        this.value = value;
+        this.hashCode = (31 + column) * 31 + value;
+        this.id = getId(column, value);
+        this.rows = rows;
+    }
+    
     /**
      * Creates a new item
      * @param column
      * @param value
      */
     public SUDA2Item(int column, int value) {
-        this.column = column;
-        this.value = value;
-        this.hashCode = (31 + column) * 31 + value;
-        this.id = getId(column, value);
+        this(column, value, new IntOpenHashSet());
     }
 
     /**
@@ -90,7 +100,7 @@ public class SUDA2Item {
      * Returns the rows in which this item is located
      * @return
      */
-    public Set<Integer> getRows() {
+    public IntOpenHashSet getRows() {
         return this.rows;
     }
 
@@ -125,13 +135,5 @@ public class SUDA2Item {
         StringBuilder builder = new StringBuilder();
         builder.append("(").append(column).append(",").append(value).append(")");
         return builder.toString();
-    }
-
-    /**
-     * Sets all rows to the given set
-     * @param rows
-     */
-    public void setRows(Set<Integer> rows) {
-        this.rows = rows;
     }
 }
