@@ -307,11 +307,11 @@ public class SUDA2 {
         referenceRank = ranks.getRank(referenceItem.getId());
 
         // All of the k-1 items in the candidate set must have rank > reference rank
-//        for (SUDA2Item candidateItem : candidate.getItems()) {
-//            if (ranks.getRank(candidateItem.getId()) <= referenceRank) {
-//                return false;
-//            }
-//        }
+        for (SUDA2Item candidateItem : candidate.getItems()) {
+            if (ranks.getRank(candidateItem.getId()) <= referenceRank) {
+                return false;
+            }
+        }
         
         // Search for the special row
 //        if (candidate.getItems().size() <= 2) {
