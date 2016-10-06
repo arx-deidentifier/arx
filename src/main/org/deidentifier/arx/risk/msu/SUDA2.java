@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,29 +37,12 @@ public class SUDA2 {
     private final int[][]             data;
     /** Number of columns */
     private final int                 columns;
-    /** The maximal k */
-    private final int                 maxK;
-    /** Item ranks */
-    private final SUDA2ItemRanks      ranks;
-    /** Item set */
-    private final SUDA2IndexedItemSet set;
-    /** Item list */
-    private final SUDA2ItemList       list;
-
-    /**
-     * Creates a new instance. MaxK will be set to the number of columns.
-     * @param data
-     */
-    public SUDA2(int[][] data) {
-        this(data, 0);
-    }
 
     /**
      * Constructor
      * @param data
-     * @param maxK If maxK <= maxK will be set to the number of columns
      */
-    public SUDA2(int[][] data, int maxK) {
+    public SUDA2(int[][] data) {
         
         // Check
         this.check(data);
@@ -68,28 +50,24 @@ public class SUDA2 {
         // Init
         this.data = data;
         this.columns = data[0].length;
-        this.maxK = maxK > 0 ? maxK : this.columns;
-        
-        // Obtain set of items
-        this.set = this.getItems();
-        
-        // Obtain sorted item list
-        this.list = this.set.getItemList();
-        
-        // Obtain map with ranks
-        this.ranks = this.list.getRanks();
     }
 
     /**
      * Executes the SUDA2 algorithm
+     * 
+     * @param maxK If maxK <= 0, maxK will be set to the number of columns
      * @return
      */
-    public Set<SUDA2ItemSet> suda2() {
+    public Set<SUDA2ItemSet> suda2(int maxK) {
         
+        // If maxK <= 0, maxK will be set to the number of columns
+        maxK = maxK > 0 ? maxK : columns;
+        
+        // Reset
         DEBUG_CALLS = 0;
 
         // Execute remainder of SUDA2 algorithm
-        Set<SUDA2ItemSet> set = suda2(new SUDA2PruningStrategy(), 1, list, data.length);
+        Set<SUDA2ItemSet> set = suda2(maxK, this.getItems().getItemList(), data.length);
         
         System.out.println("Calls: " + DEBUG_CALLS);
         
@@ -97,39 +75,6 @@ public class SUDA2 {
         
         // Return
         return set;
-    }
-
-    private void DEBUG_printHistogram(Set<SUDA2ItemSet> set) {
-        
-        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-        for (SUDA2ItemSet itemset : set) {
-            int size = itemset.getItems().size();
-            Integer count = map.get(size);
-            count = count == null ? 1 : count +1;
-            map.put(size, count);
-        }
-        
-        
-        List<Integer> sizes = new ArrayList<Integer>();
-        sizes.addAll(map.keySet());
-        Collections.sort(sizes);
-        
-        for (int size : sizes) {
-            System.out.print(DEBUG_pad(String.valueOf(size), 5) + "|");
-        }
-        System.out.println("");
-        for (int size : sizes) {
-            System.out.print(DEBUG_pad(String.valueOf(map.get(size)), 5) + "|");
-        }
-        System.out.println("");
-        System.out.println("MSUs: " +set.size());
-    }
-    
-    private String DEBUG_pad(String s, int width) {
-        while (s.length() < width) {
-            s = " " + s;
-        }
-        return s;
     }
 
     /**
@@ -143,6 +88,13 @@ public class SUDA2 {
         if (data.length == 0 || data[0] == null || data[0].length == 0) {
             throw new IllegalArgumentException("Data must not be empty");
         }
+    }
+    
+    private String DEBUG_pad(String s, int width) {
+        while (s.length() < width) {
+            s = " " + s;
+        }
+        return s;
     }
 
     /**
@@ -171,6 +123,32 @@ public class SUDA2 {
         }
     }
 
+    private void DEBUG_printHistogram(Set<SUDA2ItemSet> set) {
+        
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+        for (SUDA2ItemSet itemset : set) {
+            int size = itemset.getItems().size();
+            Integer count = map.get(size);
+            count = count == null ? 1 : count +1;
+            map.put(size, count);
+        }
+        
+        
+        List<Integer> sizes = new ArrayList<Integer>();
+        sizes.addAll(map.keySet());
+        Collections.sort(sizes);
+        
+        for (int size : sizes) {
+            System.out.print(DEBUG_pad(String.valueOf(size), 5) + "|");
+        }
+        System.out.println("");
+        for (int size : sizes) {
+            System.out.print(DEBUG_pad(String.valueOf(map.get(size)), 5) + "|");
+        }
+        System.out.println("");
+        System.out.println("MSUs: " +set.size());
+    }
+
     /**
      * Debugging stuff
      * @param string
@@ -180,10 +158,10 @@ public class SUDA2 {
     private void DEBUG_println(String string, int depth) {
         if (!DEBUG) return;
         String intent = "";
-        for (int i=0; i<depth; i++) {
-            intent +="   ";
+        for (int i = 0; i < columns - depth; i++) {
+            intent += "   ";
         }
-        System.out.println(intent+string);
+        System.out.println(intent + string);
     }
     
     /**
@@ -205,10 +183,31 @@ public class SUDA2 {
         }
         return items;
     }
-    
+
+    /**
+     * Returns all 1-MSUs from the table for the given reference item
+     * @param list
+     * @param reference
+     * @return
+     */
+    private Set<SUDA2ItemSet> getMSUs(SUDA2ItemList list, SUDA2Item reference) {
+        // Collect items within the given range and their support rows
+        Set<SUDA2ItemSet> items = new HashSet<>();
+        for (SUDA2Item _item : list.getList()) {
+            Set<Integer> rows = new HashSet<>();
+            rows.addAll(_item.getRows());
+            rows.retainAll(reference.getRows());
+            if (rows.size() == 1) {
+                items.add(new SUDA2ItemSet(new SUDA2Item(_item.getColumn(), _item.getValue(), rows)));
+            }
+        }
+        return items;
+    }
+
     /**
      * Returns all items for the given reference item from the given list.
      * This means that all 1-MSUs can be removed beforehand.
+     * @param list
      * @param reference
      * @return
      */
@@ -227,27 +226,7 @@ public class SUDA2 {
         }
         return items;
     }
-//
-//    /**
-//     * Returns all items for the given reference item
-//     * @param reference
-//     * @return
-//     */
-//    private SUDA2IndexedItemSet getItems(SUDA2Item reference) {
-//
-//        // Collect items within the given range and their support rows
-//        SUDA2IndexedItemSet items = new SUDA2IndexedItemSet(reference);
-//        for (int index : reference.getRows()) {
-//            int[] row = data[index];
-//            for (int column = 0; column < columns; column++) {
-//                int value = row[column];
-//                SUDA2Item item = items.getOrCreate(column, value);
-//                item.addRow(index);
-//            }
-//        }
-//        return items;
-//    }
-    
+
     /**
      * Clears the list and returns all MSUs
      * @param list
@@ -288,6 +267,8 @@ public class SUDA2 {
 
     /**
      * Implements both checks for MSUs described in the paper
+     * @param currentList
+     * @param currentRanks 
      * @param candidate
      * @param referenceItem
      * @param referenceRank
@@ -295,16 +276,14 @@ public class SUDA2 {
      */
 
     private boolean isMSU(SUDA2ItemList currentList,
+                          SUDA2ItemRanks currentRanks, 
                           SUDA2ItemSet candidate,
                           SUDA2Item referenceItem,
                           int referenceRank) {
-        
-        SUDA2ItemRanks ranks = new SUDA2ItemRanks(currentList);
-        referenceRank = ranks.getRank(referenceItem.getId());
 
         // All of the k-1 items in the candidate set must have rank > reference rank
         for (SUDA2Item candidateItem : candidate.getItems()) {
-            if (ranks.getRank(candidateItem.getId()) <= referenceRank) {
+            if (currentRanks.getRank(candidateItem.getId()) <= referenceRank) {
                 return false;
             }
         }
@@ -326,28 +305,19 @@ public class SUDA2 {
      */
     private boolean isSpecialRowAvailable(SUDA2ItemList currentList, SUDA2Item referenceItem, SUDA2ItemSet candidate) {
         
-        // TODO: The paper recommends the first branch for all searches
-        Set<Integer> rows = null;
-//        if (currentList.getReferenceItem() == null) {
-                
-            // Obtain reference item from the candidate set
-            SUDA2Item candidateReferenceItem = candidate.getReferenceItem();
-            
-            // Obtain according item in the current list
-            SUDA2Item candidateReferenceItemInCurrentList = currentList.getItem(candidateReferenceItem.getId());
-            
-            // If the item is not contained in the current list it must have been
-            // a singleton MSU. This implies that the special row cannot exist
-            if (candidateReferenceItemInCurrentList == null) {
-                return false;
-            }
-            
-            // Else obtain the relevant set of rows
-            rows = candidateReferenceItemInCurrentList.getRows();
-//        } else {
-//            rows = currentList.getReferenceItem().getRows();
-//        }
-            
+        // Obtain reference item from the candidate set
+        SUDA2Item candidateReferenceItem = candidate.getReferenceItem();
+
+        // Obtain according item in the current list
+        SUDA2Item candidateReferenceItemInCurrentList = currentList.getItem(candidateReferenceItem.getId());
+
+        // If the item is not contained in the current list it must have been
+        // a singleton MSU. This implies that the special row cannot exist
+        if (candidateReferenceItemInCurrentList == null) { return false; }
+
+        // Else obtain the relevant set of rows
+        Set<Integer> rows = candidateReferenceItemInCurrentList.getRows();
+
         // And search them for the special row
         outer: for (int index : rows) {
             int[] row = data[index];
@@ -366,77 +336,70 @@ public class SUDA2 {
 
     /**
      * SUDA2
-     * @param pruning
-     * @param depth
-     * @param ranks
+     * @param maxK
      * @param currentList
      * @param numRecords
      * @return
      */
-    private Set<SUDA2ItemSet> suda2(SUDA2PruningStrategy pruning,
-                                    int depth,
+    private Set<SUDA2ItemSet> suda2(int maxK,
                                     SUDA2ItemList currentList,
                                     int numRecords) {
 
         DEBUG_CALLS++;
-        
+
         // Debug
-        DEBUG_print(currentList, depth);
+        DEBUG_print(currentList, maxK);
 
         // Find MSUs and clear list
         Pair<Set<SUDA2ItemSet>, SUDA2ItemList> msusAndList = getMSUs(currentList, numRecords);
         Set<SUDA2ItemSet> msus = msusAndList.first;
         currentList = msusAndList.second;
-        
-        // First pruning strategy
-        // TODO: This can be done much more efficiently, by not performing the 
-        //       recursive call in the first place, which allows skipping the 
-        //       generation of the sorted list, etc., because we only need to 
-        //       find 1-MSUs for the next recursive step.
-        if (pruning.canPrune(depth)) {
-            return msus;
-        }
 
         // Debug
         for (SUDA2ItemSet msu : msus) {
-            DEBUG_println("Singleton: " + msu, depth);
+            DEBUG_println("Singleton: " + msu, maxK);
         }
 
         // Check for maxK
-        if (depth == maxK) {
+        if (maxK <= 1) {
             return msus;
         }
 
         // For each item i
-        List<SUDA2Item> list = currentList.getList();
-        for (int index = 0; index < list.size(); index++) {
+        int index = 0;
+        SUDA2ItemRanks currentRanks = currentList.getRanks();
+        for (SUDA2Item referenceItem : currentList.getList()) {
+            
+            // Track
+            index++;
             
             // Progress information
             if (numRecords == data.length) {
-                System.out.println(index+"/"+list.size()+" -> "+DEBUG_CALLS);
+                System.out.println(index + "/" + currentList.size() + " -> " + DEBUG_CALLS);
             }
-            
-            // Obtain item and rank
-            SUDA2Item referenceItem = list.get(index);
-            int referenceRank = ranks.getRank(referenceItem.getId());
+
+            // Obtain rank
+            int referenceRank = currentRanks.getRank(referenceItem.getId());
 
             // Debug
-            DEBUG_println("Reference: " + referenceItem, depth);
+            DEBUG_println("Reference: " + referenceItem, maxK);
 
             // Recursive call
-            SUDA2ItemList nextList = getItems(currentList, referenceItem).getItemList();
-            Set<SUDA2ItemSet> msus_i = suda2(new SUDA2PruningStrategy(referenceItem.getRows().size(),
-                                                                      list.size() - index,
-                                                                      pruning.getUpperBound() - 1),
-                                             depth + 1,
-                                             nextList,
-                                             referenceItem.getRows().size());
+            Set<SUDA2ItemSet> msus_i;
+            int upperLimit = Math.min(maxK - 1, currentList.size() - index + 1);
+            if (upperLimit == 1) {
+                msus_i = getMSUs(currentList, referenceItem);
+            } else {
+                msus_i = suda2(upperLimit, // Pruning strategy 2
+                               getItems(currentList, referenceItem).getItemList(),
+                               referenceItem.getRows().size());
+            }
 
             // For each candidate
             outer: for (SUDA2ItemSet candidate : msus_i) {
                 
                 // Check if candidate is an MSU
-                if (!isMSU(currentList, candidate, referenceItem, referenceRank)) {
+                if (!isMSU(currentList, currentRanks, candidate, referenceItem, referenceRank)) {
                     continue outer;
                 }
            
@@ -444,25 +407,25 @@ public class SUDA2 {
                 SUDA2ItemSet merged = new SUDA2ItemSet(referenceItem, candidate);
 
                 // Debug
-                DEBUG_println("Combined: " + merged, depth);
+                DEBUG_println("Combined: " + merged, maxK);
 
                 // TODO: Just a sanity check
-                if (depth == 1) {
-                    for (SUDA2ItemSet existing : msus) {
-                        if (existing.intersectsWith(merged)) {
-                            throw new IllegalStateException("Non-minimal result");
-                        }
-                    }
-                    Set<Integer> rows = new HashSet<Integer>();
-                    Iterator<SUDA2Item> iter = merged.getItems().iterator();
-                    rows.addAll(this.set.getItem(iter.next().getId()).getRows());
-                    while (iter.hasNext()) {
-                        rows.retainAll(this.set.getItem(iter.next().getId()).getRows());
-                    }
-                    if (rows.size() != 1) {
-                        throw new IllegalStateException("Non-unique result");
-                    }
-                }
+//                if (maxK == 1) {
+//                    for (SUDA2ItemSet existing : msus) {
+//                        if (existing.intersectsWith(merged)) {
+//                            throw new IllegalStateException("Non-minimal result");
+//                        }
+//                    }
+//                    Set<Integer> rows = new HashSet<Integer>();
+//                    Iterator<SUDA2Item> iter = merged.getItems().iterator();
+//                    rows.addAll(this.set.getItem(iter.next().getId()).getRows());
+//                    while (iter.hasNext()) {
+//                        rows.retainAll(this.set.getItem(iter.next().getId()).getRows());
+//                    }
+//                    if (rows.size() != 1) {
+//                        throw new IllegalStateException("Non-unique result");
+//                    }
+//                }
 
                 // Add MSU
                 msus.add(merged);

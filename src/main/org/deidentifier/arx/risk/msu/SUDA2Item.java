@@ -51,6 +51,16 @@ public class SUDA2Item {
      * Creates a new item
      * @param column
      * @param value
+     * @param rows
+     */
+    public SUDA2Item(int column, int value, Set<Integer> rows) {
+        this(column, value);
+        this.rows = rows;
+    }
+    /**
+     * Creates a new item
+     * @param column
+     * @param value
      */
     public SUDA2Item(int column, int value) {
         this.column = column;

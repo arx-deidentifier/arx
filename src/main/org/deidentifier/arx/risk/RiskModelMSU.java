@@ -73,7 +73,7 @@ public class RiskModelMSU {
         
         // Do something
         SUDA2 suda2 = new SUDA2(matrix.getMatrix());
-        suda2.suda2();
+        suda2.suda2(0);
     }
 
     /**

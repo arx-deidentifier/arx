@@ -88,6 +88,8 @@ public class Example60 extends Example {
     public static void main(String[] args) throws ParseException, IOException {
     
         Data data = createData("adult_9000");
+        long time = System.currentTimeMillis();
         data.getHandle().getRiskEstimator(ARXPopulationModel.create(Region.USA)).getMSUStatistics();
+        System.out.println("Time: " + (System.currentTimeMillis() - time));
     }
 }

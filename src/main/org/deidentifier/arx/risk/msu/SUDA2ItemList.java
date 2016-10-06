@@ -90,4 +90,12 @@ public class SUDA2ItemList {
     public SUDA2Item getReferenceItem() {
         return this.reference;
     }
+
+    /**
+     * Returns the size of the list
+     * @return
+     */
+    public int size() {
+        return this.list.size();
+    }
 }
