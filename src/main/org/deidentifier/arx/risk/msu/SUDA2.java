@@ -183,31 +183,10 @@ public class SUDA2 {
         }
         return items;
     }
-
-    /**
-     * Returns all 1-MSUs from the table for the given reference item
-     * @param list
-     * @param reference
-     * @return
-     */
-    private Set<SUDA2ItemSet> getMSUs(SUDA2ItemList list, SUDA2Item reference) {
-        // Collect items within the given range and their support rows
-        Set<SUDA2ItemSet> items = new HashSet<>();
-        for (SUDA2Item _item : list.getList()) {
-            Set<Integer> rows = new HashSet<>();
-            rows.addAll(_item.getRows());
-            rows.retainAll(reference.getRows());
-            if (rows.size() == 1) {
-                items.add(new SUDA2ItemSet(new SUDA2Item(_item.getColumn(), _item.getValue(), rows)));
-            }
-        }
-        return items;
-    }
-
+    
     /**
      * Returns all items for the given reference item from the given list.
      * This means that all 1-MSUs can be removed beforehand.
-     * @param list
      * @param reference
      * @return
      */
@@ -385,15 +364,11 @@ public class SUDA2 {
             DEBUG_println("Reference: " + referenceItem, maxK);
 
             // Recursive call
-            Set<SUDA2ItemSet> msus_i;
-            int upperLimit = Math.min(maxK - 1, currentList.size() - index + 1);
-            if (upperLimit == 1) {
-                msus_i = getMSUs(currentList, referenceItem);
-            } else {
-                msus_i = suda2(upperLimit, // Pruning strategy 2
-                               getItems(currentList, referenceItem).getItemList(),
-                               referenceItem.getRows().size());
-            }
+            int upperLimit = Math.min(maxK - 1, currentList.size() - index);
+            SUDA2ItemList nextList = getItems(currentList, referenceItem).getItemList();
+            Set<SUDA2ItemSet> msus_i = suda2(upperLimit, // Pruning strategy 2
+                                             nextList,
+                                             referenceItem.getRows().size());
 
             // For each candidate
             outer: for (SUDA2ItemSet candidate : msus_i) {
