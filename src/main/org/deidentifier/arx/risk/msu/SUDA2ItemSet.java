@@ -146,4 +146,34 @@ public class SUDA2ItemSet {
             this.rows.retainAll(setItem.getRows());
         }
     }
+
+    /**
+     * Returns the reference item
+     * @param ranks
+     * @return
+     */
+    public SUDA2Item getReferenceItem(SUDA2ItemRanks ranks) {
+        if (this.reference == null) {
+            SUDA2Item reference = null;
+            int support = Integer.MAX_VALUE;
+            for (SUDA2Item item : this.items) {
+                int rank = ranks.getRank(item.getId());
+                if (rank < support) {
+                    support = rank;
+                    reference = item;
+                }
+            }
+            this.reference = reference;
+        }
+        return this.reference;
+    }
+
+    /**
+     * Returns whether this set is a proper super- or a proper sub-set of the given set
+     * @param other
+     * @return
+     */
+    public boolean intersectsWith(SUDA2ItemSet other) {
+        return !this.equals(other) && (this.items.containsAll(other.items) || other.items.containsAll(this.items));
+    }
 }

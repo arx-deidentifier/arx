@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,9 +30,13 @@ import org.apache.mahout.math.Arrays;
 public class SUDA2 {
 
     /** Debug flag */
-    private static final boolean      DEBUG       = false;
+    private static final boolean      DEBUG            = false;
     /** Debug data */
-    private int                       DEBUG_CALLS = 0;
+    private int                       DEBUG_CALLS      = 0;
+    /** Debug data */
+    private int                       DEBUG_nonUnique  = 0;
+    /** Debug data */
+    private int                       DEBUG_nonMinimal = 0;
 
     /** The data */
     private final int[][]             data;
@@ -293,23 +298,74 @@ public class SUDA2 {
      * @return
      */
 
-    private boolean isMSU(SUDA2ItemSet candidate,
+    private boolean isMSU(SUDA2ItemList currentList,
+                          SUDA2ItemSet candidate,
                           SUDA2Item referenceItem,
                           int referenceRank) {
+        
+        SUDA2ItemRanks ranks = new SUDA2ItemRanks(currentList);
+        referenceRank = ranks.getRank(referenceItem.getId());
 
         // All of the k-1 items in the candidate set must have rank > reference rank
-        for (SUDA2Item candidateItem : candidate.getItems()) {
-            if (ranks.getRank(candidateItem.getId()) <= referenceRank) {
-                return false;
-            }
-        }
+//        for (SUDA2Item candidateItem : candidate.getItems()) {
+//            if (ranks.getRank(candidateItem.getId()) <= referenceRank) {
+//                return false;
+//            }
+//        }
         
         // Search for the special row
-        if (candidate.getItems().size() == 2) {
+//        if (candidate.getItems().size() <= 2) {
+//            return true;
+//        } else {
+            return isSpecialRowAvailable(currentList, referenceItem, candidate);
+//        }
+    }
+
+    /**
+     * Searches for the special row
+     * @param rows
+     * @param referenceItem
+     * @param candidate
+     * @return
+     */
+    private boolean isSpecialRowAvailable(SUDA2ItemList currentList, SUDA2Item referenceItem, SUDA2ItemSet candidate) {
+        
+        // TODO: The paper recommends the first branch for all searches
+        Set<Integer> rows = null;
+//        if (currentList.getReferenceItem() == null) {
+                
+            // Obtain reference item from the candidate set
+            SUDA2Item candidateReferenceItem = candidate.getReferenceItem();
+            
+            // Obtain according item in the current list
+            SUDA2Item candidateReferenceItemInCurrentList = currentList.getItem(candidateReferenceItem.getId());
+            
+            // If the item is not contained in the current list it must have been
+            // a singleton MSU. This implies that the special row cannot exist
+            if (candidateReferenceItemInCurrentList == null) {
+                return false;
+            }
+            
+            // Else obtain the relevant set of rows
+            rows = candidateReferenceItemInCurrentList.getRows();
+//        } else {
+//            rows = currentList.getReferenceItem().getRows();
+//        }
+            
+        // And search them for the special row
+        outer: for (int index : rows) {
+            int[] row = data[index];
+            if (referenceItem.isContained(row)) {
+                continue;
+            }
+            for (SUDA2Item item : candidate.getItems()) {
+                if (!item.isContained(row)) {
+                    continue outer;
+                }
+            }
             return true;
-        } else {
-            return isSpecialRowAvailable(referenceItem, candidate);
         }
+        return false;
     }
 
     /**
@@ -322,7 +378,7 @@ public class SUDA2 {
     private boolean isSpecialRowAvailable(SUDA2Item referenceItem, SUDA2ItemSet candidate) {
 
         // Obtain reference item from the candidate set
-        SUDA2Item candidateReferenceItem = candidate.getReferenceItem();
+        SUDA2Item candidateReferenceItem = candidate.getReferenceItem(ranks);
 
         // Obtain according item in the overall item list
         SUDA2Item candidateReferenceItemInCurrentList = set.getItem(candidateReferenceItem.getId());
@@ -418,7 +474,7 @@ public class SUDA2 {
             outer: for (SUDA2ItemSet candidate : msus_i) {
                 
                 // Check if candidate is an MSU
-                if (!isMSU(candidate, referenceItem, referenceRank)) {
+                if (!isMSU(currentList, candidate, referenceItem, referenceRank)) {
                     continue outer;
                 }
            
@@ -429,10 +485,23 @@ public class SUDA2 {
                 DEBUG_println("Combined: " + merged, depth);
 
                 // TODO: Just a sanity check
-                if (merged.getSupport() != 1) {
-                    throw new IllegalStateException("Invalid support count");
+                if (depth == 1) {
+                    for (SUDA2ItemSet existing : msus) {
+                        if (existing.intersectsWith(merged)) {
+                            throw new IllegalStateException("Non-minimal result");
+                        }
+                    }
+                    Set<Integer> rows = new HashSet<Integer>();
+                    Iterator<SUDA2Item> iter = merged.getItems().iterator();
+                    rows.addAll(this.set.getItem(iter.next().getId()).getRows());
+                    while (iter.hasNext()) {
+                        rows.retainAll(this.set.getItem(iter.next().getId()).getRows());
+                    }
+                    if (rows.size() != 1) {
+                        throw new IllegalStateException("Non-unique result");
+                    }
                 }
-                
+
                 // Add MSU
                 msus.add(merged);
             }
