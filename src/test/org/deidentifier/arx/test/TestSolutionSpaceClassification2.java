@@ -36,13 +36,19 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
+ * Tests the classification of the solution space
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
 public class TestSolutionSpaceClassification2 extends AbstractAnonymizationTest {
-    
+   
+    /**
+     * Returns test cases
+     * @return
+     * @throws IOException
+     */
     @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() throws IOException {
         return Arrays.asList(new Object[][] {
@@ -55,7 +61,7 @@ public class TestSolutionSpaceClassification2 extends AbstractAnonymizationTest 
     }
     
     /**
-     * 
+     * Creates a new instance
      *
      * @param testCase
      */

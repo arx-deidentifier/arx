@@ -29,7 +29,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for data transformations.
+ * Test for ordered-distance t-closeness.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -60,7 +60,8 @@ public class TestAnonymizationOrderedDistanceTCloseness extends AbstractAnonymiz
     }
     
     /**
-     * Test
+     * Creates a new instance.
+     * 
      * @param testCase
      */
     public TestAnonymizationOrderedDistanceTCloseness(final ARXAnonymizationTestCase testCase) {

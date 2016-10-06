@@ -35,7 +35,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for data transformations.
+ * Test for t-closeness.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -44,7 +44,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestAnonymizationTCloseness extends AbstractAnonymizationTest {
     
     /**
-     * 
+     * Returns the test cases.
      *
      * @return
      */
@@ -92,7 +92,7 @@ public class TestAnonymizationTCloseness extends AbstractAnonymizationTest {
     }
     
     /**
-     * 
+     * Creates a new instance.
      *
      * @param testCase
      */

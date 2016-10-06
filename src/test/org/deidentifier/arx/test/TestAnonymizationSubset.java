@@ -38,7 +38,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for data transformations.
+ * Test for anonymization of data subsets.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -47,7 +47,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestAnonymizationSubset extends AbstractAnonymizationTest {
     
     /**
-     * 
+     * Returns the test cases.
      *
      * @return
      * @throws IOException
@@ -64,7 +64,7 @@ public class TestAnonymizationSubset extends AbstractAnonymizationTest {
     }
     
     /**
-     * 
+     * Creates a new instance.
      *
      * @param testCase
      */

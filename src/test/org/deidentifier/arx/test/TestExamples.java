@@ -67,6 +67,9 @@ import org.junit.Test;
 
 /**
  * Perform unit test based on the examples
+ * 
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class TestExamples {
     

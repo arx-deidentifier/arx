@@ -30,7 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * A test case for illegal arguments.
+ * Test cases for illegal arguments.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -44,7 +44,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -69,7 +69,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -92,7 +92,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -113,7 +113,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -136,7 +136,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      */
     @Test
     public void testHistorySize() {
@@ -151,7 +151,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -174,7 +174,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -196,7 +196,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -217,7 +217,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -238,7 +238,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -259,7 +259,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -280,7 +280,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -301,7 +301,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      */
     @Test
     public void testMetric() {
@@ -316,7 +316,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -339,7 +339,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IOException
      */
@@ -360,7 +360,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      */
     @Test
     public void testSnapshotSizeNegative() {
@@ -375,7 +375,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      */
     @Test
     public void testSnapshotSizeTooLarge() {
@@ -390,7 +390,7 @@ public class TestIllegalArguments extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      */
     @Test
     public void testSnapshotSizeZero() {

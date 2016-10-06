@@ -45,8 +45,8 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestUtilityMetricsLoss extends AbstractAnonymizationTest {
     
     /**
+     * Returns the test cases
      * 
-     *
      * @return
      * @throws IOException
      */

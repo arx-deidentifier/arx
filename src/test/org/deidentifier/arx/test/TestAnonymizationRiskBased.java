@@ -34,7 +34,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for data transformations.
+ * Test for risk-based anonymization
  *
  * @author Fabian Prasser
  */
@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestAnonymizationRiskBased extends AbstractAnonymizationTest {
     
     /**
-     * 
+     * Returns the test cases.
      *
      * @return
      */

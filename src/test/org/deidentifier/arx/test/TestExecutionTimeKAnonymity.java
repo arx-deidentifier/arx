@@ -28,7 +28,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for data transformations.
+ * Performs benchmarks.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -37,7 +37,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestExecutionTimeKAnonymity extends AbstractTestExecutionTime {
 
     /**
-     * 
+     * Returns the test cases.
      *
      * @return
      */
@@ -68,7 +68,7 @@ public class TestExecutionTimeKAnonymity extends AbstractTestExecutionTime {
     }
 
     /**
-     * 
+     * Creates a new instance.
      *
      * @param testCase
      */

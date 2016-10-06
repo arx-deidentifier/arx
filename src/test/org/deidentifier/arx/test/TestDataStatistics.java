@@ -39,14 +39,26 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Test;
 
 /**
+ * Test class for data statistics
  * 
+ * @author Fabian Prasser
  */
 public class TestDataStatistics extends AbstractTest {
     
+    /**
+     * Helper class
+     * 
+     * @author Fabian Prasser
+     */
     class DoubleArrayWrapper {
         
+        /** Double array*/
         double[] values;
         
+        /**
+         * Creates a new instance
+         * @param values
+         */
         public DoubleArrayWrapper(double[] values) {
             this.values = values;
         }
@@ -88,7 +100,7 @@ public class TestDataStatistics extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -150,7 +162,7 @@ public class TestDataStatistics extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -207,7 +219,7 @@ public class TestDataStatistics extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -246,7 +258,7 @@ public class TestDataStatistics extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IllegalArgumentException
      * @throws IOException

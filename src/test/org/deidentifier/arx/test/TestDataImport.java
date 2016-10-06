@@ -30,7 +30,7 @@ import org.junit.Test;
 import cern.colt.Arrays;
 
 /**
- * Tests for importing more complex csv files
+ * Tests for importing complex csv files
  * 
  * @author Fabian Prasser
  */
