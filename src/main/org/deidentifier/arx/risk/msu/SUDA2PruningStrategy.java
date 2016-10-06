@@ -63,8 +63,8 @@ public class SUDA2PruningStrategy {
      * @return
      */
     public boolean canPrune(int depth) {
-//        return false;
-        return depth > upperBound;
+        return false;
+//        return depth > upperBound;
     }
 
     /**

@@ -74,6 +74,8 @@ public class RiskModelMSU {
         // Do something
         SUDA2 suda2 = new SUDA2(matrix.getMatrix());
         System.out.println(suda2.suda2().size());
+//        ExhaustiveSearch search = new ExhaustiveSearch(matrix.getMatrix());
+//        search.exhaustive();
     }
 
     /**

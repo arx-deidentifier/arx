@@ -121,6 +121,7 @@ public class SUDA2 {
             System.out.print(DEBUG_pad(String.valueOf(map.get(size)), 5) + "|");
         }
         System.out.println("");
+        System.out.println("MSUs: " +set.size());
     }
     
     private String DEBUG_pad(String s, int width) {
