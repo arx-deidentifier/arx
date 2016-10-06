@@ -46,8 +46,8 @@ public abstract class AbstractTestExecutionTime extends AbstractAnonymizationTes
     }
 
     /**
+     * Performs the test
      * 
-     *
      * @throws IOException
      */
     @Test
