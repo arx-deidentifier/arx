@@ -16,8 +16,6 @@
  */
 package org.deidentifier.arx.risk.msu;
 
-import java.util.HashSet;
-import java.util.Set;
 
 public class Test {
 
@@ -43,39 +41,10 @@ public class Test {
         System.out.println("26 is correct");
 
         SUDA2 suda2 = new SUDA2(data);
-        Set<SUDA2ItemSet> result = suda2.suda2(0);
-        System.out.println("Found: " + result.size() + " MSUs");
-        for (SUDA2ItemSet set : result) {
-            System.out.println(set);
-        }
+        System.out.println(suda2.suda2(0));
 
         ExhaustiveSearch exhaustive = new ExhaustiveSearch(data);
-        Set<Set<SUDA2Item>> result2 = exhaustive.exhaustive();
-        System.out.println("Found: " + result2.size() + " MSUs");
-        for (Set<SUDA2Item> set : result2) {
-            System.out.println(set);
-        }
-        
-        analyze(result, result2);
-
-    }
-
-    private static void analyze(Set<SUDA2ItemSet> result, Set<Set<SUDA2Item>> result2) {
-        System.out.println("Found by SUDA2: " + result.size());
-        System.out.println("Found by exhaustive: " + result2.size());
-        
-        Set<Set<SUDA2Item>> set = new HashSet<>();
-        for (SUDA2ItemSet itemset : result) {
-            set.add(itemset.getItems());
-        }
-        Set<Set<SUDA2Item>> set2 = new HashSet<>();
-        set2.addAll(set);
-        set2.removeAll(result2);
-        result2.removeAll(set);
-        
-        
-        System.out.println("In SUDA2 but not in exhaustive: " + set2);
-        System.out.println("In exhaustive nut not in SUDA2: " + result2);
+        System.out.println(exhaustive.exhaustive());
     }
        
 }
