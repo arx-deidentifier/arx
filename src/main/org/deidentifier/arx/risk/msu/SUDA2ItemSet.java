@@ -29,8 +29,6 @@ public class SUDA2ItemSet {
 
     /** Items */
     private Set<SUDA2Item>  items = new HashSet<>();
-    /** Reference item */
-    private SUDA2Item       reference = null;
 
     /**
      * Creates an item set containing a single item
@@ -64,24 +62,6 @@ public class SUDA2ItemSet {
     
     public Set<SUDA2Item> getItems() {
         return items;
-    }
-
-    /**
-     * Returns the reference item
-     */
-    public SUDA2Item getReferenceItem() {
-        if (this.reference == null) {
-            SUDA2Item reference = null;
-            int support = Integer.MAX_VALUE;
-            for (SUDA2Item item : this.items) {
-                if (item.getSupport() < support) {
-                    support = item.getSupport();
-                    reference = item;
-                }
-            }
-            this.reference = reference;
-        }
-        return this.reference;
     }
 
     @Override
