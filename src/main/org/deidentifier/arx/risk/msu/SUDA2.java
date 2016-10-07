@@ -189,16 +189,20 @@ public class SUDA2 {
     }
     
     /**
-     * Returns all items for the given reference item from the given list.
+     * Returns all items for the given reference item from the given list, starting at fromIndex (included)
      * This means that all 1-MSUs can be removed beforehand.
+     * @param list
      * @param reference
+     * @param fromIndex 
      * @return
      */
-    private SUDA2IndexedItemSet getItems(SUDA2ItemList list, SUDA2Item reference) {
+    private SUDA2IndexedItemSet getItems(SUDA2ItemList list, SUDA2Item reference, int fromIndex) {
 
         // Collect items within the given range and their support rows
         SUDA2IndexedItemSet items = new SUDA2IndexedItemSet(reference);
-        for (SUDA2Item _item : list.getList()) {
+        List<SUDA2Item> _list = list.getList();
+        for (int index = fromIndex; index < _list.size(); index++) {
+            SUDA2Item _item = _list.get(index);
             IntOpenHashSet rows = new IntOpenHashSet(_item.getRows());
             rows.retainAll(reference.getRows());
             if (!rows.isEmpty()) {
@@ -373,7 +377,7 @@ public class SUDA2 {
 
             // Recursive call
             int upperLimit = Math.min(maxK - 1, currentList.size() - index); // TODO: Pruning strategy 2 (+1)?
-            SUDA2ItemList nextList = getItems(currentList, referenceItem).getItemList();
+            SUDA2ItemList nextList = getItems(currentList, referenceItem, index).getItemList();
             Set<SUDA2ItemSet> msus_i = suda2(upperLimit,
                                              nextList,
                                              referenceItem.getRows().size());
