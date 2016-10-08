@@ -47,19 +47,9 @@ public class SUDA2ItemSet {
         this.items.add(item);
         this.items.addAll(set.items);
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        throw new UnsupportedOperationException();
-    }
     
     public List<SUDA2Item> getItems() {
         return items;
-    }
-
-    @Override
-    public int hashCode() {
-        throw new UnsupportedOperationException();
     }
 
     /**

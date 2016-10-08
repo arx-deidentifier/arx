@@ -79,102 +79,6 @@ public class SUDA2Item {
         this.rows.add(row);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Returns the column
-     * @return
-     */
-    public int getColumn() {
-        return column;
-    }
-
-    /**
-     * Returns the id
-     * @return
-     */
-    public long getId() {
-        return id;
-    }
-
-    /**
-     * Returns the rows in which this item is located
-     * @return
-     */
-    public IntOpenHashSet getRows() {
-        return this.rows;
-    }
-
-    /**
-     * Returns the support
-     * @return
-     */
-    public int getSupport() {
-        return this.rows.size();
-    }
-    
-    /**
-     * Returns an instance of this item projected to the given rows
-     * @param otherRows
-     * @return
-     */
-    public SUDA2Item getProjection(IntOpenHashSet otherRows) {
-
-        // Smaller set is set 1
-        int size1 = this.rows.size();
-        int size2 = otherRows.size();
-        IntOpenHashSet rows1 = size1 < size2 ? this.rows : otherRows;
-        IntOpenHashSet rows2 = size1 < size2 ? otherRows : this.rows;
-        
-        // Intersect support rows with those provided
-        IntOpenHashSet rows = new IntOpenHashSet();
-        final int [] keys = rows1.keys;
-        final boolean [] allocated = rows1.allocated;
-        for (int i = 0; i < allocated.length; i++) {
-            if (allocated[i]) {
-                int row = keys[i];
-                if (rows2.contains(row)) {
-                    rows.add(row);
-                }
-            }
-        }
-
-        // Return
-        return rows.isEmpty() ? null : new SUDA2Item(this.column, this.value, this.id, rows);
-    }
-
-    /**
-     * Returns the value
-     * @return
-     */
-    public int getValue() {
-        return value;
-    }
-
-    @Override
-    public int hashCode() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Returns whether the item is contained in a given row
-     * @param row
-     * @return
-     */
-    public boolean isContained(int[] row) {
-        return row[column] == value;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("(").append(column).append(",").append(value).append(")");
-        return builder.toString();
-    }
-
     /**
      * Returns this item if it becomes a 1-MSU in the given set of rows,
      * null otherwise
@@ -209,5 +113,91 @@ public class SUDA2Item {
         
         // Check whether the item is a 1-MSU
         return supportRowFound ? this : null;
+    }
+
+    /**
+     * Returns the column
+     * @return
+     */
+    public int getColumn() {
+        return column;
+    }
+
+    /**
+     * Returns the id
+     * @return
+     */
+    public long getId() {
+        return id;
+    }
+
+    /**
+     * Returns an instance of this item projected to the given rows
+     * @param otherRows
+     * @return
+     */
+    public SUDA2Item getProjection(IntOpenHashSet otherRows) {
+
+        // Smaller set is set 1
+        int size1 = this.rows.size();
+        int size2 = otherRows.size();
+        IntOpenHashSet rows1 = size1 < size2 ? this.rows : otherRows;
+        IntOpenHashSet rows2 = size1 < size2 ? otherRows : this.rows;
+        
+        // Intersect support rows with those provided
+        IntOpenHashSet rows = new IntOpenHashSet();
+        final int [] keys = rows1.keys;
+        final boolean [] allocated = rows1.allocated;
+        for (int i = 0; i < allocated.length; i++) {
+            if (allocated[i]) {
+                int row = keys[i];
+                if (rows2.contains(row)) {
+                    rows.add(row);
+                }
+            }
+        }
+
+        // Return
+        return rows.isEmpty() ? null : new SUDA2Item(this.column, this.value, this.id, rows);
+    }
+    
+    /**
+     * Returns the rows in which this item is located
+     * @return
+     */
+    public IntOpenHashSet getRows() {
+        return this.rows;
+    }
+
+    /**
+     * Returns the support
+     * @return
+     */
+    public int getSupport() {
+        return this.rows.size();
+    }
+
+    /**
+     * Returns the value
+     * @return
+     */
+    public int getValue() {
+        return value;
+    }
+
+    /**
+     * Returns whether the item is contained in a given row
+     * @param row
+     * @return
+     */
+    public boolean isContained(int[] row) {
+        return row[column] == value;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("(").append(column).append(",").append(value).append(")");
+        return builder.toString();
     }
 }
