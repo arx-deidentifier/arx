@@ -188,6 +188,54 @@ public class SUDA2 {
 //    }
 
     /**
+     * Returns all 1-MSUS for the given reference item from the given list, starting at fromIndex (included)
+     * 
+     * @param list
+     * @param reference
+     * @param fromIndex 
+     * @return
+     */
+    private Set<SUDA2ItemSet> getMSUs(SUDA2ItemList list, SUDA2Item reference, int fromIndex) {
+
+        // For all items within the given range
+        Set<SUDA2ItemSet> result = new HashSet<>();
+        List<SUDA2Item> _list = list.getList();
+        outer: for (int index = fromIndex; index < _list.size(); index++) {
+            
+            // Extract item of interest
+            SUDA2Item _item = _list.get(index);
+            
+            // Smaller set is set 1
+            int _size1 = _item.getRows().size();
+            int _size2 = reference.getRows().size();
+            IntOpenHashSet _rows1 = _size1 < _size2 ? _item.getRows() : reference.getRows();
+            IntOpenHashSet _rows2 = _size1 < _size2 ? reference.getRows() : _item.getRows();
+            
+            // Check if they intersect with exactly one support row
+            int supportRow = -1;
+            final int [] keys = _rows1.keys;
+            final boolean [] allocated = _rows1.allocated;
+            for (int i = 0; i < allocated.length; i++) {
+                if (allocated[i]) {
+                    int row = keys[i];
+                    if (_rows2.contains(row)) {
+                        if (supportRow != -1) {
+                            continue outer;
+                        }
+                        supportRow = row;
+                    }
+                }
+            }
+            
+            // Check whether the item is a 1-MSU
+            if (supportRow != -1) {
+                result.add(new SUDA2ItemSet(new SUDA2Item(_item.getColumn(), _item.getValue(), null)));
+            }
+        }
+        return result;
+    }
+
+    /**
      * Implements both checks for MSUs described in the paper
      * @param currentList
      * @param currentRanks 
@@ -348,10 +396,16 @@ public class SUDA2 {
             int upperLimit = maxK - 1; // Pruning strategy 3
             upperLimit = Math.min(upperLimit, currentList.size() - index); // Pruning strategy 2 // TODO: (+1)?
             upperLimit = Math.min(upperLimit, referenceItem.getSupport() - 1); // Pruning strategy 1 // TODO: No effect.
-            SUDA2ItemList nextList = getItems(currentList, referenceItem, index).getItemList();
-            Set<SUDA2ItemSet> msus_i = suda2(upperLimit,
-                                             nextList,
-                                             referenceItem.getRows().size());
+            
+            // We only perform recursion for maxK > 1
+            Set<SUDA2ItemSet> msus_i;
+            if (upperLimit > 1) {
+                msus_i = suda2(upperLimit,
+                               getItems(currentList, referenceItem, index).getItemList(),
+                               referenceItem.getRows().size());
+            } else {
+                msus_i = getMSUs(currentList, referenceItem, index);
+            }
 
             // For each candidate
             outer: for (SUDA2ItemSet candidate : msus_i) {
