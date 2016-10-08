@@ -16,9 +16,7 @@
  */
 package org.deidentifier.arx.risk.msu;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * Each item set is a concrete key, i.e. a set of values for a set of attributes.
@@ -28,55 +26,71 @@ import java.util.List;
 public class SUDA2ItemSet {
 
     /** Items */
-    private List<SUDA2Item>  items = new ArrayList<>();
-
-    /**
-     * Creates an item set containing a single item
-     * @param item
-     */
-    public SUDA2ItemSet(SUDA2Item item) {
-        this.items.add(item);
-    }
+    private SUDA2Item[] items;
+    /** Size */
+    private int         size = 1;
 
     /**
      * Creates a merged item set
      * @param item
      * @param set
      */
-    public SUDA2ItemSet(SUDA2Item item, SUDA2ItemSet set) {
-        this.items.add(item);
-        this.items.addAll(set.items);
+    public SUDA2ItemSet(SUDA2Item item) {
+        this.items = new SUDA2Item[10];
+        this.items[0] = item;
     }
     
-    public List<SUDA2Item> getItems() {
-        return items;
+    /**
+     * Adds an item
+     * @param item
+     */
+    public void add(SUDA2Item item) {
+        this.increment();
+        this.items[this.size - 1] = item;
+    }
+    
+    /**
+     * Returns the item at the given index, in reverse order. For some reason this
+     * makes the implementation much more efficient.
+     * 
+     * @param index
+     * @return
+     */
+    public SUDA2Item get(int index) {
+        return this.items[size - 1 - index];
     }
 
     /**
-     * Returns whether this set is a proper super- or a proper sub-set of the given set
-     * @param other
-     * @return
+     * Increases the capacity of this set.
      */
-    public boolean intersectsWith(SUDA2ItemSet other) {
-        return !this.equals(other) && (this.items.containsAll(other.items) || other.items.containsAll(this.items));
+    public void increment() {
+        this.size++;
+        int capacity = this.items.length;
+        if (this.size > capacity) {
+            int newCapacity = (capacity * 3) / 2 + 1;
+            if (newCapacity < size) {
+                newCapacity = size;
+            }
+            this.items = Arrays.copyOf(this.items, newCapacity);
+        }
     }
-
+    
     /**
      * Returns the size of the set
      * @return
      */
     public int size() {
-        return this.items.size();
+        return this.size;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("ItemSet[");
-        Iterator<SUDA2Item> iter = this.items.iterator();
-        while (iter.hasNext()) {
-            builder.append(iter.next().toString());
-            if (iter.hasNext()) {
+        for (int i = 0; i < size; i++) {
+            SUDA2Item item = this.items[i];
+            builder.append(item);
+            if (i < size - 1) {
                 builder.append(",");
             }
         }

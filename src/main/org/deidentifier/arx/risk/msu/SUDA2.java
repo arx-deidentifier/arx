@@ -208,7 +208,7 @@ public class SUDA2 {
         // ranks when performing the recursive call, anyways.
         
         // We don't need to search for the special row for candidate item sets of size 1
-        if (candidate.getItems().size() <= 1) {
+        if (candidate.size() <= 1) {
             return true;
         }
          
@@ -222,7 +222,9 @@ public class SUDA2 {
         // Find item with smallest support 
         IntOpenHashSet rows = null;
         SUDA2Item pivot = null;
-        for (SUDA2Item item : candidate.getItems()) {
+        int candidateSize = candidate.size();
+        for (int i = 0; i < candidateSize; i++) {
+            SUDA2Item item = candidate.get(i);
             IntOpenHashSet _rows = currentList.getItem(item.getId()).getRows();
             if (rows == null || _rows.size() < rows.size()) {
                 rows = _rows;
@@ -233,7 +235,8 @@ public class SUDA2 {
         // Prepare list of items to check
         SUDA2Item[] items = new SUDA2Item[candidate.size()-1];
         int index = 0;
-        for(SUDA2Item item : candidate.getItems()) {
+        for (int i = 0; i < candidateSize; i++) {
+            SUDA2Item item = candidate.get(i);
             if (item != pivot) {
                 items[index++] = item;
             }
@@ -353,7 +356,8 @@ public class SUDA2 {
                 if (numRecords == data.length) {
                     result.registerMSU(referenceItem, candidate);
                 } else {
-                    msus.add(new SUDA2ItemSet(referenceItem, candidate));
+                    candidate.add(referenceItem);
+                    msus.add(candidate);
                 }
                 
                 // TODO: Just a sanity check

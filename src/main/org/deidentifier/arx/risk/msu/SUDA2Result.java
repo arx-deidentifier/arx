@@ -96,9 +96,10 @@ public class SUDA2Result {
      */
     public void registerMSU(SUDA2Item item, SUDA2ItemSet set) {
         this.numMSUs++;
-        this.sizeDistribution[set.getItems().size()]++;
-        for(SUDA2Item _item : set.getItems()) {
-            this.columnContributions[_item.getColumn()]++;
+        this.sizeDistribution[set.size()]++;
+        int size = set.size();
+        for (int i = 0; i < size; i++) {
+            this.columnContributions[set.get(i).getColumn()]++;
         }
         this.columnContributions[item.getColumn()]++;
     }
@@ -188,9 +189,10 @@ public class SUDA2Result {
      */
     void registerMSU(SUDA2ItemSet set) {
         this.numMSUs++;
-        this.sizeDistribution[set.getItems().size()-1]++;
-        for(SUDA2Item item : set.getItems()) {
-            this.columnContributions[item.getColumn()]++;
+        this.sizeDistribution[set.size()-1]++;
+        int size = set.size();
+        for (int i = 0; i < size; i++) {
+            this.columnContributions[set.get(i).getColumn()]++;
         }
     }
 }
