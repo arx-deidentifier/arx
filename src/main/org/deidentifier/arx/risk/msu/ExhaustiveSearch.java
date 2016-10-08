@@ -79,7 +79,7 @@ public class ExhaustiveSearch {
             Set<SUDA2Item> items = new HashSet<SUDA2Item>();
             for (int column = 0; column < columns; column++) {
                 int value = row[column];
-                items.add(new SUDA2Item(column, value));
+                items.add(new SUDA2Item(column, value, SUDA2Item.getId(column, value)));
             }
 
             // Extract power set

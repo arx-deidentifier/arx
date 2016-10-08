@@ -50,12 +50,13 @@ public class SUDA2Item {
      * Creates a new item
      * @param column
      * @param value
+     * @param id
      */
-    public SUDA2Item(int column, int value) {
+    public SUDA2Item(int column, int value, long id) {
         this.column = column;
         this.value = value;
+        this.id = id;
         this.hashCode = (31 + column) * 31 + value;
-        this.id = getId(column, value);
         this.rows = new IntOpenHashSet();
     }
     

@@ -107,7 +107,7 @@ public class SUDA2IndexedItemSet {
         if (items.containsKey(id)) {
             item = items.lget(); 
         } else {
-            item = new SUDA2Item(column, value);
+            item = new SUDA2Item(column, value, id);
             items.put(id, item);
         }
         return item;
