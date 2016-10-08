@@ -72,14 +72,6 @@ public class SUDA2ItemList {
     }
 
     /**
-     * Returns ranks for this list
-     * @return
-     */
-    public SUDA2ItemRanks getRanks() {
-        return new SUDA2ItemRanks(this);
-    }
-
-    /**
      * Returns the size of the list
      * @return
      */

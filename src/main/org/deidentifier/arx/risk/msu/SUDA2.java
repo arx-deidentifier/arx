@@ -194,43 +194,25 @@ public class SUDA2 {
     /**
      * Implements both checks for MSUs described in the paper
      * @param currentList
-     * @param currentRanks 
      * @param candidate
      * @param referenceItem
-     * @param referenceRank
      * @return
      */
 
-    private boolean isMSU(SUDA2ItemList currentList,
-                          SUDA2ItemRanks currentRanks, 
+    private boolean isMSU(final SUDA2ItemList currentList,
                           SUDA2ItemSet candidate,
-                          SUDA2Item referenceItem,
-                          int referenceRank) {
+                          SUDA2Item referenceItem) {
 
         // All of the k-1 items in the candidate set must have rank > reference rank
-        for (SUDA2Item candidateItem : candidate.getItems()) {
-            if (currentRanks.getRank(candidateItem.getId()) <= referenceRank) {
-                return false;
-            }
-        }
+        // We don't need to check this, because we have only used items with higher
+        // ranks when performing the recursive call, anyways.
         
-        // Search for the special row
+        // We don't need to search for the special row for candidate item sets of size 1
         if (candidate.getItems().size() <= 1) {
             return true;
-        } else {
-            return isSpecialRowAvailable(currentList, referenceItem, candidate);
         }
-    }
-
-    /**
-     * Searches for the special row
-     * @param rows
-     * @param referenceItem
-     * @param candidate
-     * @return
-     */
-    private boolean isSpecialRowAvailable(final SUDA2ItemList currentList, SUDA2Item referenceItem, SUDA2ItemSet candidate) {
-        
+         
+        // Search for the special row
         // This is one of the hottest functions in SUDA2
         // (1) It seems to be more likely that the special row is found than that
         //     the special row is not found -> We optimize for this path
@@ -331,7 +313,6 @@ public class SUDA2 {
 
         // For each item i
         int index = 0;
-        SUDA2ItemRanks currentRanks = currentList.getRanks();
         for (SUDA2Item referenceItem : currentList.getList()) {
             
             // Track
@@ -344,9 +325,6 @@ public class SUDA2 {
 //                    return null;
 //                }
             }
-
-            // Obtain rank
-            int referenceRank = currentRanks.getRank(referenceItem.getId());
 
             // Recursive call
             int upperLimit = maxK - 1; // Pruning strategy 3
@@ -367,7 +345,7 @@ public class SUDA2 {
             outer: for (SUDA2ItemSet candidate : msus_i) {
                 
                 // Check if candidate is an MSU
-                if (!isMSU(currentList, currentRanks, candidate, referenceItem, referenceRank)) {
+                if (!isMSU(currentList, candidate, referenceItem)) {
                     continue outer;
                 }
 
