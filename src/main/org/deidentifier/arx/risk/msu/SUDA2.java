@@ -19,9 +19,7 @@ package org.deidentifier.arx.risk.msu;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.carrotsearch.hppc.IntOpenHashSet;
 
@@ -138,10 +136,10 @@ public class SUDA2 {
      * @param numRecords
      * @return
      */
-    private Pair<Set<SUDA2ItemSet>, SUDA2ItemList> getMSUs(SUDA2ItemList list, int numRecords) {
+    private Pair<List<SUDA2ItemSet>, SUDA2ItemList> getMSUs(SUDA2ItemList list, int numRecords) {
         
         // Prepare
-        Set<SUDA2ItemSet> msus = new HashSet<>();
+        List<SUDA2ItemSet> msus = new ArrayList<>();
         
         // Check the items
         List<SUDA2Item> result = new ArrayList<SUDA2Item>();
@@ -158,7 +156,7 @@ public class SUDA2 {
         }
 
         // Return
-        return new Pair<Set<SUDA2ItemSet>, SUDA2ItemList>(msus, new SUDA2ItemList(result));
+        return new Pair<List<SUDA2ItemSet>, SUDA2ItemList>(msus, new SUDA2ItemList(result));
     }
 //
 //    /**
@@ -178,10 +176,10 @@ public class SUDA2 {
      * @param fromIndex 
      * @return
      */
-    private Set<SUDA2ItemSet> getMSUs(SUDA2ItemList itemList, SUDA2Item reference, int fromIndex) {
+    private List<SUDA2ItemSet> getMSUs(SUDA2ItemList itemList, SUDA2Item reference, int fromIndex) {
 
         // For all items within the given range
-        Set<SUDA2ItemSet> result = new HashSet<>();
+        List<SUDA2ItemSet> result = new ArrayList<>();
         List<SUDA2Item> list = itemList.getList();
         IntOpenHashSet referenceRows = reference.getRows();
         for (int index = fromIndex; index < list.size(); index++) {
@@ -295,15 +293,15 @@ public class SUDA2 {
      * @param numRecords
      * @return
      */
-    private Set<SUDA2ItemSet> suda2(int maxK,
+    private List<SUDA2ItemSet> suda2(int maxK,
                                     SUDA2ItemList currentList,
                                     int numRecords) {
 
         this.calls++;
 
         // Find MSUs and clear list
-        Pair<Set<SUDA2ItemSet>, SUDA2ItemList> msusAndList = getMSUs(currentList, numRecords);
-        Set<SUDA2ItemSet> msus = msusAndList.first;
+        Pair<List<SUDA2ItemSet>, SUDA2ItemList> msusAndList = getMSUs(currentList, numRecords);
+        List<SUDA2ItemSet> msus = msusAndList.first;
         currentList = msusAndList.second;
         
         // When processing the original table
@@ -356,7 +354,7 @@ public class SUDA2 {
             upperLimit = Math.min(upperLimit, referenceItem.getSupport() - 1); // Pruning strategy 1 // TODO: No effect.
             
             // We only perform recursion for maxK > 1
-            Set<SUDA2ItemSet> msus_i;
+            List<SUDA2ItemSet> msus_i;
             if (upperLimit > 1) {
                 msus_i = suda2(upperLimit,
                                getItems(currentList, referenceItem, index).getItemList(),
