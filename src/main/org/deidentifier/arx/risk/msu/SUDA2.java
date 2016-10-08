@@ -240,13 +240,13 @@ public class SUDA2 {
         outer: for (int i = 0; i < allocated.length; i++) {
             if (allocated[i]) {
                 int[] row = data[keys[i]];
-                if (referenceItem.isContained(row)) {
-                    continue;
-                }
                 for (SUDA2Item item : candidate.getItems()) {
                     if (!item.isContained(row)) {
                         continue outer;
                     }
+                }
+                if (referenceItem.isContained(row)) {
+                    continue;
                 }
                 return true;
             }
