@@ -106,35 +106,35 @@ public class SUDA2 {
     /**
      * Returns all items for the given reference item from the given list, starting at fromIndex (included)
      * This means that all 1-MSUs can be removed beforehand.
-     * @param list
+     * @param itemList
      * @param reference
      * @param fromIndex 
      * @return
      */
-    private SUDA2IndexedItemSet getItems(SUDA2ItemList list, SUDA2Item reference, int fromIndex) {
+    private SUDA2IndexedItemSet getItems(SUDA2ItemList itemList, SUDA2Item reference, int fromIndex) {
 
         // For all items within the given range
         SUDA2IndexedItemSet items = new SUDA2IndexedItemSet(reference);
-        List<SUDA2Item> _list = list.getList();
-        for (int index = fromIndex; index < _list.size(); index++) {
+        List<SUDA2Item> list = itemList.getList();
+        for (int index = fromIndex; index < list.size(); index++) {
             
             // Extract item of interest
-            SUDA2Item _item = _list.get(index);
+            SUDA2Item item = list.get(index);
             
             // Smaller set is set 1
-            int _size1 = _item.getRows().size();
-            int _size2 = reference.getRows().size();
-            IntOpenHashSet _rows1 = _size1 < _size2 ? _item.getRows() : reference.getRows();
-            IntOpenHashSet _rows2 = _size1 < _size2 ? reference.getRows() : _item.getRows();
+            int size1 = item.getRows().size();
+            int size2 = reference.getRows().size();
+            IntOpenHashSet rows1 = size1 < size2 ? item.getRows() : reference.getRows();
+            IntOpenHashSet rows2 = size1 < size2 ? reference.getRows() : item.getRows();
             
             // Intersect support rows with those of the reference item
             IntOpenHashSet rows = new IntOpenHashSet();
-            final int [] keys = _rows1.keys;
-            final boolean [] allocated = _rows1.allocated;
+            final int [] keys = rows1.keys;
+            final boolean [] allocated = rows1.allocated;
             for (int i = 0; i < allocated.length; i++) {
                 if (allocated[i]) {
                     int row = keys[i];
-                    if (_rows2.contains(row)) {
+                    if (rows2.contains(row)) {
                         rows.add(row);
                     }
                 }
@@ -143,7 +143,7 @@ public class SUDA2 {
             // Check whether the set of support rows is not empty, which means that the 
             // item is contained in the sub-table
             if (!rows.isEmpty()) {
-                items.addItem(new SUDA2Item(_item.getColumn(), _item.getValue(), rows));
+                items.addItem(new SUDA2Item(item.getColumn(), item.getValue(), rows));
             }
         }
         return items;
@@ -190,46 +190,49 @@ public class SUDA2 {
     /**
      * Returns all 1-MSUS for the given reference item from the given list, starting at fromIndex (included)
      * 
-     * @param list
+     * @param itemList
      * @param reference
      * @param fromIndex 
      * @return
      */
-    private Set<SUDA2ItemSet> getMSUs(SUDA2ItemList list, SUDA2Item reference, int fromIndex) {
+    private Set<SUDA2ItemSet> getMSUs(SUDA2ItemList itemList, SUDA2Item reference, int fromIndex) {
 
         // For all items within the given range
         Set<SUDA2ItemSet> result = new HashSet<>();
-        List<SUDA2Item> _list = list.getList();
-        outer: for (int index = fromIndex; index < _list.size(); index++) {
+        List<SUDA2Item> list = itemList.getList();
+        outer: for (int index = fromIndex; index < list.size(); index++) {
             
             // Extract item of interest
-            SUDA2Item _item = _list.get(index);
+            SUDA2Item item = list.get(index);
             
-            // Smaller set is set 1
-            int _size1 = _item.getRows().size();
-            int _size2 = reference.getRows().size();
-            IntOpenHashSet _rows1 = _size1 < _size2 ? _item.getRows() : reference.getRows();
-            IntOpenHashSet _rows2 = _size1 < _size2 ? reference.getRows() : _item.getRows();
+            // Smaller set is rows1
+            int size1 = item.getRows().size();
+            int size2 = reference.getRows().size();
+            IntOpenHashSet rows1 = size1 < size2 ? item.getRows() : reference.getRows();
+            IntOpenHashSet rows2 = size1 < size2 ? reference.getRows() : item.getRows();
             
             // Check if they intersect with exactly one support row
-            int supportRow = -1;
-            final int [] keys = _rows1.keys;
-            final boolean [] allocated = _rows1.allocated;
+            boolean supportRowFound = false;
+            final int [] keys = rows1.keys;
+            final boolean [] allocated = rows1.allocated;
             for (int i = 0; i < allocated.length; i++) {
                 if (allocated[i]) {
                     int row = keys[i];
-                    if (_rows2.contains(row)) {
-                        if (supportRow != -1) {
+                    if (rows2.contains(row)) {
+                        
+                        // More than one support row
+                        if (supportRowFound) {
                             continue outer;
+                        } else {
+                            supportRowFound = true;
                         }
-                        supportRow = row;
                     }
                 }
             }
             
             // Check whether the item is a 1-MSU
-            if (supportRow != -1) {
-                result.add(new SUDA2ItemSet(new SUDA2Item(_item.getColumn(), _item.getValue(), null)));
+            if (supportRowFound) {
+                result.add(new SUDA2ItemSet(new SUDA2Item(item.getColumn(), item.getValue(), null)));
             }
         }
         return result;
