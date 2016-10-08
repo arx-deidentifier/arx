@@ -147,7 +147,7 @@ public class SUDA2Result {
             builder.append(toString(integerFormat.format(index + offset), VALUE_WIDTH)).append("|");
         }
         builder.append("\n").append(intent);
-        int width = builder.length();
+        int width = builder.length() - intent.length();
         for (int i = 0; i < width; i++) {
             builder.append("-");
         }
