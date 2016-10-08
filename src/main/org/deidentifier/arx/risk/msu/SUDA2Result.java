@@ -89,21 +89,6 @@ public class SUDA2Result {
         return this.sizeDistribution;
     }
     
-    /**
-     * Registers an MSU
-     * @param item
-     * @param set
-     */
-    public void registerMSU(SUDA2Item item, SUDA2ItemSet set) {
-        this.numMSUs++;
-        this.sizeDistribution[set.size()]++;
-        int size = set.size();
-        for (int i = 0; i < size; i++) {
-            this.columnContributions[set.get(i).getColumn()]++;
-        }
-        this.columnContributions[item.getColumn()]++;
-    }
-    
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -129,7 +114,7 @@ public class SUDA2Result {
         }
         return value;
     }
-
+    
     /**
      * Renders a distribution
      * @param intent
@@ -148,7 +133,7 @@ public class SUDA2Result {
             builder.append(toString(integerFormat.format(index + offset), VALUE_WIDTH)).append("|");
         }
         builder.append("\n").append(intent);
-        int width = builder.length() - intent.length();
+        int width = builder.length() - 2 * intent.length() - 1;
         for (int i = 0; i < width; i++) {
             builder.append("-");
         }
@@ -177,10 +162,25 @@ public class SUDA2Result {
      */
     void registerMSU(Set<SUDA2Item> set) {
         this.numMSUs++;
-        this.sizeDistribution[set.size()]++;
-        for(SUDA2Item item : set) {
+        this.sizeDistribution[set.size() - 1]++;
+        for (SUDA2Item item : set) {
             this.columnContributions[item.getColumn()]++;
         }
+    }
+
+    /**
+     * Registers an MSU
+     * @param item
+     * @param set
+     */
+    void registerMSU(SUDA2Item item, SUDA2ItemSet set) {
+        this.numMSUs++;
+        this.sizeDistribution[set.size()]++;
+        int size = set.size();
+        for (int i = 0; i < size; i++) {
+            this.columnContributions[set.get(i).getColumn()]++;
+        }
+        this.columnContributions[item.getColumn()]++;
     }
 
     /**

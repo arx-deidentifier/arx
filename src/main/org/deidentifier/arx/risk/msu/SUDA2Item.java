@@ -200,4 +200,23 @@ public class SUDA2Item {
         builder.append("(").append(column).append(",").append(value).append(")");
         return builder.toString();
     }
+
+    @Override
+    public int hashCode() {
+        // Just for debugging purposes
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + column;
+        result = prime * result + value;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // Just for debugging purposes
+        SUDA2Item other = (SUDA2Item) obj;
+        if (column != other.column) return false;
+        if (value != other.value) return false;
+        return true;
+    }
 }
