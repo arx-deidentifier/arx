@@ -41,8 +41,6 @@ public class SUDA2Item {
     private final long           id;
     /** Value */
     private final int            value;
-    /** Hash code */
-    private final int            hashCode;
     /** Support rows */
     private final IntOpenHashSet rows;
 
@@ -56,7 +54,6 @@ public class SUDA2Item {
         this.column = column;
         this.value = value;
         this.id = id;
-        this.hashCode = (31 + column) * 31 + value;
         this.rows = new IntOpenHashSet();
     }
     
@@ -65,14 +62,12 @@ public class SUDA2Item {
      * @param column
      * @param value
      * @param id
-     * @param hashCode
      * @param rows
      */
-    SUDA2Item(int column, int value, long id, int hashCode, IntOpenHashSet rows) {
+    SUDA2Item(int column, int value, long id, IntOpenHashSet rows) {
         this.column = column;
         this.value = value;
         this.id = id;
-        this.hashCode = hashCode;
         this.rows = rows;
     }
 
@@ -86,9 +81,7 @@ public class SUDA2Item {
 
     @Override
     public boolean equals(Object obj) {
-        SUDA2Item other = (SUDA2Item) obj;
-        if (column != other.column || value != other.value) return false;
-        return true;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -150,7 +143,7 @@ public class SUDA2Item {
         }
 
         // Return
-        return rows.isEmpty() ? null : new SUDA2Item(this.column, this.value, this.id, this.hashCode, rows);
+        return rows.isEmpty() ? null : new SUDA2Item(this.column, this.value, this.id, rows);
     }
 
     /**
@@ -163,7 +156,7 @@ public class SUDA2Item {
 
     @Override
     public int hashCode() {
-        return hashCode;
+        throw new UnsupportedOperationException();
     }
 
     /**

@@ -16,9 +16,9 @@
  */
 package org.deidentifier.arx.risk.msu;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Each item set is a concrete key, i.e. a set of values for a set of attributes.
@@ -28,7 +28,7 @@ import java.util.Set;
 public class SUDA2ItemSet {
 
     /** Items */
-    private Set<SUDA2Item>  items = new HashSet<>();
+    private List<SUDA2Item>  items = new ArrayList<>();
 
     /**
      * Creates an item set containing a single item
@@ -50,26 +50,16 @@ public class SUDA2ItemSet {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        SUDA2ItemSet other = (SUDA2ItemSet) obj;
-        if (items == null) {
-            if (other.items != null) return false;
-        } else if (!items.equals(other.items)) return false;
-        return true;
+        throw new UnsupportedOperationException();
     }
     
-    public Set<SUDA2Item> getItems() {
+    public List<SUDA2Item> getItems() {
         return items;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((items == null) ? 0 : items.hashCode());
-        return result;
+        throw new UnsupportedOperationException();
     }
 
     /**
