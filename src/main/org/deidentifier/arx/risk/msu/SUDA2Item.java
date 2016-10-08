@@ -36,15 +36,15 @@ public class SUDA2Item {
     }
 
     /** Column */
-    private final int      column;
+    private final int            column;
     /** Unique id */
-    private final long     id;
+    private final long           id;
     /** Value */
-    private final int      value;
+    private final int            value;
     /** Hash code */
-    private final int      hashCode;
+    private final int            hashCode;
     /** Support rows */
-    private IntOpenHashSet rows;
+    private final IntOpenHashSet rows;
 
     /**
      * Creates a new item
@@ -52,20 +52,26 @@ public class SUDA2Item {
      * @param value
      */
     public SUDA2Item(int column, int value) {
-        this(column, value, new IntOpenHashSet());
-    }
-    
-    /**
-     * Creates a new item
-     * @param column
-     * @param value
-     * @param rows
-     */
-    public SUDA2Item(int column, int value, IntOpenHashSet rows) {
         this.column = column;
         this.value = value;
         this.hashCode = (31 + column) * 31 + value;
         this.id = getId(column, value);
+        this.rows = new IntOpenHashSet();
+    }
+    
+    /**
+     * Clone constructor
+     * @param column
+     * @param value
+     * @param id
+     * @param hashCode
+     * @param rows
+     */
+    SUDA2Item(int column, int value, long id, int hashCode, IntOpenHashSet rows) {
+        this.column = column;
+        this.value = value;
+        this.id = id;
+        this.hashCode = hashCode;
         this.rows = rows;
     }
 
@@ -114,6 +120,15 @@ public class SUDA2Item {
      */
     public int getSupport() {
         return this.rows.size();
+    }
+    
+    /**
+     * Returns an instance of this item projected to the given rows
+     * @param rows
+     * @return
+     */
+    public SUDA2Item getProjection(IntOpenHashSet rows) {
+        return new SUDA2Item(this.column, this.value, this.id, this.hashCode, rows);
     }
 
     /**

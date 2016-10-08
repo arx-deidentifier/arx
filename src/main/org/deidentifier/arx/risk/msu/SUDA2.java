@@ -143,7 +143,7 @@ public class SUDA2 {
             // Check whether the set of support rows is not empty, which means that the 
             // item is contained in the sub-table
             if (!rows.isEmpty()) {
-                items.addItem(new SUDA2Item(item.getColumn(), item.getValue(), rows));
+                items.addItem(item.getProjection(rows));
             }
         }
         return items;
@@ -232,7 +232,7 @@ public class SUDA2 {
             
             // Check whether the item is a 1-MSU
             if (supportRowFound) {
-                result.add(new SUDA2ItemSet(new SUDA2Item(item.getColumn(), item.getValue(), null)));
+                result.add(new SUDA2ItemSet(item)); // Rows will never be used, so we can re-use the old item
             }
         }
         return result;
