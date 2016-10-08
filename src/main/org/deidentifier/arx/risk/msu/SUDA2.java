@@ -17,6 +17,8 @@
 package org.deidentifier.arx.risk.msu;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -223,16 +225,42 @@ public class SUDA2 {
      * @param candidate
      * @return
      */
-    private boolean isSpecialRowAvailable(SUDA2ItemList currentList, SUDA2Item referenceItem, SUDA2ItemSet candidate) {
+    private boolean isSpecialRowAvailable(final SUDA2ItemList currentList, SUDA2Item referenceItem, SUDA2ItemSet candidate) {
+        
+        // This is one of the hottest functions in SUDA2
+        // (1) It seems to be more likely that the special row is found than that
+        //     the special row is not found -> We optimize for this path
+        // (2) It is more likely that not all of the candidate items are contained
+        //     than that the reference item is contained
         
         // Find item with smallest support 
         IntOpenHashSet rows = null;
+        SUDA2Item pivot = null;
         for (SUDA2Item item : candidate.getItems()) {
             IntOpenHashSet _rows = currentList.getItem(item.getId()).getRows();
             if (rows == null || _rows.size() < rows.size()) {
                 rows = _rows;
+                pivot = item;
             }
         }
+        
+        // Prepare list of items to check
+        SUDA2Item[] items = new SUDA2Item[candidate.size()-1];
+        int index = 0;
+        for(SUDA2Item item : candidate.getItems()) {
+            if (item != pivot) {
+                items[index++] = item;
+            }
+        }
+        Arrays.sort(items, new Comparator<SUDA2Item>() {
+            @Override
+            public int compare(SUDA2Item o1, SUDA2Item o2) {
+                int support1 = currentList.getItem(o1.getId()).getSupport();
+                int support2 = currentList.getItem(o1.getId()).getSupport();
+                return support1 < support2 ? -1 :
+                       support1 > support2 ? +1 : 0;
+            }
+        });
         
         // And search for the special row
         final int [] keys = rows.keys;
@@ -240,7 +268,7 @@ public class SUDA2 {
         outer: for (int i = 0; i < allocated.length; i++) {
             if (allocated[i]) {
                 int[] row = data[keys[i]];
-                for (SUDA2Item item : candidate.getItems()) {
+                for (SUDA2Item item : items) {
                     if (!item.isContained(row)) {
                         continue outer;
                     }

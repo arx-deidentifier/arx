@@ -95,4 +95,12 @@ public class SUDA2ItemSet {
         builder.append("]");
         return builder.toString();
     }
+
+    /**
+     * Returns the size of the set
+     * @return
+     */
+    public int size() {
+        return this.items.size();
+    }
 }
