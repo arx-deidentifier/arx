@@ -34,24 +34,7 @@ public class SUDA2IndexedItemSet {
 
     /** The underlying map */
     private final LongObjectOpenHashMap<SUDA2Item> items = new LongObjectOpenHashMap<SUDA2Item>();
-    /** The reference item*/
-    private final SUDA2Item reference;
     
-    /**
-     * Creates a new instance
-     */
-    public SUDA2IndexedItemSet() {
-        this.reference = null;
-    }
-    
-    /**
-     * Creates a new instance
-     * @param reference
-     */
-    public SUDA2IndexedItemSet(SUDA2Item reference) {
-        this.reference = reference;
-    }
-
     /**
      * Adds an item
      * @param item
@@ -92,7 +75,7 @@ public class SUDA2IndexedItemSet {
         });
         
         // Return
-        return new SUDA2ItemList(list, reference);
+        return new SUDA2ItemList(list);
     }
     
     /**

@@ -114,7 +114,7 @@ public class SUDA2 {
     private SUDA2IndexedItemSet getItems(SUDA2ItemList itemList, SUDA2Item reference, int fromIndex) {
 
         // For all items within the given range
-        SUDA2IndexedItemSet items = new SUDA2IndexedItemSet(reference);
+        SUDA2IndexedItemSet items = new SUDA2IndexedItemSet();
         List<SUDA2Item> list = itemList.getList();
         for (int index = fromIndex; index < list.size(); index++) {
             
@@ -175,7 +175,7 @@ public class SUDA2 {
         }
 
         // Return
-        return new Pair<Set<SUDA2ItemSet>, SUDA2ItemList>(msus, new SUDA2ItemList(result, list.getReferenceItem()));
+        return new Pair<Set<SUDA2ItemSet>, SUDA2ItemList>(msus, new SUDA2ItemList(result));
     }
 //
 //    /**
