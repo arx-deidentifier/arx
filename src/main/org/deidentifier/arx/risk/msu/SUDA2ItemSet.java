@@ -81,6 +81,14 @@ public class SUDA2ItemSet {
         return !this.equals(other) && (this.items.containsAll(other.items) || other.items.containsAll(this.items));
     }
 
+    /**
+     * Returns the size of the set
+     * @return
+     */
+    public int size() {
+        return this.items.size();
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -94,13 +102,5 @@ public class SUDA2ItemSet {
         }
         builder.append("]");
         return builder.toString();
-    }
-
-    /**
-     * Returns the size of the set
-     * @return
-     */
-    public int size() {
-        return this.items.size();
     }
 }

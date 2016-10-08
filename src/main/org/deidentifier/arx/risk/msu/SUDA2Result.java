@@ -91,26 +91,16 @@ public class SUDA2Result {
     
     /**
      * Registers an MSU
+     * @param item
      * @param set
      */
-    void registerMSU(Set<SUDA2Item> set) {
+    public void registerMSU(SUDA2Item item, SUDA2ItemSet set) {
         this.numMSUs++;
-        this.sizeDistribution[set.size()]++;
-        for(SUDA2Item item : set) {
-            this.columnContributions[item.getColumn()]++;
+        this.sizeDistribution[set.getItems().size()]++;
+        for(SUDA2Item _item : set.getItems()) {
+            this.columnContributions[_item.getColumn()]++;
         }
-    }
-    
-    /**
-     * Registers an MSU
-     * @param set
-     */
-    void registerMSU(SUDA2ItemSet set) {
-        this.numMSUs++;
-        this.sizeDistribution[set.getItems().size()-1]++;
-        for(SUDA2Item item : set.getItems()) {
-            this.columnContributions[item.getColumn()]++;
-        }
+        this.columnContributions[item.getColumn()]++;
     }
     
     @Override
@@ -124,6 +114,19 @@ public class SUDA2Result {
         builder.append(" - Size distribution\n");
         builder.append(toString("     ", sizeDistribution, 1));
         return builder.toString();
+    }
+    
+    /**
+     * Makes sure that the value has the given number of characters
+     * @param value
+     * @param width
+     * @return
+     */
+    private String toString(String value, int width) {
+        while (value.length() < width) {
+            value = " " + value;
+        }
+        return value;
     }
 
     /**
@@ -168,29 +171,26 @@ public class SUDA2Result {
     }
 
     /**
-     * Makes sure that the value has the given number of characters
-     * @param value
-     * @param width
-     * @return
+     * Registers an MSU
+     * @param set
      */
-    private String toString(String value, int width) {
-        while (value.length() < width) {
-            value = " " + value;
+    void registerMSU(Set<SUDA2Item> set) {
+        this.numMSUs++;
+        this.sizeDistribution[set.size()]++;
+        for(SUDA2Item item : set) {
+            this.columnContributions[item.getColumn()]++;
         }
-        return value;
     }
 
     /**
      * Registers an MSU
-     * @param item
      * @param set
      */
-    public void registerMSU(SUDA2Item item, SUDA2ItemSet set) {
+    void registerMSU(SUDA2ItemSet set) {
         this.numMSUs++;
-        this.sizeDistribution[set.getItems().size()]++;
-        for(SUDA2Item _item : set.getItems()) {
-            this.columnContributions[_item.getColumn()]++;
+        this.sizeDistribution[set.getItems().size()-1]++;
+        for(SUDA2Item item : set.getItems()) {
+            this.columnContributions[item.getColumn()]++;
         }
-        this.columnContributions[item.getColumn()]++;
     }
 }

@@ -36,16 +36,25 @@ public class SUDA2Item {
     }
 
     /** Column */
-    private final int    column;
+    private final int      column;
     /** Unique id */
-    private final long   id;
+    private final long     id;
     /** Value */
-    private final int    value;
+    private final int      value;
     /** Hash code */
-    private final int    hashCode;
+    private final int      hashCode;
     /** Support rows */
     private IntOpenHashSet rows;
 
+    /**
+     * Creates a new item
+     * @param column
+     * @param value
+     */
+    public SUDA2Item(int column, int value) {
+        this(column, value, new IntOpenHashSet());
+    }
+    
     /**
      * Creates a new item
      * @param column
@@ -58,15 +67,6 @@ public class SUDA2Item {
         this.hashCode = (31 + column) * 31 + value;
         this.id = getId(column, value);
         this.rows = rows;
-    }
-    
-    /**
-     * Creates a new item
-     * @param column
-     * @param value
-     */
-    public SUDA2Item(int column, int value) {
-        this(column, value, new IntOpenHashSet());
     }
 
     /**
@@ -84,6 +84,10 @@ public class SUDA2Item {
         return true;
     }
 
+    /**
+     * Returns the column
+     * @return
+     */
     public int getColumn() {
         return column;
     }
@@ -112,6 +116,10 @@ public class SUDA2Item {
         return this.rows.size();
     }
 
+    /**
+     * Returns the value
+     * @return
+     */
     public int getValue() {
         return value;
     }
