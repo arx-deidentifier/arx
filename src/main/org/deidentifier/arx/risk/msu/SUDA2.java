@@ -116,36 +116,19 @@ public class SUDA2 {
         // For all items within the given range
         SUDA2IndexedItemSet items = new SUDA2IndexedItemSet();
         List<SUDA2Item> list = itemList.getList();
+        IntOpenHashSet referenceRows = reference.getRows();
         for (int index = fromIndex; index < list.size(); index++) {
             
             // Extract item of interest
-            SUDA2Item item = list.get(index);
-            
-            // Smaller set is set 1
-            int size1 = item.getRows().size();
-            int size2 = reference.getRows().size();
-            IntOpenHashSet rows1 = size1 < size2 ? item.getRows() : reference.getRows();
-            IntOpenHashSet rows2 = size1 < size2 ? reference.getRows() : item.getRows();
-            
-            // Intersect support rows with those of the reference item
-            IntOpenHashSet rows = new IntOpenHashSet();
-            final int [] keys = rows1.keys;
-            final boolean [] allocated = rows1.allocated;
-            for (int i = 0; i < allocated.length; i++) {
-                if (allocated[i]) {
-                    int row = keys[i];
-                    if (rows2.contains(row)) {
-                        rows.add(row);
-                    }
-                }
-            }
-            
-            // Check whether the set of support rows is not empty, which means that the 
-            // item is contained in the sub-table
-            if (!rows.isEmpty()) {
-                items.addItem(item.getProjection(rows));
+            SUDA2Item item = list.get(index).getProjection(referenceRows);
+                        
+            // If it is contained, add it
+            if (item != null) {
+                items.addItem(item);
             }
         }
+        
+        // Return all items
         return items;
     }
 
@@ -200,39 +183,11 @@ public class SUDA2 {
         // For all items within the given range
         Set<SUDA2ItemSet> result = new HashSet<>();
         List<SUDA2Item> list = itemList.getList();
-        outer: for (int index = fromIndex; index < list.size(); index++) {
-            
-            // Extract item of interest
-            SUDA2Item item = list.get(index);
-            
-            // Smaller set is rows1
-            int size1 = item.getRows().size();
-            int size2 = reference.getRows().size();
-            IntOpenHashSet rows1 = size1 < size2 ? item.getRows() : reference.getRows();
-            IntOpenHashSet rows2 = size1 < size2 ? reference.getRows() : item.getRows();
-            
-            // Check if they intersect with exactly one support row
-            boolean supportRowFound = false;
-            final int [] keys = rows1.keys;
-            final boolean [] allocated = rows1.allocated;
-            for (int i = 0; i < allocated.length; i++) {
-                if (allocated[i]) {
-                    int row = keys[i];
-                    if (rows2.contains(row)) {
-                        
-                        // More than one support row
-                        if (supportRowFound) {
-                            continue outer;
-                        } else {
-                            supportRowFound = true;
-                        }
-                    }
-                }
-            }
-            
-            // Check whether the item is a 1-MSU
-            if (supportRowFound) {
-                result.add(new SUDA2ItemSet(item)); // Rows will never be used, so we can re-use the old item
+        IntOpenHashSet referenceRows = reference.getRows();
+        for (int index = fromIndex; index < list.size(); index++) {
+            SUDA2Item item = list.get(index).get1MSU(referenceRows);
+            if (item != null) {
+                result.add(new SUDA2ItemSet(item)); // TODO: Get rid of itemset
             }
         }
         return result;

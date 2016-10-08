@@ -125,11 +125,32 @@ public class SUDA2Item {
     
     /**
      * Returns an instance of this item projected to the given rows
-     * @param rows
+     * @param otherRows
      * @return
      */
-    public SUDA2Item getProjection(IntOpenHashSet rows) {
-        return new SUDA2Item(this.column, this.value, this.id, this.hashCode, rows);
+    public SUDA2Item getProjection(IntOpenHashSet otherRows) {
+
+        // Smaller set is set 1
+        int size1 = this.rows.size();
+        int size2 = otherRows.size();
+        IntOpenHashSet rows1 = size1 < size2 ? this.rows : otherRows;
+        IntOpenHashSet rows2 = size1 < size2 ? otherRows : this.rows;
+        
+        // Intersect support rows with those provided
+        IntOpenHashSet rows = new IntOpenHashSet();
+        final int [] keys = rows1.keys;
+        final boolean [] allocated = rows1.allocated;
+        for (int i = 0; i < allocated.length; i++) {
+            if (allocated[i]) {
+                int row = keys[i];
+                if (rows2.contains(row)) {
+                    rows.add(row);
+                }
+            }
+        }
+
+        // Return
+        return rows.isEmpty() ? null : new SUDA2Item(this.column, this.value, this.id, this.hashCode, rows);
     }
 
     /**
@@ -159,5 +180,41 @@ public class SUDA2Item {
         StringBuilder builder = new StringBuilder();
         builder.append("(").append(column).append(",").append(value).append(")");
         return builder.toString();
+    }
+
+    /**
+     * Returns this item if it becomes a 1-MSU in the given set of rows,
+     * null otherwise
+     * @param otherRows
+     * @return
+     */
+    public SUDA2Item get1MSU(IntOpenHashSet otherRows) {
+
+        // Smaller set is rows1
+        int size1 = this.rows.size();
+        int size2 = otherRows.size();
+        IntOpenHashSet rows1 = size1 < size2 ? this.rows : otherRows;
+        IntOpenHashSet rows2 = size1 < size2 ? otherRows : this.rows;
+        
+        // Check if they intersect with exactly one support row
+        boolean supportRowFound = false;
+        final int [] keys = rows1.keys;
+        final boolean [] allocated = rows1.allocated;
+        for (int i = 0; i < allocated.length; i++) {
+            if (allocated[i]) {
+                int row = keys[i];
+                if (rows2.contains(row)) {
+                    // More than one support row
+                    if (supportRowFound) {
+                        return null;
+                    } else {
+                        supportRowFound = true;
+                    }
+                }
+            }
+        }
+        
+        // Check whether the item is a 1-MSU
+        return supportRowFound ? this : null;
     }
 }
