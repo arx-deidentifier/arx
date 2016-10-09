@@ -297,6 +297,7 @@ public class ViewPropertiesOutput extends ViewProperties {
                 } else if (c instanceof EntropyLDiversity){
                     EntropyLDiversity criterion = (EntropyLDiversity)c;
                     Property n = new Property(Resources.getMessage("PropertiesView.63"), new String[] { Resources.getMessage("PropertiesView.64") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.160"), new String[] { criterion.getEstimator().toString() }); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.65"), new String[] { SWTUtil.getPrettyString(criterion.getL()) }); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                 } else if (c instanceof RecursiveCLDiversity){
