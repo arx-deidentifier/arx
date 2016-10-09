@@ -48,17 +48,14 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * This view displays basic risk estimates.
  *
  * @author Fabian Prasser
+ * @author Maximilian Zitzmann
  */
 public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRisk> {
 
-    /**
-     * View
-     */
+    /** View */
     private DynamicTable table;
 
-    /**
-     * Internal stuff.
-     */
+    /** Internal stuff. */
     private final AnalysisManager manager;
 
     /**
@@ -167,6 +164,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
 
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
+        
         // Enable/disable
         final RiskEstimateBuilderInterruptible builder = getBuilder(context, context.context.getModel().getSelectedQuasiIdentifiers());
         if (!this.isEnabled() || builder == null) {
