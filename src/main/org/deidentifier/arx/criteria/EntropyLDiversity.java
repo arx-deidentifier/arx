@@ -43,8 +43,10 @@ public class EntropyLDiversity extends LDiversity {
      */
     public enum EntropyEstimator {
 
-    	SHANNON(new IPsi(){public double f(int n) {return Math.log(n);}}),
-    	GRASSBERGER(new IPsi(){public double f(int n) {return G(n);}});
+        /** The Shannon estimator*/
+    	SHANNON(new IPsi(){public double f(int n) {return Math.log(n);}}, "Shannon"),
+    	/** The Grassberger estimator*/
+    	GRASSBERGER(new IPsi(){public double f(int n) {return G(n);}}, "Grassberger");
 
         /** 
          * In Java, we need to use an inner functional interface
@@ -56,9 +58,11 @@ public class EntropyLDiversity extends LDiversity {
             public double f(int n);
         }
         
-        /** Our inner function*/
-    	private final IPsi psi;
-    	
+        /** Our inner function */
+        private final IPsi            psi;
+        /** The name */
+        private final String          name;
+
     	/**
          * Holds precomputed values of G_n for 1 <= n <= 100<br>
          * It is G_1 = G_PRECOMPUTED[0].
@@ -148,12 +152,14 @@ public class EntropyLDiversity extends LDiversity {
         /**
     	 * Creates a new instance
     	 * @param psi
+    	 * @param name
     	 */
-    	private EntropyEstimator(IPsi psi) {
+    	private EntropyEstimator(IPsi psi, String name) {
     		this.psi = psi;
+    		this.name = name;
     	}
-        
-        /**
+    	
+    	/**
     	 * The logarithm substitute of the current estimator
     	 * 
     	 * The difference in estimating the entropy by the naive Shannon or Grassberger
@@ -167,6 +173,11 @@ public class EntropyLDiversity extends LDiversity {
     	 */
     	public double psi(int n) {
     		return psi.f(n);
+    	}
+        
+        @Override
+    	public String toString() {
+    	    return name;
     	}
     }
     
