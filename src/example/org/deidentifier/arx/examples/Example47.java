@@ -1,13 +1,40 @@
+/*
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.deidentifier.arx.examples;
 
-import org.apache.commons.lang.StringUtils;
-import org.deidentifier.arx.*;
-import org.deidentifier.arx.risk.*;
-
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
+import org.apache.commons.lang.StringUtils;
+import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.risk.RiskEstimateBuilder;
+import org.deidentifier.arx.risk.RiskModelAttributes;
+
+/**
+ * Example for evaluating distinction and separation of attributes as described in
+ * R. Motwani et al. "Efficient algorithms for masking and finding quasi-identifiers"
+ * Proc. VLDB Conf., 2007.
+ * 
+ * @author Maximilian Zitzmann
+ * @author Fabian Prasser
+ */
 public class Example47 extends Example {
 
     /**
@@ -18,9 +45,8 @@ public class Example47 extends Example {
     public static void main(String[] args) throws IOException {
 
         Data data = loadData();
-        //Data data = loadCsv();
 
-        // flag every identifier as quasi identifier
+        // Flag every attribute as quasi identifier
         for (int i = 0; i < data.getHandle().getNumColumns(); i++) {
             data.getDefinition().setAttributeType(data.getHandle().getAttributeName(i), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
         }
@@ -47,23 +73,6 @@ public class Example47 extends Example {
         printPrettyTable(riskmodel.getAttributeRisks());
     }
 
-    private static Data loadCsv() throws IOException {
-        String csvFile = "data/example.csv";
-
-        DataSource source = DataSource.createCSVSource(csvFile, StandardCharsets.UTF_8, ';', true);
-        source.addColumn("sex", DataType.STRING);
-        source.addColumn("age", DataType.INTEGER);
-        source.addColumn("race", DataType.STRING);
-        source.addColumn("marital-status", DataType.STRING);
-        source.addColumn("education", DataType.STRING);
-        source.addColumn("native-country", DataType.STRING);
-        source.addColumn("workclass", DataType.STRING);
-        source.addColumn("occupation", DataType.STRING);
-        source.addColumn("salary-class", DataType.STRING);
-        source.addColumn("ldl", DataType.STRING);
-        return Data.create(source);
-    }
-
     private static Data loadData() {
         // Define data
         Data.DefaultData data = Data.create();
@@ -73,7 +82,6 @@ public class Example47 extends Example {
         data.add("40", "Female", "TX");
         data.add("20", "Male", "NY");
         data.add("40", "Male", "CA");
-
         data.add("53", "Male", "CA");
         data.add("76", "Male", "EU");
         data.add("40", "Female", "AS");
@@ -84,9 +92,13 @@ public class Example47 extends Example {
         return data;
     }
 
+    /**
+     * Helper that prints a table
+     * @param quasiIdentifiers
+     */
     private static void printPrettyTable(RiskModelAttributes.QuasiIdentifierRisk[] quasiIdentifiers) {
+        
         // get char count of longest quasi-identifier
-        ;
         int charCountLongestQi = quasiIdentifiers[quasiIdentifiers.length-1].getIdentifier().toString().length();
 
         // make sure that there is enough space for the table header strings
