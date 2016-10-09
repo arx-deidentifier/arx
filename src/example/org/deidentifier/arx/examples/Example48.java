@@ -36,7 +36,7 @@ import org.deidentifier.arx.criteria.OrderedDistanceTCloseness;
  * 
  * @author Fabian Prasser
  */
-public class Example47 extends Example {
+public class Example48 extends Example {
     
     /**
      * Entry point.
