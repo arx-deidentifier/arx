@@ -34,26 +34,124 @@ import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 /**
- * A class for attribute-related risks
+ * A class for analyzing attribute-related risks. Calculates alpha-distinction and
+ * alpha separation as described in R. Motwani et al.
+ * "Efficient algorithms for masking and finding quasi-identifiers" Proc. VLDB Conf., 2007.
  *
- * This class is based on the work stated in R. Motwani et al., “Efficient algorithms for masking and finding quasi-identifiers,” Proc. VLDB Conf., 2007.
- * Interdisciplinary training
  *
- * In this class we always analyze a given specific set of attributes, which form a quasi-identifier (QI).
- *
- * @author Fabian Prasser, Maximilian Zitzmann
+ * @author Fabian Prasser
+ * @author Maximilian Zitzmann
  */
 public class RiskModelAttributes {
 
-    private final WrappedBoolean stop;
+    /**
+     * Risks associated with a certain quasi-identifier
+     *
+     * @author Fabian Prasser
+     * @author Maximilian Zitzmann
+     */
+    public final class QuasiIdentifierRisk implements Comparable<QuasiIdentifierRisk> {
+
+        /** Field */
+        private final Set<String> identifier;
+        /** Field */
+        private final double      alphaDistinction;
+        /** Field */
+        private final double      alphaSeparation;
+
+        /**
+         * Creates a new instance
+         *
+         * @param identifier
+         */
+        private QuasiIdentifierRisk(Set<String> identifier) {
+            
+            // Store identifier
+            this.identifier = identifier;
+
+            // Calculate distribution of class sizes
+            RiskModelHistogram histogram = new RiskEstimateBuilder(population, handle, identifier, stop, solverconfig, arxconfig).getEquivalenceClassModel();
+            
+            // Calculate distinction and separation
+            this.alphaDistinction = getAlphaDistinction(histogram);
+            this.alphaSeparation = getAlphaSeparation(histogram);
+        }
+
+        @Override
+        public int compareTo(QuasiIdentifierRisk other) {
+            
+            // Compare size
+            int cmp = Integer.compare(this.identifier.size(), other.identifier.size());
+            if (cmp != 0) {
+                return cmp;
+            }
+
+            // Compare distinction
+            cmp = Double.compare(this.alphaDistinction, other.alphaDistinction);
+            if (cmp != 0) {
+                return cmp;
+            }
+
+            // Compare separation
+            cmp = Double.compare(this.alphaSeparation, other.alphaSeparation);
+            if (cmp != 0) {
+                return cmp;
+            }
+            
+            // Equal
+            return 0;
+        }
+
+        /**
+         * Returns the alpha distinction parameter of this quasi-identifier
+         * 
+         * @return the alpha distinction
+         */
+        public double getDistinction() {
+            return alphaDistinction;
+        }
+
+        /**
+         * Returns the attributes in this quasi-identifier
+         * 
+         * @return the identifier
+         */
+        public Set<String> getIdentifier() {
+            return identifier;
+        }
+
+        /**
+         * Returns the alpha separation parameter of this quasi-identifier
+         * 
+         * @return the alpha separation
+         */
+        public double getSeparation() {
+            return alphaSeparation;
+        }
+    }
+    /** Stop flag */
+    private final WrappedBoolean        stop;
+    /** Results */
     private final QuasiIdentifierRisk[] risks;
-    private ARXPopulationModel population;
-    private DataHandleInternal handle;
-    private ARXSolverConfiguration solverconfig;
-    private ARXConfiguration arxconfig;
+    /** Just needed for creating risk models */
+    private ARXPopulationModel          population;
+    /** Data handle */
+    private DataHandleInternal          handle;
+    /** Just needed for creating risk models */
+    private ARXSolverConfiguration      solverconfig;
+
+    /** Just needed for creating risk models */
+    private ARXConfiguration            arxconfig;
 
     /**
      * Creates a new instance
+     * @param population
+     * @param handle
+     * @param identifiers
+     * @param stop
+     * @param percentageDone
+     * @param solverconfig
+     * @param arxconfig
      */
     RiskModelAttributes(ARXPopulationModel population, DataHandleInternal handle, Set<String> identifiers, WrappedBoolean stop, WrappedInteger percentageDone, ARXSolverConfiguration solverconfig, ARXConfiguration arxconfig) {
         this.population = population;
@@ -86,15 +184,6 @@ public class RiskModelAttributes {
     }
 
     /**
-     * Calculates the gaussian sum formula
-     * @param n the number to sum to
-     * @return the sum from 1 to n
-     */
-    private double sum(double n) {
-        return (n * (n + 1d)) / 2d;
-    }
-
-    /**
      * Returns the quasi-identifiers, sorted by risk
      *
      * @return
@@ -113,57 +202,13 @@ public class RiskModelAttributes {
     }
 
     /**
-     * Returns the power set
-     *
-     * @param originalSet
-     * @return
+     * Calculates the Gaussian sum formula
+     * 
+     * @param n the number to sum to
+     * @return the sum from 1 to n
      */
-    private <T> Set<Set<T>> getPowerSet(Set<T> originalSet) {
-        checkInterrupt();
-        Set<Set<T>> sets = new HashSet<Set<T>>();
-        if (originalSet.isEmpty()) {
-            sets.add(new HashSet<T>());
-            return sets;
-        }
-        List<T> list = new ArrayList<T>(originalSet);
-        T head = list.get(0);
-        Set<T> rest = new HashSet<T>(list.subList(1, list.size()));
-        for (Set<T> set : getPowerSet(rest)) {
-            checkInterrupt();
-            Set<T> newSet = new HashSet<T>();
-            newSet.add(head);
-            newSet.addAll(set);
-            sets.add(newSet);
-            sets.add(set);
-        }
-        return sets;
-    }
-
-    /**
-     * Provides the calculations for risks for each attribute set
-     */
-    private RiskProvider getRiskProvider(final Set<String> attributes,
-                                         final WrappedBoolean stop) {
-
-        // get new Histogram from attributes
-        RiskEstimateBuilder builder = new RiskEstimateBuilder(population, handle, attributes, stop, solverconfig, arxconfig);
-
-        // get new Histogram
-        RiskModelHistogram newEqClasses = builder.getEquivalenceClassModel();
-
-        final double alphaDistinction = getAlphaDistinction(newEqClasses);
-        final double alphaSeparation = getAlphaSeparation(newEqClasses);
-
-        // Return a provider
-        return new RiskProvider() {
-            public double getAlphaDistinction() {
-                return alphaDistinction;
-            }
-
-            public double getAlphaSeparation() {
-                return alphaSeparation;
-            }
-        };
+    private double gaussianSum(double n) {
+        return (n * (n + 1d)) / 2d;
     }
 
     /**
@@ -190,7 +235,7 @@ public class RiskModelAttributes {
         // when we want to compare 4 values (only in one direction this means we compare "a" to "b" but not "b" to "a")
         // we have 3 + 2 + 1 comparisons
         // => numberComparisons = number of values - 1
-        double totalNumberOfComparisons = sum(histogram.getNumRecords() - 1d);
+        double totalNumberOfComparisons = gaussianSum(histogram.getNumRecords() - 1d);
 
         // a record separates another record when it has on at least one attribute a different value
         double separatedRecords = 0;
@@ -225,85 +270,29 @@ public class RiskModelAttributes {
     }
 
     /**
-     * Helper interface
-     */
-    interface RiskProvider {
-        double getAlphaDistinction();
-
-        double getAlphaSeparation();
-    }
-
-    /**
-     * Risks associated to a certain quasi-identifier
+     * Returns the power set
      *
-     * @author Fabian Prasser
+     * @param originalSet
+     * @return
      */
-    public final class QuasiIdentifierRisk implements
-            Comparable<QuasiIdentifierRisk> {
-
-        /**
-         * Field
-         */
-        private final Set<String> identifier;
-        /**
-         * Field
-         */
-        private final double alphaDistinction;
-        /**
-         * Field
-         */
-        private final double alphaSeparation;
-
-        /**
-         * Creates a new instance
-         *
-         * @param identifier
-         */
-        private QuasiIdentifierRisk(Set<String> identifier) {
-            RiskProvider provider = getRiskProvider(identifier, stop);
-            this.identifier = identifier;
-            this.alphaDistinction = provider.getAlphaDistinction();
-            this.alphaSeparation = provider.getAlphaSeparation();
+    private <T> Set<Set<T>> getPowerSet(Set<T> originalSet) {
+        checkInterrupt();
+        Set<Set<T>> sets = new HashSet<Set<T>>();
+        if (originalSet.isEmpty()) {
+            sets.add(new HashSet<T>());
+            return sets;
         }
-
-        @Override
-        public int compareTo(QuasiIdentifierRisk other) {
-            int cmp = Integer.compare(this.identifier.size(), other.identifier.size());
-            if (cmp != 0) {
-                return cmp;
-            }
-
-            cmp = Double.compare(this.alphaDistinction, other.alphaDistinction);
-            if (cmp != 0) {
-                return cmp;
-            }
-
-            cmp = Double.compare(this.alphaSeparation, other.alphaSeparation);
-            if (cmp != 0) {
-                return cmp;
-            }
-            return 0;
+        List<T> list = new ArrayList<T>(originalSet);
+        T head = list.get(0);
+        Set<T> rest = new HashSet<T>(list.subList(1, list.size()));
+        for (Set<T> set : getPowerSet(rest)) {
+            checkInterrupt();
+            Set<T> newSet = new HashSet<T>();
+            newSet.add(head);
+            newSet.addAll(set);
+            sets.add(newSet);
+            sets.add(set);
         }
-
-        /**
-         * @return the alpha distinction
-         */
-        public double getDistinction() {
-            return alphaDistinction;
-        }
-
-        /**
-         * @return the alpha separation
-         */
-        public double getSeparation() {
-            return alphaSeparation;
-        }
-
-        /**
-         * @return the identifier
-         */
-        public Set<String> getIdentifier() {
-            return identifier;
-        }
+        return sets;
     }
 }

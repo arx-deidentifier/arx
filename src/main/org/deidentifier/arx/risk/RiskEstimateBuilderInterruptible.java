@@ -18,13 +18,12 @@
 package org.deidentifier.arx.risk;
 
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
-import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**
  * A builder for risk estimates, interruptible
  * 
  * @author Fabian Prasser
- *         
+ * @author Maximilian Zitzmann
  */
 public class RiskEstimateBuilderInterruptible {
     
@@ -90,7 +89,13 @@ public class RiskEstimateBuilderInterruptible {
     public int getProgress() {
         return parent.getProgress();
     }
-
+    
+    /**
+     * Returns a class providing access to an analysis of potential quasi-identifiers using
+     * the concepts of alpha distinction and alpha separation.
+     *
+     * @return the RiskModelAttributes data from risk analysis
+     */
     public RiskModelAttributes getAttributeRisks() throws InterruptedException {
         try {
             return parent.getAttributeRisks();

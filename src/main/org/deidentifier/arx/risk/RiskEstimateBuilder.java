@@ -19,7 +19,10 @@ package org.deidentifier.arx.risk;
 
 import java.util.Set;
 
-import org.deidentifier.arx.*;
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.ARXSolverConfiguration;
+import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 
@@ -110,31 +113,6 @@ public class RiskEstimateBuilder {
                                ARXSolverConfiguration solverconfig,
                                ARXConfiguration arxconfig) {
         this(population, handle, identifiers, (RiskModelHistogram) null, solverconfig, arxconfig);
-    }
-
-    /**
-     * Creates a new instance
-     *
-     * @param population
-     * @param handle
-     * @param classes
-     * @param solverconfig
-     */
-    private RiskEstimateBuilder(ARXPopulationModel population,
-                                DataHandleInternal handle,
-                                RiskModelHistogram classes,
-                                WrappedBoolean stop,
-                                ARXSolverConfiguration solverconfig,
-                                ARXConfiguration arxconfig) {
-        this.population = population;
-        this.handle = handle;
-        this.identifiers = null;
-        this.classes = classes;
-        this.solverconfig = solverconfig;
-        this.arxconfig = arxconfig;
-        synchronized (this) {
-            this.stop = stop;
-        }
     }
 
     /**
@@ -244,12 +222,14 @@ public class RiskEstimateBuilder {
     }
 
     /**
-     * Returns a class providing access to quasi-identifer alpha distinction and alpha separation
+     * Returns a class providing access to an analysis of potential quasi-identifiers using
+     * the concepts of alpha distinction and alpha separation.
      *
-     * @return the RiskModelAttributes class with risk analysis
+     * @return the RiskModelAttributes data from risk analysis
      */
     public RiskModelAttributes getAttributeRisks() {
-        return getQuasiIdentifiers();
+        progress.value = 0;
+        return new RiskModelAttributes(this.population, this.handle, this.identifiers, this.stop, progress, this.solverconfig, this.arxconfig);
     }
 
     /**
@@ -291,11 +271,6 @@ public class RiskEstimateBuilder {
     public RiskModelSampleUniqueness getSampleBasedUniquenessRisk() {
         progress.value = 0;
         return new RiskModelSampleUniqueness(getEquivalenceClassModel());
-    }
-
-    private RiskModelAttributes getQuasiIdentifiers() {
-        progress.value = 0;
-        return new RiskModelAttributes(this.population, this.handle, this.identifiers, this.stop, progress, this.solverconfig, this.arxconfig);
     }
 
     /**
