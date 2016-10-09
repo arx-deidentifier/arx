@@ -27,41 +27,26 @@ import org.deidentifier.arx.common.WrappedInteger;
  * A builder for risk estimates
  *
  * @author Fabian Prasser
+ * @author Maximilian Zitzmann
  */
 public class RiskEstimateBuilder {
 
-    /**
-     * Fields
-     */
-    private final ARXPopulationModel population;
-    /**
-     * Fields
-     */
-    private final DataHandleInternal handle;
-    /**
-     * Fields
-     */
-    private final Set<String> identifiers;
-    /**
-     * Classes
-     */
-    private RiskModelHistogram classes;
-    /**
-     * Asynchronous computation
-     */
-    private final WrappedBoolean stop;
-    /**
-     * Model
-     */
+    /** Fields */
+    private final ARXPopulationModel     population;
+    /** Fields */
+    private final DataHandleInternal     handle;
+    /** Fields */
+    private final Set<String>            identifiers;
+    /** Equivalence classes */
+    private RiskModelHistogram           classes;
+    /** Asynchronous computation */
+    private final WrappedBoolean         stop;
+    /** Model */
     private final ARXSolverConfiguration solverconfig;
-    /**
-     * Model
-     */
-    private final WrappedInteger progress = new WrappedInteger();
-    /**
-     * Model
-     */
-    private final ARXConfiguration arxconfig;
+    /** Model */
+    private final WrappedInteger         progress = new WrappedInteger();
+    /** Model */
+    private final ARXConfiguration       arxconfig;
 
     /**
      * Creates a new instance
