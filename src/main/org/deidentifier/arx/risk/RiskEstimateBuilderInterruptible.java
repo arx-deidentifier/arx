@@ -34,7 +34,7 @@ public class RiskEstimateBuilderInterruptible {
     /**
      * Creates a new instance
      * 
-     * @param builder
+     * @param parent
      */
     RiskEstimateBuilderInterruptible(RiskEstimateBuilder parent) {
         this.parent = parent;
@@ -67,39 +67,6 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-    
-    /**
-     * Returns a class providing access to population-based risk estimates about
-     * the attributes. Uses the decision rule by Dankar et al., excluding the
-     * SNB model
-     * 
-     * @return
-     */
-    public RiskModelAttributes getPopulationBasedAttributeRisks() throws InterruptedException {
-        try {
-            return parent.getPopulationBasedAttributeRisks();
-        } catch (ComputationInterruptedException e) {
-            throw new InterruptedException("Computation interrupted");
-        }
-    }
-    
-    /**
-     * Returns a class providing access to population-based risk estimates about
-     * the attributes.
-     * 
-     * @param model
-     *            Uses the given statistical model
-     * @return
-     */
-    public RiskModelAttributes
-           getPopulationBasedAttributeRisks(PopulationUniquenessModel model) throws InterruptedException {
-        try {
-            return parent.getPopulationBasedAttributeRisks(model);
-        } catch (ComputationInterruptedException e) {
-            throw new InterruptedException("Computation interrupted");
-        }
-    }
-    
     /**
      * Returns a class providing population-based uniqueness estimates
      * 
@@ -124,20 +91,13 @@ public class RiskEstimateBuilderInterruptible {
         return parent.getProgress();
     }
 
-    /**
-     * Returns a class providing access to sample-based risk estimates about the
-     * attributes
-     * 
-     * @return
-     */
-    public RiskModelAttributes getSampleBasedAttributeRisks() throws InterruptedException {
+    public RiskModelAttributes getAttributeRisks() throws InterruptedException {
         try {
-            return parent.getSampleBasedAttributeRisks();
+            return parent.getAttributeRisks();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
     /**
      * Returns a class providing sample-based re-identification risk estimates
      * 
