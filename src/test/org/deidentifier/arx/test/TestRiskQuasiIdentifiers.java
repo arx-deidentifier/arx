@@ -26,11 +26,40 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test for QuasiIdentifiers
+ * Test calculations of alpha-distinction and alpha-separation.
  *
- * @author Max Zitzmann
+ * @author Maximilan Zitzmann
+ * @author Fabian Prasser
  */
 public class TestRiskQuasiIdentifiers {
+
+    /**
+     * Private helper class
+     * 
+     * @author Maximilian Zitzmann
+     * @author Fabian Prasser
+     */
+    private class ResultSet {
+        
+        /** Identifier*/
+        private final String identifier;
+        /** Distinction*/
+        private final double distinction;
+        /** Separation*/
+        private final double separation;
+
+        /**
+         * Creates a new instance
+         * @param identifier
+         * @param distinction
+         * @param separation
+         */
+        private ResultSet(String identifier, double distinction, double separation) {
+            this.identifier = identifier;
+            this.distinction = distinction;
+            this.separation = separation;
+        }
+    }
 
     @Test
     public void testWithDefinedDataSet() {
@@ -66,21 +95,8 @@ public class TestRiskQuasiIdentifiers {
 
         for (int i = 0; i < risks.length; i++) {
             assertTrue("Identifier expected: " + expectedResults[i].identifier + "; got: " + risks[i].getIdentifier(), expectedResults[i].identifier.equals(risks[i].getIdentifier().toString()));
-            assertTrue("Distinction expected: " + expectedResults[i].calculatedDistinction + "; got: " + risks[i].getDistinction(), expectedResults[i].calculatedDistinction == risks[i].getDistinction());
-            assertTrue("Separation expected: " + expectedResults[i].calculatedSeparation + "; got: " + risks[i].getSeparation(), expectedResults[i].calculatedSeparation == risks[i].getSeparation());
+            assertTrue("Distinction expected: " + expectedResults[i].distinction + "; got: " + risks[i].getDistinction(), expectedResults[i].distinction == risks[i].getDistinction());
+            assertTrue("Separation expected: " + expectedResults[i].separation + "; got: " + risks[i].getSeparation(), expectedResults[i].separation == risks[i].getSeparation());
         }
-    }
-
-    private class ResultSet {
-        String identifier;
-        double calculatedDistinction;
-        double calculatedSeparation;
-
-        ResultSet(String identifier, double calculatedDistinction, double calculatedSeparation) {
-            this.identifier = identifier;
-            this.calculatedDistinction = calculatedDistinction;
-            this.calculatedSeparation = calculatedSeparation;
-        }
-
     }
 }
