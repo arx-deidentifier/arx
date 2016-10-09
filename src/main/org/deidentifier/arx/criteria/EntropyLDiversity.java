@@ -24,109 +24,16 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
 /**
- * The entropy l-diversity criterion.
+ * The entropy l-diversity privacy model.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Sebastian Stammler
  */
 public class EntropyLDiversity extends LDiversity {
 
-    /**  SVUID */
-    private static final long   serialVersionUID = -354688551915634000L;
-    
-    /** Entropy Estimator to use */
-    protected EntropyEstimator estimator;
-
     /**
-     * Creates a new instance of the entropy l-diversity criterion as proposed in:
-     * Machanavajjhala A, Kifer D, Gehrke J.
-     * l-diversity: Privacy beyond k-anonymity.
-     * Transactions on Knowledge Discovery from Data (TKDD). 2007;1(1):3.
-     *
-     * @param attribute
-     * @param l
-     */
-    public EntropyLDiversity(String attribute, double l){
-        super(attribute, l, false, true);
-        this.estimator = EntropyEstimator.SHANNON;
-    }
-    
-    /**
-     * Creates a new instance of the entropy-l-diversity criterion,
-     * specifying the entropy estimator to use.
-     * Two estimators are available:
-     * - SHANNON for the usual naive Shannon estimator.
-     *   This amounts to the original entropy-l-diversity definition by Machanavajjhala.
-     * - GRASSBERGER for the corrected Grassberger estimator as proposed in:
-     *   P Grassberger. Entropy Estimates from Insufficient Samplings.
-     *   https://arxiv.org/abs/physics/0307138v2
-     *   This estimator generally accepts more sets as being entropy-l-diverse than
-     *   the naive Shannon estimator, thus increases data utility of the global optimal
-     *   anonymization. It also guarantees a more consistent meaning of the security
-     *   parameter l between different data sets. For details, consult:
-     *   S Stammler, S Katzenbeisser, K Hamacher.
-     *   Correcting Finite Sampling Issues in Entropy l-diversity.
-     *   Privacy in Statistical Databases 2016. LNCS Vol. 9867 pp 135-146
-     * @param attribute The sensitive attribute
-     * @param l Security parameter
-     * @param estimator Entropy estimator (SHANNON or GRASSBERGER)
-     */
-    public EntropyLDiversity(String attribute, double l,
-    		EntropyEstimator estimator) {
-    	super(attribute, l, false, true);
-        this.estimator = estimator;
-	}
-
-    public EntropyEstimator getEstimator() {
-		return estimator;
-	}
-
-	@Override
-    public EntropyLDiversity clone() {
-        return new EntropyLDiversity(this.getAttribute(), this.getL(), this.getEstimator());
-    }
-
-    @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
-
-        Distribution d = entry.distributions[index];
-
-        // If less than l values are present skip
-        if (d.size() < minSize) { return false; }
-
-        // Sum of the frequencies in distribution (=number of elements)
-        final int total = entry.count;
-        // Sum must stay smaller than this constant term
-        final double C = total * (estimator.psi(total) - Math.log(l));
-        double sum1 = 0d;
-
-        final int[] buckets = d.getBuckets();
-        for (int i = 0; i < buckets.length; i += 2) {
-            if (buckets[i] != -1) { // bucket not empty
-                final int frequency = buckets[i + 1];
-                sum1 += frequency * estimator.psi(frequency);
-                // If the sum grows over C, we can abort the loop earlier.
-                if (C < sum1) { return false; }
-            }
-        }
-
-        // If we reach this point, the loop did not return false.
-        return true;
-    }
-
-	@Override
-    public boolean isLocalRecodingSupported() {
-        return true;
-    }
-
-    @Override
-	public String toString() {
-		return estimator.toString().toLowerCase()+"-entropy-"+
-					l+"-diversity for attribute '"+attribute+"'";
-	}
-    
-    /**
-     * Enumerator of entropy estimators for the entropy-l-diversity criteria
+     * Enumerator of entropy estimators for the entropy-l-diversity privacy model.
      * This enumerator actually holds the logarithm substitute \psi for
      * entropy estimation via the formula
      *   $H = \psi(N) - 1/N \sum n \psi (n)$
@@ -135,41 +42,25 @@ public class EntropyLDiversity extends LDiversity {
      *
      */
     public enum EntropyEstimator {
+
     	SHANNON(new IPsi(){public double f(int n) {return Math.log(n);}}),
     	GRASSBERGER(new IPsi(){public double f(int n) {return G(n);}});
-    	
-    	/** 
-    	 * In Java, we need to use an inner functional interface
-    	 * to have an enumerator of functions... doh
-    	 */
-    	private interface IPsi {
-    		public double f(int n);
-    	}
-    	
+
+        /** 
+         * In Java, we need to use an inner functional interface
+         * to have an enumerator of functions... doh
+         * 
+         * @author Sebastian Stammler
+         */
+        private interface IPsi {
+            public double f(int n);
+        }
+        
+        /** Our inner function*/
     	private final IPsi psi;
     	
-    	private EntropyEstimator(IPsi psi) {
-    		this.psi = psi;
-    	}
-    	
     	/**
-    	 * The logarithm substitute of the current estimator
-    	 * 
-    	 * The difference in estimating the entropy by the naive Shannon or Grassberger
-    	 * estimator is actually using log or G for \psi in the entropy formula
-    	 *    $H = \psi(N) - 1/N \sum n \psi(n)$
-    	 * where N is the size of the set and the sum goes over all values of the
-    	 * sensitive attribute, n is the count of the current sensitive attribute
-    	 *  
-    	 * @param n
-    	 * @return The logarithm substitute of the estimator
-    	 */
-    	public double psi(int n) {
-    		return psi.f(n);
-    	}
-    	
-    	/**
-         * Holds precomputed values of G_n for 1 <= n <= 100
+         * Holds precomputed values of G_n for 1 <= n <= 100<br>
          * It is G_1 = G_PRECOMPUTED[0].
          * For n>1, we have G_{2n+1} := G_{2n}, so we only store the values for even index:
          * G_{2n} = G_PRECOMPUTED[n]
@@ -227,13 +118,17 @@ public class EntropyLDiversity extends LDiversity {
                 4.5849848312863175, // G_98
                 4.605186851488337, // G_100
         };
-
-        final private static double s1 = 1d/24;
-        final private static double s2 = 7d/960;
-        final private static double s3 = 31d/8064;
+    	
+    	/** Static s1 */
+        private static final double s1 = 1d/24;
+    	/** Static s2 */
+        private static final double s2 = 7d/960;
+        /** Static s3 */
+        private static final double s3 = 31d/8064;
+        
         /**
-         * Calculates the Grassberger entropy correction term G_n
-         *
+         * Calculates the Grassberger entropy correction term G_n<br>
+         * <br>
          * $$G_{2n+1} := G_{2n} = -\gamma -\log2 +\sum_{k=1}^n 2/(2k-1)$$
          * The first 100 values are precomputed. After that, an expansion of the Digamma function at infinity is used.
          *
@@ -248,26 +143,151 @@ public class EntropyLDiversity extends LDiversity {
             n -= n%2; // Make n even
             final double m = 1d / ((n/2)*(n/2));
 
-            return Math.log(n) +
-                    m *(s1 - m *(s2 - m*s3));
+            return Math.log(n) + m *(s1 - m *(s2 - m*s3));
         }
+        /**
+    	 * Creates a new instance
+    	 * @param psi
+    	 */
+    	private EntropyEstimator(IPsi psi) {
+    		this.psi = psi;
+    	}
+        
+        /**
+    	 * The logarithm substitute of the current estimator
+    	 * 
+    	 * The difference in estimating the entropy by the naive Shannon or Grassberger
+    	 * estimator is actually using log or G for \psi in the entropy formula
+    	 *    $H = \psi(N) - 1/N \sum n \psi(n)$
+    	 * where N is the size of the set and the sum goes over all values of the
+    	 * sensitive attribute, n is the count of the current sensitive attribute
+    	 *  
+    	 * @param n
+    	 * @return The logarithm substitute of the estimator
+    	 */
+    	public double psi(int n) {
+    		return psi.f(n);
+    	}
     }
     
+    /**  SVUID */
+    private static final long   serialVersionUID = -354688551915634000L;
+
+    /** Entropy estimator to be used */
+    private EntropyEstimator estimator;
+    
     /**
-     * Custom deserialization
+     * Creates a new instance of the entropy l-diversity model as proposed in:<br>
+     * Machanavajjhala A, Kifer D, Gehrke J. l-diversity: Privacy beyond k-anonymity.<br>
+     * Transactions on Knowledge Discovery from Data (TKDD). 2007;1(1):3.
+     *
+     * @param attribute
+     * @param l
+     */
+    public EntropyLDiversity(String attribute, double l){
+        super(attribute, l, false, true);
+        this.estimator = EntropyEstimator.SHANNON;
+    }
+
+    /**
+     * Creates a new instance of the entropy-l-diversity privacy model,
+     * specifying the entropy estimator be to used.
+     * Two estimators are available:<br>
+     * <ul>
+     *   <li> 
+     *   SHANNON for the usual naive Shannon estimator:
+     *   this amounts to the original entropy-l-diversity definition by Machanavajjhala.
+     *   </li>
+     *   <li>
+     *   GRASSBERGER for the corrected Grassberger estimator as proposed in:
+     *   P Grassberger. Entropy Estimates from Insufficient Samplings.
+     *   https://arxiv.org/abs/physics/0307138v2<br>
+     *   This estimator generally accepts more sets as being entropy-l-diverse than
+     *   the naive Shannon estimator, thus increases data utility.
+     *   It also guarantees a more consistent meaning of the security
+     *   parameter l between different data sets. For details take a look at:
+     *   S Stammler, S Katzenbeisser, K Hamacher.
+     *   Correcting Finite Sampling Issues in Entropy l-diversity.
+     *   Privacy in Statistical Databases 2016. LNCS Vol. 9867 pp 135-146
+     *   </li>
+     * </ul>
+     *   
+     * @param attribute The sensitive attribute
+     * @param l Security parameter
+     * @param estimator Entropy estimator (SHANNON or GRASSBERGER)
+     */
+    public EntropyLDiversity(String attribute, double l, EntropyEstimator estimator) {
+    	super(attribute, l, false, true);
+        this.estimator = estimator;
+	}
+
+	@Override
+    public EntropyLDiversity clone() {
+        return new EntropyLDiversity(this.getAttribute(), this.getL(), this.getEstimator());
+    }
+
+    /**
+     * Returns the entropy estimator used by this instance
+     * @return
+     */
+    public EntropyEstimator getEstimator() {
+		return estimator;
+	}
+
+	@Override
+    public boolean isAnonymous(HashGroupifyEntry entry) {
+
+        Distribution d = entry.distributions[index];
+
+        // If less than l values are present skip
+        if (d.size() < minSize) { return false; }
+
+        // Sum of the frequencies in distribution (=number of elements)
+        final int total = entry.count;
+        // Sum must stay smaller than this constant term
+        final double C = total * (estimator.psi(total) - Math.log(l));
+        double sum1 = 0d;
+
+        final int[] buckets = d.getBuckets();
+        for (int i = 0; i < buckets.length; i += 2) {
+            if (buckets[i] != -1) { // bucket not empty
+                final int frequency = buckets[i + 1];
+                sum1 += frequency * estimator.psi(frequency);
+                // If the sum grows over C, we can abort the loop earlier.
+                if (C < sum1) { return false; }
+            }
+        }
+
+        // If we reach this point, the loop did not return false.
+        return true;
+    }
+
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return true;
+    }
+    
+    @Override
+	public String toString() {
+        return estimator.toString().toLowerCase() + "-entropy-" + l + "-diversity for attribute '" + attribute + "'";
+	}
+    
+    /**
+     * Custom de-serialization
      * 
-     * If we deserialize an older object where the entropy estimator
+     * If we de-serialize an older object where the entropy estimator
      * could not be chosen, set the estimator to the default: Shannon.
      * 
      * @param ois
      * @throws ClassNotFoundException
      * @throws IOException
      */
-    private void readObject(ObjectInputStream ois)
-    		throws ClassNotFoundException, IOException {
-    	// default deserialization
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        
+    	// Default de-serialization
     	ois.defaultReadObject();
-    	// Set default estimator if deserializing an older object
+    	
+    	// Set default estimator if de-serializing an older object
     	if(this.estimator == null) {
     		this.estimator = EntropyEstimator.SHANNON;
     	}
