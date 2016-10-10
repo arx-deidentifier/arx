@@ -19,6 +19,8 @@ package org.deidentifier.arx.risk;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -53,7 +55,7 @@ public class RiskModelAttributes {
     public final class QuasiIdentifierRisk implements Comparable<QuasiIdentifierRisk> {
 
         /** Field */
-        private final Set<String> identifier;
+        private final List<String> identifier;
         /** Field */
         private final double      alphaDistinction;
         /** Field */
@@ -64,14 +66,19 @@ public class RiskModelAttributes {
          *
          * @param identifier
          */
-        private QuasiIdentifierRisk(Set<String> identifier) {
-            
+        private QuasiIdentifierRisk(List<String> identifier) {
+
             // Store identifier
             this.identifier = identifier;
 
             // Calculate distribution of class sizes
-            RiskModelHistogram histogram = new RiskEstimateBuilder(population, handle, identifier, stop, solverconfig, arxconfig).getEquivalenceClassModel();
-            
+            RiskModelHistogram histogram = new RiskEstimateBuilder(population,
+                                                                   handle,
+                                                                   new HashSet<String>(identifier),
+                                                                   stop,
+                                                                   solverconfig,
+                                                                   arxconfig).getEquivalenceClassModel();
+
             // Calculate distinction and separation
             this.alphaDistinction = getAlphaDistinction(histogram);
             this.alphaSeparation = getAlphaSeparation(histogram);
@@ -98,8 +105,8 @@ public class RiskModelAttributes {
                 return cmp;
             }
             
-            // Equal
-            return 0;
+            // Compare lexicographically
+            return this.identifier.toString().compareTo(other.identifier.toString());
         }
 
         /**
@@ -116,7 +123,7 @@ public class RiskModelAttributes {
          * 
          * @return the identifier
          */
-        public Set<String> getIdentifier() {
+        public List<String> getIdentifier() {
             return identifier;
         }
 
@@ -152,25 +159,48 @@ public class RiskModelAttributes {
      * @param solverconfig
      * @param arxconfig
      */
-    RiskModelAttributes(ARXPopulationModel population, DataHandleInternal handle, Set<String> identifiers, WrappedBoolean stop, WrappedInteger percentageDone, ARXSolverConfiguration solverconfig, ARXConfiguration arxconfig) {
+    RiskModelAttributes(final ARXPopulationModel population,
+                        final DataHandleInternal handle,
+                        final Set<String> identifiers,
+                        final WrappedBoolean stop,
+                        final WrappedInteger percentageDone,
+                        final ARXSolverConfiguration solverconfig,
+                        final ARXConfiguration arxconfig) {
+        
         this.population = population;
         this.handle = handle;
         this.stop = stop;
         this.solverconfig = solverconfig;
         this.arxconfig = arxconfig;
 
-        // Compute risk estimates for all elements in the power set
+        // Find order list of qis
+        List<List<String>> qis = new ArrayList<>();
         Set<Set<String>> powerset = getPowerSet(identifiers);
-        Map<Set<String>, QuasiIdentifierRisk> scores = new HashMap<>();
-        int done = 0;
         for (Set<String> set : powerset) {
-            checkInterrupt();
+            
+            // Exclude empty set
             if (!set.isEmpty()) {
-                scores.put(set, new QuasiIdentifierRisk(set));
-                percentageDone.value = (int) Math.round((double) done++ /
-                        (double) (powerset.size() - 1) *
-                        100d);
+                List<String> qi = new ArrayList<String>(set);
+                
+                // Sort by column index
+                Collections.sort(qi, new Comparator<String>(){
+                    @Override
+                    public int compare(String o1, String o2) {
+                        int index1 = handle.getColumnIndexOf(o1);
+                        int index2 = handle.getColumnIndexOf(o2);
+                        return new Integer(index1).compareTo(index2);
+                    }
+                });
             }
+        }
+        
+        // Compute risk estimates for all elements in the power set
+        Map<List<String>, QuasiIdentifierRisk> scores = new HashMap<>();
+        int done = 0;
+        for (List<String> qi : qis) {
+            checkInterrupt();
+            scores.put(qi, new QuasiIdentifierRisk(qi));
+            percentageDone.value = (int) Math.round((double) done++ / (double) (powerset.size() - 1) * 100d);
         }
 
         // Now create sorted array
