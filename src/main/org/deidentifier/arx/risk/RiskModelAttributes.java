@@ -139,7 +139,6 @@ public class RiskModelAttributes {
     private DataHandleInternal          handle;
     /** Just needed for creating risk models */
     private ARXSolverConfiguration      solverconfig;
-
     /** Just needed for creating risk models */
     private ARXConfiguration            arxconfig;
 
