@@ -146,6 +146,7 @@
                     <include name="**/TestAnonymizationRiskBased.java" />
                     <include name="**/TestAnonymizationLocalRecoding.java" />
                     <include name="**/TestAnonymizationOrderedDistanceTCloseness.java" />
+                    <include name="**/TestAnonymizationEntropyLDiversity.java" />
                 </fileset>
                 <formatter type="plain" usefile="false" />
                 <formatter type="xml" />
