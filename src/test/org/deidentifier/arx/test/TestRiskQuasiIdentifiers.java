@@ -63,6 +63,7 @@ public class TestRiskQuasiIdentifiers {
 
     @Test
     public void testWithDefinedDataSet() {
+        
         // Define data
         Data.DefaultData data = Data.create();
         data.add("age", "sex", "state");
@@ -72,7 +73,7 @@ public class TestRiskQuasiIdentifiers {
         data.add("20", "Male", "NY");
         data.add("40", "Male", "CA");
 
-        // calculated by hand
+        // Calculated by hand
         ResultSet[] expectedResults = new ResultSet[]{
                 new ResultSet("[sex]", 0.4, 0.6),
                 new ResultSet("[state]", 0.6, 0.7),
@@ -83,12 +84,12 @@ public class TestRiskQuasiIdentifiers {
                 new ResultSet("[sex, age, state]", 1.0, 1.0),
         };
 
-        // flag every identifier as quasi identifier
+        // Flag every identifier as quasi identifier
         for (int i = 0; i < data.getHandle().getNumColumns(); i++) {
             data.getDefinition().setAttributeType(data.getHandle().getAttributeName(i), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
         }
 
-        // perform calculation
+        // Perform calculation
         RiskEstimateBuilder builder = data.getHandle().getRiskEstimator(null);
         RiskModelAttributes riskmodel = builder.getAttributeRisks();
         RiskModelAttributes.QuasiIdentifierRisk risks[] = riskmodel.getAttributeRisks();
