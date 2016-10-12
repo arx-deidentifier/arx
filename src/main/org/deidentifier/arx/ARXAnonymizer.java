@@ -368,13 +368,13 @@ public class ARXAnonymizer {
         if (config.containsCriterion(KAnonymity.class)){
             KAnonymity c = config.getCriterion(KAnonymity.class);
             if ((c.getK() > manager.getDataGeneralized().getDataLength()) || (c.getK() < 1)) { 
-                throw new IllegalArgumentException("Parameter k (" + c.getK() + ") musst be positive and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
+                throw new IllegalArgumentException("Parameter k (" + c.getK() + ") musst be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
             }
         }
         if (config.containsCriterion(LDiversity.class)){
             for (LDiversity c : config.getCriteria(LDiversity.class)){
 	            if ((c.getL() > manager.getDataGeneralized().getDataLength()) || (c.getL() < 1)) { 
-	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") musst be positive and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
+	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") musst be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
 	            }
             }
         }
