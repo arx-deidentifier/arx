@@ -39,21 +39,21 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
     public static final int   VARIANT_DISTINCT            = 0;
 
     /** Variant. */
-    public static final int   VARIANT_ENTROPY             = 1;
-
-    /** Variant. */
-    public static final int   VARIANT_RECURSIVE           = 2;
+    public static final int   VARIANT_SHANNON_ENTROPY     = 1;
 
     /** Variant. */
     public static final int   VARIANT_GRASSBERGER_ENTROPY = 3;
 
+    /** Variant. */
+    public static final int   VARIANT_RECURSIVE           = 2;
+
     /** The variant to use. */
     private int               variant                     = 0;
 
-    /** L. */
+    /** Parameter "l" */
     private int               l                           = 2;
 
-    /** C, if any. */
+    /** Parameter "c", if any */
     private double            c                           = 0.001d;
 
     /**
@@ -107,12 +107,12 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
         switch (variant) {
         case VARIANT_DISTINCT:
             return new DistinctLDiversity(getAttribute(), l);
-        case VARIANT_ENTROPY:
+        case VARIANT_SHANNON_ENTROPY:
             return new EntropyLDiversity(getAttribute(), l);
         case VARIANT_RECURSIVE:
             return new RecursiveCLDiversity(getAttribute(), c, l);
         case VARIANT_GRASSBERGER_ENTROPY:
-            return new EntropyLDiversity(getAttribute(), c, EntropyEstimator.GRASSBERGER);
+            return new EntropyLDiversity(getAttribute(), l, EntropyEstimator.GRASSBERGER);
         default:
             throw new RuntimeException(Resources.getMessage("Model.0e")); //$NON-NLS-1$
         }
@@ -196,7 +196,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
         switch (variant) {
         case VARIANT_DISTINCT:
             return Resources.getMessage("Model.3") + SWTUtil.getPrettyString(l) + Resources.getMessage("Model.4"); //$NON-NLS-1$ //$NON-NLS-2$
-        case VARIANT_ENTROPY:
+        case VARIANT_SHANNON_ENTROPY:
             return Resources.getMessage("Model.5") + SWTUtil.getPrettyString(l) + Resources.getMessage("Model.6"); //$NON-NLS-1$ //$NON-NLS-2$
         case VARIANT_GRASSBERGER_ENTROPY:
             return Resources.getMessage("Model.35") + SWTUtil.getPrettyString(l) + Resources.getMessage("Model.6"); //$NON-NLS-1$ //$NON-NLS-2$
