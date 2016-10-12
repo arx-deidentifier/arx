@@ -299,8 +299,8 @@ public class EntropyLDiversity extends LDiversity {
     	ois.defaultReadObject();
     	
     	// Set default estimator if de-serializing an older object
-    	if(this.estimator == null) {
-    		this.estimator = EntropyEstimator.SHANNON;
-    	}
+        if (this.estimator == null) {
+            this.estimator = EntropyEstimator.SHANNON;
+        }
     }
 }
