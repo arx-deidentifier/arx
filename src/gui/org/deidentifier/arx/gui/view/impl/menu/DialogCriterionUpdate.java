@@ -57,7 +57,7 @@ import de.linearbits.swt.table.DynamicTable;
 import de.linearbits.swt.table.DynamicTableColumn;
 
 /**
- * A dialog for adding and configuring privacy criteria.
+ * A dialog for adding and configuring privacy models.
  *
  * @author Fabian Prasser
  */
@@ -310,8 +310,6 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
                 }
             }
         });
-        
-        
 
         ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-80"); //$NON-NLS-1$
         bar.add(Resources.getMessage("DialogCriterionUpdate.16"),  //$NON-NLS-1$
@@ -351,6 +349,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
         label.setLayoutData(data);
         label.setText(Resources.getMessage("DialogCriterionUpdate.20")); //$NON-NLS-1$
 
+        // Return
         return parent;
     }
 
