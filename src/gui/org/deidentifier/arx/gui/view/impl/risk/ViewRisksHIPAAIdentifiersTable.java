@@ -221,6 +221,9 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
                     col.pack();
                 }
 
+                // Layout
+                table.layout();
+
                 // Enable drawing and redraw
                 table.setRedraw(true);
                 table.redraw();
