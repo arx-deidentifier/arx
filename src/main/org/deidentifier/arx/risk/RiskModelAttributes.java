@@ -180,7 +180,10 @@ public class RiskModelAttributes {
             
             // Exclude empty set
             if (!set.isEmpty()) {
+                
+                // Create and add
                 List<String> qi = new ArrayList<String>(set);
+                qis.add(qi);
                 
                 // Sort by column index
                 Collections.sort(qi, new Comparator<String>(){
