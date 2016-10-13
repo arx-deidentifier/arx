@@ -251,6 +251,8 @@ public class RiskModelAttributes {
      * @return the calculated alpha distinction
      */
     private double getAlphaDistinction(RiskModelHistogram histogramm) {
+        
+        // This is almost trivial
         return histogramm.getNumClasses() / histogramm.getNumRecords();
     }
 
@@ -262,6 +264,8 @@ public class RiskModelAttributes {
      * @return the calculated alpha separation
      */
     private double getAlphaSeparation(RiskModelHistogram histogram) {
+        
+        // Obtain class sizes
         int[] classes = histogram.getHistogram();
 
         // when we want to compare 4 values (only in one direction this means we compare "a" to "b" but not "b" to "a")
@@ -294,6 +298,9 @@ public class RiskModelAttributes {
 
             // add number of separated classes to result
             separatedRecords += separatedRecordsCurrentClass;
+            
+            // Check interrupt
+            checkInterrupt();
         }
 
         // alpha separation indicates a value alpha [0,1] such that a subset of attributes separates
