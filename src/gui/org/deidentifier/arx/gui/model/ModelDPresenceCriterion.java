@@ -103,7 +103,9 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
         ModelDPresenceCriterion other = (ModelDPresenceCriterion)criterion;
         this.dmax = other.dmax;
         this.dmin = other.dmin;
-        this.setEnabled(other.isEnabled());
+        if (!_default) {
+            this.setEnabled(other.isEnabled());
+        }
     }
 
     /**

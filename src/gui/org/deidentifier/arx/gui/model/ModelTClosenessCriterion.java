@@ -122,7 +122,9 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
         ModelTClosenessCriterion other = (ModelTClosenessCriterion)criterion;
         this.t = other.t;
         this.variant = other.variant;
-        this.setEnabled(other.isEnabled());
+        if (!_default) {
+            this.setEnabled(other.isEnabled());
+        }
     }
     
 	@Override

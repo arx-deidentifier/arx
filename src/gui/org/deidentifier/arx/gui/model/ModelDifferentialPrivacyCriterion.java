@@ -115,7 +115,9 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         if (!_default) {
             this.generalization = other.generalization.clone();
         }
-        this.setEnabled(other.isEnabled());
+        if (!_default) {
+            this.setEnabled(other.isEnabled());
+        }
     }
 
     /**

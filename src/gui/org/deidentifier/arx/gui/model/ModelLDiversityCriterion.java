@@ -150,7 +150,9 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
         this.l = other.l;
         this.c = other.c;
         this.variant = other.variant;
-        this.setEnabled(other.isEnabled());
+        if (!_default) {
+            this.setEnabled(other.isEnabled());
+        }
     }
 
     @Override
