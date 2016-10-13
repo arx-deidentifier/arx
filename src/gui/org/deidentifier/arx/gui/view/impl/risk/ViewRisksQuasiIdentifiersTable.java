@@ -16,8 +16,6 @@
  */
 package org.deidentifier.arx.gui.view.impl.risk;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
@@ -91,10 +89,8 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
      * @param risks
      */
     private void createItem(QuasiIdentifierRisk risks) {
-        final TableItem item = new TableItem(table, SWT.NONE);
-        List<String> list = new ArrayList<String>();
-        list.addAll(risks.getIdentifier());
-        Collections.sort(list);
+        TableItem item = new TableItem(table, SWT.NONE);
+        List<String> list = risks.getIdentifier();
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < list.size(); i++) {
             builder.append(list.get(i));
@@ -103,8 +99,8 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
             }
         }
         item.setText(0, builder.toString());
-        item.setData("1", risks.getDistinction());
-        item.setData("2", risks.getSeparation());
+        item.setData("1", risks.getDistinction()); //$NON-NLS-1$
+        item.setData("2", risks.getSeparation()); //$NON-NLS-1$
     }
 
     @Override
@@ -199,27 +195,36 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
                     return;
                 }
 
+                // Disable drawing
+                table.setRedraw(false);
+                
                 // Update chart
                 for (final TableItem i : table.getItems()) {
                     i.dispose();
                 }
-
-                // For all sizes
+                
+                // Create table items
                 for (QuasiIdentifierRisk item : risks.getAttributeRisks()) {
                     createItem(item);
                 }
-
+                
+                // Pack columns
                 for (final TableColumn col : table.getColumns()) {
                     col.pack();
                 }
-
+                
+                // Update status
                 if (risks.getAttributeRisks().length == 0) {
                     setStatusEmpty();
                 } else {
                     setStatusDone();
                 }
 
+                // Layout
                 table.layout();
+
+                // Enable drawing and redraw
+                table.setRedraw(true);
                 table.redraw();
             }
 
