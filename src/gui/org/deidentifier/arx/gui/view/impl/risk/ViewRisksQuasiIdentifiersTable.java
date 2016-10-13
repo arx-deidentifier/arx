@@ -213,19 +213,19 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
                     col.pack();
                 }
                 
-                // Update status
-                if (risks.getAttributeRisks().length == 0) {
-                    setStatusEmpty();
-                } else {
-                    setStatusDone();
-                }
-
                 // Layout
                 table.layout();
 
                 // Enable drawing and redraw
                 table.setRedraw(true);
                 table.redraw();
+
+                // Update status
+                if (risks.getAttributeRisks().length == 0) {
+                    setStatusEmpty();
+                } else {
+                    setStatusDone();
+                }
             }
 
             @Override

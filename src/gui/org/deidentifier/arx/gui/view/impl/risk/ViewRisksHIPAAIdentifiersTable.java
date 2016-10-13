@@ -198,9 +198,13 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
             @Override
             public void onFinish() {
                 
+                // Check
                 if (stopped || !isEnabled()) {
                     return;
                 }
+
+                // Disable drawing
+                table.setRedraw(false);
                 
                 // Update chart
                 for (final TableItem i : table.getItems()) {
@@ -212,12 +216,16 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
                     createItem(item);
                 }
                 
+                // Pack columns
                 for (final TableColumn col : table.getColumns()) {
                     col.pack();
                 }
-                
+
+                // Enable drawing and redraw
+                table.setRedraw(true);
                 table.redraw();
-                table.layout();
+
+                // Set status
                 setStatusDone();
             }
             
