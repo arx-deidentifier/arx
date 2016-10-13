@@ -48,29 +48,29 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * A dialog for selecting privacy criteria.
+ * A dialog for selecting privacy models.
  *
  * @author Fabian Prasser
  */
 public class DialogCriterionSelection extends TitleAreaDialog implements IDialog {
 
-    /**  TODO */
+    /**  View */
     private Button                       ok         = null;
     
-    /**  TODO */
+    /**  View */
     private Button                       cancel     = null;
     
-    /**  TODO */
+    /**  Model */
     private List<ModelExplicitCriterion> elements   = null;
     
-    /**  TODO */
+    /**  Model */
     private ModelExplicitCriterion       selection  = null;
 
-    /**  TODO */
+    /**  Controller */
     private Controller                   controller = null;
 
     /**
-     * Constructor.
+     * Creates a new instance.
      *
      * @param controller
      * @param parent
@@ -90,7 +90,7 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
     }
 
     /**
-     * Returns the selected criterion.
+     * Returns the selected model.
      *
      * @return
      */

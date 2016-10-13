@@ -79,9 +79,9 @@ public class TestRiskQuasiIdentifiers {
                 new ResultSet("[state]", 0.6, 0.7),
                 new ResultSet("[age]", 0.6, 0.8),
                 new ResultSet("[sex, state]", 0.8, 0.9),
+                new ResultSet("[age, sex]", 1.0, 1.0),
                 new ResultSet("[age, state]", 1.0, 1.0),
-                new ResultSet("[sex, age]", 1.0, 1.0),
-                new ResultSet("[sex, age, state]", 1.0, 1.0),
+                new ResultSet("[age, sex, state]", 1.0, 1.0),
         };
 
         // Flag every identifier as quasi identifier
@@ -94,6 +94,10 @@ public class TestRiskQuasiIdentifiers {
         RiskModelAttributes riskmodel = builder.getAttributeRisks();
         RiskModelAttributes.QuasiIdentifierRisk risks[] = riskmodel.getAttributeRisks();
 
+        // Check length
+        assertTrue("Number of potential quasi-identifiers expected: " + risks.length, expectedResults.length == risks.length);
+        
+        // Check each entry
         for (int i = 0; i < risks.length; i++) {
             assertTrue("Identifier expected: " + expectedResults[i].identifier + "; got: " + risks[i].getIdentifier(), expectedResults[i].identifier.equals(risks[i].getIdentifier().toString()));
             assertTrue("Distinction expected: " + expectedResults[i].distinction + "; got: " + risks[i].getDistinction(), expectedResults[i].distinction == risks[i].getDistinction());
