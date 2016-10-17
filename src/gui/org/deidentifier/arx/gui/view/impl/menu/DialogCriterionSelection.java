@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * A dialog for selecting privacy criteria.
+ * A dialog for selecting privacy models.
  *
  * @author Fabian Prasser
  */

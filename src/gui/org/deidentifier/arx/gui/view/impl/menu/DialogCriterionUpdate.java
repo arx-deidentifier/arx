@@ -58,9 +58,10 @@ import de.linearbits.swt.table.DynamicTable;
 import de.linearbits.swt.table.DynamicTableColumn;
 
 /**
- * A dialog for adding and configuring privacy criteria.
+ * A dialog for adding and configuring privacy models.
  *
  * @author Fabian Prasser
+ * @author James Gaupp
  */
 public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
 
