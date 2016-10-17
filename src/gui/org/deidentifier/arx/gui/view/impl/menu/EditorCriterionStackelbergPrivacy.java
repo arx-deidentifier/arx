@@ -1,3 +1,20 @@
+/*
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.util.ArrayList;
@@ -17,24 +34,44 @@ import org.eclipse.swt.widgets.Text;
 
 import de.linearbits.swt.widgets.Knob;
 
+/**
+ * Editor for the stackelberg game-theoretic privacy model
+ * 
+ * @author James Gaupp
+ * @author Fabian Prasser
+ */
 public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStackelbergPrivacyCriterion> {
-	
-	private Text labelAdvCost;
-	private Text labelAdvGain;
-	private Text labelPubBenefit;
-	private Text labelPubLoss;
-	
-	Knob<Double> knobAdvCost;
-	Knob<Double> knobAdvGain;
-	Knob<Double> knobPubBenefit;
-	Knob<Double> knobPubLoss;
-	
+
+    /** View */
+    private Text          labelAdvCost;
+    /** View */
+    private Text          labelAdvGain;
+    /** View */
+    private Text          labelPubBenefit;
+    /** View */
+    private Text          labelPubLoss;
+
+    /** View */
+    private Knob<Integer> knobAdvCost;
+    /** View */
+    private Knob<Integer> knobAdvGain;
+    /** View */
+    private Knob<Integer> knobPubBenefit;
+    /** View */
+    private Knob<Integer> knobPubLoss;
+
+	/**
+	 * Creates a new instance
+	 * @param parent
+	 * @param model
+	 */
 	public EditorCriterionStackelbergPrivacy(final Composite parent, final ModelStackelbergPrivacyCriterion model) {
 		super(parent, model);
 	}
 
 	@Override
 	protected Composite build(Composite parent) {
+	    
         // Create input group
         Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillHorizontallyGridData());
@@ -45,7 +82,7 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
         Label pubBenefit = new Label(group, SWT.NONE);
         pubBenefit.setText(Resources.getMessage("CriterionDefinitionView.110"));
         labelPubBenefit = createLabel(group);
-        knobPubBenefit = createKnobDouble(group, 0, 10000);
+        knobPubBenefit = createKnobInteger(group, 0, Integer.MAX_VALUE);
         knobPubBenefit.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -57,7 +94,7 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
         Label pubLoss = new Label(group, SWT.NONE);
         pubLoss.setText(Resources.getMessage("CriterionDefinitionView.111"));
         labelPubLoss = createLabel(group);
-        knobPubLoss = createKnobDouble(group, 0, 10000);
+        knobPubLoss = createKnobInteger(group, 0, Integer.MAX_VALUE);
         knobPubLoss.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -69,7 +106,7 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
         Label advGain = new Label(group, SWT.NONE);
         advGain.setText(Resources.getMessage("CriterionDefinitionView.112"));
         labelAdvGain = createLabel(group);
-        knobAdvGain = createKnobDouble(group, 0, 10000);
+        knobAdvGain = createKnobInteger(group, 0, Integer.MAX_VALUE);
         knobAdvGain.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -81,7 +118,7 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
         Label advCost = new Label(group, SWT.NONE);
         advCost.setText(Resources.getMessage("CriterionDefinitionView.113"));
         labelAdvCost = createLabel(group);
-        knobAdvCost = createKnobDouble(group, 0, 10000);
+        knobAdvCost = createKnobInteger(group, 0, Integer.MAX_VALUE);
         knobAdvCost.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -95,28 +132,31 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
 
 	@Override
 	protected List<ModelCriterion> getTypicalParameters() {
-		
+
+	    // Create list
+	    List<ModelCriterion> result = new ArrayList<ModelCriterion>();
+	    
+	    // TODO: We could add some more configurations here
 		ModelStackelbergPrivacyCriterion mc1 = new ModelStackelbergPrivacyCriterion();
 		mc1.setAdversaryCost(4d);
 		mc1.setAdversaryGain(300d);
 		mc1.setPublisherLoss(300d);
 		mc1.setPublisherBenefit(1200d);
-		
-		List<ModelCriterion> result = new ArrayList<ModelCriterion>();
 		result.add(mc1);
+		
+		// Return
         return result;
 	}
 
 	@Override
 	protected void parse(ModelStackelbergPrivacyCriterion model, boolean defaultParameters) {
-		
-		updateLabel(labelAdvCost, model.getAdversaryCost());
+        updateLabel(labelAdvCost, model.getAdversaryCost());
         updateLabel(labelAdvGain, model.getAdversaryGain());
-		updateLabel(labelPubBenefit, model.getPublisherBenefit());
+        updateLabel(labelPubBenefit, model.getPublisherBenefit());
         updateLabel(labelPubLoss, model.getPublisherLoss());
-        knobAdvCost.setValue(model.getAdversaryCost());
-        knobAdvGain.setValue(model.getAdversaryGain());
-        knobPubBenefit.setValue(model.getPublisherBenefit());
-        knobPubLoss.setValue(model.getPublisherLoss());
+        knobAdvCost.setValue((int) model.getAdversaryCost());
+        knobAdvGain.setValue((int) model.getAdversaryGain());
+        knobPubBenefit.setValue((int) model.getPublisherBenefit());
+        knobPubLoss.setValue((int) model.getPublisherLoss());
 	}
 }
