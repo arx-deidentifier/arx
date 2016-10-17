@@ -38,6 +38,7 @@ import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.criteria.RiskBasedCriterion;
 import org.deidentifier.arx.criteria.SampleUniqueness;
+import org.deidentifier.arx.criteria.StackelbergPrivacyModel;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -274,6 +275,21 @@ public class ViewPropertiesOutput extends ViewProperties {
                     new Property(n, Resources.getMessage("PropertiesView.148"), new String[] { SWTUtil.getPrettyString(criterion.getType1Error()) }); //$NON-NLS-1$
                 }
             }
+            // Print info about game-theoretic privacy
+            if (context.config.containsCriterion(StackelbergPrivacyModel.class)) {
+                
+                StackelbergPrivacyModel criterion = context.config.getCriterion(StackelbergPrivacyModel.class);
+                Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { Resources.getMessage("PropertiesView.134") }); //$NON-NLS-1$ //$NON-NLS-2$
+                new Property(n, Resources.getMessage("PropertiesView.135"), new String[] { SWTUtil.getPrettyString(criterion.getConfig().getPublisherBenefit())}); //$NON-NLS-1$
+                new Property(n, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(criterion.getConfig().getPublisherLoss())}); //$NON-NLS-1$
+                new Property(n, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(criterion.getConfig().getAdversaryGain())}); //$NON-NLS-1$
+                new Property(n, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(criterion.getConfig().getAdversaryCost())}); //$NON-NLS-1$
+                if (criterion.getConfig().isProsecutorAttackerModel()) {
+                    new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
+                } else {
+                    new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.161") }); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+            }
             
             // Print info about (e,d)-dp
             if (context.config.containsCriterion(EDDifferentialPrivacy.class)) {
@@ -285,7 +301,7 @@ public class ViewPropertiesOutput extends ViewProperties {
                 new Property(n, Resources.getMessage("PropertiesView.145"), new String[] { SWTUtil.getPrettyString(criterion.getBeta())}); //$NON-NLS-1$
             }
             
-            // Print info about l-diversity or t-closeness
+            // Print info about l-diversity, t-closeness and d-disclosure privacy
             int index = 0;
             for (PrivacyCriterion c : context.config.getCriteria()) {
                 if (c instanceof DistinctLDiversity){
