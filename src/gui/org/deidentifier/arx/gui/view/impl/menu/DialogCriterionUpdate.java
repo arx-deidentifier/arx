@@ -300,7 +300,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
                 item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
                 item.setImage(0, symbolDP);
             } else if (c instanceof ModelStackelbergPrivacyCriterion) {
-            	item.setText(new String[] { "", c.getLabel(), "" });
+            	item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
             	item.setImage(0, symbolG);
             }
         }
@@ -319,8 +319,6 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
                 }
             }
         });
-        
-        
 
         ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-80"); //$NON-NLS-1$
         bar.add(Resources.getMessage("DialogCriterionUpdate.16"),  //$NON-NLS-1$
