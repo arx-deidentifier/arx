@@ -240,7 +240,8 @@ public class Model implements Serializable {
     /** Model for a specific privacy criterion. */
     private Map<String, ModelDDisclosurePrivacyCriterion> dDisclosurePrivacyModel         = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
 
-    private ModelStackelbergPrivacyCriterion stackelbergPrivacyModel                      = new ModelStackelbergPrivacyCriterion();
+    /** Model for a specific privacy criterion. */
+    private ModelStackelbergPrivacyCriterion              stackelbergPrivacyModel         = new ModelStackelbergPrivacyCriterion();
 
     /* *****************************************
      * UTILITY ANALYSIS
