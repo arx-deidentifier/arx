@@ -385,12 +385,14 @@ public class ViewAttributeTransformation implements IView {
                 if (definition.getQuasiIdentifyingAttributes().isEmpty()) {
                     
                     if (model.getKAnonymityModel().isEnabled() ||
-                        model.getDPresenceModel().isEnabled()) {
+                        model.getDPresenceModel().isEnabled() ||
+                        model.getStackelbergModel().isEnabled()) {
                         criteriaDisabled = true;
                     }
                     
                     model.getKAnonymityModel().setEnabled(false);
                     model.getDPresenceModel().setEnabled(false);
+                    model.getStackelbergModel().setEnabled(false);
                     for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
                         if (c.isEnabled()) {
                             criteriaDisabled = true;

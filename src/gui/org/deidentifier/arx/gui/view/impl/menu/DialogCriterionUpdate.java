@@ -29,6 +29,7 @@ import org.deidentifier.arx.gui.model.ModelKAnonymityCriterion;
 import org.deidentifier.arx.gui.model.ModelKMapCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
+import org.deidentifier.arx.gui.model.ModelStackelbergPrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -172,7 +173,10 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
                 editor = new EditorCriterionRiskBased(root, (ModelRiskBasedCriterion)selection);
             } else if (selection instanceof ModelDifferentialPrivacyCriterion) {
                 editor = new EditorCriterionDifferentialPrivacy(root, (ModelDifferentialPrivacyCriterion)selection, controller, model);
+            } else if (selection instanceof ModelStackelbergPrivacyCriterion) {
+            	editor = new EditorCriterionStackelbergPrivacy(root, (ModelStackelbergPrivacyCriterion)selection);
             }
+            
         } else {
             if (edit && ok != null) {
                 ok.setEnabled(false);
@@ -264,6 +268,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
         Image symbolD = controller.getResources().getManagedImage("symbol_d.png"); //$NON-NLS-1$
         Image symbolR = controller.getResources().getManagedImage("symbol_r.png"); //$NON-NLS-1$
         Image symbolDP = controller.getResources().getManagedImage("symbol_dp.png"); //$NON-NLS-1$
+        Image symbolG = controller.getResources().getManagedImage("symbol_g.png"); //$NON-NLS-1$
         
         for (ModelCriterion c : elements) {
 
@@ -293,6 +298,9 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
             } else if (c instanceof ModelDifferentialPrivacyCriterion) {
                 item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
                 item.setImage(0, symbolDP);
+            } else if (c instanceof ModelStackelbergPrivacyCriterion) {
+            	item.setText(new String[] { "", c.getLabel(), "" });
+            	item.setImage(0, symbolG);
             }
         }
 

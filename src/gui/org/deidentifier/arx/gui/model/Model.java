@@ -213,8 +213,8 @@ public class Model implements Serializable {
     private ModelRisk                             riskModel                       = null;
 
     /* *****************************************
-     * PRIVACY CRITERIA****************************************
-     */
+     * PRIVACY CRITERIA
+     * *****************************************/
 
     /** Model for a specific privacy criterion. */
     private ModelDPresenceCriterion                       dPresenceModel                  = new ModelDPresenceCriterion();
@@ -239,6 +239,8 @@ public class Model implements Serializable {
 
     /** Model for a specific privacy criterion. */
     private Map<String, ModelDDisclosurePrivacyCriterion> dDisclosurePrivacyModel         = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
+
+    private ModelStackelbergPrivacyCriterion stackelbergPrivacyModel                      = new ModelStackelbergPrivacyCriterion();
 
     /* *****************************************
      * UTILITY ANALYSIS
@@ -411,6 +413,11 @@ public class Model implements Serializable {
         if (this.dPresenceModel != null && 
             this.dPresenceModel.isEnabled()) {
             config.addCriterion(this.dPresenceModel.getCriterion(this));
+        }
+		
+        if (this.stackelbergPrivacyModel != null &&
+        	this.stackelbergPrivacyModel.isEnabled()) {
+        	config.addCriterion(this.stackelbergPrivacyModel.getCriterion(this));
         }
 		
 		for (Entry<String, ModelLDiversityCriterion> entry : this.lDiversityModel.entrySet()){
@@ -1061,6 +1068,10 @@ public class Model implements Serializable {
 		return snapshotSizeSnapshot;
 	}
 
+	public ModelStackelbergPrivacyCriterion getStackelbergModel() {
+		return stackelbergPrivacyModel;
+	}
+
 	/**
      * Returns the origin of the subset.
      *
@@ -1218,6 +1229,7 @@ public class Model implements Serializable {
 		
 		differentialPrivacyModel = new ModelDifferentialPrivacyCriterion();
 		kAnonymityModel = new ModelKAnonymityCriterion();
+		stackelbergPrivacyModel = new ModelStackelbergPrivacyCriterion();
 		dPresenceModel = new ModelDPresenceCriterion();
 		kMapModel = new ModelKMapCriterion();
 		lDiversityModel.clear();
