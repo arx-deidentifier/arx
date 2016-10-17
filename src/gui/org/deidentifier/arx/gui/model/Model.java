@@ -53,13 +53,13 @@ import org.deidentifier.arx.metric.MetricDescription;
  * This class implements a large portion of the model used by the GUI.
  *
  * @author Fabian Prasser
+ * @author James Gaupp
  */
 public class Model implements Serializable {
     
     /**
      * The currently selected perspective
      * @author Fabian Prasser
-     *
      */
     public static enum Perspective {
         CONFIGURATION,
