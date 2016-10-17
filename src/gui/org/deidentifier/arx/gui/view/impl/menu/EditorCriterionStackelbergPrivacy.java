@@ -42,23 +42,26 @@ import de.linearbits.swt.widgets.Knob;
  */
 public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStackelbergPrivacyCriterion> {
 
-    /** View */
-    private Text          labelAdvCost;
-    /** View */
-    private Text          labelAdvGain;
-    /** View */
-    private Text          labelPubBenefit;
-    /** View */
-    private Text          labelPubLoss;
+    /** 1 Billion */
+    private static final int MAX = 10000000;
 
     /** View */
-    private Knob<Integer> knobAdvCost;
+    private Text             labelAdvCost;
     /** View */
-    private Knob<Integer> knobAdvGain;
+    private Text             labelAdvGain;
     /** View */
-    private Knob<Integer> knobPubBenefit;
+    private Text             labelPubBenefit;
     /** View */
-    private Knob<Integer> knobPubLoss;
+    private Text             labelPubLoss;
+
+    /** View */
+    private Knob<Integer>    knobAdvCost;
+    /** View */
+    private Knob<Integer>    knobAdvGain;
+    /** View */
+    private Knob<Integer>    knobPubBenefit;
+    /** View */
+    private Knob<Integer>    knobPubLoss;
 
 	/**
 	 * Creates a new instance
@@ -82,7 +85,7 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
         Label pubBenefit = new Label(group, SWT.NONE);
         pubBenefit.setText(Resources.getMessage("CriterionDefinitionView.110"));
         labelPubBenefit = createLabel(group);
-        knobPubBenefit = createKnobInteger(group, 0, Integer.MAX_VALUE);
+        knobPubBenefit = createKnobInteger(group, 0, MAX);
         knobPubBenefit.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -94,7 +97,7 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
         Label pubLoss = new Label(group, SWT.NONE);
         pubLoss.setText(Resources.getMessage("CriterionDefinitionView.111"));
         labelPubLoss = createLabel(group);
-        knobPubLoss = createKnobInteger(group, 0, Integer.MAX_VALUE);
+        knobPubLoss = createKnobInteger(group, 0, MAX);
         knobPubLoss.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -106,7 +109,7 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
         Label advGain = new Label(group, SWT.NONE);
         advGain.setText(Resources.getMessage("CriterionDefinitionView.112"));
         labelAdvGain = createLabel(group);
-        knobAdvGain = createKnobInteger(group, 0, Integer.MAX_VALUE);
+        knobAdvGain = createKnobInteger(group, 0, MAX);
         knobAdvGain.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -118,7 +121,7 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
         Label advCost = new Label(group, SWT.NONE);
         advCost.setText(Resources.getMessage("CriterionDefinitionView.113"));
         labelAdvCost = createLabel(group);
-        knobAdvCost = createKnobInteger(group, 0, Integer.MAX_VALUE);
+        knobAdvCost = createKnobInteger(group, 0, MAX);
         knobAdvCost.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
