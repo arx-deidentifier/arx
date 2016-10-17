@@ -226,7 +226,7 @@ public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
         builder.append(SWTUtil.getPrettyString(this.adversaryGain)).append(", "); //$NON-NLS-1$
         builder.append(SWTUtil.getPrettyString(this.adversaryCost)).append(")-"); //$NON-NLS-1$
         builder.append(Resources.getMessage("ModelCriterion.4")); //$NON-NLS-1$
-        builder.append("(");
+        builder.append(" (");
         builder.append(this.attackerModel == AttackerModel.PROSECUTOR ? Resources.getMessage("ModelCriterion.5") //$NON-NLS-1$
                 : Resources.getMessage("ModelCriterion.6")); //$NON-NLS-1$
         builder.append(")");
