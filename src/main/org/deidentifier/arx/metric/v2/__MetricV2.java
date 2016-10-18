@@ -769,17 +769,6 @@ public class __MetricV2 {
     }
     
     /**
-     * Creates an instance of the metric for maximizing publisher gain which treats generalization and suppression equally.
-     * The default aggregate function, which is the geometric mean, will be used.
-     * This metric will respect attribute weights defined in the configuration.
-     *
-     * @return
-     */
-    public static Metric<AbstractILMultiDimensional> createPublisherGainMetric() {
-        return new MetricMDNMLoss();
-    }
-    
-    /**
      * Creates an instance of a metric with statically defined information loss. 
      * The default aggregate function, which is the sum-function, will be used for comparing results.
      * This metric will respect attribute weights defined in the configuration.
