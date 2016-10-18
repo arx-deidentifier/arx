@@ -324,6 +324,9 @@ public class ARXAnonymizer {
         // Build or clean the lattice
         SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
 
+        // Initialize the metric
+        config.getMetric().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
+
         // Build a node checker
         final NodeChecker checker = new NodeChecker(manager,
                                                     config.getMetric(),
@@ -332,9 +335,6 @@ public class ARXAnonymizer {
                                                     snapshotSizeDataset,
                                                     snapshotSizeSnapshot,
                                                     solutionSpace);
-
-        // Initialize the metric
-        config.getMetric().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
         // Create an algorithm instance
         AbstractAlgorithm algorithm = getAlgorithm(config,
