@@ -296,7 +296,7 @@ public class ViewUtilityMeasures implements IView {
             this.monotonicVariant.setSelection(config.isMonotonic());
         }
         
-        // Set
+        // Set - TODO: Creating a temporary instance is such an ugly hack
         boolean isAbleToHandleMicroaggregation = description.createInstance(config).isAbleToHandleMicroaggregation();
         this.utilityBasedMicroaggregation.setSelection(isAbleToHandleMicroaggregation &&
                                                        this.model.getInputConfig().isUtilityBasedMicroaggregation());
