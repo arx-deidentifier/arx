@@ -966,10 +966,10 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                      false){ // attacker model supported
 
 
-                                    /** SVUID*/
-                                    private static final long serialVersionUID = 8536219303137546137L;
+                                     /** SVUID*/
+                                     private static final long serialVersionUID = 8536219303137546137L;
 
-                                    @Override
+                                     @Override
                                      public Metric<?> createInstance(MetricConfiguration config) {
                                          if (config.isPrecomputed()) {
                                              return createPrecomputedNormalizedEntropyMetric(config.getPrecomputationThreshold(), 
