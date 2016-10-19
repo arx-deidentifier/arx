@@ -184,7 +184,11 @@ public class KMap extends ImplicitPrivacyCriterion {
     
     @Override
     public int getMinimalClassSize() {
-        return this.derivedK;
+        if (!isAccurate()) {
+            return this.derivedK;
+        } else {
+            return 0;
+        }
     }
     
     @Override
@@ -250,8 +254,8 @@ public class KMap extends ImplicitPrivacyCriterion {
     
     @Override
     @SuppressWarnings("deprecation")
-    public void initialize(DataManager manager) {
-        super.initialize(manager);
+    public void initialize(DataManager manager, ARXConfiguration config) {
+        super.initialize(manager, config);
         
         // TODO: Needed for backwards compatibility of ARX 3.4.0 with previous versions
         if (this.populationModel != null) {

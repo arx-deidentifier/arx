@@ -163,4 +163,9 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
         super.setMax(max);
         super.setMin(min);
     }
+
+    @Override
+    public boolean isPrecomputed() {
+        return true;
+    }
 }

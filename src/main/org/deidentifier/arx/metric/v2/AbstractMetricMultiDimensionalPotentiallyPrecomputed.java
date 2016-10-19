@@ -208,12 +208,8 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         }
     }
     
-    /**
-     * Returns whether the metric is precomputed.
-     *
-     * @return
-     */
-    protected boolean isPrecomputed() {
+    @Override
+    public boolean isPrecomputed() {
         return this.precomputed;
     }
 }

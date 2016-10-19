@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.utility;
 
+import org.deidentifier.arx.ARXFinancialConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
@@ -27,7 +28,8 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTree;
-import org.deidentifier.arx.metric.Metric.AggregateFunction;
+import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.v2.MetricSDNMPublisherBenefit;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -255,10 +257,43 @@ public class ViewPropertiesInput extends ViewProperties {
         // Print basic properties
         new Property(Resources.getMessage("PropertiesView.9"), new String[] { String.valueOf(data.getNumRows()) }); //$NON-NLS-1$
         new Property(Resources.getMessage("PropertiesView.10"), new String[] { SWTUtil.getPrettyString(config.getAllowedOutliers() * 100d) + Resources.getMessage("PropertiesView.11") }); //$NON-NLS-1$ //$NON-NLS-2$
-        new Property(Resources.getMessage("PropertiesView.114"), new String[] { config.getMetric().toString() }); //$NON-NLS-1$
-        AggregateFunction aggregateFunction = config.getMetric().getAggregateFunction();
-        new Property(Resources.getMessage("PropertiesView.149"), new String[] { aggregateFunction == null ? Resources.getMessage("PropertiesView.150") : aggregateFunction.toString() }); //$NON-NLS-1$
-
+        
+        // Utility measure
+        Property m = new Property(Resources.getMessage("PropertiesView.114"), new String[] { config.getMetric().getDescription().getName() }); //$NON-NLS-1$
+        
+        // Properties of the utility measure
+        Metric<?> metric = config.getMetric();
+        if (metric.getAggregateFunction() != null) {
+            new Property(m, Resources.getMessage("PropertiesView.149"), new String[] { metric.getAggregateFunction().toString() }); //$NON-NLS-1$    
+        }
+        if (metric.isGSFactorSupported()) {
+            new Property(m, Resources.getMessage("PropertiesView.151"), new String[] { SWTUtil.getPrettyString(metric.getGeneralizationSuppressionFactor()) }); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.152"), new String[] { SWTUtil.getPrettyString(metric.getGeneralizationFactor()) }); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.153"), new String[] { SWTUtil.getPrettyString(metric.getSuppressionFactor()) }); //$NON-NLS-1$
+        }
+        new Property(m, Resources.getMessage("PropertiesView.155"), new String[] { SWTUtil.getPrettyString(metric.isMonotonic()) }); //$NON-NLS-1$
+        new Property(m, Resources.getMessage("PropertiesView.156"), new String[] { SWTUtil.getPrettyString(metric.isWeighted()) }); //$NON-NLS-1$
+        new Property(m, Resources.getMessage("PropertiesView.157"), new String[] { SWTUtil.getPrettyString(metric.isPrecomputed()) }); //$NON-NLS-1$
+        new Property(m, Resources.getMessage("PropertiesView.158"), new String[] { SWTUtil.getPrettyString(metric.isAbleToHandleMicroaggregation()) }); //$NON-NLS-1$
+                
+        // Financial configuration
+        if (config.getMetric() instanceof MetricSDNMPublisherBenefit) {
+            ARXFinancialConfiguration financial = ((MetricSDNMPublisherBenefit)config.getMetric()).getFinancialConfiguration();
+            if (financial != null) {
+                new Property(m, Resources.getMessage("PropertiesView.135"), new String[] { SWTUtil.getPrettyString(financial.getPublisherBenefit())}); //$NON-NLS-1$
+                new Property(m, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(financial.getPublisherLoss())}); //$NON-NLS-1$
+                new Property(m, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(financial.getAdversaryGain())}); //$NON-NLS-1$
+                new Property(m, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(financial.getAdversaryCost())}); //$NON-NLS-1$
+            }
+            if (((MetricSDNMPublisherBenefit)config.getMetric()).isProsecutorAttackerModel()) { 
+                new Property(m, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            if (((MetricSDNMPublisherBenefit)config.getMetric()).isJournalistAttackerModel()) { 
+                new Property(m, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.161") }); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        }
+        
+        // Attributes
         final Property attributes = new Property(Resources.getMessage("PropertiesView.12"), new String[] { String.valueOf(data.getNumColumns()) }); //$NON-NLS-1$
         
         // Print identifying attributes

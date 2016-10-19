@@ -88,8 +88,8 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
     }
 
     @Override
-    public void initialize(DataManager manager) {
-        super.initialize(manager);
+    public void initialize(DataManager manager, ARXConfiguration config) {
+        super.initialize(manager, config);
         distribution = manager.getDistribution(attribute);
     }
 

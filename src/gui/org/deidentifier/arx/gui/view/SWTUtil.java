@@ -603,6 +603,19 @@ public class SWTUtil {
     }
 
     /**
+     * Converts a boolean into a pretty string
+     * @param value
+     * @return
+     */
+    public static String getPrettyString(boolean value) {
+        if (value) {
+            return Resources.getMessage("PropertiesView.159");
+        } else {
+            return Resources.getMessage("PropertiesView.170");
+        }
+    }
+
+    /**
      * Returns a pretty string representing the given double
      * @param value
      * @return

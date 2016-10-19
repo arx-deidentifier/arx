@@ -18,9 +18,10 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXStackelbergConfiguration;
+import org.deidentifier.arx.ARXFinancialConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
@@ -32,27 +33,79 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * 
  * @author Fabian Prasser
  */
-public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion {
+public class FinancialProsecutorNoAttackPrivacy extends ImplicitPrivacyCriterion {
 
     /** SVUID */
-    private static final long                 serialVersionUID = -1283022087083117810L;
+    private static final long         serialVersionUID = -1283022087083117810L;
 
     /** The underlying k-anonymity privacy model */
-    private int                               k;
-    /** Config */
-    private final ARXStackelbergConfiguration config;
+    private int                       k                = -1;
+
+    /** The underlying financial configuration */
+    private ARXFinancialConfiguration config           = null;
 
     /**
      * Creates a new instance
      * @param config
      */
-    public StackelbergNoAttackPrivacyModel(ARXStackelbergConfiguration config) {
-        
+    public FinancialProsecutorNoAttackPrivacy() {
         // This model is monotonic
         super(true, true);
-        
-        // Store
-        this.config = config;
+    }
+    
+    @Override
+    public PrivacyCriterion clone() {
+        return new FinancialProsecutorNoAttackPrivacy();
+    }
+    
+    @Override
+    public PrivacyCriterion clone(DataSubset subset) {
+        return clone();
+    }
+    
+    @Override
+    public DataSubset getDataSubset() {
+        return null;
+    }
+    
+    /**
+     * Returns the parameter k
+     * @return
+     */
+    public int getK() {
+        return this.k;
+    }
+    
+    @Override
+    public int getMinimalClassSize() {
+        return this.k;
+    }
+    
+    @Override
+    public int getRequirements() {
+        return ARXConfiguration.REQUIREMENT_COUNTER;
+    }
+    
+    @Override
+    public double getRiskThresholdJournalist() {
+        return getRiskThresholdProsecutor();
+    }
+    
+    @Override
+    public double getRiskThresholdMarketer() {
+        return getRiskThresholdProsecutor();
+    }
+
+    @Override
+    public double getRiskThresholdProsecutor() {
+        return 1d / (double)k;
+    }
+    
+    @Override
+    public void initialize(DataManager manager, ARXConfiguration config) {
+
+        // Compute domain shares
+        this.config = config.getFinancialConfiguration();
         
         // We reduce this model to k-map or k-anonymity:
         // adversaryPayoff = adversaryGain * successProbability - adversaryCost
@@ -62,88 +115,38 @@ public class StackelbergNoAttackPrivacyModel extends ImplicitPrivacyCriterion {
         // With successProbability = 1 / [size of (population) group of r], we have:
         // -> 1 / [size of (population) group of r] < adversaryCost / adversaryGain
         // -> [size of (population) group of r] > adversaryGain / adversaryCost
-        this.k = (int)Math.ceil(config.getAdversaryGain() / config.getAdversaryCost());
-    }
-    
-    @Override
-    public PrivacyCriterion clone() {
-        StackelbergNoAttackPrivacyModel result = new StackelbergNoAttackPrivacyModel(this.config.clone());
-        result.k = this.k;
-        return result;
-    }
-    
-    @Override
-    public PrivacyCriterion clone(DataSubset subset) {
-        if (!isLocalRecodingSupported()) {
-            throw new UnsupportedOperationException("Local recoding is not supported by this model");
-        }
-        return clone();
-    }
-    
-    @Override
-    public DataSubset getDataSubset() {
-        return config.getDataSubset();
-    }
-    
-    @Override
-    public int getMinimalClassSize() {
-        if (config.isProsecutorAttackerModel()) {
-            return this.k;
-        } else {
-            return 0;
-        }
-    }
-    
-    @Override
-    public int getRequirements() {
-        int result = ARXConfiguration.REQUIREMENT_COUNTER;
-        if (config.isJournalistAttackerModel()) {
-            result |= ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
-        }
-        return result;
-    }
-    
-    @Override
-    public double getRiskThresholdJournalist() {
-        return 1d / (double)k;
-    }
-    
-    @Override
-    public double getRiskThresholdMarketer() {
-        return getRiskThresholdJournalist();
-    }
-    
-    @Override
-    public double getRiskThresholdProsecutor() {
-        if (config.isProsecutorAttackerModel()) {
-            return 1d / (double)k;
-        } else {
-            return 0d;
-        }
+        this.k = (int)Math.ceil(this.config.getAdversaryGain() / this.config.getAdversaryCost());
     }
 
     @Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
-        return config.isProsecutorAttackerModel() ? entry.count >= k : entry.pcount >= k;
+        return entry.count >= k;
     }
-    
+
     @Override
     public boolean isLocalRecodingSupported() {
-        return config.isProsecutorAttackerModel();
+        return true;
     }
 
     @Override
     public boolean isMinimalClassSizeAvailable() {
-        return config.isProsecutorAttackerModel();
+        return k != -1;
     }
 
     @Override
     public boolean isSubsetAvailable() {
-        return config.isJournalistAttackerModel();
+        return false;
     }
 
     @Override
     public String toString() {
-        return "no-attack-stackelberg-game " + config.toString();
+        return toString("prosecutor");
+    }
+
+    /**
+     * Returns a string representation
+     */
+    protected String toString(String attackerModel) {
+        return "no-attack-financial-privacy (" + attackerModel + ")" + config != null ? config.toString() : "";
     }
 }

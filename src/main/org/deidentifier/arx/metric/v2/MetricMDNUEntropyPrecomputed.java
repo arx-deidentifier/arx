@@ -307,12 +307,13 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super.setMin(min);
     }
     
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return false;
+    @Override
+    public boolean isPrecomputed() {
+        return true;
     }
 
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
 }

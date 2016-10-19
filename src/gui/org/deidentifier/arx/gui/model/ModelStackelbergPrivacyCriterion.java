@@ -16,12 +16,13 @@
  */
 package org.deidentifier.arx.gui.model;
 
-import org.deidentifier.arx.ARXStackelbergConfiguration;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.criteria.FinancialJournalistNoAttackPrivacy;
+import org.deidentifier.arx.criteria.FinancialJournalistPrivacy;
+import org.deidentifier.arx.criteria.FinancialProsecutorNoAttackPrivacy;
+import org.deidentifier.arx.criteria.FinancialProsecutorPrivacy;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.criteria.StackelbergPrivacyModel;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.SWTUtil;
 
 /**
  * This class provides a model for the game-theoretic privacy model
@@ -44,121 +45,77 @@ public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
     /** SVUID */
     private static final long serialVersionUID = -4305859036159393453L;
 
-    /** Benefit */
-    private double            publisherBenefit = 0d;
-    /** Loss */
-    private double            publisherLoss    = 0d;
-    /** Gain */
-    private double            adversaryGain    = 0d;
-    /** Cost */
-    private double            adversaryCost    = 0d;
     /** Prosecutor model */
     private AttackerModel     attackerModel    = AttackerModel.PROSECUTOR;
+
+    /** Do we allow attacks to happen? */
+    private boolean           allowAttacks     = true;
+
+    /**
+     * Creates a new instance
+     * @param attackerModel
+     * @param allowAttacks
+     */
+    public ModelStackelbergPrivacyCriterion(AttackerModel attackerModel, boolean allowAttacks) {
+        this.attackerModel = attackerModel;
+        this.allowAttacks = allowAttacks;
+    }
 
     /**
      * Creates a new instance
      */
     public ModelStackelbergPrivacyCriterion() {
-    	// Empty by design
-    }
-
-    /**
-     * Creates a new instance
-     * @param publisherBenefit
-     * @param publisherLoss
-     * @param adversaryGain
-     * @param adversaryCost
-     * @param attackerModel
-     */
-    public ModelStackelbergPrivacyCriterion(double publisherBenefit,
-                                            double publisherLoss,
-                                            double adversaryGain,
-                                            double adversaryCost,
-                                            AttackerModel attackerModel) {
-    	this.publisherBenefit = publisherBenefit;
-    	this.publisherLoss = publisherLoss;
-    	this.adversaryGain = adversaryGain;
-    	this.adversaryCost = adversaryCost;
+    	this.attackerModel = AttackerModel.PROSECUTOR; 
+    	this.allowAttacks = true;
     }
 
 	@Override
 	public ModelCriterion clone() {
 		ModelStackelbergPrivacyCriterion  result = new ModelStackelbergPrivacyCriterion();
-		result.setAdversaryCost(adversaryCost);
-		result.setAdversaryGain(adversaryGain);
-		result.setPublisherBenefit(publisherBenefit);
-		result.setPublisherLoss(publisherLoss);
 		result.setAttackerModel(attackerModel);
 		return result;
 	}
 	
     /**
-     * Returns the adversary cost
-     * @return
-     */
-    public double getAdversaryCost() {
-		return adversaryCost;
-	}
-
-    /**
-     * Returns the adversary gain
-     * @return
-     */
-    public double getAdversaryGain() {
-		return adversaryGain;
-	}
-
-    /**
      * @return the attackerModel
      */
     public AttackerModel getAttackerModel() {
-        return attackerModel;
+        return this.attackerModel;
+    }
+    
+    /**
+     * @return
+     */
+    public boolean isAllowAttacks() {
+        return this.allowAttacks;
     }
     
     @Override
 	public PrivacyCriterion getCriterion(Model model) {
-
-	    // Create config
-        ARXStackelbergConfiguration config = ARXStackelbergConfiguration.create();
         
-        // Configure benefits and costs
-        config.setAdversaryCost(adversaryCost)
-              .setAdversaryGain(adversaryGain)
-              .setPublisherLoss(publisherLoss)
-              .setPublisherBenefit(publisherBenefit);
-        
-        // Configure attacker model
+        // Create privacy model
         if (this.attackerModel == AttackerModel.PROSECUTOR) {
-            config.setProsecutorAttackerModel();
+            if (this.allowAttacks) {
+                return new FinancialProsecutorPrivacy();
+            } else {
+                return new FinancialProsecutorNoAttackPrivacy();
+            }
+        } else if (this.attackerModel == AttackerModel.JOURNALIST) {
+            DataSubset subset = DataSubset.create(model.getInputConfig().getInput(), 
+                                                  model.getInputConfig().getResearchSubset());
+            if (this.allowAttacks) {
+                return new FinancialJournalistPrivacy(subset);
+            } else {
+                return new FinancialJournalistNoAttackPrivacy(subset);
+            }
         } else {
-            config.setJournalistAttackerModel(DataSubset.create(model.getInputConfig().getInput(),
-                                                                model.getInputConfig()
-                                                                     .getResearchSubset()));
+            throw new IllegalStateException("Unknown attacker model"); //$NON-NLS-1$
         }
-        
-        // Return
-        return new StackelbergPrivacyModel(config);
 	}
 
 	@Override
 	public String getLabel() {
-		return Resources.getMessage("ModelCriterion.4");
-	}
-
-	/**
-	 * Returns the publisher benefit
-	 * @return
-	 */
-    public double getPublisherBenefit() {
-		return publisherBenefit;
-	}
-	
-	/**
-     * Returns the publisher loss
-     * @return
-     */
-    public double getPublisherLoss() {
-		return publisherLoss;
+		return Resources.getMessage("ModelCriterion.4"); //$NON-NLS-1$
 	}
     
     @Override
@@ -167,10 +124,7 @@ public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
             return;
         }
         ModelStackelbergPrivacyCriterion other = (ModelStackelbergPrivacyCriterion)criterion;
-        this.adversaryCost = other.adversaryCost;
-        this.adversaryGain = other.adversaryGain;
-        this.publisherBenefit = other.publisherBenefit;
-        this.publisherLoss = other.publisherLoss;
+        this.allowAttacks = other.allowAttacks;
         this.attackerModel = other.attackerModel;
         if (!_default) {
             this.setEnabled(other.isEnabled());
@@ -179,56 +133,37 @@ public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
 	}
     
 	/**
-	 * Sets the adversary cost
-	 * @param adversaryCost
-	 */
-	public void setAdversaryCost(double adversaryCost) {
-		this.adversaryCost = adversaryCost;
-	}
-	
-	/**
-	 * Sets the adversary gain
-	 * @param adversaryGain
-	 */
-	public void setAdversaryGain(double adversaryGain) {
-		this.adversaryGain = adversaryGain;
-	}
-	
-	/**
-     * @param attackerModel the attackerModel to set
+	 * Defines the attacker model
+     * @param attackerModel
      */
     public void setAttackerModel(AttackerModel attackerModel) {
         this.attackerModel = attackerModel;
     }
+    
+    /**
+     * Defines whether we allow attacks to happen
+     * @param allowAttacks
+     */
+    public void setAllowAttacks(boolean allowAttacks) {
+        this.allowAttacks = allowAttacks;
+    }
 
-	/**
-	 * Sets the publisher benefit
-	 * @param publisherBenefit
-	 */
-	public void setPublisherBenefit(double publisherBenefit) {
-		this.publisherBenefit = publisherBenefit;
-	}
-	
-	/**
-	 * Sets the publisher loss
-	 * @param publisherLoss
-	 */
-	public void setPublisherLoss(double publisherLoss) {
-		this.publisherLoss = publisherLoss;
-	}
-	
 	@Override
 	public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("("); //$NON-NLS-1$
-        builder.append(SWTUtil.getPrettyString(this.publisherBenefit)).append(", "); //$NON-NLS-1$
-        builder.append(SWTUtil.getPrettyString(this.publisherLoss)).append(", "); //$NON-NLS-1$
-        builder.append(SWTUtil.getPrettyString(this.adversaryGain)).append(", "); //$NON-NLS-1$
-        builder.append(SWTUtil.getPrettyString(this.adversaryCost)).append(")-"); //$NON-NLS-1$
-        builder.append(Resources.getMessage("ModelCriterion.4")); //$NON-NLS-1$
+        if (this.allowAttacks) {
+            builder.append(Resources.getMessage("ModelCriterion.4")); //$NON-NLS-1$   
+        } else {
+            builder.append(Resources.getMessage("ModelCriterion.7")); //$NON-NLS-1$   
+        }
         builder.append(" ("); //$NON-NLS-1$
-        builder.append(this.attackerModel == AttackerModel.PROSECUTOR ? Resources.getMessage("ModelCriterion.5") //$NON-NLS-1$
-                                                                      : Resources.getMessage("ModelCriterion.6")); //$NON-NLS-1$
+        if (this.attackerModel == AttackerModel.PROSECUTOR) {
+            builder.append(Resources.getMessage("ModelCriterion.5")); //$NON-NLS-1$
+        } else if (this.attackerModel == AttackerModel.JOURNALIST) {
+            builder.append(Resources.getMessage("ModelCriterion.6")); //$NON-NLS-1$
+        } else {
+            throw new IllegalStateException("Unknown attacker model"); //$NON-NLS-1$
+        }
         builder.append(")"); //$NON-NLS-1$
         return builder.toString();
 	}

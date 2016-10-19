@@ -19,6 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -131,8 +132,9 @@ public abstract class PrivacyCriterion implements Serializable{
      * Override this to initialize the criterion.
      *
      * @param manager
+     * @param config TODO
      */
-    public void initialize(DataManager manager){
+    public void initialize(DataManager manager, ARXConfiguration config){
         // Empty by design
     }
     

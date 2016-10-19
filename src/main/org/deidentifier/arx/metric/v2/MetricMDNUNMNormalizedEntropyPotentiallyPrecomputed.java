@@ -80,12 +80,4 @@ public class MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed extends Abstrac
     public String toString() {
         return "Normalized non-uniform entropy";
     }
-
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return false;
-    }
 }

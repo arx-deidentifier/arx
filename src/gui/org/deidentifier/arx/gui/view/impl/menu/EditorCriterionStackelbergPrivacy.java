@@ -22,17 +22,17 @@ import java.util.List;
 
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelStackelbergPrivacyCriterion;
+import org.deidentifier.arx.gui.model.ModelStackelbergPrivacyCriterion.AttackerModel;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-
-import de.linearbits.swt.widgets.Knob;
 
 /**
  * Editor for the stackelberg game-theoretic privacy model
@@ -42,26 +42,19 @@ import de.linearbits.swt.widgets.Knob;
  */
 public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStackelbergPrivacyCriterion> {
 
-    /** 1 Billion */
-    private static final int MAX = 10000000;
+    /** View */
+    private static final String        LABELS[] = { Resources.getMessage("CriterionDefinitionView.121"), //$NON-NLS-1$ 
+                                                    Resources.getMessage("CriterionDefinitionView.122") }; //$NON-NLS-1$
+
+    /** Model */
+    private static final AttackerModel MODELS[] = { AttackerModel.PROSECUTOR,
+                                                    AttackerModel.JOURNALIST };
 
     /** View */
-    private Text             labelAdvCost;
-    /** View */
-    private Text             labelAdvGain;
-    /** View */
-    private Text             labelPubBenefit;
-    /** View */
-    private Text             labelPubLoss;
+    private Combo                      comboAttackerModel;
 
     /** View */
-    private Knob<Integer>    knobAdvCost;
-    /** View */
-    private Knob<Integer>    knobAdvGain;
-    /** View */
-    private Knob<Integer>    knobPubBenefit;
-    /** View */
-    private Knob<Integer>    knobPubLoss;
+    private Button                     checkboxAllowAttack;
 
 	/**
 	 * Creates a new instance
@@ -72,6 +65,20 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
 		super(parent, model);
 	}
 
+	/**
+	 * Returns the index of the given model
+	 * @param model
+	 * @return
+	 */
+    private int getIndexOfAttackerModel(AttackerModel model) {
+        for (int i=0; i< MODELS.length; i++) {
+            if (MODELS[i].equals(model)) {
+                return i;
+            }
+        }
+        throw new IllegalArgumentException("Unknown attacker model");
+    }
+
 	@Override
 	protected Composite build(Composite parent) {
 	    
@@ -79,57 +86,38 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
         Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 6;
+        groupInputGridLayout.numColumns = 4;
         group.setLayout(groupInputGridLayout);
         
-        Label pubBenefit = new Label(group, SWT.NONE);
-        pubBenefit.setText(Resources.getMessage("CriterionDefinitionView.110"));
-        labelPubBenefit = createLabel(group);
-        knobPubBenefit = createKnobInteger(group, 0, MAX);
-        knobPubBenefit.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                model.setPublisherBenefit(knobPubBenefit.getValue());
-                updateLabel(labelPubBenefit, model.getPublisherBenefit());
-            }
-        });
-        
-        Label pubLoss = new Label(group, SWT.NONE);
-        pubLoss.setText(Resources.getMessage("CriterionDefinitionView.111"));
-        labelPubLoss = createLabel(group);
-        knobPubLoss = createKnobInteger(group, 0, MAX);
-        knobPubLoss.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                model.setPublisherLoss(knobPubLoss.getValue());
-                updateLabel(labelPubLoss, model.getPublisherLoss());
-            }
-        });
-        
-        Label advGain = new Label(group, SWT.NONE);
-        advGain.setText(Resources.getMessage("CriterionDefinitionView.112"));
-        labelAdvGain = createLabel(group);
-        knobAdvGain = createKnobInteger(group, 0, MAX);
-        knobAdvGain.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                model.setAdversaryGain(knobAdvGain.getValue());
-                updateLabel(labelAdvGain, model.getAdversaryGain());
-            }
-        });
-        
-        Label advCost = new Label(group, SWT.NONE);
-        advCost.setText(Resources.getMessage("CriterionDefinitionView.113"));
-        labelAdvCost = createLabel(group);
-        knobAdvCost = createKnobInteger(group, 0, MAX);
-        knobAdvCost.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                model.setAdversaryCost(knobAdvCost.getValue());
-                updateLabel(labelAdvCost, model.getAdversaryCost());
-            }
-        });
+        // Attacker model
+        Label labelAttackerModel = new Label(group, SWT.NONE);
+        labelAttackerModel.setText(Resources.getMessage("CriterionDefinitionView.120"));
 
+        comboAttackerModel = new Combo(group, SWT.READ_ONLY);
+        comboAttackerModel.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        comboAttackerModel.setItems(LABELS);
+        comboAttackerModel.select(0);
+        comboAttackerModel.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                if (comboAttackerModel.getSelectionIndex() != -1) {
+                    model.setAttackerModel(MODELS[comboAttackerModel.getSelectionIndex()]);
+                }
+            }
+        });
+        
+        // Allow attack
+        Label labelAllowAttack = new Label(group, SWT.NONE);
+        labelAllowAttack.setText(Resources.getMessage("CriterionDefinitionView.123"));
+
+        checkboxAllowAttack = new Button(group, SWT.CHECK);
+        checkboxAllowAttack.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                model.setAllowAttacks(checkboxAllowAttack.getSelection());
+            }
+        });
+        
         return group;
 	}
 
@@ -138,28 +126,17 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
 
 	    // Create list
 	    List<ModelCriterion> result = new ArrayList<ModelCriterion>();
-	    
-	    // TODO: We could add some more configurations here
-		ModelStackelbergPrivacyCriterion mc1 = new ModelStackelbergPrivacyCriterion();
-		mc1.setAdversaryCost(4d);
-		mc1.setAdversaryGain(300d);
-		mc1.setPublisherLoss(300d);
-		mc1.setPublisherBenefit(1200d);
-		result.add(mc1);
-		
+	    result.add(new ModelStackelbergPrivacyCriterion(AttackerModel.PROSECUTOR, true));
+	    result.add(new ModelStackelbergPrivacyCriterion(AttackerModel.JOURNALIST, true));
+	    result.add(new ModelStackelbergPrivacyCriterion(AttackerModel.PROSECUTOR, false));
+        result.add(new ModelStackelbergPrivacyCriterion(AttackerModel.JOURNALIST, false));
 		// Return
         return result;
 	}
 
 	@Override
 	protected void parse(ModelStackelbergPrivacyCriterion model, boolean defaultParameters) {
-        updateLabel(labelAdvCost, model.getAdversaryCost());
-        updateLabel(labelAdvGain, model.getAdversaryGain());
-        updateLabel(labelPubBenefit, model.getPublisherBenefit());
-        updateLabel(labelPubLoss, model.getPublisherLoss());
-        knobAdvCost.setValue((int) model.getAdversaryCost());
-        knobAdvGain.setValue((int) model.getAdversaryGain());
-        knobPubBenefit.setValue((int) model.getPublisherBenefit());
-        knobPubLoss.setValue((int) model.getPublisherLoss());
+        checkboxAllowAttack.setSelection(model.isAllowAttacks());
+        comboAttackerModel.select(getIndexOfAttackerModel(model.getAttackerModel()));
 	}
 }

@@ -107,6 +107,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+    
+    @Override
     // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationFactor() {
         return gFactor;
@@ -290,11 +295,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         super.setMax(max);
     }
 
-    /**
-     * Returns whether this metric handles microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
+    @Override
+    public boolean isAbleToHandleMicroaggregation() {
         return true;
     }
 

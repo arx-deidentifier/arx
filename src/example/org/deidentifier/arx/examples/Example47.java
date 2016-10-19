@@ -29,11 +29,11 @@ import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.ARXStackelbergConfiguration;
+import org.deidentifier.arx.ARXFinancialConfiguration;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.criteria.StackelbergPrivacyModel;
+import org.deidentifier.arx.criteria.FinancialProsecutorPrivacy;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.MetricSDNMPublisherBenefit;
@@ -96,61 +96,63 @@ public class Example47 extends Example {
         Data data = createData("adult");
         
         // Config from PLOS|ONE paper
-        solve(data, ARXStackelbergConfiguration.create()
+        solve(data, ARXFinancialConfiguration.create()
                                                .setAdversaryCost(4d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(300d)
-                                               .setPublisherBenefit(1200d)
-                                               .setProsecutorAttackerModel());
+                                               .setPublisherBenefit(1200d));
 
         // Larger publisher loss
-        solve(data, ARXStackelbergConfiguration.create()
+        solve(data, ARXFinancialConfiguration.create()
                                                .setAdversaryCost(4d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(600d)
-                                               .setPublisherBenefit(1200d)
-                                               .setProsecutorAttackerModel());
+                                               .setPublisherBenefit(1200d));
 
         // Even larger publisher loss
-        solve(data, ARXStackelbergConfiguration.create()
+        solve(data, ARXFinancialConfiguration.create()
                                                .setAdversaryCost(4d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(1200d)
-                                               .setPublisherBenefit(1200d)
-                                               .setProsecutorAttackerModel());
+                                               .setPublisherBenefit(1200d));
 
         // Larger publisher loss and less adversary costs
-        solve(data, ARXStackelbergConfiguration.create()
+        solve(data, ARXFinancialConfiguration.create()
                                                .setAdversaryCost(2d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(600d)
-                                               .setPublisherBenefit(1200d)
-                                               .setProsecutorAttackerModel());
+                                               .setPublisherBenefit(1200d));
         
         // Config from PLOS|ONE paper but publisher loss and benefit changed with each other
-        solve(data, ARXStackelbergConfiguration.create()
+        solve(data, ARXFinancialConfiguration.create()
                                                .setAdversaryCost(4d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(1200d)
-                                               .setPublisherBenefit(300d)
-                                               .setProsecutorAttackerModel());
+                                               .setPublisherBenefit(300d));
 
 
     }
 
-    private static void solve(Data data, ARXStackelbergConfiguration config) throws IOException {
+    /**
+     * Solve the privacy problem
+     * @param data
+     * @param config
+     * @throws IOException
+     */
+    private static void solve(Data data, ARXFinancialConfiguration config) throws IOException {
         
         // Release
         data.getHandle().release();
         
         // Configure
         ARXConfiguration arxconfig = ARXConfiguration.create();
+        arxconfig.setFinancialConfiguration(config);
         
         // Create model for measuring publisher's benefit
-        MetricSDNMPublisherBenefit stackelbergMetric = Metric.createPublisherBenefitMetric(config);
+        MetricSDNMPublisherBenefit stackelbergMetric = Metric.createPublisherBenefitMetric(false);
         
         // Create privacy model for the game-theoretic approach
-        StackelbergPrivacyModel stackelbergPrivacyModel = new StackelbergPrivacyModel(config);
+        FinancialProsecutorPrivacy stackelbergPrivacyModel = new FinancialProsecutorPrivacy();
         
         // Configure ARX
         arxconfig.setMaxOutliers(1d);

@@ -74,6 +74,26 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
               threshold);
     }
 
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
+    public double getGeneralizationFactor() {
+        return super.getPrecomputedMetric().getGeneralizationFactor();
+    }
+
+    @Override
+    public double getGeneralizationSuppressionFactor() {
+        return super.getPrecomputedMetric().getGeneralizationSuppressionFactor();
+    }
+    
+    @Override
+    public double getSuppressionFactor() {
+        return super.getPrecomputedMetric().getSuppressionFactor();
+    }
+
     /**
      * Returns the configuration of this metric.
      *
@@ -96,11 +116,8 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
                         loss.getSuppressionFactor()+")";
     }
 
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
+    @Override
+    public boolean isAbleToHandleMicroaggregation() {
         return false;
     }
 }

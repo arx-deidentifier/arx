@@ -347,7 +347,7 @@ public class Model implements Serializable {
 		if (definition == null) return;
 		
 		// Initialize the metric
-		config.setMetric(this.getMetricDescription().createInstance(this.getMetricConfiguration()));
+        config.setMetric(this.getMetricDescription().createInstance(this.getMetricConfiguration()));
 
         // Initialize definition
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
@@ -420,7 +420,7 @@ public class Model implements Serializable {
         	this.stackelbergPrivacyModel.isEnabled()) {
         	config.addCriterion(this.stackelbergPrivacyModel.getCriterion(this));
         }
-		
+        
 		for (Entry<String, ModelLDiversityCriterion> entry : this.lDiversityModel.entrySet()){
 	        if (entry.getValue() != null &&
 	            entry.getValue().isEnabled()) {
@@ -451,9 +451,7 @@ public class Model implements Serializable {
         }
         
         for (ModelRiskBasedCriterion entry : this.riskBasedModel){
-            if (entry != null &&
-                entry.isEnabled()) {
-                
+            if (entry != null && entry.isEnabled()) {
                 PrivacyCriterion criterion = entry.getCriterion(this);
                 config.addCriterion(criterion);
             }

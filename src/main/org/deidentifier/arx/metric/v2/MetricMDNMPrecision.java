@@ -233,11 +233,8 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         }
     }
     
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return false;
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
     }
 }

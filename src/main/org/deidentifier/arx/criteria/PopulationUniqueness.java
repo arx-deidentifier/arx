@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
@@ -135,8 +136,8 @@ public class PopulationUniqueness extends RiskBasedCriterion {
 
     @Override
     @SuppressWarnings("deprecation")
-    public void initialize(DataManager manager) {
-        super.initialize(manager);
+    public void initialize(DataManager manager, ARXConfiguration config) {
+        super.initialize(manager, config);
         
         // TODO: Needed for backwards compatibility of ARX 3.4.0 with previous versions
         if (this.populationModel != null) {

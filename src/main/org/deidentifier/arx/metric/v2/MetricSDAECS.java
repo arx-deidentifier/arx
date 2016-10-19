@@ -148,4 +148,9 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         double gFactor = super.getSuppressionFactor(); // Note: factors are switched on purpose
         return new ILSingleDimensional(getNumTuples() / ((double)groups * gFactor));
     }
+
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
 }

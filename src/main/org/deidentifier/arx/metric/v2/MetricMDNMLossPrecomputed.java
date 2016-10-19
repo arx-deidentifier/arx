@@ -153,11 +153,18 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
         }
     }
 
-    /**
-     * Returns whether this metric handles microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return false;
+    }
+
+    @Override
+    public boolean isPrecomputed() {
         return true;
     }
 }

@@ -134,6 +134,20 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * @return the adversaryCost
+     */
+    public double getAdversaryCost() {
+        return this.config.getFinancialConfiguration().getAdversaryCost();
+    }
+    
+    /**
+     * @return the adversaryGain
+     */
+    public double getAdversaryGain() {
+        return this.config.getFinancialConfiguration().getAdversaryGain();
+    }
+    
+    /**
      * Delegates to an instance of ARXConfiguration.
      *
      * @return
@@ -209,6 +223,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         return config.getHeuristicSearchThreshold();
     }
     
+
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#getHeuristicSearchTimeLimit()
@@ -225,7 +240,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public Map<String, Hierarchy> getHierarchies() {
         return this.hierarchies;
     }
-    
 
     /**
      * Returns the assigned hierarchy, if any. Else null.
@@ -236,7 +250,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public Hierarchy getHierarchy(String attribute) {
         return this.hierarchies.get(attribute);
     }
-    
+
     /**
      * Returns the according builder.
      *
@@ -289,7 +303,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         return this.microAggregationFunctions.get(attribute);
     }
-
+    
     /**
      * Returns the associated handling of missing data
      * @param attribute
@@ -306,7 +320,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
             return ignore;
         }
     }
-
+    
     /**
      * Minimum generalization.
      *
@@ -318,6 +332,20 @@ public class ModelConfiguration implements Serializable, Cloneable {
             return null;
         }
         return this.min.get(attribute);
+    }
+    
+    /**
+     * @return the publisherBenefit
+     */
+    public double getPublisherBenefit() {
+        return this.config.getFinancialConfiguration().getPublisherBenefit();
+    }
+    
+    /**
+     * @return the publisherLoss
+     */
+    public double getPublisherLoss() {
+        return this.config.getFinancialConfiguration().getPublisherLoss();
     }
     
     /**
@@ -427,7 +455,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void removeAllCriteria() {
         this.getCriteria().clear();
     }
-    
+
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -462,6 +490,26 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * @param adversaryCost the adversaryCost to set
+     */
+    public void setAdversaryCost(double adversaryCost) {
+        if (this.getAdversaryCost() != adversaryCost) {
+            this.setModified();
+        }
+        this.config.getFinancialConfiguration().setAdversaryCost(adversaryCost);
+    }
+    
+    /**
+     * @param adversaryGain the adversaryGain to set
+     */
+    public void setAdversaryGain(double adversaryGain) {
+        if (this.getAdversaryGain() != adversaryGain) {
+            this.setModified();
+        }
+        this.config.getFinancialConfiguration().setAdversaryGain(adversaryGain);
+    }
+    
+    /**
      * Delegates to an instance of ARXConfiguration.
      *
      * @param supp
@@ -470,7 +518,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setMaxOutliers(supp);
     }
-
+    
     /**
      * @param type
      * @param enabled
@@ -635,6 +683,27 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * @param publisherBenefit the publisherBenefit to set
+     */
+    public void setPublisherBenefit(double publisherBenefit) {
+        if (this.getPublisherBenefit() != publisherBenefit) {
+            this.setModified();
+        }
+        this.config.getFinancialConfiguration().setPublisherBenefit(publisherBenefit);
+    }
+
+
+    /**
+     * @param publisherLoss the publisherLoss to set
+     */
+    public void setPublisherLoss(double publisherLoss) {
+        if (this.getPublisherLoss() != publisherLoss) {
+            this.setModified();
+        }
+        this.config.getFinancialConfiguration().setPublisherLoss(publisherLoss);
+    }
+
+    /**
      * Sets the current research subset.
      *
      * @param subset
@@ -652,7 +721,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setSuppressionAlwaysEnabled(enabled);
     }
-    
+
     /**
      * Sets the suppression/generalization weight, that will be respected by
      * the NDS metric.
@@ -663,7 +732,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         this.suppressionWeight = suppressionWeight;
     }
-    
+
     /**
      * Sets the transformation mode
      * @param attribute
@@ -676,14 +745,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.transformationModes.put(attribute, mode);
         setModified();
     }
-    
+
     /**
      * Sets the config unmodified.
      */
     public void setUnmodified() {
-        modified = false;
+        this.modified = false;
     }
-    
+
     /**
      * Returns whether microaggregation will be considered by utility measures
      * @return

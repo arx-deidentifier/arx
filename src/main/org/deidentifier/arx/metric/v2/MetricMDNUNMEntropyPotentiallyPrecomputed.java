@@ -79,11 +79,8 @@ public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMul
         return "Non-monotonic non-uniform entropy";
     }
 
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return false;
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
     }
 }

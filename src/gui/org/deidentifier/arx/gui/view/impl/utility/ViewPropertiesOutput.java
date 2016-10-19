@@ -30,6 +30,10 @@ import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
+import org.deidentifier.arx.criteria.FinancialJournalistNoAttackPrivacy;
+import org.deidentifier.arx.criteria.FinancialJournalistPrivacy;
+import org.deidentifier.arx.criteria.FinancialProsecutorNoAttackPrivacy;
+import org.deidentifier.arx.criteria.FinancialProsecutorPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.KMap;
@@ -38,7 +42,6 @@ import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.criteria.RiskBasedCriterion;
 import org.deidentifier.arx.criteria.SampleUniqueness;
-import org.deidentifier.arx.criteria.StackelbergPrivacyModel;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -276,18 +279,32 @@ public class ViewPropertiesOutput extends ViewProperties {
                 }
             }
             // Print info about game-theoretic privacy
-            if (context.config.containsCriterion(StackelbergPrivacyModel.class)) {
+            if (context.config.containsCriterion(FinancialProsecutorPrivacy.class) ||
+                context.config.containsCriterion(FinancialJournalistPrivacy.class) ||
+                context.config.containsCriterion(FinancialProsecutorNoAttackPrivacy.class) ||
+                context.config.containsCriterion(FinancialJournalistNoAttackPrivacy.class)) {
                 
-                StackelbergPrivacyModel criterion = context.config.getCriterion(StackelbergPrivacyModel.class);
                 Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { Resources.getMessage("PropertiesView.134") }); //$NON-NLS-1$ //$NON-NLS-2$
-                new Property(n, Resources.getMessage("PropertiesView.135"), new String[] { SWTUtil.getPrettyString(criterion.getConfig().getPublisherBenefit())}); //$NON-NLS-1$
-                new Property(n, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(criterion.getConfig().getPublisherLoss())}); //$NON-NLS-1$
-                new Property(n, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(criterion.getConfig().getAdversaryGain())}); //$NON-NLS-1$
-                new Property(n, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(criterion.getConfig().getAdversaryCost())}); //$NON-NLS-1$
-                if (criterion.getConfig().isProsecutorAttackerModel()) {
+                new Property(n, Resources.getMessage("PropertiesView.135"), new String[] { SWTUtil.getPrettyString(context.config.getPublisherBenefit())}); //$NON-NLS-1$
+                new Property(n, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(context.config.getPublisherLoss())}); //$NON-NLS-1$
+                new Property(n, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(context.config.getAdversaryGain())}); //$NON-NLS-1$
+                new Property(n, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(context.config.getAdversaryCost())}); //$NON-NLS-1$
+                
+                if (context.config.containsCriterion(FinancialProsecutorPrivacy.class) ||
+                    context.config.containsCriterion(FinancialProsecutorNoAttackPrivacy.class)) {
                     new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
-                } else {
+                }
+                if (context.config.containsCriterion(FinancialJournalistPrivacy.class) ||
+                    context.config.containsCriterion(FinancialJournalistNoAttackPrivacy.class)) {
                     new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.161") }); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                if (context.config.containsCriterion(FinancialProsecutorNoAttackPrivacy.class)) {
+                    FinancialProsecutorNoAttackPrivacy model = context.config.getCriterion(FinancialProsecutorNoAttackPrivacy.class);
+                    new Property(n, Resources.getMessage("PropertiesView.162"), new String[] { SWTUtil.getPrettyString(model.getK()) }); //$NON-NLS-1$
+                }
+                if (context.config.containsCriterion(FinancialJournalistNoAttackPrivacy.class)) {
+                    FinancialJournalistNoAttackPrivacy model = context.config.getCriterion(FinancialJournalistNoAttackPrivacy.class);
+                    new Property(n, Resources.getMessage("PropertiesView.162"), new String[] { SWTUtil.getPrettyString(model.getK()) }); //$NON-NLS-1$
                 }
             }
             

@@ -18,10 +18,10 @@ package org.deidentifier.arx.risk;
 
 import java.io.Serializable;
 
-import org.deidentifier.arx.ARXStackelbergConfiguration;
+import org.deidentifier.arx.ARXFinancialConfiguration;
 
 /**
- * This class implements a monetary risk model, following the approach proposed in: <br>
+ * This class implements a financial risk model, following the approach proposed in: <br>
  * 
  * A Game Theoretic Framework for Analyzing Re-Identification Risk.
  * Zhiyu Wan, Yevgeniy Vorobeychik, Weiyi Xia, Ellen Wright Clayton,
@@ -30,19 +30,19 @@ import org.deidentifier.arx.ARXStackelbergConfiguration;
  * 
  * @author Fabian Prasser
  */
-public class RiskModelMonetary implements Serializable {
+public class RiskModelFinancial implements Serializable {
 
     /** SVUID */
     private static final long                 serialVersionUID = -6124431335607475931L;
 
     /** The underlying configuration */
-    private final ARXStackelbergConfiguration config;
+    private final ARXFinancialConfiguration config;
 
     /**
      * Creates a new instance
      * @param configuration
      */
-    public RiskModelMonetary(ARXStackelbergConfiguration configuration) {
+    public RiskModelFinancial(ARXFinancialConfiguration configuration) {
         this.config = configuration;
     }
     

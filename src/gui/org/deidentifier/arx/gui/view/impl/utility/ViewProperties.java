@@ -216,7 +216,7 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
             tc.pack();
         }
     }
-
+    
     /**
      * Implement this to update the view.
      */

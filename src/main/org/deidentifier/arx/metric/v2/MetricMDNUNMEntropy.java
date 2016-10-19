@@ -74,4 +74,9 @@ public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
+
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
 }

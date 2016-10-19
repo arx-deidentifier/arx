@@ -85,4 +85,9 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
         AbstractILMultiDimensional loss = super.getLowerBoundInternal(node);
         return new ILMultiDimensionalWithBound(loss, loss);
     }
+
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
 }

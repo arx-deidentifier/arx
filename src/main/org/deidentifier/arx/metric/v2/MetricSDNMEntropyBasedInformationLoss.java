@@ -106,7 +106,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
 
     @Override
     public String getName() {
-        return "EntropyBasedInformationLoss";
+        return "Entropy-based information loss";
     }
 
     @Override

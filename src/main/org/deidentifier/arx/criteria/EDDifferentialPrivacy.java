@@ -170,7 +170,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
      *
      * @param manager
      */
-    public void initialize(DataManager manager){
+    public void initialize(DataManager manager, ARXConfiguration config){
         
         // Needed for consistent de-serialization. We need to call this
         // method in the constructor of the class DataManager. The following

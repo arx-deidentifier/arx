@@ -20,11 +20,13 @@ package org.deidentifier.arx;
 import java.io.Serializable;
 
 /**
- * Basic configuration for the Stackelberg game
+ * Basic configuration of financial variables, such as the publisher's benefit
+ * per record or the per-record cost of an attack. Required to analyze re-identification
+ * risks on a financial basis, e.g. using a game-theoretic approach.
  * @author Fabian Prasser
  *
  */
-public class ARXStackelbergConfiguration implements Serializable {
+public class ARXFinancialConfiguration implements Serializable {
     
     /** SVUID*/
     private static final long serialVersionUID = -560679186676701860L;
@@ -33,8 +35,8 @@ public class ARXStackelbergConfiguration implements Serializable {
      * Creates a new instance
      * @return
      */
-    public static ARXStackelbergConfiguration create() {
-        return new ARXStackelbergConfiguration();
+    public static ARXFinancialConfiguration create() {
+        return new ARXFinancialConfiguration();
     }
 
     /** Basic parameters */
@@ -45,37 +47,21 @@ public class ARXStackelbergConfiguration implements Serializable {
     private double             adversaryGain     = 300d;
     /** Basic parameters */
     private double             adversaryCost     = 4d;
-    /** Parameter for the journalist model */
-    private DataSubset         subset            = null;
     
     /**
      * Hide constructor
      */
-    private ARXStackelbergConfiguration() {
+    protected ARXFinancialConfiguration() {
         // Empty by design
     }
 
     @Override
-    public ARXStackelbergConfiguration clone() {
-        ARXStackelbergConfiguration result = new ARXStackelbergConfiguration();
+    public ARXFinancialConfiguration clone() {
+        ARXFinancialConfiguration result = new ARXFinancialConfiguration();
         result.publisherBenefit = this.publisherBenefit;
         result.publisherLoss = this.publisherLoss;
         result.adversaryGain = this.adversaryGain;
         result.adversaryCost = this.adversaryCost;
-        result.subset = this.subset != null ? this.subset.clone() : null;
-        return result;
-    }
-
-    /**
-     * Creates a clone of this configuration which uses the given data subset
-     */
-    public ARXStackelbergConfiguration clone(DataSubset subset) {
-        ARXStackelbergConfiguration result = new ARXStackelbergConfiguration();
-        result.publisherBenefit = this.publisherBenefit;
-        result.publisherLoss = this.publisherLoss;
-        result.adversaryGain = this.adversaryGain;
-        result.adversaryCost = this.adversaryCost;
-        result.subset = subset;
         return result;
     }
 
@@ -94,13 +80,6 @@ public class ARXStackelbergConfiguration implements Serializable {
     }
     
     /**
-     * @return the subset
-     */
-    public DataSubset getDataSubset() {
-        return subset;
-    }
-
-    /**
      * @return the publisherBenefit
      */
     public double getPublisherBenefit() {
@@ -115,23 +94,9 @@ public class ARXStackelbergConfiguration implements Serializable {
     }
 
     /**
-     * @return whether we assume the journalist attacker model
-     */
-    public boolean isJournalistAttackerModel() {
-        return this.subset != null;
-    }
-
-    /**
-     * @return whether we assume the journalist attacker model
-     */
-    public boolean isProsecutorAttackerModel() {
-        return this.subset == null;
-    }
-
-    /**
      * @param adversaryCost the adversaryCost to set
      */
-    public ARXStackelbergConfiguration setAdversaryCost(double adversaryCost) {
+    public ARXFinancialConfiguration setAdversaryCost(double adversaryCost) {
         this.adversaryCost = adversaryCost;
         return this;
     }
@@ -139,34 +104,15 @@ public class ARXStackelbergConfiguration implements Serializable {
     /**
      * @param adversaryGain the adversaryGain to set
      */
-    public ARXStackelbergConfiguration setAdversaryGain(double adversaryGain) {
+    public ARXFinancialConfiguration setAdversaryGain(double adversaryGain) {
         this.adversaryGain = adversaryGain;
         return this;
     }
 
     /**
-     * Set the journalist attacker model with an explicit sub-/superset
-     * @param subset
-     * @return
-     */
-    public ARXStackelbergConfiguration setJournalistAttackerModel(DataSubset subset){
-        this.subset = subset;
-        return this;
-    }
-
-    /**
-     * Set the prosecutor attacker model
-     * @return
-     */
-    public ARXStackelbergConfiguration setProsecutorAttackerModel(){
-        this.subset = null;
-        return this;
-    }
-    
-    /**
      * @param publisherBenefit the publisherBenefit to set
      */
-    public ARXStackelbergConfiguration setPublisherBenefit(double publisherBenefit) {
+    public ARXFinancialConfiguration setPublisherBenefit(double publisherBenefit) {
         this.publisherBenefit = publisherBenefit;
         return this;
     }
@@ -174,17 +120,15 @@ public class ARXStackelbergConfiguration implements Serializable {
     /**
      * @param publisherLoss the publisherLoss to set
      */
-    public ARXStackelbergConfiguration setPublisherLoss(double publisherLoss) {
+    public ARXFinancialConfiguration setPublisherLoss(double publisherLoss) {
         this.publisherLoss = publisherLoss;
         return this;
     }
     
     @Override
     public String toString() {
-        
-        StringBuilder builder = new StringBuilder();
-        builder.append(isProsecutorAttackerModel() ? "[prosecutor, " : "[journalist, ");   
-        builder.append("benefit=").append(publisherBenefit).append(", loss=");
+        StringBuilder builder = new StringBuilder();   
+        builder.append("[benefit=").append(publisherBenefit).append(", loss=");
         builder.append(publisherLoss).append(", gain=").append(adversaryGain).append(", cost=").append(adversaryCost).append("]");
         return builder.toString();
     }
