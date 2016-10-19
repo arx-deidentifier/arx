@@ -131,8 +131,13 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
 
     @Override
     public String toString() {
-        return "PublisherBenefit (" + (journalistAttackerModel ? "Journalist" : "Prosecutor") +
-                config == null ? ")" : (", Benefit=" + config.getPublisherBenefit() + ")");
+        String result = "PublisherBenefit (" + (journalistAttackerModel ? "Journalist" : "Prosecutor");
+        if (config == null) {
+            result += ")";
+        } else {
+            result += ", Benefit=" + config.getPublisherBenefit() + ")";
+        }
+        return result;
     }
 
     /**
