@@ -132,17 +132,6 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
     /**
      * Handles updates of risk thresholds
      */
-    private void handleThresholdUpdateInSettings() {
-        if (riskThresholds != null) {
-            riskThresholds.setThresholdHighestRisk(super.getModel().getRiskModel().getRiskThresholdHighestRisk());
-            riskThresholds.setThresholdRecordsAtRisk(super.getModel().getRiskModel().getRiskThresholdRecordsAtRisk());
-            riskThresholds.setThresholdSuccessRate(super.getModel().getRiskModel().getRiskThresholdSuccessRate());
-        }
-    }
-
-    /**
-     * Handles updates of risk thresholds
-     */
     private void handleThresholdUpdateInMonitors() {
         prosecutor1.setThreshold(super.getModel().getRiskModel().getRiskThresholdRecordsAtRisk());
         prosecutor2.setThreshold(super.getModel().getRiskModel().getRiskThresholdHighestRisk());
@@ -151,6 +140,17 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         journalist2.setThreshold(super.getModel().getRiskModel().getRiskThresholdHighestRisk());
         journalist3.setThreshold(super.getModel().getRiskModel().getRiskThresholdSuccessRate());
         marketer1.setThreshold(super.getModel().getRiskModel().getRiskThresholdSuccessRate());
+    }
+
+    /**
+     * Handles updates of risk thresholds
+     */
+    private void handleThresholdUpdateInSettings() {
+        if (riskThresholds != null) {
+            riskThresholds.setThresholdHighestRisk(super.getModel().getRiskModel().getRiskThresholdHighestRisk());
+            riskThresholds.setThresholdRecordsAtRisk(super.getModel().getRiskModel().getRiskThresholdRecordsAtRisk());
+            riskThresholds.setThresholdSuccessRate(super.getModel().getRiskModel().getRiskThresholdSuccessRate());
+        }
     }
 
     @Override

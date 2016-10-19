@@ -72,11 +72,6 @@ public class MetricDMStar extends MetricDefault {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
-    }
-
-    @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
 
         if (node.getLowerBound() != null) {
@@ -93,6 +88,11 @@ public class MetricDMStar extends MetricDefault {
             m = m.nextOrdered;
         }
         return new InformationLossDefaultWithBound(value, value);
+    }
+
+    @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
     
     @Override

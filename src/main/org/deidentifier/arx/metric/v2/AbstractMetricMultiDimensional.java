@@ -75,6 +75,19 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      *
      * @param monotonic
      * @param independent
+     * @param function
+     */
+    AbstractMetricMultiDimensional(final boolean monotonic,
+                                   final boolean independent,
+                                   final AggregateFunction function) {
+        super(monotonic, independent, 0.5d);
+        this.function = function;
+    }
+    /**
+     * Creates a new instance.
+     *
+     * @param monotonic
+     * @param independent
      * @param gsFactor
      * @param function
      */
@@ -83,19 +96,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
                                    final double gsFactor,
                                    final AggregateFunction function) {
         super(monotonic, independent, gsFactor);
-        this.function = function;
-    }
-    /**
-     * Creates a new instance.
-     *
-     * @param monotonic
-     * @param independent
-     * @param function
-     */
-    AbstractMetricMultiDimensional(final boolean monotonic,
-                                   final boolean independent,
-                                   final AggregateFunction function) {
-        super(monotonic, independent, 0.5d);
         this.function = function;
     }
     
@@ -123,6 +123,23 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     }
     
     /**
+     * Needed for microaggregation
+     * @return
+     */
+    public DistributionAggregateFunction[] getMicroaggregationFunctions() {
+        return microaggregationFunctions;
+    }
+  
+    /**
+     * Needed for microaggregation
+     * @return
+     */
+    public int getMicroaggregationStartIndex() {
+        return microaggregationStartIndex;
+    }
+
+
+    /**
      * Helper method for creating information loss.
      *
      * @param values
@@ -145,7 +162,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
             throw new IllegalStateException("Unknown aggregate function: "+function);
         }
     }
-  
+
     /**
      * Helper method for creating information loss.
      *
@@ -158,7 +175,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         return new ILMultiDimensionalWithBound(createInformationLoss(values),
                                                createInformationLoss(bound));
     }
-
 
     /**
      * Helper method for creating information loss.
@@ -186,7 +202,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     protected int getDimensions() {
         return dimensions;
     }
-
+    
     /**
      * Returns the number of dimensions.
      *
@@ -195,7 +211,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     protected int getDimensionsAggregated() {
         return dimensionsAggregated;
     }
-
+    
     /**
      * Returns the number of dimensions.
      *
@@ -204,7 +220,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     protected int getDimensionsGeneralized() {
         return dimensionsGeneralized;
     }
-    
+
     /**
      * For backwards compatibility only.
      *
@@ -214,22 +230,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         this.weights = new double[dimensions];
         Arrays.fill(weights, 1d);
         this.dimensions = dimensions;
-    }
-    
-    /**
-     * Needed for microaggregation
-     * @return
-     */
-    public int getMicroaggregationStartIndex() {
-        return microaggregationStartIndex;
-    }
-
-    /**
-     * Needed for microaggregation
-     * @return
-     */
-    public DistributionAggregateFunction[] getMicroaggregationFunctions() {
-        return microaggregationFunctions;
     }
 
     @Override

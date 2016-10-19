@@ -86,6 +86,16 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         return super.close();
     }
 
+    /**
+     * Returns the index of a url.
+     *
+     * @param location
+     * @return
+     */
+    private int getIndexOf(String location) {
+        return config.getIndexForUrl(location);
+    }
+    
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
@@ -108,7 +118,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
             }
         });
     }
-    
+
     @Override
     protected Control createContents(Composite parent) {
     	Control contents = super.createContents(parent);
@@ -182,16 +192,6 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         list.showSelection();
         try{browser.setUrl(getUrlOf(index));} catch (Exception e){}
         return parent;
-    }
-
-    /**
-     * Returns the index of a url.
-     *
-     * @param location
-     * @return
-     */
-    private int getIndexOf(String location) {
-        return config.getIndexForUrl(location);
     }
     
     @Override

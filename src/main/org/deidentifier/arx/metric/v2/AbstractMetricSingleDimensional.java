@@ -44,10 +44,9 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
      *
      * @param monotonic
      * @param independent
-     * @param gsFactor
      */
-    protected AbstractMetricSingleDimensional(final boolean monotonic, final boolean independent, final double gsFactor) {
-        super(monotonic, independent, gsFactor);
+    protected AbstractMetricSingleDimensional(final boolean monotonic, final boolean independent) {
+        super(monotonic, independent, 0.5d);
     }
 
     /**
@@ -55,9 +54,10 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
      *
      * @param monotonic
      * @param independent
+     * @param gsFactor
      */
-    protected AbstractMetricSingleDimensional(final boolean monotonic, final boolean independent) {
-        super(monotonic, independent, 0.5d);
+    protected AbstractMetricSingleDimensional(final boolean monotonic, final boolean independent, final double gsFactor) {
+        super(monotonic, independent, gsFactor);
     }
     
     @Override

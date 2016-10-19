@@ -595,18 +595,6 @@ public class Model implements Serializable {
 	}
 
     /**
-     * Returns the k-map model.
-     *
-     * @return
-     */
-    public ModelKMapCriterion getKMapModel() {
-        if (kMapModel == null) {
-            kMapModel = new ModelKMapCriterion();
-        }
-        return kMapModel;
-    }
-    
-	/**
      * Returns a list of indices of all equivalence classes.
      *
      * @return
@@ -615,7 +603,7 @@ public class Model implements Serializable {
 		// TODO: Refactor to colors[groups[row]]
 		return this.groups;
 	}
-
+    
 	/**
      * Returns the according parameter.
      *
@@ -664,15 +652,15 @@ public class Model implements Serializable {
 	    else return inputConfig.getInput().getDefinition();
 	}
 
-    /**
+	/**
 	 * Returns the input population model
 	 * @return
 	 */
 	public ARXPopulationModel getInputPopulationModel() {
 	    return getRiskModel().getPopulationModel();
 	}
-    
-	/**
+
+    /**
      * Returns the k-anonymity model.
      *
      * @return
@@ -680,6 +668,18 @@ public class Model implements Serializable {
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
 	}
+    
+	/**
+     * Returns the k-map model.
+     *
+     * @return
+     */
+    public ModelKMapCriterion getKMapModel() {
+        if (kMapModel == null) {
+            kMapModel = new ModelKMapCriterion();
+        }
+        return kMapModel;
+    }
 	
 	/**
      * Returns the l-diversity model.

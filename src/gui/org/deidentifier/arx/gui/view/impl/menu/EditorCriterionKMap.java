@@ -148,6 +148,17 @@ public class EditorCriterionKMap extends EditorCriterion<ModelKMapCriterion> {
         return group;
     }
     
+    @Override
+    protected List<ModelCriterion> getTypicalParameters() {
+        
+        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
+        result.add(new ModelKMapCriterion(3));
+        result.add(new ModelKMapCriterion(5));
+        result.add(new ModelKMapCriterion(10));
+        result.add(new ModelKMapCriterion(100));
+        return result;
+    }
+    
     /**
      * Parse
      */
@@ -173,16 +184,5 @@ public class EditorCriterionKMap extends EditorCriterion<ModelKMapCriterion> {
         }
         updateLabel(labelSignificanceLevel, model.getSignificanceLevel());
         knobSignificanceLevel.setValue(model.getSignificanceLevel());
-    }
-    
-    @Override
-    protected List<ModelCriterion> getTypicalParameters() {
-        
-        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
-        result.add(new ModelKMapCriterion(3));
-        result.add(new ModelKMapCriterion(5));
-        result.add(new ModelKMapCriterion(10));
-        result.add(new ModelKMapCriterion(100));
-        return result;
     }
 }

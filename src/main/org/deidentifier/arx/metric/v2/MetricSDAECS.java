@@ -96,11 +96,6 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new ILSingleDimensionalWithBound(entry.count);
-    }
-
-    @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
 
         // The total number of groups with and without suppression
@@ -126,6 +121,11 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         // Compute AECS
         return new ILSingleDimensionalWithBound(getNumTuples() / groupsWithSuppression,
                                                 getNumTuples() / (groupsWithoutSuppression * gFactor));
+    }
+
+    @Override
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new ILSingleDimensionalWithBound(entry.count);
     }
 
     @Override

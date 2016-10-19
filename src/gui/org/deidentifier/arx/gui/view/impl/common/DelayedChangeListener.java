@@ -60,6 +60,18 @@ public abstract class DelayedChangeListener implements SelectionListener, Modify
         });
     }
     
+    /**
+     * Implement this
+     * @param arg0
+     */
+    public abstract void delayedEvent();
+
+    @Override
+    public void modifyText(ModifyEvent arg0) {
+        this.event = true;
+        this.time = System.currentTimeMillis() + delay;
+    }
+
     @Override
     public void widgetDefaultSelected(SelectionEvent arg0) {
         this.event = true;
@@ -71,16 +83,4 @@ public abstract class DelayedChangeListener implements SelectionListener, Modify
         this.event = true;
         this.time = System.currentTimeMillis() + delay;
     }
-
-    @Override
-    public void modifyText(ModifyEvent arg0) {
-        this.event = true;
-        this.time = System.currentTimeMillis() + delay;
-    }
-
-    /**
-     * Implement this
-     * @param arg0
-     */
-    public abstract void delayedEvent();
 }

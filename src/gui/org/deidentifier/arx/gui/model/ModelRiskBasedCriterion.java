@@ -62,19 +62,19 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
     /**
      * Creates a new instance
      * @param variant
+     */
+    public ModelRiskBasedCriterion(int variant) {
+        this.variant = variant;
+    }
+    /**
+     * Creates a new instance
+     * @param variant
      * @param threshold
      */
     public ModelRiskBasedCriterion(int variant,
                                    double threshold) {
         this.variant = variant;
         this.threshold = threshold;
-    }
-    /**
-     * Creates a new instance
-     * @param variant
-     */
-    public ModelRiskBasedCriterion(int variant) {
-        this.variant = variant;
     }
     
 	@Override
@@ -132,6 +132,14 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 		return threshold;
 	}
 
+    /**
+	 * Returns the variant
+	 * @return
+	 */
+    public int getVariant() {
+        return this.variant;
+    }
+
     @Override
     public void parse(ModelCriterion criterion, boolean _default) {
         if (!(criterion instanceof ModelRiskBasedCriterion)) {
@@ -144,6 +152,7 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
             this.setEnabled(other.isEnabled());
         }
     }
+	
 
     /**
      * Sets the threshold.
@@ -153,7 +162,6 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 	public void setThreshold(double threshold) {
 		this.threshold = threshold;
 	}
-	
 
     /**
      * Sets the variant.
@@ -163,7 +171,7 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 	public void setVariant(int variant) {
 	    this.variant = variant;
 	}
-
+    
     @Override
     public String toString() {
         switch (variant) {
@@ -183,8 +191,8 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
             throw new RuntimeException(Resources.getMessage("Model.20")); //$NON-NLS-1$
         }
     }
-    
-    /**
+
+	/**
 	 * Returns a population-based criterion for the given models
 	 * @param statisticalModel
 	 * @param model
@@ -197,12 +205,4 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 	                                                   riskModel.getPopulationModel().clone(),
 	                                                   riskModel.getSolverConfiguration());
 	}
-
-	/**
-	 * Returns the variant
-	 * @return
-	 */
-    public int getVariant() {
-        return this.variant;
-    }
 }

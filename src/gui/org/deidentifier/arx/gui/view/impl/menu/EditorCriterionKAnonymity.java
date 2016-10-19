@@ -90,15 +90,6 @@ public class EditorCriterionKAnonymity extends EditorCriterion<ModelKAnonymityCr
         return group;
     }
 
-    /**
-     * Parse
-     */
-    protected void parse(ModelKAnonymityCriterion model, boolean _default) {
-        updateLabel(labelK, model.getK());
-        knobK.setValue(model.getK());
-    }
-
-
     @Override
     protected List<ModelCriterion> getTypicalParameters() {
 
@@ -108,5 +99,14 @@ public class EditorCriterionKAnonymity extends EditorCriterion<ModelKAnonymityCr
         result.add(new ModelKAnonymityCriterion(10));
         result.add(new ModelKAnonymityCriterion(100));
         return result;
+    }
+
+
+    /**
+     * Parse
+     */
+    protected void parse(ModelKAnonymityCriterion model, boolean _default) {
+        updateLabel(labelK, model.getK());
+        knobK.setValue(model.getK());
     }
 }

@@ -40,6 +40,20 @@ public class RiskEstimateBuilderInterruptible {
     }
 
     /**
+     * Returns a class providing access to an analysis of potential quasi-identifiers using
+     * the concepts of alpha distinction and alpha separation.
+     *
+     * @return the RiskModelAttributes data from risk analysis
+     */
+    public RiskModelAttributes getAttributeRisks() throws InterruptedException {
+        try {
+            return parent.getAttributeRisks();
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
+
+    /**
      * Returns a model of the equivalence classes in this data set
      * 
      * @return
@@ -52,7 +66,6 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
     /**
      * Returns a class providing access to the identifier HIPAA identifiers.
      * 
@@ -66,6 +79,7 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
+    
     /**
      * Returns a class providing population-based uniqueness estimates
      * 
@@ -88,20 +102,6 @@ public class RiskEstimateBuilderInterruptible {
      */
     public int getProgress() {
         return parent.getProgress();
-    }
-    
-    /**
-     * Returns a class providing access to an analysis of potential quasi-identifiers using
-     * the concepts of alpha distinction and alpha separation.
-     *
-     * @return the RiskModelAttributes data from risk analysis
-     */
-    public RiskModelAttributes getAttributeRisks() throws InterruptedException {
-        try {
-            return parent.getAttributeRisks();
-        } catch (ComputationInterruptedException e) {
-            throw new InterruptedException("Computation interrupted");
-        }
     }
     /**
      * Returns a class providing sample-based re-identification risk estimates

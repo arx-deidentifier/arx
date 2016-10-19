@@ -211,6 +211,31 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
      * Creates a new instance.
      *
      * @param type The data type
+     * @param comparator Use this comparator for ordering data items
+     */
+    private HierarchyBuilderOrderBased(final DataType<T> type, final Comparator<T> comparator) {
+        super(Type.ORDER_BASED, type);
+        if (!(comparator instanceof Serializable)) {
+            throw new IllegalArgumentException("Comparator must be serializable");
+        }
+        this.comparator = new SerializableComparator<String>(){
+            private static final long serialVersionUID = -487411642974218418L;
+            @Override
+            public int compare(String o1, String o2) {
+                try {
+                    return comparator.compare(type.parse(o1), type.parse(o2));
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        };
+        this.function = AggregateFunction.forType(type).createSetFunction();
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param type The data type
      * @param order Use this for ordering data items
      */
     private HierarchyBuilderOrderBased(final DataType<T> type, final String[] order) {
@@ -226,31 +251,6 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
             public int compare(String o1, String o2) {
                 try {
                     return map.get(o1).compareTo(map.get(o2));
-                } catch (Exception e) {
-                    throw new IllegalArgumentException(e);
-                }
-            }
-        };
-        this.function = AggregateFunction.forType(type).createSetFunction();
-    }
-
-    /**
-     * Creates a new instance.
-     *
-     * @param type The data type
-     * @param comparator Use this comparator for ordering data items
-     */
-    private HierarchyBuilderOrderBased(final DataType<T> type, final Comparator<T> comparator) {
-        super(Type.ORDER_BASED, type);
-        if (!(comparator instanceof Serializable)) {
-            throw new IllegalArgumentException("Comparator must be serializable");
-        }
-        this.comparator = new SerializableComparator<String>(){
-            private static final long serialVersionUID = -487411642974218418L;
-            @Override
-            public int compare(String o1, String o2) {
-                try {
-                    return comparator.compare(type.parse(o1), type.parse(o2));
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e);
                 }

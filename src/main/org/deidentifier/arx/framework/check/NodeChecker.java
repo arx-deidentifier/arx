@@ -316,21 +316,13 @@ public class NodeChecker {
     }
     
     /**
-     * Returns the input buffer
-     * @return
-     */
-    public int[][] getInputBuffer() {
-        return this.dataGeneralized.getArray();
-    }
-
-    /**
      * Returns the configuration
      * @return
      */
     public ARXConfigurationInternal getConfiguration() {
         return config;
     }
-    
+
     /**
      * Returns the checkers history, if any.
      *
@@ -338,6 +330,14 @@ public class NodeChecker {
      */
     public History getHistory() {
         return history;
+    }
+    
+    /**
+     * Returns the input buffer
+     * @return
+     */
+    public int[][] getInputBuffer() {
+        return this.dataGeneralized.getArray();
     }
     
     /**

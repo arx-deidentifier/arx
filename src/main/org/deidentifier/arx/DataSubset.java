@@ -238,6 +238,13 @@ public class DataSubset implements Serializable {
     }
 
     /**
+     * Clone
+     */
+    public DataSubset clone() {
+        return new DataSubset(this.set.clone(), Arrays.copyOf(this.array, this.array.length));
+    }
+
+    /**
      * Getter
      *
      * @return
@@ -245,7 +252,7 @@ public class DataSubset implements Serializable {
     public int[] getArray() {
         return array;
     }
-
+    
     /**
      * Getter
      * 
@@ -253,13 +260,6 @@ public class DataSubset implements Serializable {
      */
     public RowSet getSet() {
         return set;
-    }
-    
-    /**
-     * Clone
-     */
-    public DataSubset clone() {
-        return new DataSubset(this.set.clone(), Arrays.copyOf(this.array, this.array.length));
     }
 
     /**

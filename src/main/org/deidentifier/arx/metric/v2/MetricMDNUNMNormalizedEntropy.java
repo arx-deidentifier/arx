@@ -63,12 +63,12 @@ public class MetricMDNUNMNormalizedEntropy extends MetricMDNUNMNormalizedEntropy
     }
 
     @Override
-    public String toString() {
+    public String getName() {
         return "Normalized non-uniform entropy";
     }
 
     @Override
-    public String getName() {
+    public String toString() {
         return "Normalized non-uniform entropy";
     }
 

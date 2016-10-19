@@ -80,11 +80,6 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
-    }
-
-    @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
 
         double result = 0;
@@ -96,6 +91,11 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         }
         result /= (double) transformation.length;
         return new InformationLossDefaultWithBound(result, result);
+    }
+
+    @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override

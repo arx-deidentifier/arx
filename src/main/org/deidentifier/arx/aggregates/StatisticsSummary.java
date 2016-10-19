@@ -85,13 +85,28 @@ public class StatisticsSummary<T> {
         }
         
         /**
+         * Adds a value
+         * @param value
+         */
+        public void addValue(String value) {
+            this.values.add(value);
+        }
+        
+        /**
+         * Clears the data
+         */
+        public void clear() {
+            this.values.clear();
+        }
+
+        /**
          * Returns a summary
          * @return
          */
         public String getMax() {
             return max;
         }
-        
+
         /**
          * Returns a summary
          * @return
@@ -123,7 +138,7 @@ public class StatisticsSummary<T> {
         public int getNumberOfMeasures() {
             return numberOfMeasures;
         }
-
+        
         /**
          * Returns the index of the next element that does not equal the element at the given index
          * @param index
@@ -137,21 +152,6 @@ public class StatisticsSummary<T> {
                 index++;
             }
             return index;
-        }
-
-        /**
-         * Adds a value
-         * @param value
-         */
-        public void addValue(String value) {
-            this.values.add(value);
-        }
-        
-        /**
-         * Clears the data
-         */
-        public void clear() {
-            this.values.clear();
         }
 
         /**

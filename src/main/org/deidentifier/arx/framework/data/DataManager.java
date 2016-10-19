@@ -489,47 +489,6 @@ public class DataManager {
     }
 
     /**
-     * Returns the order of the given sensitive attribute in the original dataset. 
-     * Required for t-closeness.
-     * 
-     * @param attribute
-     * @return distribution
-     */
-    public int[] getOrder(String attribute) {
-
-        // Check
-        if (!indexesSensitive.containsKey(attribute)) {
-            throw new IllegalArgumentException("Attribute " + attribute + " is not sensitive");
-        }
-        
-        // Prepare
-        final String[] dictionary = dataAnalyzed.getDictionary().getMapping()[indexesSensitive.get(attribute)];
-        final DataType<?> type = this.dataTypesSensitive.get(attribute);
-        
-        // Init
-        int[] order = new int[dictionary.length];
-        for (int i = 0; i < order.length; i++) {
-            order[i] = i;
-        }
-        
-        // Sort
-        Sorting.mergeSort(order, 0, order.length, new IntComparator() {
-            @Override public int compare(int arg0, int arg1) {
-                String value1 = dictionary[arg0];
-                String value2 = dictionary[arg1];
-                try {
-                    return type.compare(value1, value2);
-                } catch (NumberFormatException | ParseException e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-        });
-        
-        // Return
-        return order;
-    }
-
-    /**
      * Returns the distribution of the given sensitive attribute in the original dataset. 
      * Required for t-closeness.
      * 
@@ -642,6 +601,47 @@ public class DataManager {
      */
     public int getMicroaggregationStartIndex() {
         return microaggregationStartIndex;
+    }
+
+    /**
+     * Returns the order of the given sensitive attribute in the original dataset. 
+     * Required for t-closeness.
+     * 
+     * @param attribute
+     * @return distribution
+     */
+    public int[] getOrder(String attribute) {
+
+        // Check
+        if (!indexesSensitive.containsKey(attribute)) {
+            throw new IllegalArgumentException("Attribute " + attribute + " is not sensitive");
+        }
+        
+        // Prepare
+        final String[] dictionary = dataAnalyzed.getDictionary().getMapping()[indexesSensitive.get(attribute)];
+        final DataType<?> type = this.dataTypesSensitive.get(attribute);
+        
+        // Init
+        int[] order = new int[dictionary.length];
+        for (int i = 0; i < order.length; i++) {
+            order[i] = i;
+        }
+        
+        // Sort
+        Sorting.mergeSort(order, 0, order.length, new IntComparator() {
+            @Override public int compare(int arg0, int arg1) {
+                String value1 = dictionary[arg0];
+                String value2 = dictionary[arg1];
+                try {
+                    return type.compare(value1, value2);
+                } catch (NumberFormatException | ParseException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        });
+        
+        // Return
+        return order;
     }
 
     /**

@@ -132,13 +132,6 @@ public class ComponentHierarchy {
     /**
      * Clears the hierarchy.
      */
-    public void actionReset() {
-        this.setHierarchy(null);
-    }
-    
-    /**
-     * Clears the hierarchy.
-     */
     public void actionClear() {
         this.setHierarchy(null);
         this.triggerChangedEvent();
@@ -343,6 +336,13 @@ public class ComponentHierarchy {
         
         this.table.refresh();
         this.triggerChangedEvent();
+    }
+    
+    /**
+     * Clears the hierarchy.
+     */
+    public void actionReset() {
+        this.setHierarchy(null);
     }
     
     /**

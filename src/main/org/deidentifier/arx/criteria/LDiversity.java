@@ -81,14 +81,6 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
     }
 
     /**
-     * Return prosecutor risk threshold, 1 if there is none
-     * @return
-     */
-    public double getRiskThresholdProsecutor() {
-        return 1d / getL();
-    }
-
-    /**
      * Return journalist risk threshold, 1 if there is none
      * @return
      */
@@ -102,5 +94,13 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
      */
     public double getRiskThresholdMarketer() {
         return getRiskThresholdProsecutor();
+    }
+
+    /**
+     * Return prosecutor risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdProsecutor() {
+        return 1d / getL();
     }
 }

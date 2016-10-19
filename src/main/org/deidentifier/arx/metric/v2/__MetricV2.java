@@ -158,24 +158,6 @@ public class __MetricV2 {
 
 
     /**
-     * Creates an instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
-     * which is the sum-function, will be used for comparing results.
-     * This metric will respect attribute weights defined in the configuration.
-     * 
-     * @param gsFactor A factor [0,1] weighting generalization and suppression.
-     *            The default value is 0.5, which means that generalization
-     *            and suppression will be treated equally. A factor of 0
-     *            will favor suppression, and a factor of 1 will favor
-     *            generalization. The values in between can be used for
-     *            balancing both methods.
-     *             
-     * @return
-     */
-    public static Metric<AbstractILMultiDimensional> createEntropyMetric(double gsFactor) {
-        return createEntropyMetric(false, gsFactor, AggregateFunction.SUM);
-    }
-
-    /**
      * Creates an instance of the non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
      * This metric will respect attribute weights defined in the configuration.
@@ -217,7 +199,6 @@ public class __MetricV2 {
         }
     }
 
-    
     /**
      * Creates an instance of the non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -233,6 +214,25 @@ public class __MetricV2 {
         MetricMDNUEntropyPrecomputed result = (MetricMDNUEntropyPrecomputed)createEntropyMetric(monotonic, AggregateFunction.SUM);
         result.initialize(cache,  cardinalities, hierarchies);
         return result;
+    }
+
+    
+    /**
+     * Creates an instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
+     * which is the sum-function, will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     *             
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createEntropyMetric(double gsFactor) {
+        return createEntropyMetric(false, gsFactor, AggregateFunction.SUM);
     }
 
     /**
@@ -445,6 +445,48 @@ public class __MetricV2 {
      * Creates an instance of the precision metric.
      * The default aggregate function, which is the arithmetic mean, will be used.
      * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, double gsFactor) {
+        return createPrecisionMetric(monotonic, gsFactor, AggregateFunction.ARITHMETIC_MEAN);
+    }
+
+
+    /**
+     * Creates an instance of the precision metric.
+     * This metric will respect attribute weights defined in the configuration.
+     *
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @param function
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, double gsFactor, AggregateFunction function) {
+        if (monotonic) {
+            return new MetricMDPrecision(gsFactor, function);
+        } else {
+            return new MetricMDNMPrecision(gsFactor, function);
+        }
+    }
+
+    /**
+     * Creates an instance of the precision metric.
+     * The default aggregate function, which is the arithmetic mean, will be used.
+     * This metric will respect attribute weights defined in the configuration.
      *
      * @param monotonic If set to true, the monotonic variant of the metric will be created
      * @param heights
@@ -456,7 +498,6 @@ public class __MetricV2 {
         result.initialize(heights, cells);
         return result;
     }
-
 
     /**
      * Creates an instance of the non-monotonic precision metric.
@@ -492,47 +533,6 @@ public class __MetricV2 {
      */
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(double gsFactor, AggregateFunction function) {
         return createPrecisionMetric(false, gsFactor, function);
-    }
-
-    /**
-     * Creates an instance of the precision metric.
-     * The default aggregate function, which is the arithmetic mean, will be used.
-     * This metric will respect attribute weights defined in the configuration.
-     * 
-     * @param monotonic If set to true, the monotonic variant of the metric will be created
-     * @param gsFactor A factor [0,1] weighting generalization and suppression.
-     *            The default value is 0.5, which means that generalization
-     *            and suppression will be treated equally. A factor of 0
-     *            will favor suppression, and a factor of 1 will favor
-     *            generalization. The values in between can be used for
-     *            balancing both methods.
-     * 
-     * @return
-     */
-    public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, double gsFactor) {
-        return createPrecisionMetric(monotonic, gsFactor, AggregateFunction.ARITHMETIC_MEAN);
-    }
-
-    /**
-     * Creates an instance of the precision metric.
-     * This metric will respect attribute weights defined in the configuration.
-     *
-     * @param monotonic If set to true, the monotonic variant of the metric will be created
-     * @param gsFactor A factor [0,1] weighting generalization and suppression.
-     *            The default value is 0.5, which means that generalization
-     *            and suppression will be treated equally. A factor of 0
-     *            will favor suppression, and a factor of 1 will favor
-     *            generalization. The values in between can be used for
-     *            balancing both methods.
-     * @param function
-     * @return
-     */
-    public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, double gsFactor, AggregateFunction function) {
-        if (monotonic) {
-            return new MetricMDPrecision(gsFactor, function);
-        } else {
-            return new MetricMDNMPrecision(gsFactor, function);
-        }
     }
 
     /**
@@ -585,26 +585,6 @@ public class __MetricV2 {
 
 
     /**
-     * Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
-     * which is the sum-function, will be used for comparing results.
-     * This metric will respect attribute weights defined in the configuration.
-     * 
-     * @param threshold The precomputed variant of the metric will be used if 
-     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
-     * @param gsFactor A factor [0,1] weighting generalization and suppression.
-     *            The default value is 0.5, which means that generalization
-     *            and suppression will be treated equally. A factor of 0
-     *            will favor suppression, and a factor of 1 will favor
-     *            generalization. The values in between can be used for
-     *            balancing both methods.
-     *                  
-     * @return
-     */
-    public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, double gsFactor) {
-        return createPrecomputedEntropyMetric(threshold, false, gsFactor, AggregateFunction.SUM);
-    }
-
-    /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
      * This metric will respect attribute weights defined in the configuration.
@@ -648,6 +628,26 @@ public class __MetricV2 {
         } else {
             return new MetricMDNUNMEntropyPotentiallyPrecomputed(threshold, gsFactor, function);
         }
+    }
+
+    /**
+     * Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
+     * which is the sum-function, will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param threshold The precomputed variant of the metric will be used if 
+     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     *                  
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, double gsFactor) {
+        return createPrecomputedEntropyMetric(threshold, false, gsFactor, AggregateFunction.SUM);
     }
 
     

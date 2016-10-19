@@ -49,16 +49,16 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
      *
      * @param function
      */
-    protected MetricMDPrecision(double gsFactor, AggregateFunction function){
-        super(true, true, gsFactor, function);
+    protected MetricMDPrecision(AggregateFunction function){
+        super(true, true, function);
     }
     /**
      * Creates a new instance.
      *
      * @param function
      */
-    protected MetricMDPrecision(AggregateFunction function){
-        super(true, true, function);
+    protected MetricMDPrecision(double gsFactor, AggregateFunction function){
+        super(true, true, gsFactor, function);
     }
 
     /**

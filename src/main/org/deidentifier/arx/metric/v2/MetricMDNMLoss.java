@@ -333,11 +333,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
      * @param dimension
      * @return
      */
-    protected double normalizeGeneralized(double aggregate, int dimension) {
-
-        double min = gFactor * tuples / shares[dimension].getDomainSize();
-        double max = tuples;
-        double result = (aggregate - min) / (max - min);
+    protected double normalizeAggregated(double aggregate) {
+        double result = aggregate / tuples;
         result = result >= 0d ? result : 0d;
         return round(result);
     }
@@ -349,8 +346,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
      * @param dimension
      * @return
      */
-    protected double normalizeAggregated(double aggregate) {
-        double result = aggregate / tuples;
+    protected double normalizeGeneralized(double aggregate, int dimension) {
+
+        double min = gFactor * tuples / shares[dimension].getDomainSize();
+        double max = tuples;
+        double result = (aggregate - min) / (max - min);
         result = result >= 0d ? result : 0d;
         return round(result);
     }
