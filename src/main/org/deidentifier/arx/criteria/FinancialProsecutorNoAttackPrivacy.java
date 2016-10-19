@@ -147,6 +147,6 @@ public class FinancialProsecutorNoAttackPrivacy extends ImplicitPrivacyCriterion
      * Returns a string representation
      */
     protected String toString(String attackerModel) {
-        return "no-attack-financial-privacy (" + attackerModel + ")" + config != null ? config.toString() : "";
+        return "no-attack-financial-privacy (" + attackerModel + ")" + (config != null ? config.toString() : "");
     }
 }
