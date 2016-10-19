@@ -177,7 +177,12 @@ public class ViewUtilityMeasures implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 if (comboMetric.getSelectionIndex() != -1) {
-                    selectMetricAction(METRICS.get(comboMetric.getSelectionIndex()));
+                    MetricDescription metric = METRICS.get(comboMetric.getSelectionIndex());
+                    if (metric != null && model != null) {
+                        model.setMetricDescription(metric);
+                        controller.update(new ModelEvent(this, ModelPart.METRIC, model.getMetricDescription()));
+                        updateControls();
+                    }
                 }
             }
         });
@@ -201,6 +206,7 @@ public class ViewUtilityMeasures implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getMetricConfiguration().setMonotonic(monotonicVariant.getSelection());
+                controller.update(new ModelEvent(this, ModelPart.METRIC, model.getMetricDescription()));
             }
         });
 
@@ -223,6 +229,7 @@ public class ViewUtilityMeasures implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getInputConfig().setUseUtilityBasedMicroaggregation(utilityBasedMicroaggregation.getSelection());
+                controller.update(new ModelEvent(this, ModelPart.METRIC, model.getMetricDescription()));
             }
         });
 
@@ -250,6 +257,7 @@ public class ViewUtilityMeasures implements IView {
                 for (AggregateFunction function : model.getMetricDescription().getSupportedAggregateFunctions()) {
                     if (function.toString().equals(selected)) {
                         model.getMetricConfiguration().setAggregateFunction(function);
+                        controller.update(new ModelEvent(this, ModelPart.METRIC, model.getMetricDescription()));
                     }
                 }
             }
@@ -259,31 +267,18 @@ public class ViewUtilityMeasures implements IView {
     }
 
     /**
-     * Select metric action.
-     *
-     * @param metric
-     */
-    private void selectMetricAction(final MetricDescription metric) {
-        if (metric != null && model != null) {
-            model.setMetricDescription(metric);
-            controller.update(new ModelEvent(this, ModelPart.METRIC, model.getMetricDescription()));
-            this.updateControls();
-        }
-    }
-
-    /**
      * This method updates the view
      */
     private void updateControls(){
 
         // Check
-        if (model == null) {
+        if (this.model == null) {
             return;
         }
         
         // Configure
-        MetricConfiguration config = model.getMetricConfiguration();
-        MetricDescription description = model.getMetricDescription();
+        MetricConfiguration config = this.model.getMetricConfiguration();
+        MetricDescription description = this.model.getMetricDescription();
 
         // Check
         if (config == null || description == null) {
@@ -291,22 +286,23 @@ public class ViewUtilityMeasures implements IView {
             return;
         }
 
-        root.setRedraw(false);
-
+        // Disable redrawing
+        this.root.setRedraw(false);
+        
         // Monotonicity
         if (!description.isMonotonicVariantSupported()) {
             this.monotonicVariant.setSelection(false);
-            this.monotonicVariant.setEnabled(false);
         } else {
-            this.monotonicVariant.setEnabled(true);
             this.monotonicVariant.setSelection(config.isMonotonic());
         }
         
         // Set
-        utilityBasedMicroaggregation.setSelection(model.getInputConfig().isUtilityBasedMicroaggregation());
+        boolean isAbleToHandleMicroaggregation = description.createInstance(config).isAbleToHandleMicroaggregation();
+        this.utilityBasedMicroaggregation.setSelection(isAbleToHandleMicroaggregation &&
+                                                       this.model.getInputConfig().isUtilityBasedMicroaggregation());
 
         // Aggregate function
-        comboAggregate.removeAll();
+        this.comboAggregate.removeAll();
         int index = 0;
         int selected = -1;
         for (AggregateFunction function : description.getSupportedAggregateFunctions()) {
@@ -317,17 +313,22 @@ public class ViewUtilityMeasures implements IView {
             index++;
         }
         if (selected != -1) {
-            comboAggregate.select(selected);
+            this.comboAggregate.select(selected);
         }
+
+        // Enable everything
+        SWTUtil.enable(this.root);        
+
+        // Disable some components
+        if (this.comboAggregate.getItemCount() == 0) {
+            this.comboAggregate.add(Resources.getMessage("ViewMetric.0")); //$NON-NLS-1$
+            this.comboAggregate.select(0);
+            this.comboAggregate.setEnabled(false);
+        }
+        this.monotonicVariant.setEnabled(description.isMonotonicVariantSupported());
+        this.utilityBasedMicroaggregation.setEnabled(isAbleToHandleMicroaggregation);
         
-        SWTUtil.enable(root);        
-
-        if (comboAggregate.getItemCount() == 0) {
-            comboAggregate.add(Resources.getMessage("ViewMetric.0")); //$NON-NLS-1$
-            comboAggregate.select(0);
-            comboAggregate.setEnabled(false);
-        }
-
-        root.setRedraw(true);
+        // Redraw
+        this.root.setRedraw(true);
     }
 }
