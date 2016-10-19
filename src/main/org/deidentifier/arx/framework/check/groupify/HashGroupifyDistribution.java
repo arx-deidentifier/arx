@@ -182,19 +182,19 @@ public class HashGroupifyDistribution {
     }
 
     /**
-     * Returns a set of classes as an input for the risk model
-     */
-    public RiskModelHistogram getHistogram() {
-        return new RiskModelHistogram(this.distribution);
-    }
-
-    /**
      * Returns the fraction of tuples that are in classes of the given size
      * @param size
      * @return
      */
     public double getFractionOfRecordsInClassesOfSize(int size) {
         return (double)distribution.get(size) * (double)size / numRecords;
+    }
+
+    /**
+     * Returns a set of classes as an input for the risk model
+     */
+    public RiskModelHistogram getHistogram() {
+        return new RiskModelHistogram(this.distribution);
     }
 
     /**

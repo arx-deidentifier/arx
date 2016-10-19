@@ -113,6 +113,22 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
         return "PublisherBenefit (" + (journalistAttackerModel ? "Journalist)" : "Prosecutor)");
     }
 
+    /**
+     * Returns whether the journalist attacker model is being assumed.
+     * @return
+     */
+    public boolean isJournalistAttackerModel() {
+        return this.journalistAttackerModel;
+    }
+
+    /**
+     * Returns whether the prosecutor attacker model is being assumed.
+     * @return
+     */
+    public boolean isProsecutorAttackerModel() {
+        return !this.journalistAttackerModel;
+    }
+
     @Override
     public String toString() {
         return "PublisherBenefit (" + (journalistAttackerModel ? "Journalist" : "Prosecutor") +
@@ -185,7 +201,7 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
         // Return
         return super.createInformationLoss(real, bound);
     }
-
+    
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation transformation) {
         return null;
@@ -213,7 +229,7 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
         // Return
         return new ILSingleDimensional(bound);
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition,
@@ -234,21 +250,5 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
             maxIL *= share.getDomainSize();
         }
         maxIL = Math.log10(maxIL);
-    }
-
-    /**
-     * Returns whether the prosecutor attacker model is being assumed.
-     * @return
-     */
-    public boolean isProsecutorAttackerModel() {
-        return !this.journalistAttackerModel;
-    }
-
-    /**
-     * Returns whether the journalist attacker model is being assumed.
-     * @return
-     */
-    public boolean isJournalistAttackerModel() {
-        return this.journalistAttackerModel;
     }
 }

@@ -124,6 +124,13 @@ public abstract class MetricDescription implements Serializable {
     }
 
     /**
+     * @return the attackerModelSupported
+     */
+    public boolean isAttackerModelSupported() {
+        return attackerModelSupported;
+    }
+    
+    /**
      * @return the attributeWeightsSupported
      */
     public boolean isAttributeWeightsSupported() {
@@ -144,7 +151,7 @@ public abstract class MetricDescription implements Serializable {
      * @return
      */
     public abstract boolean isInstance(Metric<?> metric);
-    
+
     /**
      * @return the monotonicVariantSupported
      */
@@ -157,12 +164,5 @@ public abstract class MetricDescription implements Serializable {
      */
     public boolean isPrecomputationSupported() {
         return precomputationSupported;
-    }
-
-    /**
-     * @return the attackerModelSupported
-     */
-    public boolean isAttackerModelSupported() {
-        return attackerModelSupported;
     }
 }

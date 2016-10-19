@@ -75,12 +75,12 @@ public class MetricMDNUEntropyPotentiallyPrecomputed extends AbstractMetricMulti
     }
     
     @Override
-    public String toString() {
-        return "Non-uniform entropy";
+    public boolean isGSFactorSupported() {
+        return true;
     }
 
     @Override
-    public boolean isGSFactorSupported() {
-        return true;
+    public String toString() {
+        return "Non-uniform entropy";
     }
 }

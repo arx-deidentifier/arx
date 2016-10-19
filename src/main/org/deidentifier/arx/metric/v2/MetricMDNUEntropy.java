@@ -65,6 +65,11 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
     }
 
     @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
     public boolean isIndependent() {
         // TODO: Remove
         return false;
@@ -78,10 +83,5 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return null;
-    }
-
-    @Override
-    public boolean isGSFactorSupported() {
-        return true;
     }
 }

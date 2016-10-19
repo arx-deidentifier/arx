@@ -75,6 +75,16 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
     }
 
     @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
+    public boolean isPrecomputed() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Non-monotonic non-uniform entropy";
     }
@@ -168,15 +178,5 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         
         super.setMax(max);
         super.setMin(min);
-    }
-
-    @Override
-    public boolean isPrecomputed() {
-        return true;
-    }
-
-    @Override
-    public boolean isGSFactorSupported() {
-        return true;
     }
 }

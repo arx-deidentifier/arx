@@ -91,13 +91,13 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    public String toString() {
-        return "Average equivalence class size";
+    public boolean isGSFactorSupported() {
+        return true;
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new ILSingleDimensionalWithBound(entry.count);
+    public String toString() {
+        return "Average equivalence class size";
     }
 
     @Override
@@ -129,10 +129,15 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new ILSingleDimensionalWithBound(entry.count);
+    }
+    
+    @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node,
                                                         HashGroupify groupify) {
@@ -147,10 +152,5 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         // Compute AECS
         double gFactor = super.getSuppressionFactor(); // Note: factors are switched on purpose
         return new ILSingleDimensional(getNumTuples() / ((double)groups * gFactor));
-    }
-
-    @Override
-    public boolean isGSFactorSupported() {
-        return true;
     }
 }

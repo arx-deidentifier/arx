@@ -74,9 +74,18 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
               threshold);
     }
 
-    @Override
-    public boolean isGSFactorSupported() {
-        return true;
+    /**
+     * Returns the configuration of this metric.
+     *
+     * @return
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                      // monotonic
+                                       ((MetricMDNMLoss)super.getDefaultMetric()).getGeneralizationSuppressionFactor(), // gs-factor
+                                       super.isPrecomputed(),      // precomputed
+                                       super.getThreshold(),       // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
     }
 
     @Override
@@ -94,30 +103,21 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
         return super.getPrecomputedMetric().getSuppressionFactor();
     }
 
-    /**
-     * Returns the configuration of this metric.
-     *
-     * @return
-     */
-    public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false,                      // monotonic
-                                       ((MetricMDNMLoss)super.getDefaultMetric()).getGeneralizationSuppressionFactor(), // gs-factor
-                                       super.isPrecomputed(),      // precomputed
-                                       super.getThreshold(),       // precomputation threshold
-                                       this.getAggregateFunction() // aggregate function
-                                       );
+    @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return false;
     }
     
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
     @Override
     public String toString() {
         MetricMDNMLoss loss = ((MetricMDNMLoss)super.getDefaultMetric());
         return "Loss ("+loss.getGeneralizationSuppressionFactor()+"/"+
                         loss.getGeneralizationFactor()+"/"+
                         loss.getSuppressionFactor()+")";
-    }
-
-    @Override
-    public boolean isAbleToHandleMicroaggregation() {
-        return false;
     }
 }

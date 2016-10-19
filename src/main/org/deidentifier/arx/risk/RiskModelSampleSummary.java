@@ -131,19 +131,19 @@ public class RiskModelSampleSummary {
         }
 
         /**
-         * Proportion of records that can be re-identified on average
-         * @return
-         */
-        public double getSuccessRate() {
-            return rC;
-        }
-
-        /**
          * Proportion of records with risk above threshold
          * @return
          */
         public double getRecordsAtRisk() {
             return rA;
+        }
+
+        /**
+         * Proportion of records that can be re-identified on average
+         * @return
+         */
+        public double getSuccessRate() {
+            return rC;
         }
     }
 

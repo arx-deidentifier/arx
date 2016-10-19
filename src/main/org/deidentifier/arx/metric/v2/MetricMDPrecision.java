@@ -49,16 +49,16 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
      *
      * @param function
      */
-    protected MetricMDPrecision(double gsFactor, AggregateFunction function){
-        super(true, true, gsFactor, function);
+    protected MetricMDPrecision(AggregateFunction function){
+        super(true, true, function);
     }
     /**
      * Creates a new instance.
      *
      * @param function
      */
-    protected MetricMDPrecision(AggregateFunction function){
-        super(true, true, function);
+    protected MetricMDPrecision(double gsFactor, AggregateFunction function){
+        super(true, true, gsFactor, function);
     }
 
     /**
@@ -76,6 +76,11 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
     }
 
     @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Monotonic precision";
     }
@@ -84,10 +89,5 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         AbstractILMultiDimensional loss = super.getLowerBoundInternal(node);
         return new ILMultiDimensionalWithBound(loss, loss);
-    }
-
-    @Override
-    public boolean isGSFactorSupported() {
-        return true;
     }
 }

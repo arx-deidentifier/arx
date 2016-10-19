@@ -86,6 +86,21 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
     }
 
     @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return false;
+    }
+
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
+    public boolean isPrecomputed() {
+        return true;
+    }
+
+    @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
 
         // Prepare
@@ -151,20 +166,5 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
                 values[i][j] = hierarchies[i].getDistinctValues(j);
             }
         }
-    }
-
-    @Override
-    public boolean isGSFactorSupported() {
-        return true;
-    }
-
-    @Override
-    public boolean isAbleToHandleMicroaggregation() {
-        return false;
-    }
-
-    @Override
-    public boolean isPrecomputed() {
-        return true;
     }
 }

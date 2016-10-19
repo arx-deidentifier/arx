@@ -93,17 +93,6 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
     }
     
     /**
-     * Closes any underlying JDBC connection that may have either been created by ARX or passed during construction.
-     */
-    public void close() {
-        try {
-            this.connection.close();
-        } catch (Exception e) {
-            // Ignore
-        }
-    }
-    
-    /**
      * Adds a single column to import from
      * 
      * This makes sure that only {@link ImportColumnJDBC} can be added,
@@ -139,25 +128,14 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
     }
     
     /**
-     * @return {@link #connection}
+     * Closes any underlying JDBC connection that may have either been created by ARX or passed during construction.
      */
-    protected Connection getConnection() {
-        return this.connection;
-    }
-    
-    /**
-     * @return {@link #table}
-     */
-    protected String getTable() {
-        return this.table;
-    }
-    
-    /**
-     * Returns whether we need to close the connection
-     * @return
-     */
-    protected boolean isManageConnection() {
-        return this.manageConnection;
+    public void close() {
+        try {
+            this.connection.close();
+        } catch (Exception e) {
+            // Ignore
+        }
     }
     
     /**
@@ -201,5 +179,27 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
         throw new NoSuchElementException("Index for column '" + aliasName +
                                          "' couldn't be found");
         
+    }
+    
+    /**
+     * @return {@link #connection}
+     */
+    protected Connection getConnection() {
+        return this.connection;
+    }
+    
+    /**
+     * @return {@link #table}
+     */
+    protected String getTable() {
+        return this.table;
+    }
+    
+    /**
+     * Returns whether we need to close the connection
+     * @return
+     */
+    protected boolean isManageConnection() {
+        return this.manageConnection;
     }
 }

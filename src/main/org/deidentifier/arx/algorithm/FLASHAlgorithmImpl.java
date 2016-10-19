@@ -291,6 +291,26 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     }
     
     /**
+     * Sorts pointers to successor nodes according to the strategy.
+     *
+     * @param transformation
+     */
+    private int[] getSortedSuccessors(final Transformation transformation) {
+        
+        int identifier = (int)transformation.getIdentifier();
+        if (sortedSuccessors[identifier] == null) {
+            LongArrayList list = transformation.getSuccessors();
+            int[] result = new int[list.size()];
+            for (int i=0; i<list.size(); i++) {
+                result[i] = (int)list.getQuick(i);
+            }
+            sort(result);
+            sortedSuccessors[identifier] = result;
+        }
+        return sortedSuccessors[identifier];
+    }
+
+    /**
      * Returns all transformations that do not have the given property and sorts the resulting array
      * according to the strategy.
      *
@@ -490,25 +510,5 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             }
             
         });
-    }
-
-    /**
-     * Sorts pointers to successor nodes according to the strategy.
-     *
-     * @param transformation
-     */
-    private int[] getSortedSuccessors(final Transformation transformation) {
-        
-        int identifier = (int)transformation.getIdentifier();
-        if (sortedSuccessors[identifier] == null) {
-            LongArrayList list = transformation.getSuccessors();
-            int[] result = new int[list.size()];
-            for (int i=0; i<list.size(); i++) {
-                result[i] = (int)list.getQuick(i);
-            }
-            sort(result);
-            sortedSuccessors[identifier] = result;
-        }
-        return sortedSuccessors[identifier];
     }
 }

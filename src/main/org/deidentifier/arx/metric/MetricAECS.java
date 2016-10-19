@@ -69,11 +69,6 @@ public class MetricAECS extends MetricDefault {
     }
     
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
-    }
-
-    @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
 
         // The total number of groups with suppression
@@ -102,6 +97,11 @@ public class MetricAECS extends MetricDefault {
         // Compute AECS
         return new InformationLossDefaultWithBound((double)tuples / (double)groupsWithSuppression,
                                                (double)tuples / (double)groupsWithoutSuppression);
+    }
+
+    @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override

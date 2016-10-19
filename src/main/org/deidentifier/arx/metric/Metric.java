@@ -1294,6 +1294,23 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         initializeInternal(manager, definition, input, hierarchies, config);
     }
     /**
+     * Returns whether this metric handles microaggregation
+     * @return
+     */
+    public boolean isAbleToHandleMicroaggregation() {
+        return false;
+    }
+
+    /**
+     * Returns whether a generalization/suppression factor is supported
+     * @return
+     */
+    public boolean isGSFactorSupported() {
+        // TODO: This information is redundant to data in MetricConfiguration
+        return false;
+    }
+
+    /**
      * Returns whether this metric requires the transformed data or groups to
      * determine information loss.
      *
@@ -1302,7 +1319,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public boolean isIndependent() {
         return independent;
     }
-
+    
     /**
      * Returns false if the metric is non-monotone using suppression.
      *
@@ -1311,7 +1328,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public final boolean isMonotonic() {
         return monotonic;
     }
-
+    
     /**
      * Returns true if the metric is multi-dimensional.
      *
@@ -1319,24 +1336,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public final boolean isMultiDimensional(){
         return (this instanceof AbstractMetricMultiDimensional);
-    }
-    
-    /**
-     * Returns true if the metric is weighted.
-     *
-     * @return
-     */
-    public final boolean isWeighted() {
-        return (this instanceof MetricWeighted) || this.isMultiDimensional();
-    }
-    
-    /**
-     * Returns whether a generalization/suppression factor is supported
-     * @return
-     */
-    public boolean isGSFactorSupported() {
-        // TODO: This information is redundant to data in MetricConfiguration
-        return false;
     }
 
     /**
@@ -1348,11 +1347,12 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
-     * Returns whether this metric handles microaggregation
+     * Returns true if the metric is weighted.
+     *
      * @return
      */
-    public boolean isAbleToHandleMicroaggregation() {
-        return false;
+    public final boolean isWeighted() {
+        return (this instanceof MetricWeighted) || this.isMultiDimensional();
     }
     
     /**

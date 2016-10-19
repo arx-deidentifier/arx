@@ -37,6 +37,18 @@ import de.linearbits.jhpl.PredictiveProperty;
  */
 public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
 
+    /**
+     * Creates a new instance
+     * @param solutionSpace
+     * @param checker
+     * @param timeLimit
+     * @return
+     */
+    public static AbstractAlgorithm create(SolutionSpace solutionSpace,
+                                           NodeChecker checker,
+                                           int timeLimit) {
+        return new LIGHTNINGAlgorithm(solutionSpace, checker, timeLimit);
+    }
     /** Property */
     private final PredictiveProperty propertyChecked;
     /** Property */
@@ -45,9 +57,10 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     private final int                stepping;
     /** Time limit */
     private final int                timeLimit;
+
     /** The start time */
     private long                     timeStart;
-
+    
     /**
     * Constructor
     * @param space
@@ -65,18 +78,6 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         this.timeLimit = timeLimit;
         if (timeLimit <= 0) { 
             throw new IllegalArgumentException("Invalid time limit. Must be greater than zero."); 
-        }
-    }
-    
-    /**
-    * Makes sure that the given Transformation has been checked
-    * @param transformation
-    */
-    private void assureChecked(final Transformation transformation) {
-        if (!transformation.hasProperty(propertyChecked)) {
-            transformation.setChecked(checker.check(transformation, true));
-            trackOptimum(transformation);
-            progress((double)(System.currentTimeMillis() - timeStart) / (double)timeLimit);
         }
     }
 
@@ -112,11 +113,15 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     }
     
     /**
-     * Returns the current execution time
-     * @return
-     */
-    private int getTime() {
-        return (int)(System.currentTimeMillis() - timeStart);
+    * Makes sure that the given Transformation has been checked
+    * @param transformation
+    */
+    private void assureChecked(final Transformation transformation) {
+        if (!transformation.hasProperty(propertyChecked)) {
+            transformation.setChecked(checker.check(transformation, true));
+            trackOptimum(transformation);
+            progress((double)(System.currentTimeMillis() - timeStart) / (double)timeLimit);
+        }
     }
 
     /**
@@ -163,6 +168,14 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     }
     
     /**
+     * Returns the current execution time
+     * @return
+     */
+    private int getTime() {
+        return (int)(System.currentTimeMillis() - timeStart);
+    }
+
+    /**
     * Returns whether we can prune this Transformation
     * @param transformation
     * @return
@@ -178,18 +191,5 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
             if (metricMonotonic) prune = transformation.getLowerBound().compareTo(getGlobalOptimum().getInformationLoss()) >= 0;
         }
         return (prune || transformation.hasProperty(propertyExpanded));
-    }
-
-    /**
-     * Creates a new instance
-     * @param solutionSpace
-     * @param checker
-     * @param timeLimit
-     * @return
-     */
-    public static AbstractAlgorithm create(SolutionSpace solutionSpace,
-                                           NodeChecker checker,
-                                           int timeLimit) {
-        return new LIGHTNINGAlgorithm(solutionSpace, checker, timeLimit);
     }
 }
