@@ -245,7 +245,8 @@ public class ViewPropertiesInput extends ViewProperties {
             // We don't need to update in many cases, if we are displaying an output configuration
             if (part == ModelPart.ATTRIBUTE_TYPE || part == ModelPart.METRIC ||
                 part == ModelPart.ATTRIBUTE_WEIGHT || part == ModelPart.GS_FACTOR ||
-                part == ModelPart.MAX_OUTLIERS || part == ModelPart.DATA_TYPE) {
+                part == ModelPart.MAX_OUTLIERS || part == ModelPart.DATA_TYPE ||
+                part == ModelPart.FINANCIAL_MODEL) {
                 return;
             }
             

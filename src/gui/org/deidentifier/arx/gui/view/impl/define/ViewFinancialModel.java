@@ -108,21 +108,25 @@ public class ViewFinancialModel implements IView {
         textPublisherBenefit = createInputField(Resources.getMessage("ViewFinancialModel.1"), new Callback<Double>(){ //$NON-NLS-1$
             @Override public void call(Double value){
                 model.getInputConfig().setPublisherBenefit(value);
+                controller.update(new ModelEvent(ViewFinancialModel.this, ModelPart.FINANCIAL_MODEL, value));
             }            
         });
         textPublisherLoss = createInputField(Resources.getMessage("ViewFinancialModel.2"), new Callback<Double>(){ //$NON-NLS-1$
             @Override public void call(Double value){
                 model.getInputConfig().setPublisherLoss(value);
+                controller.update(new ModelEvent(ViewFinancialModel.this, ModelPart.FINANCIAL_MODEL, value));
             }            
         });
         textAdversaryGain = createInputField(Resources.getMessage("ViewFinancialModel.3"), new Callback<Double>(){ //$NON-NLS-1$
             @Override public void call(Double value){
                 model.getInputConfig().setAdversaryGain(value);
+                controller.update(new ModelEvent(ViewFinancialModel.this, ModelPart.FINANCIAL_MODEL, value));
             }            
         });
         textAdversaryCost = createInputField(Resources.getMessage("ViewFinancialModel.4"), new Callback<Double>(){ //$NON-NLS-1$
             @Override public void call(Double value){
                 model.getInputConfig().setAdversaryCost(value);
+                controller.update(new ModelEvent(ViewFinancialModel.this, ModelPart.FINANCIAL_MODEL, value));
             }            
         });
         

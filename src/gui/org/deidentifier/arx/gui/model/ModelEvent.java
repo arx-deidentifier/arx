@@ -115,8 +115,11 @@ public class ModelEvent {
         /** G/S FACTOR*/
         GS_FACTOR,
         
-        /** ATTRIBUTE_WEIGHT*/
-        ATTRIBUTE_WEIGHT
+        /** ATTRIBUTE WEIGHT*/
+        ATTRIBUTE_WEIGHT,
+        
+        /** FINANCIAL MODEL*/
+        FINANCIAL_MODEL
     }
 
     /** The part of the model that has changed. */

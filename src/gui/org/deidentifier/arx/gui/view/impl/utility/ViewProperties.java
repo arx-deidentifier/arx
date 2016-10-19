@@ -140,6 +140,7 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
         controller.addListener(ModelPart.GS_FACTOR, this);
         controller.addListener(ModelPart.MAX_OUTLIERS, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
+        controller.addListener(ModelPart.FINANCIAL_MODEL, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(target, this);
         if (reset != null) {
