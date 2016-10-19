@@ -110,7 +110,7 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
 
     @Override
     public String getName() {
-        return "PublisherBenefit (" + (journalistAttackerModel ? "Journalist)" : "Prosecutor)");
+        return "Publisher benefit";
     }
 
     /**
@@ -132,7 +132,7 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
     @Override
     public String toString() {
         return "PublisherBenefit (" + (journalistAttackerModel ? "Journalist" : "Prosecutor") +
-                config == null ? ")" : ", Benefit=" + config.getPublisherBenefit() + ")";
+                config == null ? ")" : (", Benefit=" + config.getPublisherBenefit() + ")");
     }
 
     /**
