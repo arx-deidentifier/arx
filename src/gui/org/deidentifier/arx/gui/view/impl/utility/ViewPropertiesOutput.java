@@ -210,8 +210,9 @@ public class ViewPropertiesOutput extends ViewProperties {
 
     /**
      * Update the view.
+     * @param part
      */
-    protected void update() {
+    protected void doUpdate(ModelPart part) {
 
         AnalysisData context = getContext().getData();
 
@@ -220,6 +221,13 @@ public class ViewPropertiesOutput extends ViewProperties {
             context.handle == null) {
             reset();
             return; 
+        }
+
+        // We don't need to update in many cases
+        if (part == ModelPart.ATTRIBUTE_TYPE || part == ModelPart.METRIC ||
+            part == ModelPart.ATTRIBUTE_WEIGHT || part == ModelPart.GS_FACTOR ||
+            part == ModelPart.MAX_OUTLIERS || part == ModelPart.DATA_TYPE) {
+            return;
         }
         
         // Disable redrawing

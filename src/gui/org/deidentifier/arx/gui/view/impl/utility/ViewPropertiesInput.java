@@ -87,7 +87,6 @@ public class ViewPropertiesInput extends ViewProperties {
                                  final Object arg2) {
             // Nothing to do
         }
-
     }
 
     /**
@@ -225,8 +224,9 @@ public class ViewPropertiesInput extends ViewProperties {
 
     /**
      * Update the view.
+     * @param part
      */
-    protected void update() {
+    protected void doUpdate(ModelPart part) {
 
     	// Check model
         if (model == null) { return; }
@@ -235,16 +235,32 @@ public class ViewPropertiesInput extends ViewProperties {
         DataDefinition definition = model.getOutputDefinition();
         if (definition == null) definition = model.getInputDefinition();
 
-        // Obtain config
-        ModelConfiguration config = model.getOutputConfig();
-        if (config == null) config = model.getInputConfig();
+        // Obtain relevant configuration objects;
+        ModelConfiguration config = null;
+        Metric<?> metric = null;
+        if (model.getOutputConfig() != null){
+            config = model.getOutputConfig();
+            metric = config.getMetric();
+
+            // We don't need to update in many cases, if we are displaying an output configuration
+            if (part == ModelPart.ATTRIBUTE_TYPE || part == ModelPart.METRIC ||
+                part == ModelPart.ATTRIBUTE_WEIGHT || part == ModelPart.GS_FACTOR ||
+                part == ModelPart.MAX_OUTLIERS || part == ModelPart.DATA_TYPE) {
+                return;
+            }
+            
+        } else {
+            config = model.getInputConfig();
+            // TODO: This is such an ugly hack
+            metric = model.getMetricDescription().createInstance(model.getMetricConfiguration());
+        }
 
         // Check
         if (definition == null || config == null || model.getInputConfig().getInput()==null){
         	reset();
             return;
         }
-
+        
         // Obtain handle
         DataHandle data = model.getInputConfig().getInput().getHandle();
                 
@@ -259,10 +275,9 @@ public class ViewPropertiesInput extends ViewProperties {
         new Property(Resources.getMessage("PropertiesView.10"), new String[] { SWTUtil.getPrettyString(config.getAllowedOutliers() * 100d) + Resources.getMessage("PropertiesView.11") }); //$NON-NLS-1$ //$NON-NLS-2$
         
         // Utility measure
-        Property m = new Property(Resources.getMessage("PropertiesView.114"), new String[] { config.getMetric().getDescription().getName() }); //$NON-NLS-1$
+        Property m = new Property(Resources.getMessage("PropertiesView.114"), new String[] { metric.getDescription().getName() }); //$NON-NLS-1$
         
         // Properties of the utility measure
-        Metric<?> metric = config.getMetric();
         if (metric.getAggregateFunction() != null) {
             new Property(m, Resources.getMessage("PropertiesView.149"), new String[] { metric.getAggregateFunction().toString() }); //$NON-NLS-1$    
         }
@@ -277,18 +292,29 @@ public class ViewPropertiesInput extends ViewProperties {
         new Property(m, Resources.getMessage("PropertiesView.158"), new String[] { SWTUtil.getPrettyString(metric.isAbleToHandleMicroaggregation()) }); //$NON-NLS-1$
                 
         // Financial configuration
-        if (config.getMetric() instanceof MetricSDNMPublisherBenefit) {
-            ARXFinancialConfiguration financial = ((MetricSDNMPublisherBenefit)config.getMetric()).getFinancialConfiguration();
-            if (financial != null) {
-                new Property(m, Resources.getMessage("PropertiesView.135"), new String[] { SWTUtil.getPrettyString(financial.getPublisherBenefit())}); //$NON-NLS-1$
-                new Property(m, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(financial.getPublisherLoss())}); //$NON-NLS-1$
-                new Property(m, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(financial.getAdversaryGain())}); //$NON-NLS-1$
-                new Property(m, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(financial.getAdversaryCost())}); //$NON-NLS-1$
+        if (metric instanceof MetricSDNMPublisherBenefit) {
+            
+            // Obtain for output data
+            ARXFinancialConfiguration financial = ((MetricSDNMPublisherBenefit)metric).getFinancialConfiguration();
+            
+            // Obtain for input only. This is a bit ugly.
+            if (financial == null) {
+                financial = ARXFinancialConfiguration.create();
+                financial.setAdversaryCost(config.getAdversaryCost())
+                         .setAdversaryGain(config.getAdversaryGain())
+                         .setPublisherBenefit(config.getPublisherBenefit())
+                         .setPublisherLoss(config.getPublisherLoss());
             }
-            if (((MetricSDNMPublisherBenefit)config.getMetric()).isProsecutorAttackerModel()) { 
+                
+            // Render
+            new Property(m, Resources.getMessage("PropertiesView.135"), new String[] { SWTUtil.getPrettyString(financial.getPublisherBenefit())}); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(financial.getPublisherLoss())}); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(financial.getAdversaryGain())}); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(financial.getAdversaryCost())}); //$NON-NLS-1$
+            if (((MetricSDNMPublisherBenefit)metric).isProsecutorAttackerModel()) { 
                 new Property(m, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            if (((MetricSDNMPublisherBenefit)config.getMetric()).isJournalistAttackerModel()) { 
+            if (((MetricSDNMPublisherBenefit)metric).isJournalistAttackerModel()) { 
                 new Property(m, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.161") }); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }

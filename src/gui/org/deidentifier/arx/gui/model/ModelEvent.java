@@ -110,7 +110,13 @@ public class ModelEvent {
         RISK_THRESHOLD_MAIN,
         
         /** RISK THRESHOLD*/
-        RISK_THRESHOLD_DERIVED
+        RISK_THRESHOLD_DERIVED,
+        
+        /** G/S FACTOR*/
+        GS_FACTOR,
+        
+        /** ATTRIBUTE_WEIGHT*/
+        ATTRIBUTE_WEIGHT
     }
 
     /** The part of the model that has changed. */
