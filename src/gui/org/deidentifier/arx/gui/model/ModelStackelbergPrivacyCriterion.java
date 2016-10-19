@@ -53,20 +53,20 @@ public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
 
     /**
      * Creates a new instance
+     */
+    public ModelStackelbergPrivacyCriterion() {
+    	this.attackerModel = AttackerModel.PROSECUTOR; 
+    	this.allowAttacks = true;
+    }
+
+    /**
+     * Creates a new instance
      * @param attackerModel
      * @param allowAttacks
      */
     public ModelStackelbergPrivacyCriterion(AttackerModel attackerModel, boolean allowAttacks) {
         this.attackerModel = attackerModel;
         this.allowAttacks = allowAttacks;
-    }
-
-    /**
-     * Creates a new instance
-     */
-    public ModelStackelbergPrivacyCriterion() {
-    	this.attackerModel = AttackerModel.PROSECUTOR; 
-    	this.allowAttacks = true;
     }
 
 	@Override
@@ -81,13 +81,6 @@ public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
      */
     public AttackerModel getAttackerModel() {
         return this.attackerModel;
-    }
-    
-    /**
-     * @return
-     */
-    public boolean isAllowAttacks() {
-        return this.allowAttacks;
     }
     
     @Override
@@ -112,11 +105,18 @@ public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
             throw new IllegalStateException("Unknown attacker model"); //$NON-NLS-1$
         }
 	}
-
-	@Override
+    
+    @Override
 	public String getLabel() {
 		return Resources.getMessage("ModelCriterion.4"); //$NON-NLS-1$
 	}
+
+	/**
+     * @return
+     */
+    public boolean isAllowAttacks() {
+        return this.allowAttacks;
+    }
     
     @Override
 	public void parse(ModelCriterion criterion, boolean _default) {
@@ -133,19 +133,19 @@ public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
 	}
     
 	/**
-	 * Defines the attacker model
-     * @param attackerModel
-     */
-    public void setAttackerModel(AttackerModel attackerModel) {
-        this.attackerModel = attackerModel;
-    }
-    
-    /**
      * Defines whether we allow attacks to happen
      * @param allowAttacks
      */
     public void setAllowAttacks(boolean allowAttacks) {
         this.allowAttacks = allowAttacks;
+    }
+    
+    /**
+	 * Defines the attacker model
+     * @param attackerModel
+     */
+    public void setAttackerModel(AttackerModel attackerModel) {
+        this.attackerModel = attackerModel;
     }
 
 	@Override

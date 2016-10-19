@@ -116,19 +116,6 @@ public class ComponentTitledFolder implements IComponent {
      * @param controller
      * @param bar
      * @param id
-     * @param helpids
-     */
-    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButtonBar bar, String id, Map<Composite, String> helpids){
-        this(parent, controller, bar, id, helpids, false, false);
-    }
-
-    /**
-     * Creates a new instance.
-     *
-     * @param parent
-     * @param controller
-     * @param bar
-     * @param id
      * @param bottom
      */
     public ComponentTitledFolder(Composite parent, 
@@ -138,6 +125,19 @@ public class ComponentTitledFolder implements IComponent {
                                  boolean bottom,
                                  boolean supportsHidingElements){
         this(parent, controller, bar, id, null, bottom, supportsHidingElements);
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param parent
+     * @param controller
+     * @param bar
+     * @param id
+     * @param helpids
+     */
+    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButtonBar bar, String id, Map<Composite, String> helpids){
+        this(parent, controller, bar, id, helpids, false, false);
     }
 
     

@@ -142,24 +142,6 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
     }
 
     @Override
-    protected void parse(ModelLDiversityCriterion model, boolean _default) {
-        
-        updateLabel(labelC, model.getC());
-        updateLabel(labelL, model.getL());
-        knobL.setValue(model.getL());
-        knobC.setValue(model.getC());
-
-        comboVariant.select(model.getVariant());
-        
-        if (model.getVariant() == 2) {
-            knobC.setEnabled(true);
-        } else {
-            knobC.setEnabled(false);
-        }
-    }
-
-
-    @Override
     protected List<ModelCriterion> getTypicalParameters() {
 
         List<ModelCriterion> result = new ArrayList<ModelCriterion>();
@@ -188,5 +170,23 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
         result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_RECURSIVE, 10, 4));
         
         return result;
+    }
+
+
+    @Override
+    protected void parse(ModelLDiversityCriterion model, boolean _default) {
+        
+        updateLabel(labelC, model.getC());
+        updateLabel(labelL, model.getL());
+        knobL.setValue(model.getL());
+        knobC.setValue(model.getC());
+
+        comboVariant.select(model.getVariant());
+        
+        if (model.getVariant() == 2) {
+            knobC.setEnabled(true);
+        } else {
+            knobC.setEnabled(false);
+        }
     }
 }

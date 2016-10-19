@@ -130,6 +130,26 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
         return group;
     }
 
+    @Override
+    protected List<ModelCriterion> getTypicalParameters() {
+
+        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR, 0.01d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR, 0.001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR, 0.0001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN, 0.01d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN, 0.001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN, 0.0001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ, 0.01d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ, 0.001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ, 0.0001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB, 0.01d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB, 0.001d));
+        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB, 0.0001d));
+        return result;
+    }
+
+
     /**
      * Parses the input
      */
@@ -150,25 +170,5 @@ public class EditorCriterionRiskBased extends EditorCriterion<ModelRiskBasedCrit
                 cmbModel.select(3);
                 break;
         }
-    }
-
-
-    @Override
-    protected List<ModelCriterion> getTypicalParameters() {
-
-        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
-        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR, 0.01d));
-        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR, 0.001d));
-        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR, 0.0001d));
-        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN, 0.01d));
-        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN, 0.001d));
-        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_PITMAN, 0.0001d));
-        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ, 0.01d));
-        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ, 0.001d));
-        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_ZAYATZ, 0.0001d));
-        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB, 0.01d));
-        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB, 0.001d));
-        result.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_SNB, 0.0001d));
-        return result;
     }
 }

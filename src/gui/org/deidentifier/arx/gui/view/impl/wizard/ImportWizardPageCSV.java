@@ -625,11 +625,6 @@ public class ImportWizardPageCSV extends WizardPage {
     }
 
     
-    private Charset getCharset() {
-        // TODO: get charset from user
-        return Charset.defaultCharset();
-    }
-
     /**
      * Tries to detect the line break.
      *
@@ -731,6 +726,11 @@ public class ImportWizardPageCSV extends WizardPage {
 
         /* Mark page as completed */
         setPageComplete(true);
+    }
+
+    private Charset getCharset() {
+        // TODO: get charset from user
+        return Charset.defaultCharset();
     }
 
     /**

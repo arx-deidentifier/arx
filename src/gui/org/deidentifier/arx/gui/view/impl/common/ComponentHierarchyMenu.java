@@ -133,6 +133,23 @@ public class ComponentHierarchyMenu implements IView {
     }
     
     /**
+     * Checks and asks users whether functional hierarchies should be removed
+     * @return
+     */
+    private boolean check() {
+        if (model != null && model.getInputConfig() != null && model.getSelectedAttribute() != null) {
+            if (model.getInputConfig().getHierarchyBuilder(model.getSelectedAttribute()) != null) {
+                return controller.actionShowQuestionDialog(Resources.getMessage("HierarchyView.20"),  //$NON-NLS-1$
+                                                                   Resources.getMessage("HierarchyView.21")); //$NON-NLS-1$
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Creates all components required for making the table editable.
      */
     private void createMenu() {
@@ -333,22 +350,5 @@ public class ComponentHierarchyMenu implements IView {
         // Show
         this.menu.setLocation(point);
         this.menu.setVisible(true);
-    }
-
-    /**
-     * Checks and asks users whether functional hierarchies should be removed
-     * @return
-     */
-    private boolean check() {
-        if (model != null && model.getInputConfig() != null && model.getSelectedAttribute() != null) {
-            if (model.getInputConfig().getHierarchyBuilder(model.getSelectedAttribute()) != null) {
-                return controller.actionShowQuestionDialog(Resources.getMessage("HierarchyView.20"),  //$NON-NLS-1$
-                                                                   Resources.getMessage("HierarchyView.21")); //$NON-NLS-1$
-            } else {
-                return true;
-            }
-        } else {
-            return false;
-        }
     }
 }

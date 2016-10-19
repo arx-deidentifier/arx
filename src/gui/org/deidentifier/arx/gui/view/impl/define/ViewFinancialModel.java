@@ -41,9 +41,18 @@ import org.eclipse.swt.widgets.Text;
  */
 public class ViewFinancialModel implements IView {
 
+    /**
+     * Helper interface
+     * @author Fabian Prasser
+     *
+     * @param <T>
+     */
+    private interface Callback<T> {
+        abstract void call(T value);
+    }
+
     /** Controller */
     private final Controller controller;
-
     /** View */
     private final Composite  root;
     /** View */
@@ -54,18 +63,9 @@ public class ViewFinancialModel implements IView {
     private Text             textAdversaryGain;
     /** View */
     private Text             textAdversaryCost;
+    
     /** Model */
     private Model            model;
-    
-    /**
-     * Helper interface
-     * @author Fabian Prasser
-     *
-     * @param <T>
-     */
-    private interface Callback<T> {
-        abstract void call(T value);
-    }
 
     /**
      * Validator
@@ -129,6 +129,35 @@ public class ViewFinancialModel implements IView {
         this.reset();
     }
 
+    @Override
+    public void dispose() {
+        if (!root.isDisposed()) {
+            root.dispose();
+        }
+        controller.removeListener(this);
+    }
+
+    @Override
+    public void reset() {
+        textPublisherBenefit.setText(""); //$NON-NLS-1$
+        textPublisherLoss.setText(""); //$NON-NLS-1$
+        textAdversaryGain.setText(""); //$NON-NLS-1$
+        textAdversaryCost.setText(""); //$NON-NLS-1$
+        textPublisherBenefit.setToolTipText(textPublisherBenefit.getText());
+        textPublisherLoss.setToolTipText(textPublisherLoss.getText());
+        textAdversaryGain.setToolTipText(textAdversaryGain.getText());
+        textAdversaryCost.setToolTipText(textAdversaryCost.getText());
+        SWTUtil.disable(root);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+        if (event.part == ModelPart.MODEL) {
+           this.model = (Model) event.data;
+           update();
+        }
+    }
+
     /**
      * Creates an input field
      * @param caption
@@ -168,35 +197,6 @@ public class ViewFinancialModel implements IView {
         
         // Return
         return text;
-    }
-
-    @Override
-    public void dispose() {
-        if (!root.isDisposed()) {
-            root.dispose();
-        }
-        controller.removeListener(this);
-    }
-
-    @Override
-    public void reset() {
-        textPublisherBenefit.setText(""); //$NON-NLS-1$
-        textPublisherLoss.setText(""); //$NON-NLS-1$
-        textAdversaryGain.setText(""); //$NON-NLS-1$
-        textAdversaryCost.setText(""); //$NON-NLS-1$
-        textPublisherBenefit.setToolTipText(textPublisherBenefit.getText());
-        textPublisherLoss.setToolTipText(textPublisherLoss.getText());
-        textAdversaryGain.setToolTipText(textAdversaryGain.getText());
-        textAdversaryCost.setToolTipText(textAdversaryCost.getText());
-        SWTUtil.disable(root);
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-        if (event.part == ModelPart.MODEL) {
-           this.model = (Model) event.data;
-           update();
-        }
     }
 
     /**

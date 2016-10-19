@@ -72,18 +72,18 @@ class ComponentStatusLabelGIFHandler implements Runnable {
     } 
     
     /**
+     * Stop
+     */
+    public void stop(){
+        this.stop = true;
+    }
+    
+    /**
      * Dispose the current image, if any
      */
     private void disposeCurrentImage() {
         if (statusLabel.getImage() != null && !statusLabel.getImage().isDisposed()) {
             statusLabel.getImage().dispose();
         }
-    }
-    
-    /**
-     * Stop
-     */
-    public void stop(){
-        this.stop = true;
     }
 }

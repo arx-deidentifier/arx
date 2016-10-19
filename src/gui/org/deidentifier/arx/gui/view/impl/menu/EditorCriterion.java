@@ -187,10 +187,10 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
      * @param label
      * @param value
      */
-    protected void updateLabel(Text label, double value) {
-        String text = SWTUtil.getPrettyString(value);
+    protected void updateLabel(Label label, int value) {
+        String text = String.valueOf(value);
         label.setText(" " + text);
-        label.setToolTipText(String.valueOf(value));
+        label.setToolTipText(text);
     }
 
     /**
@@ -199,10 +199,10 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
      * @param label
      * @param value
      */
-    protected void updateLabel(Text label, int value) {
+    protected void updateLabel(Text label, double value) {
         String text = SWTUtil.getPrettyString(value);
         label.setText(" " + text);
-        label.setToolTipText(text);
+        label.setToolTipText(String.valueOf(value));
     }
     
     /**
@@ -211,8 +211,8 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
      * @param label
      * @param value
      */
-    protected void updateLabel(Label label, int value) {
-        String text = String.valueOf(value);
+    protected void updateLabel(Text label, int value) {
+        String text = SWTUtil.getPrettyString(value);
         label.setText(" " + text);
         label.setToolTipText(text);
     }

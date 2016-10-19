@@ -57,16 +57,16 @@ public class ModelLocalRecoding implements Serializable {
      * Getter
      * @return
      */
-    public double getGsFactor() {
-        return gsFactor;
+    public double getAdaptionFactor() {
+        return adaptionFactor;
     }
 
     /**
-     * Setter
-     * @param gsFactor
+     * Getter
+     * @return
      */
-    public void setGsFactor(double gsFactor) {
-        this.gsFactor = gsFactor;
+    public double getGsFactor() {
+        return gsFactor;
     }
 
     /**
@@ -86,19 +86,19 @@ public class ModelLocalRecoding implements Serializable {
     }
 
     /**
-     * Getter
-     * @return
-     */
-    public double getAdaptionFactor() {
-        return adaptionFactor;
-    }
-
-    /**
      * Setter
      * @param mode
      */
     public void setAdaptionFactor(double adaptionFactor) {
         this.adaptionFactor = adaptionFactor;
+    }
+
+    /**
+     * Setter
+     * @param gsFactor
+     */
+    public void setGsFactor(double gsFactor) {
+        this.gsFactor = gsFactor;
     }
 
     /**

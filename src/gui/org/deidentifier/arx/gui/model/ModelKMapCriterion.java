@@ -81,22 +81,14 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
     }
     
     /**
-     * Returns the significance level.
-     * @return
-     */
-    public double getSignificanceLevel() {
-        return significanceLevel;
-    }
-	
-	/**
      * Returns the estimator.
      * @return
      */
     public CellSizeEstimator getEstimator() {
         return estimator;
     }
-
-    /**
+	
+	/**
      * Returns k.
      *
      * @return
@@ -110,6 +102,14 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
         return Resources.getMessage("Model.32"); //$NON-NLS-1$
     }
 
+    /**
+     * Returns the significance level.
+     * @return
+     */
+    public double getSignificanceLevel() {
+        return significanceLevel;
+    }
+
     @Override
     public void parse(ModelCriterion criterion, boolean _default) {
         if (!(criterion instanceof ModelKMapCriterion)) {
@@ -120,14 +120,6 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
         this.setEnabled(other.isEnabled());
         this.setEstimator(other.estimator);
         this.significanceLevel = other.significanceLevel;
-    }
-
-    /**
-     * Sets the significance level.
-     * @param significanceLevel
-     */
-    public void setSignificanceLevel(double significanceLevel) {
-        this.significanceLevel = significanceLevel;
     }
 
     /**
@@ -146,6 +138,14 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
 	public void setK(int k) {
 		this.k = k;
 	}
+
+    /**
+     * Sets the significance level.
+     * @param significanceLevel
+     */
+    public void setSignificanceLevel(double significanceLevel) {
+        this.significanceLevel = significanceLevel;
+    }
 
     @Override
     public String toString() {
