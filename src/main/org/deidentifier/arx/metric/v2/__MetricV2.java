@@ -764,8 +764,8 @@ public class __MetricV2 {
      *                                the prosecutor model will be assumed, otherwise
      * @return
      */
-    public static MetricSDNMPublisherBenefit createPublisherBenefitMetric(boolean journalistAttackerModel) {
-        return new MetricSDNMPublisherBenefit(journalistAttackerModel);
+    public static MetricSDNMPublisherPayout createPublisherBenefitMetric(boolean journalistAttackerModel) {
+        return new MetricSDNMPublisherPayout(journalistAttackerModel);
     }
     
     /**

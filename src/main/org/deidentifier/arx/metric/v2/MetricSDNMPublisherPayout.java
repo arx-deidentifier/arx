@@ -40,7 +40,7 @@ import org.deidentifier.arx.risk.RiskModelFinancial;
  * 
  * @author Fabian Prasser
  */
-public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional {
+public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
 
     /** SUID. */
     private static final long         serialVersionUID = 5729454129866471107L;
@@ -65,14 +65,14 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
      * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
      *                                the prosecutor model will be assumed, otherwise
      */
-    public MetricSDNMPublisherBenefit(boolean journalistAttackerModel) {
+    public MetricSDNMPublisherPayout(boolean journalistAttackerModel) {
         super(false, false);
         this.journalistAttackerModel = journalistAttackerModel;
     }
     
     @Override
-    public MetricSDNMPublisherBenefit clone() {
-        return new MetricSDNMPublisherBenefit(this.journalistAttackerModel);
+    public MetricSDNMPublisherPayout clone() {
+        return new MetricSDNMPublisherPayout(this.journalistAttackerModel);
     }
 
     @Override

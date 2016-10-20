@@ -36,7 +36,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.FinancialProsecutorPrivacy;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.metric.v2.MetricSDNMPublisherBenefit;
+import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
 
 /**
  * Examples of using the Stackelberg game for de-identifying the Adult dataset
@@ -149,7 +149,7 @@ public class Example47 extends Example {
         arxconfig.setFinancialConfiguration(config);
         
         // Create model for measuring publisher's benefit
-        MetricSDNMPublisherBenefit stackelbergMetric = Metric.createPublisherBenefitMetric(false);
+        MetricSDNMPublisherPayout stackelbergMetric = Metric.createPublisherPayoutMetric(false);
         
         // Create privacy model for the game-theoretic approach
         FinancialProsecutorPrivacy stackelbergPrivacyModel = new FinancialProsecutorPrivacy();

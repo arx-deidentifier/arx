@@ -58,7 +58,7 @@ import org.deidentifier.arx.metric.v2.MetricSDNMAmbiguity;
 import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
 import org.deidentifier.arx.metric.v2.MetricSDNMEntropyBasedInformationLoss;
 import org.deidentifier.arx.metric.v2.MetricSDNMKLDivergence;
-import org.deidentifier.arx.metric.v2.MetricSDNMPublisherBenefit;
+import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
 import org.deidentifier.arx.metric.v2.__MetricV2;
 
 /**
@@ -747,7 +747,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      *                                the prosecutor model will be assumed, otherwise
      * @return
      */
-    public static MetricSDNMPublisherBenefit createPublisherBenefitMetric(boolean journalistAttackerModel) {
+    public static MetricSDNMPublisherPayout createPublisherPayoutMetric(boolean journalistAttackerModel) {
         return __MetricV2.createPublisherBenefitMetric(journalistAttackerModel);
     }
     
@@ -1007,7 +1007,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                          return (metric instanceof MetricSDNMKLDivergence);
                                      } 
                },
-               new MetricDescription("Publisher's benefit",
+               new MetricDescription("Publisher payout",
                                      false,  // monotonic variant supported
                                      false,  // attribute weights supported
                                      false,  // configurable coding model supported
@@ -1021,12 +1021,12 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                      @Override
                                      public Metric<?> createInstance(MetricConfiguration config) {
                                          boolean journalist = config.getAttackerModel() == MetricConfigurationAttackerModel.JOURNALIST;
-                                         return createPublisherBenefitMetric(journalist);
+                                         return createPublisherPayoutMetric(journalist);
                                      } 
 
                                      @Override
                                      public boolean isInstance(Metric<?> metric) {
-                                         return (metric instanceof MetricSDNMPublisherBenefit);
+                                         return (metric instanceof MetricSDNMPublisherPayout);
                                      } 
                },
                new MetricDescription("Entropy-based information loss",

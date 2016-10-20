@@ -29,7 +29,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTree;
 import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.metric.v2.MetricSDNMPublisherBenefit;
+import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -293,10 +293,10 @@ public class ViewPropertiesInput extends ViewProperties {
         new Property(m, Resources.getMessage("PropertiesView.158"), new String[] { SWTUtil.getPrettyString(metric.isAbleToHandleMicroaggregation()) }); //$NON-NLS-1$
                 
         // Financial configuration
-        if (metric instanceof MetricSDNMPublisherBenefit) {
+        if (metric instanceof MetricSDNMPublisherPayout) {
             
             // Obtain for output data
-            ARXFinancialConfiguration financial = ((MetricSDNMPublisherBenefit)metric).getFinancialConfiguration();
+            ARXFinancialConfiguration financial = ((MetricSDNMPublisherPayout)metric).getFinancialConfiguration();
             
             // Obtain for input only. This is a bit ugly.
             if (financial == null) {
@@ -312,10 +312,10 @@ public class ViewPropertiesInput extends ViewProperties {
             new Property(m, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(financial.getPublisherLoss())}); //$NON-NLS-1$
             new Property(m, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(financial.getAdversaryGain())}); //$NON-NLS-1$
             new Property(m, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(financial.getAdversaryCost())}); //$NON-NLS-1$
-            if (((MetricSDNMPublisherBenefit)metric).isProsecutorAttackerModel()) { 
+            if (((MetricSDNMPublisherPayout)metric).isProsecutorAttackerModel()) { 
                 new Property(m, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            if (((MetricSDNMPublisherBenefit)metric).isJournalistAttackerModel()) { 
+            if (((MetricSDNMPublisherPayout)metric).isJournalistAttackerModel()) { 
                 new Property(m, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.161") }); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }

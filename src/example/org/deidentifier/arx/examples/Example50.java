@@ -38,7 +38,7 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.FinancialJournalistNoAttackPrivacy;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.metric.v2.MetricSDNMPublisherBenefit;
+import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
 
 /**
  * Examples of using the No-Attack variant of the Stackelberg game for de-identifying the 
@@ -148,7 +148,7 @@ public class Example50 extends Example {
         arxconfig.setFinancialConfiguration(config);
         
         // Create model for measuring publisher's benefit
-        MetricSDNMPublisherBenefit stackelbergMetric = Metric.createPublisherBenefitMetric(true);
+        MetricSDNMPublisherPayout stackelbergMetric = Metric.createPublisherPayoutMetric(true);
         
         // Create privacy model for the game-theoretic approach
         FinancialJournalistNoAttackPrivacy stackelbergPrivacyModel = new FinancialJournalistNoAttackPrivacy(subset);
