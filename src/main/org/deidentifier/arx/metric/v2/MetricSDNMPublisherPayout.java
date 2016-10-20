@@ -18,7 +18,7 @@
 package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXStackelbergConfiguration;
+import org.deidentifier.arx.ARXFinancialConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -28,7 +28,8 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.MetricConfiguration;
-import org.deidentifier.arx.risk.RiskModelMonetary;
+import org.deidentifier.arx.metric.MetricConfiguration.MetricConfigurationAttackerModel;
+import org.deidentifier.arx.risk.RiskModelFinancial;
 
 /**
  * This class implements a prototype model which maximizes publisher benefit as proposed in:<br>
@@ -39,37 +40,39 @@ import org.deidentifier.arx.risk.RiskModelMonetary;
  * 
  * @author Fabian Prasser
  */
-public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional {
+public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
 
     /** SUID. */
-    private static final long                 serialVersionUID = 5729454129866471107L;
+    private static final long         serialVersionUID = 5729454129866471107L;
 
     /** Configuration for the Stackelberg game */
-    private final ARXStackelbergConfiguration config;
+    private ARXFinancialConfiguration config;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]                     shares;
+    private DomainShare[]             shares;
 
     /** MaxIL */
-    private double                            maxIL;
+    private double                    maxIL;
 
     /** Risk model */
-    private RiskModelMonetary                 modelRisk;
+    private RiskModelFinancial        modelRisk;
+
+    /** Journalist attacker model */
+    private boolean                   journalistAttackerModel;
 
     /**
-     * Creates a new instance
-     * @param config
-     * @param infoLoss
+     * Clone constructor
+     * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
+     *                                the prosecutor model will be assumed, otherwise
      */
-    public MetricSDNMPublisherBenefit(ARXStackelbergConfiguration config) {
+    public MetricSDNMPublisherPayout(boolean journalistAttackerModel) {
         super(false, false);
-        this.config = config;
-        this.modelRisk = new RiskModelMonetary(config);
+        this.journalistAttackerModel = journalistAttackerModel;
     }
-
+    
     @Override
-    public MetricSDNMPublisherBenefit clone() {
-        return new MetricSDNMPublisherBenefit(config.clone());
+    public MetricSDNMPublisherPayout clone() {
+        return new MetricSDNMPublisherPayout(this.journalistAttackerModel);
     }
 
     @Override
@@ -93,17 +96,48 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false, 0.5d, false, 0.0d, this.getAggregateFunction());
+        return new MetricConfiguration(false, 0.5d, false, 0.0d, this.getAggregateFunction(),
+                                       this.journalistAttackerModel ? MetricConfigurationAttackerModel.JOURNALIST : 
+                                                                      MetricConfigurationAttackerModel.PROSECUTOR);
+    }
+    
+    /**
+     * Returns the financial configuration
+     */
+    public ARXFinancialConfiguration getFinancialConfiguration() {
+        return this.config;
     }
 
     @Override
     public String getName() {
-        return "PublisherBenefit";
+        return "Publisher benefit";
+    }
+
+    /**
+     * Returns whether the journalist attacker model is being assumed.
+     * @return
+     */
+    public boolean isJournalistAttackerModel() {
+        return this.journalistAttackerModel;
+    }
+
+    /**
+     * Returns whether the prosecutor attacker model is being assumed.
+     * @return
+     */
+    public boolean isProsecutorAttackerModel() {
+        return !this.journalistAttackerModel;
     }
 
     @Override
     public String toString() {
-        return "PublisherBenefit (" + config.getPublisherBenefit() + ")";
+        String result = "PublisherBenefit (" + (journalistAttackerModel ? "Journalist" : "Prosecutor");
+        if (config == null) {
+            result += ")";
+        } else {
+            result += ", Benefit=" + config.getPublisherBenefit() + ")";
+        }
+        return result;
     }
 
     /**
@@ -113,9 +147,8 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
      * @return
      */
     private double getSuccessProbability(HashGroupifyEntry entry) {
-        return config.isProsecutorAttackerModel() || entry.pcount == 0 ? 1d / entry.count : 1d / entry.pcount;
+        return !journalistAttackerModel || entry.pcount == 0 ? 1d / entry.count : 1d / entry.pcount;
     }
-
 
     /**
      * Returns the information loss for the according class. This is an exact copy of: 
@@ -173,7 +206,7 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
         // Return
         return super.createInformationLoss(real, bound);
     }
-
+    
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation transformation) {
         return null;
@@ -201,7 +234,7 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
         // Return
         return new ILSingleDimensional(bound);
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition,
@@ -213,6 +246,8 @@ public class MetricSDNMPublisherBenefit extends AbstractMetricSingleDimensional 
 
         // Compute domain shares
         this.shares =  manager.getDomainShares();
+        this.config = config.getFinancialConfiguration();
+        this.modelRisk = new RiskModelFinancial(this.config);
                 
         // Calculate MaxIL
         this.maxIL = 1d;

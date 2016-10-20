@@ -124,6 +124,10 @@ public class LayoutCriteria implements ILayout {
         composite2.setLayout(new FillLayout());
         new ViewPopulationModel(composite2, controller);
         
+        Composite composite3 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.10"), null); //$NON-NLS-1$
+        composite3.setLayout(new FillLayout());
+        new ViewFinancialModel(composite3, controller);
+        
         // Update buttons
         folder.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {

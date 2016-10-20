@@ -34,17 +34,17 @@ class HIPAAMatcherAttributeName {
      * Constructor.
      * @param value
      */
-    HIPAAMatcherAttributeName(String value, int tolerance) {
-        this.value = value.trim().toLowerCase();
-        this.tolerance = tolerance;
+    HIPAAMatcherAttributeName(String value) {
+        this(value, 0);
     }
     
     /**
      * Constructor.
      * @param value
      */
-    HIPAAMatcherAttributeName(String value) {
-        this(value, 0);
+    HIPAAMatcherAttributeName(String value, int tolerance) {
+        this.value = value.trim().toLowerCase();
+        this.tolerance = tolerance;
     }
     
     /**

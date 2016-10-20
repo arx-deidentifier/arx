@@ -57,7 +57,7 @@ public class Inclusion extends DPresence {
     }
 
     @Override
-    public void initialize(DataManager manager) {
+    public void initialize(DataManager manager, ARXConfiguration config) {
         // Nothing to do
     }
 

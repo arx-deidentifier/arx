@@ -183,6 +183,14 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
     }
 
     /**
+     * Returns the charset of the CSV file.
+     * @return
+     */
+    public Charset getCharset() {
+        return charset;
+    }
+
+    /**
      * Gets the contains header.
      *
      * @return {@link #containsHeader}
@@ -260,13 +268,5 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
     @Override
     public void setContainsHeader(boolean containsHeader) {
         this.containsHeader = containsHeader;
-    }
-
-    /**
-     * Returns the charset of the CSV file.
-     * @return
-     */
-    public Charset getCharset() {
-        return charset;
     }
 }

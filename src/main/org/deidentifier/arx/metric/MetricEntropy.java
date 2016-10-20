@@ -114,11 +114,6 @@ public class MetricEntropy extends MetricDefault {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
-    }
-
-    @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
 
         if (node.getLowerBound() != null) { 
@@ -153,6 +148,11 @@ public class MetricEntropy extends MetricDefault {
         }
         result = round(result == 0.0d ? result : -result);
         return new InformationLossDefaultWithBound(result, result);
+    }
+
+    @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override

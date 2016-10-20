@@ -111,18 +111,18 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     public double getGeneralizationFactor() {
         return gFactor;
     }
-
+    
     @Override
     // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationSuppressionFactor() {
         return gsFactor;
     }
-    
+
     @Override
     public String getName() {
         return "Loss";
     }
-
+    
     @Override
     // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getSuppressionFactor() {
@@ -130,10 +130,20 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return true;
+    }
+
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Loss ("+gsFactor+"/"+gFactor+"/"+sFactor+")";
     }
-
+    
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
         
@@ -187,7 +197,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                                                super.createInformationLoss(bound));
         
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
 
@@ -221,7 +231,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                                HashGroupify g) {
@@ -264,7 +274,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     protected DomainShare[] getShares(){
         return this.shares;
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -291,11 +301,16 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     /**
-     * Returns whether this metric handles microaggregation
+     * Normalizes the aggregate.
+     *
+     * @param aggregate
+     * @param dimension
      * @return
      */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return true;
+    protected double normalizeAggregated(double aggregate) {
+        double result = aggregate / tuples;
+        result = result >= 0d ? result : 0d;
+        return round(result);
     }
 
     /**
@@ -310,19 +325,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double min = gFactor * tuples / shares[dimension].getDomainSize();
         double max = tuples;
         double result = (aggregate - min) / (max - min);
-        result = result >= 0d ? result : 0d;
-        return round(result);
-    }
-
-    /**
-     * Normalizes the aggregate.
-     *
-     * @param aggregate
-     * @param dimension
-     * @return
-     */
-    protected double normalizeAggregated(double aggregate) {
-        double result = aggregate / tuples;
         result = result >= 0d ? result : 0d;
         return round(result);
     }

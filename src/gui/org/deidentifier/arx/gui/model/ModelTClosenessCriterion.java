@@ -50,12 +50,8 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
      *
      * @param attribute
      */
-    public ModelTClosenessCriterion(String attribute,
-                                    int variant,
-                                    double t) {
+    public ModelTClosenessCriterion(String attribute) {
         super(attribute);
-        this.variant = variant;
-        this.t = t;
     }
     
     /**
@@ -63,8 +59,12 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
      *
      * @param attribute
      */
-    public ModelTClosenessCriterion(String attribute) {
+    public ModelTClosenessCriterion(String attribute,
+                                    int variant,
+                                    double t) {
         super(attribute);
+        this.variant = variant;
+        this.t = t;
     }
     
     @Override

@@ -468,15 +468,6 @@ public class ComponentStatusLabel extends Canvas {
     }
     
     /**
-     * Updates the image
-     * @param image
-     */
-    public void updateImage(Image image) {
-        this.image = image;
-        this.redraw();
-    }
-
-    /**
      * 
      *
      * @param image
@@ -572,6 +563,15 @@ public class ComponentStatusLabel extends Canvas {
         if (this.topMargin == topMargin || topMargin < 0) return;
         this.topMargin = topMargin;
         redraw();
+    }
+
+    /**
+     * Updates the image
+     * @param image
+     */
+    public void updateImage(Image image) {
+        this.image = image;
+        this.redraw();
     }
 
     /**

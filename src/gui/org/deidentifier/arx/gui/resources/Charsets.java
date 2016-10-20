@@ -140,11 +140,12 @@ public class Charsets {
     }
 
     /**
-     * Returns a list of available charsets. The list is restricted to the most common charsets.
+     * Returns a charset for the given name
+     * @param name
      * @return
      */
-    public static String[] getNamesOfAvailableCharsets() {
-        return AVAILABLE_CHARSETS;
+    public static Charset getCharsetForName(String name) {
+        return NAME_TO_CHARSET.get(name);
     }
     
     /**
@@ -156,11 +157,10 @@ public class Charsets {
     }
     
     /**
-     * Returns a charset for the given name
-     * @param name
+     * Returns a list of available charsets. The list is restricted to the most common charsets.
      * @return
      */
-    public static Charset getCharsetForName(String name) {
-        return NAME_TO_CHARSET.get(name);
+    public static String[] getNamesOfAvailableCharsets() {
+        return AVAILABLE_CHARSETS;
     }
 }

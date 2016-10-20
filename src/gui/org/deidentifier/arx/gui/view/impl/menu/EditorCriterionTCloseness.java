@@ -115,15 +115,6 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
     }
     
     @Override
-    protected void parse(ModelTClosenessCriterion model, boolean _default) {
-        
-        knobT.setValue(model.getT());
-        updateLabel(labelT, model.getT());
-        comboVariant.select(model.getVariant());
-    }
-
-
-    @Override
     protected List<ModelCriterion> getTypicalParameters() {
 
         List<ModelCriterion> result = new ArrayList<ModelCriterion>();
@@ -132,5 +123,14 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
         result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_HIERARCHICAL, 0.15));
         result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_HIERARCHICAL, 0.2));
         return result;
+    }
+
+
+    @Override
+    protected void parse(ModelTClosenessCriterion model, boolean _default) {
+        
+        knobT.setValue(model.getT());
+        updateLabel(labelT, model.getT());
+        comboVariant.select(model.getVariant());
     }
 }

@@ -208,6 +208,14 @@ public abstract class ViewData implements IView {
     }
     
     /**
+     * Adds a listener to the folder
+     * @param listener
+     */
+    public void addSelectionListener(SelectionListener listener) {
+        this.folder.addSelectionListener(listener);
+    }
+    
+    /**
      * Adds an additional item to the folder
      * @param title
      * @param helpid 
@@ -226,6 +234,14 @@ public abstract class ViewData implements IView {
     }
     
     /**
+     * Returns the selection index of the folder
+     * @return
+     */
+    public int getSelectionIndex() {
+        return folder.getSelectionIndex();
+    }
+
+    /**
      * Returns the NatTable viewport layer.
      *
      * @return
@@ -233,7 +249,7 @@ public abstract class ViewData implements IView {
     public ViewportLayer getViewportLayer() {
         return table.getViewportLayer();
     }
-    
+
     @Override
     public void reset() {
         table.reset();
@@ -251,6 +267,14 @@ public abstract class ViewData implements IView {
         folder.setSelection(index);
     }
 
+    /**
+     * Sets the selection index of the folder
+     * @param index
+     */
+    public void setSelectionIndex(int index) {
+        folder.setSelection(index);
+    }
+    
     @Override
     public void update(final ModelEvent event) {
 
@@ -282,7 +306,7 @@ public abstract class ViewData implements IView {
         	table.setSelectedAttribute((String)event.data);
         }
     }
-
+    
     /**
      * Selects the given column.
      *
@@ -322,6 +346,7 @@ public abstract class ViewData implements IView {
         }
     }
     
+
     /**
      * Called when the sort button is pressed.
      */
@@ -334,14 +359,13 @@ public abstract class ViewData implements IView {
         ascendingButton.setEnabled(true);
         descendingButton.setEnabled(true);
     }
-    
+
     /**
      * Returns the data definition.
      *
      * @return
      */
     protected abstract DataDefinition getDefinition();
-    
 
     /**
      * Returns the data definition.
@@ -369,29 +393,5 @@ public abstract class ViewData implements IView {
         } else {
             table.getHeaderImages().set(index, IMAGE_QUASI_IDENTIFYING);
         }
-    }
-
-    /**
-     * Adds a listener to the folder
-     * @param listener
-     */
-    public void addSelectionListener(SelectionListener listener) {
-        this.folder.addSelectionListener(listener);
-    }
-
-    /**
-     * Returns the selection index of the folder
-     * @return
-     */
-    public int getSelectionIndex() {
-        return folder.getSelectionIndex();
-    }
-
-    /**
-     * Sets the selection index of the folder
-     * @param index
-     */
-    public void setSelectionIndex(int index) {
-        folder.setSelection(index);
     }
 }

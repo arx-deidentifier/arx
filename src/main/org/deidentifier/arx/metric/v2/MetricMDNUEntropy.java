@@ -65,6 +65,11 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
     }
 
     @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
     public boolean isIndependent() {
         // TODO: Remove
         return false;

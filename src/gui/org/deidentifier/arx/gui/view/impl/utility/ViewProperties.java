@@ -136,8 +136,11 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.METRIC, this);
+        controller.addListener(ModelPart.ATTRIBUTE_WEIGHT, this);
+        controller.addListener(ModelPart.GS_FACTOR, this);
         controller.addListener(ModelPart.MAX_OUTLIERS, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
+        controller.addListener(ModelPart.FINANCIAL_MODEL, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(target, this);
         if (reset != null) {
@@ -180,7 +183,7 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
             reset();
         } else {
             SWTUtil.enable(root);
-            this.update();
+            this.doUpdate(event.part);
         }
     }
 
@@ -216,9 +219,10 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
             tc.pack();
         }
     }
-
+    
     /**
      * Implement this to update the view.
+     * @param part 
      */
-    protected abstract void update();
+    protected abstract void doUpdate(ModelPart part);
 }

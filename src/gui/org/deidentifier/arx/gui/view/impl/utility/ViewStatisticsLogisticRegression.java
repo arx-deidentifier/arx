@@ -550,19 +550,6 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         this.manager.start(analysis);
     }
 
-    @Override
-    protected ComponentStatusLabelProgressProvider getProgressProvider() {
-        return new ComponentStatusLabelProgressProvider(){
-            public int getProgress() {
-                if (manager == null) {
-                    return 0;
-                } else {
-                    return manager.getProgress();
-                }
-            }
-        };
-    }
-
     /**
      * Returns all column headers
      * @return
@@ -575,6 +562,19 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
      * @return
      */
     protected abstract List<Double> getColumnValues(StatisticsClassification result);
+
+    @Override
+    protected ComponentStatusLabelProgressProvider getProgressProvider() {
+        return new ComponentStatusLabelProgressProvider(){
+            public int getProgress() {
+                if (manager == null) {
+                    return 0;
+                } else {
+                    return manager.getProgress();
+                }
+            }
+        };
+    }
 
     /**
      * Is an analysis running

@@ -30,14 +30,16 @@ import java.util.Set;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.FinancialJournalistNoAttackPrivacy;
+import org.deidentifier.arx.criteria.FinancialJournalistPrivacy;
+import org.deidentifier.arx.criteria.FinancialProsecutorNoAttackPrivacy;
+import org.deidentifier.arx.criteria.FinancialProsecutorPrivacy;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleBasedCriterion;
-import org.deidentifier.arx.criteria.StackelbergNoAttackPrivacyModel;
-import org.deidentifier.arx.criteria.StackelbergPrivacyModel;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.metric.Metric;
@@ -341,7 +343,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private int                                snapshotLength;
 
     /**
-     * Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples. */
+     * Defines values of which attribute type are to be replaced by the
+     * suppression string in suppressed tuples.
+     */
     private Integer                            suppressedAttributeTypes              = 1 << AttributeType.ATTR_TYPE_QI;
 
     /**
@@ -362,11 +366,17 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Should we use the heuristic search algorithm? */
     private boolean                            heuristicSearchEnabled                = false;
 
-    /** We will use the heuristic algorithm, if the size of the search space exceeds this threshold */
+    /**
+     * We will use the heuristic algorithm, if the size of the search space
+     * exceeds this threshold
+     */
     private Integer                            heuristicSearchThreshold              = 100000;
 
     /** The heuristic algorithm will terminate after the given time limit */
     private Integer                            heuristicSearchTimeLimit              = 30000;
+
+    /** Financial configuration*/
+    private ARXFinancialConfiguration          financialConfiguration                = ARXFinancialConfiguration.create();
 
     /**
      * Creates a new configuration without tuple suppression.
@@ -494,6 +504,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchThreshold = this.heuristicSearchThreshold;
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
         result.utilityBasedMicroaggregation = this.utilityBasedMicroaggregation;
+        result.financialConfiguration = this.getFinancialConfiguration().clone();
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
@@ -501,7 +512,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return result;
     }
-
+    
     /**
      * Returns whether the configuration contains a criterion of the given class.
      *
@@ -515,6 +526,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return false;
     }
+    
     /**
      * Returns the weight for the given attribute.
      *
@@ -531,7 +543,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (value == null) return 0.5d;
         else return value;
     }
-    
+
     /**
      * Returns all configured attribute weights. For attributes which are not a key in this
      * set the default attribute weight will be assumed by ARX. This default value is 
@@ -546,7 +558,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return new HashMap<String, Double>(this.attributeWeights);
     }
-    
     /**
      * Returns all criteria.
      * @return
@@ -554,7 +565,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public Set<PrivacyCriterion> getCriteria() {
         return this.criteria;
     }
-  
+    
     /**
      * Returns all privacy criteria that are instances of the given class.
      *
@@ -598,6 +609,16 @@ public class ARXConfiguration implements Serializable, Cloneable {
             return null;
         }
     }
+  
+    /**
+     * Returns the financial configuration
+     */
+    public ARXFinancialConfiguration getFinancialConfiguration() {
+        if (this.financialConfiguration == null) {
+            this.financialConfiguration = ARXFinancialConfiguration.create();
+        }
+        return this.financialConfiguration;
+    }
     
     /**
      * When the size of the solution space exceeds the returned number of transformations,
@@ -610,7 +631,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.heuristicSearchThreshold;
     }
-
+    
     /**
      * The heuristic search algorithm will terminate after the returned number of milliseconds.
      * The default is 30 seconds.
@@ -631,7 +652,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public final double getMaxOutliers() {
         return relMaxOutliers;
     }
-    
+
     /**
      * Returns the metric used for measuring information loss.
      *
@@ -728,7 +749,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return risk;
     }
-
+    
     /**
      * Returns whether values of the given attribute type will be replaced by the suppression 
      * string in suppressed tuples.
@@ -774,14 +795,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.suppressionAlwaysEnabled;
     }
-    
+
     /**
      * Is optimality guaranteed for sample-based criteria?
      */
     public boolean isUseHeuristicSearchForSampleBasedCriteria() {
         return heuristicSearchForSampleBasedCriteria;
     }
-
+    
     /**
      * Returns whether microaggregation is based on utility measures
      * @return
@@ -846,6 +867,17 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.attributeWeights = new HashMap<String, Double>();
         }
         this.attributeWeights.put(attribute, weight);
+    }
+
+    /**
+     * Sets the financial configuration
+     * @param config
+     */
+    public void setFinancialConfiguration(ARXFinancialConfiguration config) {
+        if (config == null) {
+            throw new NullPointerException("Argument must not be null");
+        }
+        this.financialConfiguration = config;
     }
 
     /**
@@ -970,83 +1002,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns an internal variant of the class which provides a broader interface
-     *
-     * @return
-     */
-    protected ARXConfigurationInternal getInternalConfiguration(){
-        if (this.accessibleInstance == null) {
-            this.accessibleInstance = new ARXConfigurationInternal(this);
-        }
-        return this.accessibleInstance;
-    }
-
-    /**
-     * Returns the minimal size of an equivalence class induced by the defined privacy models.
-     * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
-     * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
-     */
-    protected int getMinimalGroupSize() {
-
-        // Init
-        int result = -1;
-
-        // For each
-        for (PrivacyCriterion c : this.getCriteria()) {
-            if (c.isMinimalClassSizeAvailable()) {
-                result = Math.max(result, c.getMinimalClassSize());
-            }
-        }
-
-        // Check & return
-        if (result == -1) return Integer.MAX_VALUE;
-        else return result;
-    }
-
-    /**
-     * Returns the criteria's requirements.
-     *
-     * @return
-     */
-    protected int getRequirements() {
-        return this.requirements;
-    }
-
-    /**
-     * Returns all sample-based criteria as an array. Only used internally.
-     * @return
-     */
-    protected SampleBasedCriterion[] getSampleBasedCriteriaAsArray() {
-        return this.bCriteria;
-    }
-    
-    /**
-     * Returns the specific length of each entry in a snapshot.
-     *
-     * @return
-     */
-    protected int getSnapshotLength() {
-        return this.snapshotLength;
-    }
-    
-    /**
-     * Returns the data subset, if any subset is defined.
-     * You may only call this, after the configuration has be initialized.
-     * @return
-     */
-    protected DataSubset getSubset() {
-        for (PrivacyCriterion c : this.criteria) {
-            if (c.isSubsetAvailable()) {
-                DataSubset subset = c.getDataSubset();
-                if (subset != null) {
-                    return subset;    
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Clones this config and projects everything onto the given subset.<br>
      * - All privacy models will be cloned<br>
      * - Subsets in d-presence will be projected accordingly<br>
@@ -1120,6 +1075,83 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Return
         return result;
     }
+
+    /**
+     * Returns an internal variant of the class which provides a broader interface
+     *
+     * @return
+     */
+    protected ARXConfigurationInternal getInternalConfiguration(){
+        if (this.accessibleInstance == null) {
+            this.accessibleInstance = new ARXConfigurationInternal(this);
+        }
+        return this.accessibleInstance;
+    }
+
+    /**
+     * Returns the minimal size of an equivalence class induced by the defined privacy models.
+     * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
+     * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
+     */
+    protected int getMinimalGroupSize() {
+
+        // Init
+        int result = -1;
+
+        // For each
+        for (PrivacyCriterion c : this.getCriteria()) {
+            if (c.isMinimalClassSizeAvailable()) {
+                result = Math.max(result, c.getMinimalClassSize());
+            }
+        }
+
+        // Check & return
+        if (result == -1) return Integer.MAX_VALUE;
+        else return result;
+    }
+
+    /**
+     * Returns the criteria's requirements.
+     *
+     * @return
+     */
+    protected int getRequirements() {
+        return this.requirements;
+    }
+    
+    /**
+     * Returns all sample-based criteria as an array. Only used internally.
+     * @return
+     */
+    protected SampleBasedCriterion[] getSampleBasedCriteriaAsArray() {
+        return this.bCriteria;
+    }
+    
+    /**
+     * Returns the specific length of each entry in a snapshot.
+     *
+     * @return
+     */
+    protected int getSnapshotLength() {
+        return this.snapshotLength;
+    }
+
+    /**
+     * Returns the data subset, if any subset is defined.
+     * You may only call this, after the configuration has be initialized.
+     * @return
+     */
+    protected DataSubset getSubset() {
+        for (PrivacyCriterion c : this.criteria) {
+            if (c.isSubsetAvailable()) {
+                DataSubset subset = c.getDataSubset();
+                if (subset != null) {
+                    return subset;    
+                }
+            }
+        }
+        return null;
+    }
     
     /**
      * Returns an integer representing all attribute types that must be suppressed.
@@ -1157,7 +1189,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
         // Initialize
         for (PrivacyCriterion c : criteria) {
-            c.initialize(manager);
+            c.initialize(manager, this);
         }
 
         int dataLength = 0;
@@ -1192,11 +1224,17 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (this.containsCriterion(TCloseness.class)) {
             list.addAll(this.getCriteria(TCloseness.class));
         }
-        if (this.containsCriterion(StackelbergPrivacyModel.class)) {
-            list.addAll(this.getCriteria(StackelbergPrivacyModel.class));
+        if (this.containsCriterion(FinancialProsecutorPrivacy.class)) {
+            list.addAll(this.getCriteria(FinancialProsecutorPrivacy.class));
         }
-        if (this.containsCriterion(StackelbergNoAttackPrivacyModel.class)) {
-            list.addAll(this.getCriteria(StackelbergNoAttackPrivacyModel.class));
+        if (this.containsCriterion(FinancialProsecutorNoAttackPrivacy.class)) {
+            list.addAll(this.getCriteria(FinancialProsecutorNoAttackPrivacy.class));
+        }
+        if (this.containsCriterion(FinancialJournalistPrivacy.class)) {
+            list.addAll(this.getCriteria(FinancialJournalistPrivacy.class));
+        }
+        if (this.containsCriterion(FinancialJournalistNoAttackPrivacy.class)) {
+            list.addAll(this.getCriteria(FinancialJournalistNoAttackPrivacy.class));
         }
         this.aCriteria = list.toArray(new PrivacyCriterion[0]);
         

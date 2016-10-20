@@ -110,6 +110,20 @@ public class HIPAAIdentifierMatch {
     }
     
     /**
+     * The confidence of the discovery, or null if the
+     * match type is ATTRIBUTE_NAME
+     * 
+     * @return The value which caused the warning
+     */
+    public Double getConfidence() {
+        try {
+            return Double.valueOf(value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    /**
      * The identifier which was found
      * @return The found identifier
      */
@@ -132,7 +146,7 @@ public class HIPAAIdentifierMatch {
     public MatchType getMatchType() {
         return matchType;
     }
-    
+
     /**
      * The value which caused the identification
      * @return The value which caused the warning
@@ -142,20 +156,6 @@ public class HIPAAIdentifierMatch {
             return null;
         } else {
             return value;
-        }
-    }
-
-    /**
-     * The confidence of the discovery, or null if the
-     * match type is ATTRIBUTE_NAME
-     * 
-     * @return The value which caused the warning
-     */
-    public Double getConfidence() {
-        try {
-            return Double.valueOf(value);
-        } catch (Exception e) {
-            return null;
         }
     }
     

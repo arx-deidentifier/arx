@@ -27,18 +27,18 @@ import java.util.regex.Pattern;
 import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXFinancialConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.ARXStackelbergConfiguration;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.criteria.StackelbergNoAttackPrivacyModel;
+import org.deidentifier.arx.criteria.FinancialJournalistNoAttackPrivacy;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.metric.v2.MetricSDNMPublisherBenefit;
+import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
 
 /**
  * Examples of using the No-Attack variant of the Stackelberg game for de-identifying the 
@@ -102,52 +102,56 @@ public class Example50 extends Example {
         DataSubset subset = DataSubset.create(data, DataSelector.create(data).field("sex").equals("Male"));
         
         // Config from PLOS|ONE paper
-        solve(data, ARXStackelbergConfiguration.create()
+        solve(data, ARXFinancialConfiguration.create()
                                                .setAdversaryCost(4d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(300d)
-                                               .setPublisherBenefit(1200d)
-                                               .setJournalistAttackerModel(subset));
+                                               .setPublisherBenefit(1200d), subset);
 
         // Lower costs for the attacker
-        solve(data, ARXStackelbergConfiguration.create()
+        solve(data, ARXFinancialConfiguration.create()
                                                .setAdversaryCost(2d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(300d)
-                                               .setPublisherBenefit(1200d)
-                                               .setJournalistAttackerModel(subset));
+                                               .setPublisherBenefit(1200d), subset);
 
         // Lower costs and more gain for the attacker
-        solve(data, ARXStackelbergConfiguration.create()
+        solve(data, ARXFinancialConfiguration.create()
                                                .setAdversaryCost(2d)
                                                .setAdversaryGain(600d)
                                                .setPublisherLoss(300d)
-                                               .setPublisherBenefit(1200d)
-                                               .setJournalistAttackerModel(subset));
+                                               .setPublisherBenefit(1200d), subset);
 
         // Even more gain for the attacker
-        solve(data, ARXStackelbergConfiguration.create()
+        solve(data, ARXFinancialConfiguration.create()
                                                .setAdversaryCost(2d)
                                                .setAdversaryGain(1200d)
                                                .setPublisherLoss(300d)
-                                               .setPublisherBenefit(1200d)
-                                               .setJournalistAttackerModel(subset));
+                                               .setPublisherBenefit(1200d), subset);
 
     }
 
-    private static void solve(Data data, ARXStackelbergConfiguration config) throws IOException {
+    /**
+     * Solve the privacy problem
+     * @param data
+     * @param config
+     * @param subset
+     * @throws IOException
+     */
+    private static void solve(Data data, ARXFinancialConfiguration config, DataSubset subset) throws IOException {
         
         // Release
         data.getHandle().release();
         
         // Configure
         ARXConfiguration arxconfig = ARXConfiguration.create();
+        arxconfig.setFinancialConfiguration(config);
         
         // Create model for measuring publisher's benefit
-        MetricSDNMPublisherBenefit stackelbergMetric = Metric.createPublisherBenefitMetric(config);
+        MetricSDNMPublisherPayout stackelbergMetric = Metric.createPublisherPayoutMetric(true);
         
         // Create privacy model for the game-theoretic approach
-        StackelbergNoAttackPrivacyModel stackelbergPrivacyModel = new StackelbergNoAttackPrivacyModel(config);
+        FinancialJournalistNoAttackPrivacy stackelbergPrivacyModel = new FinancialJournalistNoAttackPrivacy(subset);
         
         // Configure ARX
         arxconfig.setMaxOutliers(1d);

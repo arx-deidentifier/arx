@@ -560,55 +560,6 @@ public class AttributeType implements Serializable, Cloneable {
     }
     
     /**
-     * This class describes a microaggregation function
-     * @author Fabian Prasser
-     */
-    public abstract static class MicroAggregationFunctionDescription implements Serializable {
-
-        /** SVUID*/
-        private static final long serialVersionUID = -6608355532280843693L;
-
-        /** The required scale*/
-        private final DataScale requiredScale;
-        
-        /** The label*/
-        private final String label;
-        
-        /**
-         * Instantiates a new hierarchy.
-         * @param requiredScale
-         * @param label 
-         */
-        private MicroAggregationFunctionDescription(DataScale requiredScale,
-                                                    String label) {
-            this.requiredScale = requiredScale;
-            this.label = label;
-        }
-        
-        /**
-         * @return the label
-         */
-        public String getLabel() {
-            return label;
-        }
-
-        /**
-         * @return the requiredScale
-         */
-        public DataScale getRequiredScale() {
-            return requiredScale;
-        }
-
-        /**
-         * Creates an instance
-         * @param ignoreMissingData
-         * @return
-         */
-        public abstract MicroAggregationFunction createInstance(boolean ignoreMissingData);
-    }
-
-
-    /**
      * This class is used to define aggregate functions for microaggregation.
      * 
      * @author Fabian Prasser
@@ -660,32 +611,13 @@ public class AttributeType implements Serializable, Cloneable {
         }
 
         /**
-         * Creates a microaggregation function returning intervals. Ignores missing data.
-         * @return
-         */
-        public static MicroAggregationFunction createInterval() {
-            return createInterval(true);
-        }
-        
-        /**
-         * Creates a microaggregation function returning intervals.
-         * 
-         * @param ignoreMissingData Should the function ignore missing data. Default is true.
-         * @return
-         */
-        public static MicroAggregationFunction createInterval(boolean ignoreMissingData) {
-            return new MicroAggregationFunction(new DistributionAggregateFunctionInterval(ignoreMissingData),
-                                                DataScale.ORDINAL, "Interval");
-        }
-        
-        /**
          * Creates a microaggregation function returning the geometric mean. Ignores missing data.
          * @return
          */
         public static MicroAggregationFunction createGeometricMean() {
             return createGeometricMean(true);
         }
-
+        
         /**
          * Creates a microaggregation function returning the geometric mean.
          * 
@@ -695,6 +627,25 @@ public class AttributeType implements Serializable, Cloneable {
         public static MicroAggregationFunction createGeometricMean(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionGeometricMean(ignoreMissingData),
                                                 DataScale.INTERVAL, "Geometric mean");
+        }
+        
+        /**
+         * Creates a microaggregation function returning intervals. Ignores missing data.
+         * @return
+         */
+        public static MicroAggregationFunction createInterval() {
+            return createInterval(true);
+        }
+
+        /**
+         * Creates a microaggregation function returning intervals.
+         * 
+         * @param ignoreMissingData Should the function ignore missing data. Default is true.
+         * @return
+         */
+        public static MicroAggregationFunction createInterval(boolean ignoreMissingData) {
+            return new MicroAggregationFunction(new DistributionAggregateFunctionInterval(ignoreMissingData),
+                                                DataScale.ORDINAL, "Interval");
         }
         
         /**
@@ -760,13 +711,22 @@ public class AttributeType implements Serializable, Cloneable {
         }
         
         /**
+         * Clones this function
+         */
+        public MicroAggregationFunction clone() {
+            return new MicroAggregationFunction(this.function.clone(),
+                                                this.requiredScale,
+                                                this.label);
+        }
+
+        /**
          * Returns a label for this function
          * @return the label
          */
         public String getLabel() {
             return label;
         }
-
+        
         /**
          * Returns the required scale of measure
          * @return
@@ -774,7 +734,7 @@ public class AttributeType implements Serializable, Cloneable {
         public DataScale getRequiredScale() {
             return requiredScale;
         }
-        
+
         /**
          * Returns whether this is a type-preserving function
          * @return
@@ -782,7 +742,7 @@ public class AttributeType implements Serializable, Cloneable {
         public boolean isTypePreserving() {
             return function.isTypePreserving();
         }
-
+        
         /**
          * Returns the aggregate function.
          * @return
@@ -790,14 +750,54 @@ public class AttributeType implements Serializable, Cloneable {
         protected DistributionAggregateFunction getFunction() {
             return function;
         }
+    }
+
+
+    /**
+     * This class describes a microaggregation function
+     * @author Fabian Prasser
+     */
+    public abstract static class MicroAggregationFunctionDescription implements Serializable {
+
+        /** SVUID*/
+        private static final long serialVersionUID = -6608355532280843693L;
+
+        /** The required scale*/
+        private final DataScale requiredScale;
+        
+        /** The label*/
+        private final String label;
         
         /**
-         * Clones this function
+         * Instantiates a new hierarchy.
+         * @param requiredScale
+         * @param label 
          */
-        public MicroAggregationFunction clone() {
-            return new MicroAggregationFunction(this.function.clone(),
-                                                this.requiredScale,
-                                                this.label);
+        private MicroAggregationFunctionDescription(DataScale requiredScale,
+                                                    String label) {
+            this.requiredScale = requiredScale;
+            this.label = label;
+        }
+        
+        /**
+         * Creates an instance
+         * @param ignoreMissingData
+         * @return
+         */
+        public abstract MicroAggregationFunction createInstance(boolean ignoreMissingData);
+
+        /**
+         * @return the label
+         */
+        public String getLabel() {
+            return label;
+        }
+
+        /**
+         * @return the requiredScale
+         */
+        public DataScale getRequiredScale() {
+            return requiredScale;
         }
     }
 
@@ -834,53 +834,6 @@ public class AttributeType implements Serializable, Cloneable {
     /** Represents a quasi-identifying attribute. */
     public static AttributeType QUASI_IDENTIFYING_ATTRIBUTE = new AttributeType(ATTR_TYPE_QI);
 
-    /** The type. */
-    private int                 type                        = 0x0;
-
-    /**
-     * Instantiates a new type.
-     *
-     * @param type the type
-     */
-    private AttributeType(final int type) {
-        this.type = type;
-    }
-
-    @Override
-    public AttributeType clone() {
-        return this;
-    }
-
-    /**
-     * Returns a string representation.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString() {
-        switch (type) {
-        case ATTR_TYPE_ID:
-            return "IDENTIFYING_ATTRIBUTE";
-        case ATTR_TYPE_SE:
-            return "SENSITIVE_ATTRIBUTE";
-        case ATTR_TYPE_IS:
-            return "INSENSITIVE_ATTRIBUTE";
-        case ATTR_TYPE_QI:
-            return "QUASI_IDENTIFYING_ATTRIBUTE";
-        default:
-            return "UNKNOWN_ATTRIBUTE_TYPE";
-        }
-    }
-
-    /**
-     * Returns the type identifier.
-     *
-     * @return the type
-     */
-    protected int getType() {
-        return type;
-    }
-    
     /**
      * Lists all available microaggregation functions
      * @return
@@ -924,5 +877,52 @@ public class AttributeType implements Serializable, Cloneable {
                     }
                 }
         });
+    }
+
+    /** The type. */
+    private int                 type                        = 0x0;
+
+    /**
+     * Instantiates a new type.
+     *
+     * @param type the type
+     */
+    private AttributeType(final int type) {
+        this.type = type;
+    }
+
+    @Override
+    public AttributeType clone() {
+        return this;
+    }
+
+    /**
+     * Returns a string representation.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString() {
+        switch (type) {
+        case ATTR_TYPE_ID:
+            return "IDENTIFYING_ATTRIBUTE";
+        case ATTR_TYPE_SE:
+            return "SENSITIVE_ATTRIBUTE";
+        case ATTR_TYPE_IS:
+            return "INSENSITIVE_ATTRIBUTE";
+        case ATTR_TYPE_QI:
+            return "QUASI_IDENTIFYING_ATTRIBUTE";
+        default:
+            return "UNKNOWN_ATTRIBUTE_TYPE";
+        }
+    }
+    
+    /**
+     * Returns the type identifier.
+     *
+     * @return the type
+     */
+    protected int getType() {
+        return type;
     }
 }

@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -75,8 +76,8 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
     }
 
     @Override
-    public void initialize(DataManager manager) {
-        super.initialize(manager);
+    public void initialize(DataManager manager, ARXConfiguration config) {
+        super.initialize(manager, config);
         this.tree = manager.getTree(attribute);
         this.start = this.tree[1] + 3;
         this.empty = new int[this.tree[1]];

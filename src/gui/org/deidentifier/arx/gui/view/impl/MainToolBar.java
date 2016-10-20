@@ -405,19 +405,6 @@ public class MainToolBar extends AbstractMenu {
     }
 
     /**
-     * Trims the given string to 20 characters
-     * @param attribute
-     * @return
-     */
-    private String trim(String attribute) {
-        if (attribute.length() > 20) {
-            return attribute.substring(0, 20) + "...";
-        } else {
-            return attribute;
-        }
-    }
-
-    /**
      * Creates all items
      * @param toolbar
      * @param items
@@ -583,6 +570,19 @@ public class MainToolBar extends AbstractMenu {
         this.labelSelected.setToolTipText(tooltip);
         this.labelApplied.setToolTipText(tooltip);
         this.labelTransformations.setToolTipText(tooltip);
+    }
+
+    /**
+     * Trims the given string to 20 characters
+     * @param attribute
+     * @return
+     */
+    private String trim(String attribute) {
+        if (attribute.length() > 20) {
+            return attribute.substring(0, 20) + "...";
+        } else {
+            return attribute;
+        }
     }
     
     @Override

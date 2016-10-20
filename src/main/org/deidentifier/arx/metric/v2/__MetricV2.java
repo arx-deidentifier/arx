@@ -19,7 +19,6 @@ package org.deidentifier.arx.metric.v2;
 import java.util.List;
 import java.util.Map;
 
-import org.deidentifier.arx.ARXStackelbergConfiguration;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.Metric.AggregateFunction;
@@ -759,24 +758,14 @@ public class __MetricV2 {
     }
     
     /**
-     * Creates an instance of the  metric for maximizing publisher benefit in the Stackelberg game.
+     * Creates an instance of the metric for maximizing publisher benefit in the Stackelberg game.
      * 
-     * @param config The config for the Stackelberg game
+     * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
+     *                                the prosecutor model will be assumed, otherwise
      * @return
      */
-    public static MetricSDNMPublisherBenefit createPublisherBenefitMetric(ARXStackelbergConfiguration config) {
-        return new MetricSDNMPublisherBenefit(config);
-    }
-    
-    /**
-     * Creates an instance of the metric for maximizing publisher gain which treats generalization and suppression equally.
-     * The default aggregate function, which is the geometric mean, will be used.
-     * This metric will respect attribute weights defined in the configuration.
-     *
-     * @return
-     */
-    public static Metric<AbstractILMultiDimensional> createPublisherGainMetric() {
-        return new MetricMDNMLoss();
+    public static MetricSDNMPublisherPayout createPublisherBenefitMetric(boolean journalistAttackerModel) {
+        return new MetricSDNMPublisherPayout(journalistAttackerModel);
     }
     
     /**

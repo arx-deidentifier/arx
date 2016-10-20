@@ -155,6 +155,15 @@ public class StatisticsEquivalenceClasses {
     }
 
     /**
+     * Returns the number of outliers in the currently selected data
+     * representation.
+     *
+     * @return
+     */
+    public int getNumberOfOutlyingTuples() {
+        return numberOfOutlyingTuples;
+    }
+    /**
      * Returns the number of tuples in the currently selected data
      * representation.
      *
@@ -163,6 +172,7 @@ public class StatisticsEquivalenceClasses {
     public int getNumberOfTuples() {
         return numberOfTuples - numberOfOutlyingTuples;
     }
+    
     /**
      * Returns the number of tuples in the currently selected data
      * representation.
@@ -171,16 +181,6 @@ public class StatisticsEquivalenceClasses {
      */
     public int getNumberOfTuplesIncludingOutliers() {
         return numberOfTuples;
-    }
-    
-    /**
-     * Returns the number of outliers in the currently selected data
-     * representation.
-     *
-     * @return
-     */
-    public int getNumberOfOutlyingTuples() {
-        return numberOfOutlyingTuples;
     }
 
     @Override

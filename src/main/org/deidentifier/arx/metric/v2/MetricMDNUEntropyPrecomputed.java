@@ -121,10 +121,20 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
+    public boolean isPrecomputed() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Non-uniform entropy";
     }
-
+    
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
@@ -146,7 +156,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         Arrays.fill(result, entry.count);
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
-    
+
     /**
      * 
      *
@@ -197,7 +207,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
                                                                HashGroupify groupify) {
         return this.getLowerBoundInternal(node);
     }
-
+    
     /**
      * Returns the upper bound of the entropy value per column
      * @return
@@ -232,7 +242,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
         return result;
     }
-
+    
     /**
      * For backwards compatibility.
      *
@@ -261,7 +271,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super.setMax(max);
         super.setMin(min);
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -306,13 +316,4 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super.setMax(max);
         super.setMin(min);
     }
-    
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return false;
-    }
-
 }

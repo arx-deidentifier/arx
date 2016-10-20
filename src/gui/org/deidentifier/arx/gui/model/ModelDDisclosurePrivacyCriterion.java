@@ -39,10 +39,8 @@ public class ModelDDisclosurePrivacyCriterion extends ModelExplicitCriterion{
      *
      * @param attribute
      */
-    public ModelDDisclosurePrivacyCriterion(String attribute,
-                                            double d) {
+    public ModelDDisclosurePrivacyCriterion(String attribute) {
         super(attribute);
-        this.d = d;
     }
     
     /**
@@ -50,8 +48,10 @@ public class ModelDDisclosurePrivacyCriterion extends ModelExplicitCriterion{
      *
      * @param attribute
      */
-    public ModelDDisclosurePrivacyCriterion(String attribute) {
+    public ModelDDisclosurePrivacyCriterion(String attribute,
+                                            double d) {
         super(attribute);
+        this.d = d;
     }
     
     @Override
@@ -67,11 +67,6 @@ public class ModelDDisclosurePrivacyCriterion extends ModelExplicitCriterion{
 	    return new DDisclosurePrivacy(getAttribute(), d);
 	}
 	
-	@Override
-    public String getLabel() {
-        return  '\u03B4' + Resources.getMessage("Model.31"); //$NON-NLS-1$
-    }
-	
 	/**
      * Returns D.
      *
@@ -80,6 +75,11 @@ public class ModelDDisclosurePrivacyCriterion extends ModelExplicitCriterion{
 	public double getD() {
 		return d;
 	}
+	
+	@Override
+    public String getLabel() {
+        return  '\u03B4' + Resources.getMessage("Model.31"); //$NON-NLS-1$
+    }
 
     @Override
     public void parse(ModelCriterion criterion, boolean _default) {

@@ -53,13 +53,13 @@ import org.deidentifier.arx.metric.MetricDescription;
  * This class implements a large portion of the model used by the GUI.
  *
  * @author Fabian Prasser
+ * @author James Gaupp
  */
 public class Model implements Serializable {
     
     /**
      * The currently selected perspective
      * @author Fabian Prasser
-     *
      */
     public static enum Perspective {
         CONFIGURATION,
@@ -213,8 +213,8 @@ public class Model implements Serializable {
     private ModelRisk                             riskModel                       = null;
 
     /* *****************************************
-     * PRIVACY CRITERIA****************************************
-     */
+     * PRIVACY CRITERIA
+     * *****************************************/
 
     /** Model for a specific privacy criterion. */
     private ModelDPresenceCriterion                       dPresenceModel                  = new ModelDPresenceCriterion();
@@ -239,6 +239,9 @@ public class Model implements Serializable {
 
     /** Model for a specific privacy criterion. */
     private Map<String, ModelDDisclosurePrivacyCriterion> dDisclosurePrivacyModel         = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
+
+    /** Model for a specific privacy criterion. */
+    private ModelStackelbergPrivacyCriterion              stackelbergPrivacyModel         = new ModelStackelbergPrivacyCriterion();
 
     /* *****************************************
      * UTILITY ANALYSIS
@@ -344,7 +347,7 @@ public class Model implements Serializable {
 		if (definition == null) return;
 		
 		// Initialize the metric
-		config.setMetric(this.getMetricDescription().createInstance(this.getMetricConfiguration()));
+        config.setMetric(this.getMetricDescription().createInstance(this.getMetricConfiguration()));
 
         // Initialize definition
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
@@ -413,6 +416,11 @@ public class Model implements Serializable {
             config.addCriterion(this.dPresenceModel.getCriterion(this));
         }
 		
+        if (this.stackelbergPrivacyModel != null &&
+        	this.stackelbergPrivacyModel.isEnabled()) {
+        	config.addCriterion(this.stackelbergPrivacyModel.getCriterion(this));
+        }
+        
 		for (Entry<String, ModelLDiversityCriterion> entry : this.lDiversityModel.entrySet()){
 	        if (entry.getValue() != null &&
 	            entry.getValue().isEnabled()) {
@@ -443,9 +451,7 @@ public class Model implements Serializable {
         }
         
         for (ModelRiskBasedCriterion entry : this.riskBasedModel){
-            if (entry != null &&
-                entry.isEnabled()) {
-                
+            if (entry != null && entry.isEnabled()) {
                 PrivacyCriterion criterion = entry.getCriterion(this);
                 config.addCriterion(criterion);
             }
@@ -595,18 +601,6 @@ public class Model implements Serializable {
 	}
 
     /**
-     * Returns the k-map model.
-     *
-     * @return
-     */
-    public ModelKMapCriterion getKMapModel() {
-        if (kMapModel == null) {
-            kMapModel = new ModelKMapCriterion();
-        }
-        return kMapModel;
-    }
-    
-	/**
      * Returns a list of indices of all equivalence classes.
      *
      * @return
@@ -615,7 +609,7 @@ public class Model implements Serializable {
 		// TODO: Refactor to colors[groups[row]]
 		return this.groups;
 	}
-
+    
 	/**
      * Returns the according parameter.
      *
@@ -664,15 +658,15 @@ public class Model implements Serializable {
 	    else return inputConfig.getInput().getDefinition();
 	}
 
-    /**
+	/**
 	 * Returns the input population model
 	 * @return
 	 */
 	public ARXPopulationModel getInputPopulationModel() {
 	    return getRiskModel().getPopulationModel();
 	}
-    
-	/**
+
+    /**
      * Returns the k-anonymity model.
      *
      * @return
@@ -680,6 +674,18 @@ public class Model implements Serializable {
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
 	}
+    
+	/**
+     * Returns the k-map model.
+     *
+     * @return
+     */
+    public ModelKMapCriterion getKMapModel() {
+        if (kMapModel == null) {
+            kMapModel = new ModelKMapCriterion();
+        }
+        return kMapModel;
+    }
 	
 	/**
      * Returns the l-diversity model.
@@ -1062,6 +1068,17 @@ public class Model implements Serializable {
 	}
 
 	/**
+	 * Returns the configuration object for the stackelberg privacy model
+	 * @return
+	 */
+	public ModelStackelbergPrivacyCriterion getStackelbergModel() {
+	    if (this.stackelbergPrivacyModel == null) {
+	        this.stackelbergPrivacyModel = new ModelStackelbergPrivacyCriterion();
+	    }
+		return stackelbergPrivacyModel;
+	}
+
+	/**
      * Returns the origin of the subset.
      *
      * @return
@@ -1218,6 +1235,7 @@ public class Model implements Serializable {
 		
 		differentialPrivacyModel = new ModelDifferentialPrivacyCriterion();
 		kAnonymityModel = new ModelKAnonymityCriterion();
+		stackelbergPrivacyModel = new ModelStackelbergPrivacyCriterion();
 		dPresenceModel = new ModelDPresenceCriterion();
 		kMapModel = new ModelKMapCriterion();
 		lDiversityModel.clear();

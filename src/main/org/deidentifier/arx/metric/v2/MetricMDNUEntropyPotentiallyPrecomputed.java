@@ -75,15 +75,12 @@ public class MetricMDNUEntropyPotentiallyPrecomputed extends AbstractMetricMulti
     }
     
     @Override
-    public String toString() {
-        return "Non-uniform entropy";
+    public boolean isGSFactorSupported() {
+        return true;
     }
 
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return false;
+    @Override
+    public String toString() {
+        return "Non-uniform entropy";
     }
 }

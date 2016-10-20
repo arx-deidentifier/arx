@@ -18,13 +18,13 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXStackelbergConfiguration;
+import org.deidentifier.arx.ARXFinancialConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.DomainShare;
-import org.deidentifier.arx.risk.RiskModelMonetary;
+import org.deidentifier.arx.risk.RiskModelFinancial;
 
 /**
  * Privacy model for the game theoretic approach proposed in:
@@ -35,22 +35,22 @@ import org.deidentifier.arx.risk.RiskModelMonetary;
  * 
  * @author Fabian Prasser
  */
-public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion {
+public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
 
     /** SVUID */
-    private static final long                 serialVersionUID = -1698534839214708559L;
+    private static final long         serialVersionUID = -1698534839214708559L;
 
     /** Configuration */
-    private final ARXStackelbergConfiguration config;
+    private ARXFinancialConfiguration config;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]                     shares;
+    private DomainShare[]             shares;
 
     /** MaxIL */
-    private double                            maxIL;
+    private double                    maxIL;
 
-    /** Risk model*/
-    private RiskModelMonetary                 riskModel;
+    /** Risk model */
+    private RiskModelFinancial        riskModel;
 
     /**
      * Creates a new instance of game theoretic approach proposed in:
@@ -59,45 +59,38 @@ public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion {
      * Murat Kantarcioglu, Ranjit Ganta, Raymond Heatherly, Bradley A. Malin
      * PLOS|ONE. 2015. 
      */
-    public StackelbergPrivacyModel(ARXStackelbergConfiguration config){
+    public FinancialProsecutorPrivacy(){
         // TODO: Can we find some form of monotonicity for this model?
         super(false, false);
-        this.config = config;
-        this.riskModel = new RiskModelMonetary(config);
     }
 
     @Override
-    public StackelbergPrivacyModel clone() {
-        return new StackelbergPrivacyModel(config.clone());
+    public FinancialProsecutorPrivacy clone() {
+        return new FinancialProsecutorPrivacy();
     }
 
-    /**
-     * Returns the configuration
-     * @return config
-     */
-    public ARXStackelbergConfiguration getConfig() {
-        return config;
+    @Override
+    public PrivacyCriterion clone(DataSubset subset) {
+        return clone();
     }
-
+    
     @Override
     public DataSubset getDataSubset() {
-        return config.getDataSubset();
+        return null;
     }
     
     @Override
     public int getRequirements(){
-        if (config.isProsecutorAttackerModel()) {
-            return ARXConfiguration.REQUIREMENT_COUNTER;
-        } else {
-            return ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
-        }
+        return ARXConfiguration.REQUIREMENT_COUNTER;
     }
     
     @Override
-    public void initialize(DataManager manager) {
+    public void initialize(DataManager manager, ARXConfiguration config) {
 
         // Compute domain shares
         this.shares =  manager.getDomainShares();
+        this.config = config.getFinancialConfiguration();
+        this.riskModel = new RiskModelFinancial(this.config);
                 
         // Calculate MaxIL
         this.maxIL = 1d;
@@ -126,19 +119,19 @@ public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion {
 
     @Override
     public boolean isLocalRecodingSupported() {
-        return config.isProsecutorAttackerModel();
+        return true;
     }
     
     @Override
     public boolean isSubsetAvailable() {
-        return config.isJournalistAttackerModel();
+        return false;
     }
 
     @Override
     public String toString() {
-        return "stackelberg-game " + config.toString();
+        return toString("prosecutor");
     }
-
+    
     /**
      * Returns the information loss for the according class. This is an exact copy of: 
      * @see MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(Transformation, HashGroupifyEntry)
@@ -160,7 +153,14 @@ public class StackelbergPrivacyModel extends ImplicitPrivacyCriterion {
      * @param entry
      * @return
      */
-    private double getSuccessProbability(HashGroupifyEntry entry) {
-        return config.isProsecutorAttackerModel() || entry.pcount == 0 ? 1d / entry.count : 1d / entry.pcount;
+    protected double getSuccessProbability(HashGroupifyEntry entry) {
+        return 1d / entry.count;
+    }
+
+    /**
+     * Returns a string representation
+     */
+    protected String toString(String attackerModel) {
+        return "financial-privacy (" + attackerModel + ")" + (config != null ? config.toString() : "");
     }
 }

@@ -123,6 +123,11 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Non-monotonic precision";
     }
@@ -161,7 +166,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         Arrays.fill(result, entry.count);
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         
@@ -174,7 +179,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         }
         return createInformationLoss(result);
     }
-    
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
@@ -203,7 +208,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         setMin(min);
         setMax(max);
     }
-
+    
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -231,13 +236,5 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         for (int j = 0; j < heights.length; j++) {
             heights[j] = hierarchies[j].getArray()[0].length - 1;
         }
-    }
-    
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return false;
     }
 }

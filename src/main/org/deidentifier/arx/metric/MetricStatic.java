@@ -74,11 +74,6 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     }
     
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
-    }
-
-    @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
 
         double value = 0;
@@ -87,6 +82,11 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
             value += infoloss[i][transformation[i]];
         }
         return new InformationLossDefaultWithBound(value, value);
+    }
+
+    @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override
