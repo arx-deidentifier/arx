@@ -873,11 +873,12 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * Sets the financial configuration
      * @param config
      */
-    public void setFinancialConfiguration(ARXFinancialConfiguration config) {
+    public ARXConfiguration setFinancialConfiguration(ARXFinancialConfiguration config) {
         if (config == null) {
             throw new NullPointerException("Argument must not be null");
         }
         this.financialConfiguration = config;
+        return this;
     }
 
     /**
