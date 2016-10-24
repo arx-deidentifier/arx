@@ -269,7 +269,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
         Image symbolD = controller.getResources().getManagedImage("symbol_d.png"); //$NON-NLS-1$
         Image symbolR = controller.getResources().getManagedImage("symbol_r.png"); //$NON-NLS-1$
         Image symbolDP = controller.getResources().getManagedImage("symbol_dp.png"); //$NON-NLS-1$
-        Image symbolG = controller.getResources().getManagedImage("symbol_g.png"); //$NON-NLS-1$
+        Image symbolG = controller.getResources().getManagedImage("symbol_gt.png"); //$NON-NLS-1$
         
         for (ModelCriterion c : elements) {
 

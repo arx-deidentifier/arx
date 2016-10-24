@@ -109,7 +109,7 @@ public class ViewCriteriaList implements IView {
         this.symbolD = controller.getResources().getManagedImage("symbol_d.png"); //$NON-NLS-1$
         this.symbolDP = controller.getResources().getManagedImage("symbol_dp.png"); //$NON-NLS-1$
         this.symbolR = controller.getResources().getManagedImage("symbol_r.png"); //$NON-NLS-1$
-        this.symbolG = controller.getResources().getManagedImage("symbol_g.png"); //$NON-NLS-1$
+        this.symbolG = controller.getResources().getManagedImage("symbol_gt.png"); //$NON-NLS-1$
         
         this.root = parent;
         this.table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
