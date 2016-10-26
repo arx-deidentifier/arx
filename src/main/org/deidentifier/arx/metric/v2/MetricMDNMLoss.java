@@ -158,7 +158,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double[] result = new double[dimensions];
         double[] bound = new double[dimensions];
 
-        // Compute NDS and lower bound
+        // Compute information loss and lower bound
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count>0) {
