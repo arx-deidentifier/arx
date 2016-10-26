@@ -104,8 +104,9 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
 
         // Prepare
+        int dimensions = getDimensions();
+        int dimensionsGeneralized = getDimensionsGeneralized();
         int[] transformation = node.getGeneralization();
-        int dimensions = transformation.length;
         double[] bound = new double[dimensions];
         DomainShare[] shares = super.getShares();
         double gFactor = super.getGeneralizationFactor();
@@ -114,10 +115,10 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
 
 
         // For each column
-        for (int column = 0; column < cardinalities.length; column++) {
+        for (int column = 0; column < dimensionsGeneralized; column++) {
 
             // Check for cached value
-            int level = node.getGeneralization()[column];
+            int level = transformation[column];
             int[][] cardinality = cardinalities[column];
             int[] values = this.values[column][level];
             
