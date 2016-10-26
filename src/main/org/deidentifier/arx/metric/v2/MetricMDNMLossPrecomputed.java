@@ -127,6 +127,9 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
                 bound[column] += share * gFactor;
             }
         }
+        // Note: we ignore microaggregation, as we cannot compute a bound for it
+        // this means that the according entries in the resulting array are not changed and remain 0d
+        // This is not a problem, as it is OK to underestimate information loss when computing lower bounds
                 
         // Normalize
         for (int column=0; column<dimensions; column++){

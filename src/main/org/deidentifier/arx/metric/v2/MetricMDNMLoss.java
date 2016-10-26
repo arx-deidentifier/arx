@@ -233,8 +233,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
-                                                               HashGroupify g) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node, HashGroupify g) {
         
         // Prepare
         int dimensions = getDimensions();
@@ -253,6 +252,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                     bound[dimension] += share * gFactor;
                 }
                 // Note: we ignore microaggregation, as we cannot compute a bound for it
+                // this means that the according entries in the resulting array are not changed and remain 0d
+                // This is not a problem, as it is OK to underestimate information loss when computing lower bounds
             }
             m = m.nextOrdered;
         }
