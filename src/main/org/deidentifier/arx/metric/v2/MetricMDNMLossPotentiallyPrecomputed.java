@@ -105,7 +105,7 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
 
     @Override
     public boolean isAbleToHandleMicroaggregation() {
-        return false;
+        return true;
     }
     
     @Override

@@ -87,7 +87,7 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
 
     @Override
     public boolean isAbleToHandleMicroaggregation() {
-        return false;
+        return true;
     }
 
     @Override
@@ -133,7 +133,7 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
         // This is not a problem, as it is OK to underestimate information loss when computing lower bounds
                 
         // Normalize
-        for (int column=0; column<dimensions; column++){
+        for (int column=0; column<dimensionsGeneralized; column++){
             bound[column] = normalizeGeneralized(bound[column], column);
         }
         
