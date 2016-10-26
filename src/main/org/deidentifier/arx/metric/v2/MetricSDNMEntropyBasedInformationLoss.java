@@ -124,7 +124,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
 
         // We transform the formula, to make evaluating it more efficient. We have:
         // 
-        // [-log( 1 / share_1 * size_1 ) - log ( 1 / share_2 * size_2 ) ... - log( 1 / share_n * size_n) ] / maxIL
+        // [-log( 1 / (share_1 * size_1) ) - log ( 1 / (share_2 * size_2) ) ... - log( 1 / (share_n * size_n) ) ] / maxIL
         //
         // Step 1:
         //
