@@ -19,6 +19,7 @@ package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -34,10 +35,25 @@ import org.deidentifier.arx.metric.Metric;
 public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDimensional> {
 
     /** SVUID. */
-    private static final long serialVersionUID = -1082954137578580790L;
+    private static final long               serialVersionUID = -1082954137578580790L;
 
     /** Row count. */
-    private Double            tuples         = null;
+    private Double                          tuples           = null;
+
+    /** Number of dimensions. */
+    private int                             dimensions;
+
+    /** Number of dimensions with generalization */
+    private int                             dimensionsGeneralized;
+
+    /** Number of dimensions with aggregation */
+    private int                             dimensionsAggregated;
+
+    /** The microaggregation functions. */
+    private DistributionAggregateFunction[] microaggregationFunctions;
+
+    /** The start index of the attributes with microaggregation in the data array */
+    private int                             microaggregationStartIndex;
 
     /**
      * Creates a new instance.
@@ -91,6 +107,48 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
 
 
     /**
+     * Returns the number of dimensions.
+     *
+     * @return
+     */
+    protected int getDimensions() {
+        return dimensions;
+    }
+
+    /**
+     * Returns the number of dimensions.
+     *
+     * @return
+     */
+    protected int getDimensionsAggregated() {
+        return dimensionsAggregated;
+    }
+    /**
+     * Returns the number of dimensions.
+     *
+     * @return
+     */
+    protected int getDimensionsGeneralized() {
+        return dimensionsGeneralized;
+    }
+
+    /**
+     * Needed for microaggregation
+     * @return
+     */
+    protected DistributionAggregateFunction[] getMicroaggregationFunctions() {
+        return microaggregationFunctions;
+    }
+    
+    /**
+     * Needed for microaggregation
+     * @return
+     */
+    protected int getMicroaggregationStartIndex() {
+        return microaggregationStartIndex;
+    }
+    
+    /**
      * Returns the number of rows in the dataset or subset.
      *
      * @return
@@ -107,6 +165,18 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
                                       final ARXConfiguration config) {
         
         this.tuples = (double) getNumRecords(config, input);
+
+        // Handle microaggregation
+        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
+        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
+        if (!config.isUtilityBasedMicroaggregation() || !isAbleToHandleMicroaggregation()) {
+            this.microaggregationFunctions = new DistributionAggregateFunction[0];
+        }
+        
+        // Initialize dimensions
+        this.dimensionsGeneralized = hierarchies.length;
+        this.dimensionsAggregated = microaggregationFunctions.length;
+        this.dimensions = dimensionsGeneralized + dimensionsAggregated;
     }
 
     /**
