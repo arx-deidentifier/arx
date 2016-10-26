@@ -175,7 +175,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                     double share = (double)m.count * microaggregationFunctions[dimension].getMeanError(m.distributions[microaggregationStart + dimension]);
                     result[dimensionsGeneralized + dimension] += m.isNotOutlier ? share * gFactor :
                                          (sFactor == 1d ? m.count : share + sFactor * ((double)m.count - share));
-                    // Note: we ignore the bound, as we cannot compute it
+                    // Note: we ignore a bound for microaggregation, as we cannot compute it
+                    // this means that the according entries in the resulting array are not changed and remain 0d
+                    // This is not a problem, as it is OK to underestimate information loss when computing lower bounds
                 }
             }
             m = m.nextOrdered;
