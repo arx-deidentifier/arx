@@ -148,7 +148,9 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
         ModelRiskBasedCriterion other = (ModelRiskBasedCriterion)criterion;
         this.threshold = other.threshold;
         this.variant = other.variant;
-        this.setEnabled(other.isEnabled());
+        if (!_default) {
+            this.setEnabled(other.isEnabled());
+        }
     }
 	
 

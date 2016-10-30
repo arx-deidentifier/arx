@@ -263,7 +263,10 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
      * @param padding
      */
     private void createItems(Combo combo, boolean padding){
-        if (padding) combo.add("( )"); //$NON-NLS-1$
+        if (padding) {
+            combo.add("( )"); //$NON-NLS-1$
+            combo.add("(0)"); //$NON-NLS-1$
+        }
         combo.add("(*)"); //$NON-NLS-1$
         combo.add("(x)"); //$NON-NLS-1$
         combo.add("(#)"); //$NON-NLS-1$

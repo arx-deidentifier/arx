@@ -90,7 +90,7 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
     public String toString() {
         return "Normalized non-uniform entropy";
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
@@ -108,7 +108,7 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
         return new ILMultiDimensionalWithBound(super.createInformationLoss(loss),
                                                super.createInformationLoss(bound));
     }
-
+    
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return super.getInformationLossInternal(node, entry);

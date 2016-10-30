@@ -75,7 +75,7 @@ public class KAnonymity extends ImplicitPrivacyCriterion {
         return ARXConfiguration.REQUIREMENT_COUNTER;
     }
 
-    /**
+	/**
      * Return journalist risk threshold, 1 if there is none
      * @return
      */

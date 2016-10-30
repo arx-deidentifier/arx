@@ -56,19 +56,19 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
      */
     public static class ARXUtilityMetricsTestCase {
         
-        /** TODO */
+        /** Config */
         public ARXConfiguration config;
                                 
-        /** TODO */
+        /** Dataset */
         public String           dataset;
                                 
-        /** TODO */
+        /** Sensitive attribute */
         public String           sensitiveAttribute;
                                 
-        /** TODO */
+        /** First model */
         public Metric<?>        m1;
                                 
-        /** TODO */
+        /** Second model */
         public Metric<?>        m2;
                                 
         /**

@@ -303,7 +303,6 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /* Place holders */
         new Label(container, SWT.NONE);
-
         new Label(container, SWT.NONE);
         new Label(container, SWT.NONE);
         new Label(container, SWT.NONE);

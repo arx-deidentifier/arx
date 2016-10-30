@@ -358,6 +358,10 @@
 <dd>
 <div class="block">Shows the audit trail</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/Controller.html#actionShowCharsetInputDialog(org.eclipse.swt.widgets.Shell)">actionShowCharsetInputDialog(Shell)</a></span> - Method in class org.deidentifier.arx.gui.<a href="./org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></dt>
+<dd>
+<div class="block">Shows an input dialog for selecting a charset.</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/Controller.html#actionShowErrorDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.Throwable)">actionShowErrorDialog(Shell, String, Throwable)</a></span> - Method in class org.deidentifier.arx.gui.<a href="./org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></dt>
 <dd>
 <div class="block">Shows an error dialog.</div>
@@ -1302,6 +1306,12 @@
 <div class="block">Changes a control's font</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/worker/io/XMLHandler.html#characters(char[],%20int,%20int)">characters(char[], int, int)</a></span> - Method in class org.deidentifier.arx.gui.worker.io.<a href="./org/deidentifier/arx/gui/worker/io/XMLHandler.html" title="class in org.deidentifier.arx.gui.worker.io">XMLHandler</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="./org/deidentifier/arx/gui/resources/Charsets.html" title="class in org.deidentifier.arx.gui.resources"><span class="strong">Charsets</span></a> - Class in <a href="./org/deidentifier/arx/gui/resources/package-summary.html">org.deidentifier.arx.gui.resources</a></dt>
+<dd>
+<div class="block">A class for managing charsets.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/resources/Charsets.html#Charsets()">Charsets()</a></span> - Constructor for class org.deidentifier.arx.gui.resources.<a href="./org/deidentifier/arx/gui/resources/Charsets.html" title="class in org.deidentifier.arx.gui.resources">Charsets</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/DataHandle.html#checkColumn(int)">checkColumn(int)</a></span> - Method in class org.deidentifier.arx.<a href="./org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
 <dd>
@@ -3998,13 +4008,18 @@
 <dd>
 <div class="block">The according definition.</div>
 </dd>
-<dt><a href="./org/deidentifier/arx/gui/view/impl/common/DelayedSelectionListener.html" title="class in org.deidentifier.arx.gui.view.impl.common"><span class="strong">DelayedSelectionListener</span></a> - Class in <a href="./org/deidentifier/arx/gui/view/impl/common/package-summary.html">org.deidentifier.arx.gui.view.impl.common</a></dt>
+<dt><a href="./org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html" title="class in org.deidentifier.arx.gui.view.impl.common"><span class="strong">DelayedChangeListener</span></a> - Class in <a href="./org/deidentifier/arx/gui/view/impl/common/package-summary.html">org.deidentifier.arx.gui.view.impl.common</a></dt>
 <dd>
-<div class="block">A selection listener that defers execution for a given amount of time</div>
+<div class="block">A listener that acts as a selection listener and a modify listener which defers change
+ events for a given amount of time</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/DelayedSelectionListener.html#DelayedSelectionListener(long)">DelayedSelectionListener(long)</a></span> - Constructor for class org.deidentifier.arx.gui.view.impl.common.<a href="./org/deidentifier/arx/gui/view/impl/common/DelayedSelectionListener.html" title="class in org.deidentifier.arx.gui.view.impl.common">DelayedSelectionListener</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html#DelayedChangeListener(long)">DelayedChangeListener(long)</a></span> - Constructor for class org.deidentifier.arx.gui.view.impl.common.<a href="./org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html" title="class in org.deidentifier.arx.gui.view.impl.common">DelayedChangeListener</a></dt>
 <dd>
 <div class="block">Delay in milliseconds</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html#delayedEvent()">delayedEvent()</a></span> - Method in class org.deidentifier.arx.gui.view.impl.common.<a href="./org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html" title="class in org.deidentifier.arx.gui.view.impl.common">DelayedChangeListener</a></dt>
+<dd>
+<div class="block">Implement this</div>
 </dd>
 <dt><a href="./org/deidentifier/arx/gui/view/impl/utility/DensityData.html" title="class in org.deidentifier.arx.gui.view.impl.utility"><span class="strong">DensityData</span></a> - Class in <a href="./org/deidentifier/arx/gui/view/impl/utility/package-summary.html">org.deidentifier.arx.gui.view.impl.utility</a></dt>
 <dd>
@@ -5230,6 +5245,10 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/io/ImportConfigurationCSV.html#getCharset()">getCharset()</a></span> - Method in class org.deidentifier.arx.io.<a href="./org/deidentifier/arx/io/ImportConfigurationCSV.html" title="class in org.deidentifier.arx.io">ImportConfigurationCSV</a></dt>
 <dd>
 <div class="block">Returns the charset of the CSV file.</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/resources/Charsets.html#getCharsetForName(java.lang.String)">getCharsetForName(String)</a></span> - Static method in class org.deidentifier.arx.gui.resources.<a href="./org/deidentifier/arx/gui/resources/Charsets.html" title="class in org.deidentifier.arx.gui.resources">Charsets</a></dt>
+<dd>
+<div class="block">Returns a charset for the given name</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/worker/io/Vocabulary.html#getChecked()">getChecked()</a></span> - Method in class org.deidentifier.arx.gui.worker.io.<a href="./org/deidentifier/arx/gui/worker/io/Vocabulary.html" title="class in org.deidentifier.arx.gui.worker.io">Vocabulary</a></dt>
 <dd>&nbsp;</dd>
@@ -7578,6 +7597,14 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/risk/HIPAAConstants.html#getNameMatchers(java.lang.String)">getNameMatchers(String)</a></span> - Method in class org.deidentifier.arx.risk.<a href="./org/deidentifier/arx/risk/HIPAAConstants.html" title="class in org.deidentifier.arx.risk">HIPAAConstants</a></dt>
 <dd>
 <div class="block">Returns all matchers for the given category</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/resources/Charsets.html#getNameOfDefaultCharset()">getNameOfDefaultCharset()</a></span> - Static method in class org.deidentifier.arx.gui.resources.<a href="./org/deidentifier/arx/gui/resources/Charsets.html" title="class in org.deidentifier.arx.gui.resources">Charsets</a></dt>
+<dd>
+<div class="block">Returns the system's default charset</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/resources/Charsets.html#getNamesOfAvailableCharsets()">getNamesOfAvailableCharsets()</a></span> - Static method in class org.deidentifier.arx.gui.resources.<a href="./org/deidentifier/arx/gui/resources/Charsets.html" title="class in org.deidentifier.arx.gui.resources">Charsets</a></dt>
+<dd>
+<div class="block">Returns a list of available charsets.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/ComponentMeterFigure.html#getNeedleColor()">getNeedleColor()</a></span> - Method in class org.deidentifier.arx.gui.view.impl.common.<a href="./org/deidentifier/arx/gui/view/impl/common/ComponentMeterFigure.html" title="class in org.deidentifier.arx.gui.view.impl.common">ComponentMeterFigure</a></dt>
 <dd>&nbsp;</dd>
@@ -10692,6 +10719,12 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/IO.html#IO()">IO()</a></span> - Constructor for class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/IO.html" title="class in org.deidentifier.arx.metric.v2">IO</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="./org/deidentifier/arx/io/IOUtil.html" title="class in org.deidentifier.arx.io"><span class="strong">IOUtil</span></a> - Class in <a href="./org/deidentifier/arx/io/package-summary.html">org.deidentifier.arx.io</a></dt>
+<dd>
+<div class="block">Utility for I/O</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/io/IOUtil.html#IOUtil()">IOUtil()</a></span> - Constructor for class org.deidentifier.arx.io.<a href="./org/deidentifier/arx/io/IOUtil.html" title="class in org.deidentifier.arx.io">IOUtil</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#isAbleToHandleMicroaggregation()">isAbleToHandleMicroaggregation()</a></span> - Method in class org.deidentifier.arx.metric.v2.<a href="./org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensional</a></dt>
 <dd>
 <div class="block">Does this metric handle microaggregation</div>
@@ -12719,6 +12752,8 @@
 <dd>
 <div class="block">Mode.</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html#modifyText(org.eclipse.swt.events.ModifyEvent)">modifyText(ModifyEvent)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.common.<a href="./org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html" title="class in org.deidentifier.arx.gui.view.impl.common">DelayedChangeListener</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/datatable/DataTableViewportLayer.html#moveCellPositionIntoViewport(int,%20int)">moveCellPositionIntoViewport(int, int)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.common.datatable.<a href="./org/deidentifier/arx/gui/view/impl/common/datatable/DataTableViewportLayer.html" title="class in org.deidentifier.arx.gui.view.impl.common.datatable">DataTableViewportLayer</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/table/LayerViewport.html#moveCellPositionIntoViewport(int,%20int)">moveCellPositionIntoViewport(int, int)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.common.table.<a href="./org/deidentifier/arx/gui/view/impl/common/table/LayerViewport.html" title="class in org.deidentifier.arx.gui.view.impl.common.table">LayerViewport</a></dt>
@@ -15251,6 +15286,10 @@
 <dd>
 <div class="block">Shows the audit trail</div>
 </dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/MainWindow.html#showCharsetInputDialog(org.eclipse.swt.widgets.Shell)">showCharsetInputDialog(Shell)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.<a href="./org/deidentifier/arx/gui/view/impl/MainWindow.html" title="class in org.deidentifier.arx.gui.view.impl">MainWindow</a></dt>
+<dd>
+<div class="block">Shows an input dialog for selecting a charset.</div>
+</dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/MainWindow.html#showConfigureCriterionDialog(org.deidentifier.arx.gui.model.Model,%20java.util.List,%20org.deidentifier.arx.gui.model.ModelCriterion)">showConfigureCriterionDialog(Model, List&lt;ModelCriterion&gt;, ModelCriterion)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.<a href="./org/deidentifier/arx/gui/view/impl/MainWindow.html" title="class in org.deidentifier.arx.gui.view.impl">MainWindow</a></dt>
 <dd>
 <div class="block">Shows a dialog for configuring privacy criteria.</div>
@@ -15830,6 +15869,10 @@
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#triggerUpdate()">triggerUpdate()</a></span> - Method in class org.deidentifier.arx.gui.view.impl.utility.<a href="./org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatistics</a></dt>
 <dd>
 <div class="block">Triggers an update</div>
+</dd>
+<dt><span class="strong"><a href="./org/deidentifier/arx/io/IOUtil.html#trim(java.lang.String)">trim(String)</a></span> - Static method in class org.deidentifier.arx.io.<a href="./org/deidentifier/arx/io/IOUtil.html" title="class in org.deidentifier.arx.io">IOUtil</a></dt>
+<dd>
+<div class="block">Trims a given string.</div>
 </dd>
 <dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/explore/ViewSolutionSpace.html#trimLabel(java.lang.String)">trimLabel(String)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.explore.<a href="./org/deidentifier/arx/gui/view/impl/explore/ViewSolutionSpace.html" title="class in org.deidentifier.arx.gui.view.impl.explore">ViewSolutionSpace</a></dt>
 <dd>
@@ -16798,13 +16841,9 @@ the order they are declared.</div>
 <dd>
 <div class="block">Constants.</div>
 </dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/DelayedSelectionListener.html#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)">widgetDefaultSelected(SelectionEvent)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.common.<a href="./org/deidentifier/arx/gui/view/impl/common/DelayedSelectionListener.html" title="class in org.deidentifier.arx.gui.view.impl.common">DelayedSelectionListener</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)">widgetDefaultSelected(SelectionEvent)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.common.<a href="./org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html" title="class in org.deidentifier.arx.gui.view.impl.common">DelayedChangeListener</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/DelayedSelectionListener.html#widgetDelayedSelected(org.eclipse.swt.events.SelectionEvent)">widgetDelayedSelected(SelectionEvent)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.common.<a href="./org/deidentifier/arx/gui/view/impl/common/DelayedSelectionListener.html" title="class in org.deidentifier.arx.gui.view.impl.common">DelayedSelectionListener</a></dt>
-<dd>
-<div class="block">Implement this</div>
-</dd>
-<dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/DelayedSelectionListener.html#widgetSelected(org.eclipse.swt.events.SelectionEvent)">widgetSelected(SelectionEvent)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.common.<a href="./org/deidentifier/arx/gui/view/impl/common/DelayedSelectionListener.html" title="class in org.deidentifier.arx.gui.view.impl.common">DelayedSelectionListener</a></dt>
+<dt><span class="strong"><a href="./org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html#widgetSelected(org.eclipse.swt.events.SelectionEvent)">widgetSelected(SelectionEvent)</a></span> - Method in class org.deidentifier.arx.gui.view.impl.common.<a href="./org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html" title="class in org.deidentifier.arx.gui.view.impl.common">DelayedChangeListener</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./org/deidentifier/arx/gui/worker/Worker.html" title="class in org.deidentifier.arx.gui.worker"><span class="strong">Worker</span></a>&lt;<a href="./org/deidentifier/arx/gui/worker/Worker.html" title="type parameter in Worker">T</a>&gt; - Class in <a href="./org/deidentifier/arx/gui/worker/package-summary.html">org.deidentifier.arx.gui.worker</a></dt>
 <dd>

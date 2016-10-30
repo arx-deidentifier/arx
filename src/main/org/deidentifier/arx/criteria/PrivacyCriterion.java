@@ -129,6 +129,14 @@ public abstract class PrivacyCriterion implements Serializable{
     }
     
     /**
+     * Returns a research subset, <code>null</code> if no subset is available
+     * @return
+     */
+    public DataSubset getSubset() {
+        return null;
+    }
+    
+    /**
      * Override this to initialize the criterion.
      *
      * @param manager

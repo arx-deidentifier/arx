@@ -117,9 +117,11 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
         }
         ModelKMapCriterion other = (ModelKMapCriterion)criterion;
         this.k = other.k;
-        this.setEnabled(other.isEnabled());
         this.setEstimator(other.estimator);
         this.significanceLevel = other.significanceLevel;
+        if (!_default) {
+            this.setEnabled(other.isEnabled());
+        }
     }
 
     /**

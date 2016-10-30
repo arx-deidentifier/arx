@@ -60,8 +60,8 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
+     * Performs a test
      * 
-     *
      * @throws IOException
      */
     @Test
@@ -87,7 +87,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -114,7 +114,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -140,7 +140,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -236,7 +236,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -254,7 +254,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -283,7 +283,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -315,7 +315,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -347,7 +347,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -379,7 +379,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -406,7 +406,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -463,7 +463,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -474,7 +474,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -485,7 +485,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -557,7 +557,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */

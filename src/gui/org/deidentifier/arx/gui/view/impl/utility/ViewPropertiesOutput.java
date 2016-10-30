@@ -37,6 +37,7 @@ import org.deidentifier.arx.criteria.FinancialProsecutorPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.KMap;
+import org.deidentifier.arx.criteria.OrderedDistanceTCloseness;
 import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
@@ -338,6 +339,7 @@ public class ViewPropertiesOutput extends ViewProperties {
                 } else if (c instanceof EntropyLDiversity){
                     EntropyLDiversity criterion = (EntropyLDiversity)c;
                     Property n = new Property(Resources.getMessage("PropertiesView.63"), new String[] { Resources.getMessage("PropertiesView.64") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.164"), new String[] { criterion.getEstimator().toString() }); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.65"), new String[] { SWTUtil.getPrettyString(criterion.getL()) }); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                 } else if (c instanceof RecursiveCLDiversity){
@@ -349,6 +351,11 @@ public class ViewPropertiesOutput extends ViewProperties {
                 } else if (c instanceof EqualDistanceTCloseness){
                     EqualDistanceTCloseness criterion = (EqualDistanceTCloseness)c;
                     Property n = new Property(Resources.getMessage("PropertiesView.77"), new String[] { Resources.getMessage("PropertiesView.78") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.79"), new String[] { SWTUtil.getPrettyString(criterion.getT()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
+                } else if (c instanceof OrderedDistanceTCloseness){
+                    OrderedDistanceTCloseness criterion = (OrderedDistanceTCloseness)c;
+                    Property n = new Property(Resources.getMessage("PropertiesView.77"), new String[] { Resources.getMessage("PropertiesView.163") }); //$NON-NLS-1$ //$NON-NLS-2$
                     new Property(n, Resources.getMessage("PropertiesView.79"), new String[] { SWTUtil.getPrettyString(criterion.getT()) }); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                 } else if (c instanceof HierarchicalDistanceTCloseness){

@@ -20,6 +20,7 @@ package org.deidentifier.arx;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
@@ -38,6 +39,7 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.io.CSVSyntax;
+import org.deidentifier.arx.io.IOUtil;
 
 /**
  * Represents an attribute type.
@@ -119,6 +121,36 @@ public class AttributeType implements Serializable, Cloneable {
                 }
                 return array;
             }
+
+            /**
+             * This fixes a bug, where hierarchies which have been loaded from CSV files are trimmed but
+             * hierarchies which are deserialized are not. We fix this by implementing custom deserialization.
+             * @param ois
+             * @throws ClassNotFoundException
+             * @throws IOException
+             */
+            private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+                
+                // Default deserialization
+                ois.defaultReadObject();
+                
+                // Trim array
+                if (array != null) {
+                    for (int row = 0; row < array.length; row++) {
+                        if (array[row] != null && array[row].length > 0) {
+                            array[row][0] = IOUtil.trim(array[row][0]);
+                        }
+                    }
+                }
+                // Trim list
+                if (hierarchy != null) {
+                    for (int row = 0; row < hierarchy.size(); row++) {
+                        if (hierarchy.get(row) != null && hierarchy.get(row).length > 0) {
+                            hierarchy.get(row)[0] = IOUtil.trim(hierarchy.get(row)[0]);
+                        }
+                    }
+                }
+            }            
         }
 
         /**
@@ -153,6 +185,28 @@ public class AttributeType implements Serializable, Cloneable {
             public String[][] getHierarchy() {
                 return hierarchy;
             }
+
+            /**
+             * This fixes a bug, where hierarchies which have been loaded from CSV files are trimmed but
+             * hierarchies which are deserialized are not. We fix this by implementing custom deserialization.
+             * @param ois
+             * @throws ClassNotFoundException
+             * @throws IOException
+             */
+            private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+                
+                // Default deserialization
+                ois.defaultReadObject();
+                
+                // Trim array
+                if (hierarchy != null) {
+                    for (int row = 0; row < hierarchy.length; row++) {
+                        if (hierarchy[row] != null && hierarchy[row].length > 0) {
+                            hierarchy[row][0] = IOUtil.trim(hierarchy[row][0]);
+                        }
+                    }
+                }
+            }  
         }
 
         /**
@@ -205,6 +259,29 @@ public class AttributeType implements Serializable, Cloneable {
                 }
                 return array;
             }
+
+            /**
+             * This fixes a bug, where hierarchies which have been loaded from CSV files are trimmed but
+             * hierarchies which are deserialized are not. We fix this by implementing custom deserialization.
+             * @param ois
+             * @throws ClassNotFoundException
+             * @throws IOException
+             */
+            private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+                
+                // Default deserialization
+                ois.defaultReadObject();
+                
+                // Trim array
+                String[][] hierarchy = getHierarchy();
+                if (hierarchy != null) {
+                    for (int row = 0; row < hierarchy.length; row++) {
+                        if (hierarchy[row] != null && hierarchy[row].length > 0) {
+                            hierarchy[row][0] = IOUtil.trim(hierarchy[row][0]);
+                        }
+                    }
+                }
+            }  
         }
 
         /** SVUID */

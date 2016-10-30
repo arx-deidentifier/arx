@@ -132,7 +132,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return new ILSingleDimensionalWithBound(entry.count);
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
         return null;

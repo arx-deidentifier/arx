@@ -31,9 +31,6 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
  * @param <T>
  */
 public class HierarchyWizardModelIntervals<T> extends HierarchyWizardModelGrouping<T>{
-    
-    /** Var. */
-    private final String[] data;
 
     /**
      * Constructor to create an initial definition.
@@ -43,7 +40,6 @@ public class HierarchyWizardModelIntervals<T> extends HierarchyWizardModelGroupi
      */
     public HierarchyWizardModelIntervals(final DataType<T> dataType, String[] data) {
         super(data, dataType, true);
-        this.data = data;
         this.update();
     }
 

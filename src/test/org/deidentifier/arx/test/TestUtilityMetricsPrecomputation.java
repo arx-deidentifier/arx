@@ -42,12 +42,12 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class TestUtilityMetricsPrecomputation extends AbstractTestUtilityMetricsPrecomputation {
     
-    /** TODO */
+    /** A threshold */
     private final static double threshold = 1d;
     
     /**
+     * Returns the test cases
      * 
-     *
      * @return
      * @throws IOException
      */
@@ -83,7 +83,7 @@ public class TestUtilityMetricsPrecomputation extends AbstractTestUtilityMetrics
     }
     
     /**
-     * 
+     * Creates a new instance.
      *
      * @param testCase
      */

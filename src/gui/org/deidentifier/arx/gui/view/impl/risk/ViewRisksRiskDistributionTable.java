@@ -166,7 +166,10 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
                 if (stopped || !isEnabled()) {
                     return;
                 }
-
+                
+                // Disable drawing
+                table.setRedraw(false);
+                
                 // Update chart
                 for (final TableItem i : table.getItems()) {
                     i.dispose();
@@ -180,7 +183,12 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
                     item.setData("2", cumulative[i]);
                 }
 
+                // Enable drawing and redraw
+                table.setRedraw(true);
+                table.redraw();
                 root.layout();
+                
+                // Set status
                 setStatusDone();
             }
 

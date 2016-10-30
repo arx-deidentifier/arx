@@ -28,7 +28,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for data transformations.
+ * Test for k-anonymity
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -37,7 +37,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestAnonymizationKAnonymity extends AbstractAnonymizationTest {
     
     /**
-     * 
+     * Returns the test cases.
      *
      * @return
      */
@@ -66,7 +66,7 @@ public class TestAnonymizationKAnonymity extends AbstractAnonymizationTest {
     }
     
     /**
-     * 
+     * Creates a new instance.
      *
      * @param testCase
      */

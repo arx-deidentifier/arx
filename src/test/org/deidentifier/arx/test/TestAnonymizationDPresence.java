@@ -32,7 +32,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for data transformations.
+ * Test for d-presence
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestAnonymizationDPresence extends AbstractAnonymizationTest {
     
     /**
-     * 
+     * Returns the test cases.
      *
      * @return
      * @throws IOException
@@ -115,7 +115,7 @@ public class TestAnonymizationDPresence extends AbstractAnonymizationTest {
     }
     
     /**
-     * 
+     * Creates a new instance.
      *
      * @param testCase
      */

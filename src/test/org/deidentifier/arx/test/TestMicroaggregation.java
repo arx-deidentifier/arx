@@ -43,7 +43,7 @@ import org.deidentifier.arx.metric.Metric.AggregateFunction;
 import org.junit.Test;
 
 /**
- * Test for risk metrics.
+ * Test for microaggregation.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer

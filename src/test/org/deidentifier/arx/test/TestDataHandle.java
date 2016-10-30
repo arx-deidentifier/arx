@@ -42,6 +42,8 @@ import org.junit.Test;
 
 /**
  * Tests for data handles
+ * 
+ * @author Fabian Prasser
  */
 public class TestDataHandle extends AbstractTest {
     

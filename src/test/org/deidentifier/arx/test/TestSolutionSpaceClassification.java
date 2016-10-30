@@ -37,6 +37,7 @@ import org.deidentifier.arx.metric.Metric;
 import org.junit.Test;
 
 /**
+ * Tests the classification of the solution space.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -44,7 +45,7 @@ import org.junit.Test;
 public class TestSolutionSpaceClassification extends AbstractTest {
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IllegalArgumentException
      * @throws IOException

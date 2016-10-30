@@ -44,7 +44,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for data transformations.
+ * Test for local recoding
  *
  * @author Fabian Prasser
  */
@@ -52,8 +52,8 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestAnonymizationLocalRecoding extends AbstractAnonymizationTest {
     
     /**
+     * Returns the test cases.
      * 
-     *
      * @return
      * @throws IOException
      */
@@ -76,8 +76,8 @@ public class TestAnonymizationLocalRecoding extends AbstractAnonymizationTest {
     }
     
     /**
+     * Creates a new instance.
      * 
-     *
      * @param testCase
      */
     public TestAnonymizationLocalRecoding(final ARXAnonymizationTestCase testCase) {

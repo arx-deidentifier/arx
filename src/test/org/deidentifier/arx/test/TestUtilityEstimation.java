@@ -37,7 +37,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for utility estimations.
+ * Tests for utility estimations.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -46,8 +46,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestUtilityEstimation extends AbstractTestUtilityEstimation {
     
     /**
-     * 
-     *
+     * Returns the test cases.
      * @return
      * @throws IOException
      */
@@ -229,8 +228,7 @@ public class TestUtilityEstimation extends AbstractTestUtilityEstimation {
     }
     
     /**
-     * 
-     *
+     * Creates a new instance.
      * @param testCase
      */
     public TestUtilityEstimation(final ARXUtilityMetricsTestCase testCase) {

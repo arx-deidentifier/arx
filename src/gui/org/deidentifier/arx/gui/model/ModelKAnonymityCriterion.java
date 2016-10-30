@@ -83,7 +83,9 @@ public class ModelKAnonymityCriterion extends ModelImplicitCriterion{
         }
         ModelKAnonymityCriterion other = (ModelKAnonymityCriterion)criterion;
         this.k = other.k;
-        this.setEnabled(other.isEnabled());
+        if (!_default) {
+            this.setEnabled(other.isEnabled());
+        }
     }
 
     /**

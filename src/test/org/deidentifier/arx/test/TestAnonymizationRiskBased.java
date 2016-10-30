@@ -34,7 +34,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for data transformations.
+ * Test for risk-based anonymization
  *
  * @author Fabian Prasser
  */
@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestAnonymizationRiskBased extends AbstractAnonymizationTest {
     
     /**
-     * 
+     * Returns the test cases.
      *
      * @return
      */
@@ -50,11 +50,11 @@ public class TestAnonymizationRiskBased extends AbstractAnonymizationTest {
     public static Collection<Object[]> cases() {
         return Arrays.asList(new Object[][] {
                                               /* 0 */{ new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d)).addCriterion(new AverageReidentificationRisk(0.01d)), "./data/adult.csv", 314637.8461904862, new int[] { 1, 0, 1, 1, 3, 2, 2, 1, 1 }, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedLossMetric(0.1d)).addCriterion(new SampleUniqueness(0.01d)), "./data/adult.csv", 0.1619408500759394, new int[] { 0, 3, 0, 0, 1, 1, 1, 1, 0 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedLossMetric(0.1d)).addCriterion(new SampleUniqueness(0.01d)), "./data/adult.csv", 0.1606952725863784, new int[] { 0, 3, 0, 0, 1, 1, 1, 1, 0 }, false) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d)).addCriterion(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.DANKAR)), "./data/adult.csv", 144298.1603344462, new int[] { 0, 0, 1, 1, 1, 2, 1, 0, 0 }, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedLossMetric(0.1d)).addCriterion(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.ZAYATZ)), "./data/adult.csv", 0.16199866691277487, new int[] { 0, 3, 0, 0, 1, 1, 1, 1, 0 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedLossMetric(0.1d)).addCriterion(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.ZAYATZ)), "./data/adult.csv", 0.16078200456326086, new int[] { 0, 3, 0, 0, 1, 1, 1, 1, 0 }, false) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d)).addCriterion(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.PITMAN)), "./data/adult.csv", 144298.1603344462, new int[] { 0, 0, 1, 1, 1, 2, 1, 0, 0 }, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedLossMetric(0.1d)).addCriterion(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.SNB)), "./data/adult.csv", 0.17700077019900906, new int[] { 0, 3, 0, 0, 2, 1, 1, 1, 0 }, false) }
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedLossMetric(0.1d)).addCriterion(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.SNB)), "./data/adult.csv", 0.17599055898432758, new int[] { 0, 3, 0, 0, 2, 1, 1, 1, 0 }, false) }
         });
     }
     

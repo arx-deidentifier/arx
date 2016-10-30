@@ -43,11 +43,18 @@ import de.linearbits.swt.widgets.Knob;
  */
 public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCriterion> {
 
-    /**  View */
-    private static final String VARIANTS[] = { Resources.getMessage("CriterionDefinitionView.6"), //$NON-NLS-1$ 
-                                               Resources.getMessage("CriterionDefinitionView.7"), //$NON-NLS-1$ 
-                                               Resources.getMessage("CriterionDefinitionView.8") };  //$NON-NLS-1$ 
+    /** View */
+    private static final String LABELS[] = { Resources.getMessage("CriterionDefinitionView.6"), //$NON-NLS-1$ 
+                                             Resources.getMessage("CriterionDefinitionView.7"), //$NON-NLS-1$
+                                             Resources.getMessage("CriterionDefinitionView.110"), //$NON-NLS-1$ 
+                                             Resources.getMessage("CriterionDefinitionView.8") }; //$NON-NLS-1$ 
 
+    /** Model */
+    private static final int[]  VARIANTS = { ModelLDiversityCriterion.VARIANT_DISTINCT,
+                                             ModelLDiversityCriterion.VARIANT_SHANNON_ENTROPY,
+                                             ModelLDiversityCriterion.VARIANT_GRASSBERGER_ENTROPY,
+                                             ModelLDiversityCriterion.VARIANT_RECURSIVE};
+    
     /** View */
     private Knob<Integer>       knobL;
 
@@ -65,15 +72,29 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
 
     /**
      * Creates a new instance.
-     *
+     * 
      * @param parent
      * @param model
      */
     public EditorCriterionLDiversity(final Composite parent,
-                                   final ModelLDiversityCriterion model) {
+                                     final ModelLDiversityCriterion model) {
         super(parent, model);
     }
 
+    /**
+     * Returns the index of the given variant
+     * @param variant
+     * @return
+     */
+    private int getIndexOfVariant(int variant) {
+        for (int i = 0; i < VARIANTS.length; i++) {
+            if (VARIANTS[i] == variant) {
+                return i;
+            }
+        }
+        throw new IllegalStateException("Unknown variant of l-diversity");
+    }
+    
     @Override
     protected Composite build(Composite parent) {
 
@@ -99,7 +120,7 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
             }
         });
 
-        // Create criterion combo
+        // Create variant combo
         final Label cLabel = new Label(group, SWT.PUSH);
         cLabel.setText(Resources.getMessage("CriterionDefinitionView.33")); //$NON-NLS-1$
 
@@ -108,7 +129,7 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
         d31.verticalAlignment = SWT.CENTER;
         d31.horizontalSpan = 1;
         comboVariant.setLayoutData(d31);
-        comboVariant.setItems(VARIANTS);
+        comboVariant.setItems(LABELS);
         comboVariant.select(0);
 
         // Create c slider
@@ -126,11 +147,12 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
             }
         });
 
+        // Add listener to combo
         comboVariant.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.setVariant(comboVariant.getSelectionIndex());
-                if (model.getVariant() == 2) {
+                model.setVariant(VARIANTS[comboVariant.getSelectionIndex()]);
+                if (model.getVariant() == ModelLDiversityCriterion.VARIANT_RECURSIVE) {
                     knobC.setEnabled(true);
                 } else {
                     knobC.setEnabled(false);
@@ -138,6 +160,7 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
             }
         });
 
+        // Return
         return group;
     }
 
@@ -151,11 +174,17 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
         result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_DISTINCT, 8, 1.0E-5));
         result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_DISTINCT, 10, 1.0E-5));
         
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 2, 1.0E-5));
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 4, 1.0E-5));
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 6, 1.0E-5));
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 8, 1.0E-5));
-        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_ENTROPY, 10, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_SHANNON_ENTROPY, 2, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_SHANNON_ENTROPY, 4, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_SHANNON_ENTROPY, 6, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_SHANNON_ENTROPY, 8, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_SHANNON_ENTROPY, 10, 1.0E-5));
+
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_GRASSBERGER_ENTROPY, 2, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_GRASSBERGER_ENTROPY, 4, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_GRASSBERGER_ENTROPY, 6, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_GRASSBERGER_ENTROPY, 8, 1.0E-5));
+        result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_GRASSBERGER_ENTROPY, 10, 1.0E-5));
 
         result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_RECURSIVE, 2, 3));
         result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_RECURSIVE, 4, 3));
@@ -172,18 +201,18 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
         return result;
     }
 
-
     @Override
     protected void parse(ModelLDiversityCriterion model, boolean _default) {
         
+        // Set c and l
         updateLabel(labelC, model.getC());
         updateLabel(labelL, model.getL());
         knobL.setValue(model.getL());
         knobC.setValue(model.getC());
 
-        comboVariant.select(model.getVariant());
-        
-        if (model.getVariant() == 2) {
+        // Set variant
+        comboVariant.select(getIndexOfVariant(model.getVariant()));   
+        if (model.getVariant() == ModelLDiversityCriterion.VARIANT_RECURSIVE) {
             knobC.setEnabled(true);
         } else {
             knobC.setEnabled(false);

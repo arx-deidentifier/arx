@@ -46,8 +46,8 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestUtilityMetrics2 extends AbstractTestUtilityEstimation {
     
     /**
+     * Returns the test cases
      * 
-     *
      * @return
      * @throws IOException
      */
@@ -229,7 +229,7 @@ public class TestUtilityMetrics2 extends AbstractTestUtilityEstimation {
     }
     
     /**
-     * 
+     * Creates a new instance.
      *
      * @param testCase
      */

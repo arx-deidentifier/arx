@@ -17,167 +17,110 @@
 
 package org.deidentifier.arx.examples;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.mahout.math.Arrays;
-import org.deidentifier.arx.ARXAnonymizer;
-import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.ARXFinancialConfiguration;
-import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.apache.commons.lang.StringUtils;
+import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.criteria.FinancialProsecutorPrivacy;
-import org.deidentifier.arx.io.CSVHierarchyInput;
-import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
+import org.deidentifier.arx.risk.RiskEstimateBuilder;
+import org.deidentifier.arx.risk.RiskModelAttributes;
 
 /**
- * Examples of using the Stackelberg game for de-identifying the Adult dataset
- * based on the prosecutor attacker model
- *
+ * Example for evaluating distinction and separation of attributes as described in
+ * R. Motwani et al. "Efficient algorithms for masking and finding quasi-identifiers"
+ * Proc. VLDB Conf., 2007.
+ * 
+ * @author Maximilian Zitzmann
  * @author Fabian Prasser
  */
 public class Example47 extends Example {
 
     /**
-     * Loads a dataset from disk
-     * @param dataset
-     * @return
-     * @throws IOException
+     * Entry point.
+     *
+     * @param args the arguments
      */
-    public static Data createData(final String dataset) throws IOException {
+    public static void main(String[] args) throws IOException {
 
-        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
+        Data data = loadData();
 
-        // Read generalization hierarchies
-        FilenameFilter hierarchyFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                if (name.matches(dataset + "_hierarchy_(.)+.csv")) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-
-        // Create definition
-        File testDir = new File("data/");
-        File[] genHierFiles = testDir.listFiles(hierarchyFilter);
-        Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
-        for (File file : genHierFiles) {
-            Matcher matcher = pattern.matcher(file.getName());
-            if (matcher.find()) {
-                CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
-                String attributeName = matcher.group(1);
-                data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
-            }
+        // Flag every attribute as quasi identifier
+        for (int i = 0; i < data.getHandle().getNumColumns(); i++) {
+            data.getDefinition().setAttributeType(data.getHandle().getAttributeName(i), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
         }
 
+        // Perform risk analysis
+        System.out.println("\n - Input data");
+        print(data.getHandle());
+
+        System.out.println("\n - Quasi-identifiers with values (in percent):");
+        analyzeAttributes(data.getHandle());
+    }
+
+    /**
+     * Calculate Alpha Distinction and Separation
+     *
+     * @param handle the data handle
+     */
+    private static void analyzeAttributes(DataHandle handle) {
+        ARXPopulationModel populationmodel = ARXPopulationModel.create(ARXPopulationModel.Region.USA);
+        RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
+        RiskModelAttributes riskmodel = builder.getAttributeRisks();
+
+        // output
+        printPrettyTable(riskmodel.getAttributeRisks());
+    }
+
+    private static Data loadData() {
+        // Define data
+        Data.DefaultData data = Data.create();
+        data.add("age", "sex", "state");
+        data.add("20", "Female", "CA");
+        data.add("30", "Female", "CA");
+        data.add("40", "Female", "TX");
+        data.add("20", "Male", "NY");
+        data.add("40", "Male", "CA");
+        data.add("53", "Male", "CA");
+        data.add("76", "Male", "EU");
+        data.add("40", "Female", "AS");
+        data.add("32", "Female", "CA");
+        data.add("88", "Male", "CA");
+        data.add("48", "Female", "AS");
+        data.add("76", "Male", "UU");
         return data;
     }
 
     /**
-     * Entry point.
-     *
-     * @param args the arguments
-     * @throws IOException
+     * Helper that prints a table
+     * @param quasiIdentifiers
      */
-    public static void main(String[] args) throws IOException {
+    private static void printPrettyTable(RiskModelAttributes.QuasiIdentifierRisk[] quasiIdentifiers) {
         
-        // Load the dataset
-        Data data = createData("adult");
-        
-        // Config from PLOS|ONE paper
-        solve(data, ARXFinancialConfiguration.create()
-                                               .setAdversaryCost(4d)
-                                               .setAdversaryGain(300d)
-                                               .setPublisherLoss(300d)
-                                               .setPublisherBenefit(1200d));
+        // get char count of longest quasi-identifier
+        int charCountLongestQi = quasiIdentifiers[quasiIdentifiers.length-1].getIdentifier().toString().length();
 
-        // Larger publisher loss
-        solve(data, ARXFinancialConfiguration.create()
-                                               .setAdversaryCost(4d)
-                                               .setAdversaryGain(300d)
-                                               .setPublisherLoss(600d)
-                                               .setPublisherBenefit(1200d));
+        // make sure that there is enough space for the table header strings
+        charCountLongestQi = Math.max(charCountLongestQi, 12);
 
-        // Even larger publisher loss
-        solve(data, ARXFinancialConfiguration.create()
-                                               .setAdversaryCost(4d)
-                                               .setAdversaryGain(300d)
-                                               .setPublisherLoss(1200d)
-                                               .setPublisherBenefit(1200d));
+        // calculate space needed
+        String leftAlignFormat = "| %-" + charCountLongestQi + "s | %13.2f | %12.2f |%n";
 
-        // Larger publisher loss and less adversary costs
-        solve(data, ARXFinancialConfiguration.create()
-                                               .setAdversaryCost(2d)
-                                               .setAdversaryGain(300d)
-                                               .setPublisherLoss(600d)
-                                               .setPublisherBenefit(1200d));
-        
-        // Config from PLOS|ONE paper but publisher loss and benefit changed with each other
-        solve(data, ARXFinancialConfiguration.create()
-                                               .setAdversaryCost(4d)
-                                               .setAdversaryGain(300d)
-                                               .setPublisherLoss(1200d)
-                                               .setPublisherBenefit(300d));
+        // add 2 spaces that are in the string above on the left and right side of the first pattern
+        charCountLongestQi += 2;
 
+        // subtract the char count of the column header string to calculate
+        // how many spaces we need for filling up to the right columnborder
+        int spacesAfterColumHeader = charCountLongestQi - 12;
 
-    }
-
-    /**
-     * Solve the privacy problem
-     * @param data
-     * @param config
-     * @throws IOException
-     */
-    private static void solve(Data data, ARXFinancialConfiguration config) throws IOException {
-        
-        // Release
-        data.getHandle().release();
-        
-        // Configure
-        ARXConfiguration arxconfig = ARXConfiguration.create();
-        arxconfig.setFinancialConfiguration(config);
-        
-        // Create model for measuring publisher's benefit
-        MetricSDNMPublisherPayout stackelbergMetric = Metric.createPublisherPayoutMetric(false);
-        
-        // Create privacy model for the game-theoretic approach
-        FinancialProsecutorPrivacy stackelbergPrivacyModel = new FinancialProsecutorPrivacy();
-        
-        // Configure ARX
-        arxconfig.setMaxOutliers(1d);
-        arxconfig.setMetric(stackelbergMetric);
-        arxconfig.addCriterion(stackelbergPrivacyModel);
-
-        // Anonymize
-        ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXResult result = anonymizer.anonymize(data, arxconfig);
-        ARXNode node = result.getGlobalOptimum();
-        DataHandle handle = result.getOutput(node, false);
-        
-        // Print stuff
-        System.out.println("Data: " + data.getHandle().getView().getNumRows() + " records with " + data.getDefinition().getQuasiIdentifyingAttributes().size() + " quasi-identifiers");
-        System.out.println(" - Configuration: " + config.toString());
-        System.out.println(" - Policies available: " + result.getLattice().getSize());
-        System.out.println(" - Solution: " + Arrays.toString(node.getTransformation()));
-        System.out.println("   * Optimal: " + result.getLattice().isComplete());
-        System.out.println("   * Time needed: " + result.getTime() + "[ms]");
-        System.out.println("   * Minimal reduction in publisher benefit: " + result.getConfiguration().getMetric().createMinInformationLoss());
-        System.out.println("   * Maximal reduction in publisher benefit: " + result.getConfiguration().getMetric().createMaxInformationLoss());
-        System.out.println("   * Reduction in publisher benefit: " + node.getMinimumInformationLoss() + " (" +
-                           node.getMinimumInformationLoss().relativeTo(result.getConfiguration().getMetric().createMinInformationLoss(),
-                                                                       result.getConfiguration().getMetric().createMaxInformationLoss()) * 100 + "%)");
-        System.out.println("   * Suppressed records: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfOutlyingTuples());
- 
+        System.out.format("+" + StringUtils.repeat("-", charCountLongestQi) + "+---------------+--------------+%n");
+        System.out.format("| Identifier " + StringUtils.repeat(" ", spacesAfterColumHeader) + "|   Distinction |   Separation |%n");
+        System.out.format("+" + StringUtils.repeat("-", charCountLongestQi) + "+---------------+--------------+%n");
+        for (RiskModelAttributes.QuasiIdentifierRisk quasiIdentifier : quasiIdentifiers) {
+            // print every Quasi-Identifier
+            System.out.format(leftAlignFormat, quasiIdentifier.getIdentifier(), quasiIdentifier.getDistinction() * 100, quasiIdentifier.getSeparation() * 100);
+        }
+        System.out.format("+" + StringUtils.repeat("-", charCountLongestQi) + "+---------------+--------------+%n");
     }
 }

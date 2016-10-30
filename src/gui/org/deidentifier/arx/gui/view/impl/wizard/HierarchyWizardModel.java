@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -68,6 +71,9 @@ public class HierarchyWizardModel<T> {
         // Store
         this.data = data;
         this.dataType = dataType;
+        
+        // Sort input data
+        this.sort(this.getDataType());
         
         // Create models
         orderModel = new HierarchyWizardModelOrder<T>(dataType, locale, getOrderData());
@@ -233,5 +239,29 @@ public class HierarchyWizardModel<T> {
             } 
         } 
         return data;
+    }
+
+    /**
+     * Sort.
+     *
+     * @param <U>
+     * @param type
+     * @return successful, or not
+     */
+    protected <U> boolean sort(final DataType<U> type) {
+        try {
+            Arrays.sort(this.data, new Comparator<String>(){
+                @Override public int compare(String o1, String o2) {
+                    try {
+                        return type.compare(o1, o2);
+                    } catch (NumberFormatException | ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

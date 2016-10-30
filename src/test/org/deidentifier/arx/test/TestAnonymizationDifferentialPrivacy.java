@@ -31,7 +31,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for data transformations.
+ * Tests for differential privacy
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -73,7 +73,7 @@ public class TestAnonymizationDifferentialPrivacy extends AbstractAnonymizationT
     }
     
     /**
-     * 
+     * Creates a new instance.
      *
      * @param testCase
      */

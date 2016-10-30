@@ -30,7 +30,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for data transformations.
+ * Test for l-diversity.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -39,7 +39,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestAnonymizationLDiversity extends AbstractAnonymizationTest {
     
     /**
-     * 
+     * Returns the test cases.
      *
      * @return
      */
@@ -105,7 +105,7 @@ public class TestAnonymizationLDiversity extends AbstractAnonymizationTest {
     }
     
     /**
-     * 
+     * Creates a new instance.
      *
      * @param testCase
      */

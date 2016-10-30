@@ -17,166 +17,62 @@
 
 package org.deidentifier.arx.examples;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.nio.charset.Charset;
 
-import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXFinancialConfiguration;
-import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.DataSelector;
-import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.criteria.FinancialJournalistPrivacy;
-import org.deidentifier.arx.io.CSVHierarchyInput;
-import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
+import org.deidentifier.arx.DataSource;
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.criteria.OrderedDistanceTCloseness;
 
 /**
- * Examples of using the Stackelberg game for de-identifying the Adult dataset
- * based on the journalist attacker model with an explicit population table
- *
+ * This class implements an example of how to use ordered distance t-closeness. Implements Example 3
+ * from the paper Li et al. "t-Closeness: Privacy Beyond k-Anonymity and l-Diversity"
+ * 
  * @author Fabian Prasser
  */
 public class Example48 extends Example {
-
-    /**
-     * Loads a dataset from disk
-     * @param dataset
-     * @return
-     * @throws IOException
-     */
-    public static Data createData(final String dataset) throws IOException {
-
-        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
-
-        // Read generalization hierarchies
-        FilenameFilter hierarchyFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                if (name.matches(dataset + "_hierarchy_(.)+.csv")) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-
-        // Create definition
-        File testDir = new File("data/");
-        File[] genHierFiles = testDir.listFiles(hierarchyFilter);
-        Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
-        for (File file : genHierFiles) {
-            Matcher matcher = pattern.matcher(file.getName());
-            if (matcher.find()) {
-                CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
-                String attributeName = matcher.group(1);
-                data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
-            }
-        }
-
-        return data;
-    }
-
+    
     /**
      * Entry point.
-     *
+     * 
      * @param args the arguments
-     * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        
-        // Load the dataset
-        Data data = createData("adult");
-        
-        // We select all records with "sex=Male" to serve as the dataset which we will de-identify.
-        // The overall dataset serves as our population table.
-        DataSubset subset = DataSubset.create(data, DataSelector.create(data).field("sex").equals("Male"));
-        
-        // Config from PLOS|ONE paper
-        solve(data, ARXFinancialConfiguration.create()
-                                               .setAdversaryCost(4d)
-                                               .setAdversaryGain(300d)
-                                               .setPublisherLoss(300d)
-                                               .setPublisherBenefit(1200d), subset);
 
-        // Larger publisher loss
-        solve(data, ARXFinancialConfiguration.create()
-                                               .setAdversaryCost(4d)
-                                               .setAdversaryGain(300d)
-                                               .setPublisherLoss(600d)
-                                               .setPublisherBenefit(1200d), subset);
-
-        // Even larger publisher loss
-        solve(data, ARXFinancialConfiguration.create()
-                                               .setAdversaryCost(4d)
-                                               .setAdversaryGain(300d)
-                                               .setPublisherLoss(1200d)
-                                               .setPublisherBenefit(1200d), subset);
-
-        // Larger publisher loss and less adversary costs
-        solve(data, ARXFinancialConfiguration.create()
-                                               .setAdversaryCost(2d)
-                                               .setAdversaryGain(300d)
-                                               .setPublisherLoss(600d)
-                                               .setPublisherBenefit(1200d), subset);
-
-    }
-
-    /**
-     * Solve the privacy problem
-     * @param data
-     * @param config
-     * @param subset
-     * @throws IOException
-     */
-    private static void solve(Data data, ARXFinancialConfiguration config, DataSubset subset) throws IOException {
+        // Load data
+        DataSource source = DataSource.createCSVSource("data/test2.csv", Charset.forName("UTF-8"), ';', true);
+        source.addColumn("ZIPCode", DataType.STRING);
+        source.addColumn("Age", DataType.INTEGER);
+        source.addColumn("Salary", DataType.INTEGER); // in k
+        source.addColumn("Disease", DataType.STRING);
+        Data data = Data.create(source);
         
-        // Release
-        data.getHandle().release();
+        // Load hierarchies
+        Hierarchy zipcode = Hierarchy.create("data/test2_hierarchy_ZIPCode.csv", Charset.forName("UTF-8"), ';');
+        Hierarchy age = Hierarchy.create("data/test2_hierarchy_Age.csv", Charset.forName("UTF-8"), ';');
         
-        // Configure
-        ARXConfiguration arxconfig = ARXConfiguration.create();
-        arxconfig.setFinancialConfiguration(config);
+        // Define
+        data.getDefinition().setAttributeType("ZIPCode", zipcode);
+        data.getDefinition().setAttributeType("Age", age);
+        data.getDefinition().setAttributeType("Salary", AttributeType.SENSITIVE_ATTRIBUTE);
         
-        // Create model for measuring publisher's benefit
-        MetricSDNMPublisherPayout stackelbergMetric = Metric.createPublisherPayoutMetric(true);
-        
-        // Create privacy model for the game-theoretic approach
-        FinancialJournalistPrivacy stackelbergPrivacyModel = new FinancialJournalistPrivacy(subset);
-        
-        // Configure ARX
-        arxconfig.setMaxOutliers(1d);
-        arxconfig.setMetric(stackelbergMetric);
-        arxconfig.addCriterion(stackelbergPrivacyModel);
-
-        // Anonymize
+        // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXResult result = anonymizer.anonymize(data, arxconfig);
-        ARXNode node = result.getGlobalOptimum();
-        DataHandle handle = result.getOutput(node, false).getView();
+        ARXConfiguration config = ARXConfiguration.create();
+        config.addCriterion(new OrderedDistanceTCloseness("Salary", 0.3751));
+        config.setMaxOutliers(0d);
         
-        // Print stuff
-        System.out.println("Data: " + data.getHandle().getView().getNumRows() + " records with " + data.getDefinition().getQuasiIdentifyingAttributes().size() + " quasi-identifiers");
-        System.out.println(" - Configuration: " + config.toString());
-        System.out.println(" - Policies available: " + result.getLattice().getSize());
-        System.out.println(" - Solution: " + Arrays.toString(node.getTransformation()));
-        System.out.println("   * Optimal: " + result.getLattice().isComplete());
-        System.out.println("   * Time needed: " + result.getTime() + "[ms]");
-        System.out.println("   * Minimal reduction in publisher benefit: " + result.getConfiguration().getMetric().createMinInformationLoss());
-        System.out.println("   * Maximal reduction in publisher benefit: " + result.getConfiguration().getMetric().createMaxInformationLoss());
-        System.out.println("   * Reduction in publisher benefit: " + node.getMinimumInformationLoss() + " (" +
-                           node.getMinimumInformationLoss().relativeTo(result.getConfiguration().getMetric().createMinInformationLoss(),
-                                                                       result.getConfiguration().getMetric().createMaxInformationLoss()) * 100 + "%)");
-        System.out.println("   * Suppressed records: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfOutlyingTuples());
- 
+        // Anonymize
+        ARXResult result = anonymizer.anonymize(data, config);
+
+        // Print results
+        System.out.println("Output data:");
+        print(result.getOutput());
     }
 }

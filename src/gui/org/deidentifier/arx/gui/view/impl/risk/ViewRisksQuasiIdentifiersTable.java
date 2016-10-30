@@ -16,8 +16,6 @@
  */
 package org.deidentifier.arx.gui.view.impl.risk;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
@@ -34,7 +32,6 @@ import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelAttributes;
 import org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisk;
-import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -49,17 +46,15 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * This view displays basic risk estimates.
  *
  * @author Fabian Prasser
+ * @author Maximilian Zitzmann
  */
 public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRisk> {
 
     /** View */
-    private Composite         root;
-
-    /** View */
-    private DynamicTable      table;
+    private DynamicTable table;
 
     /** Internal stuff. */
-    private AnalysisManager   manager;
+    private final AnalysisManager manager;
 
     /**
      * Creates a new instance.
@@ -70,16 +65,16 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
      * @param reset
      */
     public ViewRisksQuasiIdentifiersTable(final Composite parent,
-                                    final Controller controller,
-                                    final ModelPart target,
-                                    final ModelPart reset) {
-        
+                                          final Controller controller,
+                                          final ModelPart target,
+                                          final ModelPart reset) {
+
         super(parent, controller, target, reset);
         controller.addListener(ModelPart.SELECTED_QUASI_IDENTIFIERS, this);
         controller.addListener(ModelPart.POPULATION_MODEL, this);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
-    
+
     @Override
     public void update(ModelEvent event) {
         super.update(event);
@@ -90,57 +85,54 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
 
     /**
      * Creates a table item
+     *
      * @param risks
      */
     private void createItem(QuasiIdentifierRisk risks) {
-        final TableItem item = new TableItem(table, SWT.NONE);
-        List<String> list = new ArrayList<String>();
-        list.addAll(risks.getIdentifier());
-        Collections.sort(list);
+        TableItem item = new TableItem(table, SWT.NONE);
+        List<String> list = risks.getIdentifier();
         StringBuilder builder = new StringBuilder();
-        for (int i=0; i<list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             builder.append(list.get(i));
-            if (i < list.size() - 1){
+            if (i < list.size() - 1) {
                 builder.append(", "); //$NON-NLS-1$
             }
         }
         item.setText(0, builder.toString());
-        item.setData("1", risks.getFractionOfUniqueTuples());
-        item.setData("2", risks.getHighestReidentificationRisk());
-        item.setData("3", risks.getAverageReidentificationRisk());
+        item.setData("1", risks.getDistinction()); //$NON-NLS-1$
+        item.setData("2", risks.getSeparation()); //$NON-NLS-1$
     }
 
     @Override
     protected Control createControl(Composite parent) {
 
-        this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(new FillLayout());
+        /* View */
+        Composite root = new Composite(parent, SWT.NONE);
+        root.setLayout(new FillLayout());
 
         table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.BORDER |
-                                       SWT.V_SCROLL | SWT.FULL_SELECTION);
+                SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
 
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("70%"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setWidth("50%"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("RiskAnalysis.19")); //$NON-NLS-1$
         c.setResizable(true);
+
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("RiskAnalysis.20")); //$NON-NLS-1$
+        c.setText(Resources.getMessage("RiskAnalysis.43")); //$NON-NLS-1$
         c.setResizable(true);
+
         c = new DynamicTableColumn(table, SWT.LEFT);
         SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("RiskAnalysis.21")); //$NON-NLS-1$
+        c.setText(Resources.getMessage("RiskAnalysis.44")); //$NON-NLS-1$
         c.setResizable(true);
-        c = new DynamicTableColumn(table, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("RiskAnalysis.22")); //$NON-NLS-1$
-        c.setResizable(true);
+
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
@@ -178,14 +170,14 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
             this.setStatusEmpty();
             return;
         }
-        
+
         // Create an analysis
         Analysis analysis = new Analysis() {
 
             // The statistics builder
-            private boolean                  stopped = false;
-            private RiskModelAttributes      risks;
-            
+            private boolean stopped = false;
+            private RiskModelAttributes risks;
+
             @Override
             public int getProgress() {
                 return builder.getProgress();
@@ -203,28 +195,37 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
                     return;
                 }
 
+                // Disable drawing
+                table.setRedraw(false);
+                
                 // Update chart
                 for (final TableItem i : table.getItems()) {
                     i.dispose();
                 }
-
-                // For all sizes
+                
+                // Create table items
                 for (QuasiIdentifierRisk item : risks.getAttributeRisks()) {
                     createItem(item);
                 }
-
+                
+                // Pack columns
                 for (final TableColumn col : table.getColumns()) {
                     col.pack();
                 }
+                
+                // Layout
+                table.layout();
 
-                if (risks.getAttributeRisks().length==0) {
+                // Enable drawing and redraw
+                table.setRedraw(true);
+                table.redraw();
+
+                // Update status
+                if (risks.getAttributeRisks().length == 0) {
                     setStatusEmpty();
                 } else {
                     setStatusDone();
                 }
-
-                table.layout();
-                table.redraw();
             }
 
             @Override
@@ -238,30 +239,9 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
 
             @Override
             public void run() throws InterruptedException {
-
                 // Timestamp
                 long time = System.currentTimeMillis();
-
-                // Perform work
-                switch (getModel().getRiskModel().getRiskModelForAttributes()) {
-                case SAMPLE_UNIQUENESS:
-                    risks = builder.getSampleBasedAttributeRisks();
-                    break;
-                case POPULATION_UNIQUENESS_PITMAN:
-                    risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.PITMAN);
-                    break;
-                case POPULATION_UNIQUENESS_ZAYATZ:
-                    risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.ZAYATZ);
-                    break;
-                case POPULATION_UNIQUENESS_SNB:
-                    risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.SNB);
-                    break;
-                case POPULATION_UNIQUENESS_DANKAR:
-                    risks = builder.getPopulationBasedAttributeRisks(PopulationUniquenessModel.DANKAR);
-                    break;
-                default:
-                    throw new RuntimeException("Invalid risk model"); //$NON-NLS-1$
-                }
+                risks = builder.getAttributeRisks();
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped) {
@@ -281,7 +261,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
 
     @Override
     protected ComponentStatusLabelProgressProvider getProgressProvider() {
-        return new ComponentStatusLabelProgressProvider(){
+        return new ComponentStatusLabelProgressProvider() {
             public int getProgress() {
                 if (manager == null) {
                     return 0;
@@ -291,7 +271,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
             }
         };
     }
-    
+
     @Override
     protected ViewRiskType getViewType() {
         return ViewRiskType.ATTRIBUTES;

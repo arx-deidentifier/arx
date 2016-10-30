@@ -563,6 +563,7 @@ public class StatisticsBuilder {
             } else {
                 
                 containsOutliers = true;
+                // All suppressed records will collapse into a single group, so we can use the "=" assignment operator here
                 numberOfOutlyingTuples = element.getCount();
             }
             

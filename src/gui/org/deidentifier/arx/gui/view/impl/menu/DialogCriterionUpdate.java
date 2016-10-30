@@ -358,6 +358,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
         label.setLayoutData(data);
         label.setText(Resources.getMessage("DialogCriterionUpdate.20")); //$NON-NLS-1$
 
+        // Return
         return parent;
     }
 

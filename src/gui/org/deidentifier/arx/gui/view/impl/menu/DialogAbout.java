@@ -66,7 +66,8 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "Johanna Eicher (heuristic search)\n" + //$NON-NLS-1$
                                                "Helmut Spengler (heuristic search)\n" + //$NON-NLS-1$
                                                "David Gassmann (HIPAA identifiers)\n" + //$NON-NLS-1$
-                                               "Sebastian Stammler (performance improvements)" ; //$NON-NLS-1$
+                                               "Sebastian Stammler (performance improvements, l-diversity)\n" + //$NON-NLS-1$
+                                               "Maximilian Zitzmann (distinction and separation)"; //$NON-NLS-1$
     
     /**  TODO */
     private Image image;
