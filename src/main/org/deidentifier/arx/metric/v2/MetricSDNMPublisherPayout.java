@@ -189,20 +189,22 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         // Compute
         double real = 0;
         double bound = 0;
+        double gFactor = super.getGeneralizationFactor();
+        double sFactor = super.getSuppressionFactor();
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
+        double maxPayout = this.config.getPublisherBenefit();
         while (entry != null) {
             if (entry.count > 0) {
                 double adversarySuccessProbability = this.getSuccessProbability(entry);
                 double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
-                real += !entry.isNotOutlier ? 0d : entry.count * modelRisk.getExpectedPublisherPayout(informationLoss, adversarySuccessProbability);
-                bound += entry.count * modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
+                double realPayout = modelRisk.getExpectedPublisherPayout(informationLoss, adversarySuccessProbability);
+                double boundPayout = modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
+                real += !entry.isNotOutlier ? (sFactor * entry.count * maxPayout) : 
+                                              (gFactor * entry.count * (maxPayout - realPayout));
+                bound += gFactor * entry.count * (maxPayout - boundPayout);
             }
             entry = entry.nextOrdered;
         }
-        
-        // Invert
-        real = this.getNumTuples() * this.config.getPublisherBenefit() - real;
-        bound = this.getNumTuples() * this.config.getPublisherBenefit() - bound;
         
         // Return
         return super.createInformationLoss(real, bound);
@@ -212,15 +214,17 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     protected InformationLossWithBound<ILSingleDimensional> getInformationLossInternal(Transformation transformation, HashGroupifyEntry entry) {
 
         // Compute
+        double gFactor = super.getGeneralizationFactor();
+        double sFactor = super.getSuppressionFactor();
         double adversarySuccessProbability = this.getSuccessProbability(entry);
         double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
-        double real = !entry.isNotOutlier ? 0d : entry.count * modelRisk.getExpectedPublisherPayout(informationLoss, adversarySuccessProbability);
-        double bound = entry.count * modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
+        double maxPayout = this.config.getPublisherBenefit();
+        double realPayout = modelRisk.getExpectedPublisherPayout(informationLoss, adversarySuccessProbability);
+        double boundPayout = modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
+        double real =  !entry.isNotOutlier ? (sFactor * entry.count * maxPayout) : 
+                                             (gFactor * entry.count * (maxPayout - realPayout));
+        double bound = gFactor * entry.count * (maxPayout - boundPayout);
 
-        // Invert
-        real = entry.count * this.config.getPublisherBenefit() - real;
-        bound = entry.count * this.config.getPublisherBenefit() - bound;
-        
         // Return
         return super.createInformationLoss(real, bound);
     }
@@ -237,17 +241,17 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
 
         // Compute
         double bound = 0;
+        double gFactor = super.getGeneralizationFactor();
+        double maxPayout = this.config.getPublisherBenefit();
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         while (entry != null) {
             if (entry.count > 0) {
                 double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
-                bound +=  entry.count * modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
+                double boundPayout = modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
+                bound += gFactor * entry.count * (maxPayout - boundPayout);
             }
             entry = entry.nextOrdered;
         }
-        
-        // Invert
-        bound = this.getNumTuples() * this.config.getPublisherBenefit() - bound;
         
         // Return
         return new ILSingleDimensional(bound);

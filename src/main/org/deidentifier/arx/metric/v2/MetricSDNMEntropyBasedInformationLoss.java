@@ -159,12 +159,14 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         // Compute
         double real = 0;
         double bound = 0;
+        double gFactor = super.getGeneralizationFactor();
+        double sFactor = super.getSuppressionFactor();
         HashGroupifyEntry entry = g.getFirstEquivalenceClass();
         while (entry != null) {
             if (entry.count > 0) {
                 double loss = entry.count * getEntropyBasedInformationLoss(transformation, entry);
-                real += entry.isNotOutlier ? loss : entry.count;
-                bound += loss;
+                real += entry.isNotOutlier ? gFactor * loss : sFactor * entry.count;
+                bound += gFactor * loss;
             }
             entry = entry.nextOrdered;
         }
@@ -177,10 +179,11 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     protected InformationLossWithBound<ILSingleDimensional> getInformationLossInternal(Transformation transformation,
                                                                                        HashGroupifyEntry entry) {
         
-        double iloss = entry.count * getEntropyBasedInformationLoss(transformation, entry);
-        double loss = entry.isNotOutlier ? iloss : entry.count;
-        double bound = iloss;
-        return super.createInformationLoss(loss, bound);
+        double gFactor = super.getGeneralizationFactor();
+        double sFactor = super.getSuppressionFactor();
+        double bound = entry.count * getEntropyBasedInformationLoss(transformation, entry);
+        double loss = entry.isNotOutlier ? gFactor * bound : sFactor * entry.count;
+        return super.createInformationLoss(loss, gFactor * bound);
     }
 
     @Override
@@ -194,10 +197,11 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
 
         // Compute
         double bound = 0;
+        double gFactor = super.getGeneralizationFactor();
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         while (entry != null) {
             
-            bound += entry.count == 0 ? 0d : entry.count * getEntropyBasedInformationLoss(transformation, entry);
+            bound += entry.count == 0 ? 0d : gFactor * entry.count * getEntropyBasedInformationLoss(transformation, entry);
             entry = entry.nextOrdered;
         }
         
