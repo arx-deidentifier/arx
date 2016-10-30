@@ -172,14 +172,30 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
-     * Creates an instance of the entropy-based information loss metric
+     * Creates an instance of the entropy-based information loss metric, which will treat
+     * generalization and suppression equally.
      * 
      * @return
      */
     public static MetricSDNMEntropyBasedInformationLoss createEntropyBasedInformationLossMetric() {
-        return __MetricV2.createEntropyBasedInformationLossMetric();
+        return __MetricV2.createEntropyBasedInformationLossMetric(0.5d);
     }
-    
+
+    /**
+     * Creates an instance of the entropy-based information loss metric.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * 
+     * @return
+     */
+    public static MetricSDNMEntropyBasedInformationLoss createEntropyBasedInformationLossMetric(double gsFactor) {
+        return __MetricV2.createEntropyBasedInformationLossMetric(gsFactor);
+    }
     /**
      * Creates an instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -741,14 +757,34 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
-     * Creates an instance of the  metric for maximizing publisher benefit in the Stackelberg game.
+     * Creates an instance of the  metric for maximizing publisher benefit in the Stackelberg game
+     * which treats generalization and suppression equally.
      * 
      * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
      *                                the prosecutor model will be assumed, otherwise
      * @return
      */
     public static MetricSDNMPublisherPayout createPublisherPayoutMetric(boolean journalistAttackerModel) {
-        return __MetricV2.createPublisherBenefitMetric(journalistAttackerModel);
+        return __MetricV2.createPublisherBenefitMetric(journalistAttackerModel, 0.5d);
+    }
+
+    /**
+     * Creates an instance of the  metric for maximizing publisher benefit in the Stackelberg game.
+     * 
+     * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
+     *                                the prosecutor model will be assumed, otherwise
+     *                                
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @return
+     */
+    public static MetricSDNMPublisherPayout createPublisherPayoutMetric(boolean journalistAttackerModel,
+                                                                        double gsFactor) {
+        return __MetricV2.createPublisherBenefitMetric(journalistAttackerModel, gsFactor);
     }
     
     /**
@@ -1021,7 +1057,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                      @Override
                                      public Metric<?> createInstance(MetricConfiguration config) {
                                          boolean journalist = config.getAttackerModel() == MetricConfigurationAttackerModel.JOURNALIST;
-                                         return createPublisherPayoutMetric(journalist);
+                                         return createPublisherPayoutMetric(journalist, config.getGsFactor());
                                      } 
 
                                      @Override
@@ -1042,7 +1078,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
 
                                      @Override
                                      public Metric<?> createInstance(MetricConfiguration config) {
-                                         return createEntropyBasedInformationLossMetric();
+                                         return createEntropyBasedInformationLossMetric(config.getGsFactor());
                                      } 
 
                                      @Override
@@ -1139,7 +1175,9 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         // generalization. The values in between can be used for
         // balancing both methods.
         this.gsFactor = gsFactor;
+        // sFactor = 0 will only calculate the information loss through generalization
         this.sFactor = gsFactor <  0.5d ? 2d * gsFactor : 1d;
+        // gFactor = 0 will only calculate the information loss through suppression
         this.gFactor = gsFactor <= 0.5d ? 1d            : 1d - 2d * (gsFactor - 0.5d);
     }
 

@@ -61,20 +61,30 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     private boolean                   journalistAttackerModel;
 
     /**
-     * Clone constructor
+     * Creates a new instance
+     * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
+     *                                the prosecutor model will be assumed, otherwise
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     */
+    public MetricSDNMPublisherPayout(boolean journalistAttackerModel, double gsFactor) {
+        super(false, false, gsFactor);
+        this.journalistAttackerModel = journalistAttackerModel;
+    }
+    
+    /**
+     * Creates a new instance. Default constructor which treats all transformation methods equally.
      * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
      *                                the prosecutor model will be assumed, otherwise
      */
     public MetricSDNMPublisherPayout(boolean journalistAttackerModel) {
-        super(false, false);
-        this.journalistAttackerModel = journalistAttackerModel;
+       this(journalistAttackerModel, 0.5d);
     }
     
-    @Override
-    public MetricSDNMPublisherPayout clone() {
-        return new MetricSDNMPublisherPayout(this.journalistAttackerModel);
-    }
-
     @Override
     public ILSingleDimensional createMaxInformationLoss() {
         Double rows = getNumTuples();
@@ -173,7 +183,6 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         }
         return Math.log10(infoLoss) / maxIL + 1d;
     }
-
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation transformation, HashGroupify groupify) {
         
@@ -185,8 +194,8 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
             if (entry.count > 0) {
                 double adversarySuccessProbability = this.getSuccessProbability(entry);
                 double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
-                real += !entry.isNotOutlier ? 0d : entry.count * modelRisk.getExpectedPublisherPayoff(informationLoss, adversarySuccessProbability);
-                bound += entry.count * modelRisk.getExpectedPublisherPayoff(informationLoss, 0d);
+                real += !entry.isNotOutlier ? 0d : entry.count * modelRisk.getExpectedPublisherPayout(informationLoss, adversarySuccessProbability);
+                bound += entry.count * modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
             }
             entry = entry.nextOrdered;
         }
@@ -205,8 +214,8 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         // Compute
         double adversarySuccessProbability = this.getSuccessProbability(entry);
         double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
-        double real = !entry.isNotOutlier ? 0d : entry.count * modelRisk.getExpectedPublisherPayoff(informationLoss, adversarySuccessProbability);
-        double bound = entry.count * modelRisk.getExpectedPublisherPayoff(informationLoss, 0d);
+        double real = !entry.isNotOutlier ? 0d : entry.count * modelRisk.getExpectedPublisherPayout(informationLoss, adversarySuccessProbability);
+        double bound = entry.count * modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
 
         // Invert
         real = entry.count * this.config.getPublisherBenefit() - real;
@@ -232,7 +241,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         while (entry != null) {
             if (entry.count > 0) {
                 double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
-                bound +=  entry.count * modelRisk.getExpectedPublisherPayoff(informationLoss, 0d);
+                bound +=  entry.count * modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
             }
             entry = entry.nextOrdered;
         }
@@ -261,8 +270,8 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         // Calculate MaxIL
         this.maxIL = 1d;
         for (DomainShare share : shares) {
-            maxIL *= share.getDomainSize();
+            this.maxIL *= share.getDomainSize();
         }
-        maxIL = Math.log10(maxIL);
+        this.maxIL = Math.log10(maxIL);
     }
 }

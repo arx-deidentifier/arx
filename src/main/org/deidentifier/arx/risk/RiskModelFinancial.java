@@ -47,11 +47,11 @@ public class RiskModelFinancial implements Serializable {
     }
     
     /**
-     * Returns the expected adversary payoff
+     * Returns the expected adversary payout
      * @param successProbability
      * @return
      */
-    public double getExpectedAdversaryPayoff(double successProbability) {
+    public double getExpectedAdversaryPayout(double successProbability) {
         checkArgument(successProbability);
         return config.getAdversaryGain() * successProbability - config.getAdversaryCost();
     }
@@ -67,15 +67,15 @@ public class RiskModelFinancial implements Serializable {
     }
 
     /**
-     * Returns the expected publisher payoff
+     * Returns the expected publisher payout
      * @param informationLoss
      * @param adversarySuccessProbability
      * @return
      */
-    public double getExpectedPublisherPayoff(double informationLoss, double adversarySuccessProbability ) {
+    public double getExpectedPublisherPayout(double informationLoss, double adversarySuccessProbability ) {
         // Arguments will be checked in subsequent method calls
         return getExpectedPublisherBenefit(informationLoss) - 
-               (getExpectedAdversaryPayoff(adversarySuccessProbability) > 0 ? config.getPublisherLoss() * adversarySuccessProbability : 0);
+               (getExpectedAdversaryPayout(adversarySuccessProbability) > 0 ? config.getPublisherLoss() * adversarySuccessProbability : 0);
     }
     
     /**

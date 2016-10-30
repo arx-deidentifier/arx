@@ -50,34 +50,24 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     private double                            maxIL;
 
     /**
-     * Creates a new instance
-     * @param config
+     * Creates a new instance. Default constructor which treats all transformation methods equally.
      */
     public MetricSDNMEntropyBasedInformationLoss() {
-        super(false, false);
+        this(0.5d);
     }
 
     /**
-     * Clone constructor
-     * @param config
-     * @param shares
-     * @param maxIL
+     * Creates a new instance.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
      */
-    private MetricSDNMEntropyBasedInformationLoss(DomainShare[] shares,
-                                                  double maxIL) {
-        super(false, false);
-        this.shares = shares;
-        this.maxIL = maxIL;
-    }
-
-    @Override
-    public MetricSDNMEntropyBasedInformationLoss clone() {
-        
-        DomainShare[] shares = new DomainShare[this.shares.length];
-        for (int i = 0; i < this.shares.length; i++) {
-            shares[i] = this.shares[i].clone();
-        }
-        return new MetricSDNMEntropyBasedInformationLoss(shares, maxIL);
+    public MetricSDNMEntropyBasedInformationLoss(double gsFactor) {
+        super(false, false, gsFactor);
     }
 
     @Override

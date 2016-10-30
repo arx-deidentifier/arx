@@ -111,7 +111,7 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
         // Calculate information loss and success probability
         double informationLoss = getEntropyBasedInformationLoss(transformation, entry);
         double successProbability = getSuccessProbability(entry);
-        double publisherPayoff = riskModel.getExpectedPublisherPayoff(informationLoss, successProbability);
+        double publisherPayoff = riskModel.getExpectedPublisherPayout(informationLoss, successProbability);
                 
         // We keep the set of records if the payoff is > 0
         return publisherPayoff > 0;

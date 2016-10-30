@@ -116,12 +116,19 @@ public class __MetricV2 {
     }
 
     /**
-     * Creates an instance of the entropy-based information loss metric
+     * Creates an instance of the entropy-based information loss metric.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
      * 
      * @return
      */
-    public static MetricSDNMEntropyBasedInformationLoss createEntropyBasedInformationLossMetric() {
-        return new MetricSDNMEntropyBasedInformationLoss();
+    public static MetricSDNMEntropyBasedInformationLoss createEntropyBasedInformationLossMetric(double gsFactor) {
+        return new MetricSDNMEntropyBasedInformationLoss(gsFactor);
     }
 
     /**
@@ -762,10 +769,18 @@ public class __MetricV2 {
      * 
      * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
      *                                the prosecutor model will be assumed, otherwise
+     *                                
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
      * @return
      */
-    public static MetricSDNMPublisherPayout createPublisherBenefitMetric(boolean journalistAttackerModel) {
-        return new MetricSDNMPublisherPayout(journalistAttackerModel);
+    public static MetricSDNMPublisherPayout createPublisherBenefitMetric(boolean journalistAttackerModel,
+                                                                         double gsFactor) {
+        return new MetricSDNMPublisherPayout(journalistAttackerModel, gsFactor);
     }
     
     /**
