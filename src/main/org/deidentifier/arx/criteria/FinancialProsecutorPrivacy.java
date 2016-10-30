@@ -60,7 +60,11 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
      * PLOS|ONE. 2015. 
      */
     public FinancialProsecutorPrivacy(){
-        // TODO: Can we find some form of monotonicity for this model?
+        // This model is not monotonic:
+        // Often, generalization only marginally reduces the adversary's success
+        // probability but at the same time it significantly reduces the
+        // publisher's payout - up to the point where it does not make sense to
+        // keep a record anymore.
         super(false, false);
     }
 
