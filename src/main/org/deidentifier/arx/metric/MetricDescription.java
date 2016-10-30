@@ -51,6 +51,9 @@ public abstract class MetricDescription implements Serializable {
     
     /** Aggregate functions supported. */
     private final boolean aggregateFunctionSupported;
+
+    /** Are different attacker models supported. */
+    private final boolean attackerModelSupported;
     
     /**
      * Creates a new description.
@@ -61,19 +64,22 @@ public abstract class MetricDescription implements Serializable {
      * @param configurableCodingModelSupported
      * @param precomputationSupported
      * @param aggregateFunctionSupported
+     * @param attackerModelSupported
      */
     MetricDescription(String name,
                               boolean monotonicVariantSupported,
                               boolean attributeWeightsSupported,
                               boolean configurableCodingModelSupported,
                               boolean precomputationSupported,
-                              boolean aggregateFunctionSupported) {
+                              boolean aggregateFunctionSupported,
+                              boolean attackerModelSupported) {
         this.name = name;
         this.monotonicVariantSupported = monotonicVariantSupported;
         this.attributeWeightsSupported = attributeWeightsSupported;
         this.configurableCodingModelSupported = configurableCodingModelSupported;
         this.precomputationSupported = precomputationSupported;
         this.aggregateFunctionSupported = aggregateFunctionSupported;
+        this.attackerModelSupported = attackerModelSupported;
     }
 
     /**
@@ -118,6 +124,13 @@ public abstract class MetricDescription implements Serializable {
     }
 
     /**
+     * @return the attackerModelSupported
+     */
+    public boolean isAttackerModelSupported() {
+        return attackerModelSupported;
+    }
+    
+    /**
      * @return the attributeWeightsSupported
      */
     public boolean isAttributeWeightsSupported() {
@@ -138,7 +151,7 @@ public abstract class MetricDescription implements Serializable {
      * @return
      */
     public abstract boolean isInstance(Metric<?> metric);
-    
+
     /**
      * @return the monotonicVariantSupported
      */

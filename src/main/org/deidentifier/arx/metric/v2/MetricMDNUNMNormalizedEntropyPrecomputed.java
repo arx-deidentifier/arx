@@ -82,6 +82,11 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
     
 
     @Override
+    public boolean isPrecomputed() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Normalized non-uniform entropy";
     }

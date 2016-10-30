@@ -64,15 +64,11 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
         return l;
     }
 
-    /**
-     * Returns the minimal group size required to fulfill this criterion.
-     *
-     * @return
-     */
-    public int getMinimalGroupSize(){
-        return minSize;
+    @Override
+    public int getMinimalClassSize() {
+        return this.minSize;
     }
-    
+
     @Override
     public int getRequirements() {
 
@@ -101,6 +97,11 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
      * @return
      */
     public double getRiskThresholdProsecutor() {
-        return 1d / getL();
+        return 1d / minSize;
+    }
+
+    @Override
+    public boolean isMinimalClassSizeAvailable() {
+        return true;
     }
 }

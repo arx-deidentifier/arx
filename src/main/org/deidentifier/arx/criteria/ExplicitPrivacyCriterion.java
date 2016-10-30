@@ -16,6 +16,7 @@
  */
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.data.DataManager;
 
 /**
@@ -59,7 +60,7 @@ public abstract class ExplicitPrivacyCriterion extends PrivacyCriterion {
     }
 
     @Override
-    public void initialize(DataManager manager) {
+    public void initialize(DataManager manager, ARXConfiguration config) {
         String[] header = manager.getDataAnalyzed().getHeader();
         for (int i=0; i< header.length; i++){
             if (header[i].equals(attribute)) {

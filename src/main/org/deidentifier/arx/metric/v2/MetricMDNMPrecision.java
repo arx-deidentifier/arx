@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -123,6 +124,16 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return true;
+    }
+    
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Non-monotonic precision";
     }
@@ -130,24 +141,49 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
+        // Prepare
+        int dimensions = getDimensions();
+        int dimensionsGeneralized = getDimensionsGeneralized();
+        int dimensionsAggregated = getDimensionsAggregated();
+        int microaggregationStart = getMicroaggregationStartIndex();
+        DistributionAggregateFunction[] microaggregationFunctions = getMicroaggregationFunctions();
+        
+        int[] transformation = node.getGeneralization();
+        double[] result = new double[dimensions];
+
         double gFactor = super.getGeneralizationFactor();
         double sFactor = super.getSuppressionFactor();
         int suppressedTuples = 0;
         int unsuppressedTuples = 0;
         
+        // For each group
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
+            
+            // Calculate number of affected records
             // if (m.count > 0) is given implicitly
             unsuppressedTuples += m.isNotOutlier ? m.count : 0;
             suppressedTuples += m.isNotOutlier ? 0 : m.count;
+
+            // Calculate avg. MSE
+            for (int i = 0; i < dimensionsAggregated; i++) {
+                double share = (double) m.count * microaggregationFunctions[i].getMeanError(m.distributions[microaggregationStart + i]);
+                result[dimensionsGeneralized + i] += m.isNotOutlier ? share * gFactor : 
+                                                                      (sFactor == 1d ? m.count : share + sFactor * ((double) m.count - share));
+            }
+
+            // Next group
             m = m.nextOrdered;
         }
         
-        double[] result = new double[getDimensions()];
-        for (int i = 0; i<heights.length; i++) {
-            double value = heights[i] == 0 ? 0 : (double) node.getGeneralization()[i] / (double) heights[i];
+        // Calculate precision
+        for (int i = 0; i<dimensionsGeneralized; i++) {
+            double value = heights[i] == 0 ? 0 : (double) transformation[i] / (double) heights[i];
             result[i] += ((double)unsuppressedTuples * value) * gFactor + (double)suppressedTuples * sFactor;
             result[i] /= rowCount;
+        }
+        for (int i = 0; i<dimensionsAggregated; i++) {
+            result[dimensionsGeneralized + i] /= rowCount;
         }
         
         // Return
@@ -161,20 +197,24 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         Arrays.fill(result, entry.count);
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         
         double gFactor = super.getGeneralizationFactor();
         double[] result = new double[getDimensions()];
         final int[] transformation = node.getGeneralization();
+        
+        // Note: we ignore microaggregation, as we cannot compute a bound for it
+        // this means that the according entries in the resulting array are not changed and remain 0d
+        // This is not a problem, as it is OK to underestimate information loss when computing lower bounds
         for (int i = 0; i < transformation.length; i++) {
             double level = (double) transformation[i];
             result[i] += (double)(heights[i] == 0 ? 0 : (level / (double) heights[i])) * gFactor;
         }
         return createInformationLoss(result);
     }
-    
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
@@ -188,6 +228,8 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
      * @param cells
      */
     protected void initialize(int[] heights, double cells){
+        
+        // TODO: Get rid of this
 
         super.initialize(heights.length);
         this.heights = heights;
@@ -203,7 +245,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         setMin(min);
         setMax(max);
     }
-
+    
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -216,7 +258,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         double sFactor = super.getSuppressionFactor();
 
         // Min and max
-        double[] min = new double[hierarchies.length];
+        double[] min = new double[super.getDimensions()];
         Arrays.fill(min, 0d);
         double[] max = new double[min.length];
         Arrays.fill(max, 1d * Math.max(gFactor, sFactor));
@@ -231,13 +273,5 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         for (int j = 0; j < heights.length; j++) {
             heights[j] = hierarchies[j].getArray()[0].length - 1;
         }
-    }
-    
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return false;
     }
 }

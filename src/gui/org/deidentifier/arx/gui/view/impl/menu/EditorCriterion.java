@@ -35,7 +35,7 @@ import de.linearbits.swt.widgets.KnobColorProfile;
 import de.linearbits.swt.widgets.KnobRange;
 
 /**
- * Base class
+ * Base class for editors
  * 
  * @author Fabian Prasser
  */

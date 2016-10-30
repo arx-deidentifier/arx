@@ -91,6 +91,11 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
     
     @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Average equivalence class size";
     }
@@ -132,7 +137,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node,
                                                         HashGroupify groupify) {

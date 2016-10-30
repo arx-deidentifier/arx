@@ -34,7 +34,7 @@ import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class orchestrates the process of checking a node for k-anonymity.
+ * This class orchestrates the process of transforming and analyzing a dataset.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer

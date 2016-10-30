@@ -66,7 +66,7 @@ public class ViewAttributeList implements IView {
     /** Model */
     private String[]         dataTypes;
 
-    /** List */
+    /** View */
     private DynamicTable     table;
 
     /** Resource */

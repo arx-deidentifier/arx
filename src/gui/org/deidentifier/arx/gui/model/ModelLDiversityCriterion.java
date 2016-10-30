@@ -64,10 +64,10 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
     public ModelLDiversityCriterion(String attribute) {
         super(attribute);
     }
-
+    
     /**
      * Creates a new instance.
-     * 
+     *
      * @param attribute
      * @param variant
      * @param l

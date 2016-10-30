@@ -69,7 +69,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     /** Header of the microaggregated data subset */
     private String[]                        microaggregationHeader;
 
-
     /**
      * Creates a new instance.
      *
@@ -123,23 +122,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     }
     
     /**
-     * Needed for microaggregation
-     * @return
-     */
-    public DistributionAggregateFunction[] getMicroaggregationFunctions() {
-        return microaggregationFunctions;
-    }
-  
-    /**
-     * Needed for microaggregation
-     * @return
-     */
-    public int getMicroaggregationStartIndex() {
-        return microaggregationStartIndex;
-    }
-
-
-    /**
      * Helper method for creating information loss.
      *
      * @param values
@@ -162,7 +144,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
             throw new IllegalStateException("Unknown aggregate function: "+function);
         }
     }
-
+  
     /**
      * Helper method for creating information loss.
      *
@@ -202,7 +184,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     protected int getDimensions() {
         return dimensions;
     }
-    
+
     /**
      * Returns the number of dimensions.
      *
@@ -211,7 +193,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     protected int getDimensionsAggregated() {
         return dimensionsAggregated;
     }
-    
+
     /**
      * Returns the number of dimensions.
      *
@@ -219,6 +201,22 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      */
     protected int getDimensionsGeneralized() {
         return dimensionsGeneralized;
+    }
+    
+    /**
+     * Needed for microaggregation
+     * @return
+     */
+    protected DistributionAggregateFunction[] getMicroaggregationFunctions() {
+        return microaggregationFunctions;
+    }
+    
+    /**
+     * Needed for microaggregation
+     * @return
+     */
+    protected int getMicroaggregationStartIndex() {
+        return microaggregationStartIndex;
     }
 
     /**
@@ -284,12 +282,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         this.max = new double[dimensions];
         Arrays.fill(max, Double.MAX_VALUE);
     }
-
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected abstract boolean isAbleToHandleMicroaggregation();
 
     /**
      * Sets the maximal information loss.

@@ -224,7 +224,9 @@ public class ComponentGSSlider {
             selection = 0d;
         }
         int value = (int)(MINIMUM + selection * (double)(MAXIMUM - MINIMUM));
+        if (!this.root.isDisposed()) this.root.setRedraw(false);
         if (!this.slider.isDisposed()) this.slider.setSelection(value);
         if (!this.canvas.isDisposed()) this.canvas.redraw();
+        if (!this.root.isDisposed()) this.root.setRedraw(true);
     }
 }

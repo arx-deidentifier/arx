@@ -21,6 +21,8 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * A listener that acts as a selection listener and a modify listener which defers change
@@ -28,7 +30,7 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @author Fabian Prasser
  */
-public abstract class DelayedChangeListener implements SelectionListener, ModifyListener {
+public abstract class DelayedChangeListener implements SelectionListener, ModifyListener, Listener {
 
     /** Tick in milliseconds */
     private static final int TICK  = 100;
@@ -65,6 +67,12 @@ public abstract class DelayedChangeListener implements SelectionListener, Modify
      * @param arg0
      */
     public abstract void delayedEvent();
+
+    @Override
+    public void handleEvent(Event arg0) {
+        this.event = true;
+        this.time = System.currentTimeMillis() + delay;
+    }
 
     @Override
     public void modifyText(ModifyEvent arg0) {

@@ -129,6 +129,11 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     }
   
     
+    @Override
+    public boolean isPrecomputed() {
+        return this.precomputed;
+    }
+
     /**
      * Returns the default variant.
      *
@@ -153,7 +158,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
             return defaultMetric.getInformationLoss(node, entry);
         }
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return precomputed ? precomputedMetric.getLowerBound(node) : 
@@ -165,7 +170,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         return precomputed ? precomputedMetric.getLowerBound(node, groupify) : 
                              defaultMetric.getLowerBound(node, groupify);
     }
-    
+
     /**
      * Returns the precomputed variant.
      *
@@ -174,7 +179,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     protected AbstractMetricMultiDimensional getPrecomputedMetric(){
         return this.precomputedMetric;
     }
-
+    
     /**
      * Returns the threshold.
      *
@@ -206,14 +211,5 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         } else {
             defaultMetric.initializeInternal(manager, definition, input, ahierarchies, config);
         }
-    }
-    
-    /**
-     * Returns whether the metric is precomputed.
-     *
-     * @return
-     */
-    protected boolean isPrecomputed() {
-        return this.precomputed;
     }
 }

@@ -30,6 +30,7 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.common.DelayedChangeListener;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -264,6 +265,11 @@ public class ViewAttributeWeights implements IView {
                     if (model != null && model.getInputConfig() != null) {
                         model.getInputConfig().setAttributeWeight(attribute, value);
                     }
+                }
+            });
+            knob.addSelectionListener(new DelayedChangeListener(100) {
+                @Override public void delayedEvent() {
+                    controller.update(new ModelEvent(ViewAttributeWeights.this, ModelPart.ATTRIBUTE_WEIGHT, model.getInputConfig().getAttributeWeight(attribute)));
                 }
             });
         }

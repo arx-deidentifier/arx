@@ -519,7 +519,7 @@ public class ARXResult {
         
         // Check, if input matches
         if (output.getInputBuffer() == null || !output.getInputBuffer().equals(this.checker.getInputBuffer())) {
-            throw new IllegalArgumentException("This output data is associated to the correct input data");
+            throw new IllegalArgumentException("This output data is not associated to the correct input data");
         }
         
         // We are now ready, to go
@@ -537,11 +537,11 @@ public class ARXResult {
 
         // We start by creating a projected instance of the configuration
         // - All privacy models will be cloned
-        // - Subsets in d-presence will be projected accordingly
+        // - Subsets will be projected accordingly
         // - Utility measures will be cloned
-        ARXConfiguration config = this.config.getSubsetInstance(rowset, gsFactor);
+        ARXConfiguration config = this.config.getInstanceForLocalRecoding(rowset, gsFactor);
 
-        // In the data definition, only MicroAggregationFunctions maintain a state, but these 
+        // In the data definition, only microaggregation functions maintain a state, but these 
         // are cloned, when cloning the definition
         // TODO: This is probably not necessary, because they are used from the data manager,
         //       which in turn creates a clone by itself
@@ -551,7 +551,7 @@ public class ARXResult {
         DataManager manager = this.manager.getSubsetInstance(rowset);
         
         // Create an anonymizer
-        // TODO: It stores some values that should be transferred?
+        // TODO: May this object stores some values that should be transferred?
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setListener(listener);
         
@@ -607,7 +607,7 @@ public class ARXResult {
         // If anything happens in the above block, the operation needs to be rolled back, because
         // the buffer might be in an inconsistent state
         } catch (Exception e) {
-            throw new RollbackRequiredException("Handle must be rebuild to ensure privacy", e);
+            throw new RollbackRequiredException("Handle must be rebuild to guarantee privacy", e);
         }
     }
 

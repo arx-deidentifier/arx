@@ -54,18 +54,14 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class DialogCriterionSelection extends TitleAreaDialog implements IDialog {
 
-    /**  View */
-    private Button                       ok         = null;
-    
+    /** View */
+    private Button                       ok         = null;    
     /**  View */
     private Button                       cancel     = null;
-    
     /**  Model */
     private List<ModelExplicitCriterion> elements   = null;
-    
     /**  Model */
     private ModelExplicitCriterion       selection  = null;
-
     /**  Controller */
     private Controller                   controller = null;
 

@@ -86,11 +86,27 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
     }
 
     @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return true;
+    }
+
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
+    public boolean isPrecomputed() {
+        return true;
+    }
+
+    @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
 
         // Prepare
+        int dimensions = getDimensions();
+        int dimensionsGeneralized = getDimensionsGeneralized();
         int[] transformation = node.getGeneralization();
-        int dimensions = transformation.length;
         double[] bound = new double[dimensions];
         DomainShare[] shares = super.getShares();
         double gFactor = super.getGeneralizationFactor();
@@ -99,10 +115,10 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
 
 
         // For each column
-        for (int column = 0; column < cardinalities.length; column++) {
+        for (int column = 0; column < dimensionsGeneralized; column++) {
 
             // Check for cached value
-            int level = node.getGeneralization()[column];
+            int level = transformation[column];
             int[][] cardinality = cardinalities[column];
             int[] values = this.values[column][level];
             
@@ -112,9 +128,12 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
                 bound[column] += share * gFactor;
             }
         }
+        // Note: we ignore microaggregation, as we cannot compute a bound for it
+        // this means that the according entries in the resulting array are not changed and remain 0d
+        // This is not a problem, as it is OK to underestimate information loss when computing lower bounds
                 
         // Normalize
-        for (int column=0; column<dimensions; column++){
+        for (int column=0; column<dimensionsGeneralized; column++){
             bound[column] = normalizeGeneralized(bound[column], column);
         }
         
@@ -151,13 +170,5 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
                 values[i][j] = hierarchies[i].getDistinctValues(j);
             }
         }
-    }
-
-    /**
-     * Returns whether this metric handles microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return true;
     }
 }

@@ -168,12 +168,4 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
         setMin(min);
         setMax(max);
     }
-    
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return false;
-    }
 }

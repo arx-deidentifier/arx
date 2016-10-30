@@ -21,6 +21,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * The d-presence criterion
@@ -32,7 +33,7 @@ import org.deidentifier.arx.framework.data.DataManager;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class DPresence extends ImplicitPrivacyCriterion{
+public class DPresence extends ImplicitPrivacyCriterion {
     
     /**  SVUID */
     private static final long serialVersionUID = 8534004943055128797L;
@@ -76,9 +77,14 @@ public class DPresence extends ImplicitPrivacyCriterion{
         
     @Override
     public DPresence clone() {
-        return new DPresence(this.getDMin(), this.getDMax(), this.getSubset().clone());
+        return new DPresence(this.getDMin(), this.getDMax(), this.getDataSubset().clone());
     }
     
+    @Override
+    public DataSubset getDataSubset() {
+        return this.subset;
+    }
+
     /**
      * Returns dMax.
      *
@@ -103,26 +109,26 @@ public class DPresence extends ImplicitPrivacyCriterion{
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
-
+    
     @Override
-    public DataSubset getSubset() {
-        return this.subset;
-    }
-
-    @Override
-    public void initialize(DataManager manager) {
+    public void initialize(DataManager manager, ARXConfiguration config) {
         // Nothing to do
     }
     
-    @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+	@Override
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         double delta = entry.count == 0 ? 0d : (double) entry.count / (double) entry.pcount;
         return (delta >= dMin) && (delta <= dMax);
     }
-    
-	@Override
+
+    @Override
     public boolean isLocalRecodingSupported() {
         return false;
+    }
+
+    @Override
+    public boolean isSubsetAvailable() {
+        return this.subset != null;
     }
 
     @Override

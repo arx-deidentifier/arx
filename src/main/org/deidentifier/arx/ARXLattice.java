@@ -489,7 +489,7 @@ public class ARXLattice implements Serializable {
             if (index == null) { return 0; }
             return transformation[index];
         }
-
+        
         /**
          * Returns the maximal information loss.
          *

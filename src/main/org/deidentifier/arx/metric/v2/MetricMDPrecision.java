@@ -76,6 +76,16 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
     }
 
     @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return false;
+    }
+    
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Monotonic precision";
     }

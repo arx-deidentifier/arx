@@ -100,8 +100,7 @@ public class EditorCriterionKAnonymity extends EditorCriterion<ModelKAnonymityCr
         result.add(new ModelKAnonymityCriterion(100));
         return result;
     }
-
-
+    
     /**
      * Parse
      */
