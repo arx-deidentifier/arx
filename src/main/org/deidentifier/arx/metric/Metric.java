@@ -1010,7 +1010,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                new MetricDescription("Publisher payout",
                                      false,  // monotonic variant supported
                                      false,  // attribute weights supported
-                                     false,  // configurable coding model supported
+                                     true,   // configurable coding model supported
                                      false,  // pre-computation supported
                                      false,  // aggregate function supported
                                      true){  // attacker model supported
@@ -1030,11 +1030,11 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                      } 
                },
                new MetricDescription("Entropy-based information loss",
-                                     false,  // monotonic variant supported
-                                     false,  // attribute weights supported
-                                     false,  // configurable coding model supported
-                                     false,  // pre-computation supported
-                                     false,  // aggregate function supported
+                                     false,   // monotonic variant supported
+                                     false,   // attribute weights supported
+                                     true,    // configurable coding model supported
+                                     false,   // pre-computation supported
+                                     false,   // aggregate function supported
                                      false){  // attacker model supported
 
                                      /** SVUID */
@@ -1132,6 +1132,12 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Parameter must be in [0, 1]");
         }
+        // A factor [0,1] weighting generalization and suppression.
+        // The default value is 0.5, which means that generalization
+        // and suppression will be treated equally. A factor of 0
+        // will favor suppression, and a factor of 1 will favor
+        // generalization. The values in between can be used for
+        // balancing both methods.
         this.gsFactor = gsFactor;
         this.sFactor = gsFactor <  0.5d ? 2d * gsFactor : 1d;
         this.gFactor = gsFactor <= 0.5d ? 1d            : 1d - 2d * (gsFactor - 0.5d);

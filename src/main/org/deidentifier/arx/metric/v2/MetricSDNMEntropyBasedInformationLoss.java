@@ -95,13 +95,22 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         return new ILSingleDimensional(0d);
     }
 
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
     /**
      * Returns the configuration of this metric.
      * 
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false, 0.5d, false, 0.0d, this.getAggregateFunction());
+        return new MetricConfiguration(false, 
+                                       super.getGeneralizationSuppressionFactor(), 
+                                       false, 
+                                       0.0d, 
+                                       this.getAggregateFunction());
     }
 
     @Override

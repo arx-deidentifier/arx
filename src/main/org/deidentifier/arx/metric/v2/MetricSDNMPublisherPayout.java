@@ -96,7 +96,11 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false, 0.5d, false, 0.0d, this.getAggregateFunction(),
+        return new MetricConfiguration(false, 
+                                       super.getGeneralizationSuppressionFactor(), // gs-factor
+                                       false, 
+                                       0.0d, 
+                                       this.getAggregateFunction(),
                                        this.journalistAttackerModel ? MetricConfigurationAttackerModel.JOURNALIST : 
                                                                       MetricConfigurationAttackerModel.PROSECUTOR);
     }
@@ -111,6 +115,11 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     @Override
     public String getName() {
         return "Publisher benefit";
+    }
+
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
     }
 
     /**
