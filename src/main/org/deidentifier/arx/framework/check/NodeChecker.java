@@ -34,7 +34,7 @@ import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class orchestrates the process of checking a node for k-anonymity.
+ * This class orchestrates the process of transforming and analyzing a dataset.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -316,21 +316,13 @@ public class NodeChecker {
     }
     
     /**
-     * Returns the input buffer
-     * @return
-     */
-    public int[][] getInputBuffer() {
-        return this.dataGeneralized.getArray();
-    }
-
-    /**
      * Returns the configuration
      * @return
      */
     public ARXConfigurationInternal getConfiguration() {
         return config;
     }
-    
+
     /**
      * Returns the checkers history, if any.
      *
@@ -338,6 +330,14 @@ public class NodeChecker {
      */
     public History getHistory() {
         return history;
+    }
+    
+    /**
+     * Returns the input buffer
+     * @return
+     */
+    public int[][] getInputBuffer() {
+        return this.dataGeneralized.getArray();
     }
     
     /**

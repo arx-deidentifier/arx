@@ -17,9 +17,11 @@
 
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * The t-closeness criterion with hierarchical-distance EMD.
@@ -74,15 +76,15 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
     }
 
     @Override
-    public void initialize(DataManager manager) {
-        super.initialize(manager);
+    public void initialize(DataManager manager, ARXConfiguration config) {
+        super.initialize(manager, config);
         this.tree = manager.getTree(attribute);
         this.start = this.tree[1] + 3;
         this.empty = new int[this.tree[1]];
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         
         // Empty data in tree
         System.arraycopy(empty, 0, tree, start, empty.length);

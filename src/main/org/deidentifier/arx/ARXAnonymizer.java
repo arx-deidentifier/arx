@@ -303,61 +303,6 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Reset a previous lattice and run the algorithm .
-     *
-     * @param manager
-     * @param definition
-     * @param config
-     * @return
-     * @throws IOException
-     */
-    protected Result anonymize(final DataManager manager,
-                               final DataDefinition definition,
-                               final ARXConfiguration config) throws IOException {
-
-        // Initialize
-        config.initialize(manager);
-
-        // Check
-        checkAfterEncoding(config, manager);
-
-        // Build or clean the lattice
-        SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
-
-        // Build a node checker
-        final NodeChecker checker = new NodeChecker(manager,
-                                                    config.getMetric(),
-                                                    config.getInternalConfiguration(),
-                                                    historySize,
-                                                    snapshotSizeDataset,
-                                                    snapshotSizeSnapshot,
-                                                    solutionSpace);
-
-        // Initialize the metric
-        config.getMetric().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
-
-        // Create an algorithm instance
-        AbstractAlgorithm algorithm = getAlgorithm(config,
-                                                   manager,
-                                                   solutionSpace,
-                                                   checker);
-        algorithm.setListener(listener);
-
-        
-        // Execute
-
-        final long time = System.currentTimeMillis();
-        algorithm.traverse();
-        
-        // Deactivate history to prevent bugs when sorting data
-        checker.getHistory().reset();
-        checker.getHistory().setSize(0);
-        
-        // Return the result
-        return new Result(config.getMetric(), checker, solutionSpace, manager, algorithm, time);
-    }
-
-    /**
      * Performs some sanity checks.
      *
      * @param config
@@ -577,5 +522,60 @@ public class ARXAnonymizer {
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
         final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria(), getAggregateFunctions(definition));
         return manager;
+    }
+
+    /**
+     * Reset a previous lattice and run the algorithm .
+     *
+     * @param manager
+     * @param definition
+     * @param config
+     * @return
+     * @throws IOException
+     */
+    protected Result anonymize(final DataManager manager,
+                               final DataDefinition definition,
+                               final ARXConfiguration config) throws IOException {
+
+        // Initialize
+        config.initialize(manager);
+
+        // Check
+        checkAfterEncoding(config, manager);
+
+        // Build or clean the lattice
+        SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
+
+        // Initialize the metric
+        config.getMetric().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
+
+        // Build a node checker
+        final NodeChecker checker = new NodeChecker(manager,
+                                                    config.getMetric(),
+                                                    config.getInternalConfiguration(),
+                                                    historySize,
+                                                    snapshotSizeDataset,
+                                                    snapshotSizeSnapshot,
+                                                    solutionSpace);
+
+        // Create an algorithm instance
+        AbstractAlgorithm algorithm = getAlgorithm(config,
+                                                   manager,
+                                                   solutionSpace,
+                                                   checker);
+        algorithm.setListener(listener);
+
+        
+        // Execute
+
+        final long time = System.currentTimeMillis();
+        algorithm.traverse();
+        
+        // Deactivate history to prevent bugs when sorting data
+        checker.getHistory().reset();
+        checker.getHistory().setSize(0);
+        
+        // Return the result
+        return new Result(config.getMetric(), checker, solutionSpace, manager, algorithm, time);
     }
 }

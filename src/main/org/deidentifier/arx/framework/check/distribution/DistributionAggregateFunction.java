@@ -185,25 +185,6 @@ public abstract class DistributionAggregateFunction implements Serializable {
             return result;
         }
 
-        /**
-         * Reads data into the provided array
-         * @param buckets
-         * @param state
-         * @return True, if data was read
-         */
-        private boolean read(int[] buckets, int[] state) {
-            while (state[1] < buckets.length && buckets[state[1]] == -1) {
-                state[1] += 2;
-            }
-            if (state[1] >= buckets.length) {
-                return false;
-            } else {
-                state[0] = buckets[state[1]];
-                state[1] += 2;
-                return true;
-            }
-        }
-
         @Override
         public <T> double getMeanError(Distribution distribution) {
 
@@ -231,6 +212,25 @@ public abstract class DistributionAggregateFunction implements Serializable {
             
             // Return error
             return (double) lvl / (double) (hierarchy[0].length - 1);
+        }
+
+        /**
+         * Reads data into the provided array
+         * @param buckets
+         * @param state
+         * @return True, if data was read
+         */
+        private boolean read(int[] buckets, int[] state) {
+            while (state[1] < buckets.length && buckets[state[1]] == -1) {
+                state[1] += 2;
+            }
+            if (state[1] >= buckets.length) {
+                return false;
+            } else {
+                state[0] = buckets[state[1]];
+                state[1] += 2;
+                return true;
+            }
         }
     }
 

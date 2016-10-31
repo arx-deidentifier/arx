@@ -27,6 +27,12 @@ import java.io.Serializable;
 public interface DomainShare extends Serializable{
 
     /**
+     * Clones the share
+     * @return
+     */
+    public abstract DomainShare clone();
+
+    /**
      * Returns the size of the domain.
      *
      * @return
@@ -41,5 +47,4 @@ public interface DomainShare extends Serializable{
      * @return
      */
     public abstract double getShare(int value, int level);
-
 }

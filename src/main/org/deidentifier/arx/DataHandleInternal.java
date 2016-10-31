@@ -49,6 +49,29 @@ public class DataHandleInternal {
     }
 
     /**
+     * Returns the associated input handle, itself if there is none.
+     * @return
+     */
+    public DataHandleInternal getAssociatedInput() {
+        
+        // Check if input already
+        if (!this.isOutput()) {
+            return this;
+        }
+        
+        // Obtain
+        DataHandle input = this.handle.registry.getInputHandle();
+        
+        // Map to subset
+        if (this.getSuperset() != null) {
+            input = input.getView();
+        }
+        
+        // Return
+        return new DataHandleInternal(input);
+    }
+
+    /**
      * Method
      * @param column
      * @return
@@ -123,7 +146,7 @@ public class DataHandleInternal {
     public String[] getDistinctValues(int column, boolean ignoreSuppression, InterruptHandler stop) {
         return handle.getDistinctValues(column, ignoreSuppression, stop);
     }
-
+    
     /**
      * Method
      * @param column
@@ -133,7 +156,7 @@ public class DataHandleInternal {
     public String[] getDistinctValues(int column, InterruptHandler stop) {
         return handle.getDistinctValues(column, false, stop);
     }
-    
+
     /**
      * Delegate
      * @param row
@@ -144,7 +167,7 @@ public class DataHandleInternal {
     public Double getDouble(int row, int column) throws ParseException {
         return handle.getDouble(row, column);
     }
-
+    
     /**
      * Method
      * @param attribute
@@ -153,7 +176,7 @@ public class DataHandleInternal {
     public int getGeneralization(String attribute) {
         return handle.getGeneralization(attribute);
     }
-    
+
     /**
      * Delegate
      * @param row
@@ -196,7 +219,7 @@ public class DataHandleInternal {
             return new DataHandleInternal(((DataHandleSubset)handle).getSource());
         }
     }
-
+  
     /**
      * Method
      * @param row
@@ -206,14 +229,14 @@ public class DataHandleInternal {
     public String getValue(int row, int column) {
         return handle.getValue(row, column);
     }
-  
+
     /**
      * Gets the value
      */
     public String getValue(final int row, final int col, final boolean ignoreSuppression) {
         return handle.internalGetValue(row, col, ignoreSuppression);
     }
-
+    
     /**
      * Returns the view
      * @return
@@ -229,7 +252,7 @@ public class DataHandleInternal {
     public boolean isAnonymous() {
         return handle.isAnonymous();
     }
-    
+
     /**
      * Returns whether the handle is optimized
      * @return
@@ -257,28 +280,5 @@ public class DataHandleInternal {
         } else {
             return this.handle instanceof DataHandleOutput;
         }
-    }
-
-    /**
-     * Returns the associated input handle, itself if there is none.
-     * @return
-     */
-    public DataHandleInternal getAssociatedInput() {
-        
-        // Check if input already
-        if (!this.isOutput()) {
-            return this;
-        }
-        
-        // Obtain
-        DataHandle input = this.handle.registry.getInputHandle();
-        
-        // Map to subset
-        if (this.getSuperset() != null) {
-            input = input.getView();
-        }
-        
-        // Return
-        return new DataHandleInternal(input);
     }
 }

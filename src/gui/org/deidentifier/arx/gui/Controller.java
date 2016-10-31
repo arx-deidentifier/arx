@@ -247,6 +247,9 @@ public class Controller implements IView {
         if (!model.getDPresenceModel().isEnabled()) {
             criteria.add(model.getDPresenceModel());
         }
+        if (!model.getStackelbergModel().isEnabled()) {
+        	criteria.add(model.getStackelbergModel());
+        }
         
         Set<String> sensitive = model.getInputDefinition().getSensitiveAttributes();
         
@@ -317,6 +320,9 @@ public class Controller implements IView {
         }
         if (model.getDPresenceModel().isEnabled()) {
             criteria.add(model.getDPresenceModel());
+        }
+        if (model.getStackelbergModel().isEnabled()) {
+        	criteria.add(model.getStackelbergModel());
         }
         
         Set<String> sensitive = model.getInputDefinition().getSensitiveAttributes();

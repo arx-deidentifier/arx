@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +30,10 @@ import java.util.Set;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.FinancialJournalistNoAttackPrivacy;
+import org.deidentifier.arx.criteria.FinancialJournalistPrivacy;
+import org.deidentifier.arx.criteria.FinancialProsecutorNoAttackPrivacy;
+import org.deidentifier.arx.criteria.FinancialProsecutorPrivacy;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.KMap;
@@ -50,8 +55,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     // TODO: While in use, this configuration object should be locked, similar to, e.g., DataDefinition
 
     /**
-     * Class for internal use that provides access to more details.
-     * TODO: This class is a hack and should be removed in future releases
+     * Class for internal use that provides access to more parameters and functionality.
      */
     public static class ARXConfigurationInternal {
         
@@ -339,7 +343,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private int                                snapshotLength;
 
     /**
-     * Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples. */
+     * Defines values of which attribute type are to be replaced by the
+     * suppression string in suppressed tuples.
+     */
     private Integer                            suppressedAttributeTypes              = 1 << AttributeType.ATTR_TYPE_QI;
 
     /**
@@ -351,7 +357,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Should microaggregation be based on data utility measurements */
     private boolean                            utilityBasedMicroaggregation          = false;
 
-    /** TODO: This is a hack and should be removed in future releases. */
+    /** Internal variant of the class providing a broader interface. */
     private transient ARXConfigurationInternal accessibleInstance                    = null;
 
     /** Are we performing optimal anonymization for sample-based criteria? */
@@ -360,11 +366,17 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Should we use the heuristic search algorithm? */
     private boolean                            heuristicSearchEnabled                = false;
 
-    /** We will use the heuristic algorithm, if the size of the search space exceeds this threshold */
+    /**
+     * We will use the heuristic algorithm, if the size of the search space
+     * exceeds this threshold
+     */
     private Integer                            heuristicSearchThreshold              = 100000;
 
     /** The heuristic algorithm will terminate after the given time limit */
     private Integer                            heuristicSearchTimeLimit              = 30000;
+
+    /** Financial configuration*/
+    private ARXFinancialConfiguration          financialConfiguration                = ARXFinancialConfiguration.create();
 
     /**
      * Creates a new configuration without tuple suppression.
@@ -413,36 +425,60 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @return
      */
     public ARXConfiguration addCriterion(PrivacyCriterion c) {
+        
+        // Check
         checkArgument(c);
                 
+        // Check models for which only one instance is supported
         if ((c instanceof DPresence) && this.containsCriterion(DPresence.class)) {
             throw new RuntimeException("You must not add more than one d-presence criterion");
-        } 
-        if ((c instanceof DPresence) && this.containsCriterion(KMap.class)) {
-            if (this.getCriterion(KMap.class).isAccurate() && !Arrays.equals(((DPresence)c).getSubset().getArray(), this.getCriterion(KMap.class).getSubset().getArray())) {
-                throw new IllegalArgumentException("You must not use two different research subsets");
-            }
-        } 
-        if ((c instanceof KMap) && this.containsCriterion(DPresence.class)) {
-            if (((KMap)c).isAccurate() && !Arrays.equals(((KMap)c).getSubset().getArray(), this.getCriterion(DPresence.class).getSubset().getArray())) {
-                throw new IllegalArgumentException("You must not use two different research subsets");
-            }
-        } 
+        }
         if ((c instanceof KMap) && this.containsCriterion(KMap.class)) { 
             throw new RuntimeException("You must not add more than one k-map criterion"); 
         } 
         if ((c instanceof KAnonymity) && this.containsCriterion(KAnonymity.class)) { 
                throw new RuntimeException("You must not add more than one k-anonymity criterion"); 
         }
-        criteria.add(c);
-        
-        if (this.containsCriterion(EDDifferentialPrivacy.class) && 
-           (this.containsCriterion(DPresence.class) || this.containsCriterion(Inclusion.class) || 
-            this.containsCriterion(KMap.class))) {
-            criteria.remove(c);
-            throw new RuntimeException("Differential privacy must not be combined with a research subset");
+        if ((c instanceof EDDifferentialPrivacy) && this.containsCriterion(EDDifferentialPrivacy.class)) { 
+            throw new RuntimeException("You must not add more than one differential privacy criterion"); 
         }
         
+        // Check whether different subsets have been defined
+        if (c.isSubsetAvailable()) {
+
+            // Collect all subsets
+            List<int[]> subsets = new ArrayList<int[]>();
+            subsets.add(c.getDataSubset().getArray());
+            for (PrivacyCriterion other : this.getCriteria()) {
+                if (other.isSubsetAvailable()) {
+                    subsets.add(other.getDataSubset().getArray());
+                }
+            }
+
+            // Compare
+            for (int i = 0; i < subsets.size() - 1; i++) {
+                if (!Arrays.equals(subsets.get(i), subsets.get(i + 1))) {
+                    throw new IllegalArgumentException("Using different research subsets is not supported");
+                }
+            }
+        }
+        
+        // Add
+        criteria.add(c);
+        
+        // Check DP has been combined with a subset
+        if (this.containsCriterion(EDDifferentialPrivacy.class)) {
+            for (PrivacyCriterion other : this.getCriteria()) {
+                if (other != c && other.isSubsetAvailable()) {
+                    
+                    // Remove and complain
+                    criteria.remove(c);
+                    throw new RuntimeException("Combining differential privacy with a research subset is not supported");        
+                }
+            }
+        }
+        
+        // Everything is fine
         return this;
     }
     
@@ -468,6 +504,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchThreshold = this.heuristicSearchThreshold;
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
         result.utilityBasedMicroaggregation = this.utilityBasedMicroaggregation;
+        result.financialConfiguration = this.getFinancialConfiguration().clone();
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
@@ -475,7 +512,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return result;
     }
-
+    
     /**
      * Returns whether the configuration contains a criterion of the given class.
      *
@@ -489,6 +526,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return false;
     }
+    
     /**
      * Returns the weight for the given attribute.
      *
@@ -505,7 +543,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (value == null) return 0.5d;
         else return value;
     }
-    
+
     /**
      * Returns all configured attribute weights. For attributes which are not a key in this
      * set the default attribute weight will be assumed by ARX. This default value is 
@@ -520,7 +558,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return new HashMap<String, Double>(this.attributeWeights);
     }
-    
     /**
      * Returns all criteria.
      * @return
@@ -528,7 +565,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public Set<PrivacyCriterion> getCriteria() {
         return this.criteria;
     }
-  
+    
     /**
      * Returns all privacy criteria that are instances of the given class.
      *
@@ -572,6 +609,16 @@ public class ARXConfiguration implements Serializable, Cloneable {
             return null;
         }
     }
+  
+    /**
+     * Returns the financial configuration
+     */
+    public ARXFinancialConfiguration getFinancialConfiguration() {
+        if (this.financialConfiguration == null) {
+            this.financialConfiguration = ARXFinancialConfiguration.create();
+        }
+        return this.financialConfiguration;
+    }
     
     /**
      * When the size of the solution space exceeds the returned number of transformations,
@@ -584,7 +631,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.heuristicSearchThreshold;
     }
-
+    
     /**
      * The heuristic search algorithm will terminate after the returned number of milliseconds.
      * The default is 30 seconds.
@@ -605,7 +652,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public final double getMaxOutliers() {
         return relMaxOutliers;
     }
-    
+
     /**
      * Returns the metric used for measuring information loss.
      *
@@ -702,7 +749,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return risk;
     }
-
+    
     /**
      * Returns whether values of the given attribute type will be replaced by the suppression 
      * string in suppressed tuples.
@@ -748,14 +795,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.suppressionAlwaysEnabled;
     }
-    
+
     /**
      * Is optimality guaranteed for sample-based criteria?
      */
     public boolean isUseHeuristicSearchForSampleBasedCriteria() {
         return heuristicSearchForSampleBasedCriteria;
     }
-
+    
     /**
      * Returns whether microaggregation is based on utility measures
      * @return
@@ -820,6 +867,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.attributeWeights = new HashMap<String, Double>();
         }
         this.attributeWeights.put(attribute, weight);
+    }
+
+    /**
+     * Sets the financial configuration
+     * @param config
+     */
+    public ARXConfiguration setFinancialConfiguration(ARXFinancialConfiguration config) {
+        if (config == null) {
+            throw new NullPointerException("Argument must not be null");
+        }
+        this.financialConfiguration = config;
+        return this;
     }
 
     /**
@@ -944,7 +1003,82 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * TODO: This is a hack and should be removed in future releases.
+     * Clones this config and projects everything onto the given subset.<br>
+     * - All privacy models will be cloned<br>
+     * - Subsets in d-presence will be projected accordingly<br>
+     * - Utility measures will be cloned<br>
+     * - Replaces estimated k-map with according k-anonymity<br>
+     * @param gsFactor 
+     *
+     * @return
+     */
+    protected ARXConfiguration getInstanceForLocalRecoding(RowSet rowset, double gsFactor) {
+
+        // Check, if we can do this
+        for (PrivacyCriterion criterion : this.getCriteria()) {
+            if (!criterion.isLocalRecodingSupported()) {
+                throw new IllegalStateException("Local recoding not supported.");
+            }
+        }
+        
+        // Prepare a subset
+        DataSubset subset = this.getSubset();
+        if (subset != null) {
+            subset = subset.getSubsetInstance(rowset);
+        } else {
+            subset = DataSubset.create(rowset.length(), rowset);
+        }
+        
+        // Clone all criteria
+        boolean subsetAdded = false;
+        HashSet<PrivacyCriterion> criteria = new HashSet<PrivacyCriterion>();
+        for (PrivacyCriterion criterion : this.getCriteria()) {
+            
+            // Clone and store
+            PrivacyCriterion clone = criterion.clone(subset);
+            subsetAdded |= criterion.isSubsetAvailable();
+            
+            // We need to make sure that we don't add multiple instances of k-anonymity
+            // because k-map can be converted into this model
+            if (clone instanceof KAnonymity) {
+                Iterator<PrivacyCriterion> iter = criteria.iterator();
+                while (iter.hasNext()) {
+                    PrivacyCriterion other = iter.next();
+                    if (other instanceof KAnonymity) {
+                        if (((KAnonymity)other).getK() <= ((KAnonymity)clone).getK()) {
+                            iter.remove();
+                        } else {
+                            clone = null;
+                        }
+                    }
+                }
+                if (clone != null) {
+                    criteria.add(clone);
+                }
+            } else {
+                criteria.add(clone);
+            }
+        }
+        
+        // Make sure that we have added the subset
+        if (!subsetAdded) {
+            criteria.add(new Inclusion(subset));
+        }
+        
+        // Clone the config
+        ARXConfiguration result = this.clone();
+        result.aCriteria = null;
+        result.criteria = criteria;
+        MetricConfiguration utilityConfig = result.getMetric().getConfiguration();
+        utilityConfig.setGsFactor(gsFactor);
+        result.metric = result.getMetric().getDescription().createInstance(utilityConfig);
+        
+        // Return
+        return result;
+    }
+
+    /**
+     * Returns an internal variant of the class which provides a broader interface
      *
      * @return
      */
@@ -956,36 +1090,23 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns the minimal size of an equivalence class induced by the contained criteria.
+     * Returns the minimal size of an equivalence class induced by the defined privacy models.
      * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
      * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
      */
     protected int getMinimalGroupSize() {
-        int k = -1;
-        int l = -1;
 
-        if (this.containsCriterion(KAnonymity.class)) {
-            k = this.getCriterion(KAnonymity.class).getK();
-        }
-        
-        if (this.containsCriterion(EDDifferentialPrivacy.class)) {
-            k = Math.max(k, this.getCriterion(EDDifferentialPrivacy.class).getK());
-        }
-        
-        if (this.containsCriterion(KMap.class)) {
-            KMap kMap = this.getCriterion(KMap.class);
-            if (!kMap.isAccurate()) {
-                k = Math.max(k, kMap.getDerivedK());
+        // Init
+        int result = -1;
+
+        // For each
+        for (PrivacyCriterion c : this.getCriteria()) {
+            if (c.isMinimalClassSizeAvailable()) {
+                result = Math.max(result, c.getMinimalClassSize());
             }
         }
 
-        if (this.containsCriterion(LDiversity.class)) {
-            for (LDiversity c : this.getCriteria(LDiversity.class)) {
-                l = Math.max(l, c.getMinimalGroupSize());
-            }
-        }
-
-        int result = Math.max(k, l);
+        // Check & return
         if (result == -1) return Integer.MAX_VALUE;
         else return result;
     }
@@ -998,7 +1119,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected int getRequirements() {
         return this.requirements;
     }
-
+    
     /**
      * Returns all sample-based criteria as an array. Only used internally.
      * @return
@@ -1015,58 +1136,22 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected int getSnapshotLength() {
         return this.snapshotLength;
     }
-    
+
     /**
      * Returns the data subset, if any subset is defined.
-     * You may only call this, after the config has be initialized.
+     * You may only call this, after the configuration has be initialized.
      * @return
      */
     protected DataSubset getSubset() {
         for (PrivacyCriterion c : this.criteria) {
-            if (c.getSubset() != null) {
-                return c.getSubset();
+            if (c.isSubsetAvailable()) {
+                DataSubset subset = c.getDataSubset();
+                if (subset != null) {
+                    return subset;    
+                }
             }
         }
         return null;
-    }
-
-    /**
-     * Clones this config and projects everything onto the given subset.<br>
-     * - All privacy models will be cloned<br>
-     * - Subsets in d-presence will be projected accordingly<br>
-     * - Utility measures will be cloned<br>
-     * - Replaces estimated k-map with according k-anonymity<br>
-     * @param gsFactor 
-     *
-     * @return
-     */
-    protected ARXConfiguration getSubsetInstance(RowSet rowset, double gsFactor) {
-        ARXConfiguration result = this.clone();
-        result.aCriteria = null;
-        HashSet<PrivacyCriterion> criteria = new HashSet<PrivacyCriterion>();
-        for (PrivacyCriterion criterion : result.criteria) {
-            PrivacyCriterion clone = null;
-            
-            if (!criterion.isLocalRecodingSupported()) {
-                throw new IllegalStateException("Local recoding not supported.");
-            }
-            
-            if (criterion instanceof Inclusion) {
-                clone = new Inclusion(((Inclusion) criterion).getSubset().getSubsetInstance(rowset));
-            } else if (criterion instanceof KMap) {
-                // Replace estimated k-map with according k-anonymity.
-                // This prohibits the re-calculation of k' if local recoding is applied.
-                clone = new KAnonymity(((KMap) criterion).getDerivedK());
-            } else {
-                clone = criterion.clone();
-            }
-            criteria.add(clone);
-        }
-        result.criteria = criteria;
-        MetricConfiguration utilityConfig = result.getMetric().getConfiguration();
-        utilityConfig.setGsFactor(gsFactor);
-        result.metric = result.getMetric().getDescription().createInstance(utilityConfig);
-        return result;
     }
     
     /**
@@ -1089,7 +1174,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
         // Check
         if (criteria.isEmpty()) { 
-            throw new RuntimeException("At least one privacy criterion must be specified!"); 
+            throw new RuntimeException("At least one privacy model must be specified!"); 
         }
 
         // Compute requirements
@@ -1105,7 +1190,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
         // Initialize
         for (PrivacyCriterion c : criteria) {
-            c.initialize(manager);
+            c.initialize(manager, this);
         }
 
         int dataLength = 0;
@@ -1117,7 +1202,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
         // Compute max outliers
         if (this.containsCriterion(EDDifferentialPrivacy.class)) {
-            absMaxOutliers = (int)dataLength;
+            absMaxOutliers = (int) dataLength;
         } else {
             absMaxOutliers = (int) Math.floor(this.relMaxOutliers * (double) dataLength);
         }
@@ -1139,6 +1224,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         if (this.containsCriterion(TCloseness.class)) {
             list.addAll(this.getCriteria(TCloseness.class));
+        }
+        if (this.containsCriterion(FinancialProsecutorPrivacy.class)) {
+            list.addAll(this.getCriteria(FinancialProsecutorPrivacy.class));
+        }
+        if (this.containsCriterion(FinancialProsecutorNoAttackPrivacy.class)) {
+            list.addAll(this.getCriteria(FinancialProsecutorNoAttackPrivacy.class));
+        }
+        if (this.containsCriterion(FinancialJournalistPrivacy.class)) {
+            list.addAll(this.getCriteria(FinancialJournalistPrivacy.class));
+        }
+        if (this.containsCriterion(FinancialJournalistNoAttackPrivacy.class)) {
+            list.addAll(this.getCriteria(FinancialJournalistNoAttackPrivacy.class));
         }
         this.aCriteria = list.toArray(new PrivacyCriterion[0]);
         

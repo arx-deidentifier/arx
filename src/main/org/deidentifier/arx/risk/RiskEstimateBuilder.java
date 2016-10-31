@@ -167,6 +167,17 @@ public class RiskEstimateBuilder {
     }
 
     /**
+     * Returns a class providing access to an analysis of potential quasi-identifiers using
+     * the concepts of alpha distinction and alpha separation.
+     *
+     * @return the RiskModelAttributes data from risk analysis
+     */
+    public RiskModelAttributes getAttributeRisks() {
+        progress.value = 0;
+        return new RiskModelAttributes(this.population, this.handle, this.identifiers, this.stop, progress, this.solverconfig, this.arxconfig);
+    }
+
+    /**
      * Returns a model of the equivalence classes in this data set
      *
      * @return
@@ -219,17 +230,6 @@ public class RiskEstimateBuilder {
                 progress,
                 solverconfig,
                 false);
-    }
-
-    /**
-     * Returns a class providing access to an analysis of potential quasi-identifiers using
-     * the concepts of alpha distinction and alpha separation.
-     *
-     * @return the RiskModelAttributes data from risk analysis
-     */
-    public RiskModelAttributes getAttributeRisks() {
-        progress.value = 0;
-        return new RiskModelAttributes(this.population, this.handle, this.identifiers, this.stop, progress, this.solverconfig, this.arxconfig);
     }
 
     /**

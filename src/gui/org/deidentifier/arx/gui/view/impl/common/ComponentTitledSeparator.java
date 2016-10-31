@@ -111,99 +111,6 @@ public class ComponentTitledSeparator extends Composite {
         }
 
         /**
-         * Redraw the composite
-         */
-        private void redrawComposite() {
-                // Dispose previous content
-                for (final Control c : this.getChildren()) {
-                        c.dispose();
-                }
-
-                int numberOfColumns = 1;
-
-                if (this.text != null) {
-                        numberOfColumns++;
-                }
-
-                if (this.image != null) {
-                        numberOfColumns++;
-                }
-
-                if (this.alignment == SWT.CENTER) {
-                        numberOfColumns++;
-                }
-
-                super.setLayout(new GridLayout(numberOfColumns, false));
-                createContent();
-        }
-
-        /**
-         * Create the content
-         */
-        private void createContent() {
-                switch (this.alignment) {
-                        case SWT.CENTER:
-                                createSeparator();
-                                createTitle();
-                                createSeparator();
-                                break;
-                        case SWT.LEFT:
-                                createTitle();
-                                createSeparator();
-                                break;
-                        default:
-                                createSeparator();
-                                createTitle();
-                                break;
-                }
-        }
-
-        /**
-         * Create a separator
-         */
-        private void createSeparator() {
-                final Label separator = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
-                separator.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-                separator.setBackground(getBackground());
-        }
-
-        /**
-         * Create the title
-         */
-        private void createTitle() {
-                if (this.image != null) {
-                        final Label imageLabel = createLabel();
-                        imageLabel.setImage(this.image);
-                }
-
-                if (this.text != null && !this.text.trim().equals("")) {
-                        final Label textLabel = createLabel();
-                        textLabel.setText(this.text);
-
-                }
-        }
-
-        /**
-         * @return a SWT label
-         */
-        private Label createLabel() {
-                final Label label = new Label(this, SWT.NONE);
-                label.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-                label.setFont(getFont());
-                label.setForeground(getForeground());
-                label.setBackground(getBackground());
-                return label;
-        }
-
-        /**
-         * @see org.eclipse.swt.widgets.Composite#setLayout(org.eclipse.swt.widgets.Layout)
-         */
-        @Override
-        public void setLayout(final Layout layout) {
-                throw new UnsupportedOperationException("Not supported");
-        }
-
-        /**
          * Returns a value which describes the position of the text or image in the
          * receiver. The value will be one of <code>LEFT</code>, <code>RIGHT</code>
          * or <code>CENTER</code>.
@@ -298,6 +205,14 @@ public class ComponentTitledSeparator extends Composite {
         }
 
         /**
+         * @see org.eclipse.swt.widgets.Composite#setLayout(org.eclipse.swt.widgets.Layout)
+         */
+        @Override
+        public void setLayout(final Layout layout) {
+                throw new UnsupportedOperationException("Not supported");
+        }
+
+        /**
          * Sets the receiver's text.
          * 
          * @param string the new text
@@ -315,6 +230,91 @@ public class ComponentTitledSeparator extends Composite {
         public void setText(final String text) {
                 checkWidget();
                 this.text = text;
+        }
+
+        /**
+         * Create the content
+         */
+        private void createContent() {
+                switch (this.alignment) {
+                        case SWT.CENTER:
+                                createSeparator();
+                                createTitle();
+                                createSeparator();
+                                break;
+                        case SWT.LEFT:
+                                createTitle();
+                                createSeparator();
+                                break;
+                        default:
+                                createSeparator();
+                                createTitle();
+                                break;
+                }
+        }
+
+        /**
+         * @return a SWT label
+         */
+        private Label createLabel() {
+                final Label label = new Label(this, SWT.NONE);
+                label.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+                label.setFont(getFont());
+                label.setForeground(getForeground());
+                label.setBackground(getBackground());
+                return label;
+        }
+
+        /**
+         * Create a separator
+         */
+        private void createSeparator() {
+                final Label separator = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
+                separator.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+                separator.setBackground(getBackground());
+        }
+
+        /**
+         * Create the title
+         */
+        private void createTitle() {
+                if (this.image != null) {
+                        final Label imageLabel = createLabel();
+                        imageLabel.setImage(this.image);
+                }
+
+                if (this.text != null && !this.text.trim().equals("")) {
+                        final Label textLabel = createLabel();
+                        textLabel.setText(this.text);
+
+                }
+        }
+
+        /**
+         * Redraw the composite
+         */
+        private void redrawComposite() {
+                // Dispose previous content
+                for (final Control c : this.getChildren()) {
+                        c.dispose();
+                }
+
+                int numberOfColumns = 1;
+
+                if (this.text != null) {
+                        numberOfColumns++;
+                }
+
+                if (this.image != null) {
+                        numberOfColumns++;
+                }
+
+                if (this.alignment == SWT.CENTER) {
+                        numberOfColumns++;
+                }
+
+                super.setLayout(new GridLayout(numberOfColumns, false));
+                createContent();
         }
 
 }

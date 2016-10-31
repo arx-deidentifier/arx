@@ -239,6 +239,52 @@ public class Resources {
     }
     
     /**
+     * Returns the logger.
+     *
+     * @return
+     */
+    public Logger getLogger() {
+        return logger;
+    }
+    
+    /**
+     * Returns an image. Do not dispose the image.
+     *
+     * @param name
+     * @return
+     */
+    public Image getManagedImage(final String name) {
+        if (shell.isDisposed()) return null;
+        
+        if (imageCache.containsKey(name)) {
+            return imageCache.get(name);
+        } else {
+            Image image = getImage(name);
+            imageCache.put(name, image);
+            return image;
+        }
+    }
+    
+    /**
+     * Returns the shell.
+     *
+     * @return
+     */
+    public Shell getShell() {
+        return shell;
+    }
+    
+    /**
+     * Returns a stream.
+     *
+     * @param name
+     * @return
+     */
+    public InputStream getStream(final String name) {
+        return this.getClass().getResourceAsStream(name);
+    }
+    
+    /**
      * Returns an image.
      *
      * @param name
@@ -267,51 +313,5 @@ public class Resources {
                 }
             }
         }
-    }
-    
-    /**
-     * Returns an image. Do not dispose the image.
-     *
-     * @param name
-     * @return
-     */
-    public Image getManagedImage(final String name) {
-        if (shell.isDisposed()) return null;
-        
-        if (imageCache.containsKey(name)) {
-            return imageCache.get(name);
-        } else {
-            Image image = getImage(name);
-            imageCache.put(name, image);
-            return image;
-        }
-    }
-    
-    /**
-     * Returns the logger.
-     *
-     * @return
-     */
-    public Logger getLogger() {
-        return logger;
-    }
-    
-    /**
-     * Returns the shell.
-     *
-     * @return
-     */
-    public Shell getShell() {
-        return shell;
-    }
-    
-    /**
-     * Returns a stream.
-     *
-     * @param name
-     * @return
-     */
-    public InputStream getStream(final String name) {
-        return this.getClass().getResourceAsStream(name);
     }
 }

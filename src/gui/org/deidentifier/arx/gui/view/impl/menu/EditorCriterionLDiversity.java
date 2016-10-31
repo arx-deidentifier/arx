@@ -81,6 +81,20 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
         super(parent, model);
     }
 
+    /**
+     * Returns the index of the given variant
+     * @param variant
+     * @return
+     */
+    private int getIndexOfVariant(int variant) {
+        for (int i = 0; i < VARIANTS.length; i++) {
+            if (VARIANTS[i] == variant) {
+                return i;
+            }
+        }
+        throw new IllegalStateException("Unknown variant of l-diversity");
+    }
+    
     @Override
     protected Composite build(Composite parent) {
 
@@ -149,38 +163,6 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
         // Return
         return group;
     }
-    
-    /**
-     * Returns the index of the given variant
-     * @param variant
-     * @return
-     */
-    private int getIndexOfVariant(int variant) {
-        for (int i = 0; i < VARIANTS.length; i++) {
-            if (VARIANTS[i] == variant) {
-                return i;
-            }
-        }
-        throw new IllegalStateException("Unknown variant of l-diversity");
-    }
-
-    @Override
-    protected void parse(ModelLDiversityCriterion model, boolean _default) {
-        
-        // Set c and l
-        updateLabel(labelC, model.getC());
-        updateLabel(labelL, model.getL());
-        knobL.setValue(model.getL());
-        knobC.setValue(model.getC());
-
-        // Set variant
-        comboVariant.select(getIndexOfVariant(model.getVariant()));   
-        if (model.getVariant() == ModelLDiversityCriterion.VARIANT_RECURSIVE) {
-            knobC.setEnabled(true);
-        } else {
-            knobC.setEnabled(false);
-        }
-    }
 
     @Override
     protected List<ModelCriterion> getTypicalParameters() {
@@ -217,5 +199,23 @@ public class EditorCriterionLDiversity extends EditorCriterion<ModelLDiversityCr
         result.add(new ModelLDiversityCriterion(this.model.getAttribute(), ModelLDiversityCriterion.VARIANT_RECURSIVE, 10, 4));
         
         return result;
+    }
+
+    @Override
+    protected void parse(ModelLDiversityCriterion model, boolean _default) {
+        
+        // Set c and l
+        updateLabel(labelC, model.getC());
+        updateLabel(labelL, model.getL());
+        knobL.setValue(model.getL());
+        knobC.setValue(model.getC());
+
+        // Set variant
+        comboVariant.select(getIndexOfVariant(model.getVariant()));   
+        if (model.getVariant() == ModelLDiversityCriterion.VARIANT_RECURSIVE) {
+            knobC.setEnabled(true);
+        } else {
+            knobC.setEnabled(false);
+        }
     }
 }

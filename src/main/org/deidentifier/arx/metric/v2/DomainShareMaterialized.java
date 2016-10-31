@@ -122,6 +122,23 @@ public class DomainShareMaterialized implements DomainShare {
     }
 
     /**
+     * Clone constructor
+     * @param size
+     * @param shares
+     * @param duplicates
+     */
+    private DomainShareMaterialized(double size, double[] shares, LongDoubleOpenHashMap duplicates) {
+        this.size = size;
+        this.shares = shares;
+        this.duplicates = duplicates;
+    }
+
+    @Override
+    public DomainShareMaterialized clone() {
+        return new DomainShareMaterialized(this.size, this.shares.clone(), this.duplicates.clone());
+    }
+
+    /**
      * Returns the size of the domain.
      *
      * @return
@@ -179,5 +196,4 @@ public class DomainShareMaterialized implements DomainShare {
         // Write map
         IO.writeLongDoubleOpenHashMap(aOutputStream, duplicates);
     }
-
 }

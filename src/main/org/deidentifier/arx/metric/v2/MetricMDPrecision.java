@@ -49,16 +49,16 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
      *
      * @param function
      */
-    protected MetricMDPrecision(double gsFactor, AggregateFunction function){
-        super(true, true, gsFactor, function);
+    protected MetricMDPrecision(AggregateFunction function){
+        super(true, true, function);
     }
     /**
      * Creates a new instance.
      *
      * @param function
      */
-    protected MetricMDPrecision(AggregateFunction function){
-        super(true, true, function);
+    protected MetricMDPrecision(double gsFactor, AggregateFunction function){
+        super(true, true, gsFactor, function);
     }
 
     /**
@@ -73,6 +73,16 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
                                        0.0d,                       // precomputation threshold
                                        this.getAggregateFunction() // aggregate function
                                        );
+    }
+
+    @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return false;
+    }
+    
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
     }
 
     @Override

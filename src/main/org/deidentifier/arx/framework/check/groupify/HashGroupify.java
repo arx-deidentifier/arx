@@ -484,7 +484,7 @@ public class HashGroupify {
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(entry);
+            int anonymous = isPrivacyModelFulfilled(transformation, entry);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -573,7 +573,7 @@ public class HashGroupify {
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(entry);
+            int anonymous = isPrivacyModelFulfilled(transformation, entry);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -676,12 +676,12 @@ public class HashGroupify {
         
     /**
      * Checks whether the given entry is anonymous.
-     *
+     * @param transformation
      * @param entry
      * @return
      * @returns -1, if all criteria are fulfilled, 0, if minimal group size is not fulfilled, (index+1) if criteria[index] is not fulfilled
      */
-    private int isPrivacyModelFulfilled(HashGroupifyEntry entry) {
+    private int isPrivacyModelFulfilled(Transformation transformation, HashGroupifyEntry entry) {
         
         // Check minimal group size
         if (minimalClassSize != Integer.MAX_VALUE && entry.count < minimalClassSize) {
@@ -692,7 +692,7 @@ public class HashGroupify {
         // Note: The d-presence criterion must be checked first to ensure correct handling of d-presence with tuple suppression.
         // This is currently ensured by convention. See ARXConfiguration.getCriteriaAsArray();
         for (int i = 0; i < classBasedCriteria.length; i++) {
-            if (!classBasedCriteria[i].isAnonymous(entry)) {
+            if (!classBasedCriteria[i].isAnonymous(transformation, entry)) {
                 return i + 1;
             }
         }

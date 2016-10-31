@@ -23,6 +23,7 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
@@ -65,7 +66,6 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
      * @param hierarchy
      * @param dictionary
      */
-
     @SuppressWarnings("unchecked")
     public DomainShareInterval(HierarchyBuilderIntervalBased<T> builder,
                                int[][] hierarchy, String[] dictionary) {
@@ -166,6 +166,30 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
             }
         }
     }
+    
+    /**
+     * Creates a new instance
+     */
+    @SuppressWarnings("unchecked")
+    private DomainShareInterval(double domainSize,
+                                DataType<T> dataType,
+                                Range<T> lower, Range<T> upper,
+                                double[] shares,
+                                LongDoubleOpenHashMap duplicates) {
+        super(dataType, lower, upper);
+        this.domainSize = domainSize;
+        this.dataType = (DataTypeWithRatioScale<T>)dataType;
+        this.shares = shares;
+        this.duplicates = duplicates;
+    }
+
+    @Override
+    public DomainShareInterval<T> clone() {
+        return new DomainShareInterval<T>(this.domainSize, this.getDataType(), 
+                                          this.getLowerRange(), this.getUpperRange(),
+                                          this.shares.clone(), this.duplicates.clone());
+        
+    }
 
     /**
      * Returns the size of the domain.
@@ -228,7 +252,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
             throw new IllegalStateException("Unknown data type");
         }
     }
-
+    
     /**
      * Serialization.
      *

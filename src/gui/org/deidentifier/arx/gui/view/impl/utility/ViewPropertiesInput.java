@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.utility;
 
+import org.deidentifier.arx.ARXFinancialConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
@@ -27,7 +28,8 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTree;
-import org.deidentifier.arx.metric.Metric.AggregateFunction;
+import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -85,7 +87,6 @@ public class ViewPropertiesInput extends ViewProperties {
                                  final Object arg2) {
             // Nothing to do
         }
-
     }
 
     /**
@@ -223,8 +224,9 @@ public class ViewPropertiesInput extends ViewProperties {
 
     /**
      * Update the view.
+     * @param part
      */
-    protected void update() {
+    protected void doUpdate(ModelPart part) {
 
     	// Check model
         if (model == null) { return; }
@@ -233,16 +235,33 @@ public class ViewPropertiesInput extends ViewProperties {
         DataDefinition definition = model.getOutputDefinition();
         if (definition == null) definition = model.getInputDefinition();
 
-        // Obtain config
-        ModelConfiguration config = model.getOutputConfig();
-        if (config == null) config = model.getInputConfig();
+        // Obtain relevant configuration objects;
+        ModelConfiguration config = null;
+        Metric<?> metric = null;
+        if (model.getOutputConfig() != null){
+            config = model.getOutputConfig();
+            metric = config.getMetric();
+
+            // We don't need to update in many cases, if we are displaying an output configuration
+            if (part == ModelPart.ATTRIBUTE_TYPE || part == ModelPart.METRIC ||
+                part == ModelPart.ATTRIBUTE_WEIGHT || part == ModelPart.GS_FACTOR ||
+                part == ModelPart.MAX_OUTLIERS || part == ModelPart.DATA_TYPE ||
+                part == ModelPart.FINANCIAL_MODEL) {
+                return;
+            }
+            
+        } else {
+            config = model.getInputConfig();
+            // TODO: This is such an ugly hack
+            metric = model.getMetricDescription().createInstance(model.getMetricConfiguration());
+        }
 
         // Check
         if (definition == null || config == null || model.getInputConfig().getInput()==null){
         	reset();
             return;
         }
-
+        
         // Obtain handle
         DataHandle data = model.getInputConfig().getInput().getHandle();
                 
@@ -255,10 +274,53 @@ public class ViewPropertiesInput extends ViewProperties {
         // Print basic properties
         new Property(Resources.getMessage("PropertiesView.9"), new String[] { String.valueOf(data.getNumRows()) }); //$NON-NLS-1$
         new Property(Resources.getMessage("PropertiesView.10"), new String[] { SWTUtil.getPrettyString(config.getAllowedOutliers() * 100d) + Resources.getMessage("PropertiesView.11") }); //$NON-NLS-1$ //$NON-NLS-2$
-        new Property(Resources.getMessage("PropertiesView.114"), new String[] { config.getMetric().toString() }); //$NON-NLS-1$
-        AggregateFunction aggregateFunction = config.getMetric().getAggregateFunction();
-        new Property(Resources.getMessage("PropertiesView.149"), new String[] { aggregateFunction == null ? Resources.getMessage("PropertiesView.150") : aggregateFunction.toString() }); //$NON-NLS-1$
-
+        
+        // Utility measure
+        Property m = new Property(Resources.getMessage("PropertiesView.114"), new String[] { metric.getDescription().getName() }); //$NON-NLS-1$
+        
+        // Properties of the utility measure
+        if (metric.getAggregateFunction() != null) {
+            new Property(m, Resources.getMessage("PropertiesView.149"), new String[] { metric.getAggregateFunction().toString() }); //$NON-NLS-1$    
+        }
+        if (metric.isGSFactorSupported()) {
+            new Property(m, Resources.getMessage("PropertiesView.151"), new String[] { SWTUtil.getPrettyString(metric.getGeneralizationSuppressionFactor()) }); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.152"), new String[] { SWTUtil.getPrettyString(metric.getGeneralizationFactor()) }); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.153"), new String[] { SWTUtil.getPrettyString(metric.getSuppressionFactor()) }); //$NON-NLS-1$
+        }
+        new Property(m, Resources.getMessage("PropertiesView.155"), new String[] { SWTUtil.getPrettyString(metric.isMonotonic()) }); //$NON-NLS-1$
+        new Property(m, Resources.getMessage("PropertiesView.156"), new String[] { SWTUtil.getPrettyString(metric.isWeighted()) }); //$NON-NLS-1$
+        new Property(m, Resources.getMessage("PropertiesView.157"), new String[] { SWTUtil.getPrettyString(metric.isPrecomputed()) }); //$NON-NLS-1$
+        new Property(m, Resources.getMessage("PropertiesView.158"), new String[] { SWTUtil.getPrettyString(metric.isAbleToHandleMicroaggregation()) }); //$NON-NLS-1$
+                
+        // Financial configuration
+        if (metric instanceof MetricSDNMPublisherPayout) {
+            
+            // Obtain for output data
+            ARXFinancialConfiguration financial = ((MetricSDNMPublisherPayout)metric).getFinancialConfiguration();
+            
+            // Obtain for input only. This is a bit ugly.
+            if (financial == null) {
+                financial = ARXFinancialConfiguration.create();
+                financial.setAdversaryCost(config.getAdversaryCost())
+                         .setAdversaryGain(config.getAdversaryGain())
+                         .setPublisherBenefit(config.getPublisherBenefit())
+                         .setPublisherLoss(config.getPublisherLoss());
+            }
+                
+            // Render
+            new Property(m, Resources.getMessage("PropertiesView.135"), new String[] { SWTUtil.getPrettyString(financial.getPublisherBenefit())}); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(financial.getPublisherLoss())}); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(financial.getAdversaryGain())}); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(financial.getAdversaryCost())}); //$NON-NLS-1$
+            if (((MetricSDNMPublisherPayout)metric).isProsecutorAttackerModel()) { 
+                new Property(m, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            if (((MetricSDNMPublisherPayout)metric).isJournalistAttackerModel()) { 
+                new Property(m, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.161") }); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        }
+        
+        // Attributes
         final Property attributes = new Property(Resources.getMessage("PropertiesView.12"), new String[] { String.valueOf(data.getNumColumns()) }); //$NON-NLS-1$
         
         // Print identifying attributes

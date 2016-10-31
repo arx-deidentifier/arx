@@ -25,13 +25,21 @@ import java.util.Set;
 
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataGeneralizationScheme;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.RowSet;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
+import org.deidentifier.arx.metric.v2.DomainShare;
+import org.deidentifier.arx.metric.v2.DomainShareInterval;
+import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
+import org.deidentifier.arx.metric.v2.DomainShareRedaction;
 
 import cern.colt.Sorting;
 import cern.colt.function.IntComparator;
@@ -72,6 +80,12 @@ public class DataManager {
 
     /** The data which is insensitive */
     private final Data                                 dataStatic;
+
+    /** The data definition */
+    private final DataDefinition                       definition;
+
+    /** The domain shares */
+    private DomainShare[]                              shares;
 
     /** The original input header. */
     private final String[]                             header;
@@ -137,6 +151,7 @@ public class DataManager {
 
         // Store columns for reordering the output
         this.header = header;
+        this.definition = definition;
 
         Set<String> attributesGeneralized = definition.getQuasiIdentifiersWithGeneralization();
         Set<String> attributesSensitive = definition.getSensitiveAttributes();
@@ -368,17 +383,22 @@ public class DataManager {
         // Store research subset
         for (PrivacyCriterion c : criteria) {
             if (c instanceof EDDifferentialPrivacy) {
-                ((EDDifferentialPrivacy) c).initialize(this);
+                ((EDDifferentialPrivacy) c).initialize(this, null);
             }
-            if (c.getSubset() != null) {
-                subset = c.getSubset().getSet();
-                subsetSize = c.getSubset().getArray().length;
+            if (c.isSubsetAvailable()) {
+                DataSubset _subset = c.getDataSubset();
+                if (_subset != null) {
+                    subset = _subset.getSet();
+                    subsetSize = _subset.getArray().length;
+                    break;
+                }
             }
         }
     }
 
     /**
      * For creating a projected instance
+     * @param definition
      * @param dataAnalyzed
      * @param dataGeneralized
      * @param dataStatic
@@ -396,7 +416,8 @@ public class DataManager {
      * @param minLevels
      * @param dataTypesSensitive 
      */
-    protected DataManager(Data dataAnalyzed,
+    protected DataManager(DataDefinition definition,
+                          Data dataAnalyzed,
                           Data dataGeneralized,
                           Data dataStatic,
                           String[] header,
@@ -412,6 +433,7 @@ public class DataManager {
                           int microaggregationStartIndex,
                           int[] minLevels,
                           Map<String, DataType<?>> dataTypesSensitive) {
+        this.definition = definition;
         this.dataAnalyzed = dataAnalyzed;
         this.dataGeneralized = dataGeneralized;
         this.dataStatic = dataStatic;
@@ -489,47 +511,6 @@ public class DataManager {
     }
 
     /**
-     * Returns the order of the given sensitive attribute in the original dataset. 
-     * Required for t-closeness.
-     * 
-     * @param attribute
-     * @return distribution
-     */
-    public int[] getOrder(String attribute) {
-
-        // Check
-        if (!indexesSensitive.containsKey(attribute)) {
-            throw new IllegalArgumentException("Attribute " + attribute + " is not sensitive");
-        }
-        
-        // Prepare
-        final String[] dictionary = dataAnalyzed.getDictionary().getMapping()[indexesSensitive.get(attribute)];
-        final DataType<?> type = this.dataTypesSensitive.get(attribute);
-        
-        // Init
-        int[] order = new int[dictionary.length];
-        for (int i = 0; i < order.length; i++) {
-            order[i] = i;
-        }
-        
-        // Sort
-        Sorting.mergeSort(order, 0, order.length, new IntComparator() {
-            @Override public int compare(int arg0, int arg1) {
-                String value1 = dictionary[arg0];
-                String value2 = dictionary[arg1];
-                try {
-                    return type.compare(value1, value2);
-                } catch (NumberFormatException | ParseException e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-        });
-        
-        // Return
-        return order;
-    }
-
-    /**
      * Returns the distribution of the given sensitive attribute in the original dataset. 
      * Required for t-closeness.
      * 
@@ -550,6 +531,44 @@ public class DataManager {
         
         // Calculate and return
         return getDistribution(data, index, distinctValues);
+    }
+
+    public DomainShare[] getDomainShares() {
+
+        // Build on-demand
+        if (this.shares == null) {
+            
+            // Compute domain shares
+            this.shares = new DomainShare[dataGeneralized.getHeader().length];
+            for (int i=0; i<shares.length; i++) {
+                
+                // Extract info
+                String attribute = dataGeneralized.getHeader()[i];
+                String[][] hierarchy = definition.getHierarchy(attribute);
+                HierarchyBuilder<?> builder = definition.getHierarchyBuilder(attribute);
+                
+                // Create shares for redaction-based hierarchies
+                if (builder != null && (builder instanceof HierarchyBuilderRedactionBased) &&
+                    ((HierarchyBuilderRedactionBased<?>)builder).isDomainPropertiesAvailable()){
+                    this.shares[i] = new DomainShareRedaction((HierarchyBuilderRedactionBased<?>)builder);
+                    
+                 // Create shares for interval-based hierarchies
+                } else if (builder != null && (builder instanceof HierarchyBuilderIntervalBased)) {
+                    this.shares[i] = new DomainShareInterval<>((HierarchyBuilderIntervalBased<?>)builder,
+                                                           hierarchiesGeneralized[i].getArray(),
+                                                           dataGeneralized.getDictionary().getMapping()[i]);
+                    
+                // Create fallback-shares for materialized hierarchies
+                } else {
+                    this.shares[i] = new DomainShareMaterialized(hierarchy, 
+                                                            dataGeneralized.getDictionary().getMapping()[i],
+                                                            hierarchiesGeneralized[i].getArray());
+                }
+            }
+        }
+        
+        // Return
+        return this.shares;
     }
 
     /**
@@ -642,6 +661,47 @@ public class DataManager {
      */
     public int getMicroaggregationStartIndex() {
         return microaggregationStartIndex;
+    }
+
+    /**
+     * Returns the order of the given sensitive attribute in the original dataset. 
+     * Required for t-closeness.
+     * 
+     * @param attribute
+     * @return distribution
+     */
+    public int[] getOrder(String attribute) {
+
+        // Check
+        if (!indexesSensitive.containsKey(attribute)) {
+            throw new IllegalArgumentException("Attribute " + attribute + " is not sensitive");
+        }
+        
+        // Prepare
+        final String[] dictionary = dataAnalyzed.getDictionary().getMapping()[indexesSensitive.get(attribute)];
+        final DataType<?> type = this.dataTypesSensitive.get(attribute);
+        
+        // Init
+        int[] order = new int[dictionary.length];
+        for (int i = 0; i < order.length; i++) {
+            order[i] = i;
+        }
+        
+        // Sort
+        Sorting.mergeSort(order, 0, order.length, new IntComparator() {
+            @Override public int compare(int arg0, int arg1) {
+                String value1 = dictionary[arg0];
+                String value2 = dictionary[arg1];
+                try {
+                    return type.compare(value1, value2);
+                } catch (NumberFormatException | ParseException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        });
+        
+        // Return
+        return order;
     }
 
     /**
@@ -805,7 +865,7 @@ public class DataManager {
         final int index = indexesSensitive.get(attribute);
         return getTree(data, index, hierarchiesSensitive.get(attribute).map);
     }
-
+    
     /**
      * Encodes the data.
      * 
@@ -883,5 +943,13 @@ public class DataManager {
                 new Data(valsDI, headerAnalyzed, mapAnalyzed, dictionaryAnalyzed),
                 new Data(valsIS, headerStatic, mapStatic, dictionaryStatic) };
         return result;
+    }
+
+    /**
+     * Returns the data definitions
+     * @return
+     */
+    protected DataDefinition getDataDefinition() {
+        return this.definition;
     }
 }

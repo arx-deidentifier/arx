@@ -144,6 +144,14 @@ public class FLASHConfiguration {
     }
 
     /**
+     * Returns whether or not the anonymity property is predictable
+     * @return
+     */
+    public boolean isAnonymityPropertyPredicable() {
+        return anonymityPropertyPredictable;
+    }
+
+    /**
      * Is a binary phase required.
      *
      * @return
@@ -168,13 +176,5 @@ public class FLASHConfiguration {
      */
     public boolean isPruneInsufficientUtility() {
         return pruneInsufficientUtility;
-    }
-
-    /**
-     * Returns whether or not the anonymity property is predictable
-     * @return
-     */
-    public boolean isAnonymityPropertyPredicable() {
-        return anonymityPropertyPredictable;
     }
 }

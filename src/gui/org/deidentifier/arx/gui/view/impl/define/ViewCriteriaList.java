@@ -83,6 +83,8 @@ public class ViewCriteriaList implements IView {
     /** View */
     private final Image              symbolR;
     /** View */
+    private final Image              symbolG;
+    /** View */
     private final LayoutCriteria     layout;
 
     /**
@@ -107,6 +109,7 @@ public class ViewCriteriaList implements IView {
         this.symbolD = controller.getResources().getManagedImage("symbol_d.png"); //$NON-NLS-1$
         this.symbolDP = controller.getResources().getManagedImage("symbol_dp.png"); //$NON-NLS-1$
         this.symbolR = controller.getResources().getManagedImage("symbol_r.png"); //$NON-NLS-1$
+        this.symbolG = controller.getResources().getManagedImage("symbol_gt.png"); //$NON-NLS-1$
         
         this.root = parent;
         this.table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -271,6 +274,13 @@ public class ViewCriteriaList implements IView {
             item.setText(new String[] { "", model.getDPresenceModel().toString(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
             item.setImage(0, symbolD);
             item.setData(model.getDPresenceModel());
+        }
+        
+        if (model.getStackelbergModel().isEnabled()) {
+        	TableItem item = new TableItem(table, SWT.NONE);
+        	item.setText(new String[] { "", model.getStackelbergModel().toString(), ""});
+        	item.setImage(0, symbolG);
+        	item.setData(model.getStackelbergModel());
         }
 
 

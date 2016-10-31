@@ -214,6 +214,7 @@ public class ViewTransformationSettings implements IView {
                 } else {
                     precomputationThreshold.setEnabled(false);
                 }
+                controller.update(new ModelEvent(this, ModelPart.METRIC, model.getMetricDescription()));
             }
         });
         

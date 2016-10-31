@@ -68,7 +68,8 @@ public class DataManagerSubset extends DataManager {
                                 int microaggregationStartIndex,
                                 int[] minLevels,
                                 Map<String, DataType<?>> dataTypesSensitive) {
-        super(dataAnalyzed,
+        super(source.getDataDefinition(),
+              dataAnalyzed,
               dataGeneralized,
               dataStatic,
               header,
@@ -89,12 +90,6 @@ public class DataManagerSubset extends DataManager {
     }
 
     @Override
-    public int[] getOrder(String attribute) {
-        // Delegate to source
-        return source.getOrder(attribute);
-    }
-
-    @Override
     public double[] getDistribution(int[][] data, int index, int distinctValues) {
         // Delegate to source
         return source.getDistribution(data, index, distinctValues);
@@ -104,6 +99,12 @@ public class DataManagerSubset extends DataManager {
     public double[] getDistribution(String attribute) {
         // Delegate to source
         return source.getDistribution(attribute);
+    }
+
+    @Override
+    public int[] getOrder(String attribute) {
+        // Delegate to source
+        return source.getOrder(attribute);
     }
 
     @Override

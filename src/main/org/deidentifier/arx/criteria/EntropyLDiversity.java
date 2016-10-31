@@ -22,6 +22,7 @@ import java.io.ObjectInputStream;
 
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * The entropy l-diversity privacy model.
@@ -245,8 +246,8 @@ public class EntropyLDiversity extends LDiversity {
 		return estimator;
 	}
 
-	@Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    @Override
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
 
         Distribution d = entry.distributions[index];
 

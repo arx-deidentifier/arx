@@ -20,6 +20,7 @@ package org.deidentifier.arx.criteria;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * Delta-disclosure privacy as proposed in:<br>
@@ -87,13 +88,13 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
     }
 
     @Override
-    public void initialize(DataManager manager) {
-        super.initialize(manager);
+    public void initialize(DataManager manager, ARXConfiguration config) {
+        super.initialize(manager, config);
         distribution = manager.getDistribution(attribute);
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
 
         // For table t
         // Foreach class c

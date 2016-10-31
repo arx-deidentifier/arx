@@ -188,6 +188,23 @@ public class ComponentGSSlider {
     }
     
     /**
+     * Adds a selection listener
+     * @param listener
+     */
+    public void addSelectionListener(SelectionListener listener) {
+        this.slider.addSelectionListener(listener);
+        this.button.addSelectionListener(listener);
+    }
+    
+    /**
+     * Gets the selection
+     * @return
+     */
+    public double getSelection() {
+        return ((double)slider.getSelection() - MINIMUM) / (double)(MAXIMUM - MINIMUM);
+    }
+    
+    /**
      * Sets layout data
      * @param data
      */
@@ -207,24 +224,9 @@ public class ComponentGSSlider {
             selection = 0d;
         }
         int value = (int)(MINIMUM + selection * (double)(MAXIMUM - MINIMUM));
+        if (!this.root.isDisposed()) this.root.setRedraw(false);
         if (!this.slider.isDisposed()) this.slider.setSelection(value);
         if (!this.canvas.isDisposed()) this.canvas.redraw();
-    }
-    
-    /**
-     * Gets the selection
-     * @return
-     */
-    public double getSelection() {
-        return ((double)slider.getSelection() - MINIMUM) / (double)(MAXIMUM - MINIMUM);
-    }
-    
-    /**
-     * Adds a selection listener
-     * @param listener
-     */
-    public void addSelectionListener(SelectionListener listener) {
-        this.slider.addSelectionListener(listener);
-        this.button.addSelectionListener(listener);
+        if (!this.root.isDisposed()) this.root.setRedraw(true);
     }
 }

@@ -66,6 +66,11 @@ public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
     }
 
     @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Non-monotonic non-uniform entropy";
     }
