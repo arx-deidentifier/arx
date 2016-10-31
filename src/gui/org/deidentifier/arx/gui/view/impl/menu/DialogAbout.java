@@ -49,15 +49,15 @@ import org.eclipse.swt.widgets.Text;
  */
 public class DialogAbout extends TitleAreaDialog implements IDialog {
 
-    /**  TODO */
+    /**  License */
     private static final String LICENSE      = Resources.getLicenseText();
     
-    /**  TODO */
+    /**  About */
     private static final String ABOUT =   Resources.getMessage("AboutDialog.16") + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
                                           Resources.getMessage("AboutDialog.18") + "\n\n" + //$NON-NLS-1$ //$NON-NLS-2$
                                           Resources.getMessage("AboutDialog.21") + Resources.getVersion(); //$NON-NLS-1$
     
-    /**  TODO */
+    /**  Contributors */
     private static final String CONTRIBUTORS = "Karol Babioch (data import wizard)\n" + //$NON-NLS-1$
                                                "Ledian Xhani (hierarchy editor)\n" + //$NON-NLS-1$
                                                "Ljubomir Dshevlekov (hierarchy editor)\n" +  //$NON-NLS-1$
@@ -67,13 +67,14 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "Helmut Spengler (heuristic search)\n" + //$NON-NLS-1$
                                                "David Gassmann (HIPAA identifiers)\n" + //$NON-NLS-1$
                                                "Sebastian Stammler (performance improvements, l-diversity)\n" + //$NON-NLS-1$
-                                               "Maximilian Zitzmann (distinction and separation)"; //$NON-NLS-1$
+                                               "Maximilian Zitzmann (distinction and separation)\n" + //$NON-NLS-1$
+                                               "James Gaupp (game-theoretic privacy)"; //$NON-NLS-1$
     
-    /**  TODO */
+    /**  Icon */
     private Image image;
 
     /**
-     * Constructor.
+     * Creates a new instance
      *
      * @param parentShell
      * @param controller
