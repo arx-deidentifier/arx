@@ -463,9 +463,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
                 
                 double result = 0d;
                 double perBatch = 100d / (double)classes.length;
-                if (progress >= 1) {
-                    result += (double) (progress - 1) * perBatch;
-                }
+                result += (double)progress * perBatch;
                 result += (double)builder.getProgress() / 100d * perBatch;
                 result = result <= 100d ? result : 100d;
                 return (int)result;
