@@ -103,6 +103,7 @@ public class RiskEstimateBuilderInterruptible {
     public int getProgress() {
         return parent.getProgress();
     }
+    
     /**
      * Returns a class providing sample-based re-identification risk estimates
      * 

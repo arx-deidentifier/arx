@@ -78,9 +78,6 @@ public abstract class DataHandle {
     /** The current registry. */
     protected DataRegistry      registry   = null;
 
-    /** The statistics. */
-    protected StatisticsBuilder statistics = null;
-
     /** The current research subset. */
     protected DataHandle        subset     = null;
 
@@ -526,9 +523,7 @@ public abstract class DataHandle {
      *
      * @return the statistics
      */
-    public StatisticsBuilder getStatistics() {
-        return statistics;
-    }
+    public abstract StatisticsBuilder getStatistics();
 
     /**
      * Returns the transformation .

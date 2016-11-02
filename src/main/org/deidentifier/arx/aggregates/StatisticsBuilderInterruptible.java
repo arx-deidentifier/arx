@@ -467,6 +467,16 @@ public class StatisticsBuilderInterruptible {
     }
 
     /**
+     * If supported by the according builder, this method will report a progress
+     * value in [0,100]. Otherwise, it will always return 0
+     * 
+     * @return
+     */
+    public int getProgress() {
+        return builder.getProgress();
+    }
+
+    /**
      * Returns summary statistics for all attributes. 
      * 
      * @param listwiseDeletion A flag enabling list-wise deletion

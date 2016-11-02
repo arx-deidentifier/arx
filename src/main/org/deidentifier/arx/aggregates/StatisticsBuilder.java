@@ -43,6 +43,7 @@ import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 import cern.colt.GenericSorting;
@@ -57,10 +58,13 @@ import cern.colt.function.IntComparator;
 public class StatisticsBuilder {
 
     /** The handle. */
-    private DataHandleInternal    handle;
+    private DataHandleInternal      handle;
 
     /** The stop flag. */
     private volatile WrappedBoolean interrupt = new WrappedBoolean(false);
+
+    /** Model */
+    private final WrappedInteger    progress  = new WrappedInteger();
 
     /**
      * Creates a new instance.
@@ -94,9 +98,10 @@ public class StatisticsBuilder {
     
         // Reset stop flag
         interrupt.value = false;
+        progress.value = 0;
         
         // Return
-        return new StatisticsClassification(handle.getAssociatedInput(), handle, features, clazz, config, interrupt);
+        return new StatisticsClassification(handle.getAssociatedInput(), handle, features, clazz, config, interrupt, progress);
     }
     
     /**
@@ -1168,5 +1173,14 @@ public class StatisticsBuilder {
      */
     void interrupt() {
         this.interrupt.value = true;
+    }
+
+    /**
+     * Returns progress data, if available
+     *
+     * @return
+     */
+    int getProgress() {
+        return this.progress.value;
     }
 }

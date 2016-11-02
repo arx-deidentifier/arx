@@ -98,9 +98,6 @@ public class DataHandleInput extends DataHandle {
 
         // Create datatype array
         this.dataTypes = getDataTypeArray();
-        
-        // Create statistics
-        this.statistics = new StatisticsBuilder(new DataHandleInternal(this));
     }
 
     @Override
@@ -126,6 +123,11 @@ public class DataHandleInput extends DataHandle {
     public int getNumRows() {
         checkRegistry();
         return data.length;
+    }
+
+    @Override
+    public StatisticsBuilder getStatistics() {
+        return new StatisticsBuilder(new DataHandleInternal(this));
     }
 
     @Override
@@ -174,7 +176,7 @@ public class DataHandleInput extends DataHandle {
             }
         };
     }
-
+    
     /**
      * Swaps two rows.
      *
@@ -187,7 +189,7 @@ public class DataHandleInput extends DataHandle {
         data[row1] = data[row2];
         data[row2] = temp;
     }
-    
+
     /**
      * Releases all resources.
      */
@@ -197,12 +199,12 @@ public class DataHandleInput extends DataHandle {
         dataDI = null;
         dataIS = null;
     }
-
+    
     @Override
     protected DataType<?> getBaseDataType(final String attribute) {
         return this.getDataType(attribute);
     }
-    
+
     @Override
     protected ARXConfiguration getConfiguration() {
         return null;
@@ -222,7 +224,7 @@ public class DataHandleInput extends DataHandle {
         }
         return dataTypes;
     }
-
+    
     @Override
     protected String[] getDistinctValues(final int column, final boolean ignoreSuppression, InterruptHandler handler) {
         checkRegistry();
@@ -236,7 +238,7 @@ public class DataHandleInput extends DataHandle {
         System.arraycopy(dict, 0, vals, 0, vals.length);
         return vals;
     }
-    
+
     /**
      * Returns the input buffer
      * @return
@@ -245,7 +247,7 @@ public class DataHandleInput extends DataHandle {
         checkRegistry();
         return this.dataGH;
     }
-
+    
     @Override
     protected String internalGetValue(final int row, final int column, final boolean ignoreSuppression) {
         return dictionary.getMapping()[column][data[row][column]];
@@ -266,7 +268,7 @@ public class DataHandleInput extends DataHandle {
         }
         return found;
     }
-    
+
     /**
      * Swaps the rows.
      *
