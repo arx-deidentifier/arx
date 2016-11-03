@@ -43,6 +43,16 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class ARXResult {
 
+    /**
+     * Score type
+     * @author Fabian Prasser
+     *
+     */
+    public static enum ScoreType {
+        AECS,
+        LOSS
+    }
+    
     /** Lock the buffer. */
     private DataHandle             bufferLockedByHandle = null;
 
@@ -191,6 +201,19 @@ public class ARXResult {
 
 
     /**
+     * Returns a map of all microaggregation functions
+     * @param definition
+     * @return
+     */
+    private Map<String, DistributionAggregateFunction> getAggregateFunctions(DataDefinition definition) {
+        Map<String, DistributionAggregateFunction> result = new HashMap<String, DistributionAggregateFunction>();
+        for (String key : definition.getQuasiIdentifiersWithMicroaggregation()) {
+            result.put(key, definition.getMicroAggregationFunction(key).getFunction());
+        }
+        return result;
+    }
+
+    /**
      * Returns the configuration used.
      *
      * @return
@@ -238,7 +261,7 @@ public class ARXResult {
     public DataHandle getHandle(ARXNode node) {
         return getOutput(node, false);
     }
-
+    
     /**
      * Returns the lattice.
      *
@@ -259,7 +282,7 @@ public class ARXResult {
         if (optimalNode == null) { return null; }
         return getOutput(optimalNode, true);
     }
-    
+
     /**
      * Returns a handle to data obtained by applying the given transformation.  This method will fork the buffer, 
      * allowing to obtain multiple handles to different representations of the data set. Note that only one instance can
@@ -271,31 +294,6 @@ public class ARXResult {
      */
     public DataHandle getOutput(ARXNode node) {
         return getOutput(node, true);
-    }
-
-    /**
-     * Score type
-     * @author Fabian Prasser
-     *
-     */
-    public static enum ScoreType {
-        TYPE_1,
-        TYPE_2,
-        TYPE_3
-    }
-    
-    /**
-     * Returns a score
-     *  
-     * @param node the transformation
-     * 
-     * @return
-     */
-    public double getScore(ARXNode node, ScoreType score) {
-        
-        // Apply the transformation
-        final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
-        return checker.getScore(definition, transformation, score);
     }
     
     /**
@@ -396,6 +394,34 @@ public class ARXResult {
         if (optimalNode == null) { return null; }
         return getOutput(optimalNode, fork);
     }
+    
+    /**
+     * Returns a score
+     *  
+     * @param node the transformation
+     * @param score type of score
+     * 
+     * @return
+     */
+    public double getScore(ARXNode node, ScoreType score) {
+        return getScore(node, score, 0);
+    }
+
+    /**
+     * Returns a score
+     *  
+     * @param node the transformation
+     * @param score type of score
+     * @param clazz index of the class attribute, if any
+     * 
+     * @return
+     */
+    public double getScore(ARXNode node, ScoreType score, int clazz) {
+        
+        // Apply the transformation
+        final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
+        return checker.getScore(definition, transformation, score, clazz);
+    }
 
     /**
      * Returns the execution time (wall clock).
@@ -405,7 +431,7 @@ public class ARXResult {
     public long getTime() {
         return duration;
     }
-
+    
     /**
      * Returns whether local recoding can be applied to the given handle
      * @param handle
@@ -454,7 +480,7 @@ public class ARXResult {
         // Yes, we probably can do this
         return true;
     }
-    
+
     /**
      * Indicates if a result is available.
      *
@@ -635,7 +661,7 @@ public class ARXResult {
             throw new RollbackRequiredException("Handle must be rebuild to guarantee privacy", e);
         }
     }
-
+    
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -661,7 +687,7 @@ public class ARXResult {
             }
         });
     }
-    
+
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -726,19 +752,6 @@ public class ARXResult {
             }
             iterations++;
         }
-    }
-
-    /**
-     * Returns a map of all microaggregation functions
-     * @param definition
-     * @return
-     */
-    private Map<String, DistributionAggregateFunction> getAggregateFunctions(DataDefinition definition) {
-        Map<String, DistributionAggregateFunction> result = new HashMap<String, DistributionAggregateFunction>();
-        for (String key : definition.getQuasiIdentifiersWithMicroaggregation()) {
-            result.put(key, definition.getMicroAggregationFunction(key).getFunction());
-        }
-        return result;
     }
     
     /**

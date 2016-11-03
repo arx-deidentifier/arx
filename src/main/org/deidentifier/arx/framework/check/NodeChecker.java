@@ -36,6 +36,7 @@ import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.Metric.AggregateFunction;
+import org.deidentifier.arx.metric.v2.AbstractILMultiDimensional;
 
 /**
  * This class orchestrates the process of transforming and analyzing a dataset.
@@ -362,36 +363,55 @@ public class NodeChecker {
      * @param definition 
      * @param transformation
      * @param score
+     * @param clazz
      * @return
      */
-    public double getScore(DataDefinition definition, Transformation transformation, ScoreType score) {
+    public double getScore(DataDefinition definition, 
+                           Transformation transformation, 
+                           ScoreType score, 
+                           int clazz) {
 
+        int k = config.getMinimalGroupSize();
+        
         // Apply transition and groupify
         currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
-        currentGroupify.stateAnalyze(transformation, true);
-        if (!currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
-            currentGroupify.stateResetSuppression();
+        currentGroupify.prepareScore(transformation, dataGeneralized.getDataLength());
+        
+        switch(score) {
+            case AECS:
+              return currentGroupify.getNumberOfEquivalenceClasses();
+            case LOSS:
+
+                Metric<AbstractILMultiDimensional> metric = Metric.createLossMetric(AggregateFunction.GEOMETRIC_MEAN);
+                metric.initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config.getParent());
+                double[] lossAttrs = metric.getInformationLoss(transformation, currentGroupify).getInformationLoss().getValue();
+                
+                double loss = 0d;
+                for (int i = 0; i < dataGeneralized.getHeader().length; i++) {
+                    double min = (double)dataGeneralized.getDataLength() / (double)manager.getHierarchies()[i].getArray().length;
+                    double max = dataGeneralized.getDataLength();
+                    loss += lossAttrs[i] * (max - min) + min;
+                }
+                loss *= -1d / ((double) dataGeneralized.getHeader().length);
+                loss /= ((double) (k + 1));
+                return loss;
+            default:
+                throw new IllegalArgumentException("Unknown score type");
         }
-        
-        // Option-1: Evaluate an existing measure
-        Metric<?> metric = Metric.createLossMetric(AggregateFunction.GEOMETRIC_MEAN);
-        metric.initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config.getParent());
-        metric.initialize(null, null, null, null, null);
-        double loss = Double.valueOf(metric.getInformationLoss(transformation, currentGroupify).getInformationLoss().toString());
-        
-        // Option-2: Calculate your own: For each group
-        HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
-        while (entry != null) {
-            
-            // Record and count
-            int[] record = entry.key;
-            int count = entry.count;
-            
-            // Next group
-            entry = entry.next;
-        }
-        
-        // Return dummy data
-        return 0;
+//        
+//        // Option-2: Calculate your own: For each group
+//        HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
+//        while (entry != null) {
+//            
+//            // Record and count
+//            int[] record = entry.key;
+//            int count = entry.count;
+//            
+//            // Next group
+//            entry = entry.next;
+//        }
+//        
+//        // Return dummy data
+//        return 0;
     }
 }
