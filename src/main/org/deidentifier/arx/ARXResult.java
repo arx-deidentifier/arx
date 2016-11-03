@@ -272,6 +272,31 @@ public class ARXResult {
     public DataHandle getOutput(ARXNode node) {
         return getOutput(node, true);
     }
+
+    /**
+     * Score type
+     * @author Fabian Prasser
+     *
+     */
+    public static enum ScoreType {
+        TYPE_1,
+        TYPE_2,
+        TYPE_3
+    }
+    
+    /**
+     * Returns a score
+     *  
+     * @param node the transformation
+     * 
+     * @return
+     */
+    public double getScore(ARXNode node, ScoreType score) {
+        
+        // Apply the transformation
+        final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
+        return checker.getScore(definition, transformation, score);
+    }
     
     /**
      * Returns a handle to data obtained by applying the given transformation. This method allows controlling whether

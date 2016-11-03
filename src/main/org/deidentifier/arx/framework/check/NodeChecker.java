@@ -19,10 +19,13 @@ package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
+import org.deidentifier.arx.ARXResult.ScoreType;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.StateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -32,6 +35,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.Metric.AggregateFunction;
 
 /**
  * This class orchestrates the process of transforming and analyzing a dataset.
@@ -121,6 +125,8 @@ public class NodeChecker {
 
     /** Is a minimal class size required */
     private final boolean                         minimalClassSizeRequired;
+    
+    private final DataManager manager;
 
     /**
      * Creates a new NodeChecker instance.
@@ -144,6 +150,9 @@ public class NodeChecker {
         // Initialize all operators
         this.metric = metric;
         this.config = config;
+        this.manager = manager;
+        
+        
         this.dataGeneralized = manager.getDataGeneralized();
         this.microaggregationFunctions = manager.getMicroaggregationFunctions();
         this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
@@ -346,5 +355,43 @@ public class NodeChecker {
      */
     public Metric<?> getMetric() {
         return metric;
+    }
+
+    /**
+     * Calculates a score
+     * @param definition 
+     * @param transformation
+     * @param score
+     * @return
+     */
+    public double getScore(DataDefinition definition, Transformation transformation, ScoreType score) {
+
+        // Apply transition and groupify
+        currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
+        currentGroupify.stateAnalyze(transformation, true);
+        if (!currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
+            currentGroupify.stateResetSuppression();
+        }
+        
+        // Option-1: Evaluate an existing measure
+        Metric<?> metric = Metric.createLossMetric(AggregateFunction.GEOMETRIC_MEAN);
+        metric.initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config.getParent());
+        metric.initialize(null, null, null, null, null);
+        double loss = Double.valueOf(metric.getInformationLoss(transformation, currentGroupify).getInformationLoss().toString());
+        
+        // Option-2: Calculate your own: For each group
+        HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
+        while (entry != null) {
+            
+            // Record and count
+            int[] record = entry.key;
+            int count = entry.count;
+            
+            // Next group
+            entry = entry.next;
+        }
+        
+        // Return dummy data
+        return 0;
     }
 }
