@@ -184,8 +184,8 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         // A Transformation (and it's direct and indirect successors, respectively) can be pruned if
         // the information loss is monotonic and the nodes's IL is greater or equal than the IL of the
         // global maximum (regardless of the anonymity criterion's monotonicity)
-    	boolean metricMonotonic = (checker.getMetric().isMonotonicWithSuppression() && checker.getConfiguration().getAbsoluteMaxOutliers() != 0)
-    			|| (checker.getMetric().isMonotonicWithGeneralization() && checker.getConfiguration().getAbsoluteMaxOutliers() == 0);
+        boolean metricMonotonic = (checker.getMetric().isMonotonicWithSuppression() && checker.getConfiguration().getAbsoluteMaxOutliers() != 0) ||
+                                  (checker.getMetric().isMonotonicWithGeneralization() && checker.getConfiguration().getAbsoluteMaxOutliers() == 0);
         // Depending on monotony of metric we choose to compare either IL or monotonic subset with the global optimum
         boolean prune = false;
         if (getGlobalOptimum() != null) {

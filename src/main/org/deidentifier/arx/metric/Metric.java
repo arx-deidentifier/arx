@@ -1168,7 +1168,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param gsFactor
      */
     protected Metric(final boolean monotonicWithGeneralization, final boolean monotonicWithSuppression, final boolean independent, final double gsFactor) {
-    	this.monotonicWithGeneralization = monotonicWithGeneralization;
+        this.monotonicWithGeneralization = monotonicWithGeneralization;
         this.monotonic = monotonicWithSuppression;
         this.independent = independent;
         if (gsFactor < 0d || gsFactor > 1d) {
@@ -1377,7 +1377,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     public final boolean isMonotonicWithGeneralization(){
-         return monotonicWithGeneralization;	
+         return monotonicWithGeneralization;
     }
     
     /**

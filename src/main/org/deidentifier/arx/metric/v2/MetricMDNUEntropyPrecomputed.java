@@ -84,7 +84,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
      * @param function
      */
     public MetricMDNUEntropyPrecomputed(boolean monotonicWithGeneralization,
-    		                            boolean monotonicWithSuppression, 
+                                        boolean monotonicWithSuppression, 
                                         boolean independent, 
                                         double gsFactor, 
                                         AggregateFunction function) {

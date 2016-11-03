@@ -78,7 +78,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      * @param function
      */
     AbstractMetricMultiDimensional(final boolean monotonicWithGeneralization,
-    		                       final boolean monotonicWithSuppression,
+                                   final boolean monotonicWithSuppression,
                                    final boolean independent,
                                    final AggregateFunction function) {
         super(monotonicWithGeneralization, monotonicWithSuppression, independent, 0.5d);
@@ -94,7 +94,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      * @param function
      */
     AbstractMetricMultiDimensional(final boolean monotonicWithGeneralization,
-    		                       final boolean monotonicWithSuppression,
+                                   final boolean monotonicWithSuppression,
                                    final boolean independent,
                                    final double gsFactor,
                                    final AggregateFunction function) {

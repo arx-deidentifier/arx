@@ -708,8 +708,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public Monotonicity getMonotonicityOfUtility() {
         if ((metric.isMonotonicWithGeneralization() && this.getMaxOutliers() == 0) || 
-        	(metric.isMonotonicWithSuppression() && this.getMaxOutliers() != 0) || 
-        	this.isPracticalMonotonicity()) {
+            (metric.isMonotonicWithSuppression() && this.getMaxOutliers() != 0) || 
+            this.isPracticalMonotonicity()) {
             return Monotonicity.FULL;
         }  else {
             return Monotonicity.NONE;

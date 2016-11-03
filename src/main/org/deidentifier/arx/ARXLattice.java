@@ -117,8 +117,7 @@ public class ARXLattice implements Serializable {
          * @param config
          */
         public void setMonotonicity(ARXConfiguration config) {
-            lattice.monotonicNonAnonymous = lattice.metric.isMonotonicWithSuppression() || !config.isSuppressionAlwaysEnabled();
-            lattice.monotonicAnonymous = lattice.metric.isMonotonicWithSuppression() || config.getAbsoluteMaxOutliers() == 0;
+            lattice.setMonotonicity(config);
         }
 
         /**
@@ -1263,6 +1262,13 @@ public class ARXLattice implements Serializable {
         if (complete == null) {
             complete = true;
         }
+    }
+    
+    private void setMonotonicity(ARXConfiguration config) {
+        this.monotonicNonAnonymous = (this.metric.isMonotonicWithSuppression() && config.isSuppressionAlwaysEnabled()) ||
+                                     (this.metric.isMonotonicWithGeneralization() && !config.isSuppressionAlwaysEnabled());
+        this.monotonicAnonymous = (this.metric.isMonotonicWithSuppression() && config.getAbsoluteMaxOutliers() != 0) || 
+                                  (this.metric.isMonotonicWithGeneralization() && config.getAbsoluteMaxOutliers() == 0);
     }
     
     /**
