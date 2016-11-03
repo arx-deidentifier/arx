@@ -117,7 +117,7 @@ public class ARXLattice implements Serializable {
          * @param config
          */
         public void setMonotonicity(ARXConfiguration config) {
-            lattice.setMonotonicity(config);
+            lattice.setMonotonicity(config.isSuppressionAlwaysEnabled(), config.getAbsoluteMaxOutliers());
         }
 
         /**
@@ -728,8 +728,7 @@ public class ARXLattice implements Serializable {
         // Init
         this.solutions = solutions;
         this.metric = config.getMetric();
-        this.monotonicNonAnonymous = (metric.isMonotonicWithSuppression() && config.isSuppressionAlwaysEnabled()) || (metric.isMonotonicWithGeneralization() && !config.isSuppressionAlwaysEnabled());
-        this.monotonicAnonymous = (metric.isMonotonicWithSuppression() && config.getAbsoluteMaxOutliers() != 0) || (metric.isMonotonicWithGeneralization() && config.getAbsoluteMaxOutliers() == 0);
+        this.setMonotonicity(config.isSuppressionAlwaysEnabled(), config.getAbsoluteMaxOutliers());
         this.complete = complete;
         this.virtualSize = solutions.getSize();
  
@@ -1264,11 +1263,11 @@ public class ARXLattice implements Serializable {
         }
     }
     
-    private void setMonotonicity(ARXConfiguration config) {
-        this.monotonicNonAnonymous = (this.metric.isMonotonicWithSuppression() && config.isSuppressionAlwaysEnabled()) ||
-                                     (this.metric.isMonotonicWithGeneralization() && !config.isSuppressionAlwaysEnabled());
-        this.monotonicAnonymous = (this.metric.isMonotonicWithSuppression() && config.getAbsoluteMaxOutliers() != 0) || 
-                                  (this.metric.isMonotonicWithGeneralization() && config.getAbsoluteMaxOutliers() == 0);
+    private void setMonotonicity(boolean isSuppressionAlwaysEnabled, int absoluteMaxOutliers) {
+        this.monotonicNonAnonymous = (this.metric.isMonotonicWithSuppression() && isSuppressionAlwaysEnabled) ||
+                                     (this.metric.isMonotonicWithGeneralization() && !isSuppressionAlwaysEnabled);
+        this.monotonicAnonymous = (this.metric.isMonotonicWithSuppression() && absoluteMaxOutliers != 0) || 
+                                  (this.metric.isMonotonicWithGeneralization() && absoluteMaxOutliers == 0);
     }
     
     /**
