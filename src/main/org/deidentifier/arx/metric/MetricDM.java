@@ -44,7 +44,7 @@ public class MetricDM extends MetricDefault {
      * Creates a new instance.
      */
     protected MetricDM() {
-        super(false, false);
+        super(true, false, false);
     }
 
     @Override

@@ -52,7 +52,7 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
      * Creates a new instance.
      */
     protected MetricNMPrecision() {
-        super(false, false);
+        super(true, false, false);
     }
 
     @Override

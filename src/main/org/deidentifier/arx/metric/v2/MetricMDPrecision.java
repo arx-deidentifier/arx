@@ -41,7 +41,7 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
      * Creates a new instance.
      */
     protected MetricMDPrecision() {
-        super(true, true, AggregateFunction.ARITHMETIC_MEAN);
+        super(true, true, true, AggregateFunction.ARITHMETIC_MEAN);
     }
 
     /**
@@ -50,7 +50,7 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
      * @param function
      */
     protected MetricMDPrecision(AggregateFunction function){
-        super(true, true, function);
+        super(true, true, true, function);
     }
     /**
      * Creates a new instance.
@@ -58,7 +58,7 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
      * @param function
      */
     protected MetricMDPrecision(double gsFactor, AggregateFunction function){
-        super(true, true, gsFactor, function);
+        super(true, true, true, gsFactor, function);
     }
 
     /**

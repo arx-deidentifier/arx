@@ -83,7 +83,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
      * @param function
      */
     public MetricMDNMLoss(double gsFactor, AggregateFunction function){
-        super(false, false, function);
+        super(true, false, false, function);
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Parameter must be in [0, 1]");
         }

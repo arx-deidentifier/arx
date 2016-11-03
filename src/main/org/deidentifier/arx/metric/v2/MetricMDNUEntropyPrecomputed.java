@@ -77,23 +77,25 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     /**
      * Precomputed.
      *
-     * @param monotonic
+     * @param monotonicWithGeneralization
+     * @param monotonicWithSuppression
      * @param independent
      * @param gsFactor
      * @param function
      */
-    public MetricMDNUEntropyPrecomputed(boolean monotonic, 
+    public MetricMDNUEntropyPrecomputed(boolean monotonicWithGeneralization,
+    		                            boolean monotonicWithSuppression, 
                                         boolean independent, 
                                         double gsFactor, 
                                         AggregateFunction function) {
-        super(monotonic, independent, gsFactor, function);
+        super(monotonicWithGeneralization, monotonicWithSuppression, independent, gsFactor, function);
     }
     
     /**
      * Creates a new instance.
      */
     protected MetricMDNUEntropyPrecomputed() {
-        super(true, true, 0.5d, AggregateFunction.SUM);
+        super(true, true, true, 0.5d, AggregateFunction.SUM);
     }
     
     /**
@@ -103,7 +105,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
      * @param function
      */
     protected MetricMDNUEntropyPrecomputed(double gsFactor, AggregateFunction function){
-        super(true, true, gsFactor, function);
+        super(true, true, true, gsFactor, function);
     }
 
     /**

@@ -38,16 +38,17 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
      * Creates a new instance.
      */
     protected MetricSDNMDiscernability() {
-        super(false, false);
+        super(true, false, false);
     }
 
     /**
      * For subclasses.
      *
-     * @param monotonic
+     * @param monotonicWithGeneralization
+     * @param monotonicWithSuppression
      */
-    MetricSDNMDiscernability(boolean monotonic) {
-        super(monotonic, false);
+    MetricSDNMDiscernability(boolean monotonicWithGeneralization, boolean monotonicWithSuppression) {
+        super(monotonicWithGeneralization, monotonicWithSuppression, false);
     }
 
     @Override

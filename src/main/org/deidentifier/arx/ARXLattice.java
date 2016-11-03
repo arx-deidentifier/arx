@@ -117,8 +117,8 @@ public class ARXLattice implements Serializable {
          * @param config
          */
         public void setMonotonicity(ARXConfiguration config) {
-            lattice.monotonicNonAnonymous = lattice.metric.isMonotonic() || !config.isSuppressionAlwaysEnabled();
-            lattice.monotonicAnonymous = lattice.metric.isMonotonic() || config.getAbsoluteMaxOutliers() == 0;
+            lattice.monotonicNonAnonymous = lattice.metric.isMonotonicWithSuppression() || !config.isSuppressionAlwaysEnabled();
+            lattice.monotonicAnonymous = lattice.metric.isMonotonicWithSuppression() || config.getAbsoluteMaxOutliers() == 0;
         }
 
         /**
@@ -729,8 +729,10 @@ public class ARXLattice implements Serializable {
         // Init
         this.solutions = solutions;
         this.metric = config.getMetric();
-        this.monotonicNonAnonymous = metric.isMonotonic() || !config.isSuppressionAlwaysEnabled();
-        this.monotonicAnonymous = metric.isMonotonic() || config.getAbsoluteMaxOutliers() == 0;
+        //this.monotonicNonAnonymous = metric.isMonotonicWithSuppression()  || !config.isSuppressionAlwaysEnabled();
+        this.monotonicNonAnonymous = (metric.isMonotonicWithSuppression() && config.isSuppressionAlwaysEnabled()) || (metric.isMonotonicWithGeneralization() && !config.isSuppressionAlwaysEnabled());
+        //this.monotonicAnonymous = metric.isMonotonicWithSuppression() || config.getAbsoluteMaxOutliers() == 0;
+        this.monotonicAnonymous = (metric.isMonotonicWithSuppression() && config.getAbsoluteMaxOutliers() != 0) || (metric.isMonotonicWithGeneralization() && config.getAbsoluteMaxOutliers() == 0);
         this.complete = complete;
         this.virtualSize = solutions.getSize();
  

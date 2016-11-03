@@ -1143,8 +1143,11 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
 
     /** Is the metric independent?. */
     private boolean           independent      = false;
+    
+    /** Is the metric monotonic with generalization?. */
+    private boolean           monotonicWithGeneralization    = true;
 
-    /** Is the metric monotonic?. */
+    /** Is the metric monotonic with suppression?. */
     private boolean           monotonic        = false;
 
     /** Configuration factor. */
@@ -1159,11 +1162,14 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     /**
      * Create a new metric.
      *
-     * @param monotonic
+     * @param monotonicWithGeneralization
+     * @param monotonicWithSuppression
      * @param independent
+     * @param gsFactor
      */
-    protected Metric(final boolean monotonic, final boolean independent, final double gsFactor) {
-        this.monotonic = monotonic;
+    protected Metric(final boolean monotonicWithGeneralization, final boolean monotonicWithSuppression, final boolean independent, final double gsFactor) {
+    	this.monotonicWithGeneralization = monotonicWithGeneralization;
+        this.monotonic = monotonicWithSuppression;
         this.independent = independent;
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Parameter must be in [0, 1]");
@@ -1364,12 +1370,22 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return independent;
     }
     
+    
     /**
-     * Returns false if the metric is non-monotone using suppression.
-     *
-     * @return the monotonic
+     * Returns false if the metric is non-monotonic when using generalization.
+     * 
+     * @return
      */
-    public final boolean isMonotonic() {
+    public final boolean isMonotonicWithGeneralization(){
+         return monotonicWithGeneralization;	
+    }
+    
+    /**
+     * Returns false if the metric is non-monotonic when using suppression.
+     *
+     * @return
+     */
+    public final boolean isMonotonicWithSuppression() {
         return monotonic;
     }
     

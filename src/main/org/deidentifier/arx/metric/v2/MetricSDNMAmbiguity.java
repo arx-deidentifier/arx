@@ -52,7 +52,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
      * Default constructor.
      */
     public MetricSDNMAmbiguity(){
-        super(false, false);
+        super(true, false, false);
     }
 
     @Override

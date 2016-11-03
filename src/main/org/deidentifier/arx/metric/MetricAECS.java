@@ -46,7 +46,7 @@ public class MetricAECS extends MetricDefault {
      * Creates a new instance
      */
     protected MetricAECS() {
-        super(false, false);
+        super(true, false, false);
     }
     
     @Override
