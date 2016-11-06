@@ -76,8 +76,8 @@ public class ARXLattice implements Serializable {
         }
 
         /**
+         * Accessor method
          * 
-         *
          * @return
          */
         public Map<String, Integer> getAttributeMap() {
@@ -85,7 +85,7 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param bottom
          */
@@ -94,7 +94,7 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param levels
          */
@@ -103,7 +103,7 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param metric
          */
@@ -112,7 +112,7 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param config
          */
@@ -121,7 +121,7 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param node
          */
@@ -130,7 +130,7 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param size
          */
@@ -147,7 +147,7 @@ public class ARXLattice implements Serializable {
         }
         
         /**
-         * 
+         * Accessor method
          *
          * @param top
          */
@@ -156,7 +156,7 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param uncertainty
          */
@@ -166,7 +166,7 @@ public class ARXLattice implements Serializable {
     }
 
     /**
-     * 
+     * ReflectS different anonymity properties 
      */
     public static enum Anonymity {
         
@@ -206,7 +206,7 @@ public class ARXLattice implements Serializable {
             private final ARXNode node;
 
             /**
-             * 
+             * Accessor class
              *
              * @param node
              */
