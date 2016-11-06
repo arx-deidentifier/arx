@@ -74,17 +74,18 @@ public class MetricEntropy extends MetricDefault {
      * 
      */
     protected MetricEntropy() {
-        super(true, true);
+        super(true, true, true);
     }
 
     /**
+     * Creates a new instance.
      * 
-     *
-     * @param monotonic
+     * @param monotonicWithGeneralization
+     * @param monotonicWithSuppression
      * @param independent
      */
-    protected MetricEntropy(final boolean monotonic, final boolean independent) {
-        super(monotonic, independent);
+    protected MetricEntropy(final boolean monotonicWithGeneralization, final boolean monotonicWithSuppression, final boolean independent) {
+        super(monotonicWithGeneralization, monotonicWithSuppression, independent);
     }
     
     @Override

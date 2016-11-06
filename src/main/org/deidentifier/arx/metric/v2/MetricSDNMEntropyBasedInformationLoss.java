@@ -67,7 +67,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
      *            balancing both methods.
      */
     public MetricSDNMEntropyBasedInformationLoss(double gsFactor) {
-        super(false, false, gsFactor);
+        super(true, false, false, gsFactor);
     }
 
     @Override

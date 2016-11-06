@@ -39,7 +39,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
      * Creates a new instance.
      */
     protected MetricSDAECS() {
-        super(false, false);
+        super(true, false, false);
     }
 
     /**
@@ -48,7 +48,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
      * @param gsFactor
      */
     protected MetricSDAECS(double gsFactor) {
-        super(false, false, gsFactor);
+        super(true, false, false, gsFactor);
     }
 
     /**
@@ -57,7 +57,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
      * @param rowCount
      */
     protected MetricSDAECS(int rowCount) {
-        super(false, false);
+        super(true, false, false);
         super.setNumTuples((double)rowCount);
     }
     

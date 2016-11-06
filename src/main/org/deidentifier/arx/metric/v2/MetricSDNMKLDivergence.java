@@ -108,7 +108,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
      * Default constructor.
      */
     public MetricSDNMKLDivergence(){
-        super(false, false);
+        super(true, false, false);
     }
     
     @Override

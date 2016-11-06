@@ -58,7 +58,7 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
      * @param infoloss
      */
     protected MetricMDStatic(final AggregateFunction function, final Map<String, List<Double>> infoloss) {
-        super(true, true, function);
+        super(true, true, true, function);
         _infoloss = infoloss;
     }
 
@@ -68,7 +68,7 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
      * @param infoloss
      */
     protected MetricMDStatic(final Map<String, List<Double>> infoloss) {
-        super(true, true, AggregateFunction.SUM);
+        super(true, true, true, AggregateFunction.SUM);
         _infoloss = infoloss;
     }
 

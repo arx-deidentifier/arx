@@ -49,7 +49,7 @@ public class MetricHeight extends MetricDefault {
      * Creates a new instance.
      */
     protected MetricHeight() {
-        super(true, true);
+        super(true, true, true);
     }
 
     @Override

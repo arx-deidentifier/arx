@@ -54,7 +54,7 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
      * @param infoloss
      */
     protected MetricStatic(final Map<String, List<Double>> infoloss) {
-        super(true, true);
+        super(true, true, true);
         _infoloss = infoloss;
     }
     

@@ -47,7 +47,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
      * Creates a new instance.
      */
     protected MetricMDNUNMEntropyPrecomputed() {
-        super(false, false, 0.5d, AggregateFunction.SUM);
+        super(true, false, false, 0.5d, AggregateFunction.SUM);
     }
     
     /**
@@ -57,7 +57,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
      * @param function
      */
     protected MetricMDNUNMEntropyPrecomputed(double gsFactor, AggregateFunction function){
-        super(false, false, gsFactor, function);
+        super(true, false, false, gsFactor, function);
     }
     
     /**

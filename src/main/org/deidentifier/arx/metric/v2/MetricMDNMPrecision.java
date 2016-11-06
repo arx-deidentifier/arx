@@ -56,7 +56,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
      * Creates a new instance.
      */
     protected MetricMDNMPrecision() {
-        super(false, false, AggregateFunction.ARITHMETIC_MEAN);
+        super(true, false, false, AggregateFunction.ARITHMETIC_MEAN);
     }
     
     /**
@@ -65,30 +65,32 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
      * @param function
      */
     protected MetricMDNMPrecision(AggregateFunction function){
-        super(false, false, function);
+        super(true, false, false, function);
     }
 
     /**
      * For subclasses.
      *
-     * @param monotonic
+     * @param monotonicWithGeneralization
+     * @param monotonicWithSuppression
      * @param independent
      * @param function
      */
-    protected MetricMDNMPrecision(boolean monotonic, boolean independent, AggregateFunction function){
-        super(monotonic, independent, function);
+    protected MetricMDNMPrecision(boolean monotonicWithGeneralization, boolean monotonicWithSuppression, boolean independent, AggregateFunction function){
+        super(monotonicWithGeneralization, monotonicWithSuppression, independent, function);
     }
 
     /**
      * For subclasses.
      *
-     * @param monotonic
+     * @param monotonicWithGeneralization
+     * @param monotonicWithSuppression
      * @param independent
      * @param gsFactor
      * @param function
      */
-    protected MetricMDNMPrecision(boolean monotonic, boolean independent, double gsFactor, AggregateFunction function){
-        super(monotonic, independent, gsFactor, function);
+    protected MetricMDNMPrecision(boolean monotonicWithGeneralization, boolean monotonicWithSuppression, boolean independent, double gsFactor, AggregateFunction function){
+        super(monotonicWithGeneralization, monotonicWithSuppression, independent, gsFactor, function);
     }
     
     /**
@@ -96,7 +98,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
      * @param gsFactor
      */
     protected MetricMDNMPrecision(double gsFactor) {
-        super(false, false, gsFactor, AggregateFunction.ARITHMETIC_MEAN);
+        super(true, false, false, gsFactor, AggregateFunction.ARITHMETIC_MEAN);
     }
 
     /**
@@ -106,7 +108,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
      * @param function
      */
     protected MetricMDNMPrecision(double gsFactor, AggregateFunction function){
-        super(false, false, gsFactor, function);
+        super(true, false, false, gsFactor, function);
     }
     
     /**

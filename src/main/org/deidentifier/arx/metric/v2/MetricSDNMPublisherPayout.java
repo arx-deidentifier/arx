@@ -72,7 +72,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
      *            balancing both methods.
      */
     public MetricSDNMPublisherPayout(boolean journalistAttackerModel, double gsFactor) {
-        super(false, false, gsFactor);
+        super(false, false, false, gsFactor);
         this.journalistAttackerModel = journalistAttackerModel;
     }
     

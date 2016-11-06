@@ -50,7 +50,7 @@ public class MetricNMEntropy extends MetricEntropy {
      * Creates a new instance.
      */
     protected MetricNMEntropy() {
-        super(false, false);
+        super(true, false, false);
     }
     
     @Override

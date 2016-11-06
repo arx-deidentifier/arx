@@ -45,7 +45,7 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
      * Creates a new instance.
      */
     protected MetricMDHeight() {
-        super(true, true, AggregateFunction.SUM);
+        super(true, true, true, AggregateFunction.SUM);
     }
 
     /**
@@ -54,7 +54,7 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
      * @param function
      */
     protected MetricMDHeight(AggregateFunction function) {
-        super(true, true, function);
+        super(true, true, true, function);
     }
   
     /**

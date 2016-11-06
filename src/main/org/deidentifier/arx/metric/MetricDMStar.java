@@ -45,7 +45,7 @@ public class MetricDMStar extends MetricDefault {
      * Creates a new instance.
      */
     protected MetricDMStar() {
-        super(true, false);
+        super(true, true, false);
     }
 
     @Override

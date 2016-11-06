@@ -37,7 +37,7 @@ public class MetricSDDiscernability extends MetricSDNMDiscernability {
      * Creates a new instance.
      */
     protected MetricSDDiscernability() {
-        super(true);
+        super(true, true);
     }
 
     /**
