@@ -1145,7 +1145,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     private boolean      independent                 = false;
 
     /** Is the metric monotonic with generalization?. */
-    private boolean      monotonicWithGeneralization = true;
+    private Boolean      monotonicWithGeneralization = true;
 
     /** Is the metric monotonic with suppression?. */
     private boolean      monotonic                   = false;
@@ -1377,7 +1377,10 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     public final boolean isMonotonicWithGeneralization(){
-         return monotonicWithGeneralization;
+        if (monotonicWithGeneralization == null) {
+            monotonicWithGeneralization = true;
+        }
+        return monotonicWithGeneralization;
     }
     
     /**
