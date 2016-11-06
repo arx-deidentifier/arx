@@ -43,6 +43,16 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class ARXResult {
 
+    /**
+     * Score type
+     * @author Fabian Prasser
+     *
+     */
+    public static enum ScoreType {
+        AECS,
+        LOSS,
+    }
+
     /** Lock the buffer. */
     private DataHandle             bufferLockedByHandle = null;
 
@@ -75,7 +85,7 @@ public class ARXResult {
 
     /** The registry. */
     private final SolutionSpace    solutionSpace;
-
+    
     /**
      * Internal constructor for deserialization.
      *
@@ -155,7 +165,9 @@ public class ARXResult {
         this.duration = time;
         this.solutionSpace = solutionSpace;
     }
-    
+
+
+
     /**
      * Creates a new instance.
      *
@@ -187,8 +199,6 @@ public class ARXResult {
         this.duration = duration;
         this.solutionSpace = solutionSpace;
     }
-
-
 
     /**
      * Returns the configuration used.
@@ -238,7 +248,7 @@ public class ARXResult {
     public DataHandle getHandle(ARXNode node) {
         return getOutput(node, false);
     }
-
+    
     /**
      * Returns the lattice.
      *
@@ -259,7 +269,7 @@ public class ARXResult {
         if (optimalNode == null) { return null; }
         return getOutput(optimalNode, true);
     }
-    
+
     /**
      * Returns a handle to data obtained by applying the given transformation.  This method will fork the buffer, 
      * allowing to obtain multiple handles to different representations of the data set. Note that only one instance can
@@ -273,31 +283,6 @@ public class ARXResult {
         return getOutput(node, true);
     }
 
-    /**
-     * Score type
-     * @author Fabian Prasser
-     *
-     */
-    public static enum ScoreType {
-        TYPE_1,
-        TYPE_2,
-        TYPE_3
-    }
-    
-    /**
-     * Returns a score
-     *  
-     * @param node the transformation
-     * 
-     * @return
-     */
-    public double getScore(ARXNode node, ScoreType score) {
-        
-        // Apply the transformation
-        final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
-        return checker.getScore(definition, transformation, score);
-    }
-    
     /**
      * Returns a handle to data obtained by applying the given transformation. This method allows controlling whether
      * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
@@ -381,7 +366,7 @@ public class ARXResult {
         // Return
         return result;
     }
-    
+        
     /**
      * Returns a handle to the data obtained by applying the optimal transformation. This method allows controlling whether
      * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
@@ -395,6 +380,34 @@ public class ARXResult {
     public DataHandle getOutput(boolean fork) {
         if (optimalNode == null) { return null; }
         return getOutput(optimalNode, fork);
+    }
+    
+    /**
+     * Returns a score
+     *  
+     * @param node the transformation
+     * @param score the type of score
+     * 
+     * @return
+     */
+    public double getScore(ARXNode node, ScoreType score) {
+        return getScore(node, score, -1);
+    }
+    
+    /**
+     * Returns a score
+     *  
+     * @param node the transformation
+     * @param score the type of score
+     * @param clazz the index of the class attribute
+     * 
+     * @return
+     */
+    public double getScore(ARXNode node, ScoreType score, int clazz) {
+        
+        // Apply the transformation
+        final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
+        return checker.getScore(definition, transformation, score, clazz);
     }
 
     /**
