@@ -1142,23 +1142,23 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /** Is the metric independent?. */
-    private boolean           independent      = false;
-    
+    private boolean      independent                 = false;
+
     /** Is the metric monotonic with generalization?. */
-    private boolean           monotonicWithGeneralization    = true;
+    private boolean      monotonicWithGeneralization = true;
 
     /** Is the metric monotonic with suppression?. */
-    private boolean           monotonic        = false;
+    private boolean      monotonic                   = false;
 
     /** Configuration factor. */
-    private final Double      gFactor;
-    
-    /** Configuration factor. */
-    private final Double      gsFactor;
+    private final Double gFactor;
 
     /** Configuration factor. */
-    private final Double      sFactor;
-    
+    private final Double gsFactor;
+
+    /** Configuration factor. */
+    private final Double sFactor;
+
     /**
      * Create a new metric.
      *
