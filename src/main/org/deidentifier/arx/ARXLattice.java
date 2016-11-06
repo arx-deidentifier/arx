@@ -1118,8 +1118,9 @@ public class ARXLattice implements Serializable {
         }
         return 0;
     }
+    
     /**
-     * Creates all relationships from the 
+     * Creates all relationships 
      * @param solutions
      * @param map
      * @param id
@@ -1194,7 +1195,7 @@ public class ARXLattice implements Serializable {
 
 
     /**
-     * Creates all relationships from the 
+     * Creates all relationships
      * @param solutions
      * @param map
      * @param id
