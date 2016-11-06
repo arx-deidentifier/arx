@@ -1263,6 +1263,11 @@ public class ARXLattice implements Serializable {
         }
     }
     
+    /**
+     * Sets the monotonicity based on the current configuration
+     * @param isSuppressionAlwaysEnabled
+     * @param absoluteMaxOutliers
+     */
     private void setMonotonicity(boolean isSuppressionAlwaysEnabled, int absoluteMaxOutliers) {
         this.monotonicNonAnonymous = (this.metric.isMonotonicWithSuppression() && isSuppressionAlwaysEnabled) ||
                                      (this.metric.isMonotonicWithGeneralization() && !isSuppressionAlwaysEnabled);
