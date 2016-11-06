@@ -1382,6 +1382,20 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         }
         return monotonicWithGeneralization;
     }
+
+    /**
+     * Returns whether this model is monotonic under the given suppression limit.
+     *
+     * @param suppressionLimit
+     * @return
+     */
+    public final boolean isMonotonic(double suppressionLimit) {
+        if (suppressionLimit == 0d) {
+            return this.isMonotonicWithGeneralization();
+        } else {
+            return this.isMonotonicWithSuppression();
+        } 
+    }
     
     /**
      * Returns false if the metric is non-monotonic when using suppression.

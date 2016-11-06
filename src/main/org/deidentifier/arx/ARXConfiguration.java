@@ -707,8 +707,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @return
      */
     public Monotonicity getMonotonicityOfUtility() {
-        if ((metric.isMonotonicWithGeneralization() && this.getMaxOutliers() == 0) || 
-            (metric.isMonotonicWithSuppression() && this.getMaxOutliers() != 0) || 
+        if (metric.isMonotonic(this.getMaxOutliers()) || 
             this.isPracticalMonotonicity()) {
             return Monotonicity.FULL;
         }  else {
