@@ -64,10 +64,20 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
                                                          AbstractMetricMultiDimensional precomputedMetric,
                                                          double threshold) {
 
-        super(defaultMetric.isMonotonicWithGeneralization(), defaultMetric.isMonotonicWithSuppression(), false, defaultMetric.getAggregateFunction());
-        if (defaultMetric.getAggregateFunction() != precomputedMetric.getAggregateFunction()) { throw new IllegalArgumentException("Aggregate function does not match"); }
-        if (defaultMetric.isMonotonicWithSuppression() != precomputedMetric.isMonotonicWithSuppression()) { throw new IllegalArgumentException("Monotonicity does not match"); }
-        if (defaultMetric.isMonotonicWithGeneralization() != precomputedMetric.isMonotonicWithGeneralization()) { throw new IllegalArgumentException("Monotonicity does not match"); }
+        super(defaultMetric.isMonotonicWithGeneralization(), 
+              defaultMetric.isMonotonicWithSuppression(),
+              false, defaultMetric.getAggregateFunction());
+        
+        // Sanity checks
+        if (defaultMetric.getAggregateFunction() != precomputedMetric.getAggregateFunction()) {
+            throw new IllegalArgumentException("Aggregate function does not match");
+        }
+        if (defaultMetric.isMonotonicWithSuppression() != precomputedMetric.isMonotonicWithSuppression()) {
+            throw new IllegalArgumentException("Monotonicity does not match");
+        }
+        if (defaultMetric.isMonotonicWithGeneralization() != precomputedMetric.isMonotonicWithGeneralization()) {
+            throw new IllegalArgumentException("Monotonicity does not match");
+        }
 
         // Default is non-precomputed
         this.threshold = threshold;
