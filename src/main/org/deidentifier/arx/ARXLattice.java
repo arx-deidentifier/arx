@@ -1270,8 +1270,11 @@ public class ARXLattice implements Serializable {
      * @param absoluteSuppressionLimit
      */
     private void setMonotonicity(boolean isSuppressionAlwaysEnabled, int absoluteSuppressionLimit) {
-        this.monotonicNonAnonymous = this.metric.isMonotonic(absoluteSuppressionLimit) ||
-                                     (!isSuppressionAlwaysEnabled && this.metric.isMonotonicWithGeneralization());
+        
+
+        this.monotonicNonAnonymous = (this.metric.isMonotonicWithSuppression() && isSuppressionAlwaysEnabled) ||
+                                     (this.metric.isMonotonicWithGeneralization() && !isSuppressionAlwaysEnabled);
+        
         this.monotonicAnonymous = this.metric.isMonotonic(absoluteSuppressionLimit);
     }
     
