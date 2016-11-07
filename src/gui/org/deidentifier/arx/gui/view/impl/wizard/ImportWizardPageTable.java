@@ -71,7 +71,7 @@ public class ImportWizardPageTable extends WizardPage {
      *
      * @return Human readable string representation of <code>rows</code>
      */
-    private static String humanReadableRowCount(long rows) {
+    private static String getHumanReadableCount(long rows) {
         
         int unit = 1000;
         if (rows < unit) {
@@ -101,8 +101,8 @@ public class ImportWizardPageTable extends WizardPage {
         
         super("WizardImportTablePage"); //$NON-NLS-1$
         this.wizardImport = wizardImport;
-        setTitle(Resources.getMessage("ImportWizardPageTable.3")); //$NON-NLS-1$
-        setDescription(Resources.getMessage("ImportWizardPageTable.4")); //$NON-NLS-1$
+        this.setTitle(Resources.getMessage("ImportWizardPageTable.3")); //$NON-NLS-1$
+        this.setDescription(Resources.getMessage("ImportWizardPageTable.4")); //$NON-NLS-1$
     }
     
     /**
@@ -137,9 +137,7 @@ public class ImportWizardPageTable extends WizardPage {
                 wizardImport.getData().setSelectedJdbcTable(selectedTable);
                 
                 readColumns();
-                readPreview();
-                
-                setPageComplete(true);
+                setPageComplete(readPreview());
             }
         });
         
@@ -193,8 +191,7 @@ public class ImportWizardPageTable extends WizardPage {
         tblclmnColumns.setWidth(100);
         tblclmnColumns.setText(Resources.getMessage("ImportWizardPageTable.10")); //$NON-NLS-1$
         
-        TableViewerColumn tableViewerColumnRows = new TableViewerColumn(tableViewer,
-                                                                        SWT.NONE);
+        TableViewerColumn tableViewerColumnRows = new TableViewerColumn(tableViewer, SWT.NONE);
         tableViewerColumnRows.setLabelProvider(new ColumnLabelProvider() {
             
             /**
@@ -208,7 +205,7 @@ public class ImportWizardPageTable extends WizardPage {
                 
                 long rows = getNumberOfRows((String) element);
                 if (rows != -1) {
-                    return " ~ " + humanReadableRowCount(rows); //$NON-NLS-1$
+                    return " ~ " + getHumanReadableCount(rows); //$NON-NLS-1$
                 } else {
                     return "???"; //$NON-NLS-1$
                 }
@@ -321,8 +318,7 @@ public class ImportWizardPageTable extends WizardPage {
      *
      * @return Number of rows for given table, -1 in case of error
      */
-    protected int getNumberOfColumns(String table)
-    {
+    private int getNumberOfColumns(String table) {
         ResultSet rs = null;
         int i = 0;
         
@@ -365,7 +361,7 @@ public class ImportWizardPageTable extends WizardPage {
      * 
      * @return Number of rows for given table, -1 in case of error
      */
-    protected long getNumberOfRows(String table) {
+    private long getNumberOfRows(String table) {
         
         Statement statement = null;
         ResultSet resultSet = null;
@@ -408,14 +404,12 @@ public class ImportWizardPageTable extends WizardPage {
      * Reads in the preview data for currently selected table
      * 
      * If this can be performed successful, the preview data will be made
-     * available for the following pages by {@link ImportWizardModel#setPreviewData(List)}. Otherwise an appropriate
-     * error message is set.
+     * available for the following pages by {@link ImportWizardModel#setPreviewData(List)}.
+     * Otherwise an appropriate error message is set.
      */
-    protected void readPreview() {
+    private boolean readPreview() {
         
         String selectedTable = wizardImport.getData().getSelectedJdbcTable();
-        
-        List<String[]> previewData = new ArrayList<String[]>();
         Connection connection = wizardImport.getData().getJdbcConnection();
         Statement statement = null;
         ResultSet rs = null;
@@ -427,6 +421,7 @@ public class ImportWizardPageTable extends WizardPage {
             statement.execute("SELECT * FROM " + selectedTable); //$NON-NLS-1$
             rs = statement.getResultSet();
             
+            List<String[]> previewData = new ArrayList<String[]>();
             while (rs.next()) {
                 String[] previewRow = new String[rs.getMetaData().getColumnCount()];
                 for (int j = 0; j < previewRow.length; j++) {
@@ -434,6 +429,8 @@ public class ImportWizardPageTable extends WizardPage {
                 }
                 previewData.add(previewRow);
             }
+            wizardImport.getData().setPreviewData(previewData);
+            return true;
         } catch (SQLException e) {
             setErrorMessage(Resources.getMessage("ImportWizardPageTable.21")); //$NON-NLS-1$
         } finally {
@@ -452,7 +449,7 @@ public class ImportWizardPageTable extends WizardPage {
                 /* Ignore silently */
             }
         }
-        
-        wizardImport.getData().setPreviewData(previewData);
+        wizardImport.getData().setPreviewData(new ArrayList<String[]>());
+        return false;
     }
 }

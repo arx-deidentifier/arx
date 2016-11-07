@@ -248,11 +248,13 @@ public class ImportWizardPageJDBC extends WizardPage {
             /* Read tables from file */
             @Override
             public void widgetSelected(SelectionEvent e) {
-                setPageComplete(false);
                 setErrorMessage(null);
-                
                 connect();
-                readTables();
+                boolean ok = readTables();
+                setPageComplete(ok);
+                if (ok) {
+                    setMessage(Resources.getMessage("ImportWizardPageJDBC.21"), INFORMATION); //$NON-NLS-1$
+                }
             }
         });
         
