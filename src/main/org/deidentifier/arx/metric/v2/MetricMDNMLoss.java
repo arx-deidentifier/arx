@@ -289,7 +289,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         super.initializeInternal(manager, definition, input, hierarchies, config);
 
         // Determine total number of tuples
-        this.tuples = (double)super.getNumRecords(config, input);
+        this.tuples = manager.getDataGeneralized().getDataLength();
         
         // Save domain shares
         this.shares = manager.getDomainShares();

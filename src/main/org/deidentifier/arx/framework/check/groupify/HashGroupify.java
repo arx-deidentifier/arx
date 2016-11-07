@@ -733,7 +733,7 @@ public class HashGroupify {
             
             // If suppressed
             boolean removed = false;
-            if (!current.isNotOutlier) {
+            if (!current.isNotOutlier || current.count == 0) {
                 
                 if (suppressed == null) {
                     suppressed = current;
@@ -778,7 +778,7 @@ public class HashGroupify {
             this.hashTableFirstEntry = current;
         } else {
             previous.nextOrdered = current.nextOrdered;
-            this.hashTableElementCount--;
         }
+        this.hashTableElementCount--;
     }
 }

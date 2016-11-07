@@ -51,6 +51,10 @@ public class ARXResult {
     public static enum ScoreType {
         AECS,
         LOSS,
+        PRECISION,
+        DISCERNABILITY,
+        ENTROPY,
+        CLASSIFICATION
     }
 
     /** Lock the buffer. */

@@ -266,7 +266,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         setMax(max);
         
         // Store row count
-        rowCount = (double)super.getNumRecords(config, input);
+        rowCount = manager.getDataGeneralized().getDataLength();
         
         // Store heights
         this.heights = new int[hierarchies.length];
