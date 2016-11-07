@@ -402,7 +402,7 @@ public class ImportWizardPageJDBC extends WizardPage {
      *
      * @see {@link ImportWizardModel#setJdbcConnection(Connection)}
      */
-    protected boolean connect() {
+    private boolean connect() {
         
         try {
             
@@ -462,7 +462,7 @@ public class ImportWizardPageJDBC extends WizardPage {
      *
      * @see {@link ImportWizardModel#setJdbcTables(List)}
      */
-    protected boolean readTables() {
+    private boolean readTables() {
         ResultSet rs = null;
         try {
             Connection connection = wizardImport.getData().getJdbcConnection();

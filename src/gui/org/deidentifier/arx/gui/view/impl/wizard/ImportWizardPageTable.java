@@ -264,50 +264,6 @@ public class ImportWizardPageTable extends WizardPage {
     }
     
     /**
-     * Reads in the columns of currently selected table
-     * 
-     * If this can be performed successful, the columns will be made available
-     * for the next page by {@link ImportWizardModel#setWizardColumns(List)}.
-     * Otherwise an appropriate error message is set.
-     */
-    private void readColumns() {
-        
-        String selectedTable = wizardImport.getData().getSelectedJdbcTable();
-        
-        Connection connection = wizardImport.getData().getJdbcConnection();
-        List<ImportWizardModelColumn> columns = new ArrayList<ImportWizardModelColumn>();
-        
-        int i = 0;
-        ResultSet rs = null;
-        try {
-            rs = connection.getMetaData().getColumns(null,
-                                                     null,
-                                                     selectedTable,
-                                                     null);
-            
-            while (rs.next()) {
-                ImportColumnJDBC column = new ImportColumnJDBC(i++,
-                                                               IOUtil.trim(rs.getString("COLUMN_NAME")), //$NON-NLS-1$
-                                                               DataType.STRING);
-                columns.add(new ImportWizardModelColumn(column));
-            }
-            
-        } catch (SQLException e) {
-            setErrorMessage(Resources.getMessage("ImportWizardPageTable.17")); //$NON-NLS-1$
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException e) {
-                /* Ignore silently */
-            }
-        }
-        
-        wizardImport.getData().setWizardColumns(columns);
-    }
-    
-    /**
      * Gets the number of columns for given table
      *
      * This uses the JDBC connection {@link ImportWizardModel#getJdbcConnection()} to determine the number of
@@ -398,6 +354,50 @@ public class ImportWizardPageTable extends WizardPage {
         }
         
         return -1L;
+    }
+    
+    /**
+     * Reads in the columns of currently selected table
+     * 
+     * If this can be performed successful, the columns will be made available
+     * for the next page by {@link ImportWizardModel#setWizardColumns(List)}.
+     * Otherwise an appropriate error message is set.
+     */
+    private void readColumns() {
+        
+        String selectedTable = wizardImport.getData().getSelectedJdbcTable();
+        
+        Connection connection = wizardImport.getData().getJdbcConnection();
+        List<ImportWizardModelColumn> columns = new ArrayList<ImportWizardModelColumn>();
+        
+        int i = 0;
+        ResultSet rs = null;
+        try {
+            rs = connection.getMetaData().getColumns(null,
+                                                     null,
+                                                     selectedTable,
+                                                     null);
+            
+            while (rs.next()) {
+                ImportColumnJDBC column = new ImportColumnJDBC(i++,
+                                                               IOUtil.trim(rs.getString("COLUMN_NAME")), //$NON-NLS-1$
+                                                               DataType.STRING);
+                columns.add(new ImportWizardModelColumn(column));
+            }
+            
+        } catch (SQLException e) {
+            setErrorMessage(Resources.getMessage("ImportWizardPageTable.17")); //$NON-NLS-1$
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                /* Ignore silently */
+            }
+        }
+        
+        wizardImport.getData().setWizardColumns(columns);
     }
     
     /**
