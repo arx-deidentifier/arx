@@ -455,7 +455,7 @@ public class ImportWizardPageJDBC extends WizardPage {
      * Reads in the tables
      *
      * If successful, the page is marked as complete and a list of tables is
-     * assigned to {@link ImportWizardModel}. Otherwise an appropriate error messages
+     * assigned to {@link ImportWizardModel}. Otherwise an appropriate error message
      * is set.
      *
      * @see {@link ImportWizardModel#setJdbcTables(List)}
