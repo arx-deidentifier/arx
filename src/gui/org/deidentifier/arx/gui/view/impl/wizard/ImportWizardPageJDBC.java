@@ -471,7 +471,12 @@ public class ImportWizardPageJDBC extends WizardPage {
             List<String> tables = new ArrayList<String>();
             
             while (rs.next()) {
-                tables.add(rs.getString("TABLE_NAME")); //$NON-NLS-1$
+                String name = rs.getString("TABLE_NAME"); //$NON-NLS-1$
+                String schema = rs.getString("TABLE_SCHEM"); //$NON-NLS-1$
+                if (schema != null) {
+                    name = schema + "." + name; //$NON-NLS-1$
+                }
+                tables.add(name); 
             }
             
             wizardImport.getData().setJdbcTables(tables);
