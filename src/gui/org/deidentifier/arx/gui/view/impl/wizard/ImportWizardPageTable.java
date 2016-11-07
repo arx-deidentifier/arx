@@ -336,9 +336,9 @@ public class ImportWizardPageTable extends WizardPage {
             while (rs.next()) {
                 i++;
             }
+            return i;
             
         } catch (SQLException e) {
-            e.printStackTrace();
             setErrorMessage(Resources.getMessage("ImportWizardPageTable.18")); //$NON-NLS-1$
         } finally {
             try {
@@ -349,9 +349,8 @@ public class ImportWizardPageTable extends WizardPage {
                 /* Ignore silently */
             }
         }
-        
-        return i;
-        
+
+        return -1;
     }
     
     /**
