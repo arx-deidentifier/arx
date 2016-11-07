@@ -467,70 +467,7 @@ public class HashGroupify {
         // Return
         return entry;
     }
-
-    /**
-     * Analyzes the content of the hash table. 
-     * @param transformation
-     * @param records
-     */
-    public void prepareScore(Transformation transformation, int records) {
-        
-        // We have only checked k-anonymity so far
-        minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
-        
-        // Iterate over all classes
-        boolean dpresent = true;
-        currentNumOutliers = 0;
-        HashGroupifyEntry entry = hashTableFirstEntry;
-        while (entry != null) {
-            
-            // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(transformation, entry);
-            
-            // Determine outliers
-            if (anonymous != -1) {
-                
-                // Note: If d-presence exists, it is stored at criteria[0] by convention.
-                // If it fails, isAnonymous(entry) thus returns 1.
-                // Tuples from the public table that have no matching candidates in the private table
-                // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
-                // transformation must be considered to not fulfill the privacy criteria.
-                if (privacyModelContainsDPresence && entry.count == 0 && anonymous == 1) {
-                    dpresent = false;
-                }
-                
-                currentNumOutliers += entry.count;
-            }
-            
-            // We only suppress classes that are contained in the research subset
-            entry.isNotOutlier = entry.count != 0 ? (anonymous == -1) : true;
-            
-            // Next class
-            entry = entry.nextOrdered;
-        }
-        
-        this.analyzeSampleBasedCriteria(transformation, false);
-        this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit) && dpresent;
-        
-        // Add all records which are not in the subset as a single suppressed eq class
-        int rowsIncluded = 0;
-        HashGroupifyEntry e = this.hashTableFirstEntry;
-        while (e != null) {
-            rowsIncluded += e.count;
-            e = e.nextOrdered;
-        }
-        
-        int[] item = new int[hashTableLastEntry.key.length];
-        int hash = 0;
-        int index = hash & (hashTableBuckets.length - 1);
-        if (++hashTableElementCount > hashTableThreshold) {
-            rehash();
-            index = hash & (hashTableBuckets.length - 1);
-        }
-        e = this.createEntry(item, index, hash, 0);
-        e.count = records - rowsIncluded;
-        e.isNotOutlier = false;
-    }
+    
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
@@ -778,5 +715,70 @@ public class HashGroupify {
         }
         hashTableBuckets = newData;
         hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
+    }
+
+    /**
+     * Prepares the hash table for calculation of the score function
+     */
+    public void prepareScore() {
+        
+        HashGroupifyEntry suppressed = null;
+        int totalRecords = 0;
+        int totalNotSuppressed = 0;
+        
+        // For each class
+        HashGroupifyEntry previous = null;
+        HashGroupifyEntry current = hashTableFirstEntry;
+        while (current != null) {
+            
+            // If suppressed
+            boolean removed = false;
+            if (!current.isNotOutlier) {
+                
+                if (suppressed == null) {
+                    suppressed = current;
+                } else {
+                    removed = true;
+                    prepareScoreRemove(previous, current);
+                }
+                
+            } else {
+                totalNotSuppressed += current.count;
+            }
+            totalRecords += current.pcount;
+            
+            // Next group
+            if (!removed) {
+                previous = current;
+            }
+            current = current.nextOrdered;
+        }
+        
+        // Store all suppressed entries in the selected group
+        suppressed.count = totalRecords - totalNotSuppressed;
+        suppressed.isNotOutlier = false;
+        
+        // Make sure that next and nextOrdered match with each other
+        current = hashTableFirstEntry;
+        while (current != null) {
+            hashTableLastEntry = current;
+            current.next = current.nextOrdered;
+            current = current.nextOrdered;
+        }
+    }
+
+    /**
+     * Removes the given entry
+     * @param previous
+     * @param current 
+     */
+    private void prepareScoreRemove(HashGroupifyEntry previous, HashGroupifyEntry current) {
+        
+        if (previous == null) {
+            this.hashTableFirstEntry = current;
+        } else {
+            previous.nextOrdered = current.nextOrdered;
+            this.hashTableElementCount--;
+        }
     }
 }

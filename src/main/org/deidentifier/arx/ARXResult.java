@@ -50,9 +50,9 @@ public class ARXResult {
      */
     public static enum ScoreType {
         AECS,
-        LOSS
+        LOSS,
     }
-    
+
     /** Lock the buffer. */
     private DataHandle             bufferLockedByHandle = null;
 
@@ -85,7 +85,7 @@ public class ARXResult {
 
     /** The registry. */
     private final SolutionSpace    solutionSpace;
-
+    
     /**
      * Internal constructor for deserialization.
      *
@@ -165,7 +165,9 @@ public class ARXResult {
         this.duration = time;
         this.solutionSpace = solutionSpace;
     }
-    
+
+
+
     /**
      * Creates a new instance.
      *
@@ -196,21 +198,6 @@ public class ARXResult {
         this.optimalNode = lattice.getOptimum();
         this.duration = duration;
         this.solutionSpace = solutionSpace;
-    }
-
-
-
-    /**
-     * Returns a map of all microaggregation functions
-     * @param definition
-     * @return
-     */
-    private Map<String, DistributionAggregateFunction> getAggregateFunctions(DataDefinition definition) {
-        Map<String, DistributionAggregateFunction> result = new HashMap<String, DistributionAggregateFunction>();
-        for (String key : definition.getQuasiIdentifiersWithMicroaggregation()) {
-            result.put(key, definition.getMicroAggregationFunction(key).getFunction());
-        }
-        return result;
     }
 
     /**
@@ -295,7 +282,7 @@ public class ARXResult {
     public DataHandle getOutput(ARXNode node) {
         return getOutput(node, true);
     }
-    
+
     /**
      * Returns a handle to data obtained by applying the given transformation. This method allows controlling whether
      * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
@@ -379,7 +366,7 @@ public class ARXResult {
         // Return
         return result;
     }
-    
+        
     /**
      * Returns a handle to the data obtained by applying the optimal transformation. This method allows controlling whether
      * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
@@ -399,20 +386,20 @@ public class ARXResult {
      * Returns a score
      *  
      * @param node the transformation
-     * @param score type of score
+     * @param score the type of score
      * 
      * @return
      */
     public double getScore(ARXNode node, ScoreType score) {
-        return getScore(node, score, 0);
+        return getScore(node, score, -1);
     }
-
+    
     /**
      * Returns a score
      *  
      * @param node the transformation
-     * @param score type of score
-     * @param clazz index of the class attribute, if any
+     * @param score the type of score
+     * @param clazz the index of the class attribute
      * 
      * @return
      */
@@ -431,7 +418,7 @@ public class ARXResult {
     public long getTime() {
         return duration;
     }
-    
+
     /**
      * Returns whether local recoding can be applied to the given handle
      * @param handle
@@ -480,7 +467,7 @@ public class ARXResult {
         // Yes, we probably can do this
         return true;
     }
-
+    
     /**
      * Indicates if a result is available.
      *
@@ -661,7 +648,7 @@ public class ARXResult {
             throw new RollbackRequiredException("Handle must be rebuild to guarantee privacy", e);
         }
     }
-    
+
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -687,7 +674,7 @@ public class ARXResult {
             }
         });
     }
-
+    
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -752,6 +739,19 @@ public class ARXResult {
             }
             iterations++;
         }
+    }
+
+    /**
+     * Returns a map of all microaggregation functions
+     * @param definition
+     * @return
+     */
+    private Map<String, DistributionAggregateFunction> getAggregateFunctions(DataDefinition definition) {
+        Map<String, DistributionAggregateFunction> result = new HashMap<String, DistributionAggregateFunction>();
+        for (String key : definition.getQuasiIdentifiersWithMicroaggregation()) {
+            result.put(key, definition.getMicroAggregationFunction(key).getFunction());
+        }
+        return result;
     }
     
     /**
