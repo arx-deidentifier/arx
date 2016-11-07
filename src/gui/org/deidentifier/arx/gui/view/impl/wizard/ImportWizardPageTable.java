@@ -274,15 +274,22 @@ public class ImportWizardPageTable extends WizardPage {
      *
      * @return Number of rows for given table, -1 in case of error
      */
-    private int getNumberOfColumns(String table) {
+    private int getNumberOfColumns(String selectedTable) {
         ResultSet rs = null;
         int i = 0;
         
         try {
+            String table = selectedTable;
+            String schema = null;
+            if (selectedTable.contains(".")) {
+                table = selectedTable.split("\\.")[1];
+                schema = selectedTable.split("\\.")[0];
+            }
+            
             
             Connection connection = wizardImport.getData().getJdbcConnection();
             rs = connection.getMetaData().getColumns(null,
-                                                     null,
+                                                     schema,
                                                      table,
                                                      null);
             while (rs.next()) {
@@ -292,7 +299,7 @@ public class ImportWizardPageTable extends WizardPage {
             return i;
             
         } catch (SQLException e) {
-            setErrorMessage(Resources.getMessage("ImportWizardPageTable.18")); //$NON-NLS-1$
+            /* Ignore silently */
         } finally {
             try {
                 if (rs != null) {
@@ -334,7 +341,6 @@ public class ImportWizardPageTable extends WizardPage {
             }
             
         } catch (SQLException e) {
-            setErrorMessage(Resources.getMessage("ImportWizardPageTable.22")); //$NON-NLS-1$
             /* Ignore silently */
         } finally {
             try {
@@ -366,16 +372,23 @@ public class ImportWizardPageTable extends WizardPage {
     private void readColumns() {
         
         String selectedTable = wizardImport.getData().getSelectedJdbcTable();
-        
         Connection connection = wizardImport.getData().getJdbcConnection();
         List<ImportWizardModelColumn> columns = new ArrayList<ImportWizardModelColumn>();
         
         int i = 0;
         ResultSet rs = null;
         try {
+            
+            String table = selectedTable;
+            String schema = null;
+            if (selectedTable.contains(".")) {
+                table = selectedTable.split("\\.")[1];
+                schema = selectedTable.split("\\.")[0];
+            }
+            
             rs = connection.getMetaData().getColumns(null,
-                                                     null,
-                                                     selectedTable,
+                                                     schema,
+                                                     table,
                                                      null);
             
             while (rs.next()) {
@@ -430,9 +443,18 @@ public class ImportWizardPageTable extends WizardPage {
                 previewData.add(previewRow);
             }
             wizardImport.getData().setPreviewData(previewData);
-            return true;
+            if (previewData.isEmpty()) {
+                setErrorMessage(Resources.getMessage("ImportWizardPageTable.22")); //$NON-NLS-1$
+                return false;
+            } else {
+                setErrorMessage(null);
+                setMessage(Resources.getMessage("ImportWizardPageTable.23"), INFORMATION); //$NON-NLS-1$
+                return true;
+            }
         } catch (SQLException e) {
+            wizardImport.getData().setPreviewData(new ArrayList<String[]>());
             setErrorMessage(Resources.getMessage("ImportWizardPageTable.21")); //$NON-NLS-1$
+            return false;
         } finally {
             try {
                 if (rs != null) {
@@ -449,7 +471,5 @@ public class ImportWizardPageTable extends WizardPage {
                 /* Ignore silently */
             }
         }
-        wizardImport.getData().setPreviewData(new ArrayList<String[]>());
-        return false;
     }
 }
