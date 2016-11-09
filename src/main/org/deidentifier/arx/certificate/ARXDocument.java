@@ -41,73 +41,6 @@ import rst.pdfbox.layout.elements.Document;
  */
 public class ARXDocument {
 
-    /** The document style */
-    private final ARXDocumentStyle style;
-    /** Elements*/
-    private final List<Element> elements = new ArrayList<Element>();
- 
-    /**
-     * Creates a new instance
-     * @param style
-     */
-	public ARXDocument(ARXDocumentStyle style) {
-        this.style = style;
-
-	}
-
-	/**
-	 * Adds a new element
-	 * @param element
-	 */
-	public void addElement(Element element) {
-	    this.elements.add(element);
-	}
-	
-	/**
-	 * Renders the document
-	 * @throws IOException 
-	 */
-    public void render() throws IOException {
-        
-        // Render
-        Document document = new Document(style.gethMargin(), style.gethMargin(), style.getvMargin(), style.getvMargin());
-        for (Element element : this.elements) {
-            element.render(document, 0, this.style);
-        }
-        
-        // Save
-        File file = File.createTempFile("arx", String.valueOf(System.currentTimeMillis()));
-        OutputStream outputStream = new FileOutputStream(file);
-        document.save(outputStream);
-        
-        // Open
-        if (Desktop.isDesktopSupported()) {
-            Desktop.getDesktop().open(file);
-        }
-    }
-	
-//
-//	@Override
-//	public void add(Element element) {
-//
-//	    
-//		else if(element instanceof ElementTable) {
-//			((ElementTable) element).setWidth(getPageWidth()-2*vMargin);
-//			super.add(element);
-//			try {
-//				Paragraph paragraph = new Paragraph();
-//				paragraph.addText("\n", 11,
-//						PDType1Font.HELVETICA);
-//				add(paragraph);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		else
-//			super.add(element);
-//	}
-//
-    
     public static void main(String[] args) throws IOException {
         ARXDocument document = new ARXDocument(ARXDocumentStyle.create());
         document.addElement(new ElementTitle("Title"));
@@ -131,5 +64,72 @@ public class ARXDocument {
         document.addElement(list2);
         document.addElement(new ElementText("Text3"));
         document.render();
+    }
+    /** The document style */
+    private final ARXDocumentStyle style;
+ 
+    /** Elements*/
+    private final List<Element> elements = new ArrayList<Element>();
+
+	/**
+     * Creates a new instance
+     * @param style
+     */
+	public ARXDocument(ARXDocumentStyle style) {
+        this.style = style;
+
+	}
+	
+	/**
+	 * Adds a new element
+	 * @param element
+	 */
+	public void addElement(Element element) {
+	    this.elements.add(element);
+	}
+	
+//
+//	@Override
+//	public void add(Element element) {
+//
+//	    
+//		else if(element instanceof ElementTable) {
+//			((ElementTable) element).setWidth(getPageWidth()-2*vMargin);
+//			super.add(element);
+//			try {
+//				Paragraph paragraph = new Paragraph();
+//				paragraph.addText("\n", 11,
+//						PDType1Font.HELVETICA);
+//				add(paragraph);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		else
+//			super.add(element);
+//	}
+//
+    
+    /**
+	 * Renders the document
+	 * @throws IOException 
+	 */
+    public void render() throws IOException {
+        
+        // Render
+        Document document = new Document(style.gethMargin(), style.gethMargin(), style.getvMargin(), style.getvMargin());
+        for (Element element : this.elements) {
+            element.render(document, 0, this.style);
+        }
+        
+        // Save
+        File file = File.createTempFile("arx", String.valueOf(System.currentTimeMillis()));
+        OutputStream outputStream = new FileOutputStream(file);
+        document.save(outputStream);
+        
+        // Open
+        if (Desktop.isDesktopSupported()) {
+            Desktop.getDesktop().open(file);
+        }
     }
 }

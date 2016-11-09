@@ -47,6 +47,32 @@ public class ElementText implements Element {
     /** Style*/
     private final TextStyle style;
 
+    /** Field*/
+    private final String text;
+    /**
+     * Creates a new text
+     * @param text
+     */
+    public ElementText(String text) {
+        this(text, TextStyle.PLAIN);
+    }
+
+    /**
+     * Creates a new text
+     * @param text
+     */
+    public ElementText(String text, TextStyle style) {
+        this.text = text;
+        this.style = style;
+    }
+    
+    @Override
+    public void render(Document target, int indent, ARXDocumentStyle style) throws IOException {
+        Paragraph paragraph = new Paragraph();
+        paragraph.addText(text, style.getTextSize(), getFont(style));
+        target.add(paragraph);
+    }
+
     /**
      * Returns a styled instance
      * @param font
@@ -60,32 +86,6 @@ public class ElementText implements Element {
         case ITALIC: return font.getItalicFont();
         default: return font.getPlainFont();
         }
-    }
-    /** Field*/
-    private final String text;
-
-    /**
-     * Creates a new text
-     * @param text
-     */
-    public ElementText(String text) {
-        this(text, TextStyle.PLAIN);
-    }
-    
-    /**
-     * Creates a new text
-     * @param text
-     */
-    public ElementText(String text, TextStyle style) {
-        this.text = text;
-        this.style = style;
-    }
-
-    @Override
-    public void render(Document target, int indent, ARXDocumentStyle style) throws IOException {
-        Paragraph paragraph = new Paragraph();
-        paragraph.addText(text, style.getTextSize(), getFont(style));
-        target.add(paragraph);
     }
     
     /**

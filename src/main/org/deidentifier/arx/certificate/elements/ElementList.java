@@ -86,7 +86,7 @@ public class ElementList implements Element {
      * Adds an item to this list
      * @param item
      */
-    public void addItem(ElementText item) {
+    public void addItem(ElementList item) {
         this.items.add(item);
     }
 
@@ -94,8 +94,20 @@ public class ElementList implements Element {
      * Adds an item to this list
      * @param item
      */
-    public void addItem(ElementList item) {
+    public void addItem(ElementText item) {
         this.items.add(item);
+    }
+
+    /**
+     * Styling
+     * @param deep
+     * @return
+     */
+    public String getListItemIndicator(int indent) {
+        switch (style) {
+            case BULLETS: return indent % 2 == 1 ? bulletOdd : bulletEven;
+            default: return enumerator.next() +  separator;
+        }
     }
 
     @Override
@@ -116,18 +128,6 @@ public class ElementList implements Element {
             }
         }
 
-    }
-
-    /**
-     * Styling
-     * @param deep
-     * @return
-     */
-    public String getListItemIndicator(int indent) {
-        switch (style) {
-            case BULLETS: return indent % 2 == 1 ? bulletOdd : bulletEven;
-            default: return enumerator.next() +  separator;
-        }
     }
     
     /**
