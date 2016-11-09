@@ -39,13 +39,19 @@ public class ARXDocument {
     /** Elements*/
     private final List<Element> elements = new ArrayList<Element>();
 
+    /**
+     * Creates a new instance
+     */
+    public ARXDocument() {
+        this.style = ARXDocumentStyle.create();
+    }
+    
 	/**
      * Creates a new instance
      * @param style
      */
 	public ARXDocument(ARXDocumentStyle style) {
         this.style = style;
-
 	}
 	
 	/**
