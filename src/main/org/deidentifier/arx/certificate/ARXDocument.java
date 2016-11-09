@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.certificate.elements.Element;
 
 import rst.pdfbox.layout.elements.Document;
@@ -58,8 +59,16 @@ public class ARXDocument {
 	 * Adds a new element
 	 * @param element
 	 */
-	public void addElement(Element element) {
+	public void add(Element element) {
 	    this.elements.add(element);
+	}
+	
+	/**
+	 * Adds a new data element
+	 * @param data
+	 */
+	public void add(ElementData data) {
+	    
 	}
 	
 	/**
