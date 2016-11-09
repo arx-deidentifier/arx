@@ -68,7 +68,8 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "David Gassmann (HIPAA identifiers)\n" + //$NON-NLS-1$
                                                "Sebastian Stammler (performance improvements, l-diversity)\n" + //$NON-NLS-1$
                                                "Maximilian Zitzmann (distinction and separation)\n" + //$NON-NLS-1$
-                                               "James Gaupp (game-theoretic privacy)"; //$NON-NLS-1$
+                                               "James Gaupp (game-theoretic privacy)\n" + //$NON-NLS-1$
+                                               "Annika Saken (certificates)"; //$NON-NLS-1$
     
     /**  Icon */
     private Image image;
