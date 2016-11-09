@@ -64,7 +64,7 @@ public class DistinctLDiversity extends LDiversity{
     public ElementData render() {
         ElementData result = new ElementData("Distinct l-diversity");
         result.addProperty("Attribute", attribute);
-        result.addProperty("Threshold (l)", String.valueOf(minSize));
+        result.addProperty("Threshold (l)", minSize);
         return result;
     }
 

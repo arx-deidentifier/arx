@@ -114,7 +114,7 @@ public class OrderedDistanceTCloseness extends TCloseness {
     public ElementData render() {
         ElementData result = new ElementData("t-Closeness");
         result.addProperty("Attribute", attribute);
-        result.addProperty("Threshold (t)", String.valueOf(this.t));
+        result.addProperty("Threshold (t)", this.t);
         result.addProperty("Distance", "Ordered");
         return result;
     }

@@ -131,7 +131,7 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
     public ElementData render() {
         ElementData result = new ElementData("Disclosure privacy");
         result.addProperty("Attribute", attribute);
-        result.addProperty("Threshold (delta)", String.valueOf(d));
+        result.addProperty("Threshold (delta)", d);
         return result;
     }
 

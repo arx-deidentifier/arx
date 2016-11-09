@@ -26,6 +26,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.RowSet;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -1372,18 +1373,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     
     
     /**
-     * Returns false if the metric is non-monotonic when using generalization.
-     * 
-     * @return
-     */
-    public final boolean isMonotonicWithGeneralization(){
-        if (monotonicWithGeneralization == null) {
-            monotonicWithGeneralization = true;
-        }
-        return monotonicWithGeneralization;
-    }
-
-    /**
      * Returns whether this model is monotonic under the given suppression limit.
      * Note: The suppression limit may be relative or absolute.
      *
@@ -1398,6 +1387,18 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         } else {
             return this.isMonotonicWithSuppression();
         } 
+    }
+
+    /**
+     * Returns false if the metric is non-monotonic when using generalization.
+     * 
+     * @return
+     */
+    public final boolean isMonotonicWithGeneralization(){
+        if (monotonicWithGeneralization == null) {
+            monotonicWithGeneralization = true;
+        }
+        return monotonicWithGeneralization;
     }
     
     /**
@@ -1436,6 +1437,12 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Renders the privacy model
+     * @return
+     */
+    public abstract ElementData render(ARXConfiguration config);
+    
+    /**
      * Returns the name of metric.
      *
      * @return
@@ -1443,7 +1450,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public String toString() {
         return this.getClass().getSimpleName();
     }
-    
+
     /**
      * Evaluates the metric for the given node.
      *
@@ -1452,7 +1459,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return the double
      */
     protected abstract InformationLossWithBound<T> getInformationLossInternal(final Transformation node, final HashGroupify groupify);
-
+    
+ 
     /**
      * Returns the information loss that would be induced by suppressing the given entry. The loss
      * is not necessarily consistent with the loss that is computed by 
@@ -1463,8 +1471,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     protected abstract InformationLossWithBound<T> getInformationLossInternal(final Transformation node, HashGroupifyEntry entry);
-    
- 
+
     /**
      * Returns a lower bound for the information loss for the given node. 
      * This can be used to expose the results of monotonic shares of a metric,
@@ -1492,7 +1499,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     protected abstract T getLowerBoundInternal(final Transformation node, final HashGroupify groupify);
-
+    
     /**
      * Returns the number of records
      * @param config

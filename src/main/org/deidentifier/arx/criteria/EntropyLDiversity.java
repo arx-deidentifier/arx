@@ -284,7 +284,7 @@ public class EntropyLDiversity extends LDiversity {
     public ElementData render() {
         ElementData result = new ElementData("Entropy l-diversity");
         result.addProperty("Attribute", attribute);
-        result.addProperty("Threshold (l)", String.valueOf(this.l));
+        result.addProperty("Threshold (l)", this.l);
         result.addProperty("Entropy estimator", this.estimator.toString());
         return result;
     }

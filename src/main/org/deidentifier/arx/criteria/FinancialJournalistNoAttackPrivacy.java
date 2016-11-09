@@ -116,10 +116,11 @@ public class FinancialJournalistNoAttackPrivacy extends FinancialProsecutorNoAtt
         result.addProperty("Attacker model", "Journalist");
         ARXFinancialConfiguration config = super.getConfiguration();
         if (config != null) {
-            result.addProperty("Adversary cost", String.valueOf(config.getAdversaryCost()));
-            result.addProperty("Adversary gain", String.valueOf(config.getAdversaryGain()));
-            result.addProperty("Publisher loss", String.valueOf(config.getPublisherLoss()));
-            result.addProperty("Publisher benefit", String.valueOf(config.getPublisherBenefit()));
+            result.addProperty("Threshold", super.getK());
+            result.addProperty("Adversary cost", config.getAdversaryCost());
+            result.addProperty("Adversary gain", config.getAdversaryGain());
+            result.addProperty("Publisher loss", config.getPublisherLoss());
+            result.addProperty("Publisher benefit", config.getPublisherBenefit());
         }
         return result;
     }

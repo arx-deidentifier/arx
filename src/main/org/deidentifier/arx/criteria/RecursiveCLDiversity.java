@@ -110,8 +110,8 @@ public class RecursiveCLDiversity extends LDiversity{
     public ElementData render() {
         ElementData result = new ElementData("Recursive-(c,l)-diversity");
         result.addProperty("Attribute", attribute);
-        result.addProperty("Threshold (l)", String.valueOf(this.l));
-        result.addProperty("Multiplier (c)", String.valueOf(this.c));
+        result.addProperty("Threshold (l)", this.l);
+        result.addProperty("Multiplier (c)", this.c);
         return result;
     }
 

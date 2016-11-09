@@ -20,6 +20,7 @@ package org.deidentifier.arx.metric.v2;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXFinancialConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -277,5 +278,20 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
             this.maxIL *= share.getDomainSize();
         }
         this.maxIL = Math.log10(maxIL);
+    }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Average equivalence class size");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        if (this.config != null) {
+            result.addProperty("Adversary cost", this.config.getAdversaryCost());
+            result.addProperty("Adversary gain", this.config.getAdversaryGain());
+            result.addProperty("Publisher loss", this.config.getPublisherLoss());
+            result.addProperty("Publisher benefit", this.config.getPublisherBenefit());
+        }
+        return result;
     }
 }

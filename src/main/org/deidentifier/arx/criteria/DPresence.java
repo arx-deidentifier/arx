@@ -135,8 +135,8 @@ public class DPresence extends ImplicitPrivacyCriterion {
     @Override
     public ElementData render() {
         ElementData result = new ElementData("Delta presence");
-        result.addProperty("Lower threshold (delta)", String.valueOf(dMin));
-        result.addProperty("Upper threshold (delta)", String.valueOf(dMax));
+        result.addProperty("Lower threshold (delta)", dMin);
+        result.addProperty("Upper threshold (delta)", dMax);
         return result;
     }
 

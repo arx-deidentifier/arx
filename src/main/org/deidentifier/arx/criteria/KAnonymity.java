@@ -118,7 +118,7 @@ public class KAnonymity extends ImplicitPrivacyCriterion {
     @Override
     public ElementData render() {
         ElementData result = new ElementData("k-Anonymity");
-        result.addProperty("Threshold (k)", String.valueOf(k));
+        result.addProperty("Threshold (k)", k);
         return result;
     }
 

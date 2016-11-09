@@ -73,10 +73,46 @@ public class ElementData implements Element {
      * @param property
      * @param value
      */
+    public void addProperty(String property, boolean value) {
+        this.properties.add(new ElementDataProperty(property, value ? "Yes" : "No"));
+    }
+
+    /**
+     * Adds a property
+     * @param property
+     * @param value
+     */
+    public void addProperty(String property, double value) {
+        this.properties.add(new ElementDataProperty(property, String.valueOf(value)));
+    }
+
+    /**
+     * Adds a property
+     * @param property
+     * @param value
+     */
+    public void addProperty(String property, int value) {
+        this.properties.add(new ElementDataProperty(property, String.valueOf(value)));
+    }
+
+    /**
+     * Adds a property
+     * @param property
+     * @param value
+     */
+    public void addProperty(String property, long value) {
+        this.properties.add(new ElementDataProperty(property, String.valueOf(value)));
+    }
+
+    /**
+     * Adds a property
+     * @param property
+     * @param value
+     */
     public void addProperty(String property, String value) {
         this.properties.add(new ElementDataProperty(property, value));
     }
-
+    
     @Override
     public void render(Document target, int indent, ARXDocumentStyle style) throws IOException {
         ElementText text = new ElementText(this.text);

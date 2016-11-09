@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -39,7 +40,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  */
 public class MetricStatic extends MetricWeighted<InformationLossDefault> {
 
-    /**  TODO */
+    /**  SVUID */
     private static final long               serialVersionUID = 3778891174824606177L;
 
     /** The user defined information loss per level, indexed by column name. */
@@ -135,4 +136,12 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
             }
         }
     }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Static");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
 }

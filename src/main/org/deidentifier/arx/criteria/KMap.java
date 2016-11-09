@@ -326,14 +326,14 @@ public class KMap extends ImplicitPrivacyCriterion {
     @Override
     public ElementData render() {
         ElementData result = new ElementData("k-Map");
-        result.addProperty("Threshold (k)", String.valueOf(k));
+        result.addProperty("Threshold (k)", k);
         if (this.estimator != null) {
             result.addProperty("Estimator", this.estimator.toString());
             if (this.derivedK != -1) {
-                result.addProperty("Derived threshold", String.valueOf(this.derivedK));
+                result.addProperty("Derived threshold", this.derivedK);
             }
             if (this.populationModel != null) {
-                result.addProperty("Population", String.valueOf(this.populationModel.getPopulationSize()));
+                result.addProperty("Population", this.populationModel.getPopulationSize());
             }
         }
         return result;

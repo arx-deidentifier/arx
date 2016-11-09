@@ -144,10 +144,11 @@ public class FinancialProsecutorNoAttackPrivacy extends ImplicitPrivacyCriterion
         ElementData result = new ElementData("Financial no-attack privacy");
         result.addProperty("Attacker model", "Prosecutor");
         if (config != null) {
-            result.addProperty("Adversary cost", String.valueOf(config.getAdversaryCost()));
-            result.addProperty("Adversary gain", String.valueOf(config.getAdversaryGain()));
-            result.addProperty("Publisher loss", String.valueOf(config.getPublisherLoss()));
-            result.addProperty("Publisher benefit", String.valueOf(config.getPublisherBenefit()));
+            result.addProperty("Threshold", getK());
+            result.addProperty("Adversary cost", config.getAdversaryCost());
+            result.addProperty("Adversary gain", config.getAdversaryGain());
+            result.addProperty("Publisher loss", config.getPublisherLoss());
+            result.addProperty("Publisher benefit", config.getPublisherBenefit());
         }
         return result;
     }

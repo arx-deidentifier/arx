@@ -154,8 +154,8 @@ public class PopulationUniqueness extends RiskBasedCriterion {
     @Override
     public ElementData render() {
         ElementData result = new ElementData("Population uniqueness");
-        result.addProperty("Threshold", String.valueOf(super.getRiskThreshold()));
-        result.addProperty("Population", String.valueOf(this.populationModel.getPopulationSize()));
+        result.addProperty("Threshold", super.getRiskThreshold());
+        result.addProperty("Population", this.populationModel.getPopulationSize());
         result.addProperty("Estimator", this.statisticalModel.toString());
         return result;
     }

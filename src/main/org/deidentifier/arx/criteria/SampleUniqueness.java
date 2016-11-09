@@ -62,7 +62,7 @@ public class SampleUniqueness extends RiskBasedCriterion{
     @Override
     public ElementData render() {
         ElementData result = new ElementData("Sample uniqueness");
-        result.addProperty("Threshold", String.valueOf(super.getRiskThreshold()));
+        result.addProperty("Threshold", super.getRiskThreshold());
         return result;
     }
 

@@ -232,8 +232,8 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     @Override
     public ElementData render() {
         ElementData result = new ElementData("Differential privacy");
-        result.addProperty("Epsilon", String.valueOf(epsilon));
-        result.addProperty("Delta", String.valueOf(delta));
+        result.addProperty("Epsilon", epsilon);
+        result.addProperty("Delta", delta);
         return result;
     }
 

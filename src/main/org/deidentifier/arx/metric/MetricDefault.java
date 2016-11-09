@@ -33,7 +33,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  */
 public abstract class MetricDefault extends Metric<InformationLossDefault> {
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = 2672819203235170632L;
 
     /**

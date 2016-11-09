@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 
@@ -82,5 +84,10 @@ public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMul
     @Override
     public String toString() {
         return "Non-monotonic non-uniform entropy";
+    }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        return super.getDefaultMetric().render(config);
     }
 }

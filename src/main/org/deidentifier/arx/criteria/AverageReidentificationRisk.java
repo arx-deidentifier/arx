@@ -61,7 +61,7 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
     @Override
     public ElementData render() {
         ElementData result = new ElementData("Average re-identification risk");
-        result.addProperty("Threshold", String.valueOf(this.getRiskThreshold()));
+        result.addProperty("Threshold", this.getRiskThreshold());
         return result;
     }
 
