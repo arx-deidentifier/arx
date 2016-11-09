@@ -754,6 +754,14 @@ public class HashGroupify {
             current = current.nextOrdered;
         }
         
+        // Add entry if missing
+        if (suppressed == null) {
+        	suppressed = new HashGroupifyEntry(null, 0);
+        	suppressed.nextOrdered = null;
+        	suppressed.representative = -1;
+        	previous.nextOrdered = suppressed;
+        }
+        
         // Store all suppressed entries in the selected group
         suppressed.count = totalRecords - totalNotSuppressed;
         suppressed.isNotOutlier = false;
