@@ -49,14 +49,6 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         super(true, true, true, AggregateFunction.SUM);
     }
 
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Height");
-        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
-    }
-
     /**
      * Creates a new instance.
      *
@@ -65,7 +57,7 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
     protected MetricMDHeight(AggregateFunction function) {
         super(true, true, true, function);
     }
-  
+
     /**
      * Returns the configuration of this metric.
      *
@@ -79,7 +71,7 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
                                        this.getAggregateFunction() // aggregate function
                                        );
     }
-
+  
     /**
      * For backwards compatibility only.
      *
@@ -90,6 +82,14 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         super.initialize(1);
         setMin(new double[]{minHeight});
         setMax(new double[]{maxHeight});
+    }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Height");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
     }
     
     @Override

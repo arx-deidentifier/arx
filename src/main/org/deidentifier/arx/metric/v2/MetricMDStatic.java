@@ -88,10 +88,18 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
     }
     
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Static");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+    
+    @Override
     public String toString() {
         return "Static";
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         AbstractILMultiDimensional loss = this.getLowerBoundInternal(node);
@@ -168,13 +176,5 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
         
         setMin(min);
         setMax(max);
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Static");
-        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
     }
 }

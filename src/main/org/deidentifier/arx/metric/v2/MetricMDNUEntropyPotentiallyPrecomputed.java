@@ -82,12 +82,12 @@ public class MetricMDNUEntropyPotentiallyPrecomputed extends AbstractMetricMulti
     }
 
     @Override
-    public String toString() {
-        return "Non-uniform entropy";
+    public ElementData render(ARXConfiguration config) {
+        return super.getDefaultMetric().render(config);
     }
 
     @Override
-    public ElementData render(ARXConfiguration config) {
-        return super.getDefaultMetric().render(config);
+    public String toString() {
+        return "Non-uniform entropy";
     }
 }

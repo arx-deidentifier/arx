@@ -57,6 +57,13 @@ public class MetricSDDiscernability extends MetricSDNMDiscernability {
     }
     
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Discernibility");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Monotonic discernability (DM*)";
     }
@@ -65,12 +72,5 @@ public class MetricSDDiscernability extends MetricSDNMDiscernability {
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         ILSingleDimensional result = super.getLowerBoundInternal(node, g);
         return new ILSingleDimensionalWithBound(result.getValue(), result.getValue());
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Discernibility");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
     }
 }

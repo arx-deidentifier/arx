@@ -134,10 +134,20 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Non-uniform entropy");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
+    }
+    
+    @Override
     public String toString() {
         return "Non-uniform entropy";
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
@@ -204,7 +214,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return this.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                                HashGroupify groupify) {
@@ -245,7 +255,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
         return result;
     }
-    
+
     /**
      * For backwards compatibility.
      *
@@ -318,15 +328,5 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         
         super.setMax(max);
         super.setMin(min);
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Non-uniform entropy");
-        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        result.addProperty("Generalization factor", this.getGeneralizationFactor());
-        result.addProperty("Suppression factor", this.getSuppressionFactor());
-        return result;
     }
 }

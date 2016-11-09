@@ -116,15 +116,15 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        return super.getDefaultMetric().render(config);
+    }
+
+    @Override
     public String toString() {
         MetricMDNMLoss loss = ((MetricMDNMLoss)super.getDefaultMetric());
         return "Loss ("+loss.getGeneralizationSuppressionFactor()+"/"+
                         loss.getGeneralizationFactor()+"/"+
                         loss.getSuppressionFactor()+")";
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        return super.getDefaultMetric().render(config);
     }
 }

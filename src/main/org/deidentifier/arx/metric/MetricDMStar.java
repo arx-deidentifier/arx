@@ -68,15 +68,15 @@ public class MetricDMStar extends MetricDefault {
     }
 
     @Override
-    public String toString() {
-        return "Monotonic Discernability";
-    }
-
-    @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Discernibility");
         result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Monotonic Discernability";
     }
 
     @Override

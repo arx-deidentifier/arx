@@ -70,10 +70,17 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Static");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+    
+    @Override
     public String toString() {
         return "Static";
     }
-    
+
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
 
@@ -94,13 +101,13 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     protected InformationLossDefault getLowerBoundInternal(Transformation node) {
         return this.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
-
+    
     @Override
     protected InformationLossDefault getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
          return this.getLowerBoundInternal(node);
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -135,13 +142,6 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
                 infoloss[i][j] = basicInfoloss.get(j) * weight;
             }
         }
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Static");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
     }
 
 }

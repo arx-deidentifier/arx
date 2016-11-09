@@ -62,6 +62,15 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     private boolean                   journalistAttackerModel;
 
     /**
+     * Creates a new instance. Default constructor which treats all transformation methods equally.
+     * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
+     *                                the prosecutor model will be assumed, otherwise
+     */
+    public MetricSDNMPublisherPayout(boolean journalistAttackerModel) {
+       this(journalistAttackerModel, 0.5d);
+    }
+    
+    /**
      * Creates a new instance
      * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
      *                                the prosecutor model will be assumed, otherwise
@@ -75,15 +84,6 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     public MetricSDNMPublisherPayout(boolean journalistAttackerModel, double gsFactor) {
         super(false, false, false, gsFactor);
         this.journalistAttackerModel = journalistAttackerModel;
-    }
-    
-    /**
-     * Creates a new instance. Default constructor which treats all transformation methods equally.
-     * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
-     *                                the prosecutor model will be assumed, otherwise
-     */
-    public MetricSDNMPublisherPayout(boolean journalistAttackerModel) {
-       this(journalistAttackerModel, 0.5d);
     }
     
     @Override
@@ -150,6 +150,21 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Average equivalence class size");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        if (this.config != null) {
+            result.addProperty("Adversary cost", this.config.getAdversaryCost());
+            result.addProperty("Adversary gain", this.config.getAdversaryGain());
+            result.addProperty("Publisher loss", this.config.getPublisherLoss());
+            result.addProperty("Publisher benefit", this.config.getPublisherBenefit());
+        }
+        return result;
+    }
+
+    @Override
     public String toString() {
         String result = "PublisherBenefit (" + (journalistAttackerModel ? "Journalist" : "Prosecutor");
         if (config == null) {
@@ -169,7 +184,6 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     private double getSuccessProbability(HashGroupifyEntry entry) {
         return !journalistAttackerModel || entry.pcount == 0 ? 1d / entry.count : 1d / entry.pcount;
     }
-
     /**
      * Returns the information loss for the according class. This is an exact copy of: 
      * @see MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(Transformation, HashGroupifyEntry)
@@ -184,6 +198,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         }
         return Math.log10(infoLoss) / maxIL + 1d;
     }
+
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation transformation, HashGroupify groupify) {
         
@@ -210,7 +225,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         // Return
         return super.createInformationLoss(real, bound);
     }
-
+    
     @Override
     protected InformationLossWithBound<ILSingleDimensional> getInformationLossInternal(Transformation transformation, HashGroupifyEntry entry) {
 
@@ -229,7 +244,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         // Return
         return super.createInformationLoss(real, bound);
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation transformation) {
         return null;
@@ -278,20 +293,5 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
             this.maxIL *= share.getDomainSize();
         }
         this.maxIL = Math.log10(maxIL);
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Average equivalence class size");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        result.addProperty("Generalization factor", this.getGeneralizationFactor());
-        result.addProperty("Suppression factor", this.getSuppressionFactor());
-        if (this.config != null) {
-            result.addProperty("Adversary cost", this.config.getAdversaryCost());
-            result.addProperty("Adversary gain", this.config.getAdversaryGain());
-            result.addProperty("Publisher loss", this.config.getPublisherLoss());
-            result.addProperty("Publisher benefit", this.config.getPublisherBenefit());
-        }
-        return result;
     }
 }

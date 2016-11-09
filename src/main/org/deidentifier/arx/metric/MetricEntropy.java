@@ -90,17 +90,24 @@ public class MetricEntropy extends MetricDefault {
     }
     
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Non-uniform entropy");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Monotonic Non-Uniform Entropy";
     }
-
+    
     /**
      * @return the cache
      */
     protected double[][] getCache() {
         return cache;
     }
-    
+
     /**
      * @return the cardinalities
      */
@@ -161,13 +168,13 @@ public class MetricEntropy extends MetricDefault {
     protected InformationLossDefault getLowerBoundInternal(Transformation node) {
         return getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
-
+    
     @Override
     protected InformationLossDefault getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -224,13 +231,6 @@ public class MetricEntropy extends MetricDefault {
             cache[i] = new double[ahierarchies[i].getArray()[0].length];
             Arrays.fill(cache[i], NA);
         }
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Non-uniform entropy");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
     }
 
 }

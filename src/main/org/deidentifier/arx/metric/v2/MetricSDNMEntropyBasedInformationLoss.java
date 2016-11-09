@@ -86,11 +86,6 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         return new ILSingleDimensional(0d);
     }
 
-    @Override
-    public boolean isGSFactorSupported() {
-        return true;
-    }
-
     /**
      * Returns the configuration of this metric.
      * 
@@ -107,6 +102,20 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     @Override
     public String getName() {
         return "Entropy-based information loss";
+    }
+
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Entropy-based information loss");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
     }
 
     @Override
@@ -209,7 +218,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         // Return
         return new ILSingleDimensional(bound);
     }
-
+    
     /**
      * For subclasses.
      * 
@@ -218,7 +227,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     protected DomainShare[] getShares() {
         return this.shares;
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition,
@@ -238,14 +247,5 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
             maxIL *= share.getDomainSize();
         }
         maxIL = Math.log10(maxIL);
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Entropy-based information loss");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        result.addProperty("Generalization factor", this.getGeneralizationFactor());
-        result.addProperty("Suppression factor", this.getSuppressionFactor());
-        return result;
     }
 }

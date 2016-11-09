@@ -67,10 +67,17 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Precision");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Non-Monotonic Precision";
     }
-
+    
     /**
      * Returns the number of cells.
      *
@@ -79,14 +86,14 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
     protected double getCells() {
         return cells;
     }
-    
+
     /**
      * @return the heights
      */
     protected int[] getHeights() {
         return height;
     }
-
+    
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
@@ -114,7 +121,7 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         // Return
         return new InformationLossDefaultWithBound(precision, getLowerBound(node).getValue());
     }
-    
+
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return new InformationLossDefaultWithBound(entry.count, entry.count);
@@ -134,13 +141,13 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         // Return
         return new InformationLossDefault(result);
     }
-
+    
     @Override
     protected InformationLossDefault getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
        return getLowerBoundInternal(node);
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -157,13 +164,6 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         
         int rowCount = super.getNumRecords(config, input);
         this.cells = (double)rowCount * (double)input.getHeader().length;
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Precision");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
     }
 
 }

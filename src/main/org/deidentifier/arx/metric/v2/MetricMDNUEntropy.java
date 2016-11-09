@@ -78,16 +78,6 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
     }
 
     @Override
-    public String toString() {
-        return "Non-uniform entropy";
-    }
-
-    @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
-        return null;
-    }
-
-    @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Non-uniform entropy");
         result.addProperty("Aggregate function", super.getAggregateFunction().toString());
@@ -95,5 +85,15 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Non-uniform entropy";
+    }
+
+    @Override
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
+        return null;
     }
 }

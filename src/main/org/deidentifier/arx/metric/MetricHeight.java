@@ -72,6 +72,13 @@ public class MetricHeight extends MetricDefault {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Height");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Height";
     }
@@ -127,13 +134,6 @@ public class MetricHeight extends MetricDefault {
             minHeight += definition.getMinimumGeneralization(genQi);
             maxHeight += definition.getMaximumGeneralization(genQi);
         }
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Height");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
     }
 
 }

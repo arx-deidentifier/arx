@@ -94,10 +94,17 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Ambiguity");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Ambiguity";
     }
-
+    
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
 
@@ -150,7 +157,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
         // Return
         return new ILSingleDimensionalWithBound(result, result);
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
         return null;
@@ -186,7 +193,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
         // Return
         return new ILSingleDimensional(result);
     }
-
+    
     /**
      * For subclasses.
      *
@@ -195,7 +202,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
     protected DomainShare[] getShares(){
         return this.shares;
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -223,12 +230,5 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
         // Determine total number of tuples
         this.tuples = (double)super.getNumRecords(config, input);
         this.max *= this.tuples;
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Ambiguity");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
     }
 }

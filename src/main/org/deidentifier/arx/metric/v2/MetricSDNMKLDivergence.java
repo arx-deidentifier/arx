@@ -146,10 +146,17 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("KL divergence");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "KL-Divergence";
     }
-
+    
     /**
      * Returns the area
      * @param output
@@ -165,7 +172,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
         }
         return result;
     }
-    
+
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
         
@@ -203,23 +210,23 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
         // Return
         return new ILSingleDimensionalWithBound(result);
     }
-
+    
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return new ILSingleDimensionalWithBound(entry.count, entry.count);
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
-
+    
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node,
                                                         HashGroupify g) {
         return null;
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -277,12 +284,5 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
                max += frequency * log2(frequency * maximalArea);
            }
        }
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("KL divergence");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
     }
 }

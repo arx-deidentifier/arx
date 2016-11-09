@@ -98,6 +98,15 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Average equivalence class size");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Average equivalence class size";
     }
@@ -154,14 +163,5 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         // Compute AECS
         double gFactor = super.getSuppressionFactor(); // Note: factors are switched on purpose
         return new ILSingleDimensional(getNumTuples() / ((double)groups * gFactor));
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Average equivalence class size");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        result.addProperty("Generalization factor", this.getGeneralizationFactor());
-        result.addProperty("Suppression factor", this.getSuppressionFactor());
-        return result;
     }
 }

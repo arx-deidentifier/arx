@@ -70,6 +70,14 @@ public class MetricMDNUNMNormalizedEntropy extends MetricMDNUNMNormalizedEntropy
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Normalized non-uniform entropy");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Normalized non-uniform entropy";
     }
@@ -77,13 +85,5 @@ public class MetricMDNUNMNormalizedEntropy extends MetricMDNUNMNormalizedEntropy
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return null;
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Normalized non-uniform entropy");
-        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
     }
 }

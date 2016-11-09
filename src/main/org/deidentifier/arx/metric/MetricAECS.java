@@ -65,15 +65,15 @@ public class MetricAECS extends MetricDefault {
     }
     
     @Override
-    public String toString() {
-        return "Average Equivalence Class Size";
-    }
-
-    @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Average equivalence class size");
         result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Average Equivalence Class Size";
     }
 
     @Override

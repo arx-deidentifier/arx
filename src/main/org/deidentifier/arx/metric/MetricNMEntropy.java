@@ -55,6 +55,13 @@ public class MetricNMEntropy extends MetricEntropy {
     }
     
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Non-uniform entropy");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Non-Monotonic Non-Uniform Entropy";
     }
@@ -104,12 +111,12 @@ public class MetricNMEntropy extends MetricEntropy {
         // Return sum of both values
         return new InformationLossDefaultWithBound(round(originalInfoLoss - additionalInfoLoss), originalInfoLossDefault.getValue());
     }
-
+    
     @Override
     protected InformationLossDefault getLowerBoundInternal(Transformation node) {
         return super.getInformationLossInternal(node, (HashGroupify)null).getInformationLoss();
     }
-    
+
     @Override
     protected InformationLossDefault getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
@@ -123,13 +130,6 @@ public class MetricNMEntropy extends MetricEntropy {
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
         super.initializeInternal(manager, definition, input, hierarchies, config);
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Non-uniform entropy");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
     }
 
 }

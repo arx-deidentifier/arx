@@ -102,6 +102,16 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Loss");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
+    }
+
+    @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
 
         // Prepare
@@ -171,15 +181,5 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
                 values[i][j] = hierarchies[i].getDistinctValues(j);
             }
         }
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Loss");
-        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        result.addProperty("Generalization factor", this.getGeneralizationFactor());
-        result.addProperty("Suppression factor", this.getSuppressionFactor());
-        return result;
     }
 }
