@@ -69,6 +69,14 @@ public class ElementData implements Element {
     }
     
     /**
+     * Adds an item
+     * @param item
+     */
+    public void addItem(String item) {
+        this.properties.add(new ElementDataProperty(item, null));
+    }
+
+    /**
      * Adds a property
      * @param property
      * @param value
@@ -119,7 +127,11 @@ public class ElementData implements Element {
         text.render(target, indent, style);
         ElementList list = new ElementList(ListStyle.BULLETS);
         for (ElementDataProperty property : this.properties) {
-            list.addItem(new ElementText(property.property + ": " + property.value));
+            if (property.value != null) {
+                list.addItem(new ElementText(property.property + ": " + property.value));
+            } else {
+                list.addItem(new ElementText(property.property));
+            }
         }
         list.render(target, indent, style);
     }

@@ -68,9 +68,17 @@ public class ARXDocument {
 	 * @param data
 	 */
 	public void add(ElementData data) {
-	    
+	    this.elements.add(data);
 	}
-	
+
+    /**
+     * Adds a new list of data elements
+     * @param data
+     */
+    public void add(List<ElementData> data) {
+        this.elements.addAll(data);
+    }
+    
 	/**
 	 * Renders the document into the given output stream
 	 * 
