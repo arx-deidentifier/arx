@@ -18,9 +18,11 @@ package org.deidentifier.arx.certificate.elements;
 
 import java.io.IOException;
 
+import org.deidentifier.arx.certificate.ARXDocumentStyle;
+
+import rst.pdfbox.layout.elements.Document;
 import rst.pdfbox.layout.elements.Paragraph;
-import rst.pdfbox.layout.text.Alignment;
-import rst.pdfbox.layout.text.BaseFont;
+import rst.pdfbox.layout.elements.render.VerticalLayoutHint;
 
 /**
  * PDF title element
@@ -28,25 +30,28 @@ import rst.pdfbox.layout.text.BaseFont;
  * @author Annika Saken
  * @author Fabian Prasser
  */
-public class ElementTitle extends Paragraph {
+public class ElementTitle implements Element {
     
-	private static final float TEXT_SIZE = 16;
+    /** Field*/
+    private final String text;
+    
+    /**
+     * Creates a new title
+     * @param text
+     */
+    public ElementTitle(String text) {
+        this.text = text;
+    }
 
-	/**
-	 * Constructor for a centered Title in TEXT_SIZE
-	 * @param text 
-	 */
-	public ElementTitle(String text) {
-		setAlignment(Alignment.Center);
-		try {
-			addText(text, TEXT_SIZE, BaseFont.Helvetica.getBoldFont());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public float getHeight() throws IOException {
-		return super.getHeight() * 2f;
-	}
+    @Override
+    public void render(Document target, int indent, ARXDocumentStyle style) throws IOException {
+        Paragraph paragraph = new Paragraph() {
+            @Override public float getHeight() throws IOException {
+                return super.getHeight() * 2f;
+            }
+        };
+        paragraph.setAlignment(style.getTitleAlignment());
+        paragraph.addText(text, style.getTitleSize(), style.getTitleFont().getBoldFont());
+        target.add(paragraph, VerticalLayoutHint.CENTER);
+    }
 }

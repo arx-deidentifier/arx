@@ -18,8 +18,10 @@ package org.deidentifier.arx.certificate.elements;
 
 import java.io.IOException;
 
+import org.deidentifier.arx.certificate.ARXDocumentStyle;
+
+import rst.pdfbox.layout.elements.Document;
 import rst.pdfbox.layout.elements.Paragraph;
-import rst.pdfbox.layout.text.BaseFont;
 
 /**
  * PDF subtitle element
@@ -27,19 +29,23 @@ import rst.pdfbox.layout.text.BaseFont;
  * @author Annika Saken
  * @author Fabian Prasser
  */
-public class ElementSubtitle extends Paragraph {
-	private static final float TEXT_SIZE = 11;
+public class ElementSubtitle implements Element {
 
-	/**
-	 * Constructor for a left aligned subtitle in TEXT_SIZE
-	 * @param text
-	 */
-	public ElementSubtitle(String text) {
-		super();
-		try {
-			addText(text, TEXT_SIZE, BaseFont.Helvetica.getBoldFont());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    /** Field*/
+    private final String text;
+    
+    /**
+     * Creates a new subtitle
+     * @param text
+     */
+    public ElementSubtitle(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public void render(Document target, int indent, ARXDocumentStyle style) throws IOException {
+        Paragraph paragraph = new Paragraph();
+        paragraph.addText(text, style.getSubtitleSize(), style.getSubtitleFont().getBoldFont());
+        target.add(paragraph);
+    }
 }

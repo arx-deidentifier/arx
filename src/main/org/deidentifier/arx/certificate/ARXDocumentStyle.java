@@ -16,8 +16,6 @@
  */
 package org.deidentifier.arx.certificate;
 
-import org.apache.pdfbox.pdmodel.font.PDFont;
-
 import rst.pdfbox.layout.elements.render.LayoutHint;
 import rst.pdfbox.layout.elements.render.VerticalLayoutHint;
 import rst.pdfbox.layout.text.Alignment;
@@ -28,7 +26,23 @@ import rst.pdfbox.layout.text.BaseFont;
  * @author Fabian Prasser
  */
 public class ARXDocumentStyle {
+    
+    /**
+     * Enum for list styles
+     * 
+     * @author Fabian Prasser
+     */
+    public enum ListStyle {
+        ARABIC, ROMAN, ALPHABETICAL, LOWERCASE_ALPHABETICAL, BULLETS
+    }
 
+    /**
+     * Creates a new instance
+     * @return
+     */
+    public static ARXDocumentStyle create() {
+        return new ARXDocumentStyle();
+    }
     /** Style information */
     private float      hMargin        = 80;
     /** Style information */
@@ -36,33 +50,27 @@ public class ARXDocumentStyle {
     /** Style information */
     private LayoutHint titleHint      = VerticalLayoutHint.CENTER;
     /** Style information */
-    private PDFont     textFond       = BaseFont.Helvetica.getPlainFont();
+    private BaseFont     textFont       = BaseFont.Helvetica;
     /** Style information */
     private int        textSize       = 11;
     /** Style information */
-    private PDFont     subtitleFont   = BaseFont.Helvetica.getBoldFont();
+    private BaseFont     subtitleFont   = BaseFont.Helvetica;
     /** Style information */
     private int        subtitleSize   = 11;
     /** Style information */
-    private PDFont     titleFont      = BaseFont.Helvetica.getBoldFont();
+    private BaseFont     titleFont      = BaseFont.Helvetica;
     /** Style information */
     private int        titleSize      = 16;
     /** Style information */
     private Alignment  titleAlignment = Alignment.Center;
+    /** Style information */
+    private int        listIndent     = 30;
 
     /**
      * Private constructor
      */
     private ARXDocumentStyle() {
         // Empty by design
-    }
-    
-    /**
-     * Creates a new instance
-     * @return
-     */
-    public static ARXDocumentStyle create() {
-        return new ARXDocumentStyle();
     }
 
     /**
@@ -71,11 +79,18 @@ public class ARXDocumentStyle {
     public float gethMargin() {
         return hMargin;
     }
+    
+    /**
+     * @return the listIndent
+     */
+    public int getListIndent() {
+        return listIndent;
+    }
 
     /**
      * @return the subtitleFont
      */
-    public PDFont getSubtitleFont() {
+    public BaseFont getSubtitleFont() {
         return subtitleFont;
     }
 
@@ -87,10 +102,10 @@ public class ARXDocumentStyle {
     }
 
     /**
-     * @return the textFond
+     * @return the textFont
      */
-    public PDFont getTextFond() {
-        return textFond;
+    public BaseFont getTextFont() {
+        return textFont;
     }
 
     /**
@@ -110,7 +125,7 @@ public class ARXDocumentStyle {
     /**
      * @return the titleFont
      */
-    public PDFont getTitleFont() {
+    public BaseFont getTitleFont() {
         return titleFont;
     }
 
@@ -144,9 +159,17 @@ public class ARXDocumentStyle {
     }
 
     /**
+     * @param listIndent the listIndent to set
+     */
+    public ARXDocumentStyle setListIndent(int listIndent) {
+        this.listIndent = listIndent;
+        return this;
+    }
+
+    /**
      * @param subtitleFont the subtitleFont to set
      */
-    public ARXDocumentStyle setSubtitleFont(PDFont subtitleFont) {
+    public ARXDocumentStyle setSubtitleFont(BaseFont subtitleFont) {
         this.subtitleFont = subtitleFont;
         return this;
     }
@@ -160,10 +183,10 @@ public class ARXDocumentStyle {
     }
 
     /**
-     * @param textFond the textFond to set
+     * @param textFond the textFont to set
      */
-    public ARXDocumentStyle setTextFond(PDFont textFond) {
-        this.textFond = textFond;
+    public ARXDocumentStyle setTextFont(BaseFont textFont) {
+        this.textFont = textFont;
         return this;
     }
 
@@ -186,7 +209,7 @@ public class ARXDocumentStyle {
     /**
      * @param titleFont the titleFont to set
      */
-    public ARXDocumentStyle setTitleFont(PDFont titleFont) {
+    public ARXDocumentStyle setTitleFont(BaseFont titleFont) {
         this.titleFont = titleFont;
         return this;
     }

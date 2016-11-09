@@ -14,34 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.deidentifier.arx.certificate.elements;
 
-package org.deidentifier.arx.certificate;
+import java.io.IOException;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.deidentifier.arx.certificate.ARXDocumentStyle;
+
+import rst.pdfbox.layout.elements.Document;
+import rst.pdfbox.layout.elements.VerticalSpacer;
 
 /**
- * This class provides access to basic resources.
- *
+ * PDF page break
+ * 
  * @author Fabian Prasser
  */
-public class StringResources {
+public class ElementVerticalSpace implements Element {
     
-    /** Messages */
-    private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.certificate.messages"); //$NON-NLS-1$
-                       
+    /** Space*/
+    private final int space;
+    
     /**
-     * 
-     * Returns the associated message
-     *
-     * @param key
-     * @return
+     * Creates a new instance
+     * @param space
      */
-    public static String getMessage(String key) {
-        try {
-            return MESSAGES_BUNDLE.getString(key);
-        } catch (MissingResourceException e) {
-            return '!' + key + '!';
-        }
+    public ElementVerticalSpace(int space) {
+        this.space = space;
+    }
+
+    @Override
+    public void render(Document target, int indent, ARXDocumentStyle style) throws IOException {
+        target.add(new VerticalSpacer(space));
     }
 }
