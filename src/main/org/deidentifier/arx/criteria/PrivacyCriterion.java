@@ -206,7 +206,7 @@ public abstract class PrivacyCriterion implements Serializable{
      * @return
      */
     public boolean isSubsetAvailable() {
-    return false;
+        return false;
     }
     
     /**
