@@ -42,6 +42,7 @@ import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
@@ -80,7 +81,7 @@ public abstract class DataHandle {
 
     /** The current research subset. */
     protected DataHandle        subset     = null;
-
+    
     /**
      * Returns the name of the specified column.
      *
@@ -115,7 +116,7 @@ public abstract class DataHandle {
         checkRegistry();
         return definition.getDataType(attribute);
     }
-    
+
     /**
      * Returns a date/time value from the specified cell.
      *
@@ -133,7 +134,7 @@ public abstract class DataHandle {
             throw new ParseException("Invalid datatype: " + type.getClass().getSimpleName(), col);
         }
     }
-
+    
     /**
      * Returns the data definition.
      *
@@ -464,7 +465,7 @@ public abstract class DataHandle {
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model) {
         return getRiskEstimator(model, getDefinition().getQuasiIdentifyingAttributes());
     }
-    
+
     /**
      * Returns a risk estimator
      * @param model
@@ -474,7 +475,7 @@ public abstract class DataHandle {
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, ARXSolverConfiguration config) {
         return getRiskEstimator(model, getDefinition().getQuasiIdentifyingAttributes(), config);
     }
-
+    
     /**
      * Returns a risk estimator for the given set of equivalence classes. Saves resources by re-using existing classes
      * @param model
@@ -602,6 +603,17 @@ public abstract class DataHandle {
         if (registry != null) {
             registry.release(this);
         }
+    }
+
+    /**
+     * Renders this object
+     * @return
+     */
+    public ElementData render() {
+        ElementData data = new ElementData("Data");
+        data.addProperty("Records", this.getNumRows());
+        data.addProperty("Attributes", this.getNumColumns());
+        return data;
     }
 
     /**
