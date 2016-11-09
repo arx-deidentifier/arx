@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
@@ -57,6 +58,14 @@ public class DistinctLDiversity extends LDiversity{
     @Override
     public boolean isLocalRecodingSupported() {
         return true;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Distinct l-diversity");
+        result.addProperty("Attribute", attribute);
+        result.addProperty("Threshold (l)", String.valueOf(minSize));
+        return result;
     }
 
     @Override

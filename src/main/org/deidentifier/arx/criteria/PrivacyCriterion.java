@@ -22,6 +22,7 @@ import java.io.Serializable;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -200,7 +201,6 @@ public abstract class PrivacyCriterion implements Serializable{
         return false;
     }
 
-
     /**
      * If a privacy model uses a data subset, it must overwrite this method
      * @return
@@ -208,6 +208,12 @@ public abstract class PrivacyCriterion implements Serializable{
     public boolean isSubsetAvailable() {
         return false;
     }
+
+    /**
+     * Renders the privacy model
+     * @return
+     */
+    public abstract ElementData render();
     
     /**
      * Returns a string representation.

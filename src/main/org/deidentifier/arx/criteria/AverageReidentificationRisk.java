@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
 
 /**
@@ -55,6 +56,13 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
     @Override
     public boolean isLocalRecodingSupported() {
         return false;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Average re-identification risk");
+        result.addProperty("Threshold", String.valueOf(this.getRiskThreshold()));
+        return result;
     }
 
     @Override

@@ -20,6 +20,7 @@ package org.deidentifier.arx.criteria;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXFinancialConfiguration;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -122,7 +123,7 @@ public class FinancialProsecutorNoAttackPrivacy extends ImplicitPrivacyCriterion
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return entry.count >= k;
     }
-
+    
     @Override
     public boolean isLocalRecodingSupported() {
         return true;
@@ -139,8 +140,29 @@ public class FinancialProsecutorNoAttackPrivacy extends ImplicitPrivacyCriterion
     }
 
     @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Financial no-attack privacy");
+        result.addProperty("Attacker model", "Prosecutor");
+        if (config != null) {
+            result.addProperty("Adversary cost", String.valueOf(config.getAdversaryCost()));
+            result.addProperty("Adversary gain", String.valueOf(config.getAdversaryGain()));
+            result.addProperty("Publisher loss", String.valueOf(config.getPublisherLoss()));
+            result.addProperty("Publisher benefit", String.valueOf(config.getPublisherBenefit()));
+        }
+        return result;
+    }
+
+    @Override
     public String toString() {
         return toString("prosecutor");
+    }
+
+    /**
+     * Returns the config
+     * @return
+     */
+    protected ARXFinancialConfiguration getConfiguration() {
+        return this.config;
     }
 
     /**

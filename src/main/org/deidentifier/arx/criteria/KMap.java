@@ -21,6 +21,7 @@ import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -320,6 +321,22 @@ public class KMap extends ImplicitPrivacyCriterion {
     @Override
     public boolean isSubsetAvailable() {
         return this.subset != null;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("k-Map");
+        result.addProperty("Threshold (k)", String.valueOf(k));
+        if (this.estimator != null) {
+            result.addProperty("Estimator", this.estimator.toString());
+            if (this.derivedK != -1) {
+                result.addProperty("Derived threshold", String.valueOf(this.derivedK));
+            }
+            if (this.populationModel != null) {
+                result.addProperty("Population", String.valueOf(this.populationModel.getPopulationSize()));
+            }
+        }
+        return result;
     }
 
     @Override

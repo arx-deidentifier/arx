@@ -19,6 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -168,6 +169,15 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
 	@Override
     public boolean isLocalRecodingSupported() {
         return true;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("t-Closeness");
+        result.addProperty("Attribute", attribute);
+        result.addProperty("Threshold (t)", String.valueOf(this.t));
+        result.addProperty("Distance", "Hierarchical");
+        return result;
     }
 
     @Override

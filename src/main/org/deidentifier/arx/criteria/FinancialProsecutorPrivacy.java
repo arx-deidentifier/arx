@@ -20,6 +20,7 @@ package org.deidentifier.arx.criteria;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXFinancialConfiguration;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -78,6 +79,14 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
         return clone();
     }
     
+    /**
+     * Returns the config
+     * @return
+     */
+    public ARXFinancialConfiguration getConfiguration() {
+        return this.config;
+    }
+    
     @Override
     public DataSubset getDataSubset() {
         return null;
@@ -87,7 +96,7 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
     public int getRequirements(){
         return ARXConfiguration.REQUIREMENT_COUNTER;
     }
-    
+
     @Override
     public void initialize(DataManager manager, ARXConfiguration config) {
 
@@ -120,22 +129,35 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
         // We keep the set of records if the payoff is > 0
         return publisherPayoff > 0;
     }
-
+    
     @Override
     public boolean isLocalRecodingSupported() {
         return true;
     }
-    
+
     @Override
     public boolean isSubsetAvailable() {
         return false;
+    }
+    
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Financial privacy");
+        result.addProperty("Attacker model", "Prosecutor");
+        if (config != null) {
+            result.addProperty("Adversary cost", String.valueOf(config.getAdversaryCost()));
+            result.addProperty("Adversary gain", String.valueOf(config.getAdversaryGain()));
+            result.addProperty("Publisher loss", String.valueOf(config.getPublisherLoss()));
+            result.addProperty("Publisher benefit", String.valueOf(config.getPublisherBenefit()));
+        }
+        return result;
     }
 
     @Override
     public String toString() {
         return toString("prosecutor");
     }
-    
+
     /**
      * Returns the information loss for the according class. This is an exact copy of: 
      * @see MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(Transformation, HashGroupifyEntry)

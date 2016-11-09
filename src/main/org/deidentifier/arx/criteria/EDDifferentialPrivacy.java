@@ -27,6 +27,7 @@ import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -229,6 +230,14 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     }
     
     @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Differential privacy");
+        result.addProperty("Epsilon", String.valueOf(epsilon));
+        result.addProperty("Delta", String.valueOf(delta));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "("+epsilon+","+delta+")-DP";
     }
@@ -244,7 +253,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         double gamma = calculateGamma(epsilon, beta);
         return calculateBinomialSum((int) Math.floor(n * gamma) + 1, n, beta);
     }
-
+    
     /**
      * Calculates beta_max
      * @param epsilon
@@ -253,7 +262,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     private double calculateBeta(double epsilon) {
         return 1.0d - (new Exp()).value(-1.0d * epsilon);
     }
-    
+
     /**
      * Adds summands of the binomial distribution with probability beta
      * @param from

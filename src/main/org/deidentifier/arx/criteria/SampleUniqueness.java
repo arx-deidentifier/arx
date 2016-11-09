@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
 
 /**
@@ -59,8 +60,15 @@ public class SampleUniqueness extends RiskBasedCriterion{
     }
 
     @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Sample uniqueness");
+        result.addProperty("Threshold", String.valueOf(super.getRiskThreshold()));
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return "("+getRiskThreshold()+")-sample-uniques";
+        return "("+getRiskThreshold()+")-sample-uniqueness";
     }
 
     @Override

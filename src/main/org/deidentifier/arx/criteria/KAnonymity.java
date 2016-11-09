@@ -18,6 +18,7 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
@@ -112,6 +113,13 @@ public class KAnonymity extends ImplicitPrivacyCriterion {
     @Override
     public boolean isMinimalClassSizeAvailable() {
         return true;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("k-Anonymity");
+        result.addProperty("Threshold (k)", String.valueOf(k));
+        return result;
     }
 
     @Override

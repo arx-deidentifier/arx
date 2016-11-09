@@ -18,7 +18,9 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXFinancialConfiguration;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
 /**
@@ -80,6 +82,20 @@ public class FinancialJournalistPrivacy extends FinancialProsecutorPrivacy {
         return true;
     }
     
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Financial privacy");
+        result.addProperty("Attacker model", "Journalist");
+        ARXFinancialConfiguration config = super.getConfiguration();
+        if (config != null) {
+            result.addProperty("Adversary cost", String.valueOf(config.getAdversaryCost()));
+            result.addProperty("Adversary gain", String.valueOf(config.getAdversaryGain()));
+            result.addProperty("Publisher loss", String.valueOf(config.getPublisherLoss()));
+            result.addProperty("Publisher benefit", String.valueOf(config.getPublisherBenefit()));
+        }
+        return result;
+    }
+
     @Override
     public String toString() {
         return toString("journalist");

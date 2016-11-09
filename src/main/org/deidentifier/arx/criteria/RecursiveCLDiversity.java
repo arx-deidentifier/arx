@@ -19,6 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import java.util.Arrays;
 
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -103,6 +104,15 @@ public class RecursiveCLDiversity extends LDiversity{
 	@Override
     public boolean isLocalRecodingSupported() {
         return true;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Recursive-(c,l)-diversity");
+        result.addProperty("Attribute", attribute);
+        result.addProperty("Threshold (l)", String.valueOf(this.l));
+        result.addProperty("Multiplier (c)", String.valueOf(this.c));
+        return result;
     }
 
     @Override

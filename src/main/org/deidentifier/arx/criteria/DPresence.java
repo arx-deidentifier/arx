@@ -19,6 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -129,6 +130,14 @@ public class DPresence extends ImplicitPrivacyCriterion {
     @Override
     public boolean isSubsetAvailable() {
         return this.subset != null;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Delta presence");
+        result.addProperty("Lower threshold (delta)", String.valueOf(dMin));
+        result.addProperty("Upper threshold (delta)", String.valueOf(dMax));
+        return result;
     }
 
     @Override

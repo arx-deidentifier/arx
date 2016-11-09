@@ -20,6 +20,7 @@ package org.deidentifier.arx.criteria;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -280,10 +281,19 @@ public class EntropyLDiversity extends LDiversity {
     }
     
     @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Entropy l-diversity");
+        result.addProperty("Attribute", attribute);
+        result.addProperty("Threshold (l)", String.valueOf(this.l));
+        result.addProperty("Entropy estimator", this.estimator.toString());
+        return result;
+    }
+    
+    @Override
 	public String toString() {
         return estimator.toString().toLowerCase() + "-entropy-" + l + "-diversity for attribute '" + attribute + "'";
 	}
-    
+
     /**
      * Custom de-serialization
      * 

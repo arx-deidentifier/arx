@@ -37,8 +37,7 @@ public class RiskModelPopulationUniqueness extends RiskModelPopulation {
      * 
      * @author Fabian Prasser
      */
-    public static enum PopulationUniquenessModel implements
-                                                Serializable {
+    public static enum PopulationUniquenessModel implements Serializable {
         PITMAN,
         ZAYATZ,
         SNB,
