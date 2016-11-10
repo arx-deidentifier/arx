@@ -281,7 +281,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
                TupleWrapper wrapper = new TupleWrapper(input.getArray()[row]);
                double frequency = groupify.get(wrapper).doubleValue() / this.tuples;
                this.inputDistribution[row] = frequency ;
-               max += frequency * log2(frequency * maximalArea);
+               this.max += frequency * log2(frequency * maximalArea);
            }
        }
     }
