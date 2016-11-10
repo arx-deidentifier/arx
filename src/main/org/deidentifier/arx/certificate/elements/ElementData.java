@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.certificate.ARXDocumentStyle;
-import org.deidentifier.arx.certificate.ARXDocumentStyle.ListStyle;
+import org.deidentifier.arx.certificate.CertificateStyle;
+import org.deidentifier.arx.certificate.CertificateStyle.ListStyle;
 
 import rst.pdfbox.layout.elements.Document;
 
@@ -122,7 +122,7 @@ public class ElementData implements Element {
     }
     
     @Override
-    public void render(Document target, int indent, ARXDocumentStyle style) throws IOException {
+    public void render(Document target, int indent, CertificateStyle style) throws IOException {
         ElementText text = new ElementText(this.text);
         text.render(target, indent, style);
         ElementList list = new ElementList(ListStyle.BULLETS);

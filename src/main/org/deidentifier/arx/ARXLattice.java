@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -366,7 +367,7 @@ public class ARXLattice implements Serializable {
         public ARXNode(ARXLattice lattice) {
             this.lattice = lattice;
         }
-
+        
         /**
          * Constructor.
          *
@@ -432,7 +433,7 @@ public class ARXLattice implements Serializable {
                 }
             }
         }
-        
+
         /**
          * Alter associated fields.
          *
@@ -448,7 +449,7 @@ public class ARXLattice implements Serializable {
         public void expand() {
             this.lattice.expand(this);
         }
-
+        
         /**
          * Returns the anonymity property.
          *
@@ -457,7 +458,7 @@ public class ARXLattice implements Serializable {
         public Anonymity getAnonymity() {
             return anonymity;
         }
-        
+
         /**
          * Returns the attributes.
          *
@@ -476,7 +477,7 @@ public class ARXLattice implements Serializable {
         public int getDimension(final String attr) {
             return headermap.get(attr);
         }
-
+        
         /**
          * Returns the generalization for the attribute.
          *
@@ -488,7 +489,7 @@ public class ARXLattice implements Serializable {
             if (index == null) { return 0; }
             return transformation[index];
         }
-        
+
         /**
          * Returns the maximal information loss.
          *
@@ -497,7 +498,7 @@ public class ARXLattice implements Serializable {
         public InformationLoss<?> getMaximumInformationLoss() {
             return maxInformationLoss;
         }
-
+        
         /**
          * Returns the minimal information loss.
          *
@@ -569,7 +570,7 @@ public class ARXLattice implements Serializable {
         public Anonymity isAnonymous() {
             return anonymity;
         }
-        
+
         /**
          * Returns if the node has been checked explicitly.
          *
@@ -577,6 +578,20 @@ public class ARXLattice implements Serializable {
          */
         public boolean isChecked() {
             return checked;
+        }
+        
+        /**
+         * Renders this object
+         * @return
+         */
+        public ElementData render() {
+            ElementData result = new ElementData("Transformation");
+            result.addProperty("Generalization scheme", Arrays.toString(this.transformation));
+            result.addProperty("Anonymity", this.anonymity.toString());
+            result.addProperty("Checked", this.checked);
+            result.addProperty("Minimum information loss", this.minInformationLoss.toString());
+            result.addProperty("Maximum information loss", this.maxInformationLoss.toString());
+            return result;
         }
 
         /**
@@ -879,7 +894,7 @@ public class ARXLattice implements Serializable {
         // Update information loss
         this.estimateInformationLoss();
     }
-
+    
     /**
      * Returns the bottom node.
      *
@@ -897,7 +912,7 @@ public class ARXLattice implements Serializable {
     public ARXNode[][] getLevels() {
         return levels;
     }
-    
+
     /**
      * Returns the maximal information loss.
      *
@@ -909,7 +924,7 @@ public class ARXLattice implements Serializable {
         }
         return this.maximumInformationLoss;
     }
-
+    
     /**
      * Returns the minimal information loss.
      *
@@ -921,7 +936,7 @@ public class ARXLattice implements Serializable {
         }
         return this.minimumInformationLoss;
     }
-    
+
     /**
      * Returns the number of nodes.
      *
@@ -930,7 +945,7 @@ public class ARXLattice implements Serializable {
     public int getSize() {
         return size;
     }
-
+    
     /**
      * Returns the top node.
      *
@@ -947,13 +962,25 @@ public class ARXLattice implements Serializable {
     public long getVirtualSize() {
         return virtualSize != null ? virtualSize : size;
     }
-    
+
     /**
      * Returns whether the search space has been characterized completely
      * @return
      */
     public boolean isComplete() {
         return this.complete;
+    }
+    
+    /**
+     * Renders this object
+     * @return
+     */
+    public ElementData render() {
+        ElementData result = new ElementData("Search space");
+        result.addProperty("Size", this.virtualSize);
+        result.addProperty("Materialized", this.size);
+        result.addProperty("Completely classified", this.complete);
+        return result;
     }
     
     /**

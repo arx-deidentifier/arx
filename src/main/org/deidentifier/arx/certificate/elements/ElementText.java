@@ -19,7 +19,7 @@ package org.deidentifier.arx.certificate.elements;
 import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.deidentifier.arx.certificate.ARXDocumentStyle;
+import org.deidentifier.arx.certificate.CertificateStyle;
 
 import rst.pdfbox.layout.elements.Document;
 import rst.pdfbox.layout.elements.Paragraph;
@@ -67,7 +67,7 @@ public class ElementText implements Element {
     }
     
     @Override
-    public void render(Document target, int indent, ARXDocumentStyle style) throws IOException {
+    public void render(Document target, int indent, CertificateStyle style) throws IOException {
         Paragraph paragraph = new Paragraph();
         paragraph.addText(text, style.getTextSize(), getFont(style));
         target.add(paragraph);
@@ -93,7 +93,7 @@ public class ElementText implements Element {
      * @param style
      * @return
      */
-    PDFont getFont(ARXDocumentStyle style) {
+    PDFont getFont(CertificateStyle style) {
         return this.style(style.getTextFont(), this.style);
     }
     

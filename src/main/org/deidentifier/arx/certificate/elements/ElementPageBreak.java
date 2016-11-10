@@ -18,7 +18,7 @@ package org.deidentifier.arx.certificate.elements;
 
 import java.io.IOException;
 
-import org.deidentifier.arx.certificate.ARXDocumentStyle;
+import org.deidentifier.arx.certificate.CertificateStyle;
 
 import rst.pdfbox.layout.elements.ControlElement;
 import rst.pdfbox.layout.elements.Document;
@@ -31,7 +31,7 @@ import rst.pdfbox.layout.elements.Document;
 public class ElementPageBreak implements Element {
 
     @Override
-    public void render(Document target, int indent, ARXDocumentStyle style) throws IOException {
+    public void render(Document target, int indent, CertificateStyle style) throws IOException {
         target.add(ControlElement.NEWPAGE);
     }
 }

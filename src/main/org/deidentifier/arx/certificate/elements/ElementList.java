@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.certificate.ARXDocumentStyle;
-import org.deidentifier.arx.certificate.ARXDocumentStyle.ListStyle;
+import org.deidentifier.arx.certificate.CertificateStyle;
+import org.deidentifier.arx.certificate.CertificateStyle.ListStyle;
 
 import rst.pdfbox.layout.elements.Document;
 import rst.pdfbox.layout.elements.Paragraph;
@@ -111,7 +111,7 @@ public class ElementList implements Element {
     }
 
     @Override
-    public void render(Document target, int indent, ARXDocumentStyle style) throws IOException {
+    public void render(Document target, int indent, CertificateStyle style) throws IOException {
         
         int offset = indent * style.getListIndent();
         for (Element item : items) {
@@ -134,7 +134,7 @@ public class ElementList implements Element {
      * Styling
      * @return
      */
-    protected BaseFont getListItemIndicatorFont(ARXDocumentStyle documentStyle) {
+    protected BaseFont getListItemIndicatorFont(CertificateStyle documentStyle) {
         switch (style) {
             case BULLETS: return BaseFont.Times;
             default: return documentStyle.getTextFont();

@@ -32,10 +32,10 @@ import rst.pdfbox.layout.elements.Document;
  * @author Annika Saken
  * @author Fabian Prasser
  */
-public class ARXDocument {
+public class Certificate {
 
     /** The document style */
-    private final ARXDocumentStyle style;
+    private final CertificateStyle style;
  
     /** Elements*/
     private final List<Element> elements = new ArrayList<Element>();
@@ -43,15 +43,15 @@ public class ARXDocument {
     /**
      * Creates a new instance
      */
-    public ARXDocument() {
-        this.style = ARXDocumentStyle.create();
+    Certificate() {
+        this.style = CertificateStyle.create();
     }
     
 	/**
      * Creates a new instance
      * @param style
      */
-	public ARXDocument(ARXDocumentStyle style) {
+	Certificate(CertificateStyle style) {
         this.style = style;
 	}
 	
@@ -59,7 +59,7 @@ public class ARXDocument {
 	 * Adds a new element
 	 * @param element
 	 */
-	public void add(Element element) {
+	void add(Element element) {
 	    this.elements.add(element);
 	}
 	
@@ -67,7 +67,7 @@ public class ARXDocument {
 	 * Adds a new data element
 	 * @param data
 	 */
-	public void add(ElementData data) {
+	void add(ElementData data) {
 	    this.elements.add(data);
 	}
 
@@ -75,7 +75,7 @@ public class ARXDocument {
      * Adds a new list of data elements
      * @param data
      */
-    public void add(List<ElementData> data) {
+    void add(List<ElementData> data) {
         this.elements.addAll(data);
     }
     
@@ -85,7 +85,7 @@ public class ARXDocument {
 	 * @param stream
 	 * @throws IOException 
 	 */
-	public void render(OutputStream stream) throws IOException {
+	public void save(OutputStream stream) throws IOException {
 	    
         // Render
         Document document = new Document(style.gethMargin(), style.gethMargin(), style.getvMargin(), style.getvMargin());
@@ -96,16 +96,4 @@ public class ARXDocument {
         // Save
         document.save(stream);
 	}
-	
-//  /**
-//	 * Renders the document
-//	 * @throws IOException 
-//	 */
-//   public void render() throws IOException {
-//        
-//        // Open
-//        if (Desktop.isDesktopSupported()) {
-//            Desktop.getDesktop().open(file);
-//        }
-//    }
 }

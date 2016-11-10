@@ -25,7 +25,7 @@ import rst.pdfbox.layout.text.BaseFont;
  * Style information for a PDF document
  * @author Fabian Prasser
  */
-public class ARXDocumentStyle {
+public class CertificateStyle {
     
     /**
      * Enum for list styles
@@ -40,8 +40,8 @@ public class ARXDocumentStyle {
      * Creates a new instance
      * @return
      */
-    public static ARXDocumentStyle create() {
-        return new ARXDocumentStyle();
+    public static CertificateStyle create() {
+        return new CertificateStyle();
     }
     /** Style information */
     private float      hMargin        = 80;
@@ -69,7 +69,7 @@ public class ARXDocumentStyle {
     /**
      * Private constructor
      */
-    private ARXDocumentStyle() {
+    private CertificateStyle() {
         // Empty by design
     }
 
@@ -153,7 +153,7 @@ public class ARXDocumentStyle {
     /**
      * @param hMargin the hMargin to set
      */
-    public ARXDocumentStyle sethMargin(float hMargin) {
+    public CertificateStyle sethMargin(float hMargin) {
         this.hMargin = hMargin;
         return this;
     }
@@ -161,7 +161,7 @@ public class ARXDocumentStyle {
     /**
      * @param listIndent the listIndent to set
      */
-    public ARXDocumentStyle setListIndent(int listIndent) {
+    public CertificateStyle setListIndent(int listIndent) {
         this.listIndent = listIndent;
         return this;
     }
@@ -169,7 +169,7 @@ public class ARXDocumentStyle {
     /**
      * @param subtitleFont the subtitleFont to set
      */
-    public ARXDocumentStyle setSubtitleFont(BaseFont subtitleFont) {
+    public CertificateStyle setSubtitleFont(BaseFont subtitleFont) {
         this.subtitleFont = subtitleFont;
         return this;
     }
@@ -177,7 +177,7 @@ public class ARXDocumentStyle {
     /**
      * @param subtitleSize the subtitleSize to set
      */
-    public ARXDocumentStyle setSubtitleSize(int subtitleSize) {
+    public CertificateStyle setSubtitleSize(int subtitleSize) {
         this.subtitleSize = subtitleSize;
         return this;
     }
@@ -185,7 +185,7 @@ public class ARXDocumentStyle {
     /**
      * @param textFond the textFont to set
      */
-    public ARXDocumentStyle setTextFont(BaseFont textFont) {
+    public CertificateStyle setTextFont(BaseFont textFont) {
         this.textFont = textFont;
         return this;
     }
@@ -193,7 +193,7 @@ public class ARXDocumentStyle {
     /**
      * @param textSize the textSize to set
      */
-    public ARXDocumentStyle setTextSize(int textSize) {
+    public CertificateStyle setTextSize(int textSize) {
         this.textSize = textSize;
         return this;
     }
@@ -201,7 +201,7 @@ public class ARXDocumentStyle {
     /**
      * @param titleAlignment the titleAlignment to set
      */
-    public ARXDocumentStyle setTitleAlignment(Alignment titleAlignment) {
+    public CertificateStyle setTitleAlignment(Alignment titleAlignment) {
         this.titleAlignment = titleAlignment;
         return this;
     }
@@ -209,7 +209,7 @@ public class ARXDocumentStyle {
     /**
      * @param titleFont the titleFont to set
      */
-    public ARXDocumentStyle setTitleFont(BaseFont titleFont) {
+    public CertificateStyle setTitleFont(BaseFont titleFont) {
         this.titleFont = titleFont;
         return this;
     }
@@ -217,7 +217,7 @@ public class ARXDocumentStyle {
     /**
      * @param titleHint the titleHint to set
      */
-    public ARXDocumentStyle setTitleHint(LayoutHint titleHint) {
+    public CertificateStyle setTitleHint(LayoutHint titleHint) {
         this.titleHint = titleHint;
         return this;
     }
@@ -225,7 +225,7 @@ public class ARXDocumentStyle {
     /**
      * @param titleSize the titleSize to set
      */
-    public ARXDocumentStyle setTitleSize(int titleSize) {
+    public CertificateStyle setTitleSize(int titleSize) {
         this.titleSize = titleSize;
         return this;
     }
@@ -233,7 +233,7 @@ public class ARXDocumentStyle {
     /**
      * @param vMargin the vMargin to set
      */
-    public ARXDocumentStyle setvMargin(float vMargin) {
+    public CertificateStyle setvMargin(float vMargin) {
         this.vMargin = vMargin;
         return this;
     }

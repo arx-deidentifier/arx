@@ -17,7 +17,9 @@
 
 package org.deidentifier.arx.examples;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,23 +29,21 @@ import java.util.regex.Pattern;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.certificate.Certificate;
+import org.deidentifier.arx.certificate.CertificateRenderer;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to compare data mining performance
+ * This class implements an example on how to generate reports
  *
  * @author Fabian Prasser
- * @author Florian Kohlmayer
  */
-public class Example39 extends Example {
+public class Example53 extends Example {
     
     /**
      * Loads a dataset from disk
@@ -93,26 +93,7 @@ public class Example39 extends Example {
      */
     public static void main(String[] args) throws ParseException, IOException {
         
-        String[] features = new String[] {
-                                           "sex",
-                                           "age",
-                                           "race",
-                                           "marital-status",
-                                           "education",
-                                           "native-country",
-                                           "workclass",
-                                           "occupation",
-                                           "salary-class"
-        };
-        
-        String clazz = "marital-status";
-        
         Data data = createData("adult");
-        data.getDefinition().setAttributeType("marital-status", AttributeType.INSENSITIVE_ATTRIBUTE);
-        data.getDefinition().setDataType("age", DataType.INTEGER);
-        
-        System.out.println("Input dataset");
-        System.out.println(data.getHandle().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
@@ -121,8 +102,15 @@ public class Example39 extends Example {
         config.setMetric(Metric.createLossMetric());
         
         ARXResult result = anonymizer.anonymize(data, config);
-        System.out.println("5-anonymous dataset");
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
+
+        Certificate certificate = new CertificateRenderer(data.getHandle(), data.getDefinition(),
+                                                          config, result, result.getGlobalOptimum()).render();
+        File file = File.createTempFile("arx", "arx");
+        certificate.save(new FileOutputStream(file));
         
+        // Open
+        if (Desktop.isDesktopSupported()) {
+            Desktop.getDesktop().open(file);
+        }
     }
 }

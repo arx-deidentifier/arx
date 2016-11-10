@@ -25,8 +25,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
@@ -395,7 +397,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (supp < 0d || supp >= 1d) { throw new NullPointerException("Suppression must be >=0 and <1"); }
         this.relMaxOutliers = supp;
     }
-    
+
     /**
      * Creates a new config that allows the given percentage of outliers and
      * thus implements tuple suppression. Defines the metric for measuring information loss.
@@ -408,7 +410,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (metric == null) { throw new NullPointerException("Metric must not be null"); }
         this.metric = metric;
     }
-    
+
     /**
      * Creates a new config that allows to define the metric for measuring information loss.
      * @param metric
@@ -543,7 +545,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (value == null) return 0.5d;
         else return value;
     }
-
+    
     /**
      * Returns all configured attribute weights. For attributes which are not a key in this
      * set the default attribute weight will be assumed by ARX. This default value is 
@@ -558,6 +560,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return new HashMap<String, Double>(this.attributeWeights);
     }
+    
     /**
      * Returns all criteria.
      * @return
@@ -584,7 +587,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return result;
     }
-    
+
     /**
      * Returns an instance of the class, if any. Throws an exception if more than one such criterion exists.
      *
@@ -609,7 +612,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
             return null;
         }
     }
-  
     /**
      * Returns the financial configuration
      */
@@ -643,7 +645,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.heuristicSearchTimeLimit;
     }
-
+  
     /**
      * Returns the maximum number of allowed outliers.
      *
@@ -652,7 +654,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public final double getMaxOutliers() {
         return relMaxOutliers;
     }
-
+    
     /**
      * Returns the metric used for measuring information loss.
      *
@@ -701,7 +703,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Full
         return Monotonicity.FULL;
     }
-    
+
     /**
      * Returns whether the utility measure is monotonic
      * @return
@@ -714,7 +716,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
             return Monotonicity.NONE;
         }
     }
-    
+
     /**
      * Return journalist risk threshold, 1 if there is none
      * @return
@@ -765,7 +767,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return (suppressedAttributeTypes & (1 << type.getType())) != 0;
     }
-
+    
     /**
      * Returns whether ARX will use a heuristic search strategy. The default is false.
      * @return
@@ -773,7 +775,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public boolean isHeuristicSearchEnabled() {
         return this.heuristicSearchEnabled;
     }
-
+    
     /**
      * Is practical monotonicity assumed.
      *
@@ -782,7 +784,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public boolean isPracticalMonotonicity() {
         return practicalMonotonicity;
     }
-
+    
     /**
      * Returns whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
@@ -803,7 +805,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public boolean isUseHeuristicSearchForSampleBasedCriteria() {
         return heuristicSearchForSampleBasedCriteria;
     }
-    
+
     /**
      * Returns whether microaggregation is based on utility measures
      * @return
@@ -824,6 +826,19 @@ public class ARXConfiguration implements Serializable, Cloneable {
         return criteria.remove(arg);
     }
 
+    /**
+     * Renders this object 
+     * @return
+     */
+    public List<ElementData> render() {
+
+        // Render attribute types
+        List<ElementData> result = new ArrayList<>();
+        result.add(renderWeights());
+        result.add(renderSettings());
+        return result;
+    }
+    
     /**
      * Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.
      * With default settings, only quasi-identifiers will be suppressed.
@@ -911,7 +926,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (timeInMillis <= 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
         this.heuristicSearchTimeLimit = timeInMillis;
     }
-    
+
     /**
      * Allows for a certain percentage of outliers and thus
      * triggers tuple suppression.
@@ -931,7 +946,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (metric == null) { throw new NullPointerException("Metric must not be null"); }
         this.metric = metric;
     }
-
+    
     /**
      * Set, if practical monotonicity assumed.
      *
@@ -958,7 +973,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setSuppressionLimit(double limit) {
         this.relMaxOutliers = limit;
     }
-    
+
     /**
      * Do we guarantee optimality for sample-based criteria?
      */
@@ -983,6 +998,30 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (argument == null) { 
             throw new IllegalArgumentException("Argument must not be null"); 
         }
+    }
+
+    /**
+     * Renders the weights
+     * @return
+     */
+    private ElementData renderSettings() {
+        ElementData result = new ElementData("Settings");
+        result.addProperty("Assume monotonicity", this.practicalMonotonicity);
+        result.addProperty("Suppression limit", this.relMaxOutliers);
+        result.addProperty("Consider mean squared error", this.utilityBasedMicroaggregation);
+        return result;
+    }
+    
+    /**
+     * Renders the weights
+     * @return
+     */
+    private ElementData renderWeights() {
+        ElementData result = new ElementData("Weights");
+        for (Entry<String, Double> entry : attributeWeights.entrySet()) {
+            result.addProperty(entry.getKey(), entry.getValue());
+        }
+        return result;
     }
     
     /**
