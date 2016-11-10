@@ -341,12 +341,31 @@ public class DataDefinition implements Cloneable{
      * @return
      */
     public List<ElementData> render() {
+
+        // Render attribute types
         List<ElementData> result = new ArrayList<>();
         result.add(render("Insensitive attributes", getInsensitiveAttributes()));
         result.add(render("Sensitive attributes", getSensitiveAttributes()));
         result.add(render("Identifying attributes", getIdentifyingAttributes()));
         result.add(render("Quasi-identifying attributes", getQuasiIdentifyingAttributes()));
-        // TODO: HERE
+
+        // Render hierarchies
+        Set<String> attributes = new HashSet<>();
+        attributes.addAll(getInsensitiveAttributes());
+        attributes.addAll(getSensitiveAttributes());
+        attributes.addAll(getIdentifyingAttributes());
+        attributes.addAll(getQuasiIdentifyingAttributes());
+        for (String attribute : attributes) {
+            if ((!this.functions.containsKey(attribute)) && 
+                (this.hierarchies.containsKey(attribute) || this.builders.containsKey(attribute))) {
+                result.add(render(attribute, this.hierarchies.get(attribute), this.builders.get(attribute)));
+            }
+        }
+        for (String attribute : attributes) {
+            if (this.functions.containsKey(attribute)) {
+                result.add(render(attribute, this.functions.get(attribute)));
+            }
+        }
         return result;
     }
 
@@ -365,7 +384,7 @@ public class DataDefinition implements Cloneable{
     public void resetHierarchy(String attr) {
         this.hierarchies.remove(attr);
     }
-    
+
     /**
      * Resets the according setting
      * @param attr
@@ -381,7 +400,7 @@ public class DataDefinition implements Cloneable{
     public void resetMaximumGeneralization(String attr) {
         this.minGeneralization.remove(attr);
     }
-
+    
     /**
      * Resets the according setting
      * @param attr
@@ -463,7 +482,7 @@ public class DataDefinition implements Cloneable{
     public void setHierarchy(String attribute, HierarchyBuilder<?> builder) {
         this.builders.put(attribute, builder);
     }
-    
+
     /**
      * Define the maximal generalization of a given attribute.
      *
@@ -476,7 +495,7 @@ public class DataDefinition implements Cloneable{
         checkLocked();
         maxGeneralization.put(attribute, maximum);
     }
-    
+
     /**
      * Associates the given microaggregation function
      * @param attribute
@@ -485,7 +504,7 @@ public class DataDefinition implements Cloneable{
     public void setMicroAggregationFunction(String attribute, MicroAggregationFunction function) {
         this.functions.put(attribute, function);
     }
-
+    
     /**
      * Define the minimal generalization of a given attribute.
      *
@@ -498,7 +517,7 @@ public class DataDefinition implements Cloneable{
         checkLocked();
         minGeneralization.put(attribute, minimum);
     }
-
+    
     /**
      * Checks whether this handle is locked.
      *
@@ -507,7 +526,7 @@ public class DataDefinition implements Cloneable{
     private void checkLocked() throws IllegalStateException{
         if (locked) {throw new IllegalStateException("This definition is currently locked");}
     }
-    
+
     /**
      * Checks whether the argument is null.
      *
@@ -531,7 +550,7 @@ public class DataDefinition implements Cloneable{
             throw new IllegalArgumentException("Attribute ("+attribute+") is not a quasi-identifier");
         }
     }
-
+    
     /**
      * Returns attributes by type
      * @param type
@@ -543,6 +562,41 @@ public class DataDefinition implements Cloneable{
             if (entry.getValue().getType() == type) {
                 result.add(entry.getKey());
             }
+        }
+        return result;
+    }
+
+    /**
+     * Renders a hierarchy
+     * @param attribute
+     * @param hierarchy
+     * @param builder
+     */
+    private ElementData render(String attribute, Hierarchy hierarchy, HierarchyBuilder<?> builder) {
+        ElementData result = new ElementData("Generalization hierarchy");
+        result.addProperty("Attribute", attribute);
+        if (hierarchy != null && hierarchy.getHierarchy() != null && 
+            hierarchy.getHierarchy().length != 0 && hierarchy.getHierarchy()[0] != null) {
+            result.addProperty("Height", hierarchy.getHierarchy()[0].length);
+            result.addProperty("Minimum level", this.getMinimumGeneralization(attribute));
+            result.addProperty("Maximum level", this.getMaximumGeneralization(attribute));
+        } else if (builder != null){
+            result.addProperty("Builder type", builder.getType().toString());
+        }
+        return result;
+    }
+
+    /**
+     * Renders a microaggregation function
+     * @param attribute
+     * @param function
+     * @return
+     */
+    private ElementData render(String attribute, MicroAggregationFunction function) {
+        ElementData result = new ElementData("Microaggregation function");
+        result.addProperty("Attribute", attribute);
+        if (function != null) {
+            result.addProperty("Type", function.getLabel());
         }
         return result;
     }

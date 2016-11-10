@@ -43,17 +43,37 @@ public abstract class HierarchyBuilder<T> implements Serializable {
      */
     public static enum Type {
         
-        /**  TODO */
-        INTERVAL_BASED,
+        /**  Interval-based hierarchy */
+        INTERVAL_BASED("Interval"),
         
-        /**  TODO */
-        ORDER_BASED,
+        /**  Order-based hierarchy */
+        ORDER_BASED("Order"),
         
-        /**  TODO */
-        REDACTION_BASED
+        /**  Redaction-based hierarchy */
+        REDACTION_BASED("Redaction");
+
+        /** Name*/
+        private final String name;
+        
+        /**
+         * Creates a new instance
+         * @param name
+         */
+        Type(String name) {
+            this.name = name;
+        }
+        
+        @Override
+        public String toString() {
+            if (name == null) {
+                return super.toString();
+            } else {
+                return name;
+            }
+        }
     }
     
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = -4182364711973630816L;
     
     /**
