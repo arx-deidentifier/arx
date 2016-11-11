@@ -586,11 +586,23 @@ public class ARXLattice implements Serializable {
          */
         public ElementData render() {
             ElementData result = new ElementData("Transformation");
-            result.addProperty("Generalization scheme", Arrays.toString(this.transformation));
-            result.addProperty("Anonymity", this.anonymity.toString());
-            result.addProperty("Checked", this.checked);
+            result.addProperty("Anonymity", this.anonymity);
             result.addProperty("Minimum information loss", this.minInformationLoss.toString());
             result.addProperty("Maximum information loss", this.maxInformationLoss.toString());
+            result.addProperty(null, renderGeneralizationScheme());
+            return result;
+        }
+
+        /**
+         * Renders this object
+         * @return
+         */
+        private ElementData renderGeneralizationScheme() {
+            ElementData result = new ElementData("Generalization scheme");
+            for (String qi : this.getQuasiIdentifyingAttributes()) {
+                result.addProperty(qi, this.getGeneralization(qi) + "/" +
+                                       this.lattice.getTop().getGeneralization(qi));    
+            }
             return result;
         }
 

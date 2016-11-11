@@ -83,6 +83,14 @@ public class ElementList implements Element {
     }
     
     /**
+     * Adds element data
+     * @param data
+     */
+    public void addItem(ElementData data) {
+        this.items.add(data);
+    }
+
+    /**
      * Adds an item to this list
      * @param item
      */
@@ -109,7 +117,7 @@ public class ElementList implements Element {
             default: return enumerator.next() +  separator;
         }
     }
-
+    
     @Override
     public void render(Document target, int indent, CertificateStyle style) throws IOException {
         
@@ -120,16 +128,15 @@ public class ElementList implements Element {
             } else if (item instanceof ElementText) {
                 Paragraph paragraph = new Paragraph();
                 paragraph.add(new Indent(getListItemIndicator(indent), offset, SpaceUnit.pt, style.getTextSize(),
-                                    getListItemIndicatorFont(style).getPlainFont(), Alignment.Right));
+                                         getListItemIndicatorFont(style).getPlainFont(), Alignment.Right));
                 paragraph.addMarkup(((ElementText)item).getText(), style.getTextSize(), style.getTextFont());
                 target.add(paragraph);
             } else {
                 throw new IllegalStateException("Unsupported element");
             }
         }
-
     }
-    
+
     /**
      * Styling
      * @return

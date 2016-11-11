@@ -836,6 +836,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         List<ElementData> result = new ArrayList<>();
         result.add(renderWeights());
         result.add(renderSettings());
+        result.add(renderReidentificationThresholds());
         return result;
     }
     
@@ -946,7 +947,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (metric == null) { throw new NullPointerException("Metric must not be null"); }
         this.metric = metric;
     }
-    
+
     /**
      * Set, if practical monotonicity assumed.
      *
@@ -955,7 +956,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
         this.practicalMonotonicity = assumeMonotonicity;
     }
-
+    
     /**
      * Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
@@ -988,7 +989,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setUtilityBasedMicroaggregation(boolean value) {
         this.utilityBasedMicroaggregation = value;
     }
-    
+
     /**
      * Checks an argument.
      *
@@ -998,6 +999,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (argument == null) { 
             throw new IllegalArgumentException("Argument must not be null"); 
         }
+    }
+    
+    /**
+     * Renders stuff
+     * @return
+     */
+    private ElementData renderReidentificationThresholds() {
+        ElementData result = new ElementData("Risk thresholds");
+        result.addProperty("Prosecutor risk", this.getRiskThresholdProsecutor());
+        result.addProperty("Journalist risk", this.getRiskThresholdJournalist());
+        result.addProperty("Marketer risk", this.getRiskThresholdMarketer());
+        return result;
     }
 
     /**
@@ -1018,8 +1031,12 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     private ElementData renderWeights() {
         ElementData result = new ElementData("Weights");
-        for (Entry<String, Double> entry : attributeWeights.entrySet()) {
-            result.addProperty(entry.getKey(), entry.getValue());
+        if (attributeWeights.isEmpty()) {
+            result.addItem("None specified");
+        } else {
+            for (Entry<String, Double> entry : attributeWeights.entrySet()) {
+                result.addProperty(entry.getKey(), entry.getValue());
+            }
         }
         return result;
     }

@@ -43,6 +43,7 @@ public class CertificateStyle {
     public static CertificateStyle create() {
         return new CertificateStyle();
     }
+
     /** Style information */
     private float      hMargin        = 80;
     /** Style information */
@@ -50,15 +51,15 @@ public class CertificateStyle {
     /** Style information */
     private LayoutHint titleHint      = VerticalLayoutHint.CENTER;
     /** Style information */
-    private BaseFont     textFont       = BaseFont.Helvetica;
+    private BaseFont   textFont       = BaseFont.Helvetica;
     /** Style information */
     private int        textSize       = 11;
     /** Style information */
-    private BaseFont     subtitleFont   = BaseFont.Helvetica;
+    private BaseFont   subtitleFont   = BaseFont.Helvetica;
     /** Style information */
     private int        subtitleSize   = 11;
     /** Style information */
-    private BaseFont     titleFont      = BaseFont.Helvetica;
+    private BaseFont   titleFont      = BaseFont.Helvetica;
     /** Style information */
     private int        titleSize      = 16;
     /** Style information */

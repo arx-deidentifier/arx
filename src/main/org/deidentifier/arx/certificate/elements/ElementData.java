@@ -17,9 +17,11 @@
 package org.deidentifier.arx.certificate.elements;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.certificate.CertificateStyle;
 import org.deidentifier.arx.certificate.CertificateStyle.ListStyle;
 
@@ -42,14 +44,14 @@ public class ElementData implements Element {
         /** Property*/
         public final String property;
         /** Value*/
-        public final String value;
+        public final Object value;
         
         /**
          * Creates a new instance
          * @param indent
          * @param text
          */
-        ElementDataProperty(String property, String value) {
+        ElementDataProperty(String property, Object value) {
             this.property = property;
             this.value = value;
         }
@@ -74,6 +76,25 @@ public class ElementData implements Element {
      */
     public void addItem(String item) {
         this.properties.add(new ElementDataProperty(item, null));
+    }
+
+    /**
+     * Adds a property
+     * @param property
+     * @param value
+     */
+    public void addProperty(String property, Anonymity value) {
+        switch (value) {
+        case ANONYMOUS: 
+            this.addProperty(property, true);
+            return;
+        case NOT_ANONYMOUS:
+            this.addProperty(property, false);
+            return;
+        default:
+            this.addProperty(property, "Unknown");
+            return;
+        }
     }
 
     /**
@@ -111,7 +132,7 @@ public class ElementData implements Element {
     public void addProperty(String property, long value) {
         this.properties.add(new ElementDataProperty(property, String.valueOf(value)));
     }
-
+    
     /**
      * Adds a property
      * @param property
@@ -120,19 +141,67 @@ public class ElementData implements Element {
     public void addProperty(String property, String value) {
         this.properties.add(new ElementDataProperty(property, value));
     }
+
+    /**
+     * Adds a property
+     * @param property
+     * @param value
+     */
+    public void addProperty(String property, ElementData value) {
+        this.properties.add(new ElementDataProperty(property, value));
+    }
     
-    @Override
-    public void render(Document target, int indent, CertificateStyle style) throws IOException {
-        ElementText text = new ElementText(this.text);
-        text.render(target, indent, style);
+    /**
+     * Adds a number between 0 and 1 as precentage
+     * @param property
+     * @param value
+     */
+    public void addPercentProperty(String property, double value) {
+        NumberFormat percentFormat = NumberFormat.getPercentInstance();
+        percentFormat.setMaximumFractionDigits(1);
+        this.properties.add(new ElementDataProperty(property, percentFormat.format(value)+"%"));
+    }
+
+    /**
+     * Returns a list
+     * @return
+     */
+    public ElementList asList() {
+        return asList(null);
+    }
+    
+    /**
+     * Returns a list
+     * @param prefix
+     * @return
+     */
+    public ElementList asList(String prefix) {
+        ElementList master = new ElementList(ListStyle.BULLETS);
+        master.addItem(new ElementText((prefix == null ? "" : prefix + ": ") + text));
         ElementList list = new ElementList(ListStyle.BULLETS);
         for (ElementDataProperty property : this.properties) {
-            if (property.value != null) {
-                list.addItem(new ElementText(property.property + ": " + property.value));
-            } else {
+            if (property.value == null) {
                 list.addItem(new ElementText(property.property));
+            } else if (property.value instanceof String){
+                list.addItem(new ElementText(property.property + ": " + property.value));
+            } else if (property.value instanceof ElementData) {
+                list.addItem(((ElementData)property.value).asList(property.property));
             }
         }
-        list.render(target, indent, style);
+        master.addItem(list);
+        return master;
+    }
+
+    /**
+     * Returns the text
+     * @return
+     */
+    public String getText() {
+        return this.text;
+    }
+
+    @Override
+    public void render(Document target, int indent, CertificateStyle style) throws IOException {
+        this.asList().render(target, indent, style);
     }
 }

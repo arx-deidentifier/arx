@@ -103,8 +103,8 @@ public class Example53 extends Example {
         ARXResult result = anonymizer.anonymize(data, config);
 
         ARXCertificate certificate = ARXCertificate.create(data.getHandle(), data.getDefinition(),
-                                                          config, result, result.getGlobalOptimum());
-        File file = File.createTempFile("arx", "arx");
+                                                          config, result, result.getGlobalOptimum(), result.getOutput());
+        File file = File.createTempFile("arx", ".pdf");
         certificate.save(new FileOutputStream(file));
         
         // Open

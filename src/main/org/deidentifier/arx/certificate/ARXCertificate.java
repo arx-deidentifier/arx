@@ -22,13 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.ARXLattice.Anonymity;
-import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.certificate.CertificateStyle.ListStyle;
 import org.deidentifier.arx.certificate.elements.Element;
+import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.certificate.elements.ElementList;
+import org.deidentifier.arx.certificate.elements.ElementNewLine;
 import org.deidentifier.arx.certificate.elements.ElementSubtitle;
 import org.deidentifier.arx.certificate.elements.ElementTitle;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
@@ -56,10 +59,11 @@ public class ARXCertificate {
      * @param config
      * @param result
      * @param transformation
+     * @param output
      */
     public static ARXCertificate create(DataHandle input, DataDefinition definition,
-                ARXConfiguration config, ARXResult result, ARXNode transformation) {
-        return new ARXCertificate(input, definition, config, result, transformation);
+                ARXConfiguration config, ARXResult result, ARXNode transformation, DataHandle output) {
+        return new ARXCertificate(input, definition, config, result, transformation, output);
     }
     /**
      * Creates a new instance
@@ -68,9 +72,10 @@ public class ARXCertificate {
      * @param config
      * @param result
      * @param transformation
+     * @param output
      */
     ARXCertificate(DataHandle input, DataDefinition definition,
-                ARXConfiguration config, ARXResult result, ARXNode transformation) {
+                ARXConfiguration config, ARXResult result, ARXNode transformation, DataHandle output) {
         this.style = CertificateStyle.create();
 
         // Check
@@ -78,32 +83,63 @@ public class ARXCertificate {
             throw new NullPointerException();
         }
 
+        int section = 1;
         this.add(new ElementTitle("Input specification"));
-        this.add(new ElementSubtitle("Input data"));
-        this.add(input.render());
-        this.add(new ElementSubtitle("Attributes and transformations"));
-        this.add(definition.render());
-        this.add(config.render());
-        if (config.getMetric() != null) {
-            this.add(new ElementSubtitle("Data quality"));
-            this.add(config.getMetric().render(config));
-        }
+        this.add(new ElementSubtitle((section++)+". Input data"));
+        this.add(asList(input.render()));
+        this.add(new ElementNewLine());
+        this.add(new ElementSubtitle((section++)+". Attributes and transformations"));
+        this.add(asList(definition.render()));
+        this.add(new ElementSubtitle((section++)+". Configuration"));
+        this.add(asList(config.render()));
         if (result.isResultAvailable()) {
-            this.add(new ElementTitle("Output specification"));
-            this.add(new ElementSubtitle("Solutions"));
-            this.add(result.getLattice().render());
-            this.add(new ElementSubtitle("Selected transformation"));
-            this.add(transformation.render());
-            this.add(new ElementSubtitle("Privacy properties"));
+            section = 1;
+            this.add(new ElementNewLine());
+            this.add(new ElementTitle("Output properties"));
+            this.add(new ElementSubtitle((section++)+". Solutions"));
+            this.add(asList(result.getLattice().render()));
+            this.add(new ElementNewLine());
+            this.add(new ElementSubtitle((section++)+". Transformation"));
+            this.add(asList(transformation.render()));
+            this.add(new ElementNewLine());
+            if (config.getMetric() != null) {
+                this.add(new ElementSubtitle((section++)+". Data quality model"));
+                this.add(asList(config.getMetric().render(config)));
+                this.add(new ElementNewLine());
+            }
+            this.add(new ElementSubtitle((section++)+". Privacy models"));
             if (transformation.getAnonymity() == Anonymity.ANONYMOUS) {
                 for (PrivacyCriterion c : config.getCriteria()) {
-                    this.add(c.render());
+                    this.add(asList(c.render()));
                 }
             }
         }
     }
 	
-	/**
+    /**
+     * Renders as a list
+     * @param data
+     * @return
+     */
+	private Element asList(ElementData data) {
+	    ElementList list = new ElementList(ListStyle.BULLETS);
+	    list.addItem(data.asList());
+	    return list;
+    }
+
+    /**
+     * Renders as a list
+     * @param data
+     * @return
+     */
+    private Element asList(List<ElementData> data) {
+        ElementList list = new ElementList(ListStyle.BULLETS);
+        for (ElementData d : data) {
+            list.addItem(d.asList());
+        }
+        return list;
+    }
+    /**
 	 * Adds a new element
 	 * @param element
 	 */
