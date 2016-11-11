@@ -80,12 +80,19 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="#org.deidentifier.arx.criteria">org.deidentifier.arx.criteria</a></td>
+<td class="colLast">
+<div class="block">This package implements different variants of class-based privacy criteria,
+ such as k-anonymity, l-diversity, t-closeness and d-presence.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="#org.deidentifier.arx.metric">org.deidentifier.arx.metric</a></td>
 <td class="colLast">
 <div class="block">This package implements several metrics for information loss.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="#org.deidentifier.arx.risk">org.deidentifier.arx.risk</a></td>
 <td class="colLast">
 <div class="block">This package provides methods for risk analyses</div>
@@ -134,7 +141,7 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
-<td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.html#create(double,%20org.deidentifier.arx.metric.Metric)">create</a></strong>(double&nbsp;suppressionLimit,
+<td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.html#create(double, org.deidentifier.arx.metric.Metric)">create</a></strong>(double&nbsp;suppressionLimit,
       <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</code>
 <div class="block">Creates a new configuration that allows the given percentage of outliers and
  thus implements tuple suppression.</div>
@@ -152,6 +159,16 @@
 <div class="block">Returns the configuration used.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
+<td class="colLast"><span class="strong">ARXConfiguration.ARXConfigurationInternal.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getParent()">getParent</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
+<td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.html#setFinancialConfiguration(org.deidentifier.arx.ARXFinancialConfiguration)">setFinancialConfiguration</a></strong>(<a href="../../../../org/deidentifier/arx/ARXFinancialConfiguration.html" title="class in org.deidentifier.arx">ARXFinancialConfiguration</a>&nbsp;config)</code>
+<div class="block">Sets the financial configuration</div>
+</td>
+</tr>
 </tbody>
 </table>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
@@ -163,7 +180,7 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></code></td>
-<td class="colLast"><span class="strong">ARXAnonymizer.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXAnonymizer.html#anonymize(org.deidentifier.arx.Data,%20org.deidentifier.arx.ARXConfiguration)">anonymize</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
+<td class="colLast"><span class="strong">ARXAnonymizer.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXAnonymizer.html#anonymize(org.deidentifier.arx.Data, org.deidentifier.arx.ARXConfiguration)">anonymize</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
 <div class="block">Performs data anonymization.</div>
 </td>
@@ -181,7 +198,7 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.ARXLattice,%20int,%20double,%20double,%20org.deidentifier.arx.metric.Metric,%20org.deidentifier.arx.ARXConfiguration,%20org.deidentifier.arx.ARXLattice.ARXNode,%20long,%20org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXLattice, int, double, double, org.deidentifier.arx.metric.Metric, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice.ARXNode, long, org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
          <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
          <a href="../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
          int&nbsp;historySize,
@@ -194,6 +211,89 @@
          org.deidentifier.arx.framework.lattice.SolutionSpace&nbsp;solutionSpace)</code>
 <div class="block">Internal constructor for deserialization.</div>
 </td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a> in <a href="../../../../org/deidentifier/arx/criteria/package-summary.html">org.deidentifier.arx.criteria</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../org/deidentifier/arx/criteria/package-summary.html">org.deidentifier.arx.criteria</a> with parameters of type <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">PrivacyCriterion.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
+<div class="block">Override this to initialize the criterion.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">PopulationUniqueness.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/PopulationUniqueness.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">OrderedDistanceTCloseness.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/OrderedDistanceTCloseness.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">KMap.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">Inclusion.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/Inclusion.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">HierarchicalDistanceTCloseness.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/HierarchicalDistanceTCloseness.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">FinancialProsecutorPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/FinancialProsecutorPrivacy.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">FinancialProsecutorNoAttackPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/FinancialProsecutorNoAttackPrivacy.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">ExplicitPrivacyCriterion.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">EqualDistanceTCloseness.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/EqualDistanceTCloseness.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">EDDifferentialPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
+<div class="block">Creates a random sample based on beta</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">DPresence.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/DPresence.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">DDisclosurePrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/DDisclosurePrivacy.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -211,7 +311,7 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">Metric.</span><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initialize(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+<td class="colLast"><span class="strong">Metric.</span><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
           <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
           org.deidentifier.arx.framework.data.Data&nbsp;input,
           org.deidentifier.arx.framework.data.GeneralizationHierarchy[]&nbsp;hierarchies,
@@ -233,7 +333,7 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.DataHandleInternal,%20org.deidentifier.arx.risk.RiskModelHistogram,%20org.deidentifier.arx.ARXConfiguration)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel, org.deidentifier.arx.DataHandleInternal, org.deidentifier.arx.risk.RiskModelHistogram, org.deidentifier.arx.ARXConfiguration)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
                    <a href="../../../../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a>&nbsp;handle,
                    <a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;classes,
                    <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;arxconfig)</code>
@@ -241,7 +341,7 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.DataHandleInternal,%20org.deidentifier.arx.risk.RiskModelHistogram,%20org.deidentifier.arx.ARXSolverConfiguration,%20org.deidentifier.arx.ARXConfiguration)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel, org.deidentifier.arx.DataHandleInternal, org.deidentifier.arx.risk.RiskModelHistogram, org.deidentifier.arx.ARXSolverConfiguration, org.deidentifier.arx.ARXConfiguration)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
                    <a href="../../../../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a>&nbsp;handle,
                    <a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;classes,
                    <a href="../../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&nbsp;solverconfig,
@@ -250,7 +350,7 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.DataHandleInternal,%20java.util.Set,%20org.deidentifier.arx.ARXConfiguration)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel, org.deidentifier.arx.DataHandleInternal, java.util.Set, org.deidentifier.arx.ARXConfiguration)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
                    <a href="../../../../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a>&nbsp;handle,
                    java.util.Set&lt;java.lang.String&gt;&nbsp;identifiers,
                    <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;arxconfig)</code>
@@ -258,7 +358,7 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.DataHandleInternal,%20java.util.Set,%20org.deidentifier.arx.ARXSolverConfiguration,%20org.deidentifier.arx.ARXConfiguration)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskEstimateBuilder.html#RiskEstimateBuilder(org.deidentifier.arx.ARXPopulationModel, org.deidentifier.arx.DataHandleInternal, java.util.Set, org.deidentifier.arx.ARXSolverConfiguration, org.deidentifier.arx.ARXConfiguration)">RiskEstimateBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;population,
                    <a href="../../../../org/deidentifier/arx/DataHandleInternal.html" title="class in org.deidentifier.arx">DataHandleInternal</a>&nbsp;handle,
                    java.util.Set&lt;java.lang.String&gt;&nbsp;identifiers,
                    <a href="../../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a>&nbsp;solverconfig,
@@ -267,14 +367,14 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRiskDistribution.html#RiskModelSampleRiskDistribution(org.deidentifier.arx.risk.RiskModelHistogram,%20org.deidentifier.arx.ARXConfiguration,%20boolean)">RiskModelSampleRiskDistribution</a></strong>(<a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;histogram,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRiskDistribution.html#RiskModelSampleRiskDistribution(org.deidentifier.arx.risk.RiskModelHistogram, org.deidentifier.arx.ARXConfiguration, boolean)">RiskModelSampleRiskDistribution</a></strong>(<a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;histogram,
                                <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
                                boolean&nbsp;anonymous)</code>
 <div class="block">Creates a new instance</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#RiskModelSampleRisks(org.deidentifier.arx.risk.RiskModelHistogram,%20org.deidentifier.arx.ARXConfiguration,%20boolean)">RiskModelSampleRisks</a></strong>(<a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;histogram,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#RiskModelSampleRisks(org.deidentifier.arx.risk.RiskModelHistogram, org.deidentifier.arx.ARXConfiguration, boolean)">RiskModelSampleRisks</a></strong>(<a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;histogram,
                     <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
                     boolean&nbsp;anonymous)</code>
 <div class="block">Creates a new instance</div>

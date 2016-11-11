@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html" title="class in org.deidentifier.arx.criteria"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../org/deidentifier/arx/criteria/EqualDistanceTCloseness.html" title="class in org.deidentifier.arx.criteria"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.EntropyEstimator.html" title="enum in org.deidentifier.arx.criteria"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?org/deidentifier/arx/criteria/EntropyLDiversity.html" target="_top">Frames</a></li>
@@ -59,7 +59,7 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#fields_inherited_from_class_org.deidentifier.arx.criteria.LDiversity">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
@@ -115,7 +115,7 @@
 <br>
 <pre>public class <span class="strong">EntropyLDiversity</span>
 extends <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html" title="class in org.deidentifier.arx.criteria">LDiversity</a></pre>
-<div class="block">The entropy l-diversity criterion.</div>
+<div class="block">The entropy l-diversity privacy model.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../serialized-form.html#org.deidentifier.arx.criteria.EntropyLDiversity">Serialized Form</a></dd></dl>
 </li>
 </ul>
@@ -123,6 +123,27 @@ extends <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html" titl
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested_class_summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.EntropyEstimator.html" title="enum in org.deidentifier.arx.criteria">EntropyLDiversity.EntropyEstimator</a></strong></code>
+<div class="block">Enumerator of entropy estimators for the entropy-l-diversity privacy model.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field_summary">
@@ -157,10 +178,18 @@ extends <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html" titl
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.html#EntropyLDiversity(java.lang.String,%20double)">EntropyLDiversity</a></strong>(java.lang.String&nbsp;attribute,
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.html#EntropyLDiversity(java.lang.String, double)">EntropyLDiversity</a></strong>(java.lang.String&nbsp;attribute,
                  double&nbsp;l)</code>
-<div class="block">Creates a new instance of the entropy l-diversity criterion as proposed in:
- Machanavajjhala A, Kifer D, Gehrke J.</div>
+<div class="block">Creates a new instance of the entropy l-diversity model as proposed in:<br>
+ Machanavajjhala A, Kifer D, Gehrke J. l-diversity: Privacy beyond k-anonymity.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.html#EntropyLDiversity(java.lang.String, double, org.deidentifier.arx.criteria.EntropyLDiversity.EntropyEstimator)">EntropyLDiversity</a></strong>(java.lang.String&nbsp;attribute,
+                 double&nbsp;l,
+                 <a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.EntropyEstimator.html" title="enum in org.deidentifier.arx.criteria">EntropyLDiversity.EntropyEstimator</a>&nbsp;estimator)</code>
+<div class="block">Creates a new instance of the entropy-l-diversity privacy model,
+ specifying the entropy estimator be to used.</div>
 </td>
 </tr>
 </table>
@@ -185,18 +214,25 @@ extends <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html" titl
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry&nbsp;entry)</code>
-<div class="block">Implement this, to enforce the criterion.</div>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.EntropyEstimator.html" title="enum in org.deidentifier.arx.criteria">EntropyLDiversity.EntropyEstimator</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.html#getEstimator()">getEstimator</a></strong>()</code>
+<div class="block">Returns the entropy estimator used by this instance</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.html#isAnonymous(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
+           org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry&nbsp;entry)</code>
+<div class="block">Implement this, to enforce the criterion.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.html#isLocalRecodingSupported()">isLocalRecodingSupported</a></strong>()</code>
 <div class="block">Returns whether the criterion supports local recoding.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.html#toString()">toString</a></strong>()</code>
 <div class="block">Returns a string representation.</div>
@@ -208,21 +244,21 @@ extends <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html" titl
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.criteria.<a href="../../../../org/deidentifier/arx/criteria/LDiversity.html" title="class in org.deidentifier.arx.criteria">LDiversity</a></h3>
-<code><a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getL()">getL</a>, <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getMinimalGroupSize()">getMinimalGroupSize</a>, <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getRequirements()">getRequirements</a>, <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getRiskThresholdJournalist()">getRiskThresholdJournalist</a>, <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getRiskThresholdMarketer()">getRiskThresholdMarketer</a>, <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getRiskThresholdProsecutor()">getRiskThresholdProsecutor</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getL()">getL</a>, <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getMinimalClassSize()">getMinimalClassSize</a>, <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getRequirements()">getRequirements</a>, <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getRiskThresholdJournalist()">getRiskThresholdJournalist</a>, <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getRiskThresholdMarketer()">getRiskThresholdMarketer</a>, <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#getRiskThresholdProsecutor()">getRiskThresholdProsecutor</a>, <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html#isMinimalClassSizeAvailable()">isMinimalClassSizeAvailable</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_org.deidentifier.arx.criteria.ExplicitPrivacyCriterion">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.criteria.<a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ExplicitPrivacyCriterion</a></h3>
-<code><a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html#getAttribute()">getAttribute</a>, <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html#getAttribute()">getAttribute</a>, <a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_org.deidentifier.arx.criteria.PrivacyCriterion">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.criteria.<a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></h3>
-<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getPopulationModel()">getPopulationModel</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getSubset()">getSubset</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone(org.deidentifier.arx.DataSubset)">clone</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getDataSubset()">getDataSubset</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getPopulationModel()">getPopulationModel</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getSubset()">getSubset</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSubsetAvailable()">isSubsetAvailable</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -248,16 +284,48 @@ extends <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html" titl
 <a name="EntropyLDiversity(java.lang.String, double)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>EntropyLDiversity</h4>
 <pre>public&nbsp;EntropyLDiversity(java.lang.String&nbsp;attribute,
                  double&nbsp;l)</pre>
-<div class="block">Creates a new instance of the entropy l-diversity criterion as proposed in:
- Machanavajjhala A, Kifer D, Gehrke J.
- l-diversity: Privacy beyond k-anonymity.
+<div class="block">Creates a new instance of the entropy l-diversity model as proposed in:<br>
+ Machanavajjhala A, Kifer D, Gehrke J. l-diversity: Privacy beyond k-anonymity.<br>
  Transactions on Knowledge Discovery from Data (TKDD). 2007;1(1):3.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd><dd><code>l</code> - </dd></dl>
+</li>
+</ul>
+<a name="EntropyLDiversity(java.lang.String, double, org.deidentifier.arx.criteria.EntropyLDiversity.EntropyEstimator)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>EntropyLDiversity</h4>
+<pre>public&nbsp;EntropyLDiversity(java.lang.String&nbsp;attribute,
+                 double&nbsp;l,
+                 <a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.EntropyEstimator.html" title="enum in org.deidentifier.arx.criteria">EntropyLDiversity.EntropyEstimator</a>&nbsp;estimator)</pre>
+<div class="block">Creates a new instance of the entropy-l-diversity privacy model,
+ specifying the entropy estimator be to used.
+ Two estimators are available:<br>
+ <ul>
+   <li> 
+   SHANNON for the usual naive Shannon estimator:
+   this amounts to the original entropy-l-diversity definition by Machanavajjhala.
+   </li>
+   <li>
+   GRASSBERGER for the corrected Grassberger estimator as proposed in:
+   P Grassberger. Entropy Estimates from Insufficient Samplings.
+   https://arxiv.org/abs/physics/0307138v2<br>
+   This estimator generally accepts more sets as being entropy-l-diverse than
+   the naive Shannon estimator, thus increases data utility.
+   It also guarantees a more consistent meaning of the security
+   parameter l between different data sets. For details take a look at:
+   S Stammler, S Katzenbeisser, K Hamacher.
+   Correcting Finite Sampling Issues in Entropy l-diversity.
+   Privacy in Statistical Databases 2016. LNCS Vol. 9867 pp 135-146
+   </li>
+ </ul></div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - The sensitive attribute</dd><dd><code>l</code> - Security parameter</dd><dd><code>estimator</code> - Entropy estimator (SHANNON or GRASSBERGER)</dd></dl>
 </li>
 </ul>
 </li>
@@ -283,18 +351,31 @@ extends <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html" titl
 </dl>
 </li>
 </ul>
-<a name="isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">
+<a name="getEstimator()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEstimator</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.EntropyEstimator.html" title="enum in org.deidentifier.arx.criteria">EntropyLDiversity.EntropyEstimator</a>&nbsp;getEstimator()</pre>
+<div class="block">Returns the entropy estimator used by this instance</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isAnonymous(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>isAnonymous</h4>
-<pre>public&nbsp;boolean&nbsp;isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry&nbsp;entry)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">PrivacyCriterion</a></code></strong></div>
+<pre>public&nbsp;boolean&nbsp;isAnonymous(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
+                  org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry&nbsp;entry)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">PrivacyCriterion</a></code></strong></div>
 <div class="block">Implement this, to enforce the criterion.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - TODO</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -355,7 +436,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html" titl
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html" title="class in org.deidentifier.arx.criteria"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../org/deidentifier/arx/criteria/EqualDistanceTCloseness.html" title="class in org.deidentifier.arx.criteria"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/criteria/EntropyLDiversity.EntropyEstimator.html" title="enum in org.deidentifier.arx.criteria"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?org/deidentifier/arx/criteria/EntropyLDiversity.html" target="_top">Frames</a></li>
@@ -379,7 +460,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/LDiversity.html" titl
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#fields_inherited_from_class_org.deidentifier.arx.criteria.LDiversity">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>

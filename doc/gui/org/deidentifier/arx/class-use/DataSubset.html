@@ -110,52 +110,59 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
-<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data,%20org.deidentifier.arx.Data)">create</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
+<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data, org.deidentifier.arx.Data)">create</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
       <a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;subset)</code>
 <div class="block">Create a subset by matching two data instances.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
-<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data,%20org.deidentifier.arx.DataSelector)">create</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
+<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data, org.deidentifier.arx.DataSelector)">create</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
       <a href="../../../../org/deidentifier/arx/DataSelector.html" title="class in org.deidentifier.arx">DataSelector</a>&nbsp;selector)</code>
 <div class="block">Creates a subset from the given selector.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
-<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data,%20org.deidentifier.arx.RowSet)">create</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
+<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data, org.deidentifier.arx.RowSet)">create</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
       <a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;subset)</code>
 <div class="block">Creates a new subset from the given row set, from which a copy is created.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
-<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data,%20java.util.Set)">create</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
+<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data, java.util.Set)">create</a></strong>(<a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
       java.util.Set&lt;java.lang.Integer&gt;&nbsp;subset)</code>
 <div class="block">Creates a new subset from the given set of tuple indices.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
-<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(int,%20java.util.Set)">create</a></strong>(int&nbsp;rows,
+<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(int, org.deidentifier.arx.RowSet)">create</a></strong>(int&nbsp;rows,
+      <a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;subset)</code>
+<div class="block">Creates a new subset from the given row set, from which a copy is created.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
+<td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#create(int, java.util.Set)">create</a></strong>(int&nbsp;rows,
       java.util.Set&lt;java.lang.Integer&gt;&nbsp;subset)</code>
 <div class="block">Creates a new subset from the given set of tuple indices.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.html#getSubset()">getSubset</a></strong>()</code>
 <div class="block">Returns the data subset, if any subset is defined.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.ARXConfigurationInternal.</span><code><strong><a href="../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getSubset()">getSubset</a></strong>()</code>
 <div class="block">Returns the data subset, if any</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
 <td class="colLast"><span class="strong">DataSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSubset.html#getSubsetInstance(org.deidentifier.arx.RowSet)">getSubsetInstance</a></strong>(<a href="../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset)</code>
 <div class="block">Returns a new data subset, only containing those rows that are included in the subset</div>
@@ -170,7 +177,7 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/DataHandleSubset.html#DataHandleSubset(org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.DataSubset)">DataHandleSubset</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;source,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/DataHandleSubset.html#DataHandleSubset(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataSubset)">DataHandleSubset</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;source,
                 <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>
 <div class="block">Creates a new handle that represents the research subset.</div>
 </td>
@@ -191,21 +198,82 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
-<td class="colLast"><span class="strong">PrivacyCriterion.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getSubset()">getSubset</a></strong>()</code>
-<div class="block">Returns a research subset, <code>null</code> if no subset is available</div>
+<td class="colLast"><span class="strong">PrivacyCriterion.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getDataSubset()">getDataSubset</a></strong>()</code>
+<div class="block">If a privacy model uses a data subset, it must overwrite this method</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
-<td class="colLast"><span class="strong">KMap.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getSubset()">getSubset</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">KMap.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getDataSubset()">getDataSubset</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
-<td class="colLast"><span class="strong">EDDifferentialPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getSubset()">getSubset</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">FinancialProsecutorPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/FinancialProsecutorPrivacy.html#getDataSubset()">getDataSubset</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
-<td class="colLast"><span class="strong">DPresence.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/DPresence.html#getSubset()">getSubset</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">FinancialProsecutorNoAttackPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/FinancialProsecutorNoAttackPrivacy.html#getDataSubset()">getDataSubset</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
+<td class="colLast"><span class="strong">FinancialJournalistPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/FinancialJournalistPrivacy.html#getDataSubset()">getDataSubset</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
+<td class="colLast"><span class="strong">FinancialJournalistNoAttackPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/FinancialJournalistNoAttackPrivacy.html#getDataSubset()">getDataSubset</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
+<td class="colLast"><span class="strong">EDDifferentialPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/EDDifferentialPrivacy.html#getDataSubset()">getDataSubset</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
+<td class="colLast"><span class="strong">DPresence.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/DPresence.html#getDataSubset()">getDataSubset</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
+<td class="colLast"><span class="strong">PrivacyCriterion.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getSubset()">getSubset</a></strong>()</code>
+<div class="block">Returns a research subset, <code>null</code> if no subset is available</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../org/deidentifier/arx/criteria/package-summary.html">org.deidentifier.arx.criteria</a> with parameters of type <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">PrivacyCriterion.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>
+<div class="block">Clone for local recoding</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">KMap.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">Inclusion.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/Inclusion.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">FinancialProsecutorPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/FinancialProsecutorPrivacy.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">FinancialProsecutorNoAttackPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/FinancialProsecutorNoAttackPrivacy.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">FinancialJournalistPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/FinancialJournalistPrivacy.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">FinancialJournalistNoAttackPrivacy.</span><code><strong><a href="../../../../org/deidentifier/arx/criteria/FinancialJournalistNoAttackPrivacy.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -221,11 +289,22 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/DPresence.html#DPresence(double,%20double,%20org.deidentifier.arx.DataSubset)">DPresence</a></strong>(double&nbsp;dMin,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/DPresence.html#DPresence(double, double, org.deidentifier.arx.DataSubset)">DPresence</a></strong>(double&nbsp;dMin,
          double&nbsp;dMax,
          <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>
 <div class="block">Creates a new instance of the d-presence criterion as proposed in:
  Nergiz M, Atzori M, Clifton C.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/FinancialJournalistNoAttackPrivacy.html#FinancialJournalistNoAttackPrivacy(org.deidentifier.arx.DataSubset)">FinancialJournalistNoAttackPrivacy</a></strong>(<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>
+<div class="block">Creates a new instance</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/FinancialJournalistPrivacy.html#FinancialJournalistPrivacy(org.deidentifier.arx.DataSubset)">FinancialJournalistPrivacy</a></strong>(<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>
+<div class="block">Creates a new instance of game theoretic approach proposed in:
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -234,7 +313,7 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#KMap(int,%20org.deidentifier.arx.DataSubset)">KMap</a></strong>(int&nbsp;k,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#KMap(int, org.deidentifier.arx.DataSubset)">KMap</a></strong>(int&nbsp;k,
     <a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>
 <div class="block">Creates a new instance of the k-map criterion as proposed by Latanya Sweeney</div>
 </td>

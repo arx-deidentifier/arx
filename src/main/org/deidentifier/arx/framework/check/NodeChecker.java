@@ -470,11 +470,10 @@ public class NodeChecker {
                 	HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
                 	while (entry != null) {
                 		
-                		int value = entry.key[j]; // Only use this, when the group is not suppressed!
                 		int count = entry.count;
-                		
-                		if (entry.isNotOutlier && value != rootValues[j]) {
+                		if (entry.isNotOutlier && entry.key[j] != rootValues[j]) {
                 			// The attribute value is not suppressed
+                		    int value = entry.key[j];
                 			int valueCount = valueToCount.containsKey(value) ? (valueToCount.get(value) + count) : count;
                 			valueToCount.put(value, valueCount);
                 		} else {

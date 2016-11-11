@@ -150,34 +150,23 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Prepare
         int dimensions = getDimensions();
         int dimensionsGeneralized = getDimensionsGeneralized();
-        int dimensionsAggregated = getDimensionsAggregated();
-        int microaggregationStart = getMicroaggregationStartIndex();
-        DistributionAggregateFunction[] microaggregationFunctions = getMicroaggregationFunctions();
         
         int[] transformation = node.getGeneralization();
         double[] result = new double[dimensions];
-        double[] bound = new double[dimensions];
 
         // Compute information loss and lower bound
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count>0) {
                 for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-                    int value = m.key[dimension];
-                    int level = transformation[dimension];
-                    double share = (double)m.count * shares[dimension].getShare(value, level);
-                    result[dimension] += m.isNotOutlier ? share * gFactor :
-                                         (sFactor == 1d ? m.count : share + sFactor * ((double)m.count - share));
-                    bound[dimension] += share * gFactor;
-                }
-                for (int dimension=0; dimension<dimensionsAggregated; dimension++){
-                    
-                    double share = (double)m.count * microaggregationFunctions[dimension].getMeanError(m.distributions[microaggregationStart + dimension]);
-                    result[dimensionsGeneralized + dimension] += m.isNotOutlier ? share * gFactor :
-                                         (sFactor == 1d ? m.count : share + sFactor * ((double)m.count - share));
-                    // Note: we ignore a bound for microaggregation, as we cannot compute it
-                    // this means that the according entries in the resulting array are not changed and remain 0d
-                    // This is not a problem, as it is OK to underestimate information loss when computing lower bounds
+                    if (m.isNotOutlier) {
+                        int value = m.key[dimension];
+                        int level = transformation[dimension];
+                        double share = (double)m.count * shares[dimension].getShare(value, level);
+                        result[dimension] += share * gFactor;
+                    } else {
+                        result[dimension] += m.count;
+                    }
                 }
             }
             m = m.nextOrdered;
@@ -186,17 +175,10 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Normalize
         for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
             result[dimension] = normalizeGeneralized(result[dimension], dimension);
-            bound[dimension] = normalizeGeneralized(bound[dimension], dimension);
-        }
-        
-        // Normalize
-        for (int dimension=dimensionsGeneralized; dimension<dimensionsGeneralized + dimensionsAggregated; dimension++){
-            result[dimension] = normalizeAggregated(result[dimension]);
         }
         
         // Return information loss and lower bound
-        return new ILMultiDimensionalWithBound(super.createInformationLoss(result),
-                                               super.createInformationLoss(bound));
+        return new ILMultiDimensionalWithBound(super.createInformationLoss(result), null);
         
     }
 

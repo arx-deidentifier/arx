@@ -116,7 +116,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#HierarchyWizardModel(org.deidentifier.arx.DataType,%20java.util.Locale,%20java.lang.String[])">HierarchyWizardModel</a></strong>(<a href="../../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html" title="type parameter in HierarchyWizardModel">T</a>&gt;&nbsp;dataType,
+<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#HierarchyWizardModel(org.deidentifier.arx.DataType, java.util.Locale, java.lang.String[])">HierarchyWizardModel</a></strong>(<a href="../../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html" title="type parameter in HierarchyWizardModel">T</a>&gt;&nbsp;dataType,
                     java.util.Locale&nbsp;locale,
                     java.lang.String[]&nbsp;data)</code>
 <div class="block">Creates a new instance for the given data type.</div>
@@ -189,6 +189,12 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#setType(org.deidentifier.arx.aggregates.HierarchyBuilder.Type)">setType</a></strong>(<a href="../../../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.Type.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilder.Type</a>&nbsp;type)</code>
 <div class="block">Sets the type.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected &lt;U&gt;&nbsp;boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#sort(org.deidentifier.arx.DataType)">sort</a></strong>(<a href="../../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;U&gt;&nbsp;type)</code>
+<div class="block">Sort.</div>
 </td>
 </tr>
 </table>
@@ -332,12 +338,24 @@ extends java.lang.Object</pre>
 <a name="setType(org.deidentifier.arx.aggregates.HierarchyBuilder.Type)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setType</h4>
 <pre>public&nbsp;void&nbsp;setType(<a href="../../../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.Type.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilder.Type</a>&nbsp;type)</pre>
 <div class="block">Sets the type.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>type</code> - </dd></dl>
+</li>
+</ul>
+<a name="sort(org.deidentifier.arx.DataType)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>sort</h4>
+<pre>protected&nbsp;&lt;U&gt;&nbsp;boolean&nbsp;sort(<a href="../../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;U&gt;&nbsp;type)</pre>
+<div class="block">Sort.</div>
+<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>U</code> - </dd><dt><span class="strong">Parameters:</span></dt><dd><code>type</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd>successful, or not</dd></dl>
 </li>
 </ul>
 </li>

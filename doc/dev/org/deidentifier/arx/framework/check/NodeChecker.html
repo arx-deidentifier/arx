@@ -96,7 +96,7 @@
 <br>
 <pre>public class <span class="strong">NodeChecker</span>
 extends java.lang.Object</pre>
-<div class="block">This class orchestrates the process of checking a node for k-anonymity.</div>
+<div class="block">This class orchestrates the process of transforming and analyzing a dataset.</div>
 </li>
 </ul>
 </div>
@@ -136,7 +136,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#NodeChecker(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.metric.Metric,%20org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal,%20int,%20double,%20double,%20org.deidentifier.arx.framework.lattice.SolutionSpace)">NodeChecker</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#NodeChecker(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.metric.Metric, org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal, int, double, double, org.deidentifier.arx.framework.lattice.SolutionSpace)">NodeChecker</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
            <a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric,
            <a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;config,
            int&nbsp;historyMaxSize,
@@ -169,7 +169,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/TransformedData.html" title="class in org.deidentifier.arx.framework.check">TransformedData</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#applyTransformation(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.data.Dictionary)">applyTransformation</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#applyTransformation(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.data.Dictionary)">applyTransformation</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
                    <a href="../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;microaggregationDictionary)</code>
 <div class="block">Applies the given transformation and returns the dataset</div>
 </td>
@@ -182,7 +182,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">NodeChecker.Result</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#check(org.deidentifier.arx.framework.lattice.Transformation,%20boolean)">check</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#check(org.deidentifier.arx.framework.lattice.Transformation, boolean)">check</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
      boolean&nbsp;forceMeasureInfoLoss)</code>
 <div class="block">Checks the given transformation</div>
 </td>
@@ -209,6 +209,15 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#getMetric()">getMetric</a></strong>()</code>
 <div class="block">Returns the utility measure</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/check/NodeChecker.html#getScore(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.ARXResult.ScoreType, int)">getScore</a></strong>(<a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+        <a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
+        <a href="../../../../../org/deidentifier/arx/ARXResult.ScoreType.html" title="enum in org.deidentifier.arx">ARXResult.ScoreType</a>&nbsp;score,
+        int&nbsp;clazz)</code>
+<div class="block">Calculates a score</div>
 </td>
 </tr>
 </table>
@@ -308,17 +317,6 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getInputBuffer()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getInputBuffer</h4>
-<pre>public&nbsp;int[][]&nbsp;getInputBuffer()</pre>
-<div class="block">Returns the input buffer</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="getConfiguration()">
 <!--   -->
 </a>
@@ -341,15 +339,41 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getInputBuffer()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInputBuffer</h4>
+<pre>public&nbsp;int[][]&nbsp;getInputBuffer()</pre>
+<div class="block">Returns the input buffer</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getMetric()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getMetric</h4>
 <pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;getMetric()</pre>
 <div class="block">Returns the utility measure</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getScore(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.ARXResult.ScoreType, int)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getScore</h4>
+<pre>public&nbsp;double&nbsp;getScore(<a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+              <a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
+              <a href="../../../../../org/deidentifier/arx/ARXResult.ScoreType.html" title="enum in org.deidentifier.arx">ARXResult.ScoreType</a>&nbsp;score,
+              int&nbsp;clazz)</pre>
+<div class="block">Calculates a score</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>definition</code> - </dd><dd><code>transformation</code> - </dd><dd><code>score</code> - </dd><dd><code>clazz</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

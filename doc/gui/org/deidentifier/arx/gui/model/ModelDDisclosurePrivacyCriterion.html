@@ -135,7 +135,7 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelDDisclosurePrivacyCriterion.html#ModelDDisclosurePrivacyCriterion(java.lang.String,%20double)">ModelDDisclosurePrivacyCriterion</a></strong>(java.lang.String&nbsp;attribute,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelDDisclosurePrivacyCriterion.html#ModelDDisclosurePrivacyCriterion(java.lang.String, double)">ModelDDisclosurePrivacyCriterion</a></strong>(java.lang.String&nbsp;attribute,
                                 double&nbsp;d)</code>
 <div class="block">Creates a new instance.</div>
 </td>
@@ -181,7 +181,7 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelDDisclosurePrivacyCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion,%20boolean)">parse</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelDDisclosurePrivacyCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">parse</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion,
      boolean&nbsp;_default)</code>
 <div class="block">Parse</div>
 </td>
@@ -240,25 +240,25 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ModelDDisclosurePrivacyCriterion(java.lang.String, double)">
+<a name="ModelDDisclosurePrivacyCriterion(java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ModelDDisclosurePrivacyCriterion</h4>
-<pre>public&nbsp;ModelDDisclosurePrivacyCriterion(java.lang.String&nbsp;attribute,
-                                double&nbsp;d)</pre>
+<pre>public&nbsp;ModelDDisclosurePrivacyCriterion(java.lang.String&nbsp;attribute)</pre>
 <div class="block">Creates a new instance.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd></dl>
 </li>
 </ul>
-<a name="ModelDDisclosurePrivacyCriterion(java.lang.String)">
+<a name="ModelDDisclosurePrivacyCriterion(java.lang.String, double)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ModelDDisclosurePrivacyCriterion</h4>
-<pre>public&nbsp;ModelDDisclosurePrivacyCriterion(java.lang.String&nbsp;attribute)</pre>
+<pre>public&nbsp;ModelDDisclosurePrivacyCriterion(java.lang.String&nbsp;attribute,
+                                double&nbsp;d)</pre>
 <div class="block">Creates a new instance.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd></dl>
 </li>
@@ -301,6 +301,17 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getD()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getD</h4>
+<pre>public&nbsp;double&nbsp;getD()</pre>
+<div class="block">Returns D.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getLabel()">
 <!--   -->
 </a>
@@ -316,17 +327,6 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getD()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getD</h4>
-<pre>public&nbsp;double&nbsp;getD()</pre>
-<div class="block">Returns D.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">
 <!--   -->
 </a>
@@ -335,11 +335,11 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 <h4>parse</h4>
 <pre>public&nbsp;void&nbsp;parse(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion,
          boolean&nbsp;_default)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion,%20boolean)">ModelCriterion</a></code></strong></div>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">ModelCriterion</a></code></strong></div>
 <div class="block">Parse</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion,%20boolean)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
+<dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
 <dd><code>_default</code> - Defines whether the model represents a typical parameter configuration for the criterion</dd></dl>
 </li>
 </ul>

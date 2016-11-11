@@ -138,13 +138,19 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#VARIANT_ENTROPY">VARIANT_ENTROPY</a></strong></code>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#VARIANT_GRASSBERGER_ENTROPY">VARIANT_GRASSBERGER_ENTROPY</a></strong></code>
 <div class="block">Variant.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#VARIANT_RECURSIVE">VARIANT_RECURSIVE</a></strong></code>
+<div class="block">Variant.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#VARIANT_SHANNON_ENTROPY">VARIANT_SHANNON_ENTROPY</a></strong></code>
 <div class="block">Variant.</div>
 </td>
 </tr>
@@ -168,7 +174,7 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#ModelLDiversityCriterion(java.lang.String,%20int,%20int,%20double)">ModelLDiversityCriterion</a></strong>(java.lang.String&nbsp;attribute,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#ModelLDiversityCriterion(java.lang.String, int, int, double)">ModelLDiversityCriterion</a></strong>(java.lang.String&nbsp;attribute,
                         int&nbsp;variant,
                         int&nbsp;l,
                         double&nbsp;c)</code>
@@ -228,7 +234,7 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion,%20boolean)">parse</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelLDiversityCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">parse</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion,
      boolean&nbsp;_default)</code>
 <div class="block">Parse</div>
 </td>
@@ -310,15 +316,26 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../constant-values.html#org.deidentifier.arx.gui.model.ModelLDiversityCriterion.VARIANT_DISTINCT">Constant Field Values</a></dd></dl>
 </li>
 </ul>
-<a name="VARIANT_ENTROPY">
+<a name="VARIANT_SHANNON_ENTROPY">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>VARIANT_ENTROPY</h4>
-<pre>public static final&nbsp;int VARIANT_ENTROPY</pre>
+<h4>VARIANT_SHANNON_ENTROPY</h4>
+<pre>public static final&nbsp;int VARIANT_SHANNON_ENTROPY</pre>
 <div class="block">Variant.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../constant-values.html#org.deidentifier.arx.gui.model.ModelLDiversityCriterion.VARIANT_ENTROPY">Constant Field Values</a></dd></dl>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../constant-values.html#org.deidentifier.arx.gui.model.ModelLDiversityCriterion.VARIANT_SHANNON_ENTROPY">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="VARIANT_GRASSBERGER_ENTROPY">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>VARIANT_GRASSBERGER_ENTROPY</h4>
+<pre>public static final&nbsp;int VARIANT_GRASSBERGER_ENTROPY</pre>
+<div class="block">Variant.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../constant-values.html#org.deidentifier.arx.gui.model.ModelLDiversityCriterion.VARIANT_GRASSBERGER_ENTROPY">Constant Field Values</a></dd></dl>
 </li>
 </ul>
 <a name="VARIANT_RECURSIVE">
@@ -340,10 +357,21 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ModelLDiversityCriterion(java.lang.String, int, int, double)">
+<a name="ModelLDiversityCriterion(java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
+<li class="blockList">
+<h4>ModelLDiversityCriterion</h4>
+<pre>public&nbsp;ModelLDiversityCriterion(java.lang.String&nbsp;attribute)</pre>
+<div class="block">Creates a new instance.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd></dl>
+</li>
+</ul>
+<a name="ModelLDiversityCriterion(java.lang.String, int, int, double)">
+<!--   -->
+</a>
+<ul class="blockListLast">
 <li class="blockList">
 <h4>ModelLDiversityCriterion</h4>
 <pre>public&nbsp;ModelLDiversityCriterion(java.lang.String&nbsp;attribute,
@@ -352,17 +380,6 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
                         double&nbsp;c)</pre>
 <div class="block">Creates a new instance.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd><dd><code>variant</code> - </dd><dd><code>l</code> - </dd><dd><code>c</code> - </dd></dl>
-</li>
-</ul>
-<a name="ModelLDiversityCriterion(java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>ModelLDiversityCriterion</h4>
-<pre>public&nbsp;ModelLDiversityCriterion(java.lang.String&nbsp;attribute)</pre>
-<div class="block">Creates a new instance.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -459,11 +476,11 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelExplicitCrit
 <h4>parse</h4>
 <pre>public&nbsp;void&nbsp;parse(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion,
          boolean&nbsp;_default)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion,%20boolean)">ModelCriterion</a></code></strong></div>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">ModelCriterion</a></code></strong></div>
 <div class="block">Parse</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion,%20boolean)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
+<dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
 <dd><code>_default</code> - Defines whether the model represents a typical parameter configuration for the criterion</dd></dl>
 </li>
 </ul>

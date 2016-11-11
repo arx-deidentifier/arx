@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/risk/RiskModelFinancial.html" title="class in org.deidentifier.arx.risk"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html" target="_top">Frames</a></li>
@@ -105,7 +105,7 @@
 <pre>public final class <span class="strong">RiskModelAttributes.QuasiIdentifierRisk</span>
 extends java.lang.Object
 implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes.QuasiIdentifierRisk</a>&gt;</pre>
-<div class="block">Risks associated to a certain quasi-identifier</div>
+<div class="block">Risks associated with a certain quasi-identifier</div>
 </li>
 </ul>
 </div>
@@ -130,19 +130,21 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/ris
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html#getAverageReidentificationRisk()">getAverageReidentificationRisk</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html#getDistinction()">getDistinction</a></strong>()</code>
+<div class="block">Returns the alpha distinction parameter of this quasi-identifier</div>
+</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html#getFractionOfUniqueTuples()">getFractionOfUniqueTuples</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html#getIdentifier()">getIdentifier</a></strong>()</code>
+<div class="block">Returns the attributes in this quasi-identifier</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html#getHighestReidentificationRisk()">getHighestReidentificationRisk</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>java.util.Set&lt;java.lang.String&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html#getIdentifier()">getIdentifier</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html#getSeparation()">getSeparation</a></strong>()</code>
+<div class="block">Returns the alpha separation parameter of this quasi-identifier</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -179,44 +181,37 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/ris
 </dl>
 </li>
 </ul>
-<a name="getAverageReidentificationRisk()">
+<a name="getDistinction()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getAverageReidentificationRisk</h4>
-<pre>public&nbsp;double&nbsp;getAverageReidentificationRisk()</pre>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the averageReidentificationRisk</dd></dl>
-</li>
-</ul>
-<a name="getFractionOfUniqueTuples()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getFractionOfUniqueTuples</h4>
-<pre>public&nbsp;double&nbsp;getFractionOfUniqueTuples()</pre>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the fractionOfUniqueTuples</dd></dl>
-</li>
-</ul>
-<a name="getHighestReidentificationRisk()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getHighestReidentificationRisk</h4>
-<pre>public&nbsp;double&nbsp;getHighestReidentificationRisk()</pre>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the highestReidentificationRisk</dd></dl>
+<h4>getDistinction</h4>
+<pre>public&nbsp;double&nbsp;getDistinction()</pre>
+<div class="block">Returns the alpha distinction parameter of this quasi-identifier</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the alpha distinction</dd></dl>
 </li>
 </ul>
 <a name="getIdentifier()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getIdentifier</h4>
-<pre>public&nbsp;java.util.Set&lt;java.lang.String&gt;&nbsp;getIdentifier()</pre>
+<pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getIdentifier()</pre>
+<div class="block">Returns the attributes in this quasi-identifier</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the identifier</dd></dl>
+</li>
+</ul>
+<a name="getSeparation()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getSeparation</h4>
+<pre>public&nbsp;double&nbsp;getSeparation()</pre>
+<div class="block">Returns the alpha separation parameter of this quasi-identifier</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the alpha separation</dd></dl>
 </li>
 </ul>
 </li>
@@ -246,7 +241,7 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/ris
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html" title="class in org.deidentifier.arx.risk"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../org/deidentifier/arx/risk/RiskModelFinancial.html" title="class in org.deidentifier.arx.risk"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html" target="_top">Frames</a></li>
