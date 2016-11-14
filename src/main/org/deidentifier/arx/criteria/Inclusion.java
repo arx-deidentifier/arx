@@ -19,6 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -74,5 +75,12 @@ public class Inclusion extends DPresence {
     @Override
     public String toString() {
         return "Inclusion";
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Record selection");
+        result.addProperty("Number of records", super.getDataSubset().getSize());
+        return result;
     }
 }

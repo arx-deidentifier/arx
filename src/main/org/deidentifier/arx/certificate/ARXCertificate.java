@@ -16,6 +16,8 @@
  */
 package org.deidentifier.arx.certificate;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -90,12 +92,16 @@ public class ARXCertificate {
         this.add(new ElementNewLine());
         this.add(new ElementSubtitle((section++)+". Attributes and transformations"));
         this.add(asList(definition.render()));
+        this.add(new ElementNewLine());
         this.add(new ElementSubtitle((section++)+". Configuration"));
         this.add(asList(config.render()));
         if (result.isResultAvailable()) {
             section = 1;
             this.add(new ElementNewLine());
             this.add(new ElementTitle("Output properties"));
+            this.add(new ElementSubtitle((section++)+". Output data"));
+            this.add(asList(output.render()));
+            this.add(new ElementNewLine());
             this.add(new ElementSubtitle((section++)+". Solutions"));
             this.add(asList(result.getLattice().render()));
             this.add(new ElementNewLine());
@@ -166,11 +172,23 @@ public class ARXCertificate {
 	/**
 	 * Renders the document into the given output stream
 	 * 
-	 * @param stream
+	 * @param file
 	 * @throws IOException 
 	 */
-	public void save(OutputStream stream) throws IOException {
-	    
+	public void save(File file) throws IOException {
+        FileOutputStream stream = new FileOutputStream(file);
+        this.save(stream);
+        stream.close();
+	}
+
+    /**
+     * Renders the document into the given output stream
+     * 
+     * @param stream
+     * @throws IOException 
+     */
+    public void save(OutputStream stream) throws IOException {
+        
         // Render
         Document document = new Document(style.gethMargin(), style.gethMargin(), style.getvMargin(), style.getvMargin());
         for (Element element : this.elements) {
@@ -179,5 +197,5 @@ public class ARXCertificate {
         
         // Save
         document.save(stream);
-	}
+    }
 }

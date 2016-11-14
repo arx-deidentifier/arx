@@ -720,10 +720,27 @@ public class MainWindow implements IView {
     
 
     /**
+     * Creates the global menu
+     * @return
+     */
+    private List<MainMenuItem> getMenu() {
+        
+        List<MainMenuItem> menu = new ArrayList<MainMenuItem>();
+
+        menu.add(getMenuFile());
+        menu.add(getMenuEdit());
+        menu.add(getMenuView());
+        menu.add(getMenuHelp());
+        
+        return menu;
+    }
+
+
+    /**
      * Creates the edit menu
      * @return
      */
-    private MainMenuItem getEditMenu() {
+    private MainMenuItem getMenuEdit() {
         
         List<MainMenuItem> items = new ArrayList<MainMenuItem>();
         
@@ -878,66 +895,6 @@ public class MainWindow implements IView {
         };
     }
 
-
-    /**
-     * Creates the help menu
-     * @return
-     */
-    private MainMenuItem getHelpMenu() {
-
-
-        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
-        
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.27"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("help.png"), //$NON-NLS-1$
-                                   true) {
-            public void action(Controller controller) { controller.actionMenuHelpHelp(); }
-            public boolean isEnabled(Model model) { return true; }
-        });
-
-        items.add(new MainMenuSeparator());
-        
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.29"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { controller.actionMenuHelpAbout(); }
-            public boolean isEnabled(Model model) { return true; }
-        });
-
-        items.add(new MainMenuSeparator());
-
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.32"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { controller.actionMenuHelpDebug(); }
-            public boolean isEnabled(Model model) { 
-                return model != null && model.isDebugEnabled(); 
-            }
-        });
-        
-        return new MainMenuGroup(Resources.getMessage("MainMenu.2"), items) { //$NON-NLS-1$
-            public boolean isEnabled(Model model) {
-                return true;
-            }  
-        };
-    }
-
-    /**
-     * Creates the global menu
-     * @return
-     */
-    private List<MainMenuItem> getMenu() {
-        
-        List<MainMenuItem> menu = new ArrayList<MainMenuItem>();
-
-        menu.add(getMenuFile());
-        menu.add(getEditMenu());
-        menu.add(getViewMenu());
-        menu.add(getHelpMenu());
-        
-        return menu;
-    }
-
     /**
      * Creates the file menu
      * @return
@@ -994,6 +951,15 @@ public class MainWindow implements IView {
             }
         });
 
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.43"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_create_certificate.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileCreateCertificate(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getOutput() != null && model.getPerspective() == Perspective.ANALYSIS;
+            }
+        });
+
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.15"), //$NON-NLS-1$
@@ -1036,7 +1002,50 @@ public class MainWindow implements IView {
      * Creates the help menu
      * @return
      */
-    private MainMenuItem getViewMenu() {
+    private MainMenuItem getMenuHelp() {
+
+
+        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.27"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("help.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuHelpHelp(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.29"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuHelpAbout(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.32"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuHelpDebug(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.isDebugEnabled(); 
+            }
+        });
+        
+        return new MainMenuGroup(Resources.getMessage("MainMenu.2"), items) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return true;
+            }  
+        };
+    }
+
+    /**
+     * Creates the help menu
+     * @return
+     */
+    private MainMenuItem getMenuView() {
 
 
         List<MainMenuItem> items = new ArrayList<MainMenuItem>();

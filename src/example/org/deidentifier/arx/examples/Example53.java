@@ -19,7 +19,6 @@ package org.deidentifier.arx.examples;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -105,7 +104,7 @@ public class Example53 extends Example {
         ARXCertificate certificate = ARXCertificate.create(data.getHandle(), data.getDefinition(),
                                                           config, result, result.getGlobalOptimum(), result.getOutput());
         File file = File.createTempFile("arx", ".pdf");
-        certificate.save(new FileOutputStream(file));
+        certificate.save(file);
         
         // Open
         if (Desktop.isDesktopSupported()) {

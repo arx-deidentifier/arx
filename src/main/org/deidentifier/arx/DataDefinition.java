@@ -362,7 +362,7 @@ public class DataDefinition implements Cloneable{
             }
         }
         for (String attribute : attributes) {
-            if (this.functions.containsKey(attribute)) {
+            if (this.functions.containsKey(attribute) && this.functions.get(attribute) != null) {
                 result.add(render(attribute, this.functions.get(attribute)));
             }
         }
@@ -578,8 +578,10 @@ public class DataDefinition implements Cloneable{
         if (hierarchy != null && hierarchy.getHierarchy() != null && 
             hierarchy.getHierarchy().length != 0 && hierarchy.getHierarchy()[0] != null) {
             result.addProperty("Height", hierarchy.getHierarchy()[0].length);
-            result.addProperty("Minimum level", this.getMinimumGeneralization(attribute));
-            result.addProperty("Maximum level", this.getMaximumGeneralization(attribute));
+            if (this.getQuasiIdentifyingAttributes().contains(attribute)) {
+                result.addProperty("Minimum level", this.getMinimumGeneralization(attribute));
+                result.addProperty("Maximum level", this.getMaximumGeneralization(attribute));
+            }
         } else if (builder != null){
             result.addProperty("Builder type", builder.getType().toString());
         }

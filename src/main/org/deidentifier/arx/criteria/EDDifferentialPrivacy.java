@@ -234,6 +234,8 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         ElementData result = new ElementData("Differential privacy");
         result.addProperty("Epsilon", epsilon);
         result.addProperty("Delta", delta);
+        result.addProperty("Uniqueness threshold (k)", k);
+        result.addProperty("Sampling probability (beta)", beta);
         return result;
     }
 

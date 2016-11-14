@@ -274,6 +274,14 @@ public class DataSubset implements Serializable {
     }
 
     /**
+     * Returns the size of the data subset
+     * @return
+     */
+    public int getSize() {
+        return array.length;
+    }
+
+    /**
      * Returns a new data subset, only containing those rows that are included in the subset
      * @param rowset
      * @return
