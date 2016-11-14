@@ -356,7 +356,7 @@ public class DataDefinition implements Cloneable{
         attributes.addAll(getIdentifyingAttributes());
         attributes.addAll(getQuasiIdentifyingAttributes());
         for (String attribute : attributes) {
-            if ((!this.functions.containsKey(attribute)) && 
+            if ((!this.functions.containsKey(attribute) || this.functions.get(attribute) == null ) && 
                 (this.hierarchies.containsKey(attribute) || this.builders.containsKey(attribute))) {
                 result.add(render(attribute, this.hierarchies.get(attribute), this.builders.get(attribute)));
             }
