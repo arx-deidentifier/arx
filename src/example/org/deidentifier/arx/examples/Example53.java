@@ -35,6 +35,7 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.certificate.ARXCertificate;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -105,7 +106,9 @@ public class Example53 extends Example {
 
         // Create certificate
         ARXCertificate certificate = ARXCertificate.create(data.getHandle(), data.getDefinition(),
-                                                          config, result, result.getGlobalOptimum(), result.getOutput());
+                                                          config, result, result.getGlobalOptimum(), 
+                                                          result.getOutput(),
+                                                          new CSVSyntax());
         File file = File.createTempFile("arx", ".pdf");
         certificate.save(file);
         
