@@ -35,7 +35,6 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.certificate.ARXCertificate;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVDataChecksum;
-import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 
