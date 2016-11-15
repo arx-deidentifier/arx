@@ -27,6 +27,7 @@ import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.certificate.ARXCertificate;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -36,6 +37,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class WorkerCreateCertificate extends Worker<File> {
 
+    /** Data */
+    private final CSVSyntax        csvConfig;
     /** Data */
     private final String           path;
     /** Data */
@@ -55,6 +58,7 @@ public class WorkerCreateCertificate extends Worker<File> {
      * Creates a new instance.
      * 
      * @param file
+     * @param csvConfig
      * @param input
      * @param definition
      * @param config
@@ -63,12 +67,14 @@ public class WorkerCreateCertificate extends Worker<File> {
      * @param output
      */
     public WorkerCreateCertificate(String path,
+                                   CSVSyntax csvConfig,
                                    DataHandle input,
                                    DataDefinition definition,
                                    ARXConfiguration config,
                                    ARXResult result,
                                    ARXNode transformation,
                                    DataHandle output) {
+        this.csvConfig = csvConfig;
         this.path = path;
         this.input = input;
         this.definition = definition;
@@ -88,7 +94,13 @@ public class WorkerCreateCertificate extends Worker<File> {
             arg0.beginTask(Resources.getMessage("Controller.154"), 100); //$NON-NLS-1$
     
             // Create a renderer
-            ARXCertificate certificate = ARXCertificate.create(input, definition, config, result, transformation, output.getView());
+            ARXCertificate certificate = ARXCertificate.create(input, 
+                                                               definition, 
+                                                               config, 
+                                                               result, 
+                                                               transformation, 
+                                                               output.getView(),
+                                                               csvConfig);
             
             // Check and progress
             if (arg0.isCanceled()) { 

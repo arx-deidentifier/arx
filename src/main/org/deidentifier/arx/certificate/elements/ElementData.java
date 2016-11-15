@@ -74,8 +74,9 @@ public class ElementData implements Element {
      * Adds an item
      * @param item
      */
-    public void addItem(String item) {
+    public ElementData addItem(String item) {
         this.properties.add(new ElementDataProperty(item, null));
+        return this;
     }
 
     /**
@@ -83,17 +84,17 @@ public class ElementData implements Element {
      * @param property
      * @param value
      */
-    public void addProperty(String property, Anonymity value) {
+    public ElementData addProperty(String property, Anonymity value) {
         switch (value) {
         case ANONYMOUS: 
             this.addProperty(property, true);
-            return;
+            return this;
         case NOT_ANONYMOUS:
             this.addProperty(property, false);
-            return;
+            return this;
         default:
             this.addProperty(property, "Unknown");
-            return;
+            return this;
         }
     }
 
@@ -102,8 +103,9 @@ public class ElementData implements Element {
      * @param property
      * @param value
      */
-    public void addProperty(String property, boolean value) {
+    public ElementData addProperty(String property, boolean value) {
         this.properties.add(new ElementDataProperty(property, value ? "Yes" : "No"));
+        return this;
     }
 
     /**
@@ -111,8 +113,9 @@ public class ElementData implements Element {
      * @param property
      * @param value
      */
-    public void addProperty(String property, double value) {
+    public ElementData addProperty(String property, double value) {
         this.properties.add(new ElementDataProperty(property, String.valueOf(value)));
+        return this;
     }
 
     /**
@@ -120,8 +123,9 @@ public class ElementData implements Element {
      * @param property
      * @param value
      */
-    public void addProperty(String property, int value) {
+    public ElementData addProperty(String property, int value) {
         this.properties.add(new ElementDataProperty(property, String.valueOf(value)));
+        return this;
     }
 
     /**
@@ -129,8 +133,9 @@ public class ElementData implements Element {
      * @param property
      * @param value
      */
-    public void addProperty(String property, long value) {
+    public ElementData addProperty(String property, long value) {
         this.properties.add(new ElementDataProperty(property, String.valueOf(value)));
+        return this;
     }
     
     /**
@@ -138,8 +143,9 @@ public class ElementData implements Element {
      * @param property
      * @param value
      */
-    public void addProperty(String property, String value) {
+    public ElementData addProperty(String property, String value) {
         this.properties.add(new ElementDataProperty(property, value));
+        return this;
     }
 
     /**
@@ -147,8 +153,9 @@ public class ElementData implements Element {
      * @param property
      * @param value
      */
-    public void addProperty(String property, ElementData value) {
+    public ElementData addProperty(String property, ElementData value) {
         this.properties.add(new ElementDataProperty(property, value));
+        return this;
     }
     
     /**
@@ -156,10 +163,11 @@ public class ElementData implements Element {
      * @param property
      * @param value
      */
-    public void addPercentProperty(String property, double value) {
+    public ElementData addPercentProperty(String property, double value) {
         NumberFormat percentFormat = NumberFormat.getPercentInstance();
         percentFormat.setMaximumFractionDigits(1);
         this.properties.add(new ElementDataProperty(property, percentFormat.format(value)+"%"));
+        return this;
     }
 
     /**

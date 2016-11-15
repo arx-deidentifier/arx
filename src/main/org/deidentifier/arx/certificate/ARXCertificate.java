@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,8 @@ import org.deidentifier.arx.certificate.elements.ElementNewLine;
 import org.deidentifier.arx.certificate.elements.ElementSubtitle;
 import org.deidentifier.arx.certificate.elements.ElementTitle;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.io.CSVDataChecksum;
+import org.deidentifier.arx.io.CSVSyntax;
 
 import rst.pdfbox.layout.elements.Document;
 
@@ -47,12 +50,6 @@ import rst.pdfbox.layout.elements.Document;
  * @author Fabian Prasser
  */
 public class ARXCertificate {
-
-    /** The document style */
-    private final CertificateStyle style;
- 
-    /** Elements*/
-    private final List<Element> elements = new ArrayList<Element>();
 
     /**
      * Creates a new instance
@@ -65,8 +62,35 @@ public class ARXCertificate {
      */
     public static ARXCertificate create(DataHandle input, DataDefinition definition,
                 ARXConfiguration config, ARXResult result, ARXNode transformation, DataHandle output) {
-        return new ARXCertificate(input, definition, config, result, transformation, output);
+        return ARXCertificate.create(input, definition, config, result, transformation, output, null);
     }
+ 
+    /**
+     * Renders the document into the given output stream.
+     * Includes a SHA-256 checksum of the output data.
+     * 
+     * @param input
+     * @param definition
+     * @param config
+     * @param result
+     * @param transformation
+     * @param output
+     */
+    public static ARXCertificate create(DataHandle input,
+                                        DataDefinition definition,
+                                        ARXConfiguration config,
+                                        ARXResult result,
+                                        ARXNode transformation,
+                                        DataHandle output,
+                                        CSVSyntax csvConfig) {
+        return new ARXCertificate(input, definition, config, result, transformation, output, csvConfig);
+    }
+
+    /** The document style */
+    private final CertificateStyle style;
+    /** Elements*/
+    private final List<Element> elements = new ArrayList<Element>();
+	
     /**
      * Creates a new instance
      * @param input
@@ -75,9 +99,10 @@ public class ARXCertificate {
      * @param result
      * @param transformation
      * @param output
+     * @param csvConfig 
      */
     ARXCertificate(DataHandle input, DataDefinition definition,
-                ARXConfiguration config, ARXResult result, ARXNode transformation, DataHandle output) {
+                ARXConfiguration config, ARXResult result, ARXNode transformation, DataHandle output, CSVSyntax csvConfig) {
         this.style = CertificateStyle.create();
 
         // Check
@@ -101,6 +126,15 @@ public class ARXCertificate {
             this.add(new ElementTitle("Output properties"));
             this.add(new ElementSubtitle((section++)+". Output data"));
             this.add(asList(output.render()));
+            if (csvConfig != null) {
+                String checksum = null;
+                try {
+                    checksum = new CSVDataChecksum(csvConfig).getSHA256Checksum(output.iterator());
+                } catch (NoSuchAlgorithmException e) {
+                    checksum = "Could not calculate hash";
+                }
+                this.add(asList(new ElementData("Checksum").addProperty("SHA-256", checksum)));
+            }
             this.add(new ElementNewLine());
             this.add(new ElementSubtitle((section++)+". Solutions"));
             this.add(asList(result.getLattice().render()));
@@ -121,8 +155,37 @@ public class ARXCertificate {
             }
         }
     }
-	
+
     /**
+	 * Renders the document into the given output stream
+	 * 
+	 * @param file
+	 * @throws IOException 
+	 */
+	public void save(File file) throws IOException {
+        FileOutputStream stream = new FileOutputStream(file);
+        this.save(stream);
+        stream.close();
+	}
+    /**
+     * Renders the document into the given output stream
+     * 
+     * @param stream
+     * @throws IOException 
+     */
+    public void save(OutputStream stream) throws IOException {
+        
+        // Render
+        Document document = new Document(style.gethMargin(), style.gethMargin(), style.getvMargin(), style.getvMargin());
+        for (Element element : this.elements) {
+            element.render(document, 0, this.style);
+        }
+        
+        // Save
+        document.save(stream);
+    }
+	
+	/**
      * Renders as a list
      * @param data
      * @return
@@ -145,15 +208,16 @@ public class ARXCertificate {
         }
         return list;
     }
-    /**
+    
+	/**
 	 * Adds a new element
 	 * @param element
 	 */
 	void add(Element element) {
 	    this.elements.add(element);
 	}
-	
-	/**
+
+    /**
 	 * Adds a new data element
 	 * @param data
 	 */
@@ -167,35 +231,5 @@ public class ARXCertificate {
      */
     void add(List<ElementData> data) {
         this.elements.addAll(data);
-    }
-    
-	/**
-	 * Renders the document into the given output stream
-	 * 
-	 * @param file
-	 * @throws IOException 
-	 */
-	public void save(File file) throws IOException {
-        FileOutputStream stream = new FileOutputStream(file);
-        this.save(stream);
-        stream.close();
-	}
-
-    /**
-     * Renders the document into the given output stream
-     * 
-     * @param stream
-     * @throws IOException 
-     */
-    public void save(OutputStream stream) throws IOException {
-        
-        // Render
-        Document document = new Document(style.gethMargin(), style.gethMargin(), style.getvMargin(), style.getvMargin());
-        for (Element element : this.elements) {
-            element.render(document, 0, this.style);
-        }
-        
-        // Save
-        document.save(stream);
     }
 }

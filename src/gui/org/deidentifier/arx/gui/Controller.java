@@ -994,13 +994,14 @@ public class Controller implements IView {
 
         // Export
         final WorkerCreateCertificate worker = new WorkerCreateCertificate(file,
-                                                     model.getInputConfig().getInput().getHandle(),
-                                                     model.getOutputDefinition(),
-                                                     model.getOutputConfig().getConfig(),
-                                                     model.getResult(),
-                                                     model.getOutputNode(),
-                                                     model.getOutput());
-        
+                                                                           model.getCSVSyntax(),
+                                                                           model.getInputConfig().getInput().getHandle(),
+                                                                           model.getOutputDefinition(),
+                                                                           model.getOutputConfig().getConfig(),
+                                                                           model.getResult(),
+                                                                           model.getOutputNode(),
+                                                                           model.getOutput());
+
         main.showProgressDialog(Resources.getMessage("Controller.154"), worker); //$NON-NLS-1$
 
         if (worker.getError() != null) {
