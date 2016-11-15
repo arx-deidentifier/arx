@@ -105,10 +105,10 @@ public class CSVDataChecksum {
      * @return
      * @throws NoSuchAlgorithmException 
      */
-    public String getMD5Checksum(final Iterator<String[]> iterator) throws NoSuchAlgorithmException {
+    public String getSHA256Checksum(final Iterator<String[]> iterator) throws NoSuchAlgorithmException {
 
         // Initialize message digest
-        MessageDigest md = MessageDigest.getInstance("MD5");
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
         DigestOutputStream dis = new DigestOutputStream(new OutputStream() {
             @Override
             public void write(int b) throws IOException {
