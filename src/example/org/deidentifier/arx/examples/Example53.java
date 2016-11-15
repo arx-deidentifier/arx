@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,6 +34,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.certificate.ARXCertificate;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.io.CSVDataChecksum;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 
@@ -88,8 +90,9 @@ public class Example53 extends Example {
      * @param args the arguments
      * @throws ParseException
      * @throws IOException
+     * @throws NoSuchAlgorithmException 
      */
-    public static void main(String[] args) throws ParseException, IOException {
+    public static void main(String[] args) throws ParseException, IOException, NoSuchAlgorithmException {
         
         Data data = createData("adult");
         
@@ -101,6 +104,10 @@ public class Example53 extends Example {
         
         ARXResult result = anonymizer.anonymize(data, config);
 
+        // Create checksum
+        System.out.println(new CSVDataChecksum().getMD5Checksum(result.getOutput().iterator()));
+        
+        // Create certificate
         ARXCertificate certificate = ARXCertificate.create(data.getHandle(), data.getDefinition(),
                                                           config, result, result.getGlobalOptimum(), result.getOutput());
         File file = File.createTempFile("arx", ".pdf");
