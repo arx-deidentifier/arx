@@ -1000,7 +1000,8 @@ public class Controller implements IView {
                                                                            model.getOutputConfig().getConfig(),
                                                                            model.getResult(),
                                                                            model.getOutputNode(),
-                                                                           model.getOutput());
+                                                                           model.getOutput(),
+                                                                           model);
 
         main.showProgressDialog(Resources.getMessage("Controller.154"), worker); //$NON-NLS-1$
 

@@ -144,7 +144,11 @@ public class ElementData implements Element {
      * @param value
      */
     public ElementData addProperty(String property, String value) {
-        this.properties.add(new ElementDataProperty(property, value));
+        if (value == null || value.isEmpty()) {
+            this.properties.add(new ElementDataProperty(property, "Not specified"));
+        } else {
+            this.properties.add(new ElementDataProperty(property, value));    
+        }
         return this;
     }
 

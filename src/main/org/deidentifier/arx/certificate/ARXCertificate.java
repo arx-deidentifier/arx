@@ -64,7 +64,7 @@ public class ARXCertificate {
                 ARXConfiguration config, ARXResult result, ARXNode transformation, DataHandle output) {
         return ARXCertificate.create(input, definition, config, result, transformation, output, null);
     }
- 
+
     /**
      * Renders the document into the given output stream.
      * Includes a SHA-256 checksum of the output data.
@@ -75,6 +75,7 @@ public class ARXCertificate {
      * @param result
      * @param transformation
      * @param output
+     * @param syntax
      */
     public static ARXCertificate create(DataHandle input,
                                         DataDefinition definition,
@@ -82,8 +83,32 @@ public class ARXCertificate {
                                         ARXResult result,
                                         ARXNode transformation,
                                         DataHandle output,
-                                        CSVSyntax csvConfig) {
-        return new ARXCertificate(input, definition, config, result, transformation, output, csvConfig);
+                                        CSVSyntax syntax) {
+        return ARXCertificate.create(input, definition, config, result, transformation, output, syntax, null);
+    }
+
+    /**
+     * Renders the document into the given output stream.
+     * Includes a SHA-256 checksum of the output data and user defined metadata
+     * 
+     * @param input
+     * @param definition
+     * @param config
+     * @param result
+     * @param transformation
+     * @param output
+     * @param syntax
+     * @param metadata
+     */
+    public static ARXCertificate create(DataHandle input,
+                                        DataDefinition definition,
+                                        ARXConfiguration config,
+                                        ARXResult result,
+                                        ARXNode transformation,
+                                        DataHandle output,
+                                        CSVSyntax syntax,
+                                        ElementData metadata) {
+        return new ARXCertificate(input, definition, config, result, transformation, output, syntax, metadata);
     }
 
     /** The document style */
@@ -100,9 +125,13 @@ public class ARXCertificate {
      * @param transformation
      * @param output
      * @param csvConfig 
+     * @param metadata
      */
     ARXCertificate(DataHandle input, DataDefinition definition,
-                ARXConfiguration config, ARXResult result, ARXNode transformation, DataHandle output, CSVSyntax csvConfig) {
+                   ARXConfiguration config, ARXResult result, 
+                   ARXNode transformation, DataHandle output, 
+                   CSVSyntax csvConfig, ElementData metadata) {
+        
         this.style = CertificateStyle.create();
 
         // Check
@@ -111,6 +140,13 @@ public class ARXCertificate {
         }
 
         int section = 1;
+        if (metadata != null) {
+            this.add(new ElementTitle("Project"));
+            this.add(new ElementSubtitle((section++)+". Properties"));
+            this.add(asList(metadata));
+            this.add(new ElementNewLine());
+        }
+        section = 1;
         this.add(new ElementTitle("Input specification"));
         this.add(new ElementSubtitle((section++)+". Input data"));
         this.add(asList(input.render()));

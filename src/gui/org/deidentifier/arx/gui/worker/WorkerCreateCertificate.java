@@ -26,6 +26,8 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.certificate.ARXCertificate;
+import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,7 +40,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class WorkerCreateCertificate extends Worker<File> {
 
     /** Data */
-    private final CSVSyntax        csvConfig;
+    private final CSVSyntax        syntax;
     /** Data */
     private final String           path;
     /** Data */
@@ -53,12 +55,14 @@ public class WorkerCreateCertificate extends Worker<File> {
     private final ARXNode          transformation;
     /** Data */
     private final DataHandle       output;
+    /** Data */
+    private final Model            model;
 
     /**
      * Creates a new instance.
      * 
      * @param file
-     * @param csvConfig
+     * @param syntax
      * @param input
      * @param definition
      * @param config
@@ -67,14 +71,15 @@ public class WorkerCreateCertificate extends Worker<File> {
      * @param output
      */
     public WorkerCreateCertificate(String path,
-                                   CSVSyntax csvConfig,
+                                   CSVSyntax syntax,
                                    DataHandle input,
                                    DataDefinition definition,
                                    ARXConfiguration config,
                                    ARXResult result,
                                    ARXNode transformation,
-                                   DataHandle output) {
-        this.csvConfig = csvConfig;
+                                   DataHandle output,
+                                   Model model) {
+        this.syntax = syntax;
         this.path = path;
         this.input = input;
         this.definition = definition;
@@ -82,6 +87,7 @@ public class WorkerCreateCertificate extends Worker<File> {
         this.result = result;
         this.transformation = transformation;
         this.output = output;
+        this.model = model;
     }
 
     @Override
@@ -93,6 +99,11 @@ public class WorkerCreateCertificate extends Worker<File> {
             // Begin
             arg0.beginTask(Resources.getMessage("Controller.154"), 100); //$NON-NLS-1$
     
+            // Create metadata
+            ElementData metadata = new ElementData("Project");
+            metadata.addProperty("Name", model.getName());
+            metadata.addProperty("Description", model.getDescription());
+            
             // Create a renderer
             ARXCertificate certificate = ARXCertificate.create(input, 
                                                                definition, 
@@ -100,7 +111,8 @@ public class WorkerCreateCertificate extends Worker<File> {
                                                                result, 
                                                                transformation, 
                                                                output.getView(),
-                                                               csvConfig);
+                                                               syntax,
+                                                               metadata);
             
             // Check and progress
             if (arg0.isCanceled()) { 
