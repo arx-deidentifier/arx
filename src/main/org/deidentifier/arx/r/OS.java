@@ -38,7 +38,8 @@ public class OS {
     }
     
 	/** Locations*/
-	private static final String[] locationsMac = {"/Applications/R.app/Contents/MacOS/R"};
+	private static final String[] locationsMac = {"/usr/local/bin/",
+	                                              "/Applications/R.app/Contents/MacOS/R"};
 	/** Locations*/
 	private static final String[] locationsUnix = {"/usr/lib/R/bin",
 	                                               "/usr/bin/",
@@ -48,7 +49,7 @@ public class OS {
 	private static final String[] locationsWindows = {"C:\\Program Files\\R\\R-3.3.2\\bin",
 	                                                  "C:\\Program Files\\R\\R-2.1.5.1\\bin"};
 	/** Executables*/
-	private static final String[] executablesMac = {"R.app"};
+	private static final String[] executablesMac = {"R", "R.app"};
 	/** Executables*/
 	private static final String[] executablesUnix = {"R","exec"};
     /** Executables*/
