@@ -38,6 +38,69 @@ public class ARXSolverConfiguration extends NewtonRaphsonConfiguration<ARXSolver
         return new ARXSolverConfiguration();
     }
     
+    /**
+     * Default value. 
+     * @return
+     */
+    public static double getDefaultAccuracy() {
+        return 1e-6;
+    }
+    
+    /**
+     * Default value. 
+     * @return
+     */
+    public static boolean getDefaultDeterministic() {
+        return true;
+    }
+
+    /**
+     * Default value. 
+     * @return
+     */
+    public static int getDefaultIterationsPerTry() {
+        return 1000;
+    }
+
+    /**
+     * Default value. 
+     * @return
+     */
+    public static int getDefaultIterationsTotal() {
+        return 10000;
+    }
+
+    /**
+     * Default value. Returns a set of start values for the solver in range [0,1][0,1]
+     * @return
+     */
+    public static double[][] getDefaultStartValues() {
+        double[][] result = new double[16][];
+        int index = 0;
+        for (double d1 = 0d; d1 < 1d; d1 += 0.33d) {
+            for (double d2 = 0d; d2 < 1d; d2 += 0.33d) {
+                result[index++] = new double[] { d1, d2 };
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Default value. 
+     * @return
+     */
+    public static int getDefaultTimePerTry() {
+        return 100;
+    }
+
+    /**
+     * Default value. 
+     * @return
+     */
+    public static int getDefaultTimeTotal() {
+        return 1000;
+    }
+
     /** Modified*/
     private boolean modified = false;
     
@@ -47,11 +110,12 @@ public class ARXSolverConfiguration extends NewtonRaphsonConfiguration<ARXSolver
     private ARXSolverConfiguration() {
         
         // Set default values
-        this.accuracy(1e-6);
-        this.iterationsPerTry(1000);
-        this.iterationsTotal(10000);
-        this.timePerTry(100);
-        this.timeTotal(1000);        
+        this.accuracy(getDefaultAccuracy());
+        this.iterationsPerTry(getDefaultIterationsPerTry());
+        this.iterationsTotal(getDefaultIterationsTotal());
+        this.timePerTry(getDefaultTimePerTry());
+        this.timeTotal(getDefaultTimeTotal());
+        this.setDeterministic(getDefaultDeterministic());
     }
 
     @Override
@@ -77,6 +141,14 @@ public class ARXSolverConfiguration extends NewtonRaphsonConfiguration<ARXSolver
     }
 
     /**
+     * Returns whether the solving process is deterministic
+     * @return
+     */
+    public boolean isDeterministic() {
+        return super.getStartValues() != null;
+    }
+
+    /**
      * Modified
      * @return
      */
@@ -99,7 +171,7 @@ public class ARXSolverConfiguration extends NewtonRaphsonConfiguration<ARXSolver
         }
         return super.iterationsTotal(arg0);
     }
-
+    
     @Override
     public ARXSolverConfiguration preparedStartValues(double[][] values) {
         if ((super.getStartValues() == null && values != null) || 
@@ -108,6 +180,15 @@ public class ARXSolverConfiguration extends NewtonRaphsonConfiguration<ARXSolver
             modified = true;
         }
         return super.preparedStartValues(values);
+    }
+    
+    /**
+     * Sets the solving process to be deterministic
+     * @param deterministic
+     * @return
+     */
+    public ARXSolverConfiguration setDeterministic(boolean deterministic) {
+        return preparedStartValues(deterministic ? getDefaultStartValues() : null);
     }
 
     /**
