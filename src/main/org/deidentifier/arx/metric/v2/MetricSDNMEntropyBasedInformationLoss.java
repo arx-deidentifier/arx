@@ -117,29 +117,35 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
      * Implements the entropy-based IL model. Ignores record suppression. Returns the loss for exactly one record.
      * @param transformation
      * @param entry
+     * @param shares
+     * @param maxIL
      * @return
      */
-    private double getEntropyBasedInformationLoss(Transformation transformation, HashGroupifyEntry entry) {
+    public static double getEntropyBasedInformationLoss(Transformation transformation, 
+                                                        HashGroupifyEntry entry,
+                                                        DomainShare[] shares,
+                                                        double maxIL) {
 
-        // We transform the formula, to make evaluating it more efficient. We have:
-        // 
-        // [-log( 1 / (share_1 * size_1) ) - log ( 1 / (share_2 * size_2) ) ... - log( 1 / (share_n * size_n) ) ] / maxIL
+        // We transform the formula, to make evaluating it more efficient.
+        //
+        // With maxIL = long(size_1 * size_2 * ... * size_n) we define
+        // IL = [-log( 1 / (share_1 * size_1) ) - log ( 1 / (share_2 * size_2) ) ... - log( 1 / (share_n * size_n) ) ] / maxIL
         //
         // Step 1:
         //
-        // [log(share_1 * size_1 ) + log (share_2 * size_2 ) ... + log( share_n * size_n) ] / maxIL
+        // IL = [log(share_1 * size_1 ) + log (share_2 * size_2 ) ... + log( share_n * size_n) ] / maxIL
         //
         // Step 2:
         //
-        // [log(share_1 * share_2 * ... * share_n) + log(size_1 * size_2 * size_n) ] / maxIL
+        // IL = [log(share_1 * share_2 * ... * share_n) + log(size_1 * size_2 * ... * size_n) ] / maxIL
         //
         // Step 3:
         // 
-        // [log(share_1 * share_2 * ... * share_n) + maxIL ] / maxIL
+        // IL = [log(share_1 * share_2 * ... * share_n) + maxIL ] / maxIL
         //
         // Step 4:
         // 
-        // log(share_1 * share_2 * ... * share_n) / maxIL + 1
+        // IL = log(share_1 * share_2 * ... * share_n) / maxIL + 1
 
         int[] generalization = transformation.getGeneralization();
         double infoLoss = 1d;
@@ -164,7 +170,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         HashGroupifyEntry entry = g.getFirstEquivalenceClass();
         while (entry != null) {
             if (entry.count > 0) {
-                double loss = entry.count * getEntropyBasedInformationLoss(transformation, entry);
+                double loss = entry.count * getEntropyBasedInformationLoss(transformation, entry, shares, maxIL);
                 real += entry.isNotOutlier ? gFactor * loss : sFactor * entry.count;
                 bound += gFactor * loss;
             }
@@ -181,7 +187,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         
         double gFactor = super.getGeneralizationFactor();
         double sFactor = super.getSuppressionFactor();
-        double bound = entry.count * getEntropyBasedInformationLoss(transformation, entry);
+        double bound = entry.count * getEntropyBasedInformationLoss(transformation, entry, shares, maxIL);
         double loss = entry.isNotOutlier ? gFactor * bound : sFactor * entry.count;
         return super.createInformationLoss(loss, gFactor * bound);
     }
@@ -201,7 +207,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         while (entry != null) {
             
-            bound += entry.count == 0 ? 0d : gFactor * entry.count * getEntropyBasedInformationLoss(transformation, entry);
+            bound += entry.count == 0 ? 0d : gFactor * entry.count * getEntropyBasedInformationLoss(transformation, entry, shares, maxIL);
             entry = entry.nextOrdered;
         }
         

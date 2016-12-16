@@ -169,20 +169,6 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         return !journalistAttackerModel || entry.pcount == 0 ? 1d / entry.count : 1d / entry.pcount;
     }
 
-    /**
-     * Returns the information loss for the according class. This is an exact copy of: 
-     * @see MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(Transformation, HashGroupifyEntry)
-     */
-    protected double getEntropyBasedInformationLoss(Transformation transformation, HashGroupifyEntry entry) {
-        int[] generalization = transformation.getGeneralization();
-        double infoLoss = 1d;
-        for (int dimension = 0; dimension < shares.length; dimension++) {
-            int value = entry.key[dimension];
-            int level = generalization[dimension];
-            infoLoss *= shares[dimension].getShare(value, level);
-        }
-        return Math.log10(infoLoss) / maxIL + 1d;
-    }
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation transformation, HashGroupify groupify) {
         
@@ -196,7 +182,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         while (entry != null) {
             if (entry.count > 0) {
                 double adversarySuccessProbability = this.getSuccessProbability(entry);
-                double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
+                double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation, entry, shares, maxIL);
                 double realPayout = modelRisk.getExpectedPublisherPayout(informationLoss, adversarySuccessProbability);
                 double boundPayout = modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
                 real += !entry.isNotOutlier ? (sFactor * entry.count * maxPayout) : 
@@ -217,7 +203,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         double gFactor = super.getGeneralizationFactor();
         double sFactor = super.getSuppressionFactor();
         double adversarySuccessProbability = this.getSuccessProbability(entry);
-        double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
+        double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation, entry, shares, maxIL);
         double maxPayout = this.config.getPublisherBenefit();
         double realPayout = modelRisk.getExpectedPublisherPayout(informationLoss, adversarySuccessProbability);
         double boundPayout = modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
@@ -238,7 +224,6 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     protected ILSingleDimensional getLowerBoundInternal(Transformation transformation,
                                                         HashGroupify groupify) {
 
-
         // Compute
         double bound = 0;
         double gFactor = super.getGeneralizationFactor();
@@ -246,7 +231,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         while (entry != null) {
             if (entry.count > 0) {
-                double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
+                double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation, entry, shares, maxIL);
                 double boundPayout = modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
                 bound += gFactor * entry.count * (maxPayout - boundPayout);
             }

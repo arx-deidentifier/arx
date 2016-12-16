@@ -24,6 +24,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.DomainShare;
+import org.deidentifier.arx.metric.v2.MetricSDNMEntropyBasedInformationLoss;
 import org.deidentifier.arx.risk.RiskModelFinancial;
 
 /**
@@ -98,10 +99,10 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
                 
         // Calculate MaxIL
         this.maxIL = 1d;
-        for (DomainShare share : shares) {
-            maxIL *= share.getDomainSize();
+        for (DomainShare share : this.shares) {
+            this.maxIL *= share.getDomainSize();
         }
-        maxIL = Math.log10(maxIL);
+        this.maxIL = Math.log10(this.maxIL);
     }
 
     @Override
@@ -113,7 +114,7 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
         }
         
         // Calculate information loss and success probability
-        double informationLoss = getEntropyBasedInformationLoss(transformation, entry);
+        double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation, entry, shares, maxIL);
         double successProbability = getSuccessProbability(entry);
         double publisherPayoff = riskModel.getExpectedPublisherPayout(informationLoss, successProbability);
                 
@@ -136,21 +137,6 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
         return toString("prosecutor");
     }
     
-    /**
-     * Returns the information loss for the according class. This is an exact copy of: 
-     * @see MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(Transformation, HashGroupifyEntry)
-     */
-    private double getEntropyBasedInformationLoss(Transformation transformation, HashGroupifyEntry entry) {
-        int[] generalization = transformation.getGeneralization();
-        double infoLoss = 1d;
-        for (int dimension = 0; dimension < shares.length; dimension++) {
-            int value = entry.key[dimension];
-            int level = generalization[dimension];
-            infoLoss *= shares[dimension].getShare(value, level);
-        }
-        return Math.log10(infoLoss) / maxIL + 1d;
-    }
-
     /**
      * Returns the success probability. If the game is configured to use the journalist risk, 
      * but no population table is available, we silently default to the prosecutor model.
