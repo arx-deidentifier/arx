@@ -52,7 +52,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     /** The microaggregation functions. */
     private DistributionAggregateFunction[] microaggregationFunctions;
 
-    /** The start index of the attributes with microaggregation in the data array */
+    /** The start index of the attributes with microaggregation in the data array (dataAnalyzed) */
     private int                             microaggregationStartIndex;
 
     /**

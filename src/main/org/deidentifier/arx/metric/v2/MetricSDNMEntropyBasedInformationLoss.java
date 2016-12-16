@@ -146,6 +146,8 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         // Step 4:
         // 
         // IL = log(share_1 * share_2 * ... * share_n) / maxIL + 1
+        //
+        // For micro-aggregated values, we set share_i to MSE and size_i to the number of distinct values in the dataset
 
         int[] generalization = transformation.getGeneralization();
         double infoLoss = 1d;
@@ -236,12 +238,12 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
 
         // Compute domain shares
         this.shares =  manager.getDomainShares();
-                
+
         // Calculate MaxIL
         this.maxIL = 1d;
         for (DomainShare share : shares) {
-            maxIL *= share.getDomainSize();
+            this.maxIL *= share.getDomainSize();
         }
-        maxIL = Math.log10(maxIL);
+        this.maxIL = Math.log10(this.maxIL);
     }
 }
