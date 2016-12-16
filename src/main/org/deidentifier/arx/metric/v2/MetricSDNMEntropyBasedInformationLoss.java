@@ -19,6 +19,7 @@ package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -112,18 +113,41 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     public String toString() {
         return "EntropyBasedInformationLoss";
     }
+    
+    /**
+     * Returns the maximal entropy-based information loss
+     * @param domainShares For generalized attributes
+     * @param domainSizes For microaggregated attributes
+     * @return
+     */
+    public static double getMaximalEntropyBasedInformationLoss(DomainShare[] domainShares,
+                                                               int[] domainSizes) {
+        double maxIL = 1d;
+        for (DomainShare share : domainShares) {
+            maxIL *= share.getDomainSize();
+        }
+        for (int size : domainSizes) {
+            maxIL *= size;
+        }
+        maxIL = Math.log10(maxIL);
+        return maxIL;
+    }
 
     /**
      * Implements the entropy-based IL model. Ignores record suppression. Returns the loss for exactly one record.
      * @param transformation
      * @param entry
      * @param shares
+     * @param functions
+     * @param microaggregationStartIndex
      * @param maxIL
      * @return
      */
     public static double getEntropyBasedInformationLoss(Transformation transformation, 
                                                         HashGroupifyEntry entry,
                                                         DomainShare[] shares,
+                                                        DistributionAggregateFunction[] microaggregationFunctions,
+                                                        int microaggregationStartIndex,
                                                         double maxIL) {
 
         // We transform the formula, to make evaluating it more efficient.
@@ -156,6 +180,11 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
             int level = generalization[dimension];
             infoLoss *= shares[dimension].getShare(value, level);
         }
+        if (microaggregationFunctions != null) {
+            for (int dimension=0; dimension<microaggregationFunctions.length; dimension++){
+                infoLoss *= microaggregationFunctions[dimension].getMeanError(entry.distributions[microaggregationStartIndex + dimension]);
+            }
+        }
         
         // Finalize
         return Math.log10(infoLoss) / maxIL + 1d;
@@ -164,15 +193,24 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation transformation, HashGroupify g) {
         
-        // Compute
+        // Prepare
         double real = 0;
         double bound = 0;
         double gFactor = super.getGeneralizationFactor();
         double sFactor = super.getSuppressionFactor();
         HashGroupifyEntry entry = g.getFirstEquivalenceClass();
+        DistributionAggregateFunction[] microaggregationFunctions = super.getMicroaggregationFunctions();
+        int microaggregationStartIndex = super.getMicroaggregationStartIndex();
+
+        // Compute
         while (entry != null) {
             if (entry.count > 0) {
-                double loss = entry.count * getEntropyBasedInformationLoss(transformation, entry, shares, maxIL);
+                double loss = entry.count * getEntropyBasedInformationLoss(  transformation,
+                                                                             entry,
+                                                                             shares,
+                                                                             microaggregationFunctions,
+                                                                             microaggregationStartIndex,
+                                                                             maxIL);
                 real += entry.isNotOutlier ? gFactor * loss : sFactor * entry.count;
                 bound += gFactor * loss;
             }
@@ -187,9 +225,16 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     protected InformationLossWithBound<ILSingleDimensional> getInformationLossInternal(Transformation transformation,
                                                                                        HashGroupifyEntry entry) {
         
+        DistributionAggregateFunction[] microaggregationFunctions = super.getMicroaggregationFunctions();
+        int microaggregationStartIndex = super.getMicroaggregationStartIndex();
         double gFactor = super.getGeneralizationFactor();
         double sFactor = super.getSuppressionFactor();
-        double bound = entry.count * getEntropyBasedInformationLoss(transformation, entry, shares, maxIL);
+        double bound = entry.count * getEntropyBasedInformationLoss(  transformation,
+                                                                      entry,
+                                                                      shares,
+                                                                      microaggregationFunctions,
+                                                                      microaggregationStartIndex,
+                                                                      maxIL);
         double loss = entry.isNotOutlier ? gFactor * bound : sFactor * entry.count;
         return super.createInformationLoss(loss, gFactor * bound);
     }
@@ -209,7 +254,12 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         while (entry != null) {
             
-            bound += entry.count == 0 ? 0d : gFactor * entry.count * getEntropyBasedInformationLoss(transformation, entry, shares, maxIL);
+            bound += entry.count == 0 ? 0d : gFactor * entry.count * getEntropyBasedInformationLoss(  transformation,
+                                                                                                      entry,
+                                                                                                      shares,
+                                                                                                      null,
+                                                                                                      0,
+                                                                                                      maxIL);
             entry = entry.nextOrdered;
         }
         
@@ -240,10 +290,6 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         this.shares =  manager.getDomainShares();
 
         // Calculate MaxIL
-        this.maxIL = 1d;
-        for (DomainShare share : shares) {
-            this.maxIL *= share.getDomainSize();
-        }
-        this.maxIL = Math.log10(this.maxIL);
+        this.maxIL = getMaximalEntropyBasedInformationLoss(this.shares, super.getMicroaggregationDomainSizes());
     }
 }

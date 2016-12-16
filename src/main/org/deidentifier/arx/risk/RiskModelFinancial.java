@@ -84,7 +84,7 @@ public class RiskModelFinancial implements Serializable {
      */
     private void checkArgument(double argument) {
         if (argument < 0d || argument > 1d) {
-            throw new IllegalArgumentException("Argument out of range [0,1]");
+            throw new IllegalArgumentException("Argument out of range [0,1]: " + argument);
         }
     }
 }

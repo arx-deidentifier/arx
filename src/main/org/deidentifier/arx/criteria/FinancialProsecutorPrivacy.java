@@ -20,6 +20,7 @@ package org.deidentifier.arx.criteria;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXFinancialConfiguration;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -39,19 +40,28 @@ import org.deidentifier.arx.risk.RiskModelFinancial;
 public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
 
     /** SVUID */
-    private static final long         serialVersionUID = -1698534839214708559L;
+    private static final long               serialVersionUID = -1698534839214708559L;
 
     /** Configuration */
-    private ARXFinancialConfiguration config;
+    private ARXFinancialConfiguration       config;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]             shares;
+    private DomainShare[]                   shares;
+
+    /** The microaggregation functions. */
+    private DistributionAggregateFunction[] microaggregationFunctions;
+
+    /** The start index of the attributes with microaggregation in the data array (dataAnalyzed) */
+    private int                             microaggregationStartIndex;
+
+    /** Domain size for each microaggregated attribute */
+    private int[]                           microaggregationDomainSizes;
 
     /** MaxIL */
-    private double                    maxIL;
+    private double                          maxIL;
 
     /** Risk model */
-    private RiskModelFinancial        riskModel;
+    private RiskModelFinancial              riskModel;
 
     /**
      * Creates a new instance of game theoretic approach proposed in:
@@ -96,13 +106,14 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
         this.shares =  manager.getDomainShares();
         this.config = config.getFinancialConfiguration();
         this.riskModel = new RiskModelFinancial(this.config);
+
+        // Prepare consideration of microaggregation
+        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
+        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
+        this.microaggregationDomainSizes = manager.getMicroaggregationDomainSizes();
                 
         // Calculate MaxIL
-        this.maxIL = 1d;
-        for (DomainShare share : this.shares) {
-            this.maxIL *= share.getDomainSize();
-        }
-        this.maxIL = Math.log10(this.maxIL);
+        this.maxIL = MetricSDNMEntropyBasedInformationLoss.getMaximalEntropyBasedInformationLoss(this.shares, this.microaggregationDomainSizes);
     }
 
     @Override
@@ -114,7 +125,12 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
         }
         
         // Calculate information loss and success probability
-        double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation, entry, shares, maxIL);
+        double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation,
+                                                                                                      entry,
+                                                                                                      shares,
+                                                                                                      this.microaggregationFunctions,
+                                                                                                      this.microaggregationStartIndex,
+                                                                                                      maxIL);
         double successProbability = getSuccessProbability(entry);
         double publisherPayoff = riskModel.getExpectedPublisherPayout(informationLoss, successProbability);
                 
