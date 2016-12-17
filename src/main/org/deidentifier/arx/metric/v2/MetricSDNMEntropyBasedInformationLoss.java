@@ -82,7 +82,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         // 
         // IL = log(share_1 * share_2 * ... * share_n) / maxIL + 1
         //
-        // For micro-aggregated values, we set share_i to MSE and size_i to the number of distinct values in the dataset
+        // For attributes transformed with microaggregation, we set share_i to 1/#distinct-values-in-eq-class and size_i to the #distinct-values-in-dataset
 
         int[] generalization = transformation.getGeneralization();
         double infoLoss = 1d;
@@ -93,11 +93,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         }
         if (microaggregationFunctions != null) {
             for (int dimension=0; dimension<microaggregationFunctions.length; dimension++){
-                double mse = microaggregationFunctions[dimension].getError(entry.distributions[microaggregationStartIndex + dimension]);
-                if (mse == 0) {
-                    mse = Double.MIN_VALUE;
-                }
-                infoLoss *= mse;
+                infoLoss *= microaggregationFunctions[dimension].getInformationLoss(entry.distributions[microaggregationStartIndex + dimension]);
             }
         }
         
