@@ -448,6 +448,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isUtilityBasedMicroaggregation() {
         return config.isUtilityBasedMicroaggregation();
     }
+
+    /**
+     * Returns whether microaggregation will be considered using the mean squared error
+     * @return
+     */
+    public boolean isUtilityBasedMicroaggregationUseMeanSquaredError() {
+        return config.isUtilityBasedMicroaggregationUseMeanSquaredError();
+    }
     
     /**
      * Removes all criteria.
@@ -754,14 +762,22 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns whether microaggregation will be considered by utility measures
+     * Sets whether microaggregation will be considered by utility measures
      * @return
      */
     public void setUseUtilityBasedMicroaggregation(boolean value) {
         setModified();
         config.setUtilityBasedMicroaggregation(value);
     }
-    
+
+    /**
+     * Sets whether microaggregation will be considered using the mean squared error
+     * @return
+     */
+    public void setUseUtilityBasedMicroaggregationMeanSquaredError(boolean value) {
+        setModified();
+        config.setUtilityBasedMicroaggregationUseMeanSquaredError(value);
+    }
     /**
      * Mark as modified.
      */

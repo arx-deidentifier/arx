@@ -313,70 +313,67 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /** Absolute tuple outliers. */
-    private int                                absMaxOutliers                        = 0;
+    private int                                absMaxOutliers                                   = 0;
 
     /** Criteria. */
-    private PrivacyCriterion[]                 aCriteria                             = new PrivacyCriterion[0];
+    private PrivacyCriterion[]                 aCriteria                                        = new PrivacyCriterion[0];
 
     /** Criteria. */
-    private SampleBasedCriterion[]             bCriteria                             = new SampleBasedCriterion[0];
+    private SampleBasedCriterion[]             bCriteria                                        = new SampleBasedCriterion[0];
 
     /** A map of weights per attribute. */
-    private Map<String, Double>                attributeWeights                      = null;
+    private Map<String, Double>                attributeWeights                                 = null;
 
     /** The criteria. */
-    private Set<PrivacyCriterion>              criteria                              = new HashSet<PrivacyCriterion>();
+    private Set<PrivacyCriterion>              criteria                                         = new HashSet<PrivacyCriterion>();
 
     /** The metric. */
-    private Metric<?>                          metric                                = Metric.createLossMetric();
+    private Metric<?>                          metric                                           = Metric.createLossMetric();
 
     /** Do we assume practical monotonicity. */
-    private boolean                            practicalMonotonicity                 = false;
+    private boolean                            practicalMonotonicity                            = false;
 
     /** Relative tuple outliers. */
-    private double                             relMaxOutliers                        = -1;
+    private double                             relMaxOutliers                                   = -1;
 
     /** The requirements per equivalence class. */
-    private int                                requirements                          = 0x0;
+    private int                                requirements                                     = 0x0;
 
     /** The snapshot length. */
     private int                                snapshotLength;
 
-    /**
-     * Defines values of which attribute type are to be replaced by the
-     * suppression string in suppressed tuples.
-     */
-    private Integer                            suppressedAttributeTypes              = 1 << AttributeType.ATTR_TYPE_QI;
+    /** Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples. */
+    private Integer                            suppressedAttributeTypes                         = 1 << AttributeType.ATTR_TYPE_QI;
 
-    /**
-     * Determines whether suppression is applied to the output of anonymous as
-     * well as non-anonymous transformations.
-     */
-    private Boolean                            suppressionAlwaysEnabled              = true;
+    /** Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations. */
+    private Boolean                            suppressionAlwaysEnabled                         = true;
 
     /** Should microaggregation be based on data utility measurements */
-    private boolean                            utilityBasedMicroaggregation          = false;
+    private boolean                            utilityBasedMicroaggregation                     = false;
+
+    /** Should the mean-squared error be used to measure the impact of microaggregation */
+    private Boolean                            utilityBasedMicroaggregationUseMeansSquaredError = false;
 
     /** Internal variant of the class providing a broader interface. */
-    private transient ARXConfigurationInternal accessibleInstance                    = null;
+    private transient ARXConfigurationInternal accessibleInstance                               = null;
 
     /** Are we performing optimal anonymization for sample-based criteria? */
-    private boolean                            heuristicSearchForSampleBasedCriteria = false;
+    private boolean                            heuristicSearchForSampleBasedCriteria            = false;
 
     /** Should we use the heuristic search algorithm? */
-    private boolean                            heuristicSearchEnabled                = false;
+    private boolean                            heuristicSearchEnabled                           = false;
 
     /**
      * We will use the heuristic algorithm, if the size of the search space
      * exceeds this threshold
      */
-    private Integer                            heuristicSearchThreshold              = 100000;
+    private Integer                            heuristicSearchThreshold                         = 100000;
 
     /** The heuristic algorithm will terminate after the given time limit */
-    private Integer                            heuristicSearchTimeLimit              = 30000;
+    private Integer                            heuristicSearchTimeLimit                         = 30000;
 
-    /** Financial configuration*/
-    private ARXFinancialConfiguration          financialConfiguration                = ARXFinancialConfiguration.create();
+    /** Financial configuration */
+    private ARXFinancialConfiguration          financialConfiguration                           = ARXFinancialConfiguration.create();
 
     /**
      * Creates a new configuration without tuple suppression.
@@ -805,11 +802,25 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Returns whether microaggregation is based on utility measures
+     * Returns whether the impact of microaggregation on data utility should be considered
      * @return
      */
     public boolean isUtilityBasedMicroaggregation() {
         return this.utilityBasedMicroaggregation;
+    }
+    
+    /**
+     * If set to true, mean squared error will be used to measure the impact of microaggregation
+     * on data quality. If set to false, a more simple measure of information loss will be used.
+     * @return
+     */
+    public boolean isUtilityBasedMicroaggregationUseMeanSquaredError() {
+        
+        // Backwards compatibility
+        if (this.utilityBasedMicroaggregationUseMeansSquaredError == null) {
+            this.utilityBasedMicroaggregationUseMeansSquaredError = true;
+        } 
+        return this.utilityBasedMicroaggregationUseMeansSquaredError;
     }
 
     /**
@@ -967,13 +978,22 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Sets whether microaggregation should be based on utility measures
+     * Sets whether the impact of microaggregation on data utility should be considered 
      * @return
      */
     public void setUtilityBasedMicroaggregation(boolean value) {
         this.utilityBasedMicroaggregation = value;
     }
-    
+
+    /**
+     * If set to true, mean squared error will be used to measure the impact of microaggregation
+     * on data quality. If set to false, a more simple measure of information loss will be used.
+     * @return
+     */
+    public void setUtilityBasedMicroaggregationUseMeanSquaredError(boolean useMSE) {
+        this.utilityBasedMicroaggregationUseMeansSquaredError = useMSE;
+    }
+
     /**
      * Checks an argument.
      *
