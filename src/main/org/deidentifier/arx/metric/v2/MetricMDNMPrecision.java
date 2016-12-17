@@ -169,7 +169,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
             // Calculate avg. MSE
             for (int i = 0; i < dimensionsAggregated; i++) {
-                double share = (double) m.count * microaggregationFunctions[i].getMeanError(m.distributions[microaggregationStart + i]);
+                double share = (double) m.count * microaggregationFunctions[i].getError(m.distributions[microaggregationStart + i]);
                 result[dimensionsGeneralized + i] += m.isNotOutlier ? share * gFactor : 
                                                                       (sFactor == 1d ? m.count : share + sFactor * ((double) m.count - share));
             }

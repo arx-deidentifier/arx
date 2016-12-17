@@ -103,7 +103,7 @@ public class Distribution {
         Arrays.fill(elements, -1);
         size = 0;
     }
-
+    
     /**
      * Gets all buckets of the hash table.
      *
@@ -190,6 +190,22 @@ public class Distribution {
      */
     public int size() {
         return size;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Distribution [");
+        boolean first = true;
+        for (int i=0; i<elements.length; i+=2) {
+            if (elements[i] != -1) {
+                builder.append(first ? "" : ",");
+                builder.append(elements[i]).append("=").append(elements[i+1]);
+                first = false;
+            }
+        }
+        builder.append("]");
+        return builder.toString();
     }
 
     /**

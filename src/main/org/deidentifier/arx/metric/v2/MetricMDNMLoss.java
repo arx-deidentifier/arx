@@ -172,7 +172,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                 }
                 for (int dimension=0; dimension<dimensionsAggregated; dimension++){
                     
-                    double share = (double)m.count * microaggregationFunctions[dimension].getMeanError(m.distributions[microaggregationStart + dimension]);
+                    double share = (double)m.count * microaggregationFunctions[dimension].getError(m.distributions[microaggregationStart + dimension]);
                     result[dimensionsGeneralized + dimension] += m.isNotOutlier ? share * gFactor :
                                          (sFactor == 1d ? m.count : share + sFactor * ((double)m.count - share));
                     // Note: we ignore a bound for microaggregation, as we cannot compute it
@@ -222,7 +222,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
         // Compute
         for (int dimension=0; dimension<dimensionsAggregated; dimension++){
-            result[dimensionsGeneralized + dimension] = (double)entry.count * microaggregationFunctions[dimension].getMeanError(entry.distributions[microaggregationStart + dimension]);
+            result[dimensionsGeneralized + dimension] = (double)entry.count * microaggregationFunctions[dimension].getError(entry.distributions[microaggregationStart + dimension]);
         }
         
         // Return

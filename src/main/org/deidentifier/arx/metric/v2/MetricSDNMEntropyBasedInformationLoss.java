@@ -44,95 +44,6 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     /** SVUID*/
     private static final long serialVersionUID = -2443537745262162075L;
 
-    /** Domain shares for each dimension. */
-    private DomainShare[]                     shares;
-
-    /** MaxIL */
-    private double                            maxIL;
-
-    /**
-     * Creates a new instance. Default constructor which treats all transformation methods equally.
-     */
-    public MetricSDNMEntropyBasedInformationLoss() {
-        this(0.5d);
-    }
-
-    /**
-     * Creates a new instance.
-     * 
-     * @param gsFactor A factor [0,1] weighting generalization and suppression.
-     *            The default value is 0.5, which means that generalization
-     *            and suppression will be treated equally. A factor of 0
-     *            will favor suppression, and a factor of 1 will favor
-     *            generalization. The values in between can be used for
-     *            balancing both methods.
-     */
-    public MetricSDNMEntropyBasedInformationLoss(double gsFactor) {
-        super(true, false, false, gsFactor);
-    }
-
-    @Override
-    public ILSingleDimensional createMaxInformationLoss() {
-        Double rows = getNumTuples();
-        if (rows == null) {
-            throw new IllegalStateException("Metric must be initialized first");
-        } else {
-            return new ILSingleDimensional(rows);
-        }
-    }
-
-    @Override
-    public ILSingleDimensional createMinInformationLoss() {
-        return new ILSingleDimensional(0d);
-    }
-
-    @Override
-    public boolean isGSFactorSupported() {
-        return true;
-    }
-
-    /**
-     * Returns the configuration of this metric.
-     * 
-     * @return
-     */
-    public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false, 
-                                       super.getGeneralizationSuppressionFactor(), 
-                                       false, 
-                                       0.0d, 
-                                       this.getAggregateFunction());
-    }
-
-    @Override
-    public String getName() {
-        return "Entropy-based information loss";
-    }
-
-    @Override
-    public String toString() {
-        return "EntropyBasedInformationLoss";
-    }
-    
-    /**
-     * Returns the maximal entropy-based information loss
-     * @param domainShares For generalized attributes
-     * @param domainSizes For microaggregated attributes
-     * @return
-     */
-    public static double getMaximalEntropyBasedInformationLoss(DomainShare[] domainShares,
-                                                               int[] domainSizes) {
-        double maxIL = 1d;
-        for (DomainShare share : domainShares) {
-            maxIL *= share.getDomainSize();
-        }
-        for (int size : domainSizes) {
-            maxIL *= size;
-        }
-        maxIL = Math.log10(maxIL);
-        return maxIL;
-    }
-
     /**
      * Implements the entropy-based IL model. Ignores record suppression. Returns the loss for exactly one record.
      * @param transformation
@@ -182,12 +93,105 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         }
         if (microaggregationFunctions != null) {
             for (int dimension=0; dimension<microaggregationFunctions.length; dimension++){
-                infoLoss *= microaggregationFunctions[dimension].getMeanError(entry.distributions[microaggregationStartIndex + dimension]);
+                double mse = microaggregationFunctions[dimension].getError(entry.distributions[microaggregationStartIndex + dimension]);
+                if (mse == 0) {
+                    mse = Double.MIN_VALUE;
+                }
+                infoLoss *= mse;
             }
         }
         
         // Finalize
         return Math.log10(infoLoss) / maxIL + 1d;
+    }
+
+    /**
+     * Returns the maximal entropy-based information loss
+     * @param domainShares For generalized attributes
+     * @param domainSizes For microaggregated attributes
+     * @return
+     */
+    public static double getMaximalEntropyBasedInformationLoss(DomainShare[] domainShares,
+                                                               int[] domainSizes) {
+        double maxIL = 1d;
+        for (DomainShare share : domainShares) {
+            maxIL *= share.getDomainSize();
+        }
+        for (int size : domainSizes) {
+            maxIL *= size;
+        }
+        maxIL = Math.log10(maxIL);
+        return maxIL;
+    }
+
+    /** Domain shares for each dimension. */
+    private DomainShare[]                     shares;
+
+    /** MaxIL */
+    private double                            maxIL;
+
+    /**
+     * Creates a new instance. Default constructor which treats all transformation methods equally.
+     */
+    public MetricSDNMEntropyBasedInformationLoss() {
+        this(0.5d);
+    }
+
+    /**
+     * Creates a new instance.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     */
+    public MetricSDNMEntropyBasedInformationLoss(double gsFactor) {
+        super(true, false, false, gsFactor);
+    }
+
+    @Override
+    public ILSingleDimensional createMaxInformationLoss() {
+        Double rows = getNumTuples();
+        if (rows == null) {
+            throw new IllegalStateException("Metric must be initialized first");
+        } else {
+            return new ILSingleDimensional(rows);
+        }
+    }
+
+    @Override
+    public ILSingleDimensional createMinInformationLoss() {
+        return new ILSingleDimensional(0d);
+    }
+
+    /**
+     * Returns the configuration of this metric.
+     * 
+     * @return
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false, 
+                                       super.getGeneralizationSuppressionFactor(), 
+                                       false, 
+                                       0.0d, 
+                                       this.getAggregateFunction());
+    }
+
+    @Override
+    public String getName() {
+        return "Entropy-based information loss";
+    }
+    
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "EntropyBasedInformationLoss";
     }
 
     @Override
