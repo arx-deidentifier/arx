@@ -753,7 +753,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
         for (int i = 0; i < buckets.length; i += 2) {
             result += buckets[i] != -1 ? 1 : 0;
         }
-        return result / (double)hierarchy.length;
+        return result / (double)dictionary.length;
     }
     
     /**
