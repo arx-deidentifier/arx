@@ -689,7 +689,6 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
     }
 
-    
     /** SVUID. */
     private static final long       serialVersionUID = 331877806010996154L;
 
