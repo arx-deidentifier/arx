@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>DataHandle (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
@@ -156,12 +156,6 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#statistics">statistics</a></strong></code>
-<div class="block">The statistics.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#subset">subset</a></strong></code>
 <div class="block">The current research subset.</div>
@@ -465,7 +459,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></code></td>
+<td class="colFirst"><code>abstract <a href="../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandle.html#getStatistics()">getStatistics</a></strong>()</code>
 <div class="block">Returns an object providing access to basic descriptive statistics about the data represented
  by this handle.</div>
@@ -744,16 +738,6 @@ extends java.lang.Object</pre>
 <h4>registry</h4>
 <pre>protected&nbsp;org.deidentifier.arx.DataRegistry registry</pre>
 <div class="block">The current registry.</div>
-</li>
-</ul>
-<a name="statistics">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>statistics</h4>
-<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a> statistics</pre>
-<div class="block">The statistics.</div>
 </li>
 </ul>
 <a name="subset">
@@ -1192,7 +1176,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getStatistics</h4>
-<pre>public&nbsp;<a href="../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a>&nbsp;getStatistics()</pre>
+<pre>public abstract&nbsp;<a href="../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a>&nbsp;getStatistics()</pre>
 <div class="block">Returns an object providing access to basic descriptive statistics about the data represented
  by this handle.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the statistics</dd></dl>

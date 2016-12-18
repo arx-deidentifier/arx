@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>P-Index (ARX API Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../stylesheet.css" title="Style">
@@ -131,6 +131,44 @@
 <dd>
 <div class="block">Instantiates a new criterion.</div>
 </dd>
+<dt><a href="../org/deidentifier/arx/criteria/ProfitabilityJournalist.html" title="class in org.deidentifier.arx.criteria"><span class="strong">ProfitabilityJournalist</span></a> - Class in <a href="../org/deidentifier/arx/criteria/package-summary.html">org.deidentifier.arx.criteria</a></dt>
+<dd>
+<div class="block">Privacy model for the game theoretic approach proposed in:
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/ProfitabilityJournalist.html#ProfitabilityJournalist(org.deidentifier.arx.DataSubset)">ProfitabilityJournalist(DataSubset)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/ProfitabilityJournalist.html" title="class in org.deidentifier.arx.criteria">ProfitabilityJournalist</a></dt>
+<dd>
+<div class="block">Creates a new instance of game theoretic approach proposed in:
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
+</dd>
+<dt><a href="../org/deidentifier/arx/criteria/ProfitabilityJournalistNoAttack.html" title="class in org.deidentifier.arx.criteria"><span class="strong">ProfitabilityJournalistNoAttack</span></a> - Class in <a href="../org/deidentifier/arx/criteria/package-summary.html">org.deidentifier.arx.criteria</a></dt>
+<dd>
+<div class="block">Privacy model for the "no-attack" variant of the game theoretic approach proposed in:
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/ProfitabilityJournalistNoAttack.html#ProfitabilityJournalistNoAttack(org.deidentifier.arx.DataSubset)">ProfitabilityJournalistNoAttack(DataSubset)</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/ProfitabilityJournalistNoAttack.html" title="class in org.deidentifier.arx.criteria">ProfitabilityJournalistNoAttack</a></dt>
+<dd>
+<div class="block">Creates a new instance</div>
+</dd>
+<dt><a href="../org/deidentifier/arx/criteria/ProfitabilityProsecutor.html" title="class in org.deidentifier.arx.criteria"><span class="strong">ProfitabilityProsecutor</span></a> - Class in <a href="../org/deidentifier/arx/criteria/package-summary.html">org.deidentifier.arx.criteria</a></dt>
+<dd>
+<div class="block">Privacy model for the game theoretic approach proposed in:
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/ProfitabilityProsecutor.html#ProfitabilityProsecutor()">ProfitabilityProsecutor()</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/ProfitabilityProsecutor.html" title="class in org.deidentifier.arx.criteria">ProfitabilityProsecutor</a></dt>
+<dd>
+<div class="block">Creates a new instance of game theoretic approach proposed in:
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
+</dd>
+<dt><a href="../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html" title="class in org.deidentifier.arx.criteria"><span class="strong">ProfitabilityProsecutorNoAttack</span></a> - Class in <a href="../org/deidentifier/arx/criteria/package-summary.html">org.deidentifier.arx.criteria</a></dt>
+<dd>
+<div class="block">Privacy model for the "no-attack" variant of the game theoretic approach proposed in:
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#ProfitabilityProsecutorNoAttack()">ProfitabilityProsecutorNoAttack()</a></span> - Constructor for class org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html" title="class in org.deidentifier.arx.criteria">ProfitabilityProsecutorNoAttack</a></dt>
+<dd>
+<div class="block">Creates a new instance</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXListener.html#progress(double)">progress(double)</a></span> - Method in interface org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a></dt>
 <dd>
 <div class="block">Reports a progress value in [0, 1]</div>
@@ -138,6 +176,16 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataScale.html#provides(org.deidentifier.arx.DataScale)">provides(DataScale)</a></span> - Method in enum org.deidentifier.arx.<a href="../org/deidentifier/arx/DataScale.html" title="enum in org.deidentifier.arx">DataScale</a></dt>
 <dd>
 <div class="block">Returns whether this scale provides at least the properties of the given scale.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/criteria/EntropyLDiversity.EntropyEstimator.html#psi(int)">psi(int)</a></span> - Method in enum org.deidentifier.arx.criteria.<a href="../org/deidentifier/arx/criteria/EntropyLDiversity.EntropyEstimator.html" title="enum in org.deidentifier.arx.criteria">EntropyLDiversity.EntropyEstimator</a></dt>
+<dd>
+<div class="block">The logarithm substitute of the current estimator
+ 
+ The difference in estimating the entropy by the naive Shannon or Grassberger
+ estimator is actually using log or G for \psi in the entropy formula
+    $H = \psi(N) - 1/N \sum n \psi(n)$
+ where N is the size of the set and the sum goes over all values of the
+ sensitive attribute, n is the count of the current sensitive attribute</div>
 </dd>
 </dl>
 <a href="index-1.html">A</a>&nbsp;<a href="index-2.html">B</a>&nbsp;<a href="index-3.html">C</a>&nbsp;<a href="index-4.html">D</a>&nbsp;<a href="index-5.html">E</a>&nbsp;<a href="index-6.html">F</a>&nbsp;<a href="index-7.html">G</a>&nbsp;<a href="index-8.html">H</a>&nbsp;<a href="index-9.html">I</a>&nbsp;<a href="index-10.html">K</a>&nbsp;<a href="index-11.html">L</a>&nbsp;<a href="index-12.html">M</a>&nbsp;<a href="index-13.html">N</a>&nbsp;<a href="index-14.html">O</a>&nbsp;<a href="index-15.html">P</a>&nbsp;<a href="index-16.html">Q</a>&nbsp;<a href="index-17.html">R</a>&nbsp;<a href="index-18.html">S</a>&nbsp;<a href="index-19.html">T</a>&nbsp;<a href="index-20.html">U</a>&nbsp;<a href="index-21.html">V</a>&nbsp;<a href="index-22.html">W</a>&nbsp;<a href="index-23.html">_</a>&nbsp;</div>
