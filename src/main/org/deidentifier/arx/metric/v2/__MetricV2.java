@@ -765,7 +765,8 @@ public class __MetricV2 {
     }
     
     /**
-     * Creates an instance of the metric for maximizing publisher benefit in the Stackelberg game.
+     * Creates an instance of the model for maximizing publisher benefit in the game-theoretic privacy
+     * model based on a cost/benefit analysis.
      * 
      * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
      *                                the prosecutor model will be assumed, otherwise

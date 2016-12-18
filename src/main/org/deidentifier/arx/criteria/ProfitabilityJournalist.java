@@ -30,7 +30,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
  * 
  * @author Fabian Prasser
  */
-public class FinancialJournalistPrivacy extends FinancialProsecutorPrivacy {
+public class ProfitabilityJournalist extends ProfitabilityProsecutor {
 
     /** SVUID */
     private static final long serialVersionUID = 5089787798100584405L;
@@ -45,14 +45,14 @@ public class FinancialJournalistPrivacy extends FinancialProsecutorPrivacy {
      * Murat Kantarcioglu, Ranjit Ganta, Raymond Heatherly, Bradley A. Malin
      * PLOS|ONE. 2015. 
      */
-    public FinancialJournalistPrivacy(DataSubset subset){
+    public ProfitabilityJournalist(DataSubset subset){
         super();
         this.subset = subset;
     }
 
     @Override
-    public FinancialJournalistPrivacy clone() {
-        return new FinancialJournalistPrivacy(this.subset.clone());
+    public ProfitabilityJournalist clone() {
+        return new ProfitabilityJournalist(this.subset.clone());
     }
 
     @Override

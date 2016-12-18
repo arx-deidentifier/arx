@@ -18,7 +18,7 @@
 package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXFinancialConfiguration;
+import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
@@ -30,10 +30,10 @@ import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricConfiguration.MetricConfigurationAttackerModel;
-import org.deidentifier.arx.risk.RiskModelFinancial;
+import org.deidentifier.arx.risk.RiskModelCostBenefit;
 
 /**
- * This class implements a prototype model which maximizes publisher benefit as proposed in:<br>
+ * This class implements a model which maximizes publisher benefit according to the model proposed in:<br>
  * A Game Theoretic Framework for Analyzing Re-Identification Risk.
  * Zhiyu Wan, Yevgeniy Vorobeychik, Weiyi Xia, Ellen Wright Clayton,
  * Murat Kantarcioglu, Ranjit Ganta, Raymond Heatherly, Bradley A. Malin
@@ -47,7 +47,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     private static final long         serialVersionUID = 5729454129866471107L;
 
     /** Configuration for the Stackelberg game */
-    private ARXFinancialConfiguration config;
+    private ARXCostBenefitConfiguration config;
 
     /** Domain shares for each dimension. */
     private DomainShare[]             shares;
@@ -56,7 +56,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     private double                    maxIL;
 
     /** Risk model */
-    private RiskModelFinancial        modelRisk;
+    private RiskModelCostBenefit        modelRisk;
 
     /** Journalist attacker model */
     private boolean                   journalistAttackerModel;
@@ -117,9 +117,9 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     }
     
     /**
-     * Returns the financial configuration
+     * Returns the cost/benefit configuration
      */
-    public ARXFinancialConfiguration getFinancialConfiguration() {
+    public ARXCostBenefitConfiguration getCostBenefitConfiguration() {
         return this.config;
     }
 
@@ -161,7 +161,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     }
 
     /**
-     * Returns the success probability. If the game is configured to use the journalist risk, 
+     * Returns the success probability. If the game is configured to use journalist risk, 
      * but no population table is available, we silently default to the prosecutor model.
      * @param entry
      * @return
@@ -272,8 +272,8 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
 
         // Compute domain shares
         this.shares =  manager.getDomainShares();
-        this.config = config.getFinancialConfiguration();
-        this.modelRisk = new RiskModelFinancial(this.config);
+        this.config = config.getCostBenefitConfiguration();
+        this.modelRisk = new RiskModelCostBenefit(this.config);
                 
         // Calculate MaxIL
         this.maxIL = MetricSDNMEntropyBasedInformationLoss.getMaximalEntropyBasedInformationLoss(this.shares, super.getMicroaggregationDomainSizes());

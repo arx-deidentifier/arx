@@ -126,7 +126,7 @@ public class LayoutCriteria implements ILayout {
         
         Composite composite3 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.10"), null); //$NON-NLS-1$
         composite3.setLayout(new FillLayout());
-        new ViewFinancialModel(composite3, controller);
+        new ViewCostBenefitModel(composite3, controller);
         
         // Update buttons
         folder.addSelectionListener(new SelectionAdapter(){

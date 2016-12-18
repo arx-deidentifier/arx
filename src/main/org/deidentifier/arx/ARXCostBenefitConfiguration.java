@@ -20,13 +20,14 @@ package org.deidentifier.arx;
 import java.io.Serializable;
 
 /**
- * Basic configuration of financial variables, such as the publisher's benefit
- * per record or the per-record cost of an attack. Required to analyze re-identification
- * risks on a financial basis, e.g. using a game-theoretic approach.
+ * Basic configuration of monetary amounts, such as the publisher's benefit
+ * per record or the per-record fine fine for a successful re-identification attack.
+ * These parameters can be used to perform monetary cost/benefit analyses, e.g. 
+ * using a game-theoretic approach.
+ * 
  * @author Fabian Prasser
- *
  */
-public class ARXFinancialConfiguration implements Serializable {
+public class ARXCostBenefitConfiguration implements Serializable {
     
     /** SVUID*/
     private static final long serialVersionUID = -560679186676701860L;
@@ -35,8 +36,8 @@ public class ARXFinancialConfiguration implements Serializable {
      * Creates a new instance
      * @return
      */
-    public static ARXFinancialConfiguration create() {
-        return new ARXFinancialConfiguration();
+    public static ARXCostBenefitConfiguration create() {
+        return new ARXCostBenefitConfiguration();
     }
 
     /** Basic parameters */
@@ -51,13 +52,13 @@ public class ARXFinancialConfiguration implements Serializable {
     /**
      * Hide constructor
      */
-    protected ARXFinancialConfiguration() {
+    protected ARXCostBenefitConfiguration() {
         // Empty by design
     }
 
     @Override
-    public ARXFinancialConfiguration clone() {
-        ARXFinancialConfiguration result = new ARXFinancialConfiguration();
+    public ARXCostBenefitConfiguration clone() {
+        ARXCostBenefitConfiguration result = new ARXCostBenefitConfiguration();
         result.publisherBenefit = this.publisherBenefit;
         result.publisherLoss = this.publisherLoss;
         result.adversaryGain = this.adversaryGain;
@@ -66,6 +67,7 @@ public class ARXFinancialConfiguration implements Serializable {
     }
 
     /**
+     * Returns the amount of money needed by an attacker for trying to re-identify a single record
      * @return the adversaryCost
      */
     public double getAdversaryCost() {
@@ -73,6 +75,7 @@ public class ARXFinancialConfiguration implements Serializable {
     }
 
     /**
+     * Returns the amount of money earned by an attacker for successfully re-identifying a single record
      * @return the adversaryGain
      */
     public double getAdversaryGain() {
@@ -80,6 +83,7 @@ public class ARXFinancialConfiguration implements Serializable {
     }
     
     /**
+     * Returns the amount of money earned by the data publisher for publishing a single record
      * @return the publisherBenefit
      */
     public double getPublisherBenefit() {
@@ -87,6 +91,7 @@ public class ARXFinancialConfiguration implements Serializable {
     }
 
     /**
+     * Returns the amount of money lost by the data publisher, e.g. due to a fine, if a single record is attacked successfully
      * @return the publisherLoss
      */
     public double getPublisherLoss() {
@@ -94,33 +99,37 @@ public class ARXFinancialConfiguration implements Serializable {
     }
 
     /**
+     * Sets the amount of money needed by an attacker for trying to re-identify a single record
      * @param adversaryCost the adversaryCost to set
      */
-    public ARXFinancialConfiguration setAdversaryCost(double adversaryCost) {
+    public ARXCostBenefitConfiguration setAdversaryCost(double adversaryCost) {
         this.adversaryCost = adversaryCost;
         return this;
     }
 
     /**
+     * Sets the amount of money earned by an attacker for successfully re-identifying a single record
      * @param adversaryGain the adversaryGain to set
      */
-    public ARXFinancialConfiguration setAdversaryGain(double adversaryGain) {
+    public ARXCostBenefitConfiguration setAdversaryGain(double adversaryGain) {
         this.adversaryGain = adversaryGain;
         return this;
     }
 
     /**
+     * Sets the amount of money earned by the data publisher for publishing a single record
      * @param publisherBenefit the publisherBenefit to set
      */
-    public ARXFinancialConfiguration setPublisherBenefit(double publisherBenefit) {
+    public ARXCostBenefitConfiguration setPublisherBenefit(double publisherBenefit) {
         this.publisherBenefit = publisherBenefit;
         return this;
     }
     
     /**
+     * Sets the amount of money lost by the data publisher, e.g. due to a fine, if a single record is attacked successfully
      * @param publisherLoss the publisherLoss to set
      */
-    public ARXFinancialConfiguration setPublisherLoss(double publisherLoss) {
+    public ARXCostBenefitConfiguration setPublisherLoss(double publisherLoss) {
         this.publisherLoss = publisherLoss;
         return this;
     }

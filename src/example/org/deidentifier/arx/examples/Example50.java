@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXFinancialConfiguration;
+import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -35,14 +35,14 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.criteria.FinancialJournalistNoAttackPrivacy;
+import org.deidentifier.arx.criteria.ProfitabilityJournalistNoAttack;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
 
 /**
- * Examples of using the No-Attack variant of the Stackelberg game for de-identifying the 
- * Adult dataset based on the journalist attacker model with an explicit population table
+ * Examples of using the no-attack variant of the game-theoretic approach for 
+ * performing a monetary cost/benefit analysis using journalist risk.
  *
  * @author Fabian Prasser
  */
@@ -102,28 +102,28 @@ public class Example50 extends Example {
         DataSubset subset = DataSubset.create(data, DataSelector.create(data).field("sex").equals("Male"));
         
         // Config from PLOS|ONE paper
-        solve(data, ARXFinancialConfiguration.create()
+        solve(data, ARXCostBenefitConfiguration.create()
                                                .setAdversaryCost(4d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(300d)
                                                .setPublisherBenefit(1200d), subset);
 
         // Lower costs for the attacker
-        solve(data, ARXFinancialConfiguration.create()
+        solve(data, ARXCostBenefitConfiguration.create()
                                                .setAdversaryCost(2d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(300d)
                                                .setPublisherBenefit(1200d), subset);
 
         // Lower costs and more gain for the attacker
-        solve(data, ARXFinancialConfiguration.create()
+        solve(data, ARXCostBenefitConfiguration.create()
                                                .setAdversaryCost(2d)
                                                .setAdversaryGain(600d)
                                                .setPublisherLoss(300d)
                                                .setPublisherBenefit(1200d), subset);
 
         // Even more gain for the attacker
-        solve(data, ARXFinancialConfiguration.create()
+        solve(data, ARXCostBenefitConfiguration.create()
                                                .setAdversaryCost(2d)
                                                .setAdversaryGain(1200d)
                                                .setPublisherLoss(300d)
@@ -138,25 +138,25 @@ public class Example50 extends Example {
      * @param subset
      * @throws IOException
      */
-    private static void solve(Data data, ARXFinancialConfiguration config, DataSubset subset) throws IOException {
+    private static void solve(Data data, ARXCostBenefitConfiguration config, DataSubset subset) throws IOException {
         
         // Release
         data.getHandle().release();
         
         // Configure
         ARXConfiguration arxconfig = ARXConfiguration.create();
-        arxconfig.setFinancialConfiguration(config);
+        arxconfig.setCostBenefitConfiguration(config);
         
         // Create model for measuring publisher's benefit
-        MetricSDNMPublisherPayout stackelbergMetric = Metric.createPublisherPayoutMetric(true);
+        MetricSDNMPublisherPayout maximizePublisherPayout = Metric.createPublisherPayoutMetric(true);
         
         // Create privacy model for the game-theoretic approach
-        FinancialJournalistNoAttackPrivacy stackelbergPrivacyModel = new FinancialJournalistNoAttackPrivacy(subset);
+        ProfitabilityJournalistNoAttack profitability = new ProfitabilityJournalistNoAttack(subset);
         
         // Configure ARX
         arxconfig.setMaxOutliers(1d);
-        arxconfig.setMetric(stackelbergMetric);
-        arxconfig.addCriterion(stackelbergPrivacyModel);
+        arxconfig.setMetric(maximizePublisherPayout);
+        arxconfig.addCriterion(profitability);
 
         // Anonymize
         ARXAnonymizer anonymizer = new ARXAnonymizer();

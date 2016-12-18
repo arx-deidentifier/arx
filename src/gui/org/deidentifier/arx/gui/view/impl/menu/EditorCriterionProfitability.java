@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.gui.model.ModelCriterion;
-import org.deidentifier.arx.gui.model.ModelStackelbergPrivacyCriterion;
-import org.deidentifier.arx.gui.model.ModelStackelbergPrivacyCriterion.AttackerModel;
+import org.deidentifier.arx.gui.model.ModelProfitabilityCriterion;
+import org.deidentifier.arx.gui.model.ModelProfitabilityCriterion.AttackerModel;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -35,12 +35,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * Editor for the stackelberg game-theoretic privacy model
+ * Editor for the profitability privacy model
  * 
  * @author James Gaupp
  * @author Fabian Prasser
  */
-public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStackelbergPrivacyCriterion> {
+public class EditorCriterionProfitability extends EditorCriterion<ModelProfitabilityCriterion> {
 
     /** View */
     private static final String        LABELS[] = { Resources.getMessage("CriterionDefinitionView.121"), //$NON-NLS-1$ 
@@ -61,7 +61,7 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
 	 * @param parent
 	 * @param model
 	 */
-	public EditorCriterionStackelbergPrivacy(final Composite parent, final ModelStackelbergPrivacyCriterion model) {
+	public EditorCriterionProfitability(final Composite parent, final ModelProfitabilityCriterion model) {
 		super(parent, model);
 	}
 
@@ -126,16 +126,16 @@ public class EditorCriterionStackelbergPrivacy extends EditorCriterion<ModelStac
 
 	    // Create list
 	    List<ModelCriterion> result = new ArrayList<ModelCriterion>();
-	    result.add(new ModelStackelbergPrivacyCriterion(AttackerModel.PROSECUTOR, true));
-	    result.add(new ModelStackelbergPrivacyCriterion(AttackerModel.JOURNALIST, true));
-	    result.add(new ModelStackelbergPrivacyCriterion(AttackerModel.PROSECUTOR, false));
-        result.add(new ModelStackelbergPrivacyCriterion(AttackerModel.JOURNALIST, false));
+	    result.add(new ModelProfitabilityCriterion(AttackerModel.PROSECUTOR, true));
+	    result.add(new ModelProfitabilityCriterion(AttackerModel.JOURNALIST, true));
+	    result.add(new ModelProfitabilityCriterion(AttackerModel.PROSECUTOR, false));
+        result.add(new ModelProfitabilityCriterion(AttackerModel.JOURNALIST, false));
 		// Return
         return result;
 	}
 
 	@Override
-	protected void parse(ModelStackelbergPrivacyCriterion model, boolean defaultParameters) {
+	protected void parse(ModelProfitabilityCriterion model, boolean defaultParameters) {
         checkboxAllowAttack.setSelection(model.isAllowAttacks());
         comboAttackerModel.select(getIndexOfAttackerModel(model.getAttackerModel()));
 	}

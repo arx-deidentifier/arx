@@ -18,7 +18,7 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXFinancialConfiguration;
+import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -26,7 +26,7 @@ import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.DomainShare;
 import org.deidentifier.arx.metric.v2.MetricSDNMEntropyBasedInformationLoss;
-import org.deidentifier.arx.risk.RiskModelFinancial;
+import org.deidentifier.arx.risk.RiskModelCostBenefit;
 
 /**
  * Privacy model for the game theoretic approach proposed in:
@@ -37,13 +37,13 @@ import org.deidentifier.arx.risk.RiskModelFinancial;
  * 
  * @author Fabian Prasser
  */
-public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
+public class ProfitabilityProsecutor extends ImplicitPrivacyCriterion {
 
     /** SVUID */
     private static final long               serialVersionUID = -1698534839214708559L;
 
     /** Configuration */
-    private ARXFinancialConfiguration       config;
+    private ARXCostBenefitConfiguration     config;
 
     /** Domain shares for each dimension. */
     private DomainShare[]                   shares;
@@ -61,7 +61,7 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
     private double                          maxIL;
 
     /** Risk model */
-    private RiskModelFinancial              riskModel;
+    private RiskModelCostBenefit            riskModel;
 
     /**
      * Creates a new instance of game theoretic approach proposed in:
@@ -70,7 +70,7 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
      * Murat Kantarcioglu, Ranjit Ganta, Raymond Heatherly, Bradley A. Malin
      * PLOS|ONE. 2015. 
      */
-    public FinancialProsecutorPrivacy(){
+    public ProfitabilityProsecutor(){
         // This model is not monotonic:
         // Often, generalization only marginally reduces the adversary's success
         // probability but at the same time it significantly reduces the
@@ -80,8 +80,8 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
     }
 
     @Override
-    public FinancialProsecutorPrivacy clone() {
-        return new FinancialProsecutorPrivacy();
+    public ProfitabilityProsecutor clone() {
+        return new ProfitabilityProsecutor();
     }
 
     @Override
@@ -104,8 +104,8 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
 
         // Compute domain shares
         this.shares =  manager.getDomainShares();
-        this.config = config.getFinancialConfiguration();
-        this.riskModel = new RiskModelFinancial(this.config);
+        this.config = config.getCostBenefitConfiguration();
+        this.riskModel = new RiskModelCostBenefit(this.config);
 
         // Prepare consideration of microaggregation
         this.microaggregationFunctions = manager.getMicroaggregationFunctions();
@@ -167,6 +167,6 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
      * Returns a string representation
      */
     protected String toString(String attackerModel) {
-        return "financial-privacy (" + attackerModel + ")" + (config != null ? config.toString() : "");
+        return "profitability (" + attackerModel + ")" + (config != null ? config.toString() : "");
     }
 }

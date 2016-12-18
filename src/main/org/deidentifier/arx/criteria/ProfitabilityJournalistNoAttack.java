@@ -31,7 +31,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * 
  * @author Fabian Prasser
  */
-public class FinancialJournalistNoAttackPrivacy extends FinancialProsecutorNoAttackPrivacy {
+public class ProfitabilityJournalistNoAttack extends ProfitabilityProsecutorNoAttack {
 
     /** SVUID */
     private static final long serialVersionUID = 1073520003237793563L;
@@ -43,14 +43,14 @@ public class FinancialJournalistNoAttackPrivacy extends FinancialProsecutorNoAtt
      * Creates a new instance
      * @param subset
      */
-    public FinancialJournalistNoAttackPrivacy(DataSubset subset) {
+    public ProfitabilityJournalistNoAttack(DataSubset subset) {
         super();
         this.subset = subset;
     }
     
     @Override
     public PrivacyCriterion clone() {
-        return new FinancialJournalistNoAttackPrivacy(this.subset.clone());
+        return new ProfitabilityJournalistNoAttack(this.subset.clone());
     }
     
     @Override

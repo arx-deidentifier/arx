@@ -241,7 +241,7 @@ public class Model implements Serializable {
     private Map<String, ModelDDisclosurePrivacyCriterion> dDisclosurePrivacyModel         = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
 
     /** Model for a specific privacy criterion. */
-    private ModelStackelbergPrivacyCriterion              stackelbergPrivacyModel         = new ModelStackelbergPrivacyCriterion();
+    private ModelProfitabilityCriterion              stackelbergPrivacyModel         = new ModelProfitabilityCriterion();
 
     /* *****************************************
      * UTILITY ANALYSIS
@@ -1071,9 +1071,9 @@ public class Model implements Serializable {
 	 * Returns the configuration object for the stackelberg privacy model
 	 * @return
 	 */
-	public ModelStackelbergPrivacyCriterion getStackelbergModel() {
+	public ModelProfitabilityCriterion getStackelbergModel() {
 	    if (this.stackelbergPrivacyModel == null) {
-	        this.stackelbergPrivacyModel = new ModelStackelbergPrivacyCriterion();
+	        this.stackelbergPrivacyModel = new ModelProfitabilityCriterion();
 	    }
 		return stackelbergPrivacyModel;
 	}
@@ -1235,7 +1235,7 @@ public class Model implements Serializable {
 		
 		differentialPrivacyModel = new ModelDifferentialPrivacyCriterion();
 		kAnonymityModel = new ModelKAnonymityCriterion();
-		stackelbergPrivacyModel = new ModelStackelbergPrivacyCriterion();
+		stackelbergPrivacyModel = new ModelProfitabilityCriterion();
 		dPresenceModel = new ModelDPresenceCriterion();
 		kMapModel = new ModelKMapCriterion();
 		lDiversityModel.clear();
