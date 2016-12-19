@@ -658,6 +658,24 @@ public class SWTUtil {
     }
 
     /**
+     * Fallback for objects of unknown type
+     * @param value
+     * @return
+     */
+    public static String getPrettyString(Object value) {
+        if (value instanceof Boolean) {
+            return SWTUtil.getPrettyString(((Boolean)value).booleanValue());
+        } else if (value instanceof Double) {
+            return SWTUtil.getPrettyString(((Double)value).doubleValue());
+        } if (value instanceof Integer) {
+            return SWTUtil.getPrettyString(((Integer)value).intValue());
+        } if (value instanceof Long) {
+            return SWTUtil.getPrettyString(((Long)value).longValue());
+        }
+        return String.valueOf(value);
+    }
+    
+    /**
      * Converts the integer value to a slider selection.
      *
      * @param min

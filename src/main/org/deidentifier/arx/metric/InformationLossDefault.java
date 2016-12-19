@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.metric;
 
+
 /**
  * This class implements an information loss which can be represented as
  * a single decimal number.

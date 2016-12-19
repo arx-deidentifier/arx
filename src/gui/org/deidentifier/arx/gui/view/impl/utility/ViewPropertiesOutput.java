@@ -30,16 +30,16 @@ import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
-import org.deidentifier.arx.criteria.ProfitabilityJournalistNoAttack;
-import org.deidentifier.arx.criteria.ProfitabilityJournalist;
-import org.deidentifier.arx.criteria.ProfitabilityProsecutorNoAttack;
-import org.deidentifier.arx.criteria.ProfitabilityProsecutor;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.OrderedDistanceTCloseness;
 import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.criteria.ProfitabilityJournalist;
+import org.deidentifier.arx.criteria.ProfitabilityJournalistNoAttack;
+import org.deidentifier.arx.criteria.ProfitabilityProsecutor;
+import org.deidentifier.arx.criteria.ProfitabilityProsecutorNoAttack;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.criteria.RiskBasedCriterion;
 import org.deidentifier.arx.criteria.SampleUniqueness;
@@ -49,6 +49,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTree;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisData;
+import org.deidentifier.arx.metric.v2.QualityMetadata;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -248,8 +249,14 @@ public class ViewPropertiesOutput extends ViewProperties {
             
             final String infoloss = node.getLowestScore().toString() +
                                     " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore(), result)) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
-            new Property(Resources.getMessage("PropertiesView.46"), new String[] { infoloss }); //$NON-NLS-1$
+            Property score = new Property(Resources.getMessage("PropertiesView.46"), new String[] { infoloss }); //$NON-NLS-1$
 
+            // Print metadata
+            if (node.isChecked()) {
+                for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
+                    new Property(score, metadata.getParameter(), new String[] { SWTUtil.getPrettyString(metadata.getValue()) });
+                }
+            }
         } 
         
         // Print basic info on neighboring nodes

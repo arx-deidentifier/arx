@@ -44,22 +44,30 @@ import org.deidentifier.arx.risk.RiskModelCostBenefit;
 public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
 
     /** SUID. */
-    private static final long         serialVersionUID = 5729454129866471107L;
+    private static final long           serialVersionUID = 5729454129866471107L;
+
+    /** Parameter strings */
+    private static final String         PUBLISHER_PAYOUT = "Publisher payout";
+    /** Parameter strings */
+    private static final String         MAXIMAL_PAYOUT   = "Theoretical maximum";
 
     /** Configuration for the Stackelberg game */
     private ARXCostBenefitConfiguration config;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]             shares;
+    private DomainShare[]               shares;
 
-    /** MaxIL */
-    private double                    maxIL;
+    /** Maximal information loss */
+    private double                      maxIL;
 
     /** Risk model */
     private RiskModelCostBenefit        modelRisk;
 
     /** Journalist attacker model */
-    private boolean                   journalistAttackerModel;
+    private boolean                     journalistAttackerModel;
+
+    /** Maximal payout */
+    private QualityMetadata<Double>     maximalPayout;
 
     /**
      * Creates a new instance. Default constructor which treats all transformation methods equally.
@@ -185,6 +193,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         double sFactor = super.getSuppressionFactor();
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         double maxPayout = this.config.getPublisherBenefit();
+        double payout = 0d;
         DistributionAggregateFunction[] microaggregationFunctions = super.getMicroaggregationFunctions();
         int microaggregationStartIndex = super.getMicroaggregationStartIndex();
         
@@ -203,12 +212,16 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
                 real += !entry.isNotOutlier ? (sFactor * entry.count * maxPayout) : 
                                               (gFactor * entry.count * (maxPayout - realPayout));
                 bound += gFactor * entry.count * (maxPayout - boundPayout);
+                payout += !entry.isNotOutlier ? 0d : entry.count * realPayout;
             }
             entry = entry.nextOrdered;
         }
         
         // Return
-        return super.createInformationLoss(real, bound);
+        ILSingleDimensionalWithBound result = super.createInformationLoss(real, bound);
+        result.getInformationLoss().addMetadata(new QualityMetadata<Double>(PUBLISHER_PAYOUT, payout));
+        result.getInformationLoss().addMetadata(maximalPayout);
+        return result;
     }
 
     @Override
@@ -279,6 +292,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         this.shares =  manager.getDomainShares();
         this.config = config.getCostBenefitConfiguration();
         this.modelRisk = new RiskModelCostBenefit(this.config);
+        this.maximalPayout = new QualityMetadata<Double>(MAXIMAL_PAYOUT, super.getNumRecords(config, input) * this.config.getPublisherBenefit());
                 
         // Calculate MaxIL
         this.maxIL = MetricSDNMEntropyBasedInformationLoss.getMaximalEntropyBasedInformationLoss(this.shares, super.getMicroaggregationDomainSizes());

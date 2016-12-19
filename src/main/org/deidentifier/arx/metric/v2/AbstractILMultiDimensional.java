@@ -89,6 +89,11 @@ public abstract class AbstractILMultiDimensional extends InformationLoss<double[
     @Override
     public abstract String toString();
 
+    @Override
+    protected void addMetadata(QualityMetadata<?> metadata) {
+        super.addMetadata(metadata);
+    }
+
     /**
      * Converter method.
      *

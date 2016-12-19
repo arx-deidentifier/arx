@@ -30,6 +30,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledBorder;
 import org.deidentifier.arx.metric.InformationLoss;
+import org.deidentifier.arx.metric.v2.QualityMetadata;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -198,6 +199,16 @@ public class ViewProperties implements IView {
         } else {
             c.setText(1, Resources.getMessage("NodePropertiesView.26")); //$NON-NLS-1$
         }
+        
+        // Print metadata
+        if (node.isChecked()) {
+            for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
+                c = new TableItem(table, SWT.NONE);
+                c.setText(0, metadata.getParameter());
+                c.setText(1, SWTUtil.getPrettyString(metadata.getValue()));
+            }
+        }
+        
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.27")); //$NON-NLS-1$
         c.setText(1, String.valueOf(node.getSuccessors().length));

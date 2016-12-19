@@ -39,6 +39,7 @@ import org.deidentifier.arx.criteria.ProfitabilityJournalist;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
+import org.deidentifier.arx.metric.v2.QualityMetadata;
 
 /**
  * Examples of using the game-theoretic approach for 
@@ -171,12 +172,9 @@ public class Example52 extends Example {
         System.out.println(" - Solution: " + Arrays.toString(node.getTransformation()));
         System.out.println("   * Optimal: " + result.getLattice().isComplete());
         System.out.println("   * Time needed: " + result.getTime() + "[ms]");
-        System.out.println("   * Minimal reduction in publisher benefit: " + result.getConfiguration().getQualityModel().createInstanceOfLowestScore());
-        System.out.println("   * Maximal reduction in publisher benefit: " + result.getConfiguration().getQualityModel().createInstanceOfHighestScore());
-        System.out.println("   * Reduction in publisher benefit: " + node.getLowestScore() + " (" +
-                                      node.getLowestScore().relativeTo(result.getConfiguration().getQualityModel().createInstanceOfLowestScore(),
-                                                                       result.getConfiguration().getQualityModel().createInstanceOfHighestScore()) * 100 + "%)");
+        for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
+            System.out.println("   * " + metadata.getParameter() + ": " + metadata.getValue());
+        }
         System.out.println("   * Suppressed records: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfOutlyingTuples());
- 
     }
 }

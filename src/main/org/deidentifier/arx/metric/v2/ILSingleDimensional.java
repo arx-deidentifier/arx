@@ -129,4 +129,9 @@ public class ILSingleDimensional extends InformationLoss<Double> {
             return (ILSingleDimensional) other;
         }
     }
+
+    @Override
+    protected void addMetadata(QualityMetadata<?> metadata) {
+        super.addMetadata(metadata);
+    }
 }
