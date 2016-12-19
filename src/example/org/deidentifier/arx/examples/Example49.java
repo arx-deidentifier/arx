@@ -27,9 +27,9 @@ import java.util.regex.Pattern;
 import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
@@ -157,11 +157,11 @@ public class Example49 extends Example {
         System.out.println(" - Solution: " + Arrays.toString(node.getTransformation()));
         System.out.println("   * Optimal: " + result.getLattice().isComplete());
         System.out.println("   * Time needed: " + result.getTime() + "[ms]");
-        System.out.println("   * Minimal reduction in publisher benefit: " + result.getConfiguration().getMetric().createMinInformationLoss());
-        System.out.println("   * Maximal reduction in publisher benefit: " + result.getConfiguration().getMetric().createMaxInformationLoss());
+        System.out.println("   * Minimal reduction in publisher benefit: " + result.getConfiguration().getMetric().createInstanceOfLowestScore());
+        System.out.println("   * Maximal reduction in publisher benefit: " + result.getConfiguration().getMetric().createInstanceOfHighestScore());
         System.out.println("   * Reduction in publisher benefit: " + node.getLowestScore() + " (" +
-                                      node.getLowestScore().relativeTo(result.getConfiguration().getMetric().createMinInformationLoss(),
-                                                                       result.getConfiguration().getMetric().createMaxInformationLoss()) * 100 + "%)");
+                                      node.getLowestScore().relativeTo(result.getConfiguration().getMetric().createInstanceOfLowestScore(),
+                                                                       result.getConfiguration().getMetric().createInstanceOfHighestScore()) * 100 + "%)");
         System.out.println("   * Suppressed records: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfOutlyingTuples());
  
     }

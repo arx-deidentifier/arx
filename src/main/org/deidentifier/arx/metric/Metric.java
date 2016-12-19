@@ -1189,10 +1189,27 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
+     * Returns an instance of the highest possible score. Lower is better.
+     * @return
+     */
+    public InformationLoss<?> createInstanceOfHighestScore() {
+        return createMaxInformationLoss();
+    }
+
+    /**
+     * Returns an instance of the lowest possible score. Lower is better.
+     * @return
+     */
+    public InformationLoss<?> createInstanceOfLowestScore() {
+        return createMinInformationLoss();
+    }
+    
+    /**
      * Returns an instance of the maximal value.
      *
      * @return
      */
+    @Deprecated
     public abstract InformationLoss<?> createMaxInformationLoss();
     
     /**
@@ -1200,6 +1217,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      *
      * @return
      */
+    @Deprecated
     public abstract InformationLoss<?> createMinInformationLoss();
     
     /**
@@ -1373,18 +1391,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     
     
     /**
-     * Returns false if the metric is non-monotonic when using generalization.
-     * 
-     * @return
-     */
-    public final boolean isMonotonicWithGeneralization(){
-        if (monotonicWithGeneralization == null) {
-            monotonicWithGeneralization = true;
-        }
-        return monotonicWithGeneralization;
-    }
-
-    /**
      * Returns whether this model is monotonic under the given suppression limit.
      * Note: The suppression limit may be relative or absolute.
      *
@@ -1399,6 +1405,18 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         } else {
             return this.isMonotonicWithSuppression();
         } 
+    }
+
+    /**
+     * Returns false if the metric is non-monotonic when using generalization.
+     * 
+     * @return
+     */
+    public final boolean isMonotonicWithGeneralization(){
+        if (monotonicWithGeneralization == null) {
+            monotonicWithGeneralization = true;
+        }
+        return monotonicWithGeneralization;
     }
     
     /**

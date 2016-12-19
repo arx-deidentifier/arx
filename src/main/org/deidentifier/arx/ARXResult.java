@@ -317,7 +317,7 @@ public class ARXResult {
         transformation.setChecked(information.properties);
 
         // Store
-        if (!node.isChecked() || node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
+        if (!node.isChecked() || node.getHighestScore().compareTo(node.getLowestScore()) != 0) {
             
             node.access().setChecked(true);
             if (transformation.hasProperty(solutionSpace.getPropertyAnonymous())) {

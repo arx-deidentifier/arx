@@ -425,10 +425,10 @@ public class ARXLattice implements Serializable {
             // Important for expand operations
             if (!complete) {
                 if (this.maxInformationLoss == null) {
-                    this.maxInformationLoss = metric.createMaxInformationLoss();
+                    this.maxInformationLoss = metric.createInstanceOfHighestScore();
                 }
                 if (this.minInformationLoss == null) {
-                    this.minInformationLoss = metric.createMinInformationLoss();
+                    this.minInformationLoss = metric.createInstanceOfLowestScore();
                 }
             }
         }
